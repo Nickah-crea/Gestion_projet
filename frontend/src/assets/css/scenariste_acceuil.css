@@ -306,14 +306,14 @@ body {
   margin-bottom: 1.25rem;
 }
 
-.episode-statut-scene {
-  background: rgba(var(--accent-rgb), 0.1);
+.episode-statut-scene-acc p{
+  background: rgba(var(--gray-700), 0.1);
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 600;
   font-size: 0.8rem;
-  color: var(--accent);
   max-width: 100%;
+  background: var(--accent);
 }
 
 .episode-actions {
