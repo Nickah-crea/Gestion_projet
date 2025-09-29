@@ -193,13 +193,13 @@
         <div class="project-list">
           <div v-for="(project, index) in filteredProjects" :key="project.id" class="project-card-scen" :style="{'--index': index + 1}">
             <div class="episode-header">
-                <div class="episode-statut-scene">
-                  <p>{{ project.statutNom }}</p>
+                <div class="episode-statut-scene-acc">
+                  <p><i class="fas fa-flag"></i> {{ project.statutNom }}</p>
+                </div>
                 <div class="episode-actions">
-                  <span class="icon-edit" @click="startEdit(project)"><i class="fas fa-edit"></i></span>
-                  <span class="icon-delete" @click="deleteProject(project.id)"><i class="fas fa-trash-alt"></i></span>
-              </div>
-              </div>
+                  <span class="icon-edit" @click="startEdit(project)"><i class="fas fa-pen"></i></span>
+                  <span class="icon-delete" @click="deleteProject(project.id)"><i class="fas fa-trash"></i></span>
+                </div>
             </div>
 
             <h3><i class="fas fa-film icon"></i> Titre: {{ project.titre }}</h3>

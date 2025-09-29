@@ -24,7 +24,7 @@
       <form @submit.prevent="seConnecter" class="connexion-form">
         <div class="form-group">
           <div class="input-container">
-            <i class="fas fa-envelope input-icon"></i>
+            <!-- <i class="fas fa-envelope input-icon"></i> -->
             <input 
               type="email" 
               id="email"
@@ -39,7 +39,7 @@
         
         <div class="form-group">
           <div class="input-container">
-            <i class="fas fa-lock input-icon"></i>
+            <!-- <i class="fas fa-lock input-icon"></i> -->
             <input 
               type="password" 
               id="password"
