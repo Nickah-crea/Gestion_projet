@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper">
+  <div class="app-wrapper-sc">
     <div class="accueil-container">
       <!-- Contenu principal -->
       <main class="main-content-scenariste">
@@ -65,7 +65,8 @@
 
         <div class="title-filtre">
           <center>
-            <h2>Les projets existants</h2>
+            <h2> Bibliothèque de Projets</h2><br><br>
+            <p class="subtitle">Vos films et séries en cours de création</p>
           </center>
         </div><br>
         
@@ -98,7 +99,7 @@
 
           <div class="add-project-btn-container">
             <button class="add-project-btn" @click="goToAddProject">
-              <i class="fas fa-plus-circle icon"></i> Projet
+              <i class="fas fa-plus-circle icon"></i> Nouveau Projet
             </button>
           </div>
         </div> <br> <br>
@@ -189,38 +190,78 @@
           </div>
         </div>
 
-        <!-- liste des projets -->
-        <div class="project-list">
-          <div v-for="(project, index) in filteredProjects" :key="project.id" class="project-card-scen" :style="{'--index': index + 1}">
-            <div class="episode-header">
-                <div class="episode-statut-scene-acc">
-                  <p><i class="fas fa-flag"></i> {{ project.statutNom }}</p>
+        <!-- Nouvelle présentation des projets en grille type bibliothèque -->
+        <div class="projects-library">
+          <div v-for="(project, index) in filteredProjects" :key="project.id" class="movie-card" :style="{'--index': index + 1}">
+            <div class="movie-poster">
+              <div class="poster-icon">
+                <i class="fas fa-film"></i>
+              </div>
+              <div class="movie-overlay">
+                <div class="movie-statut">
+                  <span class="statut-badge" :class="getStatutClass(project.statutNom)">
+                    {{ project.statutNom }}
+                  </span>
                 </div>
-                <div class="episode-actions">
-                  <span class="icon-edit" @click="startEdit(project)"><i class="fas fa-pen"></i></span>
-                  <span class="icon-delete" @click="deleteProject(project.id)"><i class="fas fa-trash"></i></span>
+                <div class="movie-actions">
+                  <button class="action-btn edit-btn" @click.stop="startEdit(project)" title="Modifier">
+                    <i class="fas fa-pen"></i>
+                  </button>
+                  <button class="action-btn delete-btn" @click.stop="deleteProject(project.id)" title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                  </button>
                 </div>
+              </div>
             </div>
-
-            <h3><i class="fas fa-film icon"></i> Titre: {{ project.titre }}</h3>
-            <p>Genre: {{ project.genreNom }}</p>
-            <p>Créé le: {{ formatDate(project.creeLe) }}</p>
-            <p>Modifié le: {{ formatDate(project.modifieLe) }}</p>
             
-            <div class="episode-footer">
-              <div class="button-group">
-                <button class="details-btn" @click="$router.push(`/projet/${project.id}`)">
-                  <i class="fas fa-info-circle icon"></i> Détails
+            <div class="movie-info">
+              <h3 class="movie-title">{{ project.titre }}</h3>
+              <p class="movie-genre">{{ project.genreNom }}</p>
+              
+              <div class="movie-meta">
+                <div class="meta-item">
+                  <i class="fas fa-calendar-plus"></i>
+                  <span>{{ formatShortDate(project.creeLe) }}</span>
+                </div>
+                <div class="meta-item">
+                  <i class="fas fa-calendar-check"></i>
+                  <span>{{ formatShortDate(project.modifieLe) }}</span>
+                </div>
+              </div>
+              
+              <div class="movie-synopsis" v-if="project.synopsis">
+                <p>{{ truncateText(project.synopsis, 120) }}</p>
+              </div>
+              
+              <div class="movie-actions-bottom">
+                <button class="action-btn primary-btn" @click="$router.push(`/projet/${project.id}`)" title="Détails">
+                  <i class="fas fa-info-circle"></i>
+                  <span>Détails</span>
                 </button>
-                <button class="add-episode-btn-scen" @click="goToAddEpisode(project.id)">
-                  <i class="fas fa-plus-circle icon"></i> Épisode
+                <button class="action-btn secondary-btn" @click="goToAddEpisode(project.id)" title="Ajouter un épisode">
+                  <i class="fas fa-plus-circle"></i>
+                  <span>Épisode</span>
+                </button>
+                <button class="action-btn accent-btn" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
+                  <i class="fas fa-desktop"></i>
+                  <span>Travailler</span>
                 </button>
               </div>
-              <button class="work-screen-btn" @click="$router.push(`/projet/${project.id}/ecran-travail`)">
-                <i class="fas fa-desktop icon" style="color: #21294F;"></i> Écran de Travail
-              </button>
             </div>
           </div>
+        </div>
+
+        <!-- Message si aucun projet -->
+        <div v-if="filteredProjects.length === 0" class="no-projects">
+          <div class="no-projects-icon">
+            <i class="fas fa-film"></i>
+          </div>
+          <h3>Aucun projet trouvé</h3>
+          <p>Commencez par créer votre premier projet !</p>
+          <button class="add-project-btn-large" @click="goToAddProject">
+            <i class="fas fa-plus-circle"></i>
+            Créer un projet
+          </button>
         </div>
       </main>
     </div>
@@ -370,69 +411,69 @@ export default {
       }, 300);
     },
 
-async executeSearch() {
-  try {
-    const query = this.searchQuery.trim();
-    if (query.length < 2) return;
-    
-    console.log('Lancement de la recherche pour:', query);
-    
-    // Recherche dans les épisodes, scènes et séquences
-    const [episodesResponse, scenesResponse, sequencesResponse] = await Promise.all([
-      axios.get(`/api/recherche/episodes?q=${encodeURIComponent(query)}`).catch(error => {
-        console.error('Erreur recherche épisodes:', error);
-        return { data: [] };
-      }),
-      axios.get(`/api/recherche/scenes?q=${encodeURIComponent(query)}`).catch(error => {
-        console.error('Erreur recherche scènes:', error);
-        return { data: [] };
-      }),
-      axios.get(`/api/recherche/sequences?q=${encodeURIComponent(query)}`).catch(error => {
-        console.error('Erreur recherche séquences:', error);
-        return { data: [] };
-      })
-    ]);
-    
-    console.log('Réponses reçues:', {
-      episodes: episodesResponse.data,
-      scenes: scenesResponse.data,
-      sequences: sequencesResponse.data
-    });
-    
-    const episodes = (episodesResponse.data || []).map(episode => ({
-      ...episode,
-      type: 'episode',
-      projetTitre: episode.projetTitre || 'Projet inconnu',
-      projetId: episode.projetId || this.getProjetIdFromEpisode(episode)
-    }));
-    
-    const scenes = (scenesResponse.data || []).map(scene => ({
-      ...scene,
-      type: 'scene',
-      projetTitre: scene.projetTitre || 'Projet inconnu',
-      episodeTitre: scene.episodeTitre || 'Épisode inconnu',
-      projetId: scene.projetId || this.getProjetIdFromScene(scene)
-    }));
-    
-    const sequences = (sequencesResponse.data || []).map(sequence => ({
-      ...sequence,
-      type: 'sequence',
-      projetTitre: sequence.projetTitre || 'Projet inconnu',
-      episodeTitre: sequence.episodeTitre || 'Épisode inconnu',
-      projetId: sequence.projetId || this.getProjetIdFromSequence(sequence)
-    }));
-    
-    this.searchResults = [...episodes, ...scenes, ...sequences];
-    this.showSearchResults = true;
-    
-    console.log('Résultats combinés:', this.searchResults);
-    
-  } catch (error) {
-    console.error('Erreur globale lors de la recherche:', error);
-    this.searchResults = [];
-    this.showSearchResults = true;
-  }
-},
+    async executeSearch() {
+      try {
+        const query = this.searchQuery.trim();
+        if (query.length < 2) return;
+        
+        console.log('Lancement de la recherche pour:', query);
+        
+        // Recherche dans les épisodes, scènes et séquences
+        const [episodesResponse, scenesResponse, sequencesResponse] = await Promise.all([
+          axios.get(`/api/recherche/episodes?q=${encodeURIComponent(query)}`).catch(error => {
+            console.error('Erreur recherche épisodes:', error);
+            return { data: [] };
+          }),
+          axios.get(`/api/recherche/scenes?q=${encodeURIComponent(query)}`).catch(error => {
+            console.error('Erreur recherche scènes:', error);
+            return { data: [] };
+          }),
+          axios.get(`/api/recherche/sequences?q=${encodeURIComponent(query)}`).catch(error => {
+            console.error('Erreur recherche séquences:', error);
+            return { data: [] };
+          })
+        ]);
+        
+        console.log('Réponses reçues:', {
+          episodes: episodesResponse.data,
+          scenes: scenesResponse.data,
+          sequences: sequencesResponse.data
+        });
+        
+        const episodes = (episodesResponse.data || []).map(episode => ({
+          ...episode,
+          type: 'episode',
+          projetTitre: episode.projetTitre || 'Projet inconnu',
+          projetId: episode.projetId || this.getProjetIdFromEpisode(episode)
+        }));
+        
+        const scenes = (scenesResponse.data || []).map(scene => ({
+          ...scene,
+          type: 'scene',
+          projetTitre: scene.projetTitre || 'Projet inconnu',
+          episodeTitre: scene.episodeTitre || 'Épisode inconnu',
+          projetId: scene.projetId || this.getProjetIdFromScene(scene)
+        }));
+        
+        const sequences = (sequencesResponse.data || []).map(sequence => ({
+          ...sequence,
+          type: 'sequence',
+          projetTitre: sequence.projetTitre || 'Projet inconnu',
+          episodeTitre: sequence.episodeTitre || 'Épisode inconnu',
+          projetId: sequence.projetId || this.getProjetIdFromSequence(sequence)
+        }));
+        
+        this.searchResults = [...episodes, ...scenes, ...sequences];
+        this.showSearchResults = true;
+        
+        console.log('Résultats combinés:', this.searchResults);
+        
+      } catch (error) {
+        console.error('Erreur globale lors de la recherche:', error);
+        this.searchResults = [];
+        this.showSearchResults = true;
+      }
+    },
     
     clearSearch() {
       this.searchQuery = '';
@@ -454,60 +495,39 @@ async executeSearch() {
       return text.substring(0, maxLength) + '...';
     },
     
-    // navigateToResult(result) {
-    //   // Navigation vers l'écran de travail avec les paramètres appropriés
-    //   const queryParams = {};
-      
-    //   if (result.type === 'episode') {
-    //     queryParams.episodeId = result.id;
-    //   } else if (result.type === 'sequence') {
-    //     queryParams.episodeId = result.episodeId;
-    //     queryParams.sequenceId = result.id;
-    //   } else if (result.type === 'scene') {
-    //     queryParams.episodeId = result.episodeId;
-    //     queryParams.sequenceId = result.sequenceId;
-    //   }
-      
-    //   this.$router.push({
-    //     path: `/projet/${result.projetId}/ecran-travail`,
-    //     query: queryParams
-    //   });
-      
-    //   this.clearSearch();
-    // },
-    
     navigateToResult(result) {
-  // Vérifier que result.projetId est bien défini
-  if (!result.projetId) {
-    console.error('ID du projet manquant dans le résultat de recherche');
-    return;
-  }
-  
-  const queryParams = {};
-  
-  if (result.type === 'episode') {
-    queryParams.episodeId = result.id;
-  } else if (result.type === 'sequence') {
-    queryParams.episodeId = result.episodeId;
-    queryParams.sequenceId = result.id;
-  } else if (result.type === 'scene') {
-    queryParams.episodeId = result.episodeId;
-    queryParams.sequenceId = result.sequenceId;
-  }
-  
-  this.$router.push({
-    path: `/projet/${result.projetId}/ecran-travail`,
-    query: queryParams
-  });
-  
-  this.clearSearch();
-},
+      if (!result.projetId) {
+        console.error('ID du projet manquant dans le résultat de recherche');
+        return;
+      }
+      
+      const queryParams = {};
+      
+      if (result.type === 'episode') {
+        queryParams.episodeId = result.id;
+      } else if (result.type === 'sequence') {
+        queryParams.episodeId = result.episodeId;
+        queryParams.sequenceId = result.id;
+      } else if (result.type === 'scene') {
+        queryParams.episodeId = result.episodeId;
+        queryParams.sequenceId = result.sequenceId;
+      }
+      
+      this.$router.push({
+        path: `/projet/${result.projetId}/ecran-travail`,
+        query: queryParams
+      });
+      
+      this.clearSearch();
+    },
+    
     handleClickOutsideSearch(event) {
       const searchContainer = event.target.closest('.global-search-section');
       if (!searchContainer) {
         this.showSearchResults = false;
       }
     },
+    
     async fetchGenres() {
       try {
         const response = await axios.get('/api/genres');
@@ -516,6 +536,7 @@ async executeSearch() {
         console.error('Erreur lors du chargement des genres:', error);
       }
     },
+    
     async fetchStatuts() {
       try {
         const response = await axios.get('/api/statuts-projet');
@@ -524,6 +545,7 @@ async executeSearch() {
         console.error('Erreur lors du chargement des statuts:', error);
       }
     },
+    
     async fetchProjects() {
       try {
         const response = await axios.get('/api/projets');
@@ -532,6 +554,7 @@ async executeSearch() {
         console.error('Erreur lors du chargement des projets:', error);
       }
     },
+    
     startEdit(project) {
       this.editingProject = project;
       this.editForm = {
@@ -542,10 +565,12 @@ async executeSearch() {
         dateFin: project.dateFin
       };
     },
+    
     getCurrentStatutId(statutNom) {
       const statut = this.statuts.find(s => s.nomStatutsProjet === statutNom);
       return statut ? statut.idStatutProjet : '';
     },
+    
     async submitEdit() {
       this.editLoading = true;
       this.editError = '';
@@ -554,7 +579,6 @@ async executeSearch() {
         const response = await axios.put(`/api/projets/${this.editingProject.id}`, this.editForm);
         
         if (response.status === 200) {
-          // Mettre à jour la liste des projets
           await this.fetchProjects();
           this.cancelEdit();
         }
@@ -565,6 +589,7 @@ async executeSearch() {
         this.editLoading = false;
       }
     },
+    
     cancelEdit() {
       this.editingProject = null;
       this.editForm = {
@@ -576,513 +601,65 @@ async executeSearch() {
       };
       this.editError = '';
     },
+    
     async deleteProject(projectId) {
       if (confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
         try {
           await axios.delete(`/api/projets/${projectId}`);
-          await this.fetchProjects(); // Rafraîchir la liste
+          await this.fetchProjects();
         } catch (error) {
           console.error('Erreur lors de la suppression du projet:', error);
           alert('Erreur lors de la suppression du projet');
         }
       }
     },
+    
     formatDate(date) {
       return new Date(date).toLocaleString();
     },
+    
+    formatShortDate(date) {
+      return new Date(date).toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    },
+    
+    getStatutClass(statutNom) {
+      const statutClasses = {
+        'En cours': 'statut-en-cours',
+        'Terminé': 'statut-termine',
+        'En attente': 'statut-attente',
+        'Annulé': 'statut-annule'
+      };
+      return statutClasses[statutNom] || 'statut-default';
+    },
+    
     toggleProfileMenu() {
       this.showProfileMenu = !this.showProfileMenu;
     },
+    
     handleClickOutside(event) {
       if (!event.target.closest('.profile-section')) {
         this.showProfileMenu = false;
       }
     },
+    
     seDeconnecter() {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       this.$router.push('/');
     },
+    
     goToAddEpisode(projectId) {
       this.$router.push(`/projet/${projectId}/add-episode`);
     },
+    
     goToAddProject() {
       this.$router.push('/add-project');
-    },
-    // Méthode de secours pour la recherche
-    async executeSearch() {
-  try {
-    const query = this.searchQuery.trim();
-    if (query.length < 2) return;
-    
-    console.log('Lancement de la recherche pour:', query);
-    
-    // D'abord essayer la recherche normale
-    try {
-      const [episodesResponse, scenesResponse, sequencesResponse] = await Promise.all([
-        axios.get(`/api/recherche/episodes?q=${encodeURIComponent(query)}`),
-        axios.get(`/api/recherche/scenes?q=${encodeURIComponent(query)}`),
-        axios.get(`/api/recherche/sequences?q=${encodeURIComponent(query)}`)
-      ]);
-      
-      console.log('Réponses reçues:', {
-        episodes: episodesResponse.data,
-        scenes: scenesResponse.data,
-        sequences: sequencesResponse.data
-      });
-      
-      this.processSearchResults(episodesResponse.data, scenesResponse.data, sequencesResponse.data);
-      
-    } catch (apiError) {
-      console.warn('Recherche API échouée, utilisation de la recherche de secours:', apiError);
-      await this.executeSearchFallback(query);
     }
-    
-  } catch (error) {
-    console.error('Erreur globale lors de la recherche:', error);
-    this.searchResults = [];
-    this.showSearchResults = true;
-  }
-},
-
-processSearchResults(episodesData, scenesData, sequencesData) {
-  const episodes = (episodesData || []).map(episode => ({
-    ...episode,
-    type: 'episode',
-    projetTitre: episode.projetTitre || 'Projet inconnu',
-    projetId: episode.projetId || this.extractProjetId(episode)
-  }));
-  
-  const scenes = (scenesData || []).map(scene => ({
-    ...scene,
-    type: 'scene',
-    projetTitre: scene.projetTitre || 'Projet inconnu',
-    episodeTitre: scene.episodeTitre || 'Épisode inconnu',
-    projetId: scene.projetId || this.extractProjetId(scene)
-  }));
-  
-  const sequences = (sequencesData || []).map(sequence => ({
-    ...sequence,
-    type: 'sequence',
-    projetTitre: sequence.projetTitre || 'Projet inconnu',
-    episodeTitre: sequence.episodeTitre || 'Épisode inconnu',
-    projetId: sequence.projetId || this.extractProjetId(sequence)
-  }));
-  
-  this.searchResults = [...episodes, ...scenes, ...sequences];
-  this.showSearchResults = true;
-  
-  console.log('Résultats combinés:', this.searchResults);
-},
-
-async executeSearchFallback(query) {
-  try {
-    // Recherche simplifiée - récupérer tous les projets et filtrer côté client
-    const projetsResponse = await axios.get('/api/projets');
-    const allProjects = projetsResponse.data || [];
-    
-    // Filtrer les projets dont le titre contient la requête
-    const filteredProjects = allProjects.filter(project => 
-      project.titre && project.titre.toLowerCase().includes(query.toLowerCase())
-    );
-    
-    // Transformer en format de résultat de recherche
-    this.searchResults = filteredProjects.map(project => ({
-      id: project.id,
-      titre: project.titre,
-      type: 'projet',
-      projetTitre: project.titre,
-      synopsis: project.synopsis || '',
-      ordre: 0,
-      projetId: project.id
-    }));
-    
-    this.showSearchResults = true;
-    console.log('Résultats de secours:', this.searchResults);
-    
-  } catch (fallbackError) {
-    console.error('Recherche de secours échouée:', fallbackError);
-    this.searchResults = [];
-    this.showSearchResults = true;
-  }
-},
-
-extractProjetId(item) {
-  // Logique pour extraire l'ID du projet si disponible
-  return item.projetId || null;
-},
-
   }
 };
 </script>
 
-<style scoped>
-
-/* Styles pour les résultats de recherche */
-.search-results {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 800px;
-  max-height: 400px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  margin-top: 5px;
-}
-
-.search-results-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
-  background: #f8f9fa;
-}
-
-.search-results-header h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #333;
-}
-
-.close-results-btn {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.results-list {
-  padding: 10px 0;
-}
-
-.search-result-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background-color 0.2s;
-}
-
-.search-result-item:hover {
-  background-color: #f8f9fa;
-}
-
-.search-result-item:last-child {
-  border-bottom: none;
-}
-
-.result-type-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-  margin-right: 12px;
-  min-width: 70px;
-  text-align: center;
-}
-
-.result-type-badge.episode {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.result-type-badge.scene {
-  background-color: #f3e5f5;
-  color: #7b1fa2;
-}
-
-.result-type-badge.sequence {
-  background-color: #e8f5e8;
-  color: #388e3c;
-}
-
-.result-content {
-  flex: 1;
-}
-
-.result-content h4 {
-  margin: 0 0 5px 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.result-details {
-  margin: 0 0 5px 0;
-  font-size: 12px;
-  color: #666;
-}
-
-.result-details span {
-  margin-right: 10px;
-}
-
-.result-synopsis {
-  margin: 0;
-  font-size: 12px;
-  color: #888;
-  font-style: italic;
-}
-
-.result-arrow {
-  color: #666;
-  margin-left: 10px;
-}
-
-.no-results {
-  text-align: center;
-  padding: 20px;
-  color: #666;
-  font-style: italic;
-}
-
-/* Styles existants pour les boutons... */
-.episode-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.episode-statut-scene {
-  background: #F8FFA1;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #21294F;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.episode-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-left: auto;
-}
-
-.episode-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid #E8D9E9;
-}
-
-.button-group {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: space-between;
-}
-
-.details-btn, .add-episode-btn-scen {
-  flex: 1;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-  text-align: center;
-  font-size: 0.9rem;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.details-btn {
-  background: #243168;
-  color: white;
-}
-
-.details-btn:hover {
-  background: #446BB2;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.add-episode-btn-scen {
-  background: #A8A3F6;
-  color: #21294F;
-}
-
-.add-episode-btn-scen:hover {
-  background: #D1B2D5;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.work-screen-btn {
-  width: 100%;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-  text-align: center;
-  font-size: 0.9rem;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #FFDD00;
-  color: #21294F;
-}
-
-.work-screen-btn:hover {
-  background: #E0F79C;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.icon-edit, .icon-delete {
-  cursor: pointer;
-  transition: transform 0.2s, color 0.2s;
-  font-size: 1.2rem;
-  margin-left: 0.5rem;
-}
-
-.icon-edit:hover {
-  transform: scale(1.2);
-  color: #446BB2;
-}
-
-.icon-delete:hover {
-  transform: scale(1.2);
-  color: #dc3545;
-}
-
-/* Styles supplémentaires pour l'organisation des boutons */
-.episode-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.episode-statut-scene {
-  background: #F8FFA1;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #21294F;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.episode-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-left: auto;
-}
-
-.episode-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid #E8D9E9;
-}
-
-.button-group {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: space-between;
-}
-
-.details-btn, .add-episode-btn-scen {
-  flex: 1;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-  text-align: center;
-  font-size: 0.9rem;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.details-btn {
-  background: #243168;
-  color: white;
-}
-
-.details-btn:hover {
-  background: #446BB2;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.add-episode-btn-scen {
-  background: #A8A3F6;
-  color: #21294F;
-}
-
-.add-episode-btn-scen:hover {
-  background: #D1B2D5;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.work-screen-btn {
-  width: 100%;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-  text-align: center;
-  font-size: 0.9rem;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #FFDD00;
-  color: #21294F;
-}
-
-.work-screen-btn:hover {
-  background: #E0F79C;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.icon-edit, .icon-delete {
-  cursor: pointer;
-  transition: transform 0.2s, color 0.2s;
-  font-size: 1.2rem;
-  margin-left: 0.5rem;
-}
-
-.icon-edit:hover {
-  transform: scale(1.2);
-  color: #446BB2;
-}
-
-.icon-delete:hover {
-  transform: scale(1.2);
-  color: #dc3545;
-}
-</style>

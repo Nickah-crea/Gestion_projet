@@ -420,13 +420,13 @@ onMounted(() => {
 <style scoped>
 .statistiques-globales {
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* background: linear-gradient(135deg, #5D6D7E 0%, #A8A3F6 100%); */
   min-height: 100vh;
 
 }
 
 .statistiques-container {
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;  
   width: 100%;
   padding: 2rem;

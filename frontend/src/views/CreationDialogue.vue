@@ -1,4 +1,5 @@
 <template>
+  <div class="app-wrapper">
   <div class="creation-dialogue-container">
     <!-- Contenu principal -->
     <main class="main-content">
@@ -243,6 +244,7 @@
         </div>
       </div>
     </main>
+  </div>
   </div>
 </template>
 
@@ -773,7 +775,7 @@ export default {
 
 <style scoped>
 .creation-dialogue-container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Arial', sans-serif;
@@ -784,6 +786,16 @@ export default {
   border-bottom: 1px solid #e1e4e8;
   padding: 15px 0;
   margin-bottom: 20px;
+}
+
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.accueil-container {
+  flex: 1;
+  padding: 1.5rem;
 }
 
 .header-content {
