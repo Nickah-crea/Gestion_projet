@@ -1,36 +1,5 @@
 <template>
   <div class="accueil-container">
-    <!-- Header avec profil -->
-    <header class="header">
-      <div class="header-content">
-        <h1>Gestion de Création de Films</h1>
-        <div class="profile-section">
-          <div class="profile-icon" @click="toggleProfileMenu">
-            <span class="profile-avatar">{{ userInitials }}</span>
-            <span class="profile-name">{{ user?.nom }}</span>
-            <span class="profile-arrow">▼</span>
-          </div>
-          
-          <!-- Menu profil déroulant -->
-          <div v-if="showProfileMenu" class="profile-menu">
-            <div class="profile-info">
-              <div class="profile-avatar-large">{{ userInitials }}</div>
-              <div class="profile-details">
-                <h3>{{ user?.nom }}</h3>
-                <p>{{ user?.email }}</p>
-                <p class="role-badge">{{ user?.role }}</p>
-              </div>
-            </div>
-            <div class="profile-actions">
-              <button @click="seDeconnecter" class="logout-btn">
-                Se déconnecter
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
     <!-- Contenu principal -->
     <main class="main-content">
       <div class="welcome-section">
