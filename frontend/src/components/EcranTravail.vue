@@ -63,22 +63,22 @@
        <!-- Liens de création - Masquer ceux non autorisés -->
       <div class="liens">
         <button v-if="userPermissions.canEditEpisode" class="add-scene-btn" @click="goToAddEpisode">
-          <i class="fas fa-plus-circle icon" style="color: #21294F;"></i> Episode
+          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Episode
         </button>     
         <button v-if="userPermissions.canCreateSequence" class="add-scene-btn" @click="goToAddSequence">
-          <i class="fas fa-plus-circle icon" style="color: #21294F;"></i> Séquence
+          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Séquence
         </button>
         <button v-if="userPermissions.canCreateLieu" class="add-scene-btn" @click="goToAddLieu">
-          <i class="fas fa-plus-circle icon" style="color: #21294F;"></i> Lieu
+          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Lieu
         </button>
         <button v-if="userPermissions.canCreatePlateau" class="add-scene-btn" @click="goToAddPlateau">
-          <i class="fas fa-plus-circle icon" style="color: #21294F;"></i> Plateau
+          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Plateau
         </button>
         <button v-if="userPermissions.canCreateComedien" class="add-scene-btn" @click="goToAddComedien">
-          <i class="fas fa-plus-circle icon" style="color: #21294F;"></i> Comedien
+          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Comedien
         </button>
         <button v-if="userPermissions.canCreatePersonnage" class="add-scene-btn" @click="goToAddPersonnage">
-          <i class="fas fa-plus-circle icon" style="color: #21294F;"></i> Personnage
+          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Personnage
         </button>
       </div>
 
@@ -110,13 +110,13 @@
         <h2>
           Séquence 0{{ currentSequence.ordre }} : {{ currentSequence.titre }}
           <span v-if="userPermissions.canCreateSequence" class="icon-edit" @click="startEditSequence(currentSequence)">
-            <i class="fas fa-pen icon" style="color: #17a2b8;"></i>
+            <i class="fas fa-pen" style="color: #17a2b8;"></i>
           </span>
           <span v-if="userPermissions.canCreateSequence" class="icon-delete" @click="deleteSequence(currentSequence.idSequence)">
-            <i class="fas fa-trash icon" style="color: #dc3545;"></i>
+            <i class="fas fa-trash " style="color: #dc3545;"></i>
           </span>
           <span class="comment-icon" @click="toggleSequenceCommentSection">
-            <h3><i class="fas fa-comments icon" style="color: #21294F;"></i>{{ sequenceCommentCount }}</h3>
+            <h3><i class="fas fa-comments " style="color: #21294F;"></i>{{ sequenceCommentCount }}</h3>
           </span>
         </h2>
 
@@ -125,7 +125,7 @@
           <h4><i class="fas fa-comments icon" style="color: #21294F;"></i>Commentaires sur la séquence</h4>
           <div class="add-comment">
             <textarea v-model="newSequenceComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-            <button @click="addSequenceComment" class="add-comment-btn"><i class="fas fa-plus-circle icon"></i>Ajouter</button>
+            <button @click="addSequenceComment" class="add-comment-btn"><i class="fas fa-plus-circle"></i>Ajouter</button>
           </div>
           <div class="comments-list">
             <div v-for="comment in sequenceComments" :key="comment.id" class="comment-item">
@@ -150,7 +150,7 @@
         <div class="scenes-section">
           <div class="section-header">
             <h3>Scènes</h3>
-            <button class="add-scene-btn" @click="goToAddScene"><i class="fas fa-plus-circle icon" style="color: #21294F;"></i> Scène</button>
+            <button class="add-scene-btn" @click="goToAddScene"><i class="fas fa-plus-circle " style="color: #21294F;"></i> Scène</button>
           </div>
 
 
@@ -160,13 +160,13 @@
             <h3>
               Scène {{ scene.ordre }}: {{ scene.titre }}
               <span v-if="userPermissions.canCreateScene" class="icon-edit" @click="startEditScene(scene)">
-                <i class="fas fa-pen icon" style="color: #17a2b8;"></i>
+                <i class="fas fa-pen" style="color: #17a2b8;"></i>
               </span>
               <span v-if="userPermissions.canCreateScene" class="icon-delete" @click="deleteScene(scene.idScene)">
-                <i class="fas fa-trash icon" style="color: #dc3545;"></i>
+                <i class="fas fa-trash " style="color: #dc3545;"></i>
               </span>
               <span class="comment-icon" @click="toggleSceneCommentSection(scene)">
-                <i class="fas fa-comments icon" style="color: #21294F;"></i> {{ getSceneCommentCount(scene.idScene) }}
+                <i class="fas fa-comments" style="color: #21294F;"></i> {{ getSceneCommentCount(scene.idScene) }}
               </span>
             </h3>
 
@@ -175,7 +175,7 @@
                 <h4>Commentaires sur la scène</h4>
                 <div class="add-comment">
                   <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-                  <button @click="addSceneComment" class="add-comment-btn"><i class="fas fa-plus-circle icon"></i>Ajouter</button>
+                  <button @click="addSceneComment" class="add-comment-btn"><i class="fas fa-plus-circle"></i>Ajouter</button>
                 </div>
                 <div class="comments-list">
                   <div v-for="comment in sceneComments" :key="comment.id" class="comment-item">
@@ -198,11 +198,12 @@
               <p><strong>Statut:</strong> {{ scene.statutNom || 'Non défini' }}</p>
 
               <div class="section-header">
-                <h4><i class="fas fa-map-pin icon" style="color: #dc3545;"></i>Lieux et Plateaux:</h4>
+                <h4><i class="fas fa-map-pin" style="color: #dc3545;"></i>Lieux et Plateaux:</h4>
                 <button v-if="userPermissions.canCreateLieu" class="add-lieu-btn" @click="openAddLieuModal(scene)">
-                  <i class="fas fa-plus-circle icon" style="color: #21294F;"></i>Lieu/Plateau
+                  <i class="fas fa-plus-circle" style="color: #21294F;"></i>Lieu/Plateau
                 </button>
               </div>
+
               <!-- Lieux et Plateaux -->
               <div class="lieux-plateaux" v-if="scene.sceneLieus?.length">
                 <ul>
@@ -210,7 +211,7 @@
                     <strong>{{ sceneLieu.lieuNom || 'Lieu inconnu' }}</strong>
                     <span v-if="sceneLieu.plateauNom"> - <strong>Plateau:</strong> {{ sceneLieu.plateauNom }}</span>
                     <span v-if="userPermissions.canCreateLieu" class="icon-delete" @click="deleteSceneLieu(sceneLieu.id)">
-                      <i class="fas fa-trash icon" style="color: #dc3545;"></i>
+                      <i class="fas fa-trash" style="color: #dc3545;"></i>
                     </span>
                     <p v-if="sceneLieu.descriptionUtilisation">Description: {{ sceneLieu.descriptionUtilisation }}</p>
                   </li>
@@ -219,7 +220,7 @@
               <p v-else>Aucun lieu ou plateau associé.</p>
 
               <div class="section-header">
-                    <h4><i class="fas fa-comments icon" ></i>Dialogues:</h4> 
+                    <h4><i class="fas fa-comments" ></i>Dialogues:</h4> 
                 </div>
               <!-- Dialogues -->
             
@@ -256,17 +257,17 @@
                     
                     <div class="dialogue-actions">
                       <span v-if="userPermissions.canCreateDialogue" class="icon-edit" @click="startEditDialogue(dialogue)">
-                        <i class="fas fa-pen icon" style="color: #17a2b8;"></i>
+                        <i class="fas fa-pen" style="color: #17a2b8;"></i>
                       </span>
                       <span v-if="userPermissions.canCreateDialogue" class="icon-delete" @click="deleteDialogue(dialogue.id)">
-                        <i class="fas fa-trash icon" style="color: #dc3545;"></i>
+                        <i class="fas fa-trash" style="color: #dc3545;"></i>
                       </span>
                       <span class="comment-icon" @click="toggleDialogueCommentSection(dialogue)">
-                        <i class="fas fa-comment icon" style="color: #21294F;"></i> 
+                        <i class="fas fa-comment" style="color: #21294F;"></i> 
                         {{ getDialogueCommentCount(dialogue.id) }}
                       </span>
                       <span v-if="userPermissions.canCreateDialogue" class="highlight-icon" @click="openHighlightModal(dialogue, $event)" title="Surligner">
-                        <i class="fas fa-highlighter icon" style="color: #ffeb3b;"></i>
+                        <i class="fas fa-highlighter" style="color: #ffeb3b;"></i>
                       </span>
                     </div>
                   </li>
@@ -274,9 +275,9 @@
               </div>
 
               <div class="section-header">
-                  <h4><i class="fas fa-comments icon" ></i></h4> 
+                  <h4><i class="fas fa-comments" ></i></h4> 
                  <button v-if="userPermissions.canCreateDialogue" class="add-dialogue-btn" @click="goToAddDialogue(scene.idScene)">
-                    <i class="fas fa-plus-circle icon" style="color: #21294F;"></i>Dialogue
+                    <i class="fas fa-plus-circle" style="color: #21294F;"></i> Dialogue
                   </button>
               </div>                    
             
@@ -293,11 +294,11 @@
         <div class="modal-content" @click.stop>
           <div class="modal-header">
             <h3>
-              <i class="fas fa-highlighter icon"></i>
+              <i class="fas fa-highlighter"></i>
               Surligner le texte
             </h3>
             <button @click="closeHighlightModal" class="close-btn">
-              <i class="fas fa-times icon"></i>
+              <i class="fas fa-times"></i>
             </button>
           </div>
           
@@ -365,10 +366,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3>
-              <i class="fas fa-edit icon"></i>
+              <i class="fas fa-edit"></i>
               Modifier l'épisode
             </h3>
-            <button @click="closeEditEpisodeModal" class="close-btn"><i class="fas fa-times icon"></i></button>
+            <button @click="closeEditEpisodeModal" class="close-btn"><i class="fas fa-times"></i></button>
           </div>
           <form @submit.prevent="saveEditedEpisode" class="edit-form">
             <div class="form-group">
@@ -432,10 +433,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3>
-              <i class="fas fa-edit icon"></i>
+              <i class="fas fa-edit"></i>
               Modifier la séquence
             </h3>
-            <button @click="closeEditSequenceModal" class="close-btn"><i class="fas fa-times icon"></i></button>
+            <button @click="closeEditSequenceModal" class="close-btn"><i class="fas fa-times"></i></button>
           </div>
           <form @submit.prevent="saveEditedSequence" class="edit-form">
             <div class="form-group">
@@ -499,10 +500,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3>
-              <i class="fas fa-edit icon"></i>
+              <i class="fas fa-edit"></i>
               Modifier la scène
             </h3>
-            <button @click="closeEditSceneModal" class="close-btn"><i class="fas fa-times icon"></i></button>
+            <button @click="closeEditSceneModal" class="close-btn"><i class="fas fa-times"></i></button>
           </div>
           <form @submit.prevent="saveEditedScene" class="edit-form">
             <div class="form-group">
@@ -566,10 +567,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3>
-              <i class="fas fa-edit icon"></i>
+              <i class="fas fa-edit"></i>
               Modifier le dialogue
             </h3>
-            <button @click="closeEditDialogueModal" class="close-btn"><i class="fas fa-times icon"></i></button>
+            <button @click="closeEditDialogueModal" class="close-btn"><i class="fas fa-times"></i></button>
           </div>
           <form @submit.prevent="saveEditedDialogue" class="edit-form">
             <div class="form-group">
@@ -637,7 +638,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3>Commentaires du dialogue</h3>
-            <button @click="closeDialogueCommentModal" class="close-btn"><i class="fas fa-times icon"></i></button>
+            <button @click="closeDialogueCommentModal" class="close-btn"><i class="fas fa-times"></i></button>
           </div>
           <div class="add-comment">
             <textarea v-model="newDialogueComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
@@ -665,7 +666,7 @@
         <div class="modal-content" @click.stop>
           <div class="modal-header">
             <h3>Ajouter un Lieu/Plateau à la scène: {{ selectedSceneForLieu?.titre }}</h3>
-            <button @click="closeAddLieuModal" class="close-btn"><i class="fas fa-times icon"></i></button>
+            <button @click="closeAddLieuModal" class="close-btn"><i class="fas fa-times"></i></button>
           </div>
           
           <form @submit.prevent="addSceneLieu" class="edit-form">

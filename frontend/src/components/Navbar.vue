@@ -76,7 +76,7 @@
       <div class="sidebar-footer">
         <div class="user-info" v-if="user">
           <span class="user-name"><i class="fas fa-user-circle icon"></i> <span v-if="!isCollapsed">{{ user.nom }}</span></span>
-          <span v-if="!isCollapsed" class="user-role">({{ user.role }})</span>
+          <span v-if="!isCollapsed" class="user-role">{{ user.role }}</span>
           
           <button @click="logout" class="logout-btn">
             <i class="fas fa-sign-out-alt icon"></i> 
