@@ -644,3 +644,4 @@ SELECT
 FROM episodes ep
 CROSS JOIN utilisateurs u
 WHERE u.role IN ('ADMIN', 'REALISATEUR', 'SCENARISTE');
+
