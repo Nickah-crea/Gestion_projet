@@ -14,7 +14,8 @@
     
     <div class="sidebar-menu">
       <div class="sidebar-links">
-        <router-link to="/accueil" class="sidebar-link" @click="toggleSidebarIfMobile">
+        <!-- Accueil : visible pour tous SAUF ADMIN et SCENARISTE -->
+        <router-link to="/accueil" class="sidebar-link" v-if="user?.role !== 'ADMIN' && user?.role !== 'SCENARISTE'" @click="toggleSidebarIfMobile">
           <i class="fas fa-home icon"></i>
           <span v-if="!isCollapsed" class="link-text">Accueil</span>
         </router-link>
@@ -39,9 +40,10 @@
           <span v-if="!isCollapsed" class="link-text">Utilisateurs</span>
         </router-link>
 
-        <router-link to="/statistiques" class="sidebar-link" v-if="user?.role !== 'ADMIN' && 'SCENARISTE' " @click="toggleSidebarIfMobile">
+        <!-- Statistiques : visible seulement pour ADMIN et SCENARISTE -->
+        <router-link to="/statistiques" class="sidebar-link" v-if="user?.role === 'ADMIN' || user?.role === 'SCENARISTE'" @click="toggleSidebarIfMobile">
           <i class="fas fa-chart-bar icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Ecran travail</span>
+          <span v-if="!isCollapsed" class="link-text">Statistiques</span>
         </router-link>
 
         <router-link to="/creation-personnage" class="sidebar-link" @click="toggleSidebarIfMobile">
@@ -134,4 +136,3 @@ export default {
   }
 };
 </script>
-

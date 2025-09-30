@@ -1,4 +1,5 @@
 <template>
+    <div class="app-wrapper">
   <div class="ecran-travail">
     <!-- Header avec titre de l'épisode -->
     <header class="header">
@@ -128,6 +129,7 @@
     <div v-else-if="!isLoading" class="no-data">
       <p>Aucune séquence disponible pour cet épisode.</p>
     </div>
+  </div>
   </div>
 </template>
 
