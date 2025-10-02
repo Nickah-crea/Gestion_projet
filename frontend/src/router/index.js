@@ -17,7 +17,7 @@ import Add_dialogue_scene from '../components/Add_dialogue_scene.vue';
 import Add_lieu_scene_ecran_travail from '../components/Add_lieu_scene_ecran_travail.vue';
 import Add_plateau_scene from '../components/Add_plateau_scene.vue';
 import Add_episode_ecran_travail from '../components/Add_episode_ecran_travail.vue';
-
+import Liste_Projects from '../views/Liste_Projects.vue';
 
 import Add_comedien_ecran_travail from '../components/Add_comedien_ecran_travail.vue';
 
@@ -28,6 +28,11 @@ const routes = [
     path: '/',
     name: 'connexion',
     component: ConnexionView
+  },
+  {
+    path: '/liste-projects',
+    name: 'Liste_Projects',
+    component: Liste_Projects
   },
   {
     path: '/accueil',
