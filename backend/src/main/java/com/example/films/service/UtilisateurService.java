@@ -264,4 +264,125 @@ public class UtilisateurService {
         dto.setBiographie(realisateur.getBiographie());
         return dto;
     }
+
+    public Long getRoleIdByUtilisateurId(Long utilisateurId, String role) {
+        if ("SCENARISTE".equals(role)) {
+            return scenaristeRepository.findByUtilisateurId(utilisateurId)
+                    .map(Scenariste::getId)
+                    .orElseThrow(() -> new RuntimeException("Scénariste non trouvé pour l'utilisateur ID: " + utilisateurId));
+        } else if ("REALISATEUR".equals(role)) {
+            return realisateurRepository.findByUtilisateurId(utilisateurId)
+                    .map(Realisateur::getId)
+                    .orElseThrow(() -> new RuntimeException("Réalisateur non trouvé pour l'utilisateur ID: " + utilisateurId));
+        }
+        throw new RuntimeException("Rôle non supporté: " + role);
+    }
+
+    // Dans UtilisateurService.java
+@Transactional
+public void supprimerUtilisateur(Long utilisateurId) {
+    Utilisateur utilisateur = utilisateurRepository.findById(utilisateurId)
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + utilisateurId));
+    
+    String role = utilisateur.getRole();
+    
+    if ("SCENARISTE".equals(role)) {
+        // Trouver et supprimer le scénariste associé
+        Scenariste scenariste = scenaristeRepository.findByUtilisateurId(utilisateurId)
+                .orElseThrow(() -> new RuntimeException("Scénariste non trouvé pour l'utilisateur ID: " + utilisateurId));
+        scenaristeRepository.delete(scenariste);
+    } else if ("REALISATEUR".equals(role)) {
+        // Trouver et supprimer le réalisateur associé
+        Realisateur realisateur = realisateurRepository.findByUtilisateurId(utilisateurId)
+                .orElseThrow(() -> new RuntimeException("Réalisateur non trouvé pour l'utilisateur ID: " + utilisateurId));
+        realisateurRepository.delete(realisateur);
+    } else {
+        // Pour les autres rôles (comme ADMIN), supprimer directement l'utilisateur
+        utilisateurRepository.delete(utilisateur);
+    }
+}
+
+// ... (code existant)
+
+@Transactional
+public UtilisateurCreeDTO creerAdmin(CreationUtilisateurRequest request) {
+    // Vérifier si l'email existe déjà
+    Optional<Utilisateur> utilisateurExistant = utilisateurRepository.findByEmail(request.getEmail());
+    if (utilisateurExistant.isPresent()) {
+        throw new RuntimeException("Un utilisateur avec cet email existe déjà");
+    }
+
+    // Créer l'utilisateur
+    Utilisateur utilisateur = new Utilisateur();
+    utilisateur.setNom(request.getNom());
+    utilisateur.setEmail(request.getEmail());
+    utilisateur.setMotDePasse(passwordEncoder.encode(request.getMotDePasse()));
+    utilisateur.setRole("ADMIN");
+    
+    Utilisateur utilisateurSauvegarde = utilisateurRepository.save(utilisateur);
+
+    // Retourner le DTO de réponse (sans rôle spécifique)
+    UtilisateurCreeDTO response = new UtilisateurCreeDTO();
+    response.setIdUtilisateur(utilisateurSauvegarde.getId());
+    response.setIdRole(null);
+    response.setNom(utilisateurSauvegarde.getNom());
+    response.setEmail(utilisateurSauvegarde.getEmail());
+    response.setRole(utilisateurSauvegarde.getRole());
+    response.setSpecialite(null);
+    response.setBiographie(null);
+    response.setMessage("Administrateur créé avec succès");
+
+    return response;
+}
+
+@Transactional
+public UtilisateurCreeDTO modifierUtilisateur(Long id, CreationUtilisateurRequest request) {
+    Utilisateur utilisateur = utilisateurRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + id));
+
+    String role = utilisateur.getRole();
+
+    // Vérifier email unique
+    Optional<Utilisateur> utilisateurAvecEmail = utilisateurRepository.findByEmail(request.getEmail());
+    if (utilisateurAvecEmail.isPresent() && !utilisateurAvecEmail.get().getId().equals(id)) {
+        throw new RuntimeException("Un autre utilisateur utilise déjà cet email");
+    }
+
+    // Mise à jour commune
+    utilisateur.setNom(request.getNom());
+    utilisateur.setEmail(request.getEmail());
+    if (request.getMotDePasse() != null && !request.getMotDePasse().trim().isEmpty()) {
+        utilisateur.setMotDePasse(passwordEncoder.encode(request.getMotDePasse()));
+    }
+
+    if ("SCENARISTE".equals(role)) {
+        Scenariste scenariste = scenaristeRepository.findByUtilisateurId(id)
+                .orElseThrow(() -> new RuntimeException("Scénariste non trouvé"));
+        scenariste.setSpecialite(request.getSpecialite());
+        scenariste.setBiographie(request.getBiographie());
+        scenaristeRepository.save(scenariste);
+    } else if ("REALISATEUR".equals(role)) {
+        Realisateur realisateur = realisateurRepository.findByUtilisateurId(id)
+                .orElseThrow(() -> new RuntimeException("Réalisateur non trouvé"));
+        realisateur.setSpecialite(request.getSpecialite());
+        realisateur.setBiographie(request.getBiographie());
+        realisateurRepository.save(realisateur);
+    } // Pour ADMIN, pas de champs supplémentaires
+
+    Utilisateur utilisateurModifie = utilisateurRepository.save(utilisateur);
+
+    // Retourner le DTO
+    UtilisateurCreeDTO response = new UtilisateurCreeDTO();
+    response.setIdUtilisateur(utilisateurModifie.getId());
+    response.setIdRole("SCENARISTE".equals(role) || "REALISATEUR".equals(role) ? getRoleIdByUtilisateurId(id, role) : null);
+    response.setNom(utilisateurModifie.getNom());
+    response.setEmail(utilisateurModifie.getEmail());
+    response.setRole(utilisateurModifie.getRole());
+    response.setSpecialite(request.getSpecialite());
+    response.setBiographie(request.getBiographie());
+    response.setMessage(role + " modifié avec succès");
+
+    return response;
+}
+
 }
