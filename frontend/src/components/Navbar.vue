@@ -78,7 +78,7 @@
           <span class="user-name"><i class="fas fa-user-circle icon"></i> <span v-if="!isCollapsed">{{ user.nom }}</span></span>
           <span v-if="!isCollapsed" class="user-role">{{ user.role }}</span>
           
-          <button @click="logout" class="logout-btn">
+          <button @click="logout" class="logout-btn" style="  border-radius: 50px;">
             <i class="fas fa-sign-out-alt icon"></i> 
             <span v-if="!isCollapsed">Déconnexion</span>
           </button>
