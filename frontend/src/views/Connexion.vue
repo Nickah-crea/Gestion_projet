@@ -124,9 +124,6 @@ export default {
         } else if (response.data.user.role === 'SCENARISTE' || response.data.user.role === 'REALISATEUR') {
           route = '/scenariste';
         }
-        if (response.data.user.role !== 'REALISATEUR && ADMIN' ) {
-          route = '/accueil';
-        }
         this.$router.push(route);
         
       } catch (error) {
