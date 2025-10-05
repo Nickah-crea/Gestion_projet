@@ -469,6 +469,7 @@ CREATE TABLE plateaux (
     modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE scene_plateau (
     id_scene_plateau BIGSERIAL PRIMARY KEY,
     id_scene BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
@@ -645,3 +646,138 @@ FROM episodes ep
 CROSS JOIN utilisateurs u
 WHERE u.role IN ('ADMIN', 'REALISATEUR', 'SCENARISTE');
 
+
+
+-- Table des statuts de planning
+CREATE TABLE statuts_planning (
+    id_statut_planning BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_statut VARCHAR(100) NOT NULL,
+    description TEXT,
+    ordre_affichage INTEGER NOT NULL,
+    est_actif BOOLEAN DEFAULT TRUE
+);
+
+INSERT INTO statuts_planning (code, nom_statut, description, ordre_affichage) VALUES
+('planifie', 'Planifier', 'Tournage planifier', 1),
+('confirme', 'Confirmer', 'Tournage confirmer', 2),
+('en_cours', 'En cours', 'Tournage en cours', 3),
+('termine', 'Terminer', 'Tournage terminer', 4),
+('reporte', 'Reporter', 'Tournage reporter', 5),
+('annule', 'Annuler', 'Tournage annuler', 6);
+
+
+-- Table du planning de tournage
+CREATE TABLE planning_tournage (
+    id_planning_tournage BIGSERIAL PRIMARY KEY,
+    id_scene BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    date_tournage DATE NOT NULL,
+    heure_debut VARCHAR(10),
+    heure_fin VARCHAR(10),
+    id_statut_planning BIGINT REFERENCES statuts_planning(id_statut_planning),
+    description TEXT,
+    lieu_tournage VARCHAR(255),
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Ajouter les colonnes pour les clés étrangères
+ALTER TABLE planning_tournage 
+ADD COLUMN id_lieu BIGINT REFERENCES lieux(id_lieu) ON DELETE SET NULL,
+ADD COLUMN id_plateau BIGINT REFERENCES plateaux(id_plateau) ON DELETE SET NULL;
+
+-- Optionnel: Créer des index pour améliorer les performances
+CREATE INDEX idx_planning_tournage_lieu ON planning_tournage(id_lieu);
+CREATE INDEX idx_planning_tournage_plateau ON planning_tournage(id_plateau);
+
+
+CREATE INDEX idx_planning_tournage_date ON planning_tournage(date_tournage);
+CREATE INDEX idx_planning_tournage_scene ON planning_tournage(id_scene);
+CREATE INDEX idx_planning_tournage_statut ON planning_tournage(id_statut_planning);
+
+
+-- Insertion 1: Tournage planifié
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage)
+VALUES (1, '2025-10-15', '09:00', '12:30', 1, 'Tournage de la scène d introduction', 'Studio A - Plateau 1');
+
+-- Insertion 2: Tournage confirmé
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage)
+VALUES (2, '2025-10-16', '14:00', '18:00', 2, 'Scène extérieure jardin', 'Jardin du domaine');
+
+-- Insertion 3: Tournage en cours
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage)
+VALUES (2, '2025-10-17', '08:30', '17:00', 3, 'Tournage scène dialogue salon', 'Studio B - Plateau 2');
+
+-- Insertion 4: Tournage terminé
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage)
+VALUES (1, '2025-10-05', '10:00', '16:00', 4, 'Scène action - poursuite', 'Rue principale');
+
+-- Insertion 5: Tournage reporté
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage)
+VALUES (5, '2025-10-20', '13:00', '17:30', 5, 'Reporté pour cause de météo', 'Extérieur parc');
+
+-- Insertion 6: Tournage annulé
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage)
+VALUES (6, '2025-10-18', '09:30', '12:00', 6, 'Annulé - conflit d emploi du temps acteur', 'Studio C');
+
+
+
+-- Lieu 1 : Studio extérieur pour scènes urbaines
+INSERT INTO lieux (id_projet, nom_lieu, type_lieu, adresse) 
+VALUES (1, 'Studio Paris Centre', 'Studio', '12 Rue des Artistes, 75006 Paris');
+
+-- Lieu 2 : Extérieur naturel pour scènes en forêt
+INSERT INTO lieux (id_projet, nom_lieu, type_lieu, adresse) 
+VALUES (1, 'Forêt de Fontainebleau', 'Extérieur', 'Route D607, 77300 Fontainebleau');
+
+-- Lieu 3 : Intérieur privé pour dialogues
+INSERT INTO lieux (id_projet, nom_lieu, type_lieu, adresse) 
+VALUES (1, 'Appartement Haussmannien', 'Intérieur', '45 Avenue Montaigne, 75008 Paris');
+
+-- Lieu 4 : Plage pour scène d'ouverture (référence pour un planning)
+INSERT INTO lieux (id_projet, nom_lieu, type_lieu, adresse) 
+VALUES (1, 'Plage de Deauville', 'Extérieur', 'Promenade des Planches, 14800 Deauville');
+
+
+-- Plateau 1 : Sur le studio Paris (pour tournage en studio)
+INSERT INTO plateaux (id_lieu, nom, type_plateau, description) 
+VALUES (1, 'Plateau Urbain', 'Décor construit', 'Décor de rue parisienne avec façades modulables');
+
+-- Plateau 2 : Sur la forêt (pour effets naturels)
+INSERT INTO plateaux (id_lieu, nom, type_plateau, description) 
+VALUES (2, 'Zone Boisée', 'Naturel', 'Espace dégagé pour travelling en forêt, avec éclairage naturel');
+
+-- Plateau 3 : Sur l'appartement (pour intimité)
+INSERT INTO plateaux (id_lieu, nom, type_plateau, description) 
+VALUES (3, 'Salon Victorien', 'Décor intérieur', 'Mobilier d époque et éclairage tamisé pour dialogues');
+
+-- Plateau 4 : Sur la plage (sans décor spécifique)
+INSERT INTO plateaux (id_lieu, nom, type_plateau, description) 
+VALUES (4, 'Zone Lever du Soleil', 'Extérieur marin', 'Accès direct à le au pour plans larges');
+
+
+
+-- Planning 1 : Scène 1 planifiée en studio (statut 1=planifie)
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage, id_lieu, id_plateau) 
+VALUES (1, '2025-10-15', '09:00', '13:00', 1, 'Tournage de la scène d''introduction avec dialogues principaux', 'Studio Paris - Plateau Urbain', 1, 1);
+
+-- Planning 2 : Scène 2 confirmée en extérieur forêt (statut 2=confirme)
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage, id_lieu, id_plateau) 
+VALUES (2, '2025-10-18', '14:00', '18:30', 2, 'Scène de poursuite en forêt, avec effets spéciaux légers', 'Forêt de Fontainebleau - Zone Boisée', 2, 2);
+
+-- Planning 3 : Scène 5 en cours dans un intérieur (statut 3=en_cours)
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage, id_lieu, id_plateau) 
+VALUES (5, '2025-10-20', '10:30', '16:00', 3, 'Tournage de la confrontation dramatique, reprise pour reshoots', 'Appartement Haussmannien - Salon Victorien', 3, 3);
+
+-- Planning 4 : Scène 1 terminée sur plage (statut 4=termine, sans plateau spécifique)
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage, id_lieu, id_plateau) 
+VALUES (1, '2025-10-12', '07:00', '11:00', 4, 'Scène d''ouverture au lever du soleil, wrap-up complet', 'Plage de Deauville - Zone Lever du Soleil', 4, 4);
+
+-- Planning 5 : Scène 2 reportée (statut 5=reporte, lien lieu sans plateau)
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage, id_lieu, id_plateau) 
+VALUES (2, '2025-10-25', '15:00', '19:00', 5, 'Report pour météo : scène nocturne reportée', 'Studio Paris Centre', 1, NULL);
+
+-- Planning 6 : Scène 5 annulée (statut 6=annule)
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, description, lieu_tournage, id_lieu, id_plateau) 
+VALUES (5, '2025-10-22', '11:00', '15:00', 6, 'Annulé pour indisponibilité comédien', 'Forêt de Fontainebleau', 2, NULL);
