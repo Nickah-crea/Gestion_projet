@@ -1,86 +1,82 @@
-
 <template>
   <div class="connexion-container">
     <!-- Animation de fond minimaliste -->
-    <div class="background-animation">
-      <div class="animated-bg">
-        <div class="bg-shape shape-1"></div>
-        <div class="bg-shape shape-2"></div>
-        <div class="bg-shape shape-3"></div>
-        <div class="bg-shape shape-4"></div>
+    <div class="background-animation-connexion">
+      <div class="animated-bg-connexion">
+        <div class="bg-shape-connexion shape-1-connexion"></div>
+        <div class="bg-shape-connexion shape-2-connexion"></div>
+        <div class="bg-shape-connexion shape-3-connexion"></div>
       </div>
     </div>
 
     <!-- Carte de connexion -->
     <div class="connexion-card">
       <div class="connexion-header">
-        <div class="logo-container">
-          <i class="fas fa-user-circle logo-icon"></i>
+        <div class="logo-container-connexion">
+          <i class="fas fa-user-circle logo-icon-connexion"></i>
         </div>
         <h1>Connexion</h1>
         <p>Accédez à votre espace personnel</p>
       </div>
       
       <form @submit.prevent="seConnecter" class="connexion-form">
-        <div class="form-group">
-          <div class="input-container">
-            <!-- <i class="fas fa-envelope input-icon"></i> -->
+        <div class="form-group-connexion">
+          <div class="input-container-connexion">
             <input 
               type="email" 
-              id="email"
+              id="email-connexion"
               v-model="email" 
               required 
               placeholder=" "
-              class="form-input"
+              class="form-input-connexion"
             />
-            <label for="email" class="input-label">Email</label>
+            <label for="email-connexion" class="input-label-connexion">Email</label>
           </div>
         </div>
         
-        <div class="form-group">
-          <div class="input-container">
-            <!-- <i class="fas fa-lock input-icon"></i> -->
+        <div class="form-group-connexion">
+          <div class="input-container-connexion">
             <input 
               type="password" 
-              id="password"
+              id="password-connexion"
               v-model="password" 
               required 
               placeholder=" "
-              class="form-input"
+              class="form-input-connexion"
             />
-            <label for="password" class="input-label">Mot de passe</label>
+            <label for="password-connexion" class="input-label-connexion">Mot de passe</label>
           </div>
         </div>
         
-        <div class="form-options">
-          <label class="checkbox-container">
+        <div class="form-options-connexion">
+          <label class="checkbox-container-connexion">
             Se souvenir de moi
             <input type="checkbox" v-model="rememberMe">
-            <span class="checkmark"></span>
+            <span class="checkmark-connexion"></span>
           </label>
-          <a href="#" class="forgot-link">Mot de passe oublié?</a>
+          <a href="#" class="forgot-link-connexion">Mot de passe oublié?</a>
         </div>
         
-        <div v-if="error" class="error-message">
-          <i class="fas fa-exclamation-circle error-icon"></i>
+        <div v-if="error" class="error-message-connexion">
+          <i class="fas fa-exclamation-circle error-icon-connexion"></i>
           {{ error }}
         </div>
         
         <button type="submit" class="connexion-btn" :disabled="loading">
-          <span v-if="loading" class="btn-loading">
-            <span class="loading-dots">
+          <span v-if="loading" class="btn-loading-connexion">
+            <span class="loading-dots-connexion">
               <span></span>
               <span></span>
               <span></span>
             </span>
           </span>
-          <span v-else class="btn-text">
+          <span v-else class="btn-text-connexion">
             <span>Se connecter</span>
-            <i class="fas fa-arrow-right btn-icon"></i>
+            <i class="fas fa-arrow-right btn-icon-connexion"></i>
           </span>
         </button>
         
-        <div class="signup-link">
+        <div class="signup-link-connexion">
           Pas encore inscrit? <a href="#">Créer un compte</a>
         </div>
       </form>
@@ -98,6 +94,7 @@ export default {
     return {
       email: '',
       password: '',
+      rememberMe: false,
       loading: false,
       error: ''
     };
@@ -136,3 +133,4 @@ export default {
   }
 };
 </script>
+

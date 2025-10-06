@@ -469,6 +469,7 @@ CREATE TABLE plateaux (
     modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE scene_plateau (
     id_scene_plateau BIGSERIAL PRIMARY KEY,
     id_scene BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,

@@ -46,6 +46,16 @@
           <span v-if="!isCollapsed" class="link-text">Statistiques</span>
         </router-link>
 
+        <router-link to="/calendrier" class="sidebar-link" @click="toggleSidebarIfMobile">
+          <i class="fas fa-calendar-alt icon"></i>
+          <span v-if="!isCollapsed" class="link-text">Calendrier</span>
+        </router-link>
+
+          <router-link to="/planning-tournage" class="sidebar-link" @click="toggleSidebarIfMobile">
+          <i class="fas fa-calendar icon"></i>
+          <span v-if="!isCollapsed" class="link-text">Planning</span>
+        </router-link>
+
         <router-link to="/creation-personnage" class="sidebar-link" @click="toggleSidebarIfMobile">
           <i class="fas fa-user-astronaut icon"></i>
           <span v-if="!isCollapsed" class="link-text">Gestion Personnages</span>
