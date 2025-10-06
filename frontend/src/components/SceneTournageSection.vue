@@ -122,13 +122,14 @@
             
             <div class="form-group">
               <label for="heureDebut">Heure de début *</label>
-              <input 
-                type="time" 
-                id="heureDebut"
-                v-model="formData.heureDebut" 
-                required
-                class="form-input"
-              >
+            <input 
+            type="time" 
+            id="heureDebut"
+            v-model="formData.heureDebut" 
+            required
+            class="form-input"
+            step="1"
+            >
             </div>
             
             <div class="form-group">
@@ -492,7 +493,7 @@ export default {
     };
 
     const formatHeure = (heureString) => {
-      return heureString ? heureString.substring(0, 5) : '';
+    return heureString ? heureString.substring(0, 5) : '';
     };
 
     
