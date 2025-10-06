@@ -645,3 +645,55 @@ FROM episodes ep
 CROSS JOIN utilisateurs u
 WHERE u.role IN ('ADMIN', 'REALISATEUR', 'SCENARISTE');
 
+
+
+
+
+
+-- Table des statuts de planning
+CREATE TABLE statuts_planning (
+    id_statut_planning BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_statut VARCHAR(100) NOT NULL,
+    description TEXT,
+    ordre_affichage INTEGER NOT NULL,
+    est_actif BOOLEAN DEFAULT TRUE
+);
+
+INSERT INTO statuts_planning (code, nom_statut, description, ordre_affichage) VALUES
+('planifie', 'Planifier', 'Tournage planifier', 1),
+('confirme', 'Confirmer', 'Tournage confirmer', 2),
+('en_cours', 'En cours', 'Tournage en cours', 3),
+('termine', 'Terminer', 'Tournage terminer', 4),
+('reporte', 'Reporter', 'Tournage reporter', 5),
+('annule', 'Annuler', 'Tournage annuler', 6);
+
+
+-- Table du planning de tournage
+CREATE TABLE planning_tournage (
+    id_planning_tournage BIGSERIAL PRIMARY KEY,
+    id_scene BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    date_tournage DATE NOT NULL,
+    heure_debut VARCHAR(10),
+    heure_fin VARCHAR(10),
+    id_statut_planning BIGINT REFERENCES statuts_planning(id_statut_planning),
+    description TEXT,
+    lieu_tournage VARCHAR(255),
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Ajouter les colonnes pour les clés étrangères
+ALTER TABLE planning_tournage 
+ADD COLUMN id_lieu BIGINT REFERENCES lieux(id_lieu) ON DELETE SET NULL,
+ADD COLUMN id_plateau BIGINT REFERENCES plateaux(id_plateau) ON DELETE SET NULL;
+
+-- Optionnel: Créer des index pour améliorer les performances
+CREATE INDEX idx_planning_tournage_lieu ON planning_tournage(id_lieu);
+CREATE INDEX idx_planning_tournage_plateau ON planning_tournage(id_plateau);
+
+
+CREATE INDEX idx_planning_tournage_date ON planning_tournage(date_tournage);
+CREATE INDEX idx_planning_tournage_scene ON planning_tournage(id_scene);
+CREATE INDEX idx_planning_tournage_statut ON planning_tournage(id_statut_planning);
