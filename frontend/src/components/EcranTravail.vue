@@ -6,6 +6,9 @@
         <div class="navigation">
           <button class="nav-btn" @click="goToPrevPage" :disabled="!hasPrev || isLoading">Précédent</button>
           <button class="nav-btn" @click="goToNextPage" :disabled="!hasNext || isLoading">Suivant</button>
+           <button class="nav-btn" @click="goToCalendrierTournage">
+              <i class="fas fa-calendar-alt"></i> Calendrier
+            </button>
         </div>
 
         <h2> Épisode {{ currentEpisode?.ordre }} : </h2><br>     
@@ -156,6 +159,7 @@
 
           <!-- Liste des scènes -->
           <div class="scenes-list">
+            
             <div v-for="scene in currentSequence.scenes" :key="scene.idScene" class="scene-card">
             <h3>
               Scène {{ scene.ordre }}: {{ scene.titre }}
@@ -169,6 +173,14 @@
                 <i class="fas fa-comments" style="color: #21294F;"></i> {{ getSceneCommentCount(scene.idScene) }}
               </span>
             </h3>
+
+              <!-- Section Tournage -->
+            <SceneTournageSection 
+              :scene="scene"
+              :projet-id="projetId"
+              :user-permissions="userPermissions"
+              @tournage-updated="onTournageUpdated"
+            />
 
               <!-- Section commentaires scène -->
               <div v-if="showSceneCommentModal && selectedScene?.idScene === scene.idScene" class="comment-section">
@@ -740,6 +752,11 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import '../assets/css/ecran_travail.css';
+import SceneTournageSection from './SceneTournageSection.vue';
+
+components: {
+  SceneTournageSection
+}
 
 const route = useRoute();
 const router = useRouter();
@@ -1921,6 +1938,13 @@ const loadSceneComments = async (sceneId) => {
   }
 };
 
+const onTournageUpdated = (tournageData) => {
+  // Recharger les données si nécessaire
+  if (store.currentSequence) {
+    store.fetchSequenceDetails(store.currentSequence.idSequence);
+  }
+};
+
 const getSceneCommentCount = (sceneId) => {
   return sceneCommentCounts.value[sceneId] || 0;
 };
@@ -2111,6 +2135,10 @@ const deleteSceneLieu = async (sceneLieuId) => {
       alert('Erreur lors de la suppression du lieu/plateau');
     }
   }
+};
+
+const goToCalendrierTournage = () => {
+  router.push('/calendrier-tournage');
 };
 
 // Méthode utilitaire pour formater les dates

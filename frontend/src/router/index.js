@@ -193,6 +193,28 @@ const routes = [
     path: '/gestion-equipe',
     name: 'gestion-equipe',
     component: () => import('../views/GestionEquipe.vue')
+  },
+  {
+  path: '/calendrier',
+  name: 'Calendrier',
+  component: () => import('../views/Calendrier.vue')
+  },
+  {
+    path: '/planning-tournage',
+    name: 'planning-tournage',
+    component: () => import('../views/CreationPlanningTournage.vue')
+  },
+  {
+    path: '/calendrier-tournage',
+    name: 'CalendrierTournage',
+    component: () => import('../components/CalendrierTournage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/calendrier-tournage',
+    name: 'CalendrierTournage',
+    component: () => import('../components/CalendrierTournage.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
