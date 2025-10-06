@@ -32,4 +32,7 @@ public interface ComedienRepository extends JpaRepository<Comedien, Long> {
     
     @Query("SELECT DISTINCT c FROM Comedien c LEFT JOIN FETCH c.disponibilites")
     List<Comedien> findAllWithDisponibilites();
+    
+      @Query("SELECT c FROM Comedien c JOIN c.scenes s WHERE s.id = :sceneId")
+    List<Comedien> findBySceneId(@Param("sceneId") Long sceneId);
 }

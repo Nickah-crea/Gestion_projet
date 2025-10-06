@@ -38,6 +38,14 @@ public class Comedien {
     @OneToMany(mappedBy = "comedien", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DisponibiliteComedien> disponibilites = new ArrayList<>();
 
+     @ManyToMany
+    @JoinTable(
+        name = "comedien_scene",
+        joinColumns = @JoinColumn(name = "id_comedien"),
+        inverseJoinColumns = @JoinColumn(name = "id_scene")
+    )
+    private List<Scene> scenes;
+
     @CreationTimestamp
     @Column(name = "cree_le", updatable = false)
     private LocalDateTime creeLe;
