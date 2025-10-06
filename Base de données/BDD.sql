@@ -679,10 +679,10 @@ CREATE TABLE planning_tournage (
     heure_fin VARCHAR(10),
     id_statut_planning BIGINT REFERENCES statuts_planning(id_statut_planning),
     description TEXT,
-    lieu_tournage VARCHAR(255),
     cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 -- Ajouter les colonnes pour les clés étrangères
@@ -698,3 +698,160 @@ CREATE INDEX idx_planning_tournage_plateau ON planning_tournage(id_plateau);
 CREATE INDEX idx_planning_tournage_date ON planning_tournage(date_tournage);
 CREATE INDEX idx_planning_tournage_scene ON planning_tournage(id_scene);
 CREATE INDEX idx_planning_tournage_statut ON planning_tournage(id_statut_planning);
+
+
+CREATE VIEW v_planning_global AS
+SELECT 
+    pt.date_tournage,
+    pt.heure_debut,
+    pt.heure_fin,
+    s.titre as scene_titre,
+    seq.titre as sequence_titre,
+    e.titre as episode_titre,
+    p.titre as projet_titre,
+    sp.nom_statut,
+    pt.lieu_tournage,
+    l.nom_lieu,
+    pl.nom as nom_plateau
+FROM planning_tournage pt
+JOIN scenes s ON pt.id_scene = s.id_scene
+JOIN sequences seq ON s.id_sequence = seq.id_sequence  -- Lien via sequences
+JOIN episodes e ON seq.id_episode = e.id_episode       -- Puis vers episodes
+JOIN projets p ON e.id_projet = p.id_projet
+JOIN statuts_planning sp ON pt.id_statut_planning = sp.id_statut_planning
+LEFT JOIN lieux l ON pt.id_lieu = l.id_lieu
+LEFT JOIN plateaux pl ON pt.id_plateau = pl.id_plateau
+ORDER BY pt.date_tournage, pt.heure_debut;
+
+
+
+CREATE VIEW v_planning_par_projet AS
+SELECT 
+    p.id_projet,
+    p.titre as projet_titre,
+    pt.date_tournage,
+    COUNT(pt.id_planning_tournage) as nb_scenes_planifiees,
+    SUM(CASE WHEN sp.code = 'termine' THEN 1 ELSE 0 END) as nb_scenes_terminees
+FROM projets p
+JOIN episodes e ON p.id_projet = e.id_projet
+JOIN sequences seq ON e.id_episode = seq.id_episode
+JOIN scenes s ON seq.id_sequence = s.id_sequence
+LEFT JOIN planning_tournage pt ON s.id_scene = pt.id_scene
+LEFT JOIN statuts_planning sp ON pt.id_statut_planning = sp.id_statut_planning
+GROUP BY p.id_projet, p.titre, pt.date_tournage
+ORDER BY p.titre, pt.date_tournage;
+
+
+CREATE VIEW v_disponibilites_comediens AS
+SELECT 
+    c.nom_comedien,
+    p.titre as projet_titre,
+    dc.date,
+    dc.statut,
+    s.titre as scene_planifiee
+FROM comediens c
+JOIN projets p ON c.id_projet = p.id_projet
+LEFT JOIN disponibilites_comediens dc ON c.id_comedien = dc.id_comedien
+LEFT JOIN comedien_scene cs ON c.id_comedien = cs.id_comedien
+LEFT JOIN scenes s ON cs.id_scene = s.id_scene
+LEFT JOIN planning_tournage pt ON s.id_scene = pt.id_scene
+ORDER BY c.nom_comedien, dc.date;
+
+
+-- Ajout de données de test pour le planning
+INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, id_lieu, id_plateau, description) VALUES
+(1, '2024-03-20', '09:00', '12:00', 1, 1, 1, 'Tournage scène d''ouverture'),
+(2, '2024-03-20', '14:00', '17:00', 1, 2, 2, 'Tournage scène dialogue'),
+(3, '2024-03-21', '10:00', '13:00', 2, 1, 1, 'Tournage scène extérieure confirmé');
+
+-- Vue améliorée pour le planning
+CREATE OR REPLACE VIEW v_planning_complet AS
+SELECT 
+    pt.id_planning_tournage,
+    pt.date_tournage,
+    pt.heure_debut,
+    pt.heure_fin,
+    s.id_scene,
+    s.titre as scene_titre,
+    s.ordre as scene_ordre,
+    seq.id_sequence,
+    seq.titre as sequence_titre,
+    seq.ordre as sequence_ordre,
+    e.id_episode,
+    e.titre as episode_titre,
+    e.ordre as episode_ordre,
+    p.id_projet,
+    p.titre as projet_titre,
+    sp.id_statut_planning,
+    sp.code as statut_code,
+    sp.nom_statut,
+    sp.description as statut_description,
+    l.id_lieu,
+    l.nom_lieu,
+    l.type_lieu,
+    l.adresse,
+    pl.id_plateau,
+    pl.nom as plateau_nom,
+    pl.type_plateau,
+    pl.description as plateau_description,
+    pt.description as notes_tournage,
+    pt.cree_le,
+    pt.modifie_le,
+    -- Informations sur les comédiens de la scène
+    (SELECT COUNT(*) FROM comedien_scene cs WHERE cs.id_scene = s.id_scene) as nb_comediens,
+    (SELECT string_agg(c.nom_comedien, ', ') 
+     FROM comedien_scene cs 
+     JOIN comediens c ON cs.id_comedien = c.id_comedien 
+     WHERE cs.id_scene = s.id_scene) as noms_comediens
+FROM planning_tournage pt
+JOIN scenes s ON pt.id_scene = s.id_scene
+JOIN sequences seq ON s.id_sequence = seq.id_sequence
+JOIN episodes e ON seq.id_episode = e.id_episode
+JOIN projets p ON e.id_projet = p.id_projet
+JOIN statuts_planning sp ON pt.id_statut_planning = sp.id_statut_planning
+LEFT JOIN lieux l ON pt.id_lieu = l.id_lieu
+LEFT JOIN plateaux pl ON pt.id_plateau = pl.id_plateau
+ORDER BY pt.date_tournage, pt.heure_debut;
+
+
+
+-- Table pour gérer les tournages de scènes
+CREATE TABLE scene_tournage (
+    id_scene_tournage BIGSERIAL PRIMARY KEY,
+    id_scene BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    date_tournage DATE NOT NULL,
+    heure_debut TIME NOT NULL,
+    heure_fin TIME NOT NULL,
+    id_lieu BIGINT REFERENCES lieux(id_lieu),
+    id_plateau BIGINT REFERENCES plateaux(id_plateau),
+    statut_tournage VARCHAR(50) DEFAULT 'planifie',
+    notes TEXT,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(id_scene) -- Une scène ne peut être planifiée qu'une fois
+);
+
+-- Index pour optimiser les recherches
+CREATE INDEX idx_scene_tournage_date ON scene_tournage(date_tournage);
+CREATE INDEX idx_scene_tournage_statut ON scene_tournage(statut_tournage);
+CREATE INDEX idx_scene_tournage_lieu ON scene_tournage(id_lieu);
+CREATE INDEX idx_scene_tournage_plateau ON scene_tournage(id_plateau);
+
+-- Vue pour les conflits de comédiens
+CREATE VIEW v_conflits_comediens AS
+SELECT 
+    st.date_tournage,
+    st.heure_debut,
+    st.heure_fin,
+    c.id_comedien,
+    c.nom_comedien,
+    s.titre as scene_titre,
+    p.titre as projet_titre
+FROM scene_tournage st
+JOIN scenes s ON st.id_scene = s.id_scene
+JOIN sequences seq ON s.id_sequence = seq.id_sequence
+JOIN episodes e ON seq.id_episode = e.id_episode
+JOIN projets p ON e.id_projet = p.id_projet
+JOIN comedien_scene cs ON s.id_scene = cs.id_scene
+JOIN comediens c ON cs.id_comedien = c.id_comedien
+WHERE st.statut_tournage IN ('planifie', 'confirme', 'en_cours');
