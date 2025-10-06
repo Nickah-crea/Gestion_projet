@@ -227,12 +227,21 @@ export default {
   async created() {
     axios.defaults.baseURL = API_BASE_URL;
     
+    // Configuration de l'intercepteur pour ajouter l'en-tête X-User-Id
     axios.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+        
+        // Ajouter l'en-tête X-User-Id si l'utilisateur est connecté
+        if (user && user.id) {
+          config.headers['X-User-Id'] = user.id;
+        }
+        
         return config;
       },
       (error) => {
@@ -298,16 +307,29 @@ export default {
     },
     async submitForm() {
       try {
+        // Vérifier que l'utilisateur est connecté
+        if (!this.user || !this.user.id) {
+          alert('Erreur: Utilisateur non connecté');
+          return;
+        }
+
         const payload = {
           ...this.formData,
           projetId: parseInt(this.formData.projetId)
         };
         
+        // Configuration des en-têtes avec X-User-Id
+        const config = {
+          headers: {
+            'X-User-Id': this.user.id
+          }
+        };
+        
         if (this.isEditing) {
-          await axios.put(`/api/lieux/${this.editingId}`, payload);
+          await axios.put(`/api/lieux/${this.editingId}`, payload, config);
           alert('Lieu modifié avec succès!');
         } else {
-          await axios.post('/api/lieux', payload);
+          await axios.post('/api/lieux', payload, config);
           alert('Lieu créé avec succès!');
         }
         
@@ -315,7 +337,15 @@ export default {
         await this.loadLieux();
       } catch (error) {
         console.error('Erreur lors de la sauvegarde du lieu:', error);
-        alert('Erreur: ' + (error.response?.data?.message || error.message));
+        const errorMessage = error.response?.data?.message || error.message;
+        
+        if (error.response?.status === 403) {
+          alert('Erreur: Vous n\'avez pas les permissions nécessaires pour effectuer cette action');
+        } else if (error.response?.status === 400) {
+          alert('Erreur: Données invalides - ' + errorMessage);
+        } else {
+          alert('Erreur: ' + errorMessage);
+        }
       }
     },
     editLieu(lieu) {
@@ -337,12 +367,31 @@ export default {
       }
       
       try {
-        await axios.delete(`/api/lieux/${lieuId}`);
+        // Vérifier que l'utilisateur est connecté
+        if (!this.user || !this.user.id) {
+          alert('Erreur: Utilisateur non connecté');
+          return;
+        }
+
+        // Configuration des en-têtes avec X-User-Id
+        const config = {
+          headers: {
+            'X-User-Id': this.user.id
+          }
+        };
+
+        await axios.delete(`/api/lieux/${lieuId}`, config);
         await this.loadLieux();
         alert('Lieu supprimé avec succès!');
       } catch (error) {
         console.error('Erreur lors de la suppression du lieu:', error);
-        alert('Erreur: ' + (error.response?.data?.message || error.message));
+        const errorMessage = error.response?.data?.message || error.message;
+        
+        if (error.response?.status === 403) {
+          alert('Erreur: Vous n\'avez pas les permissions nécessaires pour supprimer ce lieu');
+        } else {
+          alert('Erreur: ' + errorMessage);
+        }
       }
     },
     resetForm() {
