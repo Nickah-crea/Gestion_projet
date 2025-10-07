@@ -181,9 +181,9 @@ public class SceneTournageService {
                 .orElseThrow(() -> new RuntimeException("Tournage non trouvé"));
         
         // Empêcher la suppression d'un tournage terminé
-        if ("termine".equals(tournage.getStatutTournage())) {
-            throw new RuntimeException("Impossible de supprimer un tournage terminé");
-        }
+        // if ("termine".equals(tournage.getStatutTournage())) {
+        //     throw new RuntimeException("Impossible de supprimer un tournage terminé");
+        // }
         
         sceneTournageRepository.delete(tournage);
     }
@@ -220,7 +220,7 @@ public class SceneTournageService {
         dto.setCreeLe(tournage.getCreeLe());
         dto.setModifieLe(tournage.getModifieLe());
 
-        // Libellé du statut
+        
         dto.setStatutTournageLibelle(getLibelleStatut(tournage.getStatutTournage()));
 
         if (tournage.getLieu() != null) {
