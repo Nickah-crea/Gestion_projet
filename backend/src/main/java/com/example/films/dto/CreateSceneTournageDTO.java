@@ -23,5 +23,6 @@ public class CreateSceneTournageDTO {
     
     private Long lieuId;
     private Long plateauId;
+     private String statutTournage;
     private String notes;
 }

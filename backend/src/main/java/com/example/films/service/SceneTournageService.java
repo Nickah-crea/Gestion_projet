@@ -127,10 +127,16 @@ public class SceneTournageService {
             throw new RuntimeException("Impossible de modifier un tournage terminé");
         }
 
+        // Mise à jour de tous les champs, y compris le statut
         tournage.setDateTournage(updateDTO.getDateTournage());
         tournage.setHeureDebut(updateDTO.getHeureDebut());
         tournage.setHeureFin(updateDTO.getHeureFin());
         tournage.setNotes(updateDTO.getNotes());
+        
+        
+        if (updateDTO.getStatutTournage() != null) {
+            tournage.setStatutTournage(updateDTO.getStatutTournage());
+        }
 
         if (updateDTO.getLieuId() != null) {
             Lieu lieu = lieuRepository.findById(updateDTO.getLieuId())
