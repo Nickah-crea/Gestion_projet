@@ -38,6 +38,13 @@ public interface SceneTournageRepository extends JpaRepository<SceneTournage, Lo
     @Query("SELECT st FROM SceneTournage st LEFT JOIN FETCH st.scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e LEFT JOIN FETCH e.projet WHERE st.id = :id")
     Optional<SceneTournage> findByIdWithDetails(@Param("id") Long id);
 
-    
+    // @Query("SELECT st FROM SceneTournage st " +
+    //        "JOIN st.scene s " +
+    //        "JOIN ComedienScene cs ON s.id = cs.scene.id " +
+    //        "WHERE cs.comedien.id = :comedienId " +
+    //        "AND st.dateTournage = :date " +
+    //        "AND st.statutTournage IN ('planifie', 'confirme', 'en_cours')")
+    // List<SceneTournage> findTournagesByComedienAndDate(@Param("comedienId") Long comedienId, 
+    //                                                   @Param("date") LocalDate date);
      
 }
