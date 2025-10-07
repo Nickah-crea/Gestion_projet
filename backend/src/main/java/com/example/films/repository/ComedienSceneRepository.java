@@ -23,4 +23,5 @@ public interface ComedienSceneRepository extends JpaRepository<ComedienScene, Lo
     
     @Query("SELECT COUNT(cs) > 0 FROM ComedienScene cs WHERE cs.scene.id = :sceneId AND cs.comedien.id = :comedienId")
     boolean existsBySceneIdAndComedienId(@Param("sceneId") Long sceneId, @Param("comedienId") Long comedienId);
+
 }

@@ -43,6 +43,13 @@ public class SceneService {
                 .collect(Collectors.toList());
     }
 
+    public List<SceneDTO> getScenesByProjetId(Long projetId) {
+        List<Scene> scenes = sceneRepository.findBySequenceEpisodeProjetId(projetId);
+        return scenes.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public SceneDTO createScene(Long sequenceId, CreateSceneDTO createSceneDTO) {
         // Créer la scène
@@ -152,6 +159,7 @@ public class SceneService {
                 .orElseThrow(() -> new RuntimeException("Scène non trouvée"));
         return convertToDTO(scene);
     }
+
     public List<SceneDTO> getAllScenes() {
         List<Scene> scenes = sceneRepository.findAllOrdered();
         return scenes.stream()
@@ -159,8 +167,8 @@ public class SceneService {
                 .collect(Collectors.toList());
     }
 
-    // Dans SceneService.java
     public List<RechercheSceneDTO> rechercherScenes(String query) {
         return sceneRepository.rechercherScenes(query.toLowerCase());
     }
 }
+

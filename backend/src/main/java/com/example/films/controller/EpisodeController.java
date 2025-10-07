@@ -40,8 +40,6 @@ public class EpisodeController {
         }
     }
 
-
-    
         @GetMapping("/utilisateur/{utilisateurId}")
         public ResponseEntity<List<EpisodeDTO>> getEpisodesByUtilisateurId(@PathVariable Long utilisateurId) {
             try {

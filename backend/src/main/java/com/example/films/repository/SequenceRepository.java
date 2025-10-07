@@ -32,4 +32,9 @@ public interface SequenceRepository extends JpaRepository<Sequence, Long> {
        "OR LOWER(e.titre) LIKE LOWER(CONCAT('%', :query, '%')) " +
        "OR LOWER(p.titre) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<RechercheSequenceDTO> rechercherSequences(@Param("query") String query);
+
+    @Query("SELECT s FROM Sequence s LEFT JOIN FETCH s.episode e WHERE e.projet.id = :projetId")
+    List<Sequence> findByEpisodeProjetId(@Param("projetId") Long projetId);
 }
+
+
