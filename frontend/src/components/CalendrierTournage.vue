@@ -18,6 +18,9 @@
           <option value="reporte">Reporté</option>
         </select>
         <input type="date" v-model="filtreDate" @change="chargerTournages">
+        <button @click="reinitialiserFiltres" class="btn btn-secondary">
+          <i class="fas fa-times"></i> Réinitialiser
+        </button>
       </div>
     </div>
 
@@ -426,14 +429,29 @@ export default {
         params.append('startDate', this.formatDateForAPI(startDate));
         params.append('endDate', this.formatDateForAPI(endDate));
         if (this.filtreProjet) params.append('projetId', this.filtreProjet);
-        
+
         const response = await axios.get(`${url}?${params}`);
-        this.tournages = response.data;
+        
+        // Filtrer côté client
+        let tournagesFiltres = response.data;
+        
+        // Filtre par statut
+        if (this.filtreStatut) {
+          tournagesFiltres = tournagesFiltres.filter(t => t.statutTournage === this.filtreStatut);
+        }
+        
+        // Filtre par date
+        if (this.filtreDate) {
+          tournagesFiltres = tournagesFiltres.filter(t => t.dateTournage === this.filtreDate);
+        }
+        
+        this.tournages = tournagesFiltres;
       } catch (error) {
         console.error('Erreur chargement tournages:', error);
         alert('Erreur lors du chargement du calendrier: ' + error.message);
       }
     },
+
     formatDateForAPI(date) {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -673,6 +691,12 @@ export default {
         return false;
       }
       return true;
+    },
+    reinitialiserFiltres() {
+      this.filtreProjet = '';
+      this.filtreStatut = '';
+      this.filtreDate = '';
+      this.chargerTournages();
     }
   },
   mounted() {
@@ -1069,5 +1093,23 @@ export default {
   .modal-actions {
     flex-direction: column;
   }
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filters select,
+.filters input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.filters .btn {
+  padding: 8px 12px;
+  white-space: nowrap;
 }
 </style>
