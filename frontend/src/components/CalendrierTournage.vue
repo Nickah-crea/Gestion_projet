@@ -79,75 +79,83 @@ export default {
       });
     },
     
-    joursCalendrier() {
-      const year = this.dateCourante.getFullYear();
-      const month = this.dateCourante.getMonth();
+   joursCalendrier() {
+    const year = this.dateCourante.getFullYear();
+    const month = this.dateCourante.getMonth();
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay() + 1);
+    
+    const endDate = new Date(lastDay);
+    endDate.setDate(endDate.getDate() + (7 - lastDay.getDay()));
+    
+    const days = [];
+    const currentDate = new Date(startDate);
+    
+    while (currentDate <= endDate) {
+      const dateStr = this.formatDateForAPI(currentDate);
       
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
+      const tournagesDuJour = this.tournages.filter(t => {
+        console.log(`Comparaison: ${t.dateTournage} === ${dateStr}`, t.dateTournage === dateStr);
+        return t.dateTournage === dateStr;
+      });
       
-      const startDate = new Date(firstDay);
-      startDate.setDate(startDate.getDate() - firstDay.getDay() + 1);
+      console.log(`Date: ${dateStr}, Tournages:`, tournagesDuJour);
       
-      const endDate = new Date(lastDay);
-      endDate.setDate(endDate.getDate() + (7 - lastDay.getDay()));
+      days.push({
+        date: dateStr,
+        day: currentDate.getDate(),
+        isCurrentMonth: currentDate.getMonth() === month,
+        tournages: tournagesDuJour
+      });
       
-      const days = [];
-      const currentDate = new Date(startDate);
-      
-      while (currentDate <= endDate) {
-        const dateStr = currentDate.toISOString().split('T')[0];
-        const tournagesDuJour = this.tournages.filter(t => {
-          console.log(`Comparaison: ${t.dateTournage} === ${dateStr}`, t.dateTournage === dateStr);
-          return t.dateTournage === dateStr;
-        });
-        
-        console.log(`Date: ${dateStr}, Tournages:`, tournagesDuJour);
-        
-        days.push({
-          date: dateStr,
-          day: currentDate.getDate(),
-          isCurrentMonth: currentDate.getMonth() === month,
-          tournages: tournagesDuJour
-        });
-        
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-      
-      return days;
+      currentDate.setDate(currentDate.getDate() + 1);
     }
+    
+    return days;
+  }
   },
   
   methods: {
    async chargerTournages() {
-  try {
-    let url = '/api/scene-tournage/periode';
-    const params = new URLSearchParams();
-    
-    // Calcul des dates de début et fin du mois
-    const startDate = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth(), 1);
-    const endDate = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth() + 1, 0);
-    
-    params.append('startDate', startDate.toISOString().split('T')[0]);
-    params.append('endDate', endDate.toISOString().split('T')[0]);
-    
-    // Ajouter le filtre projet si sélectionné
-    if (this.filtreProjet) {
-      params.append('projetId', this.filtreProjet);
+    try {
+      let url = '/api/scene-tournage/periode';
+      const params = new URLSearchParams();
+      
+      // CORRECTION : Calculer les dates en tenant compte du fuseau horaire local
+      const startDate = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth(), 1);
+      const endDate = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth() + 1, 0);
+      
+      // Formater les dates en YYYY-MM-DD sans conversion de fuseau horaire
+      params.append('startDate', this.formatDateForAPI(startDate));
+      params.append('endDate', this.formatDateForAPI(endDate));
+      
+      // Ajouter le filtre projet si sélectionné
+      if (this.filtreProjet) {
+        params.append('projetId', this.filtreProjet);
+      }
+      
+      console.log('Chargement tournages avec params:', params.toString());
+      
+      const response = await axios.get(`${url}?${params}`);
+      console.log('Données reçues:', response.data);
+      this.tournages = response.data;
+    } catch (error) {
+      console.error('Erreur chargement tournages:', error);
+      alert('Erreur lors du chargement du calendrier: ' + error.message);
     }
-    
-    console.log('Chargement tournages avec params:', params.toString());
-    
-    const response = await axios.get(`${url}?${params}`);
-    console.log('Données reçues:', response.data);
-    this.tournages = response.data;
-  } catch (error) {
-    console.error('Erreur chargement tournages:', error);
-    // Afficher un message d'erreur à l'utilisateur
-    alert('Erreur lors du chargement du calendrier: ' + error.message);
-  }
-},
-    
+  },
+
+  formatDateForAPI(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  },
+      
     async chargerProjets() {
       try {
         const response = await axios.get('/api/projets');
