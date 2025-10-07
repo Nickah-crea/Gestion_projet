@@ -44,6 +44,7 @@ public class SceneController {
             return ResponseEntity.badRequest().build();
         }
     }
+    
 
     // Endpoint pour récupérer toutes les scènes
     @GetMapping
