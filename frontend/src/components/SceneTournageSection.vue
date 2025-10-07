@@ -18,39 +18,42 @@
           <i class="fas fa-calendar-plus"></i> Planifier
         </button>
         
-        <!-- Confirmer - seulement si planifié -->
-        <button v-if="tournage && tournage.statutTournage === 'planifie' && userPermissions.canCreateScene" 
-                @click="modifierStatut('confirme')" 
-                class="btn-confirmer">
-          <i class="fas fa-check-circle"></i> Confirmer
-        </button>
+        <!-- Boutons de changement de statut rapide -->
+        <template v-if="tournage && userPermissions.canCreateScene">
+          <!-- Confirmer - seulement si planifié -->
+          <button v-if="tournage.statutTournage === 'planifie'" 
+                  @click="modifierStatutRapide('confirme')" 
+                  class="btn-confirmer">
+            <i class="fas fa-check-circle"></i> Confirmer
+          </button>
+          
+          <!-- Commencer - seulement si confirmé -->
+          <button v-if="tournage.statutTournage === 'confirme'" 
+                  @click="modifierStatutRapide('en_cours')" 
+                  class="btn-commencer">
+            <i class="fas fa-play-circle"></i> Commencer
+          </button>
+          
+          <!-- Terminer - seulement si en cours -->
+          <button v-if="tournage.statutTournage === 'en_cours'" 
+                  @click="modifierStatutRapide('termine')" 
+                  class="btn-terminer">
+            <i class="fas fa-stop-circle"></i> Terminer
+          </button>
+          
+          <!-- Reporter - pas possible si terminé -->
+          <button v-if="tournage.statutTournage !== 'termine'" 
+                  @click="modifierStatutRapide('reporte')" 
+                  class="btn-reporter">
+            <i class="fas fa-calendar-times"></i> Reporter
+          </button>
+        </template>
         
-        <!-- Commencer - seulement si confirmé -->
-        <button v-if="tournage && tournage.statutTournage === 'confirme' && userPermissions.canCreateScene" 
-                @click="modifierStatut('en_cours')" 
-                class="btn-commencer">
-          <i class="fas fa-play-circle"></i> Commencer
-        </button>
-        
-        <!-- Terminer - seulement si en cours -->
-        <button v-if="tournage && tournage.statutTournage === 'en_cours' && userPermissions.canCreateScene" 
-                @click="modifierStatut('termine')" 
-                class="btn-terminer">
-          <i class="fas fa-stop-circle"></i> Terminer
-        </button>
-        
-        <!-- Modifier - pas possible si terminé -->
+        <!-- Modifier - toujours disponible sauf si terminé -->
         <button v-if="tournage && tournage.statutTournage !== 'termine' && userPermissions.canCreateScene" 
                 @click="ouvrirModalModification" 
                 class="btn-modifier">
           <i class="fas fa-edit"></i> Modifier
-        </button>
-        
-        <!-- Reporter - pas possible si terminé -->
-        <button v-if="tournage && tournage.statutTournage !== 'termine' && userPermissions.canCreateScene" 
-                @click="modifierStatut('reporte')" 
-                class="btn-reporter">
-          <i class="fas fa-calendar-times"></i> Reporter
         </button>
       </div>
     </div>
@@ -77,6 +80,7 @@
           <strong><i class="fas fa-film"></i> Plateau:</strong>
           <span>{{ tournage.plateauNom }}</span>
         </div>
+      
         
         <div v-if="tournage.notes" class="detail-item notes">
           <strong><i class="fas fa-sticky-note"></i> Notes:</strong>
@@ -122,14 +126,14 @@
             
             <div class="form-group">
               <label for="heureDebut">Heure de début *</label>
-            <input 
-            type="time" 
-            id="heureDebut"
-            v-model="formData.heureDebut" 
-            required
-            class="form-input"
-            step="1"
-            >
+              <input 
+                type="time" 
+                id="heureDebut"
+                v-model="formData.heureDebut" 
+                required
+                class="form-input"
+                step="1"
+              >
             </div>
             
             <div class="form-group">
@@ -180,6 +184,25 @@
                 >
                   {{ plateau.nom }} ({{ plateau.typePlateau }})
                 </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- NOUVEAU : Sélection du statut dans le formulaire -->
+          <div class="form-row" v-if="isModification">
+            <div class="form-group">
+              <label for="statutTournage">Statut du tournage *</label>
+              <select 
+                id="statutTournage"
+                v-model="formData.statutTournage" 
+                required
+                class="form-select"
+              >
+                <option value="planifie">Planifié</option>
+                <option value="confirme">Confirmé</option>
+                <option value="en_cours">En cours</option>
+                <option value="termine">Terminé</option>
+                <option value="reporte">Reporté</option>
               </select>
             </div>
           </div>
@@ -262,6 +285,7 @@ export default {
       heureFin: '12:00',
       lieuId: null,
       plateauId: null,
+      statutTournage: 'planifie', // NOUVEAU : champ pour le statut
       notes: ''
     });
 
@@ -358,6 +382,7 @@ export default {
           heureFin: tournage.value.heureFin,
           lieuId: tournage.value.lieuId,
           plateauId: tournage.value.plateauId,
+          statutTournage: tournage.value.statutTournage, // NOUVEAU : inclure le statut
           notes: tournage.value.notes || ''
         };
         
@@ -374,6 +399,7 @@ export default {
           heureFin: '12:00',
           lieuId: null,
           plateauId: null,
+          statutTournage: 'planifie', // NOUVEAU : statut par défaut
           notes: ''
         };
       }
@@ -397,6 +423,7 @@ export default {
         let response;
         
         if (isModification.value) {
+          // NOUVEAU : Pour la modification, utiliser l'endpoint de mise à jour complet
           response = await axios.put(`/api/scene-tournage/${tournage.value.id}`, formData.value);
         } else {
           response = await axios.post('/api/scene-tournage', formData.value);
@@ -417,34 +444,34 @@ export default {
       }
     };
 
-  const validerFormulaire = () => {
-    if (!formData.value.dateTournage) {
-      erreur.value = 'La date de tournage est obligatoire';
-      return false;
-    }
-    
-    if (!formData.value.heureDebut || !formData.value.heureFin) {
-      erreur.value = 'Les heures de début et fin sont obligatoires';
-      return false;
-    }
-    
-    
-    if (formData.value.heureDebut.length > 5) {
-      formData.value.heureDebut = formData.value.heureDebut.substring(0, 5);
-    }
-    if (formData.value.heureFin.length > 5) {
-      formData.value.heureFin = formData.value.heureFin.substring(0, 5);
-    }
-    
-    if (formData.value.heureDebut >= formData.value.heureFin) {
-      erreur.value = 'L\'heure de fin doit être après l\'heure de début';
-      return false;
-    }
-    
-    return true;
-  };
+    const validerFormulaire = () => {
+      if (!formData.value.dateTournage) {
+        erreur.value = 'La date de tournage est obligatoire';
+        return false;
+      }
+      
+      if (!formData.value.heureDebut || !formData.value.heureFin) {
+        erreur.value = 'Les heures de début et fin sont obligatoires';
+        return false;
+      }
+      
+      if (formData.value.heureDebut.length > 5) {
+        formData.value.heureDebut = formData.value.heureDebut.substring(0, 5);
+      }
+      if (formData.value.heureFin.length > 5) {
+        formData.value.heureFin = formData.value.heureFin.substring(0, 5);
+      }
+      
+      if (formData.value.heureDebut >= formData.value.heureFin) {
+        erreur.value = 'L\'heure de fin doit être après l\'heure de début';
+        return false;
+      }
+      
+      return true;
+    };
 
-    const modifierStatut = async (nouveauStatut) => {
+    // NOUVELLE MÉTHODE : Modification rapide du statut
+    const modifierStatutRapide = async (nouveauStatut) => {
       if (!props.userPermissions.canCreateScene) {
         alert('Vous n\'êtes pas autorisé à modifier le statut des tournages.');
         return;
@@ -500,23 +527,21 @@ export default {
       return statuts[statut] || statut;
     };
 
-const formatHeure = (heureString) => {
-  if (!heureString) return '';
-  
-  // Si c'est déjà au format HH:mm, retourner tel quel
-  if (heureString.length === 5 && heureString.includes(':')) {
-    return heureString;
-  }
-  
-  // Si c'est au format HH:mm:ss, extraire seulement HH:mm
-  if (heureString.length >= 8) {
-    return heureString.substring(0, 5);
-  }
-  
-  return heureString;
-};
-
-    
+    const formatHeure = (heureString) => {
+      if (!heureString) return '';
+      
+      // Si c'est déjà au format HH:mm, retourner tel quel
+      if (heureString.length === 5 && heureString.includes(':')) {
+        return heureString;
+      }
+      
+      // Si c'est au format HH:mm:ss, extraire seulement HH:mm
+      if (heureString.length >= 8) {
+        return heureString.substring(0, 5);
+      }
+      
+      return heureString;
+    };
 
     return {
       tournage,
@@ -532,10 +557,10 @@ const formatHeure = (heureString) => {
       ouvrirModalModification,
       fermerModal,
       soumettreTournage,
-      modifierStatut,
+      modifierStatutRapide, // NOUVEAU : exporter la méthode
       formatDate,
       formatHeure,
-       getStatutLibelle
+      getStatutLibelle
     };
   }
 };
@@ -571,6 +596,13 @@ const formatHeure = (heureString) => {
   font-size: 12px;
   font-weight: bold;
   margin-left: 8px;
+}
+
+.statut-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .statut-planifie { background-color: #fff3cd; color: #856404; }
