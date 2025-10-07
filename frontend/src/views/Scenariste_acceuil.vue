@@ -21,6 +21,16 @@
             </div>
             
             <div class="filter-group">
+              <label>Date spécifique:</label>
+              <input 
+                type="date" 
+                v-model="searchSpecificDate" 
+                @change="performGlobalSearch"
+                class="date-input"
+              />
+            </div>
+
+            <div class="filter-group">
               <label>Période:</label>
               <select v-model="searchDate" @change="performGlobalSearch">
                 <option value="">Toutes les périodes</option>
@@ -29,9 +39,11 @@
                 <option value="this_month">Ce mois</option>
                 <option value="this_year">Cette année</option>
                 <option value="recent">7 derniers jours</option>
+                <option value="custom" :disabled="!searchSpecificDate">Date spécifique</option>
               </select>
             </div>
           </div>
+
 
           <div class="search-container">
             <i class="fas fa-search search-icon"></i>
@@ -454,10 +466,10 @@ export default {
       editLoading: false,
       editError: '',
 
-      // Recherche globale - structure modifiée
       globalSearchQuery: '',
       searchStatut: '',
       searchDate: '',
+      searchSpecificDate: '', // NOUVEAU: pour la date spécifique
       globalSearchResults: {
         projets: [],
         autres: []
@@ -465,7 +477,7 @@ export default {
       showGlobalSearchResults: false,
       globalSearchTimeout: null,
       allStatuts: [],
-      expandedProjects: new Set() // Pour garder la trace des projets dépliés
+      expandedProjects: new Set()
     };
   },
   computed: {
@@ -597,7 +609,10 @@ export default {
           params.append('statut', this.searchStatut);
         }
         
-        if (this.searchDate) {
+        // Gestion des dates - PRIORITÉ à la date spécifique
+        if (this.searchSpecificDate) {
+          params.append('specificDate', this.searchSpecificDate);
+        } else if (this.searchDate) {
           params.append('date', this.searchDate);
         }
         
@@ -627,6 +642,16 @@ export default {
         this.globalSearchResults = { projets: [], autres: [] };
         this.showGlobalSearchResults = true;
       }
+    },
+
+    clearGlobalSearch() {
+      this.globalSearchQuery = '';
+      this.searchStatut = '';
+      this.searchDate = '';
+      this.searchSpecificDate = ''; // NOUVEAU: reset de la date spécifique
+      this.globalSearchResults = { projets: [], autres: [] };
+      this.showGlobalSearchResults = false;
+      this.expandedProjects.clear();
     },
 
     // Nouvelle méthode pour afficher/masquer le contenu d'un projet
@@ -720,6 +745,7 @@ export default {
       this.globalSearchResults = { projets: [], autres: [] };
       this.showGlobalSearchResults = false;
       this.expandedProjects.clear();
+      this.searchSpecificDate = ''; // NOUVEAU: reset de la date spécifique
     },
     
     getTypeLabel(type) {
