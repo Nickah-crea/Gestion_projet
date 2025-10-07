@@ -18,17 +18,23 @@ public class SceneTournageService {
     private final LieuRepository lieuRepository;
     private final PlateauRepository plateauRepository;
     private final ComedienRepository comedienRepository;
+    private final SceneStatutRepository sceneStatutRepository;
+    private final StatutSceneRepository statutSceneRepository;
 
     public SceneTournageService(SceneTournageRepository sceneTournageRepository,
                               SceneRepository sceneRepository,
                               LieuRepository lieuRepository,
                               PlateauRepository plateauRepository,
-                              ComedienRepository comedienRepository) {
+                              ComedienRepository comedienRepository,
+                              SceneStatutRepository sceneStatutRepository,
+                               StatutSceneRepository statutSceneRepository) {
         this.sceneTournageRepository = sceneTournageRepository;
         this.sceneRepository = sceneRepository;
         this.lieuRepository = lieuRepository;
         this.plateauRepository = plateauRepository;
         this.comedienRepository = comedienRepository;
+        this.sceneStatutRepository = sceneStatutRepository;
+        this.statutSceneRepository = statutSceneRepository;
     }
 
     public List<SceneTournageDTO> getTournagesByDate(LocalDate date) {
@@ -51,7 +57,7 @@ public class SceneTournageService {
         return tournages.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // SUPPRIMER LA MÉTHODE DUPLIQUÉE - GARDER SEULEMENT CETTE VERSION
+ 
     public SceneTournageDTO getTournageBySceneId(Long sceneId) {
         SceneTournage tournage = sceneTournageRepository.findBySceneId(sceneId)
                 .orElse(null);
@@ -114,8 +120,15 @@ public class SceneTournageService {
 
         tournage.setStatutTournage(nouveauStatut);
         SceneTournage updated = sceneTournageRepository.save(tournage);
+        
+        
+        if ("termine".equals(nouveauStatut)) {
+            mettreAJourStatutScene(tournage.getScene().getId(), "tournee");
+        }
+        
         return convertToDTO(updated);
     }
+
 
     @Transactional
     public SceneTournageDTO modifierTournage(Long id, CreateSceneTournageDTO updateDTO) {
@@ -127,17 +140,19 @@ public class SceneTournageService {
             throw new RuntimeException("Impossible de modifier un tournage terminé");
         }
 
-        // Mise à jour de tous les champs, y compris le statut
+        String ancienStatut = tournage.getStatutTournage();
+        
+        // Mise à jour de tous les champs
         tournage.setDateTournage(updateDTO.getDateTournage());
         tournage.setHeureDebut(updateDTO.getHeureDebut());
         tournage.setHeureFin(updateDTO.getHeureFin());
         tournage.setNotes(updateDTO.getNotes());
         
-        
         if (updateDTO.getStatutTournage() != null) {
             tournage.setStatutTournage(updateDTO.getStatutTournage());
         }
 
+        // Mise à jour du lieu et plateau
         if (updateDTO.getLieuId() != null) {
             Lieu lieu = lieuRepository.findById(updateDTO.getLieuId())
                     .orElseThrow(() -> new RuntimeException("Lieu non trouvé"));
@@ -150,10 +165,13 @@ public class SceneTournageService {
             tournage.setPlateau(plateau);
         }
 
-        // Vérifier les conflits après modification
-        verifierConflitsComediens(updateDTO);
-
         SceneTournage updated = sceneTournageRepository.save(tournage);
+        
+        // Mettre à jour le statut de la scène si le statut du tournage est passé à "terminé"
+        if (!"termine".equals(ancienStatut) && "termine".equals(updated.getStatutTournage())) {
+            mettreAJourStatutScene(updated.getScene().getId(), "tournee");
+        }
+
         return convertToDTO(updated);
     }
 
@@ -180,6 +198,8 @@ public class SceneTournageService {
         // Implémentation de la vérification des conflits pour les comédiens
         // Cette méthode vérifierait si les comédiens de la scène ont d'autres tournages aux mêmes dates/heures
     }
+
+
 
     private SceneTournageDTO convertToDTO(SceneTournage tournage) {
         SceneTournageDTO dto = new SceneTournageDTO();
@@ -213,7 +233,7 @@ public class SceneTournageService {
             dto.setPlateauNom(tournage.getPlateau().getNom());
         }
 
-        // CORRECTION : Utilisation de la méthode findBySceneId maintenant disponible
+        
         List<Comedien> comediens = comedienRepository.findBySceneId(tournage.getScene().getId());
         dto.setNbComediens(comediens.size());
         dto.setNomsComediens(comediens.stream()
@@ -231,6 +251,51 @@ public class SceneTournageService {
             case "termine": return "Terminé";
             case "reporte": return "Reporté";
             default: return statut;
+        }
+    }
+
+    public void mettreAJourStatutScene(Long sceneId, String nouveauStatutCode) {
+        try {
+            // Trouver le statut correspondant
+            StatutScene statutScene = statutSceneRepository.findByCode(nouveauStatutCode)
+                    .orElseThrow(() -> new RuntimeException("Statut de scène non trouvé: " + nouveauStatutCode));
+            
+            // Trouver le statut actuel de la scène
+            SceneStatut statutActuel = sceneStatutRepository.findLatestStatutBySceneId(sceneId)
+                    .orElse(null);
+            
+            // Vérifier si le statut a changé
+            if (statutActuel == null || !statutActuel.getStatut().getCode().equals(nouveauStatutCode)) {
+                // Clôturer le statut actuel s'il existe
+                if (statutActuel != null) {
+                    statutActuel.setDateFin(java.time.LocalDateTime.now());
+                    sceneStatutRepository.save(statutActuel);
+                }
+                
+                // Créer un nouveau statut
+                SceneStatut nouveauStatut = new SceneStatut();
+                nouveauStatut.setScene(sceneRepository.findById(sceneId)
+                        .orElseThrow(() -> new RuntimeException("Scène non trouvée")));
+                nouveauStatut.setStatut(statutScene);
+                nouveauStatut.setDateDebut(java.time.LocalDateTime.now());
+                
+                sceneStatutRepository.save(nouveauStatut);
+                
+                System.out.println("Statut de la scène " + sceneId + " mis à jour vers: " + nouveauStatutCode);
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la mise à jour du statut de la scène: " + e.getMessage());
+            // Ne pas propager l'erreur pour ne pas bloquer la mise à jour du tournage
+        }
+    }
+
+    public String getCurrentStatutForScene(Long sceneId) {
+        try {
+            SceneStatut statutActuel = sceneStatutRepository.findLatestStatutBySceneId(sceneId)
+                    .orElse(null);
+            return statutActuel != null ? statutActuel.getStatut().getCode() : "non_defini";
+        } catch (Exception e) {
+            return "erreur";
         }
     }
 }

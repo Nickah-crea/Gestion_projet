@@ -98,6 +98,24 @@ public class SceneTournageController {
         }
     }
 
+   
+    @PostMapping("/{id}/synchroniser-statut-scene")
+    public ResponseEntity<String> synchroniserStatutScene(@PathVariable Long id) {
+        try {
+            SceneTournageDTO tournage = sceneTournageService.getTournageById(id);
+            
+            if ("termine".equals(tournage.getStatutTournage())) {
+                
+                sceneTournageService.mettreAJourStatutScene(tournage.getSceneId(), "tournee");
+                return ResponseEntity.ok("Statut de la scène synchronisé avec succès");
+            } else {
+                return ResponseEntity.badRequest().body("Le tournage n'est pas terminé");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erreur lors de la synchronisation: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<SceneTournageDTO> modifierTournage(@PathVariable Long id, @RequestBody CreateSceneTournageDTO updateDTO) {
         try {
