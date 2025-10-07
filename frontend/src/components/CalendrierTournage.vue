@@ -45,7 +45,7 @@
               <div v-for="tournage in day.tournages" :key="tournage.id"
                    :class="`tournage-item statut-${tournage.statutTournage}`">
                 <div class="tournage-header">
-                  <div class="tournage-time">{{ formatHeure(tournage.heureDebut) }}</div>
+                  <div class="tournage-time">{{ formatHeure(tournage.heureDebut) }} - {{ formatHeure(tournage.heureFin) }}</div>
                   <div class="tournage-actions-small">
                     <button @click.stop="ouvrirDetailsTournage(tournage)" class="btn-details-small" title="Voir les détails">
                       <i class="fas fa-eye"></i>
