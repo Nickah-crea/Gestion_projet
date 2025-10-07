@@ -417,24 +417,32 @@ export default {
       }
     };
 
-    const validerFormulaire = () => {
-      if (!formData.value.dateTournage) {
-        erreur.value = 'La date de tournage est obligatoire';
-        return false;
-      }
-      
-      if (!formData.value.heureDebut || !formData.value.heureFin) {
-        erreur.value = 'Les heures de début et fin sont obligatoires';
-        return false;
-      }
-      
-      if (formData.value.heureDebut >= formData.value.heureFin) {
-        erreur.value = 'L\'heure de fin doit être après l\'heure de début';
-        return false;
-      }
-      
-      return true;
-    };
+  const validerFormulaire = () => {
+    if (!formData.value.dateTournage) {
+      erreur.value = 'La date de tournage est obligatoire';
+      return false;
+    }
+    
+    if (!formData.value.heureDebut || !formData.value.heureFin) {
+      erreur.value = 'Les heures de début et fin sont obligatoires';
+      return false;
+    }
+    
+    
+    if (formData.value.heureDebut.length > 5) {
+      formData.value.heureDebut = formData.value.heureDebut.substring(0, 5);
+    }
+    if (formData.value.heureFin.length > 5) {
+      formData.value.heureFin = formData.value.heureFin.substring(0, 5);
+    }
+    
+    if (formData.value.heureDebut >= formData.value.heureFin) {
+      erreur.value = 'L\'heure de fin doit être après l\'heure de début';
+      return false;
+    }
+    
+    return true;
+  };
 
     const modifierStatut = async (nouveauStatut) => {
       if (!props.userPermissions.canCreateScene) {
@@ -492,9 +500,21 @@ export default {
       return statuts[statut] || statut;
     };
 
-    const formatHeure = (heureString) => {
-    return heureString ? heureString.substring(0, 5) : '';
-    };
+const formatHeure = (heureString) => {
+  if (!heureString) return '';
+  
+  // Si c'est déjà au format HH:mm, retourner tel quel
+  if (heureString.length === 5 && heureString.includes(':')) {
+    return heureString;
+  }
+  
+  // Si c'est au format HH:mm:ss, extraire seulement HH:mm
+  if (heureString.length >= 8) {
+    return heureString.substring(0, 5);
+  }
+  
+  return heureString;
+};
 
     
 
