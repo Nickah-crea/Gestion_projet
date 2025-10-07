@@ -837,22 +837,4 @@ CREATE INDEX idx_scene_tournage_statut ON scene_tournage(statut_tournage);
 CREATE INDEX idx_scene_tournage_lieu ON scene_tournage(id_lieu);
 CREATE INDEX idx_scene_tournage_plateau ON scene_tournage(id_plateau);
 
--- Vue pour les conflits de comédiens
-CREATE VIEW v_conflits_comediens AS
-SELECT 
-    st.date_tournage,
-    st.heure_debut,
-    st.heure_fin,
-    c.id_comedien,
-    c.nom_comedien,
-    s.titre as scene_titre,
-    p.titre as projet_titre
-FROM scene_tournage st
-JOIN scenes s ON st.id_scene = s.id_scene
-JOIN sequences seq ON s.id_sequence = seq.id_sequence
-JOIN episodes e ON seq.id_episode = e.id_episode
-JOIN projets p ON e.id_projet = p.id_projet
-JOIN comedien_scene cs ON s.id_scene = cs.id_scene
-JOIN comediens c ON cs.id_comedien = c.id_comedien
-WHERE st.statut_tournage IN ('planifie', 'confirme', 'en_cours');
 
