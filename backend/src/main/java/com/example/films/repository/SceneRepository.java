@@ -43,4 +43,7 @@ public interface SceneRepository extends JpaRepository<Scene, Long> {
        "OR LOWER(e.titre) LIKE LOWER(CONCAT('%', :query, '%')) " +
        "OR LOWER(p.titre) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<RechercheSceneDTO> rechercherScenes(@Param("query") String query);
+
+    @Query("SELECT s FROM Scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e WHERE e.projet.id = :projetId")
+    List<Scene> findBySequenceEpisodeProjetId(@Param("projetId") Long projetId);
 }

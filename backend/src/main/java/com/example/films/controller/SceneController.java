@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/scenes")
 public class SceneController {
     private final SceneService sceneService;
-     private final AuthorizationService authorizationService;
+    private final AuthorizationService authorizationService;
 
     public SceneController(SceneService sceneService,
                            AuthorizationService authorizationService) {
@@ -26,6 +26,23 @@ public class SceneController {
     @GetMapping("/sequences/{sequenceId}")
     public List<SceneDTO> getScenesBySequenceId(@PathVariable Long sequenceId) {
         return sceneService.getScenesBySequenceId(sequenceId);
+    }
+
+    // Endpoint pour récupérer les scènes d'un projet
+    @GetMapping("/projet/{projetId}")
+    public ResponseEntity<List<SceneDTO>> getScenesByProjetId(@PathVariable Long projetId,
+                                                            @RequestHeader(value = "X-User-Id", required = false) Long userId) {
+        try {
+            // Vérifier l'accès au projet si userId est fourni
+            if (userId != null && !authorizationService.hasAccessToProjet(userId, projetId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+            
+            List<SceneDTO> scenes = sceneService.getScenesByProjetId(projetId);
+            return ResponseEntity.ok(scenes);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     // Endpoint pour récupérer toutes les scènes
@@ -69,7 +86,7 @@ public class SceneController {
     }
 
     // Endpoint pour mettre à jour une scène
-   @PutMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<SceneDTO> updateScene(@PathVariable Long id, 
                                             @RequestBody CreateSceneDTO updateSceneDTO,
                                             @RequestHeader("X-User-Id") Long userId) {
@@ -84,8 +101,9 @@ public class SceneController {
             return ResponseEntity.notFound().build();
         }
     }
+
     // Endpoint pour supprimer une scène
-   @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteScene(@PathVariable Long id,
                                         @RequestHeader("X-User-Id") Long userId) {
         try {
@@ -100,3 +118,4 @@ public class SceneController {
         }
     }
 }
+

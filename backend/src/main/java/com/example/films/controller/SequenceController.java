@@ -15,13 +15,11 @@ import java.util.List;
 public class SequenceController {
     private final SequenceService sequenceService;
     private final AuthorizationService authorizationService;
-  
 
     public SequenceController(SequenceService sequenceService, 
                               AuthorizationService authorizationService) {
-    
         this.sequenceService = sequenceService;
-         this.authorizationService = authorizationService; 
+        this.authorizationService = authorizationService; 
     }
 
     @GetMapping("/episodes/{episodeId}")
@@ -39,6 +37,23 @@ public class SequenceController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/projet/{projetId}")
+    public ResponseEntity<List<SequenceDTO>> getSequencesByProjetId(@PathVariable Long projetId,
+                                                                  @RequestHeader(value = "X-User-Id", required = false) Long userId) {
+        try {
+            // Vérifier l'accès au projet si userId est fourni
+            if (userId != null && !authorizationService.hasAccessToProjet(userId, projetId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+            
+            List<SequenceDTO> sequences = sequenceService.getSequencesByProjetId(projetId);
+            return ResponseEntity.ok(sequences);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SequenceDTO> getSequenceById(@PathVariable Long id) {
         try {

@@ -37,19 +37,24 @@ public class SequenceService {
         this.statutSequenceRepository = statutSequenceRepository;
     }
 
-  
-   public List<SequenceDTO> getSequencesByEpisodeId(Long episodeId) {
+    public List<SequenceDTO> getSequencesByEpisodeId(Long episodeId) {
         List<Sequence> sequences = sequenceRepository.findByEpisodeId(episodeId);
-        // Pas de throw si vide ; on retourne simplement la liste triée (potentiellement vide)
         List<Sequence> sortedSequences = sequences.stream()
                 .sorted(Comparator.comparingInt(Sequence::getOrdre))
                 .collect(Collectors.toList());
         return sortedSequences.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    public List<SequenceDTO> getSequencesByProjetId(Long projetId) {
+        List<Sequence> sequences = sequenceRepository.findByEpisodeProjetId(projetId);
+        return sequences.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public SequenceDTO createSequence(Long episodeId, CreateSequenceDTO createSequenceDTO) {
-         // Vérifier si l'ordre existe déjà pour cet épisode
+        // Vérifier si l'ordre existe déjà pour cet épisode
         List<Sequence> existingSequences = sequenceRepository.findByEpisodeId(episodeId);
         boolean orderExists = existingSequences.stream()
                 .anyMatch(seq -> seq.getOrdre().equals(createSequenceDTO.getOrdre()));
@@ -167,6 +172,6 @@ public class SequenceService {
     }
 
     public List<RechercheSequenceDTO> rechercherSequences(String query) {
-    return sequenceRepository.rechercherSequences(query.toLowerCase());
-}
+        return sequenceRepository.rechercherSequences(query.toLowerCase());
+    }
 }
