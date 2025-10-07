@@ -26,4 +26,6 @@ public interface PlanningTournageRepository extends JpaRepository<PlanningTourna
     
     @Query("SELECT p FROM PlanningTournage p LEFT JOIN FETCH p.scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e LEFT JOIN FETCH e.projet WHERE p.id = :id")
     java.util.Optional<PlanningTournage> findByIdWithDetails(@Param("id") Long id);
+
+    
 }

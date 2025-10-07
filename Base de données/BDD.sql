@@ -855,3 +855,4 @@ JOIN projets p ON e.id_projet = p.id_projet
 JOIN comedien_scene cs ON s.id_scene = cs.id_scene
 JOIN comediens c ON cs.id_comedien = c.id_comedien
 WHERE st.statut_tournage IN ('planifie', 'confirme', 'en_cours');
+

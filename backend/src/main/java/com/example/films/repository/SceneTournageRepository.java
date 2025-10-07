@@ -37,5 +37,7 @@ public interface SceneTournageRepository extends JpaRepository<SceneTournage, Lo
     
     @Query("SELECT st FROM SceneTournage st LEFT JOIN FETCH st.scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e LEFT JOIN FETCH e.projet WHERE st.id = :id")
     Optional<SceneTournage> findByIdWithDetails(@Param("id") Long id);
+
+    
      
 }

@@ -735,7 +735,7 @@ export default {
           sequences: [],
           scenes: []
         };
-      }
+      }    
     },
 
     clearGlobalSearch() {
