@@ -1,7 +1,6 @@
 <template>
   <div class="app-wrapper-sc">
     <div class="accueil-container">
-      <!-- Contenu principal -->
       <main class="main-content-scenariste">
         <div class="welcome-section">
           <h2>Bienvenue, {{ user?.nom }} !</h2>
@@ -10,64 +9,224 @@
 
         <!-- Barre de recherche globale -->
         <div class="global-search-section">
+          <div class="search-filters">
+            <div class="filter-group">
+              <label>Statut:</label>
+              <select v-model="searchStatut" @change="performGlobalSearch">
+                <option value="">Tous les statuts</option>
+                <option v-for="statut in allStatuts" :key="statut" :value="statut">
+                  {{ statut }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="filter-group">
+              <label>Période:</label>
+              <select v-model="searchDate" @change="performGlobalSearch">
+                <option value="">Toutes les périodes</option>
+                <option value="today">Aujourd'hui</option>
+                <option value="this_week">Cette semaine</option>
+                <option value="this_month">Ce mois</option>
+                <option value="this_year">Cette année</option>
+                <option value="recent">7 derniers jours</option>
+              </select>
+            </div>
+          </div>
+
           <div class="search-container">
             <i class="fas fa-search search-icon"></i>
             <input 
               type="text" 
-              v-model="searchQuery" 
-              @input="performSearch" 
-              placeholder="Rechercher des épisodes, scènes, séquences..." 
+              v-model="globalSearchQuery" 
+              @input="performGlobalSearch" 
+              placeholder="Rechercher projets, épisodes, séquences, scènes..." 
               class="search-input"
             />
-            <button v-if="searchQuery" @click="clearSearch" class="clear-search-btn">
+            <button v-if="globalSearchQuery" @click="clearGlobalSearch" class="clear-search-btn">
               <i class="fas fa-times"></i>
             </button>
           </div>
 
-          <!-- Résultats de recherche -->
-          <div v-if="showSearchResults" class="search-results">
+          <!-- Résultats de recherche globale -->
+          <div v-if="showGlobalSearchResults" class="global-search-results">
             <div class="search-results-header">
-              <h3>Résultats de recherche ({{ searchResults.length }})</h3>
-              <button @click="clearSearch" class="close-results-btn">
+              <h3>Résultats de recherche ({{ totalResults }})</h3>
+              <button @click="clearGlobalSearch" class="close-results-btn">
                 <i class="fas fa-times"></i>
               </button>
             </div>
+            
             <div class="results-list">
-              <div 
-                v-for="result in searchResults" 
-                :key="result.id + result.type" 
-                class="search-result-item"
-                @click="navigateToResult(result)"
-              >
-                <span class="result-type-badge" :class="result.type">
-                  {{ getTypeLabel(result.type) }}
-                </span>
-                <div class="result-content">
-                  <h4>{{ result.titre }}</h4>
-                  <div class="result-details">
-                    <span>Projet: {{ result.projetTitre }}</span>
-                    <span v-if="result.episodeTitre">Épisode: {{ result.episodeTitre }}</span>
-                    <span v-if="result.sequenceTitre">Séquence: {{ result.sequenceTitre }}</span>
-                    <span>Ordre: {{ result.ordre }}</span>
+              <!-- Projets -->
+              <div v-if="globalSearchResults.projets.length > 0" class="results-category">
+                <h4 class="category-title">Projets ({{ globalSearchResults.projets.length }})</h4>
+                <div 
+                  v-for="result in globalSearchResults.projets" 
+                  :key="'projet-' + result.id" 
+                  class="search-result-item"
+                  @click="toggleProjectDetails(result)"
+                >
+                  <span class="result-type-badge projet">
+                    Projet
+                  </span>
+                  
+                  <div class="result-content">
+                    <h4>{{ result.titre }}</h4>
+                    <div class="result-details">
+                      <span class="project-name">
+                        <i class="fas fa-film"></i> {{ result.titre }}
+                      </span>
+                    </div>
+                    
+                    <div class="result-meta">
+                      <span class="statut" :class="getStatutClass(result.statutNom)">
+                        {{ result.statutNom }}
+                      </span>
+                      <span class="date">
+                        <i class="fas fa-calendar"></i> 
+                        {{ formatDate(result.modifieLe) }}
+                      </span>
+                      <span class="toggle-arrow">
+                        <i class="fas" :class="result.showDetails ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                        {{ result.showDetails ? 'Masquer' : 'Voir' }} le contenu
+                      </span>
+                    </div>
+                    
+                    <p v-if="result.synopsis" class="result-synopsis">
+                      {{ truncateText(result.synopsis, 120) }}
+                    </p>
+
+                    <!-- Contenu du projet (épisodes/séquences/scènes) -->
+                    <div v-if="result.showDetails && result.contenu" class="project-content">
+                      <!-- Épisodes -->
+                      <div v-if="result.contenu.episodes && result.contenu.episodes.length > 0" class="content-section">
+                        <h5>Épisodes ({{ result.contenu.episodes.length }})</h5>
+                        <div 
+                          v-for="episode in result.contenu.episodes" 
+                          :key="'episode-' + episode.id"
+                          class="content-item episode-item"
+                          @click.stop="navigateToEcranTravail(episode)"
+                        >
+                          <span class="content-type-badge episode">Épisode</span>
+                          <div class="content-details">
+                            <strong>{{ episode.ordre }}. {{ episode.titre }}</strong>
+                            <span class="content-meta">
+                              {{ episode.statutNom }} • {{ formatDate(episode.modifieLe) }}
+                            </span>
+                          </div>
+                          <i class="fas fa-arrow-right content-arrow"></i>
+                        </div>
+                      </div>
+
+                      <!-- Séquences -->
+                      <div v-if="result.contenu.sequences && result.contenu.sequences.length > 0" class="content-section">
+                        <h5>Séquences ({{ result.contenu.sequences.length }})</h5>
+                        <div 
+                          v-for="sequence in result.contenu.sequences" 
+                          :key="'sequence-' + sequence.id"
+                          class="content-item sequence-item"
+                          @click.stop="navigateToEcranTravail(sequence)"
+                        >
+                          <span class="content-type-badge sequence">Séquence</span>
+                          <div class="content-details">
+                            <strong>{{ sequence.ordre }}. {{ sequence.titre }}</strong>
+                            <span class="content-meta">
+                              Épisode {{ sequence.ordreEpisode }} • {{ sequence.statutNom }} • {{ formatDate(sequence.modifieLe) }}
+                            </span>
+                          </div>
+                          <i class="fas fa-arrow-right content-arrow"></i>
+                        </div>
+                      </div>
+
+                      <!-- Scènes -->
+                      <div v-if="result.contenu.scenes && result.contenu.scenes.length > 0" class="content-section">
+                        <h5>Scènes ({{ result.contenu.scenes.length }})</h5>
+                        <div 
+                          v-for="scene in result.contenu.scenes" 
+                          :key="'scene-' + scene.id"
+                          class="content-item scene-item"
+                          @click.stop="navigateToEcranTravail(scene)"
+                        >
+                          <span class="content-type-badge scene">Scène</span>
+                          <div class="content-details">
+                            <strong>{{ scene.ordre }}. {{ scene.titre }}</strong>
+                            <span class="content-meta">
+                              Séquence {{ scene.ordreSequence }} • {{ scene.statutNom }} • {{ formatDate(scene.modifieLe) }}
+                            </span>
+                          </div>
+                          <i class="fas fa-arrow-right content-arrow"></i>
+                        </div>
+                      </div>
+
+                      <div v-if="!result.contenu.episodes?.length && !result.contenu.sequences?.length && !result.contenu.scenes?.length" 
+                           class="no-content">
+                        <i class="fas fa-folder-open"></i>
+                        <p>Aucun contenu trouvé dans ce projet</p>
+                      </div>
+                    </div>
                   </div>
-                  <p class="result-synopsis" v-if="result.synopsis">
-                    {{ truncateText(result.synopsis, 100) }}
-                  </p>
                 </div>
-                <i class="fas fa-arrow-right result-arrow"></i>
               </div>
-              <div v-if="searchResults.length === 0" class="no-results">
-                Aucun résultat trouvé pour "{{ searchQuery }}"
+
+              <!-- Épisodes, séquences et scènes individuels (hors projets) -->
+              <div v-if="globalSearchResults.autres.length > 0" class="results-category">
+                <h4 class="category-title">Autres résultats ({{ globalSearchResults.autres.length }})</h4>
+                <div 
+                  v-for="result in globalSearchResults.autres" 
+                  :key="result.id + result.type" 
+                  class="search-result-item"
+                  @click="navigateToEcranTravail(result)"
+                >
+                  <span class="result-type-badge" :class="result.type">
+                    {{ getTypeLabel(result.type) }}
+                  </span>
+                  
+                  <div class="result-content">
+                    <h4>{{ result.titre }}</h4>
+                    <div class="result-details">
+                      <span class="project-name">
+                        <i class="fas fa-film"></i> {{ result.projetTitre }}
+                      </span>
+                      <span v-if="result.episodeTitre" class="episode-info">
+                        <i class="fas fa-play-circle"></i> Épisode {{ result.ordreEpisode }}: {{ result.episodeTitre }}
+                      </span>
+                      <span v-if="result.sequenceTitre" class="sequence-info">
+                        <i class="fas fa-layer-group"></i> Séquence {{ result.ordreSequence }}: {{ result.sequenceTitre }}
+                      </span>
+                      <span v-if="result.ordreScene" class="scene-info">
+                        <i class="fas fa-video"></i> Scène {{ result.ordreScene }}
+                      </span>
+                    </div>
+                    
+                    <div class="result-meta">
+                      <span class="statut" :class="getStatutClass(result.statutNom)">
+                        {{ result.statutNom }}
+                      </span>
+                      <span class="date">
+                        <i class="fas fa-calendar"></i> 
+                        {{ formatDate(result.modifieLe) }}
+                      </span>
+                    </div>
+                    
+                    <p v-if="result.synopsis" class="result-synopsis">
+                      {{ truncateText(result.synopsis, 120) }}
+                    </p>
+                  </div>
+                  
+                  <i class="fas fa-arrow-right result-arrow"></i>
+                </div>
+              </div>
+              
+              <div v-if="totalResults === 0" class="no-results">
+                <i class="fas fa-search"></i>
+                <p>Aucun résultat trouvé pour "{{ globalSearchQuery }}"</p>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="title-filtre">
-          <center>
-            <h2> Bibliothèque de Projets</h2><br><br>
+<div class="title-filtre" style="justify-content: center;">
+          <h2> Bibliothèque de Projets</h2><br><br>
             <p class="subtitle">Vos films et séries en cours de création</p>
-          </center>
         </div><br>
         
         <div class="filters-scenariste">
@@ -294,12 +453,19 @@ export default {
       },
       editLoading: false,
       editError: '',
-      
-      // Nouvelles données pour la recherche
-      searchQuery: '',
-      searchResults: [],
-      showSearchResults: false,
-      searchTimeout: null
+
+      // Recherche globale - structure modifiée
+      globalSearchQuery: '',
+      searchStatut: '',
+      searchDate: '',
+      globalSearchResults: {
+        projets: [],
+        autres: []
+      },
+      showGlobalSearchResults: false,
+      globalSearchTimeout: null,
+      allStatuts: [],
+      expandedProjects: new Set() // Pour garder la trace des projets dépliés
     };
   },
   computed: {
@@ -312,6 +478,11 @@ export default {
         .toUpperCase()
         .substring(0, 2);
     },
+
+    totalResults() {
+      return this.globalSearchResults.projets.length + this.globalSearchResults.autres.length;
+    },
+
     filteredProjects() {
       let list = this.projects;
       
@@ -371,6 +542,7 @@ export default {
     this.fetchGenres();
     this.fetchStatuts();
     this.fetchProjects();
+    this.loadAllStatuts();
     document.addEventListener('click', this.handleClickOutside);
     
     // Fermer les résultats de recherche en cliquant à l'extérieur
@@ -394,140 +566,241 @@ export default {
       }
     },
     
-    // Méthodes de recherche
-    performSearch() {
-      if (this.searchTimeout) {
-        clearTimeout(this.searchTimeout);
+    // Méthodes de recherche globale
+     // Méthodes de recherche globale modifiées
+    async performGlobalSearch() {
+      if (this.globalSearchTimeout) {
+        clearTimeout(this.globalSearchTimeout);
       }
       
-      if (this.searchQuery.trim().length < 2) {
-        this.showSearchResults = false;
-        this.searchResults = [];
+      if (this.globalSearchQuery.trim().length < 2) {
+        this.showGlobalSearchResults = false;
+        this.globalSearchResults = { projets: [], autres: [] };
         return;
       }
       
-      this.searchTimeout = setTimeout(() => {
-        this.executeSearch();
+      this.globalSearchTimeout = setTimeout(() => {
+        this.executeGlobalSearch();
       }, 300);
     },
 
-    async executeSearch() {
+    async executeGlobalSearch() {
       try {
-        const query = this.searchQuery.trim();
+        const query = this.globalSearchQuery.trim();
         if (query.length < 2) return;
         
-        console.log('Lancement de la recherche pour:', query);
-        
-        // Recherche dans les épisodes, scènes et séquences
-        const [episodesResponse, scenesResponse, sequencesResponse] = await Promise.all([
-          axios.get(`/api/recherche/episodes?q=${encodeURIComponent(query)}`).catch(error => {
-            console.error('Erreur recherche épisodes:', error);
-            return { data: [] };
-          }),
-          axios.get(`/api/recherche/scenes?q=${encodeURIComponent(query)}`).catch(error => {
-            console.error('Erreur recherche scènes:', error);
-            return { data: [] };
-          }),
-          axios.get(`/api/recherche/sequences?q=${encodeURIComponent(query)}`).catch(error => {
-            console.error('Erreur recherche séquences:', error);
-            return { data: [] };
-          })
-        ]);
-        
-        console.log('Réponses reçues:', {
-          episodes: episodesResponse.data,
-          scenes: scenesResponse.data,
-          sequences: sequencesResponse.data
+        const params = new URLSearchParams({
+          q: query
         });
         
-        const episodes = (episodesResponse.data || []).map(episode => ({
-          ...episode,
-          type: 'episode',
-          projetTitre: episode.projetTitre || 'Projet inconnu',
-          projetId: episode.projetId || this.getProjetIdFromEpisode(episode)
+        if (this.searchStatut) {
+          params.append('statut', this.searchStatut);
+        }
+        
+        if (this.searchDate) {
+          params.append('date', this.searchDate);
+        }
+        
+        const response = await axios.get(`/api/recherche-globale?${params}`);
+        
+        // Réorganiser les résultats : projets séparés des autres éléments
+        const resultats = response.data;
+        const projets = resultats.filter(r => r.type === 'projet');
+        const autres = resultats.filter(r => r.type !== 'projet');
+        
+        // Ajouter la propriété showDetails aux projets
+        const projetsAvecDetails = projets.map(projet => ({
+          ...projet,
+          showDetails: this.expandedProjects.has(projet.id),
+          contenu: null // Chargé seulement quand on clique
         }));
         
-        const scenes = (scenesResponse.data || []).map(scene => ({
-          ...scene,
-          type: 'scene',
-          projetTitre: scene.projetTitre || 'Projet inconnu',
-          episodeTitre: scene.episodeTitre || 'Épisode inconnu',
-          projetId: scene.projetId || this.getProjetIdFromScene(scene)
-        }));
+        this.globalSearchResults = {
+          projets: projetsAvecDetails,
+          autres: autres
+        };
         
-        const sequences = (sequencesResponse.data || []).map(sequence => ({
-          ...sequence,
-          type: 'sequence',
-          projetTitre: sequence.projetTitre || 'Projet inconnu',
-          episodeTitre: sequence.episodeTitre || 'Épisode inconnu',
-          projetId: sequence.projetId || this.getProjetIdFromSequence(sequence)
-        }));
-        
-        this.searchResults = [...episodes, ...scenes, ...sequences];
-        this.showSearchResults = true;
-        
-        console.log('Résultats combinés:', this.searchResults);
+        this.showGlobalSearchResults = true;
         
       } catch (error) {
-        console.error('Erreur globale lors de la recherche:', error);
-        this.searchResults = [];
-        this.showSearchResults = true;
+        console.error('Erreur lors de la recherche globale:', error);
+        this.globalSearchResults = { projets: [], autres: [] };
+        this.showGlobalSearchResults = true;
       }
     },
-    
-    clearSearch() {
-      this.searchQuery = '';
-      this.searchResults = [];
-      this.showSearchResults = false;
+
+    // Nouvelle méthode pour afficher/masquer le contenu d'un projet
+    async toggleProjectDetails(projet) {
+      // Basculer l'état d'affichage
+      projet.showDetails = !projet.showDetails;
+      
+      if (projet.showDetails) {
+        this.expandedProjects.add(projet.id);
+        // Charger le contenu du projet si pas déjà fait
+        if (!projet.contenu) {
+          await this.chargerContenuProjet(projet);
+        }
+      } else {
+        this.expandedProjects.delete(projet.id);
+      }
+    },
+
+    async chargerContenuProjet(projet) {
+      try {
+        // Charger les épisodes, séquences et scènes de ce projet
+        const [episodesResponse, sequencesResponse, scenesResponse] = await Promise.all([
+          axios.get(`/api/episodes/projet/${projet.id}`),
+          axios.get(`/api/sequences/projet/${projet.id}`),
+          axios.get(`/api/scenes/projet/${projet.id}`)
+        ]);
+
+        // Formater les épisodes
+        const episodesFormatted = (episodesResponse.data || []).map(episode => ({
+          ...episode,
+          type: 'episode',
+          projetId: projet.id,
+          id: episode.idEpisode || episode.id,
+          // S'assurer que les propriétés nécessaires existent
+          titre: episode.titre,
+          statutNom: episode.statutNom,
+          modifieLe: episode.modifieLe,
+          ordre: episode.ordre
+        }));
+
+        // Formater les séquences  
+        const sequencesFormatted = (sequencesResponse.data || []).map(sequence => ({
+          ...sequence,
+          type: 'sequence',
+          projetId: projet.id,
+          id: sequence.idSequence || sequence.id,
+          episodeId: sequence.episodeId,
+          // S'assurer que les propriétés nécessaires existent
+          titre: sequence.titre,
+          statutNom: sequence.statutNom,
+          modifieLe: sequence.modifieLe,
+          ordre: sequence.ordre,
+          ordreEpisode: sequence.episode?.ordre
+        }));
+
+        // Formater les scènes
+        const scenesFormatted = (scenesResponse.data || []).map(scene => ({
+          ...scene,
+          type: 'scene',
+          projetId: projet.id,
+          id: scene.idScene || scene.id,
+          sequenceId: scene.sequenceId,
+          // S'assurer que les propriétés nécessaires existent
+          titre: scene.titre,
+          statutNom: scene.statutNom,
+          modifieLe: scene.modifieLe,
+          ordre: scene.ordre,
+          ordreSequence: scene.sequence?.ordre
+        }));
+
+        projet.contenu = {
+          episodes: episodesFormatted,
+          sequences: sequencesFormatted,
+          scenes: scenesFormatted
+        };
+
+      } catch (error) {
+        console.error('Erreur lors du chargement du contenu du projet:', error);
+        projet.contenu = {
+          episodes: [],
+          sequences: [],
+          scenes: []
+        };
+      }
+    },
+
+    clearGlobalSearch() {
+      this.globalSearchQuery = '';
+      this.searchStatut = '';
+      this.searchDate = '';
+      this.globalSearchResults = { projets: [], autres: [] };
+      this.showGlobalSearchResults = false;
+      this.expandedProjects.clear();
     },
     
     getTypeLabel(type) {
       const labels = {
+        'projet': 'Projet',
         'episode': 'Épisode',
-        'scene': 'Scène',
-        'sequence': 'Séquence'
+        'sequence': 'Séquence',
+        'scene': 'Scène'
       };
       return labels[type] || type;
     },
-    
-    truncateText(text, maxLength) {
-      if (text.length <= maxLength) return text;
-      return text.substring(0, maxLength) + '...';
-    },
-    
-    navigateToResult(result) {
-      if (!result.projetId) {
-        console.error('ID du projet manquant dans le résultat de recherche');
-        return;
-      }
-      
+
+    navigateToEcranTravail(result) {
       const queryParams = {};
       
-      if (result.type === 'episode') {
+      // Construire les paramètres selon le type de résultat
+      if (result.type === 'projet') {
+        // Pour un projet, on va à l'écran de travail du projet
+        this.$router.push(`/projet/${result.projetId || result.id}/ecran-travail`);
+      } 
+      else if (result.type === 'episode') {
         queryParams.episodeId = result.id;
-      } else if (result.type === 'sequence') {
+        this.$router.push({
+          path: `/projet/${result.projetId}/ecran-travail`,
+          query: queryParams
+        });
+      }
+      else if (result.type === 'sequence') {
         queryParams.episodeId = result.episodeId;
         queryParams.sequenceId = result.id;
-      } else if (result.type === 'scene') {
+        this.$router.push({
+          path: `/projet/${result.projetId}/ecran-travail`,
+          query: queryParams
+        });
+      }
+      else if (result.type === 'scene') {
         queryParams.episodeId = result.episodeId;
         queryParams.sequenceId = result.sequenceId;
+        queryParams.sceneId = result.id;
+        this.$router.push({
+          path: `/projet/${result.projetId}/ecran-travail`,
+          query: queryParams
+        });
       }
       
-      this.$router.push({
-        path: `/projet/${result.projetId}/ecran-travail`,
-        query: queryParams
-      });
-      
-      this.clearSearch();
+      this.clearGlobalSearch();
     },
-    
+
+    async loadAllStatuts() {
+      try {
+        // Charger tous les statuts uniques depuis les différents types
+        const [projetStatuts, episodeStatuts, sequenceStatuts, sceneStatuts] = await Promise.all([
+          axios.get('/api/statuts-projet'),
+          axios.get('/api/statuts-episode'),
+          axios.get('/api/statuts-sequence'),
+          axios.get('/api/statuts-scene')
+        ]);
+        
+        const allStatuts = new Set();
+        
+        projetStatuts.data.forEach(statut => allStatuts.add(statut.nomStatutsProjet));
+        episodeStatuts.data.forEach(statut => allStatuts.add(statut.nomStatutsEpisode));
+        sequenceStatuts.data.forEach(statut => allStatuts.add(statut.nomStatutsSequence));
+        sceneStatuts.data.forEach(statut => allStatuts.add(statut.nomStatutsScene));
+        
+        this.allStatuts = Array.from(allStatuts).sort();
+      } catch (error) {
+        console.error('Erreur lors du chargement des statuts:', error);
+        // En cas d'erreur, initialiser avec une liste vide
+        this.allStatuts = [];
+      }
+    },
+
     handleClickOutsideSearch(event) {
       const searchContainer = event.target.closest('.global-search-section');
       if (!searchContainer) {
-        this.showSearchResults = false;
+        this.showGlobalSearchResults = false;
       }
     },
-    
+
+    // Méthodes existantes
     async fetchGenres() {
       try {
         const response = await axios.get('/api/genres');
@@ -615,7 +888,13 @@ export default {
     },
     
     formatDate(date) {
-      return new Date(date).toLocaleString();
+      return new Date(date).toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     },
     
     formatShortDate(date) {
@@ -626,12 +905,24 @@ export default {
       });
     },
     
+    truncateText(text, maxLength) {
+      if (!text) return '';
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength) + '...';
+    },
+    
     getStatutClass(statutNom) {
       const statutClasses = {
         'En cours': 'statut-en-cours',
         'Terminé': 'statut-termine',
         'En attente': 'statut-attente',
-        'Annulé': 'statut-annule'
+        'Annulé': 'statut-annule',
+        'Planifié': 'statut-planifie',
+        'En préparation': 'statut-preparation',
+        'En tournage': 'statut-tournage',
+        'Tourné': 'statut-tourne',
+        'Monté': 'statut-monte',
+        'Validé': 'statut-valide'
       };
       return statutClasses[statutNom] || 'statut-default';
     },
@@ -662,4 +953,5 @@ export default {
   }
 };
 </script>
+
 
