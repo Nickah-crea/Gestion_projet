@@ -39,12 +39,13 @@
         
         <div class="calendar-days">
           <div v-for="day in joursCalendrier" :key="day.date" 
-               :class="['calendar-day', { 'other-month': !day.isCurrentMonth }]">
+               :class="['calendar-day', { 'other-month': !day.isCurrentMonth, 'has-tournages': day.tournages.length > 0 }]"
+               @click="ouvrirModalPlanning(day.date)">
             <div class="day-header">{{ day.day }}</div>
             <div class="tournages-list">
               <div v-for="tournage in day.tournages" :key="tournage.id"
                    :class="`tournage-item statut-${tournage.statutTournage}`"
-                   @click="ouvrirDetailsTournage(tournage)">
+                   @click.stop="ouvrirDetailsTournage(tournage)">
                 <div class="tournage-time">{{ tournage.heureDebut }}</div>
                 <div class="tournage-title">{{ tournage.sceneTitre }}</div>
               </div>
@@ -53,11 +54,217 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de création/modification de planning -->
+    <div v-if="showPlanningModal" class="modal-overlay" @click="fermerModalPlanning">
+      <div class="modal-content planning-modal" @click.stop>
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-calendar-plus"></i>
+            {{ isModificationPlanning ? 'Modifier le planning' : 'Créer un planning' }} - {{ selectedDateFormatted }}
+          </h3>
+          <button @click="fermerModalPlanning" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <form @submit.prevent="soumettrePlanning" class="planning-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="projetId">Projet *</label>
+              <select 
+                id="projetId"
+                v-model="formPlanning.projetId" 
+                @change="chargerEpisodesParProjet"
+                required
+                class="form-select"
+              >
+                <option value="">Sélectionner un projet</option>
+                <option v-for="projet in projets" :key="projet.id" :value="projet.id">
+                  {{ projet.titre }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="episodeId">Épisode *</label>
+              <select 
+                id="episodeId"
+                v-model="formPlanning.episodeId" 
+                @change="chargerSequencesParEpisode"
+                :disabled="!formPlanning.projetId"
+                required
+                class="form-select"
+              >
+                <option value="">Sélectionner un épisode</option>
+                <option v-for="episode in episodesParProjet" :key="episode.idEpisode" :value="episode.idEpisode">
+                  Épisode {{ episode.ordre }}: {{ episode.titre }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="sequenceId">Séquence *</label>
+              <select 
+                id="sequenceId"
+                v-model="formPlanning.sequenceId" 
+                @change="chargerScenesParSequence"
+                :disabled="!formPlanning.episodeId"
+                required
+                class="form-select"
+              >
+                <option value="">Sélectionner une séquence</option>
+                <option v-for="sequence in sequencesParEpisode" :key="sequence.idSequence" :value="sequence.idSequence">
+                  Séquence {{ sequence.ordre }}: {{ sequence.titre }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="sceneId">Scène *</label>
+              <select 
+                id="sceneId"
+                v-model="formPlanning.sceneId" 
+                :disabled="!formPlanning.sequenceId"
+                required
+                class="form-select"
+              >
+                <option value="">Sélectionner une scène</option>
+                <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
+                  Scène {{ scene.ordre }}: {{ scene.titre }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lieuId">Lieu</label>
+              <select 
+                id="lieuId"
+                v-model="formPlanning.lieuId" 
+                @change="chargerPlateauxParLieu"
+                class="form-select"
+              >
+                <option value="">Sélectionner un lieu</option>
+                <option v-for="lieu in lieuxDisponibles" :key="lieu.id" :value="lieu.id">
+                  {{ lieu.nomLieu }} ({{ lieu.typeLieu }})
+                </option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="plateauId">Plateau</label>
+              <select 
+                id="plateauId"
+                v-model="formPlanning.plateauId" 
+                :disabled="!formPlanning.lieuId"
+                class="form-select"
+              >
+                <option value="">Sélectionner un plateau</option>
+                <option v-for="plateau in plateauxParLieu" :key="plateau.id" :value="plateau.id">
+                  {{ plateau.nom }} ({{ plateau.typePlateau }})
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="heureDebut">Heure de début *</label>
+              <input 
+                type="time" 
+                id="heureDebut"
+                v-model="formPlanning.heureDebut" 
+                required
+                class="form-input"
+              >
+            </div>
+            
+            <div class="form-group">
+              <label for="heureFin">Heure de fin *</label>
+              <input 
+                type="time" 
+                id="heureFin"
+                v-model="formPlanning.heureFin" 
+                required
+                class="form-input"
+              >
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="statutTournage">Statut *</label>
+              <select 
+                id="statutTournage"
+                v-model="formPlanning.statutTournage" 
+                required
+                class="form-select"
+              >
+                <option value="planifie">Planifié</option>
+                <option value="confirme">Confirmé</option>
+                <option value="en_cours">En cours</option>
+                <option value="termine">Terminé</option>
+                <option value="reporte">Reporté</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="notes">Notes</label>
+            <textarea 
+              id="notes"
+              v-model="formPlanning.notes" 
+              rows="3" 
+              placeholder="Notes additionnelles pour le tournage..."
+              class="form-textarea"
+            ></textarea>
+          </div>
+          
+          <div v-if="erreurPlanning" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ erreurPlanning }}
+          </div>
+
+          <div class="modal-actions">
+            <button 
+              type="button" 
+              @click="fermerModalPlanning" 
+              class="btn btn-secondary"
+            >
+              <i class="fas fa-times"></i> Annuler
+            </button>
+            
+            <button 
+              v-if="isModificationPlanning"
+              type="button" 
+              @click="supprimerPlanning"
+              class="btn btn-danger"
+            >
+              <i class="fas fa-trash"></i> Supprimer
+            </button>
+            
+            <button 
+              type="submit" 
+              :disabled="chargementPlanning"
+              class="btn btn-primary"
+            >
+              <i class="fas fa-save"></i>
+              {{ chargementPlanning ? 'Enregistrement...' : (isModificationPlanning ? 'Modifier' : 'Créer') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -67,7 +274,37 @@ export default {
       filtreStatut: '',
       filtreDate: '',
       dateCourante: new Date(),
-      joursSemaine: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+      joursSemaine: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+      
+      // Données pour le modal de planning
+      showPlanningModal: false,
+      isModificationPlanning: false,
+      chargementPlanning: false,
+      erreurPlanning: '',
+      selectedDate: null,
+      
+      // Données pour les listes déroulantes
+      episodesParProjet: [],
+      sequencesParEpisode: [],
+      scenesParSequence: [],
+      lieuxDisponibles: [],
+      plateauxParLieu: [],
+      
+      // Formulaire de planning
+      formPlanning: {
+        id: null,
+        projetId: '',
+        episodeId: '',
+        sequenceId: '',
+        sceneId: '',
+        dateTournage: '',
+        heureDebut: '09:00',
+        heureFin: '12:00',
+        lieuId: null,
+        plateauId: null,
+        statutTournage: 'planifie',
+        notes: ''
+      }
     }
   },
   
@@ -79,82 +316,83 @@ export default {
       });
     },
     
-   joursCalendrier() {
-    const year = this.dateCourante.getFullYear();
-    const month = this.dateCourante.getMonth();
-    
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay() + 1);
-    
-    const endDate = new Date(lastDay);
-    endDate.setDate(endDate.getDate() + (7 - lastDay.getDay()));
-    
-    const days = [];
-    const currentDate = new Date(startDate);
-    
-    while (currentDate <= endDate) {
-      const dateStr = this.formatDateForAPI(currentDate);
-      
-      const tournagesDuJour = this.tournages.filter(t => {
-        console.log(`Comparaison: ${t.dateTournage} === ${dateStr}`, t.dateTournage === dateStr);
-        return t.dateTournage === dateStr;
+    selectedDateFormatted() {
+      if (!this.selectedDate) return '';
+      return new Date(this.selectedDate).toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       });
+    },
+    
+    joursCalendrier() {
+      const year = this.dateCourante.getFullYear();
+      const month = this.dateCourante.getMonth();
       
-      console.log(`Date: ${dateStr}, Tournages:`, tournagesDuJour);
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
       
-      days.push({
-        date: dateStr,
-        day: currentDate.getDate(),
-        isCurrentMonth: currentDate.getMonth() === month,
-        tournages: tournagesDuJour
-      });
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - firstDay.getDay() + 1);
       
-      currentDate.setDate(currentDate.getDate() + 1);
+      const endDate = new Date(lastDay);
+      endDate.setDate(endDate.getDate() + (7 - lastDay.getDay()));
+      
+      const days = [];
+      const currentDate = new Date(startDate);
+      
+      while (currentDate <= endDate) {
+        const dateStr = this.formatDateForAPI(currentDate);
+        
+        const tournagesDuJour = this.tournages.filter(t => {
+          return t.dateTournage === dateStr;
+        });
+        
+        days.push({
+          date: dateStr,
+          day: currentDate.getDate(),
+          isCurrentMonth: currentDate.getMonth() === month,
+          tournages: tournagesDuJour
+        });
+        
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      
+      return days;
     }
-    
-    return days;
-  }
   },
   
   methods: {
-   async chargerTournages() {
-    try {
-      let url = '/api/scene-tournage/periode';
-      const params = new URLSearchParams();
-      
-      // CORRECTION : Calculer les dates en tenant compte du fuseau horaire local
-      const startDate = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth(), 1);
-      const endDate = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth() + 1, 0);
-      
-      // Formater les dates en YYYY-MM-DD sans conversion de fuseau horaire
-      params.append('startDate', this.formatDateForAPI(startDate));
-      params.append('endDate', this.formatDateForAPI(endDate));
-      
-      // Ajouter le filtre projet si sélectionné
-      if (this.filtreProjet) {
-        params.append('projetId', this.filtreProjet);
+    async chargerTournages() {
+      try {
+        let url = '/api/scene-tournage/periode';
+        const params = new URLSearchParams();
+        
+        const startDate = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth(), 1);
+        const endDate = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth() + 1, 0);
+        
+        params.append('startDate', this.formatDateForAPI(startDate));
+        params.append('endDate', this.formatDateForAPI(endDate));
+        
+        if (this.filtreProjet) {
+          params.append('projetId', this.filtreProjet);
+        }
+        
+        const response = await axios.get(`${url}?${params}`);
+        this.tournages = response.data;
+      } catch (error) {
+        console.error('Erreur chargement tournages:', error);
+        alert('Erreur lors du chargement du calendrier: ' + error.message);
       }
-      
-      console.log('Chargement tournages avec params:', params.toString());
-      
-      const response = await axios.get(`${url}?${params}`);
-      console.log('Données reçues:', response.data);
-      this.tournages = response.data;
-    } catch (error) {
-      console.error('Erreur chargement tournages:', error);
-      alert('Erreur lors du chargement du calendrier: ' + error.message);
-    }
-  },
+    },
 
-  formatDateForAPI(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  },
+    formatDateForAPI(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
       
     async chargerProjets() {
       try {
@@ -176,8 +414,208 @@ export default {
     },
     
     ouvrirDetailsTournage(tournage) {
-      // Ouvrir une modal avec les détails du tournage
-      alert(`Détails du tournage: ${tournage.sceneTitre}\nStatut: ${tournage.statutTournageLibelle}`);
+      alert(`Détails du tournage: ${tournage.sceneTitre}\nStatut: ${tournage.statutTournage}\nDate: ${tournage.dateTournage}`);
+    },
+
+    // Méthodes pour le planning
+    async ouvrirModalPlanning(date) {
+      this.selectedDate = date;
+      this.isModificationPlanning = false;
+      this.erreurPlanning = '';
+      
+      // Réinitialiser le formulaire
+      this.formPlanning = {
+        id: null,
+        projetId: '',
+        episodeId: '',
+        sequenceId: '',
+        sceneId: '',
+        dateTournage: date,
+        heureDebut: '09:00',
+        heureFin: '12:00',
+        lieuId: null,
+        plateauId: null,
+        statutTournage: 'planifie',
+        notes: ''
+      };
+      
+      // Charger les données nécessaires
+      await Promise.all([
+        this.chargerProjets(),
+        this.chargerLieuxDisponibles()
+      ]);
+      
+      this.showPlanningModal = true;
+    },
+
+    fermerModalPlanning() {
+      this.showPlanningModal = false;
+      this.selectedDate = null;
+      this.erreurPlanning = '';
+      this.episodesParProjet = [];
+      this.sequencesParEpisode = [];
+      this.scenesParSequence = [];
+      this.plateauxParLieu = [];
+    },
+
+    async chargerEpisodesParProjet() {
+      if (!this.formPlanning.projetId) {
+        this.episodesParProjet = [];
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`/api/episodes/projet/${this.formPlanning.projetId}`);
+        this.episodesParProjet = response.data;
+        this.formPlanning.episodeId = '';
+        this.formPlanning.sequenceId = '';
+        this.formPlanning.sceneId = '';
+      } catch (error) {
+        console.error('Erreur chargement épisodes:', error);
+        this.episodesParProjet = [];
+      }
+    },
+
+    async chargerSequencesParEpisode() {
+      if (!this.formPlanning.episodeId) {
+        this.sequencesParEpisode = [];
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`/api/sequences/episodes/${this.formPlanning.episodeId}`);
+        this.sequencesParEpisode = response.data;
+        this.formPlanning.sequenceId = '';
+        this.formPlanning.sceneId = '';
+      } catch (error) {
+        console.error('Erreur chargement séquences:', error);
+        this.sequencesParEpisode = [];
+      }
+    },
+
+    async chargerScenesParSequence() {
+      if (!this.formPlanning.sequenceId) {
+        this.scenesParSequence = [];
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`/api/scenes/sequences/${this.formPlanning.sequenceId}`);
+        this.scenesParSequence = response.data;
+        this.formPlanning.sceneId = '';
+      } catch (error) {
+        console.error('Erreur chargement scènes:', error);
+        this.scenesParSequence = [];
+      }
+    },
+
+    async chargerLieuxDisponibles() {
+      try {
+        const response = await axios.get('/api/lieux');
+        this.lieuxDisponibles = response.data;
+      } catch (error) {
+        console.error('Erreur chargement lieux:', error);
+        this.lieuxDisponibles = [];
+      }
+    },
+
+    async chargerPlateauxParLieu() {
+      if (!this.formPlanning.lieuId) {
+        this.plateauxParLieu = [];
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`/api/plateaux/lieux/${this.formPlanning.lieuId}`);
+        this.plateauxParLieu = response.data;
+        this.formPlanning.plateauId = '';
+      } catch (error) {
+        console.error('Erreur chargement plateaux:', error);
+        this.plateauxParLieu = [];
+      }
+    },
+
+    async soumettrePlanning() {
+      if (!this.validerFormulairePlanning()) return;
+      
+      this.chargementPlanning = true;
+      this.erreurPlanning = '';
+      
+      try {
+        let response;
+        
+        if (this.isModificationPlanning) {
+          response = await axios.put(`/api/scene-tournage/${this.formPlanning.id}`, this.formPlanning);
+        } else {
+          response = await axios.post('/api/scene-tournage', this.formPlanning);
+        }
+        
+        // Recharger les tournages
+        await this.chargerTournages();
+        this.fermerModalPlanning();
+        
+        alert(`Planning ${this.isModificationPlanning ? 'modifié' : 'créé'} avec succès!`);
+        
+      } catch (error) {
+        console.error('Erreur sauvegarde planning:', error);
+        this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la sauvegarde du planning';
+      } finally {
+        this.chargementPlanning = false;
+      }
+    },
+
+    async supprimerPlanning() {
+      if (!this.formPlanning.id || !confirm('Êtes-vous sûr de vouloir supprimer ce planning ?')) {
+        return;
+      }
+      
+      try {
+        await axios.delete(`/api/scene-tournage/${this.formPlanning.id}`);
+        
+        // Recharger les tournages
+        await this.chargerTournages();
+        this.fermerModalPlanning();
+        
+        alert('Planning supprimé avec succès!');
+        
+      } catch (error) {
+        console.error('Erreur suppression planning:', error);
+        this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la suppression du planning';
+      }
+    },
+
+    validerFormulairePlanning() {
+      if (!this.formPlanning.projetId) {
+        this.erreurPlanning = 'Veuillez sélectionner un projet';
+        return false;
+      }
+      
+      if (!this.formPlanning.episodeId) {
+        this.erreurPlanning = 'Veuillez sélectionner un épisode';
+        return false;
+      }
+      
+      if (!this.formPlanning.sequenceId) {
+        this.erreurPlanning = 'Veuillez sélectionner une séquence';
+        return false;
+      }
+      
+      if (!this.formPlanning.sceneId) {
+        this.erreurPlanning = 'Veuillez sélectionner une scène';
+        return false;
+      }
+      
+      if (!this.formPlanning.heureDebut || !this.formPlanning.heureFin) {
+        this.erreurPlanning = 'Veuillez renseigner les heures de début et fin';
+        return false;
+      }
+      
+      if (this.formPlanning.heureDebut >= this.formPlanning.heureFin) {
+        this.erreurPlanning = 'L\'heure de fin doit être après l\'heure de début';
+        return false;
+      }
+      
+      return true;
     }
   },
   
@@ -257,6 +695,12 @@ export default {
   border: 1px solid #e9ecef;
   padding: 5px;
   background-color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.calendar-day:hover {
+  background-color: #f8f9fa;
 }
 
 .calendar-day.other-month {
@@ -264,9 +708,14 @@ export default {
   color: #6c757d;
 }
 
+.calendar-day.has-tournages {
+  background-color: #e8f5e8;
+}
+
 .day-header {
   font-weight: bold;
   margin-bottom: 5px;
+  text-align: center;
 }
 
 .tournages-list {
@@ -301,5 +750,150 @@ export default {
 
 .tournage-title {
   font-size: 9px;
+}
+
+/* Styles pour le modal de planning */
+.planning-modal {
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.planning-form {
+  padding: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  flex: 0 0 100%;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #495057;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-select:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .calendrier-tournage {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .calendrier-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .filters {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
 }
 </style>
