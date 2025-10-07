@@ -188,7 +188,7 @@
             </div>
           </div>
 
-          <!-- Sélection du statut dans le formulaire -->
+          <!-- NOUVEAU : Sélection du statut dans le formulaire -->
           <div class="form-row" v-if="isModification">
             <div class="form-group">
               <label for="statutTournage">Statut du tournage *</label>
@@ -221,13 +221,6 @@
           <div v-if="erreur" class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
             {{ erreur }}
-          </div>
-
-          <div v-if="erreur" class="conflict-warning" :class="{ 'has-conflicts': erreur.includes('Conflits détectés') }">
-            <i class="fas fa-exclamation-triangle"></i>
-            <div class="conflict-messages">
-              <div v-for="(line, index) in erreur.split('\n')" :key="index">{{ line }}</div>
-            </div>
           </div>
           
           <div class="modal-actions">
@@ -945,29 +938,5 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
     width: 95%;
     margin: 10px;
   }
-}
-.conflict-warning {
-  background-color: #fff3cd;
-  border: 1px solid #ffeaa7;
-  color: #856404;
-  padding: 12px;
-  border-radius: 4px;
-  margin: 15px 0;
-}
-
-.conflict-warning.has-conflicts {
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-  color: #721c24;
-}
-
-.conflict-messages {
-  margin-top: 8px;
-}
-
-.conflict-messages div {
-  margin: 4px 0;
-  padding-left: 8px;
-  border-left: 3px solid #dc3545;
 }
 </style>
