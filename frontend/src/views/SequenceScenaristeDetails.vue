@@ -696,37 +696,48 @@ export default {
     },
     
    async saveEditedScene() {
-      // Valider l'ordre avant soumission
-      this.validateOrder();
-      if (this.orderError) {
-        return;
+  // Valider l'ordre avant soumission
+  this.validateOrder();
+  if (this.orderError) {
+    return;
+  }
+  
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      alert('Utilisateur non connecté');
+      return;
+    }
+
+    const response = await axios.put(`/api/scenes/${this.editingScene.idScene}`, {
+      titre: this.editingScene.titre,
+      synopsis: this.editingScene.synopsis,
+      ordre: parseInt(this.editingScene.ordre),
+      statutId: this.editingScene.statutId,
+    }, {
+      headers: {
+        'X-User-Id': user.id
       }
-      
-      try {
-        const response = await axios.put(`/api/scenes/${this.editingScene.idScene}`, {
-          titre: this.editingScene.titre,
-          synopsis: this.editingScene.synopsis,
-          ordre: parseInt(this.editingScene.ordre),
-          statutId: this.editingScene.statutId,
-        });
-        
-        this.showEditModal = false;
-        this.editError = '';
-        this.orderError = '';
-        await this.loadScenes();
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour de la scène:', error);
-        
-        // Gestion spécifique des erreurs de duplication d'ordre
-        if (error.response?.status === 400 && 
-            error.response?.data?.message?.includes('ordre')) {
-          this.orderError = 'Cet ordre existe déjà pour cette séquence. Veuillez choisir un autre numéro.';
-          this.editError = 'Erreur de validation: ' + this.orderError;
-        } else {
-          this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de la scène';
-        }
-      }
-    },
+    });
+    
+    this.showEditModal = false;
+    this.editError = '';
+    this.orderError = '';
+    await this.loadScenes();
+    alert('Scène modifiée avec succès!');
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de la scène:', error);
+    
+    // Gestion spécifique des erreurs de duplication d'ordre
+    if (error.response?.status === 400 && 
+        error.response?.data?.message?.includes('ordre')) {
+      this.orderError = 'Cet ordre existe déjà pour cette séquence. Veuillez choisir un autre numéro.';
+      this.editError = 'Erreur de validation: ' + this.orderError;
+    } else {
+      this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de la scène';
+    }
+  }
+},
     
     closeEditModal() {
       this.showEditModal = false;
@@ -964,16 +975,35 @@ async addLieuToScene() {
       };
     },
     
-    async confirmDeleteScene(sceneId) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer cette scène ?')) {
-        try {
-          await axios.delete(`/api/scenes/${sceneId}`);
-          await this.loadScenes();
-        } catch (error) {
-          console.error('Erreur lors de la suppression de la scène:', error);
+   async confirmDeleteScene(sceneId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette scène ?')) {
+      try {
+        // Récupérer l'utilisateur depuis le localStorage
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        if (!user || !user.id) {
+          alert('Utilisateur non connecté');
+          return;
         }
+
+        // Ajouter l'en-tête X-User-Id comme dans EcranTravail.vue
+        await axios.delete(`/api/scenes/${sceneId}`, {
+          headers: {
+            'X-User-Id': user.id
+          }
+        });
+        
+        await this.loadScenes();
+        alert('Scène supprimée avec succès!');
+      } catch (error) {
+        console.error('Erreur lors de la suppression de la scène:', error);
+        
+        // Afficher le message d'erreur détaillé
+        const errorMessage = error.response?.data?.message || error.response?.data || error.message;
+        alert(`Erreur lors de la suppression: ${errorMessage}`);
       }
-    },
+    }
+  },
 
     async openSynopsisModal(scene) {
       this.selectedScene = scene;
