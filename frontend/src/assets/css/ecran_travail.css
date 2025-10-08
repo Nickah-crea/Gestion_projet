@@ -1099,3 +1099,576 @@ strong {
   position: relative;
 }
 
+/* Styles pour la section d'export */
+.export-section {
+  margin: 25px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.export-section h3 {
+  margin: 0 0 15px 0;
+  color: #21294F;
+  font-size: 1.3em;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.export-section h3 i {
+  color: #dc3545;
+}
+
+.export-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.export-btn {
+  background: white;
+  color: #21294F;
+  border: 2px solid #e0e0e0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #21294F;
+}
+
+.export-btn.pdf-btn {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+}
+
+.export-btn.pdf-btn:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.export-btn i {
+  font-size: 1.1em;
+}
+
+/* Bouton d'export dans les scènes */
+.scene-actions {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.export-dialogues-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.export-dialogues-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.export-dialogues-btn.pdf-btn {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.export-dialogues-btn.pdf-btn:hover {
+  background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .export-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .export-btn {
+    padding: 10px 14px;
+    font-size: 0.85em;
+  }
+}
+
+
+/* Styles pour le menu déroulant d'export */
+.export-section {
+  margin: 15px 0;
+}
+
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-main-btn {
+  background: linear-gradient(135deg, #243168, #21294F);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(33, 41, 79, 0.3);
+}
+
+.export-main-btn:hover {
+  background: linear-gradient(135deg, #21294F, #1a1f3d);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(33, 41, 79, 0.4);
+}
+
+.export-main-btn:active {
+  transform: translateY(0);
+}
+
+.export-dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  min-width: 250px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  z-index: 1000;
+  margin-top: 5px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.export-dropdown:hover .export-dropdown-content {
+  display: block;
+}
+
+.export-option {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.export-option:last-child {
+  border-bottom: none;
+}
+
+.export-option:hover {
+  background: #f8f9fa;
+  color: #243168;
+  transform: translateX(5px);
+}
+
+.export-option i {
+  color: #dc3545;
+  width: 16px;
+}
+
+/* Styles pour les boutons d'export dans les scènes */
+.scene-actions .export-dialogues-btn {
+  background: #243168;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.scene-actions .export-dialogues-btn:hover {
+  background: #21294F;
+  transform: translateY(-1px);
+}
+
+/* Styles pour la barre de recherche */
+.global-search-section {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.search-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 45px 12px 45px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  border-color: #243168;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.clear-search-btn:hover {
+  color: #333;
+}
+
+/* Styles pour les résultats de recherche */
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.search-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.search-results-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.close-results-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.results-list {
+  padding: 10px 0;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+  background-color: #f8f9fa;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.result-type-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 12px;
+  min-width: 70px;
+  text-align: center;
+}
+
+.result-type-badge.episode {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.result-type-badge.scene {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.result-type-badge.sequence {
+  background-color: #e8f5e8;
+  color: #388e3c;
+}
+
+.result-content {
+  flex: 1;
+}
+
+.result-content h4 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.result-details {
+  margin: 0 0 5px 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.result-details span {
+  margin-right: 10px;
+}
+
+.result-synopsis {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+}
+
+.result-arrow {
+  color: #666;
+  margin-left: 10px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.sequence-navigation {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.sequence-number {
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.sequence-number:hover {
+  background-color: #e0e0e0;
+}
+
+.sequence-number.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.new-sequence {
+  position: relative;
+}
+
+.blinking-icon {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 12px;
+  animation: blink 1s infinite;
+}
+
+.separator {
+  margin: 0 5px;
+  color: #000;
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Ajouter ces styles */
+.dialogue-text {
+  cursor: text;
+  user-select: text;
+  position: relative;
+  line-height: 1.6;
+}
+
+.text-highlight {
+  padding: 2px 1px;
+  border-radius: 3px;
+  margin: 0 1px;
+}
+
+.highlight-icon {
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.color-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  border-color: #333;
+  transform: scale(1.2);
+}
+
+.selected-text-preview {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  border-left: 4px solid #007bff;
+}
+
+.existing-highlights {
+  margin-top: 15px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin: 5px 0;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.highlight-sample {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  margin-right: 10px;
+}
+
+.highlight-text {
+  flex: 1;
+  font-size: 0.9em;
+}
+
+.highlight-info {
+  font-size: 0.8em;
+  color: #666;
+  margin-right: 10px;
+}
+
+.delete-highlight-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 5px;
+}
+.episode-number.accessible {
+    border: 2px solid #4CAF50;
+}
+
+.episode-number:not(.accessible) {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.equipe-info {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+}
+
+.realisateur-info, .scenariste-info {
+    display: block;
+    margin: 5px 0;
+    font-style: italic;
+}
+
+/* Masquer les boutons non autorisés */
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
