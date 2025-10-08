@@ -9,7 +9,58 @@
            <button class="nav-btn" @click="goToCalendrierTournage">
               <i class="fas fa-calendar-alt"></i> Calendrier
             </button>
+          <div class="">
+          <div class="export-dropdown">
+            <button class="export-main-btn">
+              <i class="fas fa-file-export"></i> Exporter en PDF
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="export-dropdown-content">
+              <!-- Export PDF des scènes seulement -->
+              <button 
+                v-if="currentSequence" 
+                class="export-option" 
+                @click="exportScenesOnlyPDF"
+                title="Exporter les scènes en PDF"
+              >
+                <i class="fas fa-file-pdf"></i> Scènes PDF
+              </button>
+
+              <!-- Export PDF des dialogues d'une scène -->
+              <button 
+                v-if="currentSequence" 
+                class="export-option" 
+                @click="exportSequenceDialoguesPDF"
+                title="Exporter tous les dialogues de la séquence en PDF"
+              >
+                <i class="fas fa-file-pdf"></i> Dialogues PDF
+              </button>
+
+              <!-- Export PDF séquence complète -->
+              <button 
+                v-if="currentSequence" 
+                class="export-option" 
+                @click="exportSequenceCompletePDF"
+                title="Exporter la séquence complète en PDF"
+              >
+                <i class="fas fa-file-pdf"></i> Séquence PDF
+              </button>
+
+              <!-- Export PDF épisode avec séquence -->
+              <button 
+                v-if="currentEpisode" 
+                class="export-option" 
+                @click="exportEpisodeWithSequencePDF"
+                title="Exporter l'épisode avec séquence en PDF"
+              >
+                <i class="fas fa-file-pdf"></i> Épisode PDF
+              </button>
+            </div>
+          </div>
         </div>
+        </div>
+
+        
 
         <h2> Épisode {{ currentEpisode?.ordre }} : </h2><br>     
 
@@ -172,6 +223,18 @@
               <span class="comment-icon" @click="toggleSceneCommentSection(scene)">
                 <i class="fas fa-comments" style="color: #21294F;"></i> {{ getSceneCommentCount(scene.idScene) }}
               </span>
+
+               <!-- Dans chaque scene-card, remplacer le bouton existant par : -->
+                <div class="scene-actions">
+                  <button 
+                    v-if="userPermissions.canCreateScene" 
+                    class="export-dialogues-btn pdf-btn" 
+                    @click="exportSceneDialoguesPDF(scene)"
+                    title="Exporter les dialogues de cette scène en PDF"
+                  >
+                    <i class="fas fa-file-pdf"></i> Exporter Dialogues PDF
+                  </button>
+                </div>
             </h3>
 
               <!-- Section Tournage -->
@@ -189,6 +252,7 @@
                   <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
                   <button @click="addSceneComment" class="add-comment-btn"><i class="fas fa-plus-circle"></i>Ajouter</button>
                 </div>
+
                 <div class="comments-list">
                   <div v-for="comment in sceneComments" :key="comment.id" class="comment-item">
                     <div class="comment-header">
@@ -753,6 +817,8 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import '../assets/css/ecran_travail.css';
 import SceneTournageSection from './SceneTournageSection.vue';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 components: {
   SceneTournageSection
@@ -2153,357 +2219,665 @@ const error = computed(() => store.error);
 const isLoading = computed(() => store.isLoading);
 const hasNext = computed(() => store.hasNext);
 const hasPrev = computed(() => store.hasPrev);
+
+
+// Méthodes d'export PDF avec design de facture
+const exportScenesOnlyPDF = async () => {
+  if (!currentSequence.value) return;
+  
+  try {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    
+    // Couleurs de l'application
+    const primaryColor = [33, 41, 79]; // #21294F
+    const secondaryColor = [220, 53, 69]; // #dc3545
+    const accentColor = [23, 162, 184]; // #17a2b8
+    
+    let yPosition = 20;
+    
+    // En-tête avec design de facture
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 40, 'F');
+    
+    // Logo/Titre à gauche
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.text(`PROJET: ${currentEpisode.value?.projetTitre || 'Cinema'}`, 20, 15);
+    pdf.setFontSize(12);
+    pdf.text(`Épisode ${currentEpisode.value?.ordre}: ${currentEpisode.value?.titre}`, 20, 25);
+    
+    // Informations à droite
+    pdf.text(`Séquence ${currentSequence.value.ordre}`, 160, 15);
+    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
+    pdf.text(`Scènes: ${currentSequence.value.scenes?.length || 0}`, 160, 29);
+    
+    // Ligne de séparation
+    pdf.setDrawColor(...secondaryColor);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, 45, 190, 45);
+    
+    yPosition = 60;
+    
+    // Titre principal
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(18);
+    pdf.text(`LISTE DES SCÈNES - SÉQUENCE ${currentSequence.value.ordre}`, 20, yPosition);
+    
+    yPosition += 12;
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(`Séquence: ${currentSequence.value.titre}`, 20, yPosition);
+    
+    yPosition += 20;
+    
+    // Tableau des scènes
+    currentSequence.value.scenes.forEach((scene, index) => {
+      if (yPosition > 250) {
+        pdf.addPage();
+        yPosition = 20;
+        
+        // En-tête sur les nouvelles pages
+        pdf.setFillColor(...primaryColor);
+        pdf.rect(0, 0, 210, 40, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(12);
+        pdf.text(`Suite - Scènes Séquence ${currentSequence.value.ordre}`, 20, 20);
+        yPosition = 40;
+      }
+      
+      // En-tête de scène
+      pdf.setFillColor(240, 240, 240);
+      pdf.rect(20, yPosition - 8, 170, 10, 'F');
+      
+      pdf.setTextColor(...primaryColor);
+      pdf.setFontSize(11);
+      pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 22, yPosition);
+      
+      yPosition += 12;
+      
+      // Informations scène
+      pdf.setFontSize(9);
+      pdf.setTextColor(80, 80, 80);
+      
+      // Synopsis
+      const synopsisLines = pdf.splitTextToSize(scene.synopsis || 'Aucun synopsis', 160);
+      pdf.text('Synopsis:', 22, yPosition);
+      pdf.text(synopsisLines, 25, yPosition + 4);
+      
+      // Statut et lieux à droite
+      pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 130, yPosition);
+      
+      const lieuxText = scene.sceneLieus?.length 
+        ? scene.sceneLieus.map(sl => sl.lieuNom).join(', ')
+        : 'Aucun lieu';
+      const lieuxLines = pdf.splitTextToSize(`Lieux: ${lieuxText}`, 55);
+      pdf.text(lieuxLines, 130, yPosition + 5);
+      
+      yPosition += Math.max(synopsisLines.length * 3.5, lieuxLines.length * 3.5, 15) + 15;
+      
+      // Ligne de séparation
+      if (index < currentSequence.value.scenes.length - 1) {
+        pdf.setDrawColor(200, 200, 200);
+        pdf.line(20, yPosition - 5, 190, yPosition - 5);
+        yPosition += 5;
+      }
+    });
+    
+    // Pied de page
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFontSize(8);
+      pdf.text(`Page ${i} sur ${pageCount}`, 105, 290, { align: 'center' });
+      pdf.text(`Exporté le ${new Date().toLocaleDateString()}`, 105, 293, { align: 'center' });
+    }
+    
+    pdf.save(`scenes-sequence-${currentSequence.value.ordre}.pdf`);
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF des scènes:', error);
+    alert('Erreur lors de l\'export PDF');
+  }
+};
+
+const exportSceneDialoguesPDF = async (scene) => {
+  try {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+    const secondaryColor = [220, 53, 69];
+    
+    // En-tête
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 40, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.text(`PROJET: ${currentEpisode.value?.projetTitre || 'Cinema'}`, 20, 15);
+    pdf.setFontSize(12);
+    pdf.text(`Épisode ${currentEpisode.value?.ordre} - Séquence ${currentSequence.value?.ordre}`, 20, 25);
+    
+    pdf.text(`Scène ${scene.ordre}`, 160, 15);
+    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
+    pdf.text(`Dialogues: ${scene.dialogues?.length || 0}`, 160, 29);
+    
+    pdf.setDrawColor(...secondaryColor);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, 45, 190, 45);
+    
+    let yPosition = 60;
+    
+    // Titre
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(18);
+    pdf.text(`DIALOGUES - SCÈNE ${scene.ordre}`, 20, yPosition);
+    
+    yPosition += 10;
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(`Scène: ${scene.titre}`, 20, yPosition);
+    
+    yPosition += 15;
+    
+    // Dialogues
+    if (scene.dialogues?.length) {
+      scene.dialogues.forEach((dialogue, index) => {
+        if (yPosition > 250) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        // Personnage avec fond
+        pdf.setFillColor(245, 245, 245);
+        pdf.rect(20, yPosition - 5, 170, 8, 'F');
+        
+        pdf.setFontSize(11);
+        pdf.setTextColor(...primaryColor);
+        pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 22, yPosition);
+        
+        yPosition += 10;
+        
+        // Texte du dialogue
+        pdf.setFontSize(10);
+        pdf.setTextColor(0, 0, 0);
+        const dialogueLines = pdf.splitTextToSize(dialogue.texte, 165);
+        pdf.text(dialogueLines, 25, yPosition);
+        yPosition += (dialogueLines.length * 4.5) + 5;
+        
+        // Observation
+        if (dialogue.observation) {
+          pdf.setFontSize(9);
+          pdf.setTextColor(100, 100, 100);
+          pdf.text(`Note: ${dialogue.observation}`, 25, yPosition);
+          yPosition += 8;
+        }
+        
+        yPosition += 8;
+        
+        // Ligne de séparation
+        if (index < scene.dialogues.length - 1) {
+          pdf.setDrawColor(200, 200, 200);
+          pdf.line(20, yPosition - 3, 190, yPosition - 3);
+          yPosition += 5;
+        }
+      });
+    } else {
+      pdf.setFontSize(10);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text('Aucun dialogue dans cette scène', 20, yPosition);
+    }
+    
+    // Pied de page
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFontSize(8);
+      pdf.text(`Page ${i} sur ${pageCount}`, 105, 290, { align: 'center' });
+    }
+    
+    pdf.save(`dialogues-scene-${scene.ordre}.pdf`);
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF des dialogues:', error);
+    alert('Erreur lors de l\'export PDF');
+  }
+};
+
+const exportSequenceDialoguesPDF = async () => {
+  if (!currentSequence.value) return;
+  
+  try {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+    const secondaryColor = [220, 53, 69];
+    
+    // En-tête
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 40, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.text(`PROJET: ${currentEpisode.value?.projetTitre || 'Cinema'}`, 20, 15);
+    pdf.setFontSize(12);
+    pdf.text(`Épisode ${currentEpisode.value?.ordre}: ${currentEpisode.value?.titre}`, 20, 25);
+    
+    pdf.text(`Séquence ${currentSequence.value.ordre}`, 160, 15);
+    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
+    pdf.text(`Scènes: ${currentSequence.value.scenes?.length || 0}`, 160, 29);
+    
+    pdf.setDrawColor(...secondaryColor);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, 45, 190, 45);
+    
+    let yPosition = 60;
+    
+    // Titre
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(18);
+    pdf.text(`DIALOGUES COMPLETS - SÉQUENCE ${currentSequence.value.ordre}`, 20, yPosition);
+    
+    yPosition += 12;
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(`Séquence: ${currentSequence.value.titre}`, 20, yPosition);
+    
+    yPosition += 20;
+    
+    // Parcourir toutes les scènes
+    currentSequence.value.scenes.forEach(scene => {
+      if (scene.dialogues?.length) {
+        // Titre de la scène
+        if (yPosition > 230) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        pdf.setFillColor(240, 240, 240);
+        pdf.rect(20, yPosition - 5, 170, 8, 'F');
+        
+        pdf.setFontSize(14);
+        pdf.setTextColor(...primaryColor);
+        pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 22, yPosition);
+        yPosition += 15;
+        
+        // Dialogues de la scène
+        scene.dialogues.forEach((dialogue, index) => {
+          if (yPosition > 250) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          // Personnage
+          pdf.setFontSize(11);
+          pdf.setTextColor(23, 162, 184);
+          pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 25, yPosition);
+          
+          yPosition += 7;
+          
+          // Texte
+          pdf.setFontSize(10);
+          pdf.setTextColor(0, 0, 0);
+          const dialogueLines = pdf.splitTextToSize(dialogue.texte, 160);
+          pdf.text(dialogueLines, 30, yPosition);
+          yPosition += (dialogueLines.length * 4.5) + 8;
+          
+          // Ligne de séparation entre dialogues
+          if (index < scene.dialogues.length - 1) {
+            pdf.setDrawColor(220, 220, 220);
+            pdf.line(25, yPosition - 3, 185, yPosition - 3);
+            yPosition += 5;
+          }
+        });
+        
+        yPosition += 15;
+        
+        // Ligne de séparation entre scènes
+        pdf.setDrawColor(180, 180, 180);
+        pdf.line(20, yPosition - 5, 190, yPosition - 5);
+        yPosition += 10;
+      }
+    });
+    
+    // Pied de page
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFontSize(8);
+      pdf.text(`Page ${i} sur ${pageCount}`, 105, 290, { align: 'center' });
+    }
+    
+    pdf.save(`dialogues-sequence-${currentSequence.value.ordre}.pdf`);
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF des dialogues de séquence:', error);
+    alert('Erreur lors de l\'export PDF');
+  }
+};
+
+const exportSequenceCompletePDF = async () => {
+  if (!currentSequence.value) return;
+  
+  try {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+    const secondaryColor = [220, 53, 69];
+    
+    // Page de garde
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 297, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(24);
+    pdf.text(`SÉQUENCE ${currentSequence.value.ordre}`, 105, 120, { align: 'center' });
+    
+    pdf.setFontSize(18);
+    pdf.text(currentSequence.value.titre.toUpperCase(), 105, 140, { align: 'center' });
+    
+    pdf.setFontSize(14);
+    pdf.text(`Statut: ${currentSequence.value.statutNom}`, 105, 160, { align: 'center' });
+    
+    pdf.setFontSize(12);
+    pdf.text(`Épisode ${currentEpisode.value?.ordre}: ${currentEpisode.value?.titre}`, 105, 180, { align: 'center' });
+    pdf.text(`Projet: ${currentEpisode.value?.projetTitre || 'Série TV'}`, 105, 190, { align: 'center' });
+    
+    pdf.text(`Exporté le ${new Date().toLocaleDateString()}`, 105, 210, { align: 'center' });
+    
+    pdf.addPage();
+    
+    // En-tête pages suivantes
+    const addHeader = (pageNum) => {
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, 210, 30, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(12);
+      pdf.text(`SÉQUENCE ${currentSequence.value.ordre} - ${currentSequence.value.titre}`, 20, 15);
+      pdf.text(`Page ${pageNum}`, 190, 15, { align: 'right' });
+      
+      pdf.setDrawColor(...secondaryColor);
+      pdf.setLineWidth(0.5);
+      pdf.line(20, 35, 190, 35);
+    };
+    
+    let yPosition = 45;
+    let pageNum = 2;
+    
+    addHeader(pageNum);
+    
+    // Synopsis séquence
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(16);
+    pdf.text('SYNOPSIS DE LA SÉQUENCE', 20, yPosition);
+    
+    yPosition += 12;
+    pdf.setFontSize(10);
+    pdf.setTextColor(0, 0, 0);
+    const synopsisLines = pdf.splitTextToSize(currentSequence.value.synopsis || 'Aucun synopsis', 170);
+    pdf.text(synopsisLines, 20, yPosition);
+    yPosition += (synopsisLines.length * 4) + 25;
+    
+    // Scènes
+    pdf.setFontSize(16);
+    pdf.setTextColor(...primaryColor);
+    pdf.text('DÉTAIL DES SCÈNES', 20, yPosition);
+    yPosition += 20;
+    
+    currentSequence.value.scenes.forEach((scene, sceneIndex) => {
+      if (yPosition > 250) {
+        pdf.addPage();
+        pageNum++;
+        addHeader(pageNum);
+        yPosition = 45;
+      }
+      
+      // En-tête scène
+      pdf.setFillColor(240, 240, 240);
+      pdf.rect(20, yPosition - 5, 170, 8, 'F');
+      
+      pdf.setFontSize(14);
+      pdf.setTextColor(...primaryColor);
+      pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 22, yPosition);
+      yPosition += 15;
+      
+      // Informations scène
+      pdf.setFontSize(10);
+      pdf.setTextColor(80, 80, 80);
+      pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 22, yPosition);
+      yPosition += 8;
+      
+      // Synopsis scène
+      pdf.text('Synopsis:', 22, yPosition);
+      const sceneSynopsisLines = pdf.splitTextToSize(scene.synopsis || 'Aucun synopsis', 160);
+      pdf.text(sceneSynopsisLines, 25, yPosition + 4);
+      yPosition += (sceneSynopsisLines.length * 3.5) + 10;
+      
+      // Lieux
+      if (scene.sceneLieus?.length) {
+        pdf.text('Lieux:', 22, yPosition);
+        scene.sceneLieus.forEach((sceneLieu, lieuIndex) => {
+          const lieuText = `• ${sceneLieu.lieuNom}${sceneLieu.plateauNom ? ` (Plateau: ${sceneLieu.plateauNom})` : ''}`;
+          pdf.text(lieuText, 25, yPosition + 4 + (lieuIndex * 4));
+        });
+        yPosition += (scene.sceneLieus.length * 4) + 8;
+      }
+      
+      // Dialogues (premiers seulement)
+      if (scene.dialogues?.length) {
+        pdf.text('Dialogues:', 22, yPosition);
+        yPosition += 6;
+        
+        // Afficher seulement les 3 premiers dialogues pour l'aperçu
+        scene.dialogues.slice(0, 3).forEach((dialogue, dialogueIndex) => {
+          pdf.setFontSize(9);
+          pdf.setTextColor(23, 162, 184);
+          pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 25, yPosition);
+          yPosition += 4;
+          
+          pdf.setFontSize(8);
+          pdf.setTextColor(0, 0, 0);
+          const previewText = dialogue.texte.length > 100 ? dialogue.texte.substring(0, 100) + '...' : dialogue.texte;
+          const previewLines = pdf.splitTextToSize(previewText, 155);
+          pdf.text(previewLines, 30, yPosition);
+          yPosition += (previewLines.length * 3) + 6;
+        });
+        
+        if (scene.dialogues.length > 3) {
+          pdf.setFontSize(8);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text(`... et ${scene.dialogues.length - 3} dialogue(s) supplémentaire(s)`, 25, yPosition);
+          yPosition += 8;
+        }
+      }
+      
+      yPosition += 15;
+      
+      // Ligne de séparation entre scènes
+      if (sceneIndex < currentSequence.value.scenes.length - 1) {
+        pdf.setDrawColor(200, 200, 200);
+        pdf.line(20, yPosition - 5, 190, yPosition - 5);
+        yPosition += 10;
+      }
+    });
+    
+    // Pied de page final
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 2; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFontSize(8);
+      pdf.text(`Document complet - ${totalPages - 1} pages`, 105, 290, { align: 'center' });
+    }
+    
+    pdf.save(`sequence-${currentSequence.value.ordre}-complete.pdf`);
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF complet de la séquence:', error);
+    alert('Erreur lors de l\'export PDF');
+  }
+};
+
+const exportEpisodeWithSequencePDF = async () => {
+  if (!currentEpisode.value || !currentSequence.value) return;
+  
+  try {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+    const secondaryColor = [220, 53, 69];
+    
+    // Page de garde
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 297, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(22);
+    pdf.text(`ÉPISODE ${currentEpisode.value.ordre}`, 105, 100, { align: 'center' });
+    
+    pdf.setFontSize(18);
+    pdf.text(currentEpisode.value.titre.toUpperCase(), 105, 120, { align: 'center' });
+    
+    pdf.setFontSize(16);
+    pdf.text(`Séquence ${currentSequence.value.ordre}`, 105, 140, { align: 'center' });
+    pdf.text(currentSequence.value.titre, 105, 155, { align: 'center' });
+    
+    pdf.setFontSize(12);
+    pdf.text(`Statut: ${currentEpisode.value.statutNom}`, 105, 175, { align: 'center' });
+    
+    // Équipe
+    if (currentEpisode.value.realisateur || currentEpisode.value.scenariste) {
+      pdf.text('ÉQUIPE:', 105, 195, { align: 'center' });
+      let teamY = 205;
+      
+      if (currentEpisode.value.realisateur) {
+        pdf.text(`Réalisateur: ${currentEpisode.value.realisateur.nom}`, 105, teamY, { align: 'center' });
+        teamY += 8;
+      }
+      
+      if (currentEpisode.value.scenariste) {
+        pdf.text(`Scénariste: ${currentEpisode.value.scenariste.nom}`, 105, teamY, { align: 'center' });
+        teamY += 8;
+      }
+    }
+    
+    pdf.text(`Exporté le ${new Date().toLocaleDateString()}`, 105, 230, { align: 'center' });
+    
+    pdf.addPage();
+    
+    let yPosition = 20;
+    let pageNum = 2;
+    
+    // En-tête pages suivantes
+    const addHeader = (pageNum) => {
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, 210, 30, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(12);
+      pdf.text(`ÉPISODE ${currentEpisode.value.ordre} - ${currentEpisode.value.titre}`, 20, 15);
+      pdf.text(`Page ${pageNum}`, 190, 15, { align: 'right' });
+      
+      pdf.setDrawColor(...secondaryColor);
+      pdf.setLineWidth(0.5);
+      pdf.line(20, 35, 190, 35);
+    };
+    
+    addHeader(pageNum);
+    yPosition = 45;
+    
+    // Synopsis épisode
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(16);
+    pdf.text('SYNOPSIS DE L\'ÉPISODE', 20, yPosition);
+    
+    yPosition += 12;
+    pdf.setFontSize(10);
+    pdf.setTextColor(0, 0, 0);
+    const episodeSynopsisLines = pdf.splitTextToSize(currentEpisode.value.synopsis || 'Aucun synopsis', 170);
+    pdf.text(episodeSynopsisLines, 20, yPosition);
+    yPosition += (episodeSynopsisLines.length * 4) + 25;
+    
+    // Informations séquence
+    pdf.setFontSize(16);
+    pdf.setTextColor(...primaryColor);
+    pdf.text('INFORMATIONS DE LA SÉQUENCE', 20, yPosition);
+    
+    yPosition += 15;
+    pdf.setFontSize(12);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(`Séquence ${currentSequence.value.ordre}: ${currentSequence.value.titre}`, 20, yPosition);
+    yPosition += 8;
+    pdf.text(`Statut: ${currentSequence.value.statutNom}`, 20, yPosition);
+    yPosition += 8;
+    
+    const sequenceSynopsisLines = pdf.splitTextToSize(`Synopsis: ${currentSequence.value.synopsis || 'Aucun synopsis'}`, 170);
+    pdf.text(sequenceSynopsisLines, 20, yPosition);
+    yPosition += (sequenceSynopsisLines.length * 4) + 20;
+    
+    // Résumé des scènes
+    pdf.setFontSize(14);
+    pdf.setTextColor(...primaryColor);
+    pdf.text('RÉSUMÉ DES SCÈNES', 20, yPosition);
+    yPosition += 15;
+    
+    currentSequence.value.scenes.forEach((scene, index) => {
+      if (yPosition > 250) {
+        pdf.addPage();
+        pageNum++;
+        addHeader(pageNum);
+        yPosition = 45;
+      }
+      
+      pdf.setFontSize(11);
+      pdf.setTextColor(...primaryColor);
+      pdf.text(`• Scène ${scene.ordre}: ${scene.titre}`, 25, yPosition);
+      yPosition += 6;
+      
+      pdf.setFontSize(9);
+      pdf.setTextColor(100, 100, 100);
+      
+      // Synopsis court
+      const shortSynopsis = scene.synopsis 
+        ? (scene.synopsis.length > 120 ? scene.synopsis.substring(0, 120) + '...' : scene.synopsis)
+        : 'Aucun synopsis';
+      pdf.text(`  ${shortSynopsis}`, 28, yPosition);
+      yPosition += 5;
+      
+      // Statut et lieux
+      pdf.text(`  Statut: ${scene.statutNom || 'Non défini'}`, 28, yPosition);
+      yPosition += 4;
+      
+      const lieuxCount = scene.sceneLieus?.length || 0;
+      pdf.text(`  Lieux: ${lieuxCount}`, 28, yPosition);
+      yPosition += 4;
+      
+      const dialoguesCount = scene.dialogues?.length || 0;
+      pdf.text(`  Dialogues: ${dialoguesCount}`, 28, yPosition);
+      yPosition += 8;
+      
+      // Ligne de séparation
+      if (index < currentSequence.value.scenes.length - 1) {
+        pdf.setDrawColor(220, 220, 220);
+        pdf.line(25, yPosition - 2, 185, yPosition - 2);
+        yPosition += 5;
+      }
+    });
+    
+    // Pied de page final
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 2; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFontSize(8);
+      pdf.text(`Rapport Épisode ${currentEpisode.value.ordre} - Séquence ${currentSequence.value.ordre}`, 105, 290, { align: 'center' });
+    }
+    
+    pdf.save(`episode-${currentEpisode.value.ordre}-sequence-${currentSequence.value.ordre}.pdf`);
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF épisode + séquence:', error);
+    alert('Erreur lors de l\'export PDF');
+  }
+};
+
+
 </script>
 
-<style>
-/* Styles pour la barre de recherche */
-.global-search-section {
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.search-container {
-  position: relative;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 45px 12px 45px;
-  border: 2px solid #e0e0e0;
-  border-radius: 25px;
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-.search-input:focus {
-  border-color: #243168;
-}
-
-.search-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
-}
-
-.clear-search-btn {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.clear-search-btn:hover {
-  color: #333;
-}
-
-/* Styles pour les résultats de recherche */
-.search-results {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 800px;
-  max-height: 400px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  margin-top: 5px;
-}
-
-.search-results-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
-  background: #f8f9fa;
-}
-
-.search-results-header h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #333;
-}
-
-.close-results-btn {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.results-list {
-  padding: 10px 0;
-}
-
-.search-result-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background-color 0.2s;
-}
-
-.search-result-item:hover {
-  background-color: #f8f9fa;
-}
-
-.search-result-item:last-child {
-  border-bottom: none;
-}
-
-.result-type-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-  margin-right: 12px;
-  min-width: 70px;
-  text-align: center;
-}
-
-.result-type-badge.episode {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.result-type-badge.scene {
-  background-color: #f3e5f5;
-  color: #7b1fa2;
-}
-
-.result-type-badge.sequence {
-  background-color: #e8f5e8;
-  color: #388e3c;
-}
-
-.result-content {
-  flex: 1;
-}
-
-.result-content h4 {
-  margin: 0 0 5px 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.result-details {
-  margin: 0 0 5px 0;
-  font-size: 12px;
-  color: #666;
-}
-
-.result-details span {
-  margin-right: 10px;
-}
-
-.result-synopsis {
-  margin: 0;
-  font-size: 12px;
-  color: #888;
-  font-style: italic;
-}
-
-.result-arrow {
-  color: #666;
-  margin-left: 10px;
-}
-
-.no-results {
-  text-align: center;
-  padding: 20px;
-  color: #666;
-  font-style: italic;
-}
-
-.sequence-navigation {
-  display: flex;
-  gap: 5px;
-  margin: 10px 0;
-  justify-content: center;
-  align-items: center;
-}
-
-.sequence-number {
-  cursor: pointer;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-}
-
-.sequence-number:hover {
-  background-color: #e0e0e0;
-}
-
-.sequence-number.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.new-sequence {
-  position: relative;
-}
-
-.blinking-icon {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  font-size: 12px;
-  animation: blink 1s infinite;
-}
-
-.separator {
-  margin: 0 5px;
-  color: #000;
-  font-weight: bold;
-}
-
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-/* Ajouter ces styles */
-.dialogue-text {
-  cursor: text;
-  user-select: text;
-  position: relative;
-  line-height: 1.6;
-}
-
-.text-highlight {
-  padding: 2px 1px;
-  border-radius: 3px;
-  margin: 0 1px;
-}
-
-.highlight-icon {
-  cursor: pointer;
-  margin-left: 8px;
-}
-
-.color-palette {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0;
-}
-
-.color-option {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: transform 0.2s;
-}
-
-.color-option:hover {
-  transform: scale(1.1);
-}
-
-.color-option.selected {
-  border-color: #333;
-  transform: scale(1.2);
-}
-
-.selected-text-preview {
-  background-color: #f5f5f5;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 10px 0;
-  border-left: 4px solid #007bff;
-}
-
-.existing-highlights {
-  margin-top: 15px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.highlight-item {
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  margin: 5px 0;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-}
-
-.highlight-sample {
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
-  margin-right: 10px;
-}
-
-.highlight-text {
-  flex: 1;
-  font-size: 0.9em;
-}
-
-.highlight-info {
-  font-size: 0.8em;
-  color: #666;
-  margin-right: 10px;
-}
-
-.delete-highlight-btn {
-  background: none;
-  border: none;
-  color: #dc3545;
-  cursor: pointer;
-  padding: 5px;
-}
-.episode-number.accessible {
-    border: 2px solid #4CAF50;
-}
-
-.episode-number:not(.accessible) {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.equipe-info {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f5f5f5;
-    border-radius: 5px;
-}
-
-.realisateur-info, .scenariste-info {
-    display: block;
-    margin: 5px 0;
-    font-style: italic;
-}
-
-/* Masquer les boutons non autorisés */
-button[disabled] {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-</style>
