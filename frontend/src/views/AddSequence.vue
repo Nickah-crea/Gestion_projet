@@ -222,32 +222,42 @@ export default {
       this.ordreError = '';
     },
     async submitForm() {
-      // Valider l'ordre avant soumission
-      this.validateOrdre();
-      if (this.ordreError) {
-        return;
+  // Valider l'ordre avant soumission
+  this.validateOrdre();
+  if (this.ordreError) {
+    return;
+  }
+  
+  this.loading = true;
+  try {
+    // Récupérer l'utilisateur connecté
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      throw new Error('Utilisateur non connecté');
+    }
+
+    const response = await axios.post(`/api/sequences/episodes/${this.episodeId}`, this.formData, {
+      headers: {
+        'X-User-Id': user.id
       }
-      
-      this.loading = true;
-      try {
-        await axios.post(`/api/sequences/episodes/${this.episodeId}`, this.formData);
-        
-        alert('Séquence créée avec succès!');
-        this.goBackToEpisodeDetails();
-      } catch (error) {
-        console.error('Erreur lors de la création de la séquence:', error);
-        
-        // Gestion spécifique des erreurs de duplication d'ordre
-        if (error.response?.status === 400 && error.response?.data?.message?.includes('ordre')) {
-          this.ordreError = 'Cet ordre existe déjà pour cet épisode. Veuillez choisir un autre numéro.';
-        } else {
-          alert('Erreur lors de la création de la séquence: ' + 
-            (error.response?.data?.message || 'Veuillez réessayer'));
-        }
-      } finally {
-        this.loading = false;
-      }
-    },
+    });
+    
+    alert('Séquence créée avec succès!');
+    this.goBackToEpisodeDetails();
+  } catch (error) {
+    console.error('Erreur lors de la création de la séquence:', error);
+    
+    // Gestion spécifique des erreurs de duplication d'ordre
+    if (error.response?.status === 400 && error.response?.data?.message?.includes('ordre')) {
+      this.ordreError = 'Cet ordre existe déjà pour cet épisode. Veuillez choisir un autre numéro.';
+    } else {
+      alert('Erreur lors de la création de la séquence: ' + 
+        (error.response?.data?.message || 'Veuillez réessayer'));
+    }
+  } finally {
+    this.loading = false;
+  }
+},
     goBack() {
       this.$router.go(-1);
     },

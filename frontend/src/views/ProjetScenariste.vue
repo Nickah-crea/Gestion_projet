@@ -353,37 +353,47 @@ export default {
       return statut ? statut.idStatutEpisode : null;
     },
     async saveEditedEpisode() {
-      // Valider l'ordre avant soumission
-      this.validateOrder();
-      if (this.orderError) {
-        return;
+  // Valider l'ordre avant soumission
+  this.validateOrder();
+  if (this.orderError) {
+    return;
+  }
+  
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      this.editError = 'Utilisateur non connecté';
+      return;
+    }
+
+    const response = await axios.put(`/api/episodes/${this.editingEpisode.idEpisode}`, {
+      titre: this.editingEpisode.titre,
+      synopsis: this.editingEpisode.synopsis,
+      ordre: parseInt(this.editingEpisode.ordre),
+      statutId: this.editingEpisode.statutId,
+    }, {
+      headers: {
+        'X-User-Id': user.id
       }
-      
-      try {
-        const response = await axios.put(`/api/episodes/${this.editingEpisode.idEpisode}`, {
-          titre: this.editingEpisode.titre,
-          synopsis: this.editingEpisode.synopsis,
-          ordre: parseInt(this.editingEpisode.ordre),
-          statutId: this.editingEpisode.statutId,
-        });
-        
-        this.showEditModal = false;
-        this.editError = '';
-        this.orderError = '';
-        await this.loadEpisodes();
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour de l épisode:', error);
-        
-        // Gestion spécifique des erreurs de duplication d'ordre
-        if (error.response?.status === 400 && 
-            error.response?.data?.message?.includes('ordre')) {
-          this.orderError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
-          this.editError = 'Erreur de validation: ' + this.orderError;
-        } else {
-          this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
-        }
-      }
-    },
+    });
+    
+    this.showEditModal = false;
+    this.editError = '';
+    this.orderError = '';
+    await this.loadEpisodes();
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de l épisode:', error);
+    
+    // Gestion spécifique des erreurs de duplication d'ordre
+    if (error.response?.status === 400 && 
+        error.response?.data?.message?.includes('ordre')) {
+      this.orderError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
+      this.editError = 'Erreur de validation: ' + this.orderError;
+    } else {
+      this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
+    }
+  }
+},
 
     closeEditModal() {
       this.showEditModal = false;
@@ -401,15 +411,27 @@ export default {
       this.originalOrder = null;
     },
     async confirmDeleteEpisode(episodeId) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer cet épisode ?')) {
-        try {
-          await axios.delete(`/api/episodes/${episodeId}`);
-          await this.loadEpisodes();
-        } catch (error) {
-          console.error('Erreur lors de la suppression de l\'épisode:', error);
-        }
+  if (confirm('Êtes-vous sûr de vouloir supprimer cet épisode ?')) {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        alert('Utilisateur non connecté');
+        return;
       }
-    },
+
+      await axios.delete(`/api/episodes/${episodeId}`, {
+        headers: {
+          'X-User-Id': user.id
+        }
+      });
+      await this.loadEpisodes();
+      alert('Épisode supprimé avec succès!');
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'épisode:', error);
+      alert('Erreur lors de la suppression de l\'épisode: ' + (error.response?.data?.message || error.message));
+    }
+  }
+},
     goToAddEpisode() {
       this.$router.push(`/projet/${this.$route.params.id}/add-episode`);
     },

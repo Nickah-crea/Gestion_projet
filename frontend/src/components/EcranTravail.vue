@@ -71,6 +71,10 @@
           <span v-if="userPermissions.canEditEpisode" class="icon-edit" @click="startEditEpisode">
             <i class="fas fa-pen icon" style="background: none;"></i>
           </span> <br>
+          <span v-if="userPermissions.canEditEpisode" class="icon-delete" @click="confirmDeleteEpisode">
+            <i class="fas fa-trash icon" style="color: #dc3545; background: none;"></i>
+          </span>
+          <br>
         </div>
         
         <div class="syno-episode">
@@ -1418,6 +1422,12 @@ const saveEditedEpisode = async () => {
   editEpisodeError.value = '';
 
   try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      editEpisodeError.value = 'Utilisateur non connecté';
+      return;
+    }
+
     const url = `/api/episodes/${editingEpisode.value.id}`;
     const updateData = {
       titre: editingEpisode.value.titre,
@@ -1425,7 +1435,13 @@ const saveEditedEpisode = async () => {
       ordre: parseInt(editingEpisode.value.ordre),
       statutId: editingEpisode.value.statutId
     };
-    const response = await axios.put(url, updateData);
+    
+    const response = await axios.put(url, updateData, {
+      headers: {
+        'X-User-Id': user.id
+      }
+    });
+    
     if (response.status === 200) {
       store.currentEpisode.titre = editingEpisode.value.titre;
       store.currentEpisode.synopsis = editingEpisode.value.synopsis;
@@ -1442,6 +1458,84 @@ const saveEditedEpisode = async () => {
     editEpisodeError.value = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
   } finally {
     editEpisodeLoading.value = false;
+  }
+};
+
+// Méthode pour supprimer l'épisode
+const confirmDeleteEpisode = async () => {
+  if (!store.currentEpisode?.idEpisode) {
+    alert('Aucun épisode sélectionné');
+    return;
+  }
+
+  if (!confirm(`Êtes-vous sûr de vouloir supprimer l'épisode "${store.currentEpisode.titre}" ? Cette action est irréversible et supprimera également toutes les séquences, scènes et dialogues associés.`)) {
+    return;
+  }
+
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      alert('Utilisateur non connecté');
+      return;
+    }
+
+    // Sauvegarder l'ID de l'épisode courant et la liste des épisodes avant suppression
+    const currentEpisodeId = store.currentEpisode.idEpisode;
+    const currentEpisodes = [...store.episodes];
+    
+    await axios.delete(`/api/episodes/${currentEpisodeId}`, {
+      headers: {
+        'X-User-Id': user.id
+      }
+    });
+
+    // Recharger la liste des épisodes
+    await store.fetchEpisodes(projetId.value);
+    
+    // Trouver l'épisode à afficher après suppression
+    let episodeToNavigate = null;
+    
+    if (store.episodes.length === 0) {
+      // Plus d'épisodes - rediriger vers la page du projet
+      alert('Épisode supprimé avec succès! Aucun autre épisode dans ce projet.');
+      router.push(`/projet/${projetId.value}`);
+      return;
+    }
+    
+    // Trouver l'index de l'épisode supprimé dans l'ancienne liste
+    const deletedEpisodeIndex = currentEpisodes.findIndex(ep => ep.idEpisode === currentEpisodeId);
+    
+    if (deletedEpisodeIndex > 0) {
+      // Si ce n'était pas le premier épisode, aller à l'épisode précédent
+      const previousEpisode = currentEpisodes[deletedEpisodeIndex - 1];
+      episodeToNavigate = store.episodes.find(ep => ep.idEpisode === previousEpisode.idEpisode);
+    } else {
+      // Sinon, aller au premier épisode disponible
+      episodeToNavigate = store.episodes[0];
+    }
+    
+    // Si l'épisode cible n'existe plus (cas rare), prendre le premier disponible
+    if (!episodeToNavigate) {
+      episodeToNavigate = store.episodes[0];
+    }
+    
+    // Naviguer vers l'épisode sélectionné
+    await store.selectEpisodeById(episodeToNavigate.idEpisode);
+    
+    // Mettre à jour l'URL
+    router.push({
+      path: route.path,
+      query: { 
+        ...route.query,
+        episodeId: episodeToNavigate.idEpisode 
+      }
+    });
+    
+    alert('Épisode supprimé avec succès! Navigation vers l\'épisode précédent.');
+    
+  } catch (error) {
+    console.error('Erreur lors de la suppression de l\'épisode:', error);
+    alert('Erreur lors de la suppression de l\'épisode: ' + (error.response?.data?.message || error.message));
   }
 };
 
