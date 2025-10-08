@@ -1525,6 +1525,12 @@ const saveEditedScene = async () => {
   editSceneError.value = '';
 
   try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      editSceneError.value = 'Utilisateur non connecté';
+      return;
+    }
+
     const url = `/api/scenes/${editingScene.value.id}`;
     const updateData = {
       titre: editingScene.value.titre,
@@ -1532,7 +1538,13 @@ const saveEditedScene = async () => {
       ordre: parseInt(editingScene.value.ordre),
       statutId: editingScene.value.statutId
     };
-    const response = await axios.put(url, updateData);
+
+    const response = await axios.put(url, updateData, {
+      headers: {
+        'X-User-Id': user.id
+      }
+    });
+    
     if (response.status === 200) {
       const sceneIndex = store.currentSequence.scenes.findIndex(s => s.idScene === editingScene.value.id);
       if (sceneIndex !== -1) {
@@ -2153,19 +2165,31 @@ const deleteSequence = async (sequenceId) => {
 };
 
 const deleteScene = async (sceneId) => {
-  if (!userPermissions.value.canCreateScene) {
-    alert('Vous n\'êtes pas autorisé à supprimer des scènes pour cette séquence.');
-    return;
-  }
-  
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette scène ?')) {
-    try {
-      await axios.delete(`/api/scenes/${sceneId}`);
-      await store.fetchSequenceDetails(store.currentSequence.idSequence);
-    } catch (error) {
-      console.error('Erreur lors de la suppression de la scène:', error);
-      alert('Erreur lors de la suppression de la scène');
+  try {
+    // Récupérer l'utilisateur depuis le localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || !user.id) {
+      alert('Utilisateur non connecté');
+      return;
     }
+
+    // Essayer directement la suppression avec le header X-User-Id
+    await axios.delete(`/api/scenes/${sceneId}`, {
+      headers: {
+        'X-User-Id': user.id
+      }
+    });
+    
+    await store.fetchSequenceDetails(store.currentSequence.idSequence);
+    alert('Scène supprimée avec succès!');
+  } catch (error) {
+    console.error('Erreur DELETE complète:', error);
+    console.error('Response data:', error.response?.data);
+    
+    // Afficher le message d'erreur du backend
+    const errorMessage = error.response?.data?.message || error.response?.data || error.message;
+    alert(`Erreur suppression: ${errorMessage}`);
   }
 };
 
