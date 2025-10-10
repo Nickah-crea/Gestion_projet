@@ -70,6 +70,36 @@ public class SceneTournageService {
         return convertToDTO(tournage);
     }
 
+    private void synchroniserStatutScene(Long sceneId, String statutTournage) {
+            try {
+                String nouveauStatutScene = convertirStatutTournageVersScene(statutTournage);
+                
+                if (nouveauStatutScene != null) {
+                    mettreAJourStatutScene(sceneId, nouveauStatutScene);
+                    System.out.println("Statut de la scène " + sceneId + " synchronisé vers: " + nouveauStatutScene);
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur lors de la synchronisation du statut de la scène: " + e.getMessage());
+            }
+        }
+
+    private String convertirStatutTournageVersScene(String statutTournage) {
+            switch (statutTournage) {
+                case "planifie":
+                    return "planifiee";
+                case "en_cours":
+                    return "tournage";
+                case "termine":
+                    return "tournee";
+                case "confirme":
+                    return "preparee"; // ou garder le statut actuel
+                case "reporte":
+                    return "a_retourner"; // ou garder le statut actuel
+                default:
+                    return null; // Pas de synchronisation pour les autres statuts
+            }
+    }
+
     @Transactional
     public SceneTournageDTO planifierTournage(CreateSceneTournageDTO createDTO) {
         // Vérifier si la scène est déjà planifiée
@@ -105,6 +135,10 @@ public class SceneTournageService {
         }
 
         SceneTournage saved = sceneTournageRepository.save(tournage);
+        
+        // SYNCHRONISATION AUTOMATIQUE
+        synchroniserStatutScene(saved.getScene().getId(), saved.getStatutTournage());
+        
         return convertToDTO(saved);
     }
 
@@ -114,20 +148,20 @@ public class SceneTournageService {
                 .orElseThrow(() -> new RuntimeException("Tournage non trouvé"));
 
         // Empêcher la modification d'un tournage terminé
-        if ("termine".equals(tournage.getStatutTournage())) {
-            throw new RuntimeException("Impossible de modifier un tournage terminé");
+        if ("termine".equals(tournage.getStatutTournage()) && !"termine".equals(nouveauStatut)) {
+            throw new RuntimeException("Impossible de modifier le statut d'un tournage terminé");
         }
 
+        String ancienStatut = tournage.getStatutTournage();
         tournage.setStatutTournage(nouveauStatut);
         SceneTournage updated = sceneTournageRepository.save(tournage);
         
-        
-        if ("termine".equals(nouveauStatut)) {
-            mettreAJourStatutScene(tournage.getScene().getId(), "tournee");
-        }
+        // SYNCHRONISATION AUTOMATIQUE
+        synchroniserStatutScene(updated.getScene().getId(), nouveauStatut);
         
         return convertToDTO(updated);
     }
+
 
 
     @Transactional
@@ -136,7 +170,8 @@ public class SceneTournageService {
                 .orElseThrow(() -> new RuntimeException("Tournage non trouvé"));
 
         // Empêcher la modification d'un tournage terminé
-        if ("termine".equals(tournage.getStatutTournage())) {
+        if ("termine".equals(tournage.getStatutTournage()) && 
+            (updateDTO.getStatutTournage() != null && !"termine".equals(updateDTO.getStatutTournage()))) {
             throw new RuntimeException("Impossible de modifier un tournage terminé");
         }
 
@@ -167,14 +202,13 @@ public class SceneTournageService {
 
         SceneTournage updated = sceneTournageRepository.save(tournage);
         
-        // Mettre à jour le statut de la scène si le statut du tournage est passé à "terminé"
-        if (!"termine".equals(ancienStatut) && "termine".equals(updated.getStatutTournage())) {
-            mettreAJourStatutScene(updated.getScene().getId(), "tournee");
+        // SYNCHRONISATION AUTOMATIQUE si le statut a changé
+        if (updateDTO.getStatutTournage() != null && !updateDTO.getStatutTournage().equals(ancienStatut)) {
+            synchroniserStatutScene(updated.getScene().getId(), updated.getStatutTournage());
         }
 
         return convertToDTO(updated);
     }
-
     @Transactional
     public void supprimerTournage(Long id) {
         SceneTournage tournage = sceneTournageRepository.findByIdWithDetails(id)
@@ -254,6 +288,8 @@ public class SceneTournageService {
         }
     }
 
+    
+
     public void mettreAJourStatutScene(Long sceneId, String nouveauStatutCode) {
         try {
             // Trouver le statut correspondant
@@ -285,7 +321,7 @@ public class SceneTournageService {
             }
         } catch (Exception e) {
             System.err.println("Erreur lors de la mise à jour du statut de la scène: " + e.getMessage());
-            // Ne pas propager l'erreur pour ne pas bloquer la mise à jour du tournage
+            throw new RuntimeException("Erreur de synchronisation du statut de la scène");
         }
     }
 
