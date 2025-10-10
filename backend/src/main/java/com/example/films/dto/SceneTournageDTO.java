@@ -33,11 +33,11 @@ public class SceneTournageDTO {
     private LocalDateTime creeLe;
     private LocalDateTime modifieLe;
     
-    // Informations sur les comédiens
+    
     private Integer nbComediens;
     private String nomsComediens;
     private List<String> detailsPersonnages;
-    
+
     public List<String> getDetailsPersonnages() {
         return detailsPersonnages;
     }

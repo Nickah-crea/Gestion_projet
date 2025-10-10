@@ -130,7 +130,7 @@ public class SceneTournageService {
         }
 
         // Vérifier les conflits de dates pour les comédiens
-        verifierConflitsComediens(createDTO);
+       // verifierConflitsComediens(createDTO);
 
         SceneTournage tournage = new SceneTournage();
         
@@ -270,10 +270,10 @@ public class SceneTournageService {
         return tournages.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    private void verifierConflitsComediens(CreateSceneTournageDTO dto) {
-        // Implémentation de la vérification des conflits pour les comédiens
-        // Cette méthode vérifierait si les comédiens de la scène ont d'autres tournages aux mêmes dates/heures
-    }
+    // private void verifierConflitsComediens(CreateSceneTournageDTO dto) {
+    //     // Implémentation de la vérification des conflits pour les comédiens
+    //     // Cette méthode vérifierait si les comédiens de la scène ont d'autres tournages aux mêmes dates/heures
+    // }
 
     // Méthode pour obtenir les comédiens d'une scène (via les personnages)
     public List<Comedien> getComediensBySceneId(Long sceneId) {
