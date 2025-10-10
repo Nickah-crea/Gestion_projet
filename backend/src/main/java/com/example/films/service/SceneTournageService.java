@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,9 @@ public class SceneTournageService {
     private final ComedienRepository comedienRepository;
     private final SceneStatutRepository sceneStatutRepository;
     private final StatutSceneRepository statutSceneRepository;
+    private final ConflictVerificationService conflictVerificationService;
+    private final PersonnageRepository personnageRepository;
+
 
     public SceneTournageService(SceneTournageRepository sceneTournageRepository,
                               SceneRepository sceneRepository,
@@ -27,7 +31,9 @@ public class SceneTournageService {
                               PlateauRepository plateauRepository,
                               ComedienRepository comedienRepository,
                               SceneStatutRepository sceneStatutRepository,
-                               StatutSceneRepository statutSceneRepository) {
+                               StatutSceneRepository statutSceneRepository,
+                               ConflictVerificationService conflictVerificationService,
+                               PersonnageRepository personnageRepository) {
         this.sceneTournageRepository = sceneTournageRepository;
         this.sceneRepository = sceneRepository;
         this.lieuRepository = lieuRepository;
@@ -35,6 +41,8 @@ public class SceneTournageService {
         this.comedienRepository = comedienRepository;
         this.sceneStatutRepository = sceneStatutRepository;
         this.statutSceneRepository = statutSceneRepository;
+        this.conflictVerificationService = conflictVerificationService;
+        this.personnageRepository = personnageRepository;
     }
 
     public List<SceneTournageDTO> getTournagesByDate(LocalDate date) {
@@ -102,6 +110,20 @@ public class SceneTournageService {
 
     @Transactional
     public SceneTournageDTO planifierTournage(CreateSceneTournageDTO createDTO) {
+            ConflictVerificationService.ConflictVerificationResult conflits = 
+            conflictVerificationService.verifierConflitsComediens(
+                createDTO.getSceneId(), 
+                createDTO.getDateTournage(), 
+                createDTO.getHeureDebut(), 
+                createDTO.getHeureFin()
+            );
+        
+        if (conflits.isHasConflicts()) {
+            String message = "Conflits détectés pour les comédiens:\n" + 
+                String.join("\n", conflits.getConflicts());
+            throw new RuntimeException(message);
+        }
+            
         // Vérifier si la scène est déjà planifiée
         if (sceneTournageRepository.existsBySceneId(createDTO.getSceneId())) {
             throw new RuntimeException("Cette scène est déjà planifiée");
@@ -169,6 +191,26 @@ public class SceneTournageService {
         SceneTournage tournage = sceneTournageRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new RuntimeException("Tournage non trouvé"));
 
+        // Vérifier les conflits seulement si la date/heure change
+        if (!tournage.getDateTournage().equals(updateDTO.getDateTournage()) ||
+            !tournage.getHeureDebut().equals(updateDTO.getHeureDebut()) ||
+            !tournage.getHeureFin().equals(updateDTO.getHeureFin())) {
+            
+            ConflictVerificationService.ConflictVerificationResult conflits = 
+                conflictVerificationService.verifierConflitsComediens(
+                    tournage.getScene().getId(), 
+                    updateDTO.getDateTournage(), 
+                    updateDTO.getHeureDebut(), 
+                    updateDTO.getHeureFin()
+                );
+            
+            if (conflits.isHasConflicts()) {
+                String message = "Conflits détectés pour les comédiens:\n" + 
+                    String.join("\n", conflits.getConflicts());
+                throw new RuntimeException(message);
+            }
+        }
+
         // Empêcher la modification d'un tournage terminé
         if ("termine".equals(tournage.getStatutTournage()) && 
             (updateDTO.getStatutTournage() != null && !"termine".equals(updateDTO.getStatutTournage()))) {
@@ -233,7 +275,15 @@ public class SceneTournageService {
         // Cette méthode vérifierait si les comédiens de la scène ont d'autres tournages aux mêmes dates/heures
     }
 
-
+    // Méthode pour obtenir les comédiens d'une scène (via les personnages)
+    public List<Comedien> getComediensBySceneId(Long sceneId) {
+        List<Personnage> personnages = personnageRepository.findPersonnagesBySceneId(sceneId);
+        return personnages.stream()
+                .filter(p -> p.getComedien() != null)
+                .map(Personnage::getComedien)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 
     private SceneTournageDTO convertToDTO(SceneTournage tournage) {
         SceneTournageDTO dto = new SceneTournageDTO();
@@ -268,11 +318,23 @@ public class SceneTournageService {
         }
 
         
-        List<Comedien> comediens = comedienRepository.findBySceneId(tournage.getScene().getId());
+        List<Comedien> comediens = getComediensBySceneId(tournage.getScene().getId());
         dto.setNbComediens(comediens.size());
         dto.setNomsComediens(comediens.stream()
                 .map(Comedien::getNom)
                 .collect(Collectors.joining(", ")));
+        
+        // Ajouter les détails des personnages et comédiens
+        List<String> detailsPersonnages = new ArrayList<>();
+        List<Personnage> personnages = personnageRepository.findPersonnagesBySceneId(tournage.getScene().getId());
+        for (Personnage personnage : personnages) {
+            String detail = personnage.getNom();
+            if (personnage.getComedien() != null) {
+                detail += " (" + personnage.getComedien().getNom() + ")";
+            }
+            detailsPersonnages.add(detail);
+        }
+        dto.setDetailsPersonnages(detailsPersonnages);
 
         return dto;
     }

@@ -35,4 +35,10 @@ public interface ComedienRepository extends JpaRepository<Comedien, Long> {
     
       @Query("SELECT c FROM Comedien c JOIN c.scenes s WHERE s.id = :sceneId")
     List<Comedien> findBySceneId(@Param("sceneId") Long sceneId);
+
+    @Query("SELECT COUNT(cs) > 0 FROM ComedienScene cs WHERE cs.comedien.id = :comedienId AND cs.scene.id = :sceneId")
+    boolean existsByIdAndSceneId(@Param("comedienId") Long comedienId, @Param("sceneId") Long sceneId);
+    
+    @Query("SELECT c FROM Comedien c JOIN ComedienScene cs ON c.id = cs.comedien.id WHERE cs.scene.id = :sceneId")
+    List<Comedien> findComediensBySceneId(@Param("sceneId") Long sceneId);
 }

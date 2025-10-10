@@ -25,5 +25,26 @@ public interface PersonnageRepository extends JpaRepository<Personnage, Long> {
     List<Personnage> findAllWithDetails();
     
     boolean existsByNomAndProjetId(String nom, Long projetId);
+
+    // Trouver tous les personnages d'une scène (via les dialogues)
+    @Query("SELECT DISTINCT p FROM Personnage p " +
+           "JOIN Dialogue d ON d.personnage.id = p.id " +
+           "WHERE d.scene.id = :sceneId")
+    List<Personnage> findPersonnagesBySceneId(@Param("sceneId") Long sceneId);
+    
+    // Vérifier si un comédien joue dans une scène
+    @Query("SELECT COUNT(p) > 0 FROM Personnage p " +
+           "JOIN Dialogue d ON d.personnage.id = p.id " +
+           "WHERE p.comedien.id = :comedienId AND d.scene.id = :sceneId")
+    boolean existsComedienInScene(@Param("comedienId") Long comedienId, @Param("sceneId") Long sceneId);
+    
+    // Trouver le nom du personnage qu'un comédien joue dans une scène
+    @Query("SELECT p.nom FROM Personnage p " +
+           "JOIN Dialogue d ON d.personnage.id = p.id " +
+           "WHERE p.comedien.id = :comedienId AND d.scene.id = :sceneId")
+    Optional<String> findPersonnageNameByComedienAndScene(@Param("comedienId") Long comedienId, 
+                                                         @Param("sceneId") Long sceneId);
+    
+    
 }
 

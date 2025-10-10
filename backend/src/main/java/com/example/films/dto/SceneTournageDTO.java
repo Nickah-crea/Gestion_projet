@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,4 +36,13 @@ public class SceneTournageDTO {
     // Informations sur les comédiens
     private Integer nbComediens;
     private String nomsComediens;
+    private List<String> detailsPersonnages;
+    
+    public List<String> getDetailsPersonnages() {
+        return detailsPersonnages;
+    }
+    
+    public void setDetailsPersonnages(List<String> detailsPersonnages) {
+        this.detailsPersonnages = detailsPersonnages;
+    }
 }
