@@ -162,8 +162,35 @@ public class SequenceService {
     public void deleteSequence(Long id) {
         Sequence sequence = sequenceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Séquence non trouvée"));
+        
+        // Sauvegarder l'ordre et l'épisode avant suppression
+        Integer deletedOrder = sequence.getOrdre();
+        Long episodeId = sequence.getEpisode().getId();
+        
+        // Supprimer la séquence
         sequenceRepository.delete(sequence);
+        
+        // Recalculer les ordres des séquences restantes
+        recalculerOrdresSequences(episodeId, deletedOrder);
     }
+
+    private void recalculerOrdresSequences(Long episodeId, Integer deletedOrder) {
+        List<Sequence> sequences = sequenceRepository.findByEpisodeId(episodeId);
+        
+        // Trier par ordre actuel
+        List<Sequence> sequencesToUpdate = sequences.stream()
+                .filter(seq -> seq.getOrdre() > deletedOrder)
+                .sorted(Comparator.comparingInt(Sequence::getOrdre))
+                .collect(Collectors.toList());
+        
+        // Mettre à jour les ordres
+        int newOrder = deletedOrder;
+        for (Sequence sequence : sequencesToUpdate) {
+            sequence.setOrdre(newOrder);
+            sequenceRepository.save(sequence);
+            newOrder++;
+        }
+}
 
     public SequenceDTO getSequenceById(Long id) {
         Sequence sequence = sequenceRepository.findById(id)

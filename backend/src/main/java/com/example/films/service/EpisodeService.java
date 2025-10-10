@@ -286,11 +286,37 @@ public class EpisodeService {
         return convertToDTO(updatedEpisode);
     }
 
-    @Transactional
     public void deleteEpisode(Long id) {
         Episode episode = episodeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Épisode non trouvé"));
+        
+        // Sauvegarder l'ordre et le projet avant suppression
+        Integer deletedOrder = episode.getOrdre();
+        Long projetId = episode.getProjet().getId();
+        
+        // Supprimer l'épisode
         episodeRepository.delete(episode);
+        
+        // Recalculer les ordres des épisodes restants
+        recalculerOrdresEpisodes(projetId, deletedOrder);
+    }
+
+    private void recalculerOrdresEpisodes(Long projetId, Integer deletedOrder) {
+        List<Episode> episodes = episodeRepository.findByProjetId(projetId);
+        
+        // Trier par ordre actuel
+        List<Episode> episodesToUpdate = episodes.stream()
+                .filter(ep -> ep.getOrdre() > deletedOrder)
+                .sorted(Comparator.comparingInt(Episode::getOrdre))
+                .collect(Collectors.toList());
+        
+        // Mettre à jour les ordres
+        int newOrder = deletedOrder;
+        for (Episode episode : episodesToUpdate) {
+            episode.setOrdre(newOrder);
+            episodeRepository.save(episode);
+            newOrder++;
+        }
     }
 
     public EpisodeDTO getEpisodeById(Long id) {

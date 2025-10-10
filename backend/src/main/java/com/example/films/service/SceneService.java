@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @Service
 public class SceneService {
@@ -146,14 +147,39 @@ public class SceneService {
         
         return convertToDTO(updatedScene);
     }
-
     @Transactional
     public void deleteScene(Long id) {
         Scene scene = sceneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Scène non trouvée"));
+        
+        // Sauvegarder l'ordre et la séquence avant suppression
+        Integer deletedOrder = scene.getOrdre();
+        Long sequenceId = scene.getSequence().getId();
+        
+        // Supprimer la scène
         sceneRepository.delete(scene);
+        
+        // Recalculer les ordres des scènes restantes
+        recalculerOrdresScenes(sequenceId, deletedOrder);
     }
 
+    private void recalculerOrdresScenes(Long sequenceId, Integer deletedOrder) {
+        List<Scene> scenes = sceneRepository.findBySequenceId(sequenceId);
+        
+        // Trier par ordre actuel
+        List<Scene> scenesToUpdate = scenes.stream()
+                .filter(scene -> scene.getOrdre() > deletedOrder)
+                .sorted(Comparator.comparingInt(Scene::getOrdre))
+                .collect(Collectors.toList());
+        
+        // Mettre à jour les ordres
+        int newOrder = deletedOrder;
+        for (Scene scene : scenesToUpdate) {
+            scene.setOrdre(newOrder);
+            sceneRepository.save(scene);
+            newOrder++;
+        }
+    }
     public SceneDTO getSceneById(Long id) {
         Scene scene = sceneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Scène non trouvée"));
