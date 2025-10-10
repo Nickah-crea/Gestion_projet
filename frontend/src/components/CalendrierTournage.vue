@@ -228,10 +228,6 @@
                 <pre class="error-text">{{ erreurPlanning }}</pre>
             </div>
         </div>
-        <div v-if="formPlanning.sceneId && !erreurPlanning" class="info-message">
-            <i class="fas fa-info-circle"></i>
-            <span>Vérification des disponibilités des comédiens en cours...</span>
-        </div>
           <div class="modal-actions">
             <button 
               type="button" 
