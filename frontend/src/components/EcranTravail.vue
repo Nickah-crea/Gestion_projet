@@ -1479,59 +1479,31 @@ const confirmDeleteEpisode = async () => {
       return;
     }
 
-    // Sauvegarder l'ID de l'épisode courant et la liste des épisodes avant suppression
-    const currentEpisodeId = store.currentEpisode.idEpisode;
-    const currentEpisodes = [...store.episodes];
-    
-    await axios.delete(`/api/episodes/${currentEpisodeId}`, {
+    await axios.delete(`/api/episodes/${store.currentEpisode.idEpisode}`, {
       headers: {
         'X-User-Id': user.id
       }
     });
 
-    // Recharger la liste des épisodes
+    // Recharger les épisodes - les ordres seront automatiquement corrigés
     await store.fetchEpisodes(projetId.value);
     
-    // Trouver l'épisode à afficher après suppression
-    let episodeToNavigate = null;
-    
-    if (store.episodes.length === 0) {
-      // Plus d'épisodes - rediriger vers la page du projet
-      alert('Épisode supprimé avec succès! Aucun autre épisode dans ce projet.');
-      router.push(`/projet/${projetId.value}`);
-      return;
-    }
-    
-    // Trouver l'index de l'épisode supprimé dans l'ancienne liste
-    const deletedEpisodeIndex = currentEpisodes.findIndex(ep => ep.idEpisode === currentEpisodeId);
-    
-    if (deletedEpisodeIndex > 0) {
-      // Si ce n'était pas le premier épisode, aller à l'épisode précédent
-      const previousEpisode = currentEpisodes[deletedEpisodeIndex - 1];
-      episodeToNavigate = store.episodes.find(ep => ep.idEpisode === previousEpisode.idEpisode);
+    // Sélectionner le premier épisode disponible
+    if (store.episodes.length > 0) {
+      await store.selectEpisodeById(store.episodes[0].idEpisode);
+      router.push({
+        path: route.path,
+        query: { 
+          ...route.query,
+          episodeId: store.episodes[0].idEpisode 
+        }
+      });
     } else {
-      // Sinon, aller au premier épisode disponible
-      episodeToNavigate = store.episodes[0];
+      // Rediriger vers la page du projet si aucun épisode
+      router.push(`/projet/${projetId.value}`);
     }
     
-    // Si l'épisode cible n'existe plus (cas rare), prendre le premier disponible
-    if (!episodeToNavigate) {
-      episodeToNavigate = store.episodes[0];
-    }
-    
-    // Naviguer vers l'épisode sélectionné
-    await store.selectEpisodeById(episodeToNavigate.idEpisode);
-    
-    // Mettre à jour l'URL
-    router.push({
-      path: route.path,
-      query: { 
-        ...route.query,
-        episodeId: episodeToNavigate.idEpisode 
-      }
-    });
-    
-    alert('Épisode supprimé avec succès! Navigation vers l\'épisode précédent.');
+    alert('Épisode supprimé avec succès! Les ordres ont été recalculés automatiquement.');
     
   } catch (error) {
     console.error('Erreur lors de la suppression de l\'épisode:', error);
@@ -2240,17 +2212,19 @@ const deleteDialogueComment = async (commentId) => {
   }
 };
 
-// Méthodes de suppression
+
 const deleteSequence = async (sequenceId) => {
   if (!userPermissions.value.canCreateSequence) {
     alert('Vous n\'êtes pas autorisé à supprimer des séquences pour cet épisode.');
     return;
   }
   
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette séquence ?')) {
+  if (confirm('Êtes-vous sûr de vouloir supprimer cette séquence ? Les ordres seront automatiquement recalculés.')) {
     try {
       await axios.delete(`/api/sequences/${sequenceId}`);
+      // Recharger les séquences pour voir les nouveaux ordres
       await store.fetchSequences(store.currentEpisode.idEpisode);
+      alert('Séquence supprimée avec succès! Les ordres ont été recalculés.');
     } catch (error) {
       console.error('Erreur lors de la suppression de la séquence:', error);
       alert('Erreur lors de la suppression de la séquence');
@@ -2260,7 +2234,6 @@ const deleteSequence = async (sequenceId) => {
 
 const deleteScene = async (sceneId) => {
   try {
-    // Récupérer l'utilisateur depuis le localStorage
     const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user || !user.id) {
@@ -2268,20 +2241,23 @@ const deleteScene = async (sceneId) => {
       return;
     }
 
-    // Essayer directement la suppression avec le header X-User-Id
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette scène ? Les ordres seront automatiquement recalculés.')) {
+      return;
+    }
+
     await axios.delete(`/api/scenes/${sceneId}`, {
       headers: {
         'X-User-Id': user.id
       }
     });
     
+    // Recharger les détails de la séquence pour voir les nouveaux ordres
     await store.fetchSequenceDetails(store.currentSequence.idSequence);
-    alert('Scène supprimée avec succès!');
+    alert('Scène supprimée avec succès! Les ordres ont été recalculés.');
   } catch (error) {
     console.error('Erreur DELETE complète:', error);
     console.error('Response data:', error.response?.data);
     
-    // Afficher le message d'erreur du backend
     const errorMessage = error.response?.data?.message || error.response?.data || error.message;
     alert(`Erreur suppression: ${errorMessage}`);
   }
