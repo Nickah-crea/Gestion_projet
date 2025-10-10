@@ -221,10 +221,17 @@
               class="form-textarea"
             ></textarea>
           </div>
-          <div v-if="erreurPlanning" class="error-message">
+          <div v-if="erreurPlanning" class="error-message" :class="{ 'conflict-warning': erreurPlanning.includes('Conflits') }">
             <i class="fas fa-exclamation-triangle"></i>
-            {{ erreurPlanning }}
-          </div>
+            <div class="error-content">
+                <span v-if="erreurPlanning.includes('Conflits')" class="conflict-title">Conflits détectés :</span>
+                <pre class="error-text">{{ erreurPlanning }}</pre>
+            </div>
+        </div>
+        <div v-if="formPlanning.sceneId && !erreurPlanning" class="info-message">
+            <i class="fas fa-info-circle"></i>
+            <span>Vérification des disponibilités des comédiens en cours...</span>
+        </div>
           <div class="modal-actions">
             <button 
               type="button" 
@@ -360,6 +367,7 @@ export default {
       scenesParSequence: [],
       lieuxDisponibles: [],
       plateauxParLieu: [],
+      conflitTimeout: null,
       formPlanning: {
         id: null,
         projetId: '',
@@ -632,27 +640,96 @@ export default {
         this.plateauxParLieu = [];
       }
     },
-    async soumettrePlanning() {
-      if (!this.validerFormulairePlanning()) return;
-      this.chargementPlanning = true;
-      this.erreurPlanning = '';
-      try {
-        let response;
-        if (this.isModificationPlanning) {
-          response = await axios.put(`/api/scene-tournage/${this.formPlanning.id}`, this.formPlanning);
-        } else {
-          response = await axios.post('/api/scene-tournage', this.formPlanning);
+    async verifierConflitsComediens() {
+        if (!this.formPlanning.sceneId || !this.formPlanning.dateTournage || 
+            !this.formPlanning.heureDebut || !this.formPlanning.heureFin) {
+            return true; // La validation normale gérera les champs manquants
         }
-        await this.chargerTournages();
-        this.fermerModalPlanning();
-        alert(`Planning ${this.isModificationPlanning ? 'modifié' : 'créé'} avec succès!`);
-      } catch (error) {
-        console.error('Erreur sauvegarde planning:', error);
-        this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la sauvegarde du planning';
-      } finally {
-        this.chargementPlanning = false;
-      }
+
+        try {
+            const response = await axios.get('/api/conflicts/check', {
+                params: {
+                    sceneId: this.formPlanning.sceneId,
+                    dateTournage: this.formPlanning.dateTournage,
+                    heureDebut: this.formPlanning.heureDebut,
+                    heureFin: this.formPlanning.heureFin
+                }
+            });
+
+            if (response.data.hasConflicts) {
+                const messages = response.data.conflicts.join('\n');
+                if (!confirm(`🚨 Conflits de comédiens détectés :\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
+                    return false;
+                }
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Erreur vérification conflits:', error);
+            // Continuer malgré l'erreur de vérification
+            return true;
+        }
     },
+
+    async verifierConflitsTempsReel() {
+        if (this.formPlanning.sceneId && this.formPlanning.dateTournage && 
+            this.formPlanning.heureDebut && this.formPlanning.heureFin) {
+            try {
+                const response = await axios.get('/api/conflicts/check', {
+                    params: {
+                        sceneId: this.formPlanning.sceneId,
+                        dateTournage: this.formPlanning.dateTournage,
+                        heureDebut: this.formPlanning.heureDebut,
+                        heureFin: this.formPlanning.heureFin
+                    }
+                });
+
+                if (response.data.hasConflicts) {
+                    // Afficher les conflits dans l'interface
+                    this.erreurPlanning = '⚠️ Conflits détectés :\n' + response.data.conflicts.join('\n');
+                } else {
+                    this.erreurPlanning = '';
+                }
+            } catch (error) {
+                // Ne pas afficher d'erreur pour la vérification en temps réel
+                this.erreurPlanning = '';
+            }
+        }
+    },
+
+async soumettrePlanning() {
+        if (!this.validerFormulairePlanning()) return;
+        
+        // Vérifier les conflits avant soumission
+        const peutContinuer = await this.verifierConflitsComediens();
+        if (!peutContinuer) return;
+        
+        this.chargementPlanning = true;
+        this.erreurPlanning = '';
+        try {
+            let response;
+            if (this.isModificationPlanning) {
+                response = await axios.put(`/api/scene-tournage/${this.formPlanning.id}`, this.formPlanning);
+            } else {
+                response = await axios.post('/api/scene-tournage', this.formPlanning);
+            }
+            await this.chargerTournages();
+            this.fermerModalPlanning();
+            alert(`✅ Planning ${this.isModificationPlanning ? 'modifié' : 'créé'} avec succès !`);
+        } catch (error) {
+            console.error('Erreur sauvegarde planning:', error);
+            
+            // Gérer spécifiquement les erreurs de conflit du backend
+            if (error.response?.status === 400 && error.response?.data?.message?.includes('Conflits détectés')) {
+                this.erreurPlanning = '🚨 Conflits de planning détectés : ' + error.response.data.message;
+            } else {
+                this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la sauvegarde du planning';
+            }
+        } finally {
+            this.chargementPlanning = false;
+        }
+    },
+
     async supprimerPlanning() {
       if (!this.formPlanning.id || !confirm('Êtes-vous sûr de vouloir supprimer ce planning ?')) return;
       try {
@@ -665,32 +742,36 @@ export default {
         this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la suppression du planning';
       }
     },
+    // Mettre à jour la méthode validerFormulairePlanning
     validerFormulairePlanning() {
-      if (!this.formPlanning.projetId) {
-        this.erreurPlanning = 'Veuillez sélectionner un projet';
-        return false;
-      }
-      if (!this.formPlanning.episodeId) {
-        this.erreurPlanning = 'Veuillez sélectionner un épisode';
-        return false;
-      }
-      if (!this.formPlanning.sequenceId) {
-        this.erreurPlanning = 'Veuillez sélectionner une séquence';
-        return false;
-      }
-      if (!this.formPlanning.sceneId) {
-        this.erreurPlanning = 'Veuillez sélectionner une scène';
-        return false;
-      }
-      if (!this.formPlanning.heureDebut || !this.formPlanning.heureFin) {
-        this.erreurPlanning = 'Veuillez renseigner les heures de début et fin';
-        return false;
-      }
-      if (this.formPlanning.heureDebut >= this.formPlanning.heureFin) {
-        this.erreurPlanning = "L'heure de fin doit être après l'heure de début";
-        return false;
-      }
-      return true;
+        this.erreurPlanning = '';
+        
+        if (!this.formPlanning.projetId) {
+            this.erreurPlanning = 'Veuillez sélectionner un projet';
+            return false;
+        }
+        if (!this.formPlanning.episodeId) {
+            this.erreurPlanning = 'Veuillez sélectionner un épisode';
+            return false;
+        }
+        if (!this.formPlanning.sequenceId) {
+            this.erreurPlanning = 'Veuillez sélectionner une séquence';
+            return false;
+        }
+        if (!this.formPlanning.sceneId) {
+            this.erreurPlanning = 'Veuillez sélectionner une scène';
+            return false;
+        }
+        if (!this.formPlanning.heureDebut || !this.formPlanning.heureFin) {
+            this.erreurPlanning = 'Veuillez renseigner les heures de début et fin';
+            return false;
+        }
+        if (this.formPlanning.heureDebut >= this.formPlanning.heureFin) {
+            this.erreurPlanning = "L'heure de fin doit être après l'heure de début";
+            return false;
+        }
+        
+        return true;
     },
     reinitialiserFiltres() {
       this.filtreProjet = '';
@@ -702,6 +783,25 @@ export default {
   mounted() {
     this.chargerTournages();
     this.chargerProjets();
+    this.$watch(
+        () => [
+            this.formPlanning.sceneId,
+            this.formPlanning.dateTournage,
+            this.formPlanning.heureDebut,
+            this.formPlanning.heureFin
+        ],
+        () => {
+            if (this.formPlanning.sceneId && this.formPlanning.dateTournage && 
+                this.formPlanning.heureDebut && this.formPlanning.heureFin) {
+                // Délai pour éviter trop d'appels API
+                clearTimeout(this.conflitTimeout);
+                this.conflitTimeout = setTimeout(() => {
+                    this.verifierConflitsTempsReel();
+                }, 1000);
+            }
+        },
+        { deep: true }
+    );
   }
 };
 </script>
@@ -1111,5 +1211,76 @@ export default {
 .filters .btn {
   padding: 8px 12px;
   white-space: nowrap;
+}
+.error-message.conflict-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.error-message.conflict-warning .conflict-title {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.error-content {
+    width: 100%;
+}
+
+.error-text {
+    white-space: pre-wrap;
+    font-family: inherit;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.info-message {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+/* Améliorer l'affichage des messages de conflit dans les détails */
+.details-content .conflict-info {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.conflict-list {
+    margin-top: 8px;
+    padding-left: 20px;
+}
+
+.conflict-item {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #856404;
+}
+
+/* Style pour les jours avec conflits dans le calendrier */
+.calendar-day.has-conflicts {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+}
+
+.conflict-indicator {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background-color: #dc3545;
+    border-radius: 50%;
 }
 </style>
