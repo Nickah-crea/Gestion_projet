@@ -414,7 +414,7 @@ export default {
     };
 
 
-    const verifierConflits = async () => {
+  const verifierConflits = async () => {
   if (!formData.value.dateTournage || !formData.value.heureDebut || !formData.value.heureFin) {
     return true; // La validation normale gérera les champs manquants
   }
@@ -444,8 +444,36 @@ export default {
   }
 };
 
+const verifierConflitsTempsReel = async () => {
+  if (formData.value.dateTournage && formData.value.heureDebut && formData.value.heureFin) {
+    try {
+      const response = await axios.get('/api/conflicts/check', {
+        params: {
+          sceneId: props.scene.idScene,
+          dateTournage: formData.value.dateTournage,
+          heureDebut: formData.value.heureDebut,
+          heureFin: formData.value.heureFin
+        }
+      });
 
-    const soumettreTournage = async () => {
+      if (response.data.hasConflicts) {
+        // Afficher les conflits dans l'interface
+        erreur.value = 'Conflits détectés:\n' + response.data.conflicts.join('\n');
+      } else {
+        erreur.value = '';
+      }
+    } catch (error) {
+      // Ne pas afficher d'erreur pour la vérification en temps réel
+    }
+  }
+};
+
+watch(() => formData.value.dateTournage, verifierConflitsTempsReel);
+watch(() => formData.value.heureDebut, verifierConflitsTempsReel);
+watch(() => formData.value.heureFin, verifierConflitsTempsReel);
+
+
+  const soumettreTournage = async () => {
   if (!validerFormulaire()) return;
   
   // Vérifier les conflits avant soumission
@@ -483,34 +511,6 @@ export default {
     chargement.value = false;
   }
 };
-
-const verifierConflitsTempsReel = async () => {
-  if (formData.value.dateTournage && formData.value.heureDebut && formData.value.heureFin) {
-    try {
-      const response = await axios.get('/api/conflicts/check', {
-        params: {
-          sceneId: props.scene.idScene,
-          dateTournage: formData.value.dateTournage,
-          heureDebut: formData.value.heureDebut,
-          heureFin: formData.value.heureFin
-        }
-      });
-
-      if (response.data.hasConflicts) {
-        // Afficher les conflits dans l'interface
-        erreur.value = 'Conflits détectés:\n' + response.data.conflicts.join('\n');
-      } else {
-        erreur.value = '';
-      }
-    } catch (error) {
-      // Ne pas afficher d'erreur pour la vérification en temps réel
-    }
-  }
-};
-
-watch(() => formData.value.dateTournage, verifierConflitsTempsReel);
-watch(() => formData.value.heureDebut, verifierConflitsTempsReel);
-watch(() => formData.value.heureFin, verifierConflitsTempsReel);
 
     const validerFormulaire = () => {
       if (!formData.value.dateTournage) {
@@ -938,5 +938,24 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
     width: 95%;
     margin: 10px;
   }
+}
+
+.conflict-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  color: #856404;
+}
+
+.conflict-list {
+  margin-top: 8px;
+  padding-left: 20px;
+}
+
+.conflict-item {
+  margin: 4px 0;
+  font-size: 14px;
 }
 </style>
