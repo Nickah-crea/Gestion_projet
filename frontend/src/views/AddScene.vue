@@ -186,7 +186,6 @@ export default {
       this.validateOrder();
     },
     async submitScene() {
-      // Valider à nouveau avant soumission
       this.validateOrder();
       
       if (this.orderError) {
@@ -198,21 +197,26 @@ export default {
       this.errorMessage = '';
       
       try {
-        // CORRECTION : Utiliser le bon endpoint selon SceneController
-        await axios.post(`/api/scenes/sequences/${this.sequenceId}`, this.scene);
-       
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+          throw new Error('Utilisateur non connecté');
+        }
+
+        await axios.post(`/api/scenes/sequences/${this.sequenceId}`, this.scene, {
+          headers: {
+            'X-User-Id': user.id
+          }
+        });
+      
         this.$router.push(`/sequence/${this.sequenceId}/detail-sequence`);
       } catch (error) {
         console.error('Erreur lors de la création de la scène:', error);
         
-        // Vérifier si l'erreur est due à un doublon d'ordre
         if (error.response?.status === 400 && 
             error.response?.data?.message?.includes('ordre') &&
             error.response?.data?.message?.includes('existe')) {
           this.orderError = 'Cet ordre existe déjà dans la séquence';
           this.errorMessage = 'Erreur de validation: ' + this.orderError;
-          
-          // Recharger les ordres existants au cas où ils auraient changé
           await this.loadExistingOrders();
         } else {
           this.errorMessage = error.response?.data?.message || 'Erreur lors de la création de la scène';

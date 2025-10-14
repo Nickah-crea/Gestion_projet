@@ -53,6 +53,9 @@
                     <button @click.stop="ouvrirModificationTournage(tournage)" class="btn-edit-small" title="Modifier">
                       <i class="fas fa-edit"></i>
                     </button>
+                    <button @click.stop="supprimerTournageDirect(tournage)" class="btn-delete-small" title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
                   </div>
                 </div>
                 <div class="tournage-title">{{ tournage.sceneTitre }}</div>
@@ -126,21 +129,33 @@
                 </option>
               </select>
             </div>
-            <div class="form-group">
-              <label for="sceneId">Scène *</label>
-              <select 
-                id="sceneId"
-                v-model="formPlanning.sceneId" 
-                :disabled="!formPlanning.sequenceId"
-                required
-                class="form-select"
-              >
-                <option value="">Sélectionner une scène</option>
-                <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
-                  Scène {{ scene.ordre }}: {{ scene.titre }}
-                </option>
-              </select>
-            </div>
+            
+              <div class="form-group">
+                <label for="sceneId">Scène *</label>
+                <select 
+                  id="sceneId"
+                  v-model="formPlanning.sceneId" 
+                  :disabled="!formPlanning.sequenceId"
+                  required
+                  class="form-select"
+                >
+                  <option value="">Sélectionner une scène</option>
+                  <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
+                    Scène {{ scene.ordre }}: {{ scene.titre }}
+                    <span v-if="scene.statutActuel">({{ scene.statutActuel }})</span>
+                  </option>
+                </select>
+                <small v-if="!isModificationPlanning" class="text-info">
+                  <template v-if="!formPlanning.sequenceId">
+                    <i class="fas fa-info-circle"></i>
+                    Veuillez sélectionner une séquence pour voir les scènes disponibles
+                  </template>
+                  <template v-else-if="scenesParSequence.length === 0">
+                    <i class="fas fa-info-circle"></i>
+                    Toutes les scènes de cette séquence sont déjà planifiées.
+                  </template>
+                </small>
+              </div>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -236,14 +251,14 @@
             >
               <i class="fas fa-times"></i> Annuler
             </button>
-            <button 
+            <!-- <button 
               v-if="isModificationPlanning"
               type="button" 
               @click="supprimerPlanning"
               class="btn btn-danger"
             >
               <i class="fas fa-trash"></i> Supprimer
-            </button>
+            </button> -->
             <button 
               type="submit" 
               :disabled="chargementPlanning"
@@ -600,19 +615,46 @@ export default {
       }
     },
     async chargerScenesParSequence() {
-      if (!this.formPlanning.sequenceId) {
-        this.scenesParSequence = [];
-        return;
+    if (!this.formPlanning.sequenceId) {
+      this.scenesParSequence = [];
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`/api/scenes/sequences/${this.formPlanning.sequenceId}`);
+      let scenes = response.data;
+      
+      // Si c'est une création, vérifier chaque scène individuellement
+      if (!this.isModificationPlanning) {
+        const scenesAvecStatut = await Promise.all(
+          scenes.map(async (scene) => {
+            try {
+              // Vérifier si cette scène a déjà un tournage
+              const tournageResponse = await axios.get(`/api/scene-tournage/scene/${scene.idScene}`);
+              // Si on arrive ici, c'est que la scène a un tournage (statut 200)
+              return { ...scene, estPlanifiee: true };
+            } catch (error) {
+              // Si erreur 404, la scène n'est pas planifiée
+              if (error.response?.status === 404) {
+                return { ...scene, estPlanifiee: false };
+              }
+              // Pour les autres erreurs, on considère que la scène n'est pas planifiée
+              return { ...scene, estPlanifiee: false };
+            }
+          })
+        );
+        
+        // Filtrer pour garder seulement les scènes non planifiées
+        scenes = scenesAvecStatut.filter(scene => !scene.estPlanifiee);
       }
-      try {
-        const response = await axios.get(`/api/scenes/sequences/${this.formPlanning.sequenceId}`);
-        this.scenesParSequence = response.data;
-        this.formPlanning.sceneId = '';
-      } catch (error) {
-        console.error('Erreur chargement scènes:', error);
-        this.scenesParSequence = [];
-      }
-    },
+      
+      this.scenesParSequence = scenes;
+      
+    } catch (error) {
+      console.error('Erreur chargement scènes:', error);
+      this.scenesParSequence = [];
+    }
+  },
     async chargerLieuxDisponibles() {
       try {
         const response = await axios.get('/api/lieux');
@@ -726,16 +768,30 @@ async soumettrePlanning() {
         }
     },
 
-    async supprimerPlanning() {
-      if (!this.formPlanning.id || !confirm('Êtes-vous sûr de vouloir supprimer ce planning ?')) return;
+    // async supprimerPlanning() {
+    //   if (!this.formPlanning.id || !confirm('Êtes-vous sûr de vouloir supprimer ce planning ?')) return;
+    //   try {
+    //     await axios.delete(`/api/scene-tournage/${this.formPlanning.id}`);
+    //     await this.chargerTournages();
+    //     this.fermerModalPlanning();
+    //     alert('Planning supprimé avec succès!');
+    //   } catch (error) {
+    //     console.error('Erreur suppression planning:', error);
+    //     this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la suppression du planning';
+    //   }
+    // },
+    async supprimerTournageDirect(tournage) {
+      if (!confirm(`Êtes-vous sûr de vouloir supprimer le tournage "${tournage.sceneTitre}" du ${this.formatDateDetails(tournage.dateTournage)} ?`)) {
+        return;
+      }
+      
       try {
-        await axios.delete(`/api/scene-tournage/${this.formPlanning.id}`);
+        await axios.delete(`/api/scene-tournage/${tournage.id}`);
         await this.chargerTournages();
-        this.fermerModalPlanning();
-        alert('Planning supprimé avec succès!');
+        alert('✅ Tournage supprimé avec succès !');
       } catch (error) {
-        console.error('Erreur suppression planning:', error);
-        this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la suppression du planning';
+        console.error('Erreur suppression tournage:', error);
+        alert('❌ Erreur lors de la suppression du tournage: ' + (error.response?.data?.message || error.message));
       }
     },
     // Mettre à jour la méthode validerFormulairePlanning
@@ -1278,5 +1334,32 @@ async soumettrePlanning() {
     height: 8px;
     background-color: #dc3545;
     border-radius: 50%;
+}
+.btn-delete-small {
+  padding: 2px 4px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete-small:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Ajustez la largeur du conteneur des actions si nécessaire */
+.tournage-actions-small {
+  display: flex;
+  gap: 2px;
 }
 </style>

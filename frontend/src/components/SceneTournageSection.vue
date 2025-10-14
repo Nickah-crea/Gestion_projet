@@ -119,7 +119,6 @@
                 id="dateTournage"
                 v-model="formData.dateTournage" 
                 required
-                :min="minDate"
                 class="form-input"
               >
             </div>
@@ -289,9 +288,9 @@ export default {
       notes: ''
     });
 
-    const minDate = computed(() => {
-      return new Date().toISOString().split('T')[0];
-    });
+    // const minDate = computed(() => {
+    //   return new Date().toISOString().split('T')[0];
+    // });
 
     // Charger les données initiales
     onMounted(async () => {
@@ -620,7 +619,6 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       lieuxDisponibles,
       plateauxDisponibles,
       formData,
-      minDate,
       ouvrirModalPlanification,
       ouvrirModalModification,
       fermerModal,
