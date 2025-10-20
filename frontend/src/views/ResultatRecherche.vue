@@ -9,6 +9,10 @@
       <div v-if="resultat" class="result-type-header" :class="'type-' + resultat.type">
         <span class="type-icon">{{ getTypeIcon(resultat.type) }}</span>
         <span class="type-label">{{ getTypeLabel(resultat.type) }}</span>
+        <!-- Bouton d'export PDF -->
+        <button @click="exporterPDF" class="btn-export-pdf" :disabled="exportEnCours">
+          📄 {{ exportEnCours ? 'Génération...' : 'Exporter PDF' }}
+        </button>
       </div>
     </div>
 
@@ -324,7 +328,7 @@
               <div class="dialogues-controls">
                 <div class="filter-group">
                   <label>Trier par :</label>
-                  <select v-model="triDialogues" @change="trierDialogues">
+                  <select v-model="triDialogues" @change="trierDialogues" class="select-input">
                     <option value="ordre">Ordre chronologique</option>
                     <option value="scene">Scène</option>
                     <option value="longueur">Longueur</option>
@@ -547,6 +551,9 @@
 import { getResultatDetails, getResultatDetailsComplets } from '../service/rechercheService'
 import '../assets/css/resultat_search.css';
 
+// Import pour l'export PDF
+import jsPDF from 'jspdf';
+
 export default {
   name: 'ResultatRecherche',
   data() {
@@ -559,7 +566,8 @@ export default {
       triDialogues: 'ordre',
       rechercheDialogue: '',
       pageDialogues: 1,
-      dialoguesParPage: 10
+      dialoguesParPage: 10,
+      exportEnCours: false
     }
   },
   computed: {
@@ -635,6 +643,433 @@ export default {
         this.erreur = error.message || 'Erreur lors du chargement des détails'
       } finally {
         this.chargement = false
+      }
+    },
+    
+    // NOUVELLE MÉTHODE : Export PDF
+    async exporterPDF() {
+      this.exportEnCours = true;
+      
+      try {
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        let yPosition = 20;
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const margin = 20;
+        const contentWidth = pageWidth - (2 * margin);
+        
+        // En-tête du PDF
+        pdf.setFontSize(20);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`Détails du ${this.getTypeLabel(this.resultat.type)}`, margin, yPosition);
+        yPosition += 10;
+        
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`Export généré le ${new Date().toLocaleDateString('fr-FR')}`, margin, yPosition);
+        yPosition += 15;
+        
+        // Informations principales
+        pdf.setFontSize(16);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Informations principales', margin, yPosition);
+        yPosition += 10;
+        
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`Titre : ${this.resultat.titre}`, margin, yPosition);
+        yPosition += 7;
+        pdf.text(`Type : ${this.getTypeLabel(this.resultat.type)}`, margin, yPosition);
+        yPosition += 7;
+        pdf.text(`Dernière modification : ${this.formatDateTime(this.resultat.modifieLe)}`, margin, yPosition);
+        yPosition += 15;
+        
+        // Contenu spécifique selon le type
+        if (this.resultat.type === 'personnage') {
+          await this.exporterPDFPersonnage(pdf, margin, yPosition, contentWidth);
+        } else if (this.resultat.type === 'scene') {
+          await this.exporterPDFScene(pdf, margin, yPosition, contentWidth);
+        } else if (this.resultat.type === 'lieu') {
+          await this.exporterPDFLieu(pdf, margin, yPosition, contentWidth);
+        } else if (this.resultat.type === 'plateau') {
+          await this.exporterPDFPlateau(pdf, margin, yPosition, contentWidth);
+        }
+        
+        // Sauvegarde du PDF
+        pdf.save(`${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`);
+        
+      } catch (error) {
+        console.error('Erreur lors de l\'export PDF:', error);
+        alert('Erreur lors de la génération du PDF');
+      } finally {
+        this.exportEnCours = false;
+      }
+    },
+    
+    // Export PDF pour les personnages
+    async exporterPDFPersonnage(pdf, margin, yPosition, contentWidth) {
+      let currentY = yPosition;
+      
+      // Informations du personnage
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('👤 Informations du personnage', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Comédien : ${this.resultat.comedienNom || 'Non spécifié'}`, margin, currentY);
+      currentY += 5;
+      
+      if (this.resultatDetails.informationsComplementaires?.age) {
+        pdf.text(`Âge : ${this.resultatDetails.informationsComplementaires.age}`, margin, currentY);
+        currentY += 5;
+      }
+      
+      if (this.resultatDetails.informationsComplementaires?.typePersonnage) {
+        pdf.text(`Type : ${this.resultatDetails.informationsComplementaires.typePersonnage}`, margin, currentY);
+        currentY += 5;
+      }
+      
+      currentY += 5;
+      
+      // Structure du projet
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('📁 Projet', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      if (this.resultat.projetTitre) {
+        pdf.text(`Projet : ${this.resultat.projetTitre}`, margin, currentY);
+        currentY += 5;
+      }
+      currentY += 5;
+      
+      // Statistiques
+      if (this.resultatDetails.statistiques) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('📊 Statistiques', margin, currentY);
+        currentY += 10;
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        
+        const stats = this.resultatDetails.statistiques;
+        if (stats.nbScenes) {
+          pdf.text(`Scènes : ${stats.nbScenes}`, margin, currentY);
+          currentY += 5;
+        }
+        if (stats.nbDialogues) {
+          pdf.text(`Dialogues : ${stats.nbDialogues}`, margin, currentY);
+          currentY += 5;
+        }
+        if (stats.totalMots) {
+          pdf.text(`Total mots : ${stats.totalMots}`, margin, currentY);
+          currentY += 5;
+        }
+        if (stats.pourcentageDialogues) {
+          pdf.text(`Part des dialogues : ${Math.round(stats.pourcentageDialogues * 100) / 100}%`, margin, currentY);
+          currentY += 5;
+        }
+        if (stats.dureeTotale) {
+          pdf.text(`Durée totale : ${stats.dureeTotale}`, margin, currentY);
+          currentY += 5;
+        }
+        currentY += 5;
+      }
+      
+      // Planning de tournage
+      if (this.scenesAvecPlanning.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('🎬 Planning de tournage des scènes', margin, currentY);
+        currentY += 10;
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        
+        for (const scene of this.scenesAvecPlanning) {
+          // Vérifier si on doit ajouter une nouvelle page
+          if (currentY > 250) {
+            pdf.addPage();
+            currentY = 20;
+          }
+          
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`• ${scene.titre}`, margin, currentY);
+          currentY += 5;
+          
+          pdf.setFont('helvetica', 'normal');
+          pdf.text(`  Statut : ${this.formatStatut(scene.statut || 'planifie')}`, margin, currentY);
+          currentY += 4;
+          pdf.text(`  Date : ${this.formatDate(scene.dateTournage)}`, margin, currentY);
+          currentY += 4;
+          pdf.text(`  Heure : ${scene.heureDebut || 'N/A'} - ${scene.heureFin || 'N/A'}`, margin, currentY);
+          currentY += 4;
+          pdf.text(`  Durée : ${this.calculerDureeScene(scene.heureDebut, scene.heureFin)}`, margin, currentY);
+          currentY += 4;
+          
+          if (scene.lieuNom) {
+            pdf.text(`  Lieu : ${scene.lieuNom}`, margin, currentY);
+            currentY += 4;
+          }
+          
+          if (scene.nbDialogues) {
+            pdf.text(`  Dialogues : ${scene.nbDialogues}`, margin, currentY);
+            currentY += 4;
+          }
+          
+          currentY += 5;
+        }
+        currentY += 5;
+      }
+      
+      // Dialogues
+      if (this.resultatDetails.dialogues && this.resultatDetails.dialogues.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('💬 Tous les dialogues', margin, currentY);
+        currentY += 10;
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        
+        for (const dialogue of this.resultatDetails.dialogues.slice(0, 50)) { // Limiter à 50 dialogues
+          // Vérifier si on doit ajouter une nouvelle page
+          if (currentY > 250) {
+            pdf.addPage();
+            currentY = 20;
+          }
+          
+          const sceneInfo = dialogue.sceneTitre ? ` (Scène: ${dialogue.sceneTitre})` : '';
+          const dialogueText = `"${dialogue.texte}"`;
+          
+          // Diviser le texte long en plusieurs lignes
+          const lines = pdf.splitTextToSize(`${dialogue.personnageNom || 'Narrateur'}: ${dialogueText}${sceneInfo}`, contentWidth);
+          
+          lines.forEach(line => {
+            pdf.text(line, margin, currentY);
+            currentY += 4;
+          });
+          
+          currentY += 3;
+        }
+        
+        if (this.resultatDetails.dialogues.length > 50) {
+          pdf.text(`... et ${this.resultatDetails.dialogues.length - 50} dialogues supplémentaires`, margin, currentY);
+          currentY += 5;
+        }
+      }
+    },
+    
+    // Export PDF pour les scènes
+    async exporterPDFScene(pdf, margin, yPosition, contentWidth) {
+      let currentY = yPosition;
+      
+      // Informations de tournage
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('🎬 Informations de tournage', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Date : ${this.formatDate(this.resultat.dateTournage)}`, margin, currentY);
+      currentY += 5;
+      pdf.text(`Heure début : ${this.resultat.heureDebut || 'Non spécifiée'}`, margin, currentY);
+      currentY += 5;
+      pdf.text(`Heure fin : ${this.resultat.heureFin || 'Non spécifiée'}`, margin, currentY);
+      currentY += 5;
+      pdf.text(`Statut : ${this.formatStatut(this.resultat.statut)}`, margin, currentY);
+      currentY += 5;
+      pdf.text(`Durée estimée : ${this.calculerDureeScene(this.resultat.heureDebut, this.resultat.heureFin)}`, margin, currentY);
+      currentY += 10;
+      
+      // Structure du projet
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('📁 Structure du projet', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      if (this.resultat.projetTitre) {
+        pdf.text(`Projet : ${this.resultat.projetTitre}`, margin, currentY);
+        currentY += 5;
+      }
+      if (this.resultat.episodeTitre) {
+        pdf.text(`Épisode : ${this.resultat.episodeTitre}`, margin, currentY);
+        currentY += 5;
+      }
+      if (this.resultat.sequenceTitre) {
+        pdf.text(`Séquence : ${this.resultat.sequenceTitre}`, margin, currentY);
+        currentY += 5;
+      }
+      currentY += 5;
+      
+      // Localisation
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('📍 Localisation', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      if (this.resultat.lieuNom) {
+        pdf.text(`Lieu : ${this.resultat.lieuNom}`, margin, currentY);
+        currentY += 5;
+      }
+      if (this.resultat.plateauNom) {
+        pdf.text(`Plateau : ${this.resultat.plateauNom}`, margin, currentY);
+        currentY += 5;
+      }
+      currentY += 5;
+      
+      // Personnages
+      if (this.resultatDetails.personnages && this.resultatDetails.personnages.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('👥 Personnages impliqués', margin, currentY);
+        currentY += 10;
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        
+        for (const personnage of this.resultatDetails.personnages) {
+          const info = `${personnage.nom}${personnage.comedien ? ` (${personnage.comedien})` : ''} - ${personnage.nbDialogues} dialogues`;
+          pdf.text(`• ${info}`, margin, currentY);
+          currentY += 5;
+        }
+        currentY += 5;
+      }
+      
+      // Dialogues complets
+      if (this.resultatDetails.dialoguesComplets && this.resultatDetails.dialoguesComplets.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('💬 Dialogues complets', margin, currentY);
+        currentY += 10;
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        
+        for (const dialogue of this.resultatDetails.dialoguesComplets) {
+          if (currentY > 250) {
+            pdf.addPage();
+            currentY = 20;
+          }
+          
+          const dialogueText = `"${dialogue.texte}"`;
+          const lines = pdf.splitTextToSize(`${dialogue.personnageNom || 'Narrateur'}: ${dialogueText}`, contentWidth);
+          
+          lines.forEach(line => {
+            pdf.text(line, margin, currentY);
+            currentY += 4;
+          });
+          
+          if (dialogue.observation) {
+            pdf.text(`💡 ${dialogue.observation}`, margin, currentY);
+            currentY += 4;
+          }
+          
+          currentY += 5;
+        }
+      }
+    },
+    
+    // Export PDF pour les lieux (simplifié)
+    async exporterPDFLieu(pdf, margin, yPosition, contentWidth) {
+      let currentY = yPosition;
+      
+      // Informations du lieu
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('🏛️ Informations du lieu', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Type : ${this.resultat.description ? this.getTypeFromDescription(this.resultat.description) : 'Non spécifié'}`, margin, currentY);
+      currentY += 5;
+      
+      if (this.resultatDetails.informationsComplementaires?.adresse) {
+        pdf.text(`Adresse : ${this.resultatDetails.informationsComplementaires.adresse}`, margin, currentY);
+        currentY += 5;
+      }
+      currentY += 5;
+      
+      // Scènes associées
+      if (this.resultatDetails.scenes && this.resultatDetails.scenes.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('🎬 Scènes tournées ici', margin, currentY);
+        currentY += 10;
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        
+        for (const scene of this.resultatDetails.scenes.slice(0, 20)) { // Limiter à 20 scènes
+          if (currentY > 250) {
+            pdf.addPage();
+            currentY = 20;
+          }
+          
+          pdf.text(`• ${scene.titre}`, margin, currentY);
+          currentY += 4;
+          pdf.text(`  Date: ${this.formatDate(scene.dateTournage)} | Statut: ${this.formatStatut(scene.statut)}`, margin, currentY);
+          currentY += 4;
+          pdf.text(`  Personnages: ${scene.nbPersonnages} | Heure: ${scene.heureDebut}-${scene.heureFin}`, margin, currentY);
+          currentY += 6;
+        }
+      }
+    },
+    
+    // Export PDF pour les plateaux (similaire aux lieux)
+    async exporterPDFPlateau(pdf, margin, yPosition, contentWidth) {
+      let currentY = yPosition;
+      
+      // Informations du plateau
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('🎭 Informations du plateau', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Type : ${this.resultat.description ? this.getTypeFromDescription(this.resultat.description) : 'Non spécifié'}`, margin, currentY);
+      currentY += 5;
+      
+      if (this.resultat.lieuNom) {
+        pdf.text(`Lieu : ${this.resultat.lieuNom}`, margin, currentY);
+        currentY += 5;
+      }
+      currentY += 5;
+      
+      // Scènes associées
+      if (this.resultatDetails.scenes && this.resultatDetails.scenes.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('🎬 Scènes tournées ici', margin, currentY);
+        currentY += 10;
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        
+        for (const scene of this.resultatDetails.scenes.slice(0, 20)) {
+          if (currentY > 250) {
+            pdf.addPage();
+            currentY = 20;
+          }
+          
+          pdf.text(`• ${scene.titre}`, margin, currentY);
+          currentY += 4;
+          pdf.text(`  Date: ${this.formatDate(scene.dateTournage)} | Statut: ${this.formatStatut(scene.statut)}`, margin, currentY);
+          currentY += 4;
+          pdf.text(`  Dialogues: ${scene.nbDialogues} | Heure: ${scene.heureDebut}-${scene.heureFin}`, margin, currentY);
+          currentY += 6;
+        }
       }
     },
     
@@ -790,6 +1225,42 @@ export default {
 </script>
 
 <style scoped>
+/* Ajouter le style pour le bouton d'export PDF */
+.btn-export-pdf {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-export-pdf:hover:not(:disabled) {
+  background: #c0392b;
+}
+
+.btn-export-pdf:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
+
+.result-type-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border-radius: 20px;
+  margin-top: 10px;
+  width: 100%;
+  justify-content: space-between;
+}
+
 /* Les styles restent exactement les mêmes */
 .resultat-recherche {
   max-width: 1200px;
@@ -813,20 +1284,6 @@ export default {
 
 .back-link:hover {
   text-decoration: underline;
-}
-
-.result-type-header {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
-  background: #f8f9fa;
-  border-radius: 20px;
-  margin-top: 10px;
-}
-
-.type-icon {
-  font-size: 1.2em;
 }
 
 .details-container {
