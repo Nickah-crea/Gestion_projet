@@ -48,4 +48,6 @@ public interface SceneTournageRepository extends JpaRepository<SceneTournage, Lo
     // List<SceneTournage> findTournagesByComedienAndDate(@Param("comedienId") Long comedienId, 
     //                                                   @Param("date") LocalDate date);
      
+     // SceneTournageRepository.java                  
+        List<SceneTournage> findByPlateauId(Long plateauId);
 }

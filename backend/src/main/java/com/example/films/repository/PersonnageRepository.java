@@ -1,6 +1,8 @@
 package com.example.films.repository;
 
-import com.example.films.entity.Personnage;
+import com.example.films.entity.*;
+import com.example.films.repository.*;
+import com.example.films.dto.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,7 +46,14 @@ public interface PersonnageRepository extends JpaRepository<Personnage, Long> {
            "WHERE p.comedien.id = :comedienId AND d.scene.id = :sceneId")
     Optional<String> findPersonnageNameByComedienAndScene(@Param("comedienId") Long comedienId, 
                                                          @Param("sceneId") Long sceneId);
+
+        // Méthode pour trouver les personnages par scène
+    @Query("SELECT p FROM Personnage p JOIN Dialogue d ON d.personnage = p WHERE d.scene.id = :sceneId")
+    List<Personnage> findPersonnagesDialogueBySceneId(@Param("sceneId") Long sceneId);
     
+    // NOUVELLE MÉTHODE : Trouver les dialogues d'un personnage
+    @Query("SELECT d FROM Dialogue d WHERE d.personnage.id = :personnageId")
+    List<Dialogue> findDialoguesByPersonnageId(@Param("personnageId") Long personnageId);
     
 }
 

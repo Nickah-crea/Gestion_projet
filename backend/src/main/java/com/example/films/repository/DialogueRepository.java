@@ -27,4 +27,10 @@ public interface DialogueRepository extends JpaRepository<Dialogue, Long> {
     
     @Query("SELECT MAX(d.ordre) FROM Dialogue d WHERE d.scene.id = :sceneId")
     Integer findMaxOrdreBySceneId(@Param("sceneId") Long sceneId);
+
+    @Query("SELECT COUNT(d) FROM Dialogue d WHERE d.scene.sequence.episode.projet.id = :projetId")
+    long countBySceneSequenceEpisodeProjetId(@Param("projetId") Long projetId);
+
+    long countByPersonnageId(Long personnageId);
+    
 }
