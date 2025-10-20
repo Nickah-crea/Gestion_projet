@@ -24,7 +24,7 @@
       </div>
 
       <!-- Section formulaire BIEN AU MILIEU -->
-      <div class="connexion-form-section-conn">
+      <div class="connexio-form-section-conn">
         <div class="connexion-card-conn">
           <!-- En-tête avec dégradé -->
           <div class="connex-header-conn">

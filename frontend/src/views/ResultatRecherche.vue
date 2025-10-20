@@ -1,0 +1,1304 @@
+<template>
+  <div class="resultat-recherche">
+    <!-- En-tête avec navigation -->
+    <div class="header">
+      <router-link to="/recherche" class="back-link">
+        ← Retour aux résultats
+      </router-link>
+      <h1>📖 Détails du résultat</h1>
+      <div v-if="resultat" class="result-type-header" :class="'type-' + resultat.type">
+        <span class="type-icon">{{ getTypeIcon(resultat.type) }}</span>
+        <span class="type-label">{{ getTypeLabel(resultat.type) }}</span>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <div v-if="chargement" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des détails...</p>
+    </div>
+
+    <!-- Erreur -->
+    <div v-else-if="erreur" class="error-state">
+      <div class="error-icon">❌</div>
+      <h3>Erreur de chargement</h3>
+      <p>{{ erreur }}</p>
+      <button @click="chargerDetails" class="btn-retry">Réessayer</button>
+    </div>
+
+    <!-- Affichage des détails -->
+    <div v-else-if="resultat" class="details-container">
+      
+      <!-- Carte principale -->
+      <div class="main-card">
+        <div class="card-header">
+          <h2 class="result-title">{{ resultat.titre }}</h2>
+          <div class="header-actions">
+            <span class="last-modified">
+              📅 Modifié le : {{ formatDateTime(resultat.modifieLe) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Détails selon le type -->
+        <div class="card-content">
+          
+          <!-- SCÈNE - DÉTAILS COMPLETS -->
+          <div v-if="resultat.type === 'scene'" class="scene-details">
+            
+            <!-- Informations de tournage -->
+            <div class="detail-section">
+              <h3>🎬 Informations de tournage</h3>
+              <div class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-label">📅 Date :</span>
+                  <span class="detail-value">{{ formatDate(resultat.dateTournage) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">🕒 Heure début :</span>
+                  <span class="detail-value">{{ resultat.heureDebut || 'Non spécifiée' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">🕒 Heure fin :</span>
+                  <span class="detail-value">{{ resultat.heureFin || 'Non spécifiée' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">📊 Statut :</span>
+                  <span class="detail-value status-badge" :class="'status-' + resultat.statut">
+                    {{ formatStatut(resultat.statut) }}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">⏱️ Durée estimée :</span>
+                  <span class="detail-value">{{ calculerDureeScene(resultat.heureDebut, resultat.heureFin) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Synopsis -->
+            <div v-if="resultat.description" class="detail-section">
+              <h3>📝 Synopsis</h3>
+              <div class="description-content">
+                {{ resultat.description }}
+              </div>
+            </div>
+
+            <!-- Structure du projet -->
+            <div class="detail-section">
+              <h3>📁 Structure du projet</h3>
+              <div class="hierarchy-path">
+                <div v-if="resultat.projetTitre" class="hierarchy-level">
+                  <span class="level-icon">📁</span>
+                  <span class="level-label">Projet :</span>
+                  <span class="level-value">{{ resultat.projetTitre }}</span>
+                </div>
+                <div v-if="resultat.episodeTitre" class="hierarchy-level">
+                  <span class="level-icon">▶️</span>
+                  <span class="level-label">Épisode :</span>
+                  <span class="level-value">{{ resultat.episodeTitre }}</span>
+                </div>
+                <div v-if="resultat.sequenceTitre" class="hierarchy-level">
+                  <span class="level-icon">🎞️</span>
+                  <span class="level-label">Séquence :</span>
+                  <span class="level-value">{{ resultat.sequenceTitre }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Localisation -->
+            <div class="detail-section">
+              <h3>📍 Localisation</h3>
+              <div class="details-grid">
+                <div v-if="resultat.lieuNom" class="detail-item">
+                  <span class="detail-label">🏛️ Lieu :</span>
+                  <span class="detail-value">{{ resultat.lieuNom }}</span>
+                </div>
+                <div v-if="resultat.plateauNom" class="detail-item">
+                  <span class="detail-label">🎭 Plateau :</span>
+                  <span class="detail-value">{{ resultat.plateauNom }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Personnages impliqués avec DÉTAILS -->
+            <div v-if="resultatDetails.personnages && resultatDetails.personnages.length > 0" class="detail-section">
+              <h3>👥 Personnages impliqués ({{ resultatDetails.personnages.length }})</h3>
+              <div class="personnages-detailed-list">
+                <div
+                  v-for="personnage in resultatDetails.personnages"
+                  :key="personnage.id"
+                  class="personnage-detailed-item"
+                >
+                  <div class="personnage-main-info">
+                    <span class="personnage-nom">{{ personnage.nom }}</span>
+                    <span v-if="personnage.comedien" class="personnage-comedien">
+                      ({{ personnage.comedien }})
+                    </span>
+                  </div>
+                  <div class="personnage-stats">
+                    <span class="personnage-dialogues">{{ personnage.nbDialogues }} dialogues</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TOUS LES DIALOGUES COMPLETS DE LA SCÈNE -->
+            <div v-if="resultatDetails.dialoguesComplets && resultatDetails.dialoguesComplets.length > 0" class="detail-section">
+              <h3>💬 Dialogues complets ({{ resultatDetails.dialoguesComplets.length }})</h3>
+              <div class="dialogues-stats">
+                <span class="stat-item">📊 Total mots : {{ compterMotsDialoguesComplets(resultatDetails.dialoguesComplets) }}</span>
+                <span class="stat-item">⏱️ Durée estimée : {{ estimerDureeDialoguesComplets(resultatDetails.dialoguesComplets) }}</span>
+              </div>
+              <div class="dialogues-complets-list">
+                <div
+                  v-for="(dialogue, index) in resultatDetails.dialoguesComplets"
+                  :key="dialogue.id || index"
+                  class="dialogue-complet-item"
+                >
+                  <div class="dialogue-header">
+                    <span class="dialogue-personnage">
+                      <strong>{{ dialogue.personnageNom || 'Narrateur' }}:</strong>
+                    </span>
+                    <span class="dialogue-ordre">#{{ dialogue.ordre || index + 1 }}</span>
+                  </div>
+                  <div class="dialogue-text">"{{ dialogue.texte }}"</div>
+                  <div v-if="dialogue.observation" class="dialogue-observation">
+                    💡 {{ dialogue.observation }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="resultat.dialogues && resultat.dialogues.length > 0" class="detail-section">
+              <h3>💬 Dialogues ({{ resultat.dialogues.length }})</h3>
+              <div class="dialogues-list-simple">
+                <div
+                  v-for="(dialogue, index) in resultat.dialogues"
+                  :key="index"
+                  class="dialogue-simple-item"
+                >
+                  <div class="dialogue-text">"{{ dialogue }}"</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PERSONNAGE - DÉTAILS COMPLETS -->
+          <div v-else-if="resultat.type === 'personnage'" class="personnage-details">
+            
+            <!-- Informations de base -->
+            <div class="detail-section">
+              <h3>👤 Informations du personnage</h3>
+              <div class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-label">🎭 Comédien :</span>
+                  <span class="detail-value">{{ resultat.comedienNom || 'Non spécifié' }}</span>
+                </div>
+                <div v-if="resultatDetails.informationsComplementaires?.age" class="detail-item">
+                  <span class="detail-label">🎂 Âge :</span>
+                  <span class="detail-value">{{ resultatDetails.informationsComplementaires.age }}</span>
+                </div>
+                <div v-if="resultatDetails.informationsComplementaires?.typePersonnage" class="detail-item">
+                  <span class="detail-label">📝 Type :</span>
+                  <span class="detail-value">{{ resultatDetails.informationsComplementaires.typePersonnage }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div v-if="resultatDetails.statistiques" class="detail-section">
+              <h3>📊 Statistiques</h3>
+              <div class="details-grid">
+                <div v-if="resultatDetails.statistiques.nbScenes" class="detail-item">
+                  <span class="detail-label">🎬 Scènes :</span>
+                  <span class="detail-value">{{ resultatDetails.statistiques.nbScenes }}</span>
+                </div>
+                <div v-if="resultatDetails.statistiques.nbDialogues" class="detail-item">
+                  <span class="detail-label">💬 Dialogues :</span>
+                  <span class="detail-value">{{ resultatDetails.statistiques.nbDialogues }}</span>
+                </div>
+                <div v-if="resultatDetails.statistiques.totalMots" class="detail-item">
+                  <span class="detail-label">📝 Total mots :</span>
+                  <span class="detail-value">{{ resultatDetails.statistiques.totalMots }}</span>
+                </div>
+                <div v-if="resultatDetails.statistiques.pourcentageDialogues" class="detail-item">
+                  <span class="detail-label">📈 Part des dialogues :</span>
+                  <span class="detail-value">{{ Math.round(resultatDetails.statistiques.pourcentageDialogues * 100) / 100 }}%</span>
+                </div>
+                <div v-if="resultatDetails.statistiques.dureeTotale" class="detail-item">
+                  <span class="detail-label">⏱️ Durée totale :</span>
+                  <span class="detail-value">{{ resultatDetails.statistiques.dureeTotale }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div v-if="resultat.description" class="detail-section">
+              <h3>📝 Description</h3>
+              <div class="description-content">
+                {{ resultat.description }}
+              </div>
+            </div>
+
+            <!-- Structure du projet -->
+            <div class="detail-section">
+              <h3>📁 Projet</h3>
+              <div class="hierarchy-path">
+                <div v-if="resultat.projetTitre" class="hierarchy-level">
+                  <span class="level-icon">📁</span>
+                  <span class="level-label">Projet :</span>
+                  <span class="level-value">{{ resultat.projetTitre }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 🎬 PLANNING DE TOURNAGE RÉEL DES SCÈNES -->
+            <div v-if="resultatDetails.scenes && resultatDetails.scenes.length > 0" class="detail-section">
+              <h3>🎬 Planning de tournage des scènes</h3>
+              <div class="scenes-planning-list">
+                <div
+                  v-for="scene in scenesAvecPlanning"
+                  :key="scene.id"
+                  class="scene-planning-item"
+                >
+                  <div class="scene-planning-header">
+                    <span class="scene-titre">{{ scene.titre }}</span>
+                    <span class="scene-statut" :class="'status-' + (scene.statut || 'planifie')">
+                      {{ formatStatut(scene.statut || 'planifie') }}
+                    </span>
+                  </div>
+                  
+                  <div class="scene-planning-details">
+                    <div class="planning-info-grid">
+                      <div class="planning-info-item">
+                        <span class="detail-label">📅 Date :</span>
+                        <span class="detail-value">{{ formatDate(scene.dateTournage) }}</span>
+                      </div>
+                      <div class="planning-info-item">
+                        <span class="detail-label">🕒 Heure début :</span>
+                        <span class="detail-value">{{ scene.heureDebut || 'Non spécifiée' }}</span>
+                      </div>
+                      <div class="planning-info-item">
+                        <span class="detail-label">🕒 Heure fin :</span>
+                        <span class="detail-value">{{ scene.heureFin || 'Non spécifiée' }}</span>
+                      </div>
+                      <div class="planning-info-item">
+                        <span class="detail-label">⏱️ Durée estimée :</span>
+                        <span class="detail-value">{{ calculerDureeScene(scene.heureDebut, scene.heureFin) }}</span>
+                      </div>
+                    </div>
+                    
+                    <div class="scene-planning-location">
+                      <span v-if="scene.lieuNom" class="location-item">
+                        <span class="location-icon">🏛️</span>
+                        {{ scene.lieuNom }}
+                      </span>
+                      <span v-if="scene.plateauNom" class="location-item">
+                        <span class="location-icon">🎭</span>
+                        {{ scene.plateauNom }}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div v-if="scene.nbDialogues" class="scene-dialogues-info">
+                    <span class="dialogues-count">💬 {{ scene.nbDialogues }} dialogues dans cette scène</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div v-if="scenesAvecPlanning.length === 0" class="no-planning">
+                <p>📅 Aucun planning de tournage disponible pour ce personnage</p>
+              </div>
+            </div>
+
+            <!-- TOUS LES DIALOGUES RÉELS DU PERSONNAGE -->
+            <div v-if="resultatDetails.dialogues && resultatDetails.dialogues.length > 0" class="detail-section">
+              <h3>💬 Tous les dialogues ({{ resultatDetails.dialogues.length }})</h3>
+              
+              <div class="dialogues-stats">
+                <span class="stat-item">📊 Total mots : {{ resultatDetails.statistiques?.totalMots || compterMotsDialoguesPersonnage(resultatDetails.dialogues) }}</span>
+                <span class="stat-item">⏱️ Durée estimée : {{ estimerDureeDialoguesPersonnage(resultatDetails.dialogues) }}</span>
+              </div>
+
+              <!-- Filtres et tri -->
+              <div class="dialogues-controls">
+                <div class="filter-group">
+                  <label>Trier par :</label>
+                  <select v-model="triDialogues" @change="trierDialogues">
+                    <option value="ordre">Ordre chronologique</option>
+                    <option value="scene">Scène</option>
+                    <option value="longueur">Longueur</option>
+                  </select>
+                </div>
+                <div class="search-group">
+                  <input 
+                    v-model="rechercheDialogue" 
+                    type="text" 
+                    placeholder="Rechercher dans les dialogues..." 
+                    class="search-input"
+                  />
+                </div>
+              </div>
+
+              <div class="dialogues-list">
+                <div
+                  v-for="(dialogue, index) in dialoguesFiltres"
+                  :key="dialogue.id || index"
+                  class="dialogue-item"
+                >
+                  <div class="dialogue-header">
+                    <span class="dialogue-number">Dialogue #{{ index + 1 }}</span>
+                    <span class="dialogue-context">
+                      <strong>Scène:</strong> {{ dialogue.sceneTitre || 'Non spécifiée' }}
+                      <span v-if="dialogue.sequenceTitre"> • <strong>Séquence:</strong> {{ dialogue.sequenceTitre }}</span>
+                      <span v-if="dialogue.episodeTitre"> • <strong>Épisode:</strong> {{ dialogue.episodeTitre }}</span>
+                    </span>
+                  </div>
+                  
+                  <div class="dialogue-text">"{{ dialogue.texte }}"</div>
+                  
+                  <div class="dialogue-footer">
+                    <span class="dialogue-info">
+                      📝 {{ compterMots(dialogue.texte) }} mots • ⏱️ {{ estimerDuree(dialogue.texte) }}
+                    </span>
+                    <span v-if="dialogue.observation" class="dialogue-observation">
+                      💡 {{ dialogue.observation }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pagination si beaucoup de dialogues -->
+              <div v-if="dialoguesFiltres.length > 10" class="pagination">
+                <button @click="pageDialogues--" :disabled="pageDialogues === 1" class="pagination-btn">← Précédent</button>
+                <span>Page {{ pageDialogues }} sur {{ totalPagesDialogues }}</span>
+                <button @click="pageDialogues++" :disabled="pageDialogues === totalPagesDialogues" class="pagination-btn">Suivant →</button>
+              </div>
+            </div>
+
+            <div v-else class="no-dialogues">
+              <p>📝 Ce personnage n'a aucun dialogue.</p>
+            </div>
+
+            <!-- Scènes associées (version simplifiée) -->
+            <div v-if="resultatDetails.scenes && resultatDetails.scenes.length > 0" class="detail-section">
+              <h3>🎬 Toutes les scènes associées ({{ resultatDetails.scenes.length }})</h3>
+              <div class="scenes-overview">
+                <div
+                  v-for="scene in resultatDetails.scenes"
+                  :key="scene.id"
+                  class="scene-overview-item"
+                >
+                  <div class="scene-overview-header">
+                    <span class="scene-titre">{{ scene.titre }}</span>
+                    <span class="scene-statut" :class="'status-' + (scene.statut || 'planifie')">
+                      {{ formatStatut(scene.statut || 'planifie') }}
+                    </span>
+                  </div>
+                  <div class="scene-overview-details">
+                    <span v-if="scene.dateTournage" class="scene-date">📅 {{ formatDate(scene.dateTournage) }}</span>
+                    <span v-if="scene.lieuNom" class="scene-lieu">📍 {{ scene.lieuNom }}</span>
+                    <span class="scene-dialogues">💬 {{ scene.nbDialogues }} dialogues</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LIEU - DÉTAILS COMPLETS -->
+          <div v-else-if="resultat.type === 'lieu'" class="lieu-details">
+            <div class="detail-section">
+              <h3>🏛️ Informations du lieu</h3>
+              <div class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-label">📝 Type :</span>
+                  <span class="detail-value">{{ resultat.description ? getTypeFromDescription(resultat.description) : 'Non spécifié' }}</span>
+                </div>
+                <div v-if="resultatDetails.informationsComplementaires?.adresse" class="detail-item">
+                  <span class="detail-label">🏠 Adresse :</span>
+                  <span class="detail-value">{{ resultatDetails.informationsComplementaires.adresse }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="resultat.description" class="detail-section">
+              <h3>📝 Description</h3>
+              <div class="description-content">
+                {{ resultat.description }}
+              </div>
+            </div>
+
+            <!-- Scènes tournées à ce lieu -->
+            <div v-if="resultatDetails.scenes && resultatDetails.scenes.length > 0" class="detail-section">
+              <h3>🎬 Scènes tournées ici ({{ resultatDetails.scenes.length }})</h3>
+              <div class="scenes-list">
+                <div
+                  v-for="scene in resultatDetails.scenes"
+                  :key="scene.id"
+                  class="scene-item"
+                >
+                  <div class="scene-header">
+                    <span class="scene-titre">{{ scene.titre }}</span>
+                    <span class="scene-statut" :class="'status-' + scene.statut">
+                      {{ formatStatut(scene.statut) }}
+                    </span>
+                  </div>
+                  <div class="scene-details">
+                    <span class="scene-date">{{ formatDate(scene.dateTournage) }}</span>
+                    <span class="scene-heure">{{ scene.heureDebut }} - {{ scene.heureFin }}</span>
+                    <span class="scene-personnages">👥 {{ scene.nbPersonnages }} pers.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PLATEAU - DÉTAILS COMPLETS -->
+          <div v-else-if="resultat.type === 'plateau'" class="plateau-details">
+            <div class="detail-section">
+              <h3>🎭 Informations du plateau</h3>
+              <div class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-label">📝 Type :</span>
+                  <span class="detail-value">{{ resultat.description ? getTypeFromDescription(resultat.description) : 'Non spécifié' }}</span>
+                </div>
+                <div v-if="resultat.lieuNom" class="detail-item">
+                  <span class="detail-label">🏛️ Lieu :</span>
+                  <span class="detail-value">{{ resultat.lieuNom }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="resultat.description" class="detail-section">
+              <h3>📝 Description</h3>
+              <div class="description-content">
+                {{ resultat.description }}
+              </div>
+            </div>
+
+            <!-- Scènes tournées sur ce plateau -->
+            <div v-if="resultatDetails.scenes && resultatDetails.scenes.length > 0" class="detail-section">
+              <h3>🎬 Scènes tournées ici ({{ resultatDetails.scenes.length }})</h3>
+              <div class="scenes-list">
+                <div
+                  v-for="scene in resultatDetails.scenes"
+                  :key="scene.id"
+                  class="scene-item"
+                >
+                  <div class="scene-header">
+                    <span class="scene-titre">{{ scene.titre }}</span>
+                    <span class="scene-statut" :class="'status-' + scene.statut">
+                      {{ formatStatut(scene.statut) }}
+                    </span>
+                  </div>
+                  <div class="scene-details">
+                    <span class="scene-date">{{ formatDate(scene.dateTournage) }}</span>
+                    <span class="scene-heure">{{ scene.heureDebut }} - {{ scene.heureFin }}</span>
+                    <span class="scene-dialogues">💬 {{ scene.nbDialogues }} dialogues</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Critères de recherche utilisés -->
+      <div v-if="criteresRecherche" class="search-criteria-card">
+        <h3>🔍 Critères de recherche utilisés</h3>
+        <div class="criteria-list">
+          <div v-if="criteresRecherche.termeRecherche" class="criterion">
+            <span class="criterion-label">Mot-clé :</span>
+            <span class="criterion-value">{{ criteresRecherche.termeRecherche }}</span>
+          </div>
+          <div v-if="criteresRecherche.typesRecherche && criteresRecherche.typesRecherche.length" class="criterion">
+            <span class="criterion-label">Types recherchés :</span>
+            <span class="criterion-value">{{ formatTypes(criteresRecherche.typesRecherche) }}</span>
+          </div>
+          <div v-if="criteresRecherche.dateDebut || criteresRecherche.dateFin" class="criterion">
+            <span class="criterion-label">Période :</span>
+            <span class="criterion-value">
+              {{ formatDate(criteresRecherche.dateDebut) || 'Début non spécifié' }}
+              → 
+              {{ formatDate(criteresRecherche.dateFin) || 'Fin non spécifiée' }}
+            </span>
+          </div>
+          <div v-if="criteresRecherche.statuts && criteresRecherche.statuts.length" class="criterion">
+            <span class="criterion-label">Statuts :</span>
+            <span class="criterion-value">{{ criteresRecherche.statuts.join(', ') }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- État vide si pas de résultat -->
+    <div v-else class="empty-state">
+      <div class="empty-icon">❓</div>
+      <h3>Aucun détail disponible</h3>
+      <p>Impossible de charger les détails de ce résultat</p>
+    </div>
+  </div>
+</template>
+
+<script>
+// IMPORT DES VRAIS SERVICES
+import { getResultatDetails, getResultatDetailsComplets } from '../service/rechercheService'
+import '../assets/css/resultat_search.css';
+
+export default {
+  name: 'ResultatRecherche',
+  data() {
+    return {
+      resultat: null,
+      resultatDetails: {},
+      criteresRecherche: null,
+      chargement: true,
+      erreur: null,
+      triDialogues: 'ordre',
+      rechercheDialogue: '',
+      pageDialogues: 1,
+      dialoguesParPage: 10
+    }
+  },
+  computed: {
+    dialoguesFiltres() {
+      let dialogues = this.resultatDetails.dialogues || [];
+      
+      // Filtre par recherche
+      if (this.rechercheDialogue) {
+        const terme = this.rechercheDialogue.toLowerCase();
+        dialogues = dialogues.filter(d => 
+          d.texte.toLowerCase().includes(terme) ||
+          (d.observation && d.observation.toLowerCase().includes(terme)) ||
+          (d.sceneTitre && d.sceneTitre.toLowerCase().includes(terme))
+        );
+      }
+      
+      // Tri
+      switch (this.triDialogues) {
+        case 'scene':
+          dialogues.sort((a, b) => (a.sceneTitre || '').localeCompare(b.sceneTitre || ''));
+          break;
+        case 'longueur':
+          dialogues.sort((a, b) => this.compterMots(b.texte) - this.compterMots(a.texte));
+          break;
+        case 'ordre':
+        default:
+          dialogues.sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
+          break;
+      }
+      
+      // Pagination
+      const start = (this.pageDialogues - 1) * this.dialoguesParPage;
+      const end = start + this.dialoguesParPage;
+      return dialogues.slice(start, end);
+    },
+    
+    totalPagesDialogues() {
+      const total = this.resultatDetails.dialogues?.length || 0;
+      return Math.ceil(total / this.dialoguesParPage);
+    },
+
+    // CORRECTION : Computed property pour filtrer les scènes avec planning
+    scenesAvecPlanning() {
+      if (!this.resultatDetails.scenes) return [];
+      return this.resultatDetails.scenes.filter(scene => scene.dateTournage);
+    }
+  },
+  async mounted() {
+    await this.chargerDetails()
+  },
+  methods: {
+    async chargerDetails() {
+      this.chargement = true
+      this.erreur = null
+      
+      try {
+        const { type, id } = this.$route.params
+        
+        // Récupérer les critères de recherche depuis l'URL
+        if (this.$route.query.recherche) {
+          this.criteresRecherche = JSON.parse(this.$route.query.recherche)
+        }
+        
+        // APPELS API RÉELS
+        // 1. Détails de base
+        this.resultat = await getResultatDetails(type, id)
+        
+        // 2. Détails complets selon le type
+        this.resultatDetails = await getResultatDetailsComplets(type, id)
+        
+      } catch (error) {
+        console.error('Erreur lors du chargement des détails:', error)
+        this.erreur = error.message || 'Erreur lors du chargement des détails'
+      } finally {
+        this.chargement = false
+      }
+    },
+    
+    // Méthodes utilitaires
+    getTypeIcon(type) {
+      const icons = {
+        scene: '🎬',
+        personnage: '👤',
+        lieu: '🏛️',
+        plateau: '🎭'
+      }
+      return icons[type] || '📄'
+    },
+    
+    getTypeLabel(type) {
+      const labels = {
+        scene: 'Scène',
+        personnage: 'Personnage',
+        lieu: 'Lieu',
+        plateau: 'Plateau'
+      }
+      return labels[type] || type
+    },
+    
+    formatDate(date) {
+      if (!date) return 'Non spécifiée'
+      try {
+        return new Date(date).toLocaleDateString('fr-FR')
+      } catch (error) {
+        return 'Date invalide'
+      }
+    },
+    
+    formatDateTime(dateTime) {
+      if (!dateTime) return 'Non spécifié'
+      try {
+        return new Date(dateTime).toLocaleString('fr-FR')
+      } catch (error) {
+        return 'Date invalide'
+      }
+    },
+    
+    formatStatut(statut) {
+      const statuts = {
+        'planifie': 'Planifié',
+        'confirme': 'Confirmé',
+        'en_cours': 'En cours',
+        'termine': 'Terminé',
+        'reporte': 'Reporté',
+        'annule': 'Annulé',
+        'tourne': 'Tourné',
+        'monte': 'Monté',
+        'valide': 'Validé',
+        'a_planifier': 'À planifier'
+      }
+      return statuts[statut] || statut
+    },
+    
+    formatTypes(types) {
+      const labels = {
+        'scenes': 'Scènes',
+        'personnages': 'Personnages', 
+        'lieux': 'Lieux',
+        'plateaux': 'Plateaux'
+      }
+      return types.map(type => labels[type] || type).join(', ')
+    },
+    
+    calculerDureeScene(debut, fin) {
+      if (!debut || !fin) return 'Non spécifiée'
+      try {
+        const [debutHeures, debutMinutes] = debut.split(':').map(Number)
+        const [finHeures, finMinutes] = fin.split(':').map(Number)
+        
+        const debutTotalMinutes = debutHeures * 60 + debutMinutes
+        const finTotalMinutes = finHeures * 60 + finMinutes
+        const dureeMinutes = finTotalMinutes - debutTotalMinutes
+        
+        if (dureeMinutes <= 0) return 'Non spécifiée'
+        
+        const heures = Math.floor(dureeMinutes / 60)
+        const minutes = dureeMinutes % 60
+        
+        if (heures > 0) {
+          return `${heures}h ${minutes}min`
+        } else {
+          return `${minutes}min`
+        }
+      } catch (error) {
+        return 'Non spécifiée'
+      }
+    },
+    
+    compterMots(texte) {
+      if (!texte) return 0
+      return texte.split(/\s+/).filter(word => word.length > 0).length
+    },
+    
+    compterMotsDialoguesComplets(dialogues) {
+      if (!dialogues) return 0
+      return dialogues.reduce((total, dialogue) => total + this.compterMots(dialogue.texte), 0)
+    },
+    
+    compterMotsDialoguesPersonnage(dialogues) {
+      if (!dialogues) return 0
+      return dialogues.reduce((total, dialogue) => total + this.compterMots(dialogue.texte), 0)
+    },
+    
+    estimerDuree(texte) {
+      const mots = this.compterMots(texte)
+      const minutes = Math.ceil(mots / 150)
+      return minutes > 0 ? `${minutes}min` : '< 1min'
+    },
+    
+    estimerDureeDialoguesComplets(dialogues) {
+      const totalMots = this.compterMotsDialoguesComplets(dialogues)
+      const minutes = Math.ceil(totalMots / 150)
+      return minutes > 60 
+        ? `${Math.floor(minutes / 60)}h ${minutes % 60}min`
+        : `${minutes}min`
+    },
+    
+    estimerDureeDialoguesPersonnage(dialogues) {
+      const totalMots = this.compterMotsDialoguesPersonnage(dialogues)
+      const minutes = Math.ceil(totalMots / 150)
+      return minutes > 60 
+        ? `${Math.floor(minutes / 60)}h ${minutes % 60}min`
+        : `${minutes}min`
+    },
+    
+    getTypeFromDescription(description) {
+      if (!description) return 'Non spécifié'
+      if (description.toLowerCase().includes('intérieur')) return 'Intérieur'
+      if (description.toLowerCase().includes('extérieur')) return 'Extérieur'
+      if (description.toLowerCase().includes('studio')) return 'Studio'
+      return 'Non spécifié'
+    },
+    
+    trierDialogues() {
+      this.pageDialogues = 1
+    }
+  },
+  watch: {
+    '$route.params': {
+      handler: 'chargerDetails',
+      deep: true
+    },
+    rechercheDialogue() {
+      this.pageDialogues = 1
+    }
+  }
+}
+</script>
+
+<style scoped>
+/* Les styles restent exactement les mêmes */
+.resultat-recherche {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e1e8ed;
+  padding-bottom: 20px;
+}
+
+.back-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.result-type-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border-radius: 20px;
+  margin-top: 10px;
+}
+
+.type-icon {
+  font-size: 1.2em;
+}
+
+.details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.main-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e1e8ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.result-title {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5em;
+}
+
+.last-modified {
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+.detail-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.detail-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.detail-section h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #5a6c7d;
+  font-size: 0.9em;
+}
+
+.detail-value {
+  color: #2c3e50;
+}
+
+.scenes-planning-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.scene-planning-item {
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid #3498db;
+}
+
+.scene-planning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.scene-titre {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.1em;
+}
+
+.planning-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.planning-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.scene-planning-location {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.location-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #5a6c7d;
+}
+
+.location-icon {
+  font-size: 1.1em;
+}
+
+.scene-dialogues-info {
+  padding-top: 10px;
+  border-top: 1px dashed #e1e8ed;
+}
+
+.dialogues-count {
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+.no-planning {
+  text-align: center;
+  padding: 20px;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.personnages-detailed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.personnage-detailed-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 6px;
+}
+
+.personnage-main-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.personnage-nom {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.personnage-comedien {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.personnage-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 0.9em;
+  color: #5a6c7d;
+}
+
+.dialogues-complets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.dialogue-complet-item {
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid #2ecc71;
+}
+
+.dialogue-personnage {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.dialogue-ordre {
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+.dialogue-text {
+  margin: 10px 0;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.dialogue-observation {
+  background: #fff3cd;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #856404;
+  border-left: 3px solid #ffc107;
+}
+
+.dialogues-stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.stat-item {
+  font-size: 0.9em;
+  color: #5a6c7d;
+}
+
+.dialogues-controls {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group, .search-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-group label, .search-group label {
+  font-weight: 600;
+  color: #5a6c7d;
+}
+
+.select-input, .search-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.dialogues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.dialogue-item {
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.dialogue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dialogue-number {
+  font-weight: 600;
+  color: #3498db;
+}
+
+.dialogue-context {
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+.dialogue-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dialogue-info {
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 15px;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+}
+
+.scenes-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.scene-overview-item {
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.scene-overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.scene-overview-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.9em;
+  color: #5a6c7d;
+}
+
+.status-badge, .planning-statut, .scene-statut {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-planifie { background: #fff3cd; color: #856404; }
+.status-confirme { background: #cce7ff; color: #004085; }
+.status-en_cours { background: #fff3cd; color: #856404; }
+.status-termine { background: #d4edda; color: #155724; }
+.status-reporte { background: #f8d7da; color: #721c24; }
+.status-annule { background: #f8d7da; color: #721c24; }
+.status-tourne { background: #d4edda; color: #155724; }
+.status-monte { background: #d1ecf1; color: #0c5460; }
+.status-valide { background: #d4edda; color: #155724; }
+.status-a_planifier { background: #e2e3e5; color: #383d41; }
+
+.loading-state, .error-state, .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.btn-retry {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.btn-retry:hover {
+  background: #2980b9;
+}
+
+.search-criteria-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.criterion {
+  display: flex;
+  gap: 10px;
+}
+
+.criterion-label {
+  font-weight: 600;
+  color: #5a6c7d;
+  min-width: 150px;
+}
+
+@media (max-width: 768px) {
+  .resultat-recherche {
+    padding: 10px;
+  }
+  
+  .planning-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .scene-planning-location {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .scenes-overview {
+    grid-template-columns: 1fr;
+  }
+  
+  .scene-planning-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+</style>
+

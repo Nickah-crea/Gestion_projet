@@ -215,6 +215,17 @@ const routes = [
     name: 'CalendrierTournage',
     component: () => import('../components/CalendrierTournage.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/recherche',
+    name: 'Recherche',
+    component: () => import('../views/Recherche.vue')
+  },
+  {
+    path: '/recherche/resultat/:type/:id',
+    name: 'ResultatRecherche',
+    component: () => import('../views/ResultatRecherche.vue'),
+    props: true
   }
 ]
 
