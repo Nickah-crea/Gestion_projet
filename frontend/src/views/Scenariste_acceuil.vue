@@ -18,7 +18,7 @@
               <button v-if="globalSearchQuery" @click="clearGlobalSearch" class="clear-search-btn-Scenariste">
                 <i class="fas fa-times"></i>
               </button>
-            </div>
+            </div>  
           </div>
           <!-- Filtres Statut Recherche et Date spécifique -->
           <div class="header-filters-Scenariste">
