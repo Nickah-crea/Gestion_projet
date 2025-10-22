@@ -6,19 +6,20 @@
   --accent-Scenariste: #B8A9FF;
   --accent-light-Scenariste: #D0C7FF;
   --background-Scenariste: #F2FDFF;
-  --background: #FFFFFF;
+  /* --background: #FFFFFF; */
+    --background: #B8A9FF; /* Violet pour le fond principal */
   --surface-Scenariste: rgba(255, 255, 255, 0.95);
   --text-primary-Scenariste: #050F2A;
   --text-secondary-Scenariste: #1A2A4D;
   --text-muted-Scenariste: #4A5A7D;
   --border-Scenariste: rgba(5, 15, 42, 0.1);
   --border-dark-Scenariste: rgba(5, 15, 42, 0.2);
-  --shadow-Scenariste: 0 4px 12px rgba(5, 15, 42, 0.05); /* Réduction des ombres pour un look plus plat et subtil comme dans l'image */
-  --radius-Scenariste: 50px; /* Radius augmenté à 50px pour des coins plus ronds, comme demandé */
-  --radius-sm-Scenariste: 25px; /* Ajusté pour cohérence */
+  --shadow-Scenariste: 0 4px 12px rgba(5, 15, 42, 0.05);
+  --radius-Scenariste: 50px;
+  --radius-sm-Scenariste: 25px;
   --transition-Scenariste: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Couleurs pastel inspirées de l'image MINO pour les cartes et badges */
+  /* Couleurs pastel pour les cartes et badges */
   --pastel-pink: #FFE4E4;
   --pastel-yellow: #FFF9D6;
   --pastel-blue: #E3F2FF;
@@ -29,8 +30,8 @@
 /* Reset et base */
 .scenariste-accueil-container-Scenariste {
   min-height: 100vh;
-  background: var(--background);
   padding: 2rem;
+  background: var(--background);
 }
 
 .main-content-scenariste-Scenariste {
@@ -42,62 +43,20 @@
 .header-section-Scenariste {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
+  padding: 1rem;
   margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-Scenariste); /* Bordure subtile comme dans l'image */
+  border-bottom: 1px solid var(--border-Scenariste);
 }
 
-.title-section-Scenariste h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--text-primary-Scenariste);
-  margin: 0;
-}
-
-.subtitle-Scenariste {
-  color: var(--text-muted-Scenariste);
-  font-size: 1.1rem;
-  margin: 0.5rem 0 0 0;
-  font-weight: 500;
-}
-
-.add-project-main-Scenariste {
+.search-and-filters-Scenariste {
   display: flex;
   align-items: center;
-}
-
-.add-project-btn-main-Scenariste {
-  background: var(--primary-Scenariste); /* Suppression du gradient pour un look plus plat */
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: var(--radius-Scenariste);
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition-Scenariste);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  box-shadow: none; /* Pas d'ombre pour éviter l'effet "jouet" */
-}
-
-.add-project-btn-main-Scenariste:hover {
-  background: var(--primary-dark-Scenariste);
-  transform: translateY(-2px); /* Animation subtile */
-}
-
-/* Section Recherche et Filtres */
-.search-filters-section-Scenariste {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  align-items: flex-start;
+  gap: 10px;
 }
 
 .search-container-Scenariste {
-  flex: 1;
+  flex: 0 0 auto;
 }
 
 .search-input-wrapper-Scenariste {
@@ -114,15 +73,15 @@
 }
 
 .search-input-Scenariste {
-  width: 100%;
+  width: 450px;
   padding: 1rem 1rem 1rem 3.5rem;
-  border: 1px solid var(--border-Scenariste); /* Bordure subtile */
+  border: 1px solid var(--border-Scenariste);
   border-radius: var(--radius-Scenariste);
   background: var(--surface-Scenariste);
   font-size: 1rem;
   color: var(--text-primary-Scenariste);
   transition: var(--transition-Scenariste);
-  box-shadow: none; /* Pas d'ombre */
+  box-shadow: 0 2px 8px rgba(5, 15, 42, 0.1);
 }
 
 .search-input-Scenariste:focus {
@@ -146,20 +105,85 @@
   color: var(--text-primary-Scenariste);
 }
 
-/* Filtres à droite */
-.filters-right-Scenariste {
+.header-filters-Scenariste {
   display: flex;
-  gap: 1.5rem;
-  align-items: flex-end;
+  gap: 10px;
 }
 
-.filter-group-right-Scenariste {
+.header-filters-Scenariste .filter-group-scenariste-Scenariste {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 1px 4px rgba(5, 15, 42, 0.08);
+  border-radius: 50px;
+}
+
+.filter-group-scenariste {
+   box-shadow: 0 1px 4px rgba(5, 15, 42, 0.08);
+  border-radius: 50px;
+}
+
+.header-filters-Scenariste .filter-group-scenariste-Scenariste label {
+  font-weight: 600;
+  color: var(--text-secondary-Scenariste);
+  font-size: 0.9rem;
+}
+
+.add-project-btn-main-Scenariste {
+  background: var(--primary-Scenariste);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-Scenariste);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-Scenariste);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: none;
+}
+
+.add-project-btn-main-Scenariste:hover {
+  background: var(--primary-dark-Scenariste);
+  transform: translateY(-2px);
+}
+
+/* Filtres Section */
+.filters-section-Scenariste {
+  padding: 1rem;
+}
+
+.filters-row-Scenariste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.projects-label-Scenariste {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--text-primary-Scenariste);
+}
+
+.filters-right-Scenariste {
+  display: flex;
+  gap: 10px;
+}
+
+.filters-right-Scenariste .filter-group-scenariste-Scenariste {
+  width: 120px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.filter-group-right-Scenariste label {
+.filters-right-Scenariste .filter-group-scenariste-Scenariste label {
   font-weight: 600;
   color: var(--text-secondary-Scenariste);
   font-size: 0.9rem;
@@ -167,6 +191,8 @@
 
 .filter-select-Scenariste,
 .date-input-Scenariste {
+  width: 100%;
+  box-sizing: border-box;
   padding: 0.75rem 1rem;
   border: 1px solid var(--border-Scenariste);
   border-radius: var(--radius-sm-Scenariste);
@@ -174,7 +200,6 @@
   color: var(--text-primary-Scenariste);
   font-size: 0.9rem;
   transition: var(--transition-Scenariste);
-  min-width: 150px;
   box-shadow: none;
 }
 
@@ -184,82 +209,49 @@
   border-color: var(--primary-Scenariste);
 }
 
-/* Filtres supplémentaires */
-.additional-filters-Scenariste {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+/* Grille des projets */
+.projects-library-Scenariste {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.movie-card-Scenariste {
   background: var(--surface-Scenariste);
   border-radius: var(--radius-Scenariste);
-  border: 1px solid var(--border-Scenariste);
-  box-shadow: none; /* Pas d'ombre */
-}
-
-.filter-group-scenariste-Scenariste {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.filter-group-scenariste-Scenariste label {
-  font-weight: 600;
-  color: var(--text-secondary-Scenariste);
-  font-size: 0.9rem;
-}
-
-/* Grille des projets et résultats de recherche */
-.projects-library-Scenariste,
-.global-search-results-Scenariste {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-/* Carte de projet - Ajout de couleurs pastel aléatoires ou basées sur statut pour matcher l'image */
-.movie-card-Scenariste,
-.search-result-item-Scenariste {
-  background: var(--surface-Scenariste); /* Fond blanc subtil */
-  border-radius: var(--radius-Scenariste);
-  border: none; /* Suppression des bordures pour un look plus doux */
-  box-shadow: var(--shadow-Scenariste); /* Ombre très subtile */
+  border: none;
+  box-shadow: var(--shadow-Scenariste);
   overflow: hidden;
   transition: var(--transition-Scenariste);
   position: relative;
-  padding: 1.5rem; /* Ajustement pour uniformité avec les cartes projets */
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px; /* Hauteur minimale pour uniformité */
 }
 
-.movie-card-Scenariste:hover,
-.search-result-item-Scenariste:hover {
+.movie-card-Scenariste:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(5, 15, 42, 0.08); /* Ombre légère au hover */
+  box-shadow: 0 8px 20px rgba(5, 15, 42, 0.08);
 }
 
-/* Exemples de classes pour couleurs pastel comme dans l'image (à appliquer dynamiquement dans Vue si possible) */
-.movie-card-Scenariste.pastel-pink,
-.search-result-item-Scenariste.pastel-pink { background: var(--pastel-pink); }
-.movie-card-Scenariste.pastel-yellow,
-.search-result-item-Scenariste.pastel-yellow { background: var(--pastel-yellow); }
-.movie-card-Scenariste.pastel-blue,
-.search-result-item-Scenariste.pastel-blue { background: var(--pastel-blue); }
-.movie-card-Scenariste.pastel-green,
-.search-result-item-Scenariste.pastel-green { background: var(--pastel-green); }
-.movie-card-Scenariste.pastel-purple,
-.search-result-item-Scenariste.pastel-purple { background: var(--pastel-purple); }
+/* Couleurs pastel pour les cartes */
+.movie-card-Scenariste.pastel-pink { background: var(--pastel-pink); }
+.movie-card-Scenariste.pastel-yellow { background: var(--pastel-yellow); }
+.movie-card-Scenariste.pastel-blue { background: var(--pastel-blue); }
+.movie-card-Scenariste.pastel-green { background: var(--pastel-green); }
+.movie-card-Scenariste.pastel-purple { background: var(--pastel-purple); }
 
-.movie-card-header-Scenariste,
-.result-header-Scenariste {
+.movie-card-header-Scenariste {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   padding: 0 0 1rem 0;
-  background: transparent; /* Suppression du gradient */
+  background: transparent;
 }
 
-.movie-statut-Scenariste,
-.result-main-info-Scenariste {
+.movie-statut-Scenariste {
   flex: 1;
 }
 
@@ -270,28 +262,22 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: var(--pastel-blue); /* Exemple pastel */
+  background: var(--pastel-blue);
   color: var(--text-primary-Scenariste);
 }
 
-.statut-en-cours {
-  background: var(--pastel-blue);
-}
+.statut-en-cours { background: var(--pastel-blue); }
+.statut-termine { background: var(--pastel-green); }
+.statut-attente { background: var(--pastel-yellow); }
+.statut-annule { background: var(--pastel-pink); }
+.statut-planifie { background: var(--pastel-purple); }
+.statut-preparation { background: var(--pastel-yellow); }
+.statut-tournage { background: var(--pastel-blue); }
+.statut-tourne { background: var(--pastel-green); }
+.statut-monte { background: var(--pastel-purple); }
+.statut-valide { background: var(--pastel-green); }
 
-.statut-termine {
-  background: var(--pastel-green);
-}
-
-.statut-attente {
-  background: var(--pastel-yellow);
-}
-
-.statut-annule {
-  background: var(--pastel-pink);
-}
-
-.movie-actions-Scenariste,
-.result-actions-Scenariste {
+.movie-actions-Scenariste {
   display: flex;
   gap: 0.5rem;
 }
@@ -324,13 +310,13 @@
 }
 
 /* Contenu de la carte */
-.movie-info-Scenariste,
-.project-details-Scenariste {
-  padding: 0;
+.movie-info-Scenariste {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.movie-title-Scenariste,
-.result-title-Scenariste {
+.movie-title-Scenariste {
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-primary-Scenariste);
@@ -362,8 +348,9 @@
 .movie-synopsis-Scenariste {
   color: var(--text-secondary-Scenariste);
   line-height: 1.5;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   font-size: 0.9rem;
+  flex-grow: 1; /* Permet au synopsis de prendre l'espace disponible */
 }
 
 /* Actions en bas de carte */
@@ -371,6 +358,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  margin-top: auto; /* Force les boutons à rester en bas */
 }
 
 .actions-top-Scenariste {
@@ -378,11 +366,8 @@
   gap: 0.75rem;
 }
 
-.actions-bottom-Scenariste {
-  display: flex;
-}
-
-.primary-btn-Scenariste {
+.primary-btn-Scenariste,
+.accent-btn-Scenariste {
   flex: 1;
   background: var(--primary-Scenariste);
   color: white;
@@ -392,37 +377,91 @@
   border: none;
   font-weight: 600;
   transition: var(--transition-Scenariste);
-}
-
-.secondary-btn-Scenariste {
-  flex: 1;
-  background: var(--accent-Scenariste);
-  color: white;
-  padding: 0.75rem 1rem;
-  gap: 0.5rem;
-  border-radius: var(--radius-sm-Scenariste);
-  border: none;
-  font-weight: 600;
-  transition: var(--transition-Scenariste);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .accent-btn-Scenariste {
-  width: 100%;
   background: var(--text-secondary-Scenariste);
-  color: white;
-  padding: 0.75rem 1rem;
-  gap: 0.5rem;
-  border-radius: var(--radius-sm-Scenariste);
-  border: none;
-  font-weight: 600;
-  transition: var(--transition-Scenariste);
 }
 
 .primary-btn-Scenariste:hover,
-.secondary-btn-Scenariste:hover,
 .accent-btn-Scenariste:hover {
   opacity: 0.9;
   transform: translateY(-2px);
+}
+
+/* Résultats de recherche globale */
+.global-search-results-Scenariste {
+  padding: 1rem;
+}
+
+.search-result-item-Scenariste {
+  background: var(--surface-Scenariste);
+  border-radius: var(--radius-Scenariste);
+  border: none;
+  box-shadow: var(--shadow-Scenariste);
+  padding: 1.5rem;
+  transition: var(--transition-Scenariste);
+}
+
+.search-result-item-Scenariste:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(5, 15, 42, 0.08);
+}
+
+.search-results-header-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.search-results-group-Scenariste {
+  margin-bottom: 2rem;
+}
+
+.result-main-info-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.result-title-Scenariste {
+  font-weight: 600;
+}
+
+.result-statut-Scenariste {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm-Scenariste);
+  font-size: 0.8rem;
+}
+
+.project-details-Scenariste {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--pastel-yellow);
+  border-radius: var(--radius-sm-Scenariste);
+}
+
+.content-section-Scenariste {
+  margin-bottom: 1rem;
+}
+
+.content-item-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.no-results-Scenariste {
+  text-align: center;
+  color: var(--text-muted-Scenariste);
+  padding: 2rem;
+  background: var(--surface-Scenariste);
+  border-radius: var(--radius-Scenariste);
 }
 
 /* Aucun projet */
@@ -539,42 +578,6 @@
   color: white;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .scenariste-accueil-container-Scenariste {
-    padding: 1rem;
-  }
-  
-  .header-section-Scenariste {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1.5rem;
-  }
-  
-  .search-filters-section-Scenariste {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .filters-right-Scenariste {
-    justify-content: space-between;
-  }
-  
-  .additional-filters-Scenariste {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .projects-library-Scenariste,
-  .global-search-results-Scenariste {
-    grid-template-columns: 1fr;
-  }
-  
-  .actions-top-Scenariste {
-    flex-direction: column;
-  }
-}
-
 /* Animations */
 @keyframes fadeInUp-Scenariste {
   from {
@@ -594,54 +597,39 @@
   opacity: 0;
 }
 
-/* Styles pour les résultats de recherche globale (ajustés pour cohérence avec les cartes projets) */
-.search-results-header-Scenariste {
-  display: none; /* Caché car intégré dans la structure des cartes */
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .scenariste-accueil-container-Scenariste {
+    padding: 1rem;
+  }
 
-.search-results-group-Scenariste {
-  margin-bottom: 0; /* Pas de marge supplémentaire */
-}
+  .header-section-Scenariste {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
 
-.result-main-info-Scenariste {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+  .search-and-filters-Scenariste {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-.result-title-Scenariste {
-  font-weight: 600;
-}
+  .header-filters-Scenariste {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 
-.result-statut-Scenariste {
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-sm-Scenariste);
-  font-size: 0.8rem;
-}
+  .filters-right-Scenariste {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 
-.project-details-Scenariste {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: var(--pastel-yellow);
-  border-radius: var(--radius-sm-Scenariste);
-}
+  .projects-library-Scenariste,
+  .global-search-results-Scenariste {
+    grid-template-columns: 1fr;
+  }
 
-.content-section-Scenariste {
-  margin-bottom: 1rem;
+  .actions-top-Scenariste {
+    flex-direction: column;
+  }
 }
-
-.content-item-Scenariste {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-}
-
-.no-results-Scenariste {
-  text-align: center;
-  color: var(--text-muted-Scenariste);
-  padding: 2rem;
-  background: var(--surface-Scenariste);
-  border-radius: var(--radius-Scenariste);
-}
-
