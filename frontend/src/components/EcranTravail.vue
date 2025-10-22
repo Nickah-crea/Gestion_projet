@@ -103,7 +103,7 @@
             class="episode-number"
             :class="{ 'active': episode.idEpisode === currentEpisode?.idEpisode, 'new-episode': episode.idEpisode === newlyCreatedEpisodeId }"
             @click="selectEpisode(episode.idEpisode)"
-          >
+          >Ep
             {{ episode.ordre }}
             <span v-if="episode.idEpisode === newlyCreatedEpisodeId" class="blinking-icon">✨</span>
           </span>
@@ -140,9 +140,9 @@
         </button>
       </div>
 
-      <div class="#">
+      <!-- <div class="#">
         <h2>Les séquences :</h2>
-      </div>
+      </div> -->
 
       <div class="#">
         <!-- Navigation par numéros de séquences -->
@@ -154,7 +154,7 @@
             :class="{ 'active': sequence.idSequence === currentSequence?.idSequence, 'new-sequence': sequence.idSequence === newlyCreatedSequenceId }"
             @click="selectSequence(sequence.idSequence)"
           >
-            <span v-if="index > 0"></span>
+            <span v-if="index > 0"></span>Seq
             {{ sequence.ordre }}
             <span v-if="sequence.idSequence === newlyCreatedSequenceId" class="blinking-icon">✨</span>
           </span>

@@ -538,3 +538,27 @@ select, .search-input {
   }
 }
 
+
+/* Ajouter le style pour le bouton d'export PDF */
+.btn-export-pdf {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-export-pdf:hover:not(:disabled) {
+  background: #c0392b;
+}
+
+.btn-export-pdf:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
