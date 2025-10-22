@@ -1,30 +1,47 @@
 <template>
   <div class="scenariste-accueil-container-Scenariste">
     <main class="main-content-scenariste-Scenariste">
-      <!-- Header avec titre centré et bouton -->
+      <!-- Header avec barre de recherche, filtres Statut Recherche et Date spécifique à gauche, bouton à droite -->
       <div class="header-section-Scenariste">
-        <div class="title-section-Scenariste">
-          <h2>Bibliothèque de Projets</h2>
-          <p class="subtitle-Scenariste">Vos films et séries en cours de création</p>
-        </div>
-
-        <!-- Barre de recherche à gauche -->
-        <div class="search-container-Scenariste">
-          <div class="search-input-wrapper-Scenariste">
-            <i class="fas fa-search search-icon-Scenariste"></i>
-            <input 
-              type="text" 
-              v-model="globalSearchQuery" 
-              @input="performGlobalSearch" 
-              placeholder="Rechercher projets, épisodes, séquences, scènes..." 
-              class="search-input-Scenariste"
-            />
-            <button v-if="globalSearchQuery" @click="clearGlobalSearch" class="clear-search-btn-Scenariste">
-              <i class="fas fa-times"></i>
-            </button>
+        <div class="search-and-filters-Scenariste">
+          <!-- Barre de recherche -->
+          <div class="search-container-Scenariste">
+            <div class="search-input-wrapper-Scenariste">
+              <i class="fas fa-search search-icon-Scenariste"></i>
+              <input 
+                type="text" 
+                v-model="globalSearchQuery" 
+                @input="performGlobalSearch" 
+                placeholder="Rechercher projets, épisodes, séquences, scènes..." 
+                class="search-input-Scenariste"
+              />
+              <button v-if="globalSearchQuery" @click="clearGlobalSearch" class="clear-search-btn-Scenariste">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Filtres Statut Recherche et Date spécifique -->
+          <div class="header-filters-Scenariste">
+            <div class="filter-group-scenariste-Scenariste">
+              <select v-model="searchStatut" @change="performGlobalSearch" class="filter-select-Scenariste">
+                <option value="">Tous les statuts</option>
+                <option v-for="statut in allStatuts" :key="statut" :value="statut">
+                  {{ statut }}
+                </option>
+              </select>
+            </div>
+            <div class="filter-group-scenariste-Scenariste">
+              <input 
+                type="date" 
+                v-model="searchSpecificDate" 
+                @change="performGlobalSearch"
+                class="date-input-Scenariste"
+              />
+            </div>
           </div>
         </div>
         
+        <!-- Bouton Nouveau Projet à droite -->
         <div class="add-project-center-Scenariste">
           <button class="add-project-btn-main-Scenariste" @click="goToAddProject">
             <i class="fas fa-plus-circle icon-Scenariste"></i> 
@@ -33,45 +50,36 @@
         </div>
       </div>
 
-      <!-- Barre de recherche et filtres réorganisés -->
-      <div class="search-filters-section-Scenariste">
-        <!-- Barre de recherche à gauche -->
-        <!-- <div class="search-container-Scenariste">
-          <div class="search-input-wrapper-Scenariste">
-            <i class="fas fa-search search-icon-Scenariste"></i>
-            <input 
-              type="text" 
-              v-model="globalSearchQuery" 
-              @input="performGlobalSearch" 
-              placeholder="Rechercher projets, épisodes, séquences, scènes..." 
-              class="search-input-Scenariste"
-            />
-            <button v-if="globalSearchQuery" @click="clearGlobalSearch" class="clear-search-btn-Scenariste">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div> -->
-
-        <!-- Filtres à droite -->
-        <div class="filters-right-Scenariste">
-          <div class="filter-group-right-Scenariste">
-            <label>Statut:</label>
-            <select v-model="searchStatut" @change="performGlobalSearch" class="filter-select-Scenariste">
-              <option value="">Tous les statuts</option>
-              <option v-for="statut in allStatuts" :key="statut" :value="statut">
-                {{ statut }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="filter-group-right-Scenariste">
-            <label>Date spécifique:</label>
-            <input 
-              type="date" 
-              v-model="searchSpecificDate" 
-              @change="performGlobalSearch"
-              class="date-input-Scenariste"
-            />
+      <!-- Filtres restants avec la phrase "Les projets existants" à gauche -->
+      <div class="filters-section-Scenariste">
+        <div class="filters-row-Scenariste">
+          <h3 class="projects-label-Scenariste">Les projets existants</h3>
+          <div class="filters-right-Scenariste">
+            <div class="filter-group-scenariste">
+              <!-- <label>Période:</label> -->
+              <select v-model="filterTimePeriod" class="filter-select-Scenariste">
+                <option value="all">Tous périodes</option>
+                <option value="today">Aujourd'hui</option>
+                <option value="this_week">Cette semaine</option>
+                <option value="this_month">Ce mois-ci</option>
+                <option value="this_year">Cette année</option>
+                <option value="recent">Récent (7 jours)</option>
+              </select>
+            </div>
+            <div class="filter-group-scenariste">
+              <!-- <label>Genre:</label> -->
+              <select v-model="filterGenre" class="filter-select-Scenariste">
+                <option value="">Tous genre</option>
+                <option v-for="genre in genres" :key="genre.idGenre" :value="genre.nomGenre">{{ genre.nomGenre }}</option>
+              </select>
+            </div>
+            <div class="filter-group-scenariste">
+              <!-- <label>Statut:</label> -->
+              <select v-model="filterStatut" class="filter-select-Scenariste">
+                <option value="">Tous statuts</option>
+                <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.nomStatutsProjet">{{ statut.nomStatutsProjet }}</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -124,7 +132,7 @@
                   <div v-for="sequence in projet.contenu.sequences" :key="sequence.id" 
                        class="content-item-Scenariste" @click="navigateToEcranTravail(sequence)">
                     <i class="fas fa-layer-group"></i>
-                    <span>Sequence {{ sequence.ordre }}: {{ sequence.titre }}</span>
+                    <span>Séquence {{ sequence.ordre }}: {{ sequence.titre }}</span>
                   </div>
                 </div>
                 
@@ -172,36 +180,7 @@
         </div>
       </div>
 
-      <!-- Filtres supplémentaires -->
-      <div class="additional-filters-Scenariste">
-        <div class="filter-group-scenariste-Scenariste">
-          <label>Période de mise à jour:</label>
-          <select v-model="filterTimePeriod" class="filter-select-Scenariste">
-            <option value="all">Toutes les périodes</option>
-            <option value="today">Aujourd'hui</option>
-            <option value="this_week">Cette semaine</option>
-            <option value="this_month">Ce mois-ci</option>
-            <option value="this_year">Cette année</option>
-            <option value="recent">Récent (7 derniers jours)</option>
-          </select>
-        </div>
-        <div class="filter-group-scenariste-Scenariste">
-          <label>Genre:</label>
-          <select v-model="filterGenre" class="filter-select-Scenariste">
-            <option value="">Tous</option>
-            <option v-for="genre in genres" :key="genre.idGenre" :value="genre.nomGenre">{{ genre.nomGenre }}</option>
-          </select>
-        </div>
-        <div class="filter-group-scenariste-Scenariste">
-          <label>Statut:</label>
-          <select v-model="filterStatut" class="filter-select-Scenariste">
-            <option value="">Tous</option>
-            <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.nomStatutsProjet">{{ statut.nomStatutsProjet }}</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Grille des projets réorganisée -->
+      <!-- Grille des projets -->
       <div class="projects-library-Scenariste">
         <div v-for="(project, index) in filteredProjects" :key="project.id" class="movie-card-Scenariste" :style="{'--index': index + 1}">
           <!-- Header de la carte avec statut à gauche et actions à droite -->
@@ -241,24 +220,28 @@
               <p>{{ truncateText(project.synopsis, 120) }}</p>
             </div>
             
-            <!-- Actions en bas de carte réorganisées -->
+            <!-- Actions en bas de carte -->
             <div class="movie-actions-bottom-Scenariste">
               <div class="actions-top-Scenariste">
                 <button class="action-btn-Scenariste primary-btn-Scenariste" @click="$router.push(`/projet/${project.id}`)" title="Détails">
                   <i class="fas fa-info-circle"></i>
                   <span>Détails</span>
                 </button>
-                <button class="action-btn-Scenariste secondary-btn-Scenariste" @click="goToAddEpisode(project.id)" title="Ajouter un épisode">
+                <!-- <button class="action-btn-Scenariste secondary-btn-Scenariste" @click="goToAddEpisode(project.id)" title="Ajouter un épisode">
                   <i class="fas fa-plus-circle"></i>
                   <span>Épisode</span>
+                </button> -->
+                <button class="action-btn-Scenariste accent-btn-Scenariste" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
+                  <i class="fas fa-desktop"></i>
+                  <span>Écran</span>
                 </button>
               </div>
-              <div class="actions-bottom-Scenariste">
+              <!-- <div class="actions-bottom-Scenariste">
                 <button class="action-btn-Scenariste accent-btn-Scenariste" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
                   <i class="fas fa-desktop"></i>
                   <span>Écran de Travail</span>
                 </button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -366,7 +349,6 @@ export default {
       },
       editLoading: false,
       editError: '',
-
       globalSearchQuery: '',
       searchStatut: '',
       searchDate: '',
@@ -391,29 +373,20 @@ export default {
         .toUpperCase()
         .substring(0, 2);
     },
-
     totalResults() {
       return this.globalSearchResults.projets.length + this.globalSearchResults.autres.length;
     },
-
     filteredProjects() {
       let list = this.projects;
-      
-      // Filtre par genre
       if (this.filterGenre) {
         list = list.filter(p => p.genreNom === this.filterGenre);
       }
-      
-      // Filtre par statut
       if (this.filterStatut) {
         list = list.filter(p => p.statutNom === this.filterStatut);
       }
-      
-      // Filtre par période de mise à jour
       if (this.filterTimePeriod !== 'all') {
         const now = new Date();
         let startDate;
-        
         switch (this.filterTimePeriod) {
           case 'today':
             startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -438,7 +411,6 @@ export default {
           default:
             startDate = null;
         }
-        
         if (startDate) {
           list = list.filter(p => {
             const modifieLe = new Date(p.modifieLe);
@@ -446,7 +418,6 @@ export default {
           });
         }
       }
-      
       return list;
     }
   },
@@ -457,8 +428,6 @@ export default {
     this.fetchProjects();
     this.loadAllStatuts();
     document.addEventListener('click', this.handleClickOutside);
-    
-    // Fermer les résultats de recherche en cliquant à l'extérieur
     document.addEventListener('click', this.handleClickOutsideSearch);
   },
   beforeUnmount() {
@@ -470,7 +439,6 @@ export default {
       const userStr = localStorage.getItem('user');
       if (userStr) {
         this.user = JSON.parse(userStr);
-        
         if (this.user.role !== 'SCENARISTE' && this.user.role !== 'REALISATEUR') {
           this.$router.push('/accueil');
         }
@@ -478,72 +446,54 @@ export default {
         this.$router.push('/');
       }
     },
-    
-    // Méthodes de recherche globale
     async performGlobalSearch() {
       if (this.globalSearchTimeout) {
         clearTimeout(this.globalSearchTimeout);
       }
-      
       if (this.globalSearchQuery.trim().length < 2) {
         this.showGlobalSearchResults = false;
         this.globalSearchResults = { projets: [], autres: [] };
         return;
       }
-      
       this.globalSearchTimeout = setTimeout(() => {
         this.executeGlobalSearch();
       }, 300);
     },
-
     async executeGlobalSearch() {
       try {
         const query = this.globalSearchQuery.trim();
         if (query.length < 2) return;
-        
         const params = new URLSearchParams({
           q: query
         });
-        
         if (this.searchStatut) {
           params.append('statut', this.searchStatut);
         }
-        
-        // Gestion des dates - PRIORITÉ à la date spécifique
         if (this.searchSpecificDate) {
           params.append('specificDate', this.searchSpecificDate);
         } else if (this.searchDate) {
           params.append('date', this.searchDate);
         }
-        
         const response = await axios.get(`/api/recherche-globale?${params}`);
-        
-        // Réorganiser les résultats : projets séparés des autres éléments
         const resultats = response.data;
         const projets = resultats.filter(r => r.type === 'projet');
         const autres = resultats.filter(r => r.type !== 'projet');
-        
-        // Ajouter la propriété showDetails aux projets
         const projetsAvecDetails = projets.map(projet => ({
           ...projet,
           showDetails: this.expandedProjects.has(projet.id),
           contenu: null
         }));
-        
         this.globalSearchResults = {
           projets: projetsAvecDetails,
           autres: autres
         };
-        
         this.showGlobalSearchResults = true;
-        
       } catch (error) {
         console.error('Erreur lors de la recherche globale:', error);
         this.globalSearchResults = { projets: [], autres: [] };
         this.showGlobalSearchResults = true;
       }
     },
-
     clearGlobalSearch() {
       this.globalSearchQuery = '';
       this.searchStatut = '';
@@ -553,11 +503,8 @@ export default {
       this.showGlobalSearchResults = false;
       this.expandedProjects.clear();
     },
-
-    // Nouvelle méthode pour afficher/masquer le contenu d'un projet
     async toggleProjectDetails(projet) {
       projet.showDetails = !projet.showDetails;
-      
       if (projet.showDetails) {
         this.expandedProjects.add(projet.id);
         if (!projet.contenu) {
@@ -567,7 +514,6 @@ export default {
         this.expandedProjects.delete(projet.id);
       }
     },
-
     async chargerContenuProjet(projet) {
       try {
         const [episodesResponse, sequencesResponse, scenesResponse] = await Promise.all([
@@ -575,7 +521,6 @@ export default {
           axios.get(`/api/sequences/projet/${projet.id}`),
           axios.get(`/api/scenes/projet/${projet.id}`)
         ]);
-
         const episodesFormatted = (episodesResponse.data || []).map(episode => ({
           ...episode,
           type: 'episode',
@@ -586,7 +531,6 @@ export default {
           modifieLe: episode.modifieLe,
           ordre: episode.ordre
         }));
-
         const sequencesFormatted = (sequencesResponse.data || []).map(sequence => ({
           ...sequence,
           type: 'sequence',
@@ -599,7 +543,6 @@ export default {
           ordre: sequence.ordre,
           ordreEpisode: sequence.episode?.ordre
         }));
-
         const scenesFormatted = (scenesResponse.data || []).map(scene => ({
           ...scene,
           type: 'scene',
@@ -612,13 +555,11 @@ export default {
           ordre: scene.ordre,
           ordreSequence: scene.sequence?.ordre
         }));
-
         projet.contenu = {
           episodes: episodesFormatted,
           sequences: sequencesFormatted,
           scenes: scenesFormatted
         };
-
       } catch (error) {
         console.error('Erreur lors du chargement du contenu du projet:', error);
         projet.contenu = {
@@ -626,9 +567,8 @@ export default {
           sequences: [],
           scenes: []
         };
-      }    
+      }
     },
-
     getTypeLabel(type) {
       const labels = {
         'projet': 'Projet',
@@ -638,7 +578,6 @@ export default {
       };
       return labels[type] || type;
     },
-
     getResultIcon(type) {
       const icons = {
         'projet': 'fas fa-film',
@@ -648,29 +587,24 @@ export default {
       };
       return icons[type] || 'fas fa-file';
     },
-
     navigateToEcranTravail(result) {
       const queryParams = {};
-      
       if (result.type === 'projet') {
         this.$router.push(`/projet/${result.projetId || result.id}/ecran-travail`);
-      } 
-      else if (result.type === 'episode') {
+      } else if (result.type === 'episode') {
         queryParams.episodeId = result.id;
         this.$router.push({
           path: `/projet/${result.projetId}/ecran-travail`,
           query: queryParams
         });
-      }
-      else if (result.type === 'sequence') {
+      } else if (result.type === 'sequence') {
         queryParams.episodeId = result.episodeId;
         queryParams.sequenceId = result.id;
         this.$router.push({
           path: `/projet/${result.projetId}/ecran-travail`,
           query: queryParams
         });
-      }
-      else if (result.type === 'scene') {
+      } else if (result.type === 'scene') {
         queryParams.episodeId = result.episodeId;
         queryParams.sequenceId = result.sequenceId;
         queryParams.sceneId = result.id;
@@ -679,10 +613,8 @@ export default {
           query: queryParams
         });
       }
-      
       this.clearGlobalSearch();
     },
-
     async loadAllStatuts() {
       try {
         const [projetStatuts, episodeStatuts, sequenceStatuts, sceneStatuts] = await Promise.all([
@@ -691,31 +623,24 @@ export default {
           axios.get('/api/statuts-sequence'),
           axios.get('/api/statuts-scene')
         ]);
-        
         const allStatuts = new Set();
-        
         projetStatuts.data.forEach(statut => allStatuts.add(statut.nomStatutsProjet));
         episodeStatuts.data.forEach(statut => allStatuts.add(statut.nomStatutsEpisode));
         sequenceStatuts.data.forEach(statut => allStatuts.add(statut.nomStatutsSequence));
         sceneStatuts.data.forEach(statut => allStatuts.add(statut.nomStatutsScene));
-        
         this.allStatuts = Array.from(allStatuts).sort();
       } catch (error) {
         console.error('Erreur lors du chargement des statuts:', error);
         this.allStatuts = [];
       }
     },
-
     handleClickOutsideSearch(event) {
-      const searchContainer = event.target.closest('.search-filters-section-Scenariste');
+      const searchContainer = event.target.closest('.search-and-filters-Scenariste');
       const resultsContainer = event.target.closest('.global-search-results-Scenariste');
-      
       if (!searchContainer && !resultsContainer) {
         this.showGlobalSearchResults = false;
       }
     },
-
-    // Méthodes existantes
     async fetchGenres() {
       try {
         const response = await axios.get('/api/genres');
@@ -724,7 +649,6 @@ export default {
         console.error('Erreur lors du chargement des genres:', error);
       }
     },
-    
     async fetchStatuts() {
       try {
         const response = await axios.get('/api/statuts-projet');
@@ -733,7 +657,6 @@ export default {
         console.error('Erreur lors du chargement des statuts:', error);
       }
     },
-    
     async fetchProjects() {
       try {
         const response = await axios.get('/api/projets');
@@ -742,7 +665,6 @@ export default {
         console.error('Erreur lors du chargement des projets:', error);
       }
     },
-    
     startEdit(project) {
       this.editingProject = project;
       this.editForm = {
@@ -753,19 +675,15 @@ export default {
         dateFin: project.dateFin
       };
     },
-    
     getCurrentStatutId(statutNom) {
       const statut = this.statuts.find(s => s.nomStatutsProjet === statutNom);
       return statut ? statut.idStatutProjet : '';
     },
-    
     async submitEdit() {
       this.editLoading = true;
       this.editError = '';
-
       try {
         const response = await axios.put(`/api/projets/${this.editingProject.id}`, this.editForm);
-        
         if (response.status === 200) {
           await this.fetchProjects();
           this.cancelEdit();
@@ -777,7 +695,6 @@ export default {
         this.editLoading = false;
       }
     },
-    
     cancelEdit() {
       this.editingProject = null;
       this.editForm = {
@@ -789,7 +706,6 @@ export default {
       };
       this.editError = '';
     },
-    
     async deleteProject(projectId) {
       if (confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
         try {
@@ -801,7 +717,6 @@ export default {
         }
       }
     },
-    
     formatDate(date) {
       return new Date(date).toLocaleString('fr-FR', {
         day: '2-digit',
@@ -811,7 +726,6 @@ export default {
         minute: '2-digit'
       });
     },
-    
     formatShortDate(date) {
       return new Date(date).toLocaleDateString('fr-FR', {
         day: '2-digit',
@@ -819,13 +733,11 @@ export default {
         year: 'numeric'
       });
     },
-    
     truncateText(text, maxLength) {
       if (!text) return '';
       if (text.length <= maxLength) return text;
       return text.substring(0, maxLength) + '...';
     },
-    
     getStatutClass(statutNom) {
       const statutClasses = {
         'En cours': 'statut-en-cours',
@@ -841,27 +753,22 @@ export default {
       };
       return statutClasses[statutNom] || 'statut-default';
     },
-    
     toggleProfileMenu() {
       this.showProfileMenu = !this.showProfileMenu;
     },
-    
     handleClickOutside(event) {
       if (!event.target.closest('.profile-section')) {
         this.showProfileMenu = false;
       }
     },
-    
     seDeconnecter() {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       this.$router.push('/');
     },
-    
     goToAddEpisode(projectId) {
       this.$router.push(`/projet/${projectId}/add-episode`);
     },
-    
     goToAddProject() {
       this.$router.push('/add-project');
     }
