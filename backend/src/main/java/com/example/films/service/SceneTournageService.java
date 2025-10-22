@@ -211,11 +211,11 @@ public class SceneTournageService {
             }
         }
 
-        // Empêcher la modification d'un tournage terminé
-        if ("termine".equals(tournage.getStatutTournage()) && 
-            (updateDTO.getStatutTournage() != null && !"termine".equals(updateDTO.getStatutTournage()))) {
-            throw new RuntimeException("Impossible de modifier un tournage terminé");
-        }
+        // // Empêcher la modification d'un tournage terminé
+        // if ("termine".equals(tournage.getStatutTournage()) && 
+        //     (updateDTO.getStatutTournage() != null && !"termine".equals(updateDTO.getStatutTournage()))) {
+        //     throw new RuntimeException("Impossible de modifier un tournage terminé");
+        // }
 
         String ancienStatut = tournage.getStatutTournage();
         

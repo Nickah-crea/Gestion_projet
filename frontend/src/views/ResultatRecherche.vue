@@ -16,6 +16,74 @@
       </div>
     </div>
 
+    <!-- Dialogue d'envoi d'email -->
+<div v-if="emailDialogVisible" class="email-dialog-overlay">
+  <div class="email-dialog">
+    <div class="email-dialog-header">
+      <h3>📧 Envoyer le PDF par email</h3>
+      <button @click="emailDialogVisible = false" class="close-btn">×</button>
+    </div>
+    
+    <div class="email-dialog-content">
+      <div class="form-group">
+        <label for="toEmail">Email du destinataire *</label>
+        <input
+          id="toEmail"
+          v-model="emailForm.toEmail"
+          type="email"
+          placeholder="exemple@email.com"
+          class="email-input"
+          required
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="subject">Sujet</label>
+        <input
+          id="subject"
+          v-model="emailForm.subject"
+          type="text"
+          class="email-input"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea
+          id="message"
+          v-model="emailForm.message"
+          rows="4"
+          class="email-textarea"
+        ></textarea>
+      </div>
+    </div>
+    
+    <div class="email-dialog-actions">
+      <button 
+        @click="emailDialogVisible = false" 
+        class="btn-secondary"
+        :disabled="exportEnCours"
+      >
+        Annuler
+      </button>
+      <button 
+        @click="downloadPdfOnly" 
+        class="btn-secondary"
+        :disabled="exportEnCours"
+      >
+        📥 Télécharger seulement
+      </button>
+      <button 
+        @click="sendEmailWithPdf" 
+        class="btn-primary"
+        :disabled="exportEnCours || !emailForm.toEmail"
+      >
+        {{ exportEnCours ? 'Envoi en cours...' : '📧 Envoyer par email' }}
+      </button>
+    </div>
+  </div>
+</div>
+
     <!-- Chargement -->
     <div v-if="chargement" class="loading-state">
       <div class="spinner"></div>
@@ -567,7 +635,13 @@ export default {
       rechercheDialogue: '',
       pageDialogues: 1,
       dialoguesParPage: 10,
-      exportEnCours: false
+      exportEnCours: false,
+      emailDialogVisible: false,
+      emailForm: {
+        toEmail: '',
+        subject: 'Export PDF - Détails du résultat',
+        message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
+      }
     }
   },
   computed: {
@@ -696,6 +770,13 @@ export default {
         
         // Sauvegarde du PDF
         pdf.save(`${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`);
+
+        // Après avoir généré le PDF, ouvrir le dialogue d'email
+      const pdfBlob = pdf.output('blob');
+      this.emailDialogVisible = true;
+      
+      // Stocker le PDF pour l'envoi
+      this.generatedPdfBlob = pdfBlob;
         
       } catch (error) {
         console.error('Erreur lors de l\'export PDF:', error);
@@ -704,6 +785,87 @@ export default {
         this.exportEnCours = false;
       }
     },
+
+    async sendEmailWithPdf() {
+  if (!this.emailForm.toEmail) {
+    alert('Veuillez saisir une adresse email');
+    return;
+  }
+
+  this.exportEnCours = true;
+  
+  try {
+    // Convertir le Blob en base64
+    const reader = new FileReader();
+    reader.readAsDataURL(this.generatedPdfBlob);
+    
+    reader.onload = async () => {
+      const base64Data = reader.result.split(',')[1];
+      const pdfData = this.base64ToArrayBuffer(base64Data);
+      
+      const emailRequest = {
+        toEmail: this.emailForm.toEmail,
+        subject: this.emailForm.subject,
+        message: this.emailForm.message,
+        attachmentName: `${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`,
+        pdfData: Array.from(pdfData)
+      };
+
+     
+      const response = await fetch('http://localhost:8080/api/export/send-pdf-email', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(emailRequest)
+      });
+      // Vérifiez si la réponse est OK
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        alert('PDF envoyé par email avec succès !');
+        this.emailDialogVisible = false;
+        this.resetEmailForm();
+      } else {
+        alert('Erreur lors de l\'envoi: ' + result.message);
+      }
+    };
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de l\'email:', error);
+    alert('Erreur lors de l\'envoi de l\'email: ' + error.message);
+  } finally {
+    this.exportEnCours = false;
+  }
+},
+
+  base64ToArrayBuffer(base64) {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes;
+  },
+
+  resetEmailForm() {
+    this.emailForm = {
+      toEmail: '',
+      subject: 'Export PDF - Détails du résultat',
+      message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
+    };
+  },
+  downloadPdfOnly() {
+      // Méthode pour télécharger le PDF sans l'envoyer par email
+      const pdf = new jsPDF();
+      // ... votre code de génération PDF existant ...
+      pdf.save(`${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`);
+    },
+
     
     // Export PDF pour les personnages
     async exporterPDFPersonnage(pdf, margin, yPosition, contentWidth) {
