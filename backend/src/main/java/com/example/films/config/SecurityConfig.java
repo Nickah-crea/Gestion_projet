@@ -12,6 +12,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -25,24 +26,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Désactive CSRF pour les API REST
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/**").permitAll() // Autorise tous les accès aux API
-                .requestMatchers("/**").permitAll() // Autorise l'accès à toutes les autres routes
+                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/export/**").permitAll()
+                .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form.disable()) // Désactive le formulaire de login par défaut
-            .httpBasic(httpBasic -> httpBasic.disable()); // Désactive l'authentification basic
+            .formLogin(form -> form.disable())
+            .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        
+        // OPTION 1: Utilisez allowedOriginPatterns au lieu de allowedOrigins
+        configuration.setAllowedOriginPatterns(List.of("*")); // ✅ Correct avec allowCredentials
+        
+        // OPTION 2: Ou spécifiez explicitement les origines
+        // configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(true); // ✅ Maintenant compatible
+        configuration.setMaxAge(3600L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

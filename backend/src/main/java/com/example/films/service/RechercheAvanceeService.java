@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 @Service
 public class RechercheAvanceeService {
     
-    // Vos repositories existants...
     private final ProjetRepository projetRepository;
     private final EpisodeRepository episodeRepository;
     private final SequenceRepository sequenceRepository;
@@ -51,7 +50,7 @@ public class RechercheAvanceeService {
         this.sceneStatutRepository = sceneStatutRepository;
     }
     
-    // MÉTHODES EXISTANTES...
+    
     public List<RechercheAvanceeDTO> rechercherAvance(CritereRechercheDTO criteres) {
     // CORRECTION : Implémentation sans getTypeRecherche()
     List<RechercheAvanceeDTO> resultats = new ArrayList<>();
