@@ -138,7 +138,7 @@
 
 <script>
 import axios from 'axios';
-import '../assets/css/episode.css';
+import '../assets/css/add_episode.css';
 
 export default {
   name: 'AddEpisodeView',
@@ -356,89 +356,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* Ajout de styles pour la disposition côte à côte */
-.form-row {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.form-group-half {
-  flex: 1;
-  min-width: 0;
-}
-
-/* Ajustement pour le textarea du synopsis */
-.form-textarea {
-  width: 100%;
-}
-
-/* Assurer que les styles existants dans episode.css sont respectés */
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-input,
-.form-select,
-.form-textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.error-input {
-  border-color: red;
-}
-
-.error-text {
-  color: red;
-  font-size: 12px;
-}
-
-.suggestion-text {
-  color: #555;
-  font-size: 12px;
-  margin-top: 5px;
-  display: inline-block;
-}
-
-.suggestion-btn {
-  margin-left: 10px;
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.cancel-btn,
-.submit-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.cancel-btn {
-  background-color: #ccc;
-}
-
-.submit-btn {
-  background-color: #28a745;
-  color: white;
-}
-
-.submit-btn:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-</style>

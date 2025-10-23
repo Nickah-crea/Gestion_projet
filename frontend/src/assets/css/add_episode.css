@@ -1,0 +1,326 @@
+/* add_episode.css - Style cohérent avec scenariste_accueil.css */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+/* Variables de couleurs cohérentes avec scenariste_accueil.css */
+:root {
+  --primary-Scenariste: #7BBBFF;
+  --primary-light-Scenariste: #A3D1FF;
+  --primary-dark-Scenariste: #5AA9FF;
+  --accent-Scenariste: #B8A9FF;
+  --accent-light-Scenariste: #D0C7FF;
+  --background-Scenariste: #F2FDFF;
+  --surface-Scenariste: rgba(255, 255, 255, 0.95);
+  --text-primary-Scenariste: #050F2A;
+  --text-secondary-Scenariste: #1A2A4D;
+  --text-muted-Scenariste: #4A5A7D;
+  --border-Scenariste: rgba(5, 15, 42, 0.1);
+  --border-dark-Scenariste: rgba(5, 15, 42, 0.2);
+  --shadow-Scenariste: 0 4px 12px rgba(5, 15, 42, 0.05);
+  --radius-Scenariste: 50px;
+  --radius-sm-Scenariste: 30px;
+  --transition-Scenariste: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --pastel-pink: #FFE4E4;
+  --pastel-yellow: #FFF9D6;
+  --pastel-blue: #E3F2FF;
+  --pastel-green: #E4FFE4;
+  --pastel-purple: #F0E4FF;
+  --background: #B8A9FF; /* Violet pour le fond principal */
+}
+
+/* Conteneur principal */
+.add-episode-container {
+  min-height: 100vh;
+  padding: 20px;
+  background: var(--background);
+  display: flex;
+  justify-content: center;
+}
+
+/* Contenu principal */
+.add-episode-container .main-content {
+  max-width: 1200px;
+  width: 100%;
+  background: var(--surface-Scenariste);
+  border-radius: var(--radius-Scenariste);
+  box-shadow: var(--shadow-Scenariste);
+  padding: 30px;
+  animation: fadeInUp-Scenariste 0.6s ease-out forwards;
+}
+
+/* En-tête du formulaire */
+.add-episode-container .form-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-Scenariste);
+  padding-bottom: 20px;
+}
+
+.add-episode-container .back-btn {
+  background: var(--primary-Scenariste);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm-Scenariste) !important;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition-Scenariste);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-Scenariste);
+}
+
+.add-episode-container .back-btn:hover {
+  background: var(--primary-dark-Scenariste);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(5, 15, 42, 0.08);
+}
+
+.add-episode-container .form-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary-Scenariste);
+  margin: 0;
+}
+
+/* Formulaire */
+.add-episode-container .episode-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Disposition des champs côte à côte */
+.add-episode-container .form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.add-episode-container .form-group-half {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Groupe de formulaire */
+.add-episode-container .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-episode-container .form-group label {
+  font-weight: 600;
+  color: var(--text-secondary-Scenariste);
+  font-size: 0.95rem;
+}
+
+.add-episode-container .form-input,
+.add-episode-container .form-select,
+.add-episode-container .form-textarea {
+  width: 100%;
+  padding: 10px 20px;
+  border: 1px solid var(--border-Scenariste);
+  border-radius: var(--radius-sm-Scenariste) !important;
+  background: var(--surface-Scenariste);
+  color: var(--text-primary-Scenariste);
+  font-size: 0.95rem;
+  transition: var(--transition-Scenariste);
+  box-shadow: var(--shadow-Scenariste);
+}
+
+.add-episode-container .form-input:focus,
+.add-episode-container .form-select:focus,
+.add-episode-container .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-Scenariste);
+  box-shadow: 0 0 0 3px rgba(122, 187, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.add-episode-container .form-input:disabled {
+  background: rgba(5, 15, 42, 0.05);
+  color: var(--text-muted-Scenariste);
+  cursor: not-allowed;
+}
+
+.add-episode-container .form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Style pour le sélecteur */
+.add-episode-container .form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231A2A4D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  background-size: 16px;
+  padding-right: 50px;
+}
+
+/* Messages d'erreur */
+.add-episode-container .error-input {
+  border-color: var(--pastel-pink) !important;
+  box-shadow: 0 0 0 3px rgba(255, 228, 228, 0.3) !important;
+}
+
+.add-episode-container .error-text {
+  color: var(--text-primary-Scenariste);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 15px;
+  background: var(--pastel-pink);
+  border-radius: var(--radius-sm-Scenariste) !important;
+  margin-top: 5px;
+  border-left: 3px solid #FF7B7B;
+}
+
+/* Suggestions */
+.add-episode-container .suggestion-text {
+  color: var(--text-secondary-Scenariste);
+  font-size: 0.85rem;
+  padding: 8px 15px;
+  background: var(--pastel-blue);
+  border-radius: var(--radius-sm-Scenariste) !important;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.add-episode-container .suggestion-btn {
+  background: var(--accent-Scenariste);
+  color: var(--text-primary-Scenariste);
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--radius-sm-Scenariste) !important;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: var(--transition-Scenariste);
+}
+
+.add-episode-container .suggestion-btn:hover {
+  background: var(--accent-light-Scenariste);
+  transform: translateY(-1px);
+}
+
+/* Message d'erreur global */
+.add-episode-container .error-message {
+  background: var(--pastel-pink);
+  color: var(--text-primary-Scenariste);
+  padding: 15px 20px;
+  border-radius: var(--radius-sm-Scenariste) !important;
+  margin: 20px 0;
+  font-weight: 600;
+  border-left: 4px solid #FF7B7B;
+}
+
+/* Boutons d'action */
+.add-episode-container .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.add-episode-container .cancel-btn {
+  background: var(--text-muted-Scenariste);
+  color: white;
+  padding: 20px 40px;
+  border: none;
+  border-radius: var(--radius-sm-Scenariste) !important;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: var(--transition-Scenariste);
+  box-shadow: var(--shadow-Scenariste);
+}
+
+.add-episode-container .cancel-btn:hover {
+  background: var(--text-secondary-Scenariste);
+  transform: translateY(-2px);
+}
+
+.add-episode-container .submit-btn {
+  background: var(--primary-Scenariste);
+  color: white;
+  padding: 20px 40px;
+  border: none;
+  border-radius: var(--radius-sm-Scenariste) !important;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: var(--transition-Scenariste);
+  box-shadow: var(--shadow-Scenariste);
+}
+
+.add-episode-container .submit-btn:hover:not(:disabled) {
+  background: var(--primary-dark-Scenariste);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(5, 15, 42, 0.08);
+}
+
+.add-episode-container .submit-btn:disabled {
+  background: var(--text-muted-Scenariste);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Animation */
+@keyframes fadeInUp-Scenariste {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .add-episode-container {
+    padding: 15px;
+  }
+
+  .add-episode-container .main-content {
+    padding: 15px;
+  }
+
+  .add-episode-container .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .add-episode-container .form-group-half {
+    width: 100%;
+  }
+
+  .add-episode-container .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .add-episode-container .form-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .add-episode-container .cancel-btn,
+  .add-episode-container .submit-btn {
+    width: 100%;
+    text-align: center;
+    padding: 15px 30px;
+    font-size: 1rem;
+  }
+}
+
+
