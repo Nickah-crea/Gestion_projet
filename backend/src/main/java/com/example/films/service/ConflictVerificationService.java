@@ -1,10 +1,11 @@
-// ConflictVerificationService.java
 package com.example.films.service;
 
 import com.example.films.entity.Comedien;
+import com.example.films.entity.DisponibiliteComedien;
 import com.example.films.entity.Personnage;
 import com.example.films.entity.SceneTournage;
 import com.example.films.repository.ComedienRepository;
+import com.example.films.repository.DisponibiliteComedienRepository;
 import com.example.films.repository.PersonnageRepository;
 import com.example.films.repository.SceneTournageRepository;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,16 @@ public class ConflictVerificationService {
     private final SceneTournageRepository sceneTournageRepository;
     private final PersonnageRepository personnageRepository;
     private final ComedienRepository comedienRepository;
+    private final DisponibiliteComedienRepository disponibiliteComedienRepository;
     
     public ConflictVerificationService(SceneTournageRepository sceneTournageRepository,
                                      PersonnageRepository personnageRepository,
-                                     ComedienRepository comedienRepository) {
+                                     ComedienRepository comedienRepository,
+                                     DisponibiliteComedienRepository disponibiliteComedienRepository) {
         this.sceneTournageRepository = sceneTournageRepository;
         this.personnageRepository = personnageRepository;
         this.comedienRepository = comedienRepository;
+        this.disponibiliteComedienRepository = disponibiliteComedienRepository;
     }
     
     public ConflictVerificationResult verifierConflitsComediens(Long sceneId, LocalDate dateTournage, 
@@ -55,11 +59,37 @@ public class ConflictVerificationService {
             return new ConflictVerificationResult(false, conflits);
         }
         
-        // 3. Récupérer tous les tournages à la même date
+        // 3. Vérifier les disponibilités des comédiens
+        for (Comedien comedien : comediensScene) {
+            List<DisponibiliteComedien> disponibilites = disponibiliteComedienRepository
+                .findByComedienAndDate(comedien, dateTournage);
+            
+            for (DisponibiliteComedien disponibilite : disponibilites) {
+                String statut = disponibilite.getStatut().toLowerCase();
+                
+                if ("indisponible".equals(statut)) {
+                    String message = String.format(
+                        "Le comédien %s est marqué comme INDISPONIBLE le %s",
+                        comedien.getNom(),
+                        dateTournage.toString()
+                    );
+                    conflits.add(message);
+                } else if ("occupe".equals(statut)) {
+                    String message = String.format(
+                        "Le comédien %s est marqué comme OCCUPÉ le %s",
+                        comedien.getNom(),
+                        dateTournage.toString()
+                    );
+                    conflits.add(message);
+                }
+            }
+        }
+        
+        // 4. Récupérer tous les tournages à la même date pour vérifier les conflits horaires
         List<SceneTournage> tournagesMemeDate = sceneTournageRepository.findByDateTournage(dateTournage);
         
         for (Comedien comedien : comediensScene) {
-            // 4. Vérifier les conflits pour chaque comédien
+            // 5. Vérifier les conflits horaires pour chaque comédien
             List<SceneTournage> conflitsComedien = tournagesMemeDate.stream()
                 .filter(tournage -> !tournage.getScene().getId().equals(sceneId)) // Exclure la scène actuelle
                 .filter(tournage -> estComedienDansScene(comedien.getId(), tournage.getScene().getId()))
@@ -89,13 +119,63 @@ public class ConflictVerificationService {
         return new ConflictVerificationResult(!conflits.isEmpty(), conflits);
     }
     
+    // Méthode pour vérifier les disponibilités seulement (sans conflits horaires)
+    public ConflictVerificationResult verifierDisponibilitesComediens(Long sceneId, LocalDate dateTournage) {
+        List<String> conflits = new ArrayList<>();
+        
+        // Récupérer les personnages de la scène via les dialogues
+        List<Personnage> personnagesScene = personnageRepository.findPersonnagesBySceneId(sceneId);
+        
+        if (personnagesScene.isEmpty()) {
+            return new ConflictVerificationResult(false, conflits);
+        }
+        
+        // Récupérer les comédiens associés à ces personnages
+        Set<Comedien> comediensScene = new HashSet<>();
+        for (Personnage personnage : personnagesScene) {
+            if (personnage.getComedien() != null) {
+                comediensScene.add(personnage.getComedien());
+            }
+        }
+        
+        if (comediensScene.isEmpty()) {
+            return new ConflictVerificationResult(false, conflits);
+        }
+        
+        // Vérifier les disponibilités des comédiens
+        for (Comedien comedien : comediensScene) {
+            List<DisponibiliteComedien> disponibilites = disponibiliteComedienRepository
+                .findByComedienAndDate(comedien, dateTournage);
+            
+            for (DisponibiliteComedien disponibilite : disponibilites) {
+                String statut = disponibilite.getStatut().toLowerCase();
+                
+                if ("indisponible".equals(statut)) {
+                    String message = String.format(
+                        "Le comédien %s est marqué comme INDISPONIBLE le %s",
+                        comedien.getNom(),
+                        dateTournage.toString()
+                    );
+                    conflits.add(message);
+                } else if ("occupe".equals(statut)) {
+                    String message = String.format(
+                        "Le comédien %s est marqué comme OCCUPÉ le %s",
+                        comedien.getNom(),
+                        dateTournage.toString()
+                    );
+                    conflits.add(message);
+                }
+            }
+        }
+        
+        return new ConflictVerificationResult(!conflits.isEmpty(), conflits);
+    }
+    
     private boolean estComedienDansScene(Long comedienId, Long sceneId) {
-        // Vérifier si le comédien joue dans cette scène via les personnages
         return personnageRepository.existsComedienInScene(comedienId, sceneId);
     }
     
     private String trouverNomPersonnageComedien(Long comedienId, Long sceneId) {
-        // Trouver le nom du personnage que le comédien joue dans cette scène
         return personnageRepository.findPersonnageNameByComedienAndScene(comedienId, sceneId)
                 .orElse(null);
     }

@@ -1,3 +1,4 @@
+// ConflictController.java - Ajouter un nouvel endpoint
 package com.example.films.controller;
 
 import com.example.films.service.ConflictVerificationService;
@@ -44,6 +45,32 @@ public class ConflictController {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("hasConflicts", false);
             errorResponse.put("error", "Erreur lors de la vérification des conflits: " + e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
+
+    // NOUVEAU: Endpoint pour vérifier seulement les disponibilités
+    @GetMapping("/check-disponibilites")
+    public ResponseEntity<Map<String, Object>> verifierDisponibilites(
+            @RequestParam Long sceneId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTournage) {
+        
+        try {
+            ConflictVerificationService.ConflictVerificationResult result = 
+                conflictVerificationService.verifierDisponibilitesComediens(sceneId, dateTournage);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("hasConflicts", result.isHasConflicts());
+            response.put("conflicts", result.getConflicts());
+            response.put("sceneId", sceneId);
+            response.put("dateTournage", dateTournage);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("hasConflicts", false);
+            errorResponse.put("error", "Erreur lors de la vérification des disponibilités: " + e.getMessage());
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
