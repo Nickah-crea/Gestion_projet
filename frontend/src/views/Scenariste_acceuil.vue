@@ -22,14 +22,14 @@
           </div>
           <!-- Filtres Statut Recherche et Date spécifique -->
           <div class="header-filters-Scenariste">
-            <div class="filter-group-scenariste-Scenariste">
+            <!-- <div class="filter-group-scenariste-Scenariste">
               <select v-model="searchStatut" @change="performGlobalSearch" class="filter-select-Scenariste">
                 <option value="">Tous les statuts</option>
                 <option v-for="statut in allStatuts" :key="statut" :value="statut">
                   {{ statut }}
                 </option>
               </select>
-            </div>
+            </div> -->
             <div class="filter-group-scenariste-Scenariste">
               <input 
                 type="date" 

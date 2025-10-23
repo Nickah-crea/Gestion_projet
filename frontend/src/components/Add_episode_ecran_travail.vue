@@ -13,97 +13,103 @@
       </div>
 
       <form @submit.prevent="submitForm" class="episode-form">
-        <div class="form-group">
-          <label for="titre">Titre de l'épisode</label>
-          <input 
-            type="text" 
-            id="titre"
-            v-model="form.titre" 
-            required 
-            placeholder="Entrez le titre"
-            class="form-input"
-          />
+        <!-- Ligne 1 : Titre de l'épisode + Titre du projet -->
+        <div class="form-row">
+          <div class="form-group form-group-half">
+            <label for="titre">Titre de l'épisode</label>
+            <input 
+              type="text" 
+              id="titre"
+              v-model="form.titre" 
+              required 
+              placeholder="Entrez le titre"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group form-group-half">
+            <label for="projet">Titre du projet</label>
+            <input 
+              id="projet"
+              :value="projetTitre" 
+              type="text"
+              disabled
+              class="form-input"
+            />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="ordre">Ordre dans le projet</label>
-          <input 
-            type="number" 
-            id="ordre"
-            v-model="form.ordre" 
-            required 
-            placeholder="Entrez le nombre"
-            min="1"
-            class="form-input"
-            :class="{ 'error-input': ordreError }"
-            @blur="validateOrdre"
-          />
-          <span v-if="ordreError" class="error-text">{{ ordreError }}</span>
-          <span v-if="suggestedOrdre" class="suggestion-text">
-            Suggestion: Le prochain ordre disponible est {{ suggestedOrdre }}
-            <button type="button" @click="useSuggestedOrder" class="suggestion-btn">
-              Utiliser cette valeur
-            </button>
-          </span>
+        <!-- Ligne 2 : Ordre dans le projet + Statut -->
+        <div class="form-row">
+          <div class="form-group form-group-half">
+            <label for="ordre">Ordre dans le projet</label>
+            <input 
+              type="number" 
+              id="ordre"
+              v-model="form.ordre" 
+              required 
+              placeholder="Entrez le nombre"
+              min="1"
+              class="form-input"
+              :class="{ 'error-input': ordreError }"
+              @blur="validateOrdre"
+            />
+            <span v-if="ordreError" class="error-text">{{ ordreError }}</span>
+            <span v-if="suggestedOrdre" class="suggestion-text">
+              Suggestion: Le prochain ordre disponible est {{ suggestedOrdre }}
+              <button type="button" @click="useSuggestedOrder" class="suggestion-btn">
+                Utiliser cette valeur
+              </button>
+            </span>
+          </div>
+          <div class="form-group form-group-half">
+            <label for="statut">Statut</label>
+            <select 
+              id="statut"
+              v-model="form.statutId" 
+              required
+              class="form-select"
+            >
+              <option value="">Sélectionner le statut</option>
+              <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
+                {{ statut.nomStatutsEpisode }}
+              </option>
+            </select>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="realisateur">Réalisateur *</label>
-          <select 
-            id="realisateur"
-            v-model="form.realisateurId" 
-            required
-            class="form-select"
-          >
-            <option value="">Sélectionner un réalisateur</option>
-            <option v-for="realisateur in realisateurs" :key="realisateur.idRealisateur" :value="realisateur.idRealisateur">
-              {{ realisateur.nom }} - {{ realisateur.specialite }}
-            </option>
-          </select>
+        <!-- Ligne 3 : Réalisateur + Scénariste -->
+        <div class="form-row">
+          <div class="form-group form-group-half">
+            <label for="realisateur">Réalisateur *</label>
+            <select 
+              id="realisateur"
+              v-model="form.realisateurId" 
+              required
+              class="form-select"
+            >
+              <option value="">Sélectionner un réalisateur</option>
+              <option v-for="realisateur in realisateurs" :key="realisateur.idRealisateur" :value="realisateur.idRealisateur">
+                {{ realisateur.nom }} - {{ realisateur.specialite }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group form-group-half">
+            <label for="scenariste">Scénariste *</label>
+            <select 
+              id="scenariste"
+              v-model="form.scenaristeId" 
+              required
+              class="form-select"
+            >
+              <option value="">Sélectionner un scénariste</option>
+              <option v-for="scenariste in scenaristes" :key="scenariste.idScenariste" :value="scenariste.idScenariste">
+                {{ scenariste.nom }} - {{ scenariste.specialite }}
+              </option>
+            </select>
+          </div>
         </div>
 
-        <!-- NOUVEAU : Champ Scénariste -->
-        <div class="form-group">
-          <label for="scenariste">Scénariste *</label>
-          <select 
-            id="scenariste"
-            v-model="form.scenaristeId" 
-            required
-            class="form-select"
-          >
-            <option value="">Sélectionner un scénariste</option>
-            <option v-for="scenariste in scenaristes" :key="scenariste.idScenariste" :value="scenariste.idScenariste">
-              {{ scenariste.nom }} - {{ scenariste.specialite }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="projet">Titre du projet</label>
-          <input 
-            id="projet"
-            :value="projetTitre" 
-            type="text"
-            disabled
-            class="form-input"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="statut">Statut</label>
-          <select 
-            id="statut"
-            v-model="form.statutId" 
-            required
-            class="form-select"
-          >
-            <option value="">Sélectionner le statut</option>
-            <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
-              {{ statut.nomStatutsEpisode }}
-            </option>
-          </select>
-        </div>
-
+        <!-- Ligne 4 : Synopsis (pleine largeur) -->
         <div class="form-group">
           <label for="synopsis">Synopsis</label>
           <textarea 
@@ -217,10 +223,8 @@ export default {
         console.error('Erreur lors du chargement des statuts d\'épisode:', error);
         this.errorMessage = 'Erreur lors du chargement des statuts';
       }
-
     },
-
-     async fetchRealisateurs() {
+    async fetchRealisateurs() {
       try {
         const response = await axios.get('/api/realisateurs');
         this.realisateurs = response.data;
@@ -228,8 +232,7 @@ export default {
         console.error('Erreur lors du chargement des réalisateurs:', error);
       }
     },
-
-      async fetchScenaristes() {
+    async fetchScenaristes() {
       try {
         const response = await axios.get('/api/scenaristes');
         this.scenaristes = response.data;
@@ -237,7 +240,6 @@ export default {
         console.error('Erreur lors du chargement des scénaristes:', error);
       }
     },
-    
     async fetchExistingEpisodes() {
       try {
         const projetId = this.$route.params.id || this.$route.params.projetId || this.$route.query.projetId;
@@ -250,7 +252,6 @@ export default {
         
         // Calculer le prochain ordre disponible
         this.calculateSuggestedOrdre();
-        
       } catch (error) {
         console.error('Erreur lors du chargement des épisodes existants:', error);
       }
@@ -356,4 +357,88 @@ export default {
 };
 </script>
 
+<style scoped>
+/* Ajout de styles pour la disposition côte à côte */
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
 
+.form-group-half {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Ajustement pour le textarea du synopsis */
+.form-textarea {
+  width: 100%;
+}
+
+/* Assurer que les styles existants dans episode.css sont respectés */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.error-input {
+  border-color: red;
+}
+
+.error-text {
+  color: red;
+  font-size: 12px;
+}
+
+.suggestion-text {
+  color: #555;
+  font-size: 12px;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.suggestion-btn {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+}
+
+.submit-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.submit-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+</style>
