@@ -413,13 +413,29 @@ export default {
     };
 
 
-  const verifierConflits = async () => {
+const verifierConflits = async () => {
   if (!formData.value.dateTournage || !formData.value.heureDebut || !formData.value.heureFin) {
-    return true; // La validation normale gérera les champs manquants
+    return true;
   }
 
   try {
-    const response = await axios.get('/api/conflicts/check', {
+    // Vérifier d'abord les disponibilités (sans les horaires)
+    const disponibilitesResponse = await axios.get('/api/conflicts/check-disponibilites', {
+      params: {
+        sceneId: props.scene.idScene,
+        dateTournage: formData.value.dateTournage
+      }
+    });
+
+    if (disponibilitesResponse.data.hasConflicts) {
+      const messages = disponibilitesResponse.data.conflicts.join('\n');
+      if (!confirm(`Problèmes de disponibilité détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
+        return false;
+      }
+    }
+
+    // Ensuite vérifier les conflits horaires
+    const conflitsResponse = await axios.get('/api/conflicts/check', {
       params: {
         sceneId: props.scene.idScene,
         dateTournage: formData.value.dateTournage,
@@ -428,9 +444,9 @@ export default {
       }
     });
 
-    if (response.data.hasConflicts) {
-      const messages = response.data.conflicts.join('\n');
-      if (!confirm(`Conflits détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
+    if (conflitsResponse.data.hasConflicts) {
+      const messages = conflitsResponse.data.conflicts.join('\n');
+      if (!confirm(`Conflits de planning détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
         return false;
       }
     }
@@ -446,7 +462,16 @@ export default {
 const verifierConflitsTempsReel = async () => {
   if (formData.value.dateTournage && formData.value.heureDebut && formData.value.heureFin) {
     try {
-      const response = await axios.get('/api/conflicts/check', {
+      // Vérifier les disponibilités en temps réel
+      const disponibilitesResponse = await axios.get('/api/conflicts/check-disponibilites', {
+        params: {
+          sceneId: props.scene.idScene,
+          dateTournage: formData.value.dateTournage
+        }
+      });
+
+      // Vérifier les conflits horaires en temps réel
+      const conflitsResponse = await axios.get('/api/conflicts/check', {
         params: {
           sceneId: props.scene.idScene,
           dateTournage: formData.value.dateTournage,
@@ -455,9 +480,14 @@ const verifierConflitsTempsReel = async () => {
         }
       });
 
-      if (response.data.hasConflicts) {
-        // Afficher les conflits dans l'interface
-        erreur.value = 'Conflits détectés:\n' + response.data.conflicts.join('\n');
+      // Combiner les messages d'erreur
+      const allConflicts = [
+        ...(disponibilitesResponse.data.conflicts || []),
+        ...(conflitsResponse.data.conflicts || [])
+      ];
+
+      if (allConflicts.length > 0) {
+        erreur.value = 'Conflits détectés:\n' + allConflicts.join('\n');
       } else {
         erreur.value = '';
       }
