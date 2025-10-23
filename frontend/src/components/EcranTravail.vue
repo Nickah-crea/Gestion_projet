@@ -120,9 +120,13 @@
 
        <!-- Liens de création - Masquer ceux non autorisés -->
       <div class="liens">
-        <button v-if="userPermissions.canEditEpisode" class="add-scene-btn" @click="goToAddEpisode">
-          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Episode
-        </button>     
+            <button 
+        v-if="episodes.length === 0 || userPermissions.canEditEpisode" 
+        class="add-scene-btn" 
+        @click="goToAddEpisode"
+      >
+        <i class="fas fa-plus-circle" style="color: #21294F;"></i> Episode
+      </button>     
         <button v-if="userPermissions.canCreateSequence" class="add-scene-btn" @click="goToAddSequence">
           <i class="fas fa-plus-circle " style="color: #21294F;"></i> Séquence
         </button>
@@ -365,9 +369,9 @@
           </div>
         </div>
       </main>
-      <div v-else-if="!isLoading" class="no-data">
-        <p>Aucune séquence disponible pour cet épisode.</p>
-      </div>
+     <div v-else-if="!isLoading" class="no-data">
+      <p>Aucune séquence disponible pour cet épisode.</p>
+    </div>
 
       <!-- Ajouter cette modale après les autres modales -->
       <div v-if="showHighlightModal" class="modal-overlay" @click="closeHighlightModal">
