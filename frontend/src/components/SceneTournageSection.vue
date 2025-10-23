@@ -55,6 +55,11 @@
                 class="btn-modifier">
           <i class="fas fa-edit"></i> Modifier
         </button>
+        <button v-if="tournage && userPermissions.canCreateScene" 
+              @click="supprimerTournage" 
+              class="btn-supprimer">
+          <i class="fas fa-trash-alt"></i> Supprimer
+        </button>
       </div>
     </div>
 
@@ -371,6 +376,36 @@ export default {
       showModal.value = true;
     };
 
+    const supprimerTournage = async () => {
+      if (!props.userPermissions.canCreateScene) {
+        alert('Vous n\'êtes pas autorisé à supprimer des tournages.');
+        return;
+      }
+      
+      if (!tournage.value) return;
+      
+      if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement ce planning de tournage ? Cette action est irréversible.')) {
+        return;
+      }
+      
+      try {
+        chargement.value = true;
+        await axios.delete(`/api/scene-tournage/${tournage.value.id}`);
+        
+        // Réinitialiser les données
+        tournage.value = null;
+        emit('tournage-updated', null);
+        
+        alert('Planning de tournage supprimé avec succès!');
+        
+      } catch (error) {
+        console.error('Erreur suppression tournage:', error);
+        alert('Erreur: ' + (error.response?.data?.message || error.message));
+      } finally {
+        chargement.value = false;
+      }
+    };
+
     const initialiserFormData = () => {
       if (isModification.value && tournage.value) {
         // Remplir avec les données existantes
@@ -651,6 +686,7 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       formData,
       ouvrirModalPlanification,
       ouvrirModalModification,
+      supprimerTournage,
       fermerModal,
       soumettreTournage,
       modifierStatutRapide,
@@ -985,5 +1021,13 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
 .conflict-item {
   margin: 4px 0;
   font-size: 14px;
+}
+.btn-supprimer { 
+  background-color: #dc3545; 
+  color: white; 
+}
+
+.btn-supprimer:hover {
+  background-color: #c82333;
 }
 </style>
