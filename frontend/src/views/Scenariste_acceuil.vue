@@ -4,6 +4,19 @@
       <!-- Header avec barre de recherche, filtres Statut Recherche et Date spécifique à gauche, bouton à droite -->
       <div class="header-section-Scenariste">
         <div class="search-and-filters-Scenariste">
+           <div class="welcome-section-Scenariste">
+              <h2>Bienvenue, {{ user?.nom }} !</h2>
+              <p>Vous êtes connecté en tant que {{ user?.role }}</p>
+            </div>
+            
+            <!-- Bouton Nouveau Projet à droite -->
+        <div class="add-project-center-Scenariste">
+          <button class="add-project-btn-main-Scenariste" @click="goToAddProject">
+            <i class="fas fa-plus-circle icon-Scenariste"></i> 
+            Nouveau Projet
+          </button>
+        </div>
+        
           <!-- Barre de recherche -->
           <div class="search-container-Scenariste">
             <div class="search-input-wrapper-Scenariste">
@@ -41,13 +54,7 @@
           </div>
         </div>
         
-        <!-- Bouton Nouveau Projet à droite -->
-        <div class="add-project-center-Scenariste">
-          <button class="add-project-btn-main-Scenariste" @click="goToAddProject">
-            <i class="fas fa-plus-circle icon-Scenariste"></i> 
-            Nouveau Projet
-          </button>
-        </div>
+        
       </div>
 
       <!-- Filtres restants avec la phrase "Les projets existants" à gauche -->
@@ -183,7 +190,7 @@
       <!-- Grille des projets -->
       <div class="projects-library-Scenariste">
         <div v-for="(project, index) in filteredProjects" :key="project.id" class="movie-card-Scenariste" :style="{'--index': index + 1}">
-          <!-- Header de la carte avec statut à gauche et actions à droite -->
+       <!-- Header de la carte avec statut à gauche et actions à droite -->
           <div class="movie-card-header-Scenariste">
             <div class="movie-statut-Scenariste">
               <span class="statut-badge-Scenariste" :class="getStatutClass(project.statutNom)">
@@ -210,10 +217,10 @@
                 <i class="fas fa-calendar-plus"></i>
                 <span>{{ formatShortDate(project.creeLe) }}</span>
               </div>
-              <div class="meta-item-Scenariste">
+              <!-- <div class="meta-item-Scenariste">
                 <i class="fas fa-calendar-check"></i>
                 <span>{{ formatShortDate(project.modifieLe) }}</span>
-              </div>
+              </div> -->
             </div>
             
             <div class="movie-synopsis-Scenariste" v-if="project.synopsis">
