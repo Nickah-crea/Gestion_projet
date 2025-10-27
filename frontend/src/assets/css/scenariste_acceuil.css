@@ -1,3 +1,4 @@
+
 /* Variables de couleurs cohérentes avec sidebar.css et inspirées de l'image MINO */
 :root {
   --primary-Scenariste: #7BBBFF;
@@ -6,37 +7,43 @@
   --accent-Scenariste: #B8A9FF;
   --accent-light-Scenariste: #D0C7FF;
   --background-Scenariste: #F2FDFF;
-  /* --background: #FFFFFF; */
-    --background: #B8A9FF; /* Violet pour le fond principal */
-  --surface-Scenariste: rgba(255, 255, 255, 0.95);
+  --surface-Scenariste: rgba(255, 255, 255, 0.15);
+  --surface-hover-Scenariste: rgba(255, 255, 255, 0.25);
   --text-primary-Scenariste: #050F2A;
   --text-secondary-Scenariste: #1A2A4D;
   --text-muted-Scenariste: #4A5A7D;
-  --border-Scenariste: rgba(5, 15, 42, 0.1);
-  --border-dark-Scenariste: rgba(5, 15, 42, 0.2);
-  --shadow-Scenariste: 0 4px 12px rgba(5, 15, 42, 0.05);
+  --border-Scenariste: rgba(255, 255, 255, 0.2);
+  --border-dark-Scenariste: rgba(5, 15, 42, 0.3);
+  --shadow-Scenariste: 0 8px 32px rgba(5, 15, 42, 0.1);
+  --shadow-hover-Scenariste: 0 12px 40px rgba(5, 15, 42, 0.15);
   --radius-Scenariste: 30px;
   --radius-sm-Scenariste: 25px;
   --transition-Scenariste: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Couleurs pastel pour les cartes et badges */
-  --pastel-pink: #FFE4E4;
-  --pastel-yellow: #FFF9D6;
-  --pastel-blue: #E3F2FF;
-  --pastel-green: #E4FFE4;
-  --pastel-purple: #F0E4FF;
+  --pastel-pink: rgba(255, 228, 228, 0.3);
+  --pastel-yellow: rgba(255, 249, 214, 0.3);
+  --pastel-blue: rgba(227, 242, 255, 0.3);
+  --pastel-green: rgba(228, 255, 228, 0.3);
+  --pastel-purple: rgba(240, 228, 255, 0.3);
 }
 
-/* Reset et base */
+/* Reset et base avec effet glassmorphism */
 .scenariste-accueil-container-Scenariste {
   min-height: 100vh;
   padding: 2rem;
-  background: var(--background);
+  /* background: linear-gradient(135deg, #D0C7FF 0%, #F2FDFF 100%); */
+  backdrop-filter: blur(60px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .main-content-scenariste-Scenariste {
   max-width: 1400px;
   margin: 0 auto;
+}
+
+.welcome-section-Scenariste h2{
+  font-size: 36px;
 }
 
 /* Header Section */
@@ -76,7 +83,7 @@
   width: 450px;
   padding: 1rem 1rem 1rem 3.5rem;
   border: 1px solid var(--border-Scenariste);
-  border-radius: var(--radius-Scenariste);
+  border-radius: var(--radius-sm-Scenariste);
   background: var(--surface-Scenariste);
   font-size: 1rem;
   color: var(--text-primary-Scenariste);
@@ -135,7 +142,7 @@
   color: white;
   border: none;
   padding: 1rem 2rem;
-  border-radius: var(--radius-Scenariste);
+  border-radius: var(--radius-sm-Scenariste);
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -213,13 +220,17 @@
 .projects-library-Scenariste {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  gap: 4.5rem;
   padding: 1rem;
+  /* background: var(--background); */
+  border-radius: 30px;
+  backdrop-filter: blur(60px);
+  /* box-shadow: 10px 10px 10px 0px #050f2a19; */
 }
 
 .movie-card-Scenariste {
-  background: var(--surface-Scenariste);
-  border-radius: var(--radius-Scenariste);
+  background: #fff;
+  border-radius: var(--radius-sm-Scenariste);
   border: none;
   box-shadow: var(--shadow-Scenariste);
   overflow: hidden;
@@ -229,6 +240,15 @@
   display: flex;
   flex-direction: column;
   min-height: 300px; /* Hauteur minimale pour uniformité */
+  width: 300px;
+  box-shadow: 0 2px 12px rgba(5, 15, 42, 0.1);
+  backdrop-filter: blur(60px);
+
+}
+
+.movie-card-header-head-Scenariste {
+    background: linear-gradient(135deg, #D0C7FF 0%, #F2FDFF 100%);
+    border-radius: var(--radius-sm-Scenariste);
 }
 
 .movie-card-Scenariste:hover {
