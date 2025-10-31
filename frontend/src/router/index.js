@@ -226,7 +226,12 @@ const routes = [
     name: 'ResultatRecherche',
     component: () => import('../views/ResultatRecherche.vue'),
     props: true
-  }
+  },
+  {
+    path: '/raccords',
+    name: 'raccord',
+    component: () => import('../views/GestionRaccords.vue')
+  },
 ]
 
 const router = createRouter({
