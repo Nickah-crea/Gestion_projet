@@ -869,6 +869,23 @@ INSERT INTO statuts_verification (code, nom_statut, description, ordre_affichage
 ('NON_CONFORME', 'Non conforme', 'Le raccord présente des incohérences', 2),
 ('A_CORRIGER', 'À corriger', 'Le raccord nécessite des corrections', 3);
 
+CREATE TABLE types_raccord (
+    id_type_raccord BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_type VARCHAR(100) NOT NULL,
+    description TEXT,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+INSERT INTO types_raccord (code, nom_type, description) VALUES
+('decor', 'Décor', 'Raccord de décor et environnement'),
+('costume', 'Costume', 'Raccord de vêtements et accessoires vestimentaires'),
+('accessoire', 'Accessoire', 'Raccord d''objets et accessoires'),
+('coiffure', 'Coiffure', 'Raccord de coiffure et maquillage'),
+('lumière', 'Lumière', 'Raccord d''éclairage et ambiance lumineuse'),
+('position', 'Position', 'Raccord de position des acteurs et objets');
+
 -- Table principale des raccords
 CREATE TABLE raccords (
     id_raccord BIGSERIAL PRIMARY KEY,
