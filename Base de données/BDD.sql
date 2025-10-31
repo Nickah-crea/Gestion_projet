@@ -838,3 +838,180 @@ CREATE INDEX idx_scene_tournage_lieu ON scene_tournage(id_lieu);
 CREATE INDEX idx_scene_tournage_plateau ON scene_tournage(id_plateau);
 
 
+
+-- Table pour les statuts de raccord (doit être créée avant raccords)
+CREATE TABLE statuts_raccord (
+    id_statut_raccord BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_statut VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+INSERT INTO statuts_raccord (code, nom_statut, description) VALUES
+('A_VERIFIER', 'À vérifier', 'Raccord à vérifier'),
+('VALIDE', 'Validé', 'Raccord validé'),
+('NON_CONFORME', 'Non conforme', 'Raccord non conforme'),
+('CORRIGE', 'Corrigé', 'Raccord corrigé');
+
+-- Table pour les statuts de vérification (doit être créée avant verification_raccords)
+CREATE TABLE statuts_verification (
+    id_statut_verification BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_statut VARCHAR(100) NOT NULL,
+    description TEXT,
+    ordre_affichage INTEGER DEFAULT 1,
+    est_actif BOOLEAN DEFAULT TRUE,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO statuts_verification (code, nom_statut, description, ordre_affichage) VALUES
+('CONFORME', 'Conforme', 'Le raccord est conforme', 1),
+('NON_CONFORME', 'Non conforme', 'Le raccord présente des incohérences', 2),
+('A_CORRIGER', 'À corriger', 'Le raccord nécessite des corrections', 3);
+
+-- Table principale des raccords
+CREATE TABLE raccords (
+    id_raccord BIGSERIAL PRIMARY KEY,
+    scene_source_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    scene_cible_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    id_type_raccord BIGINT REFERENCES types_raccord(id_type_raccord),
+    description TEXT NOT NULL,
+    est_critique BOOLEAN DEFAULT FALSE,
+    id_statut_raccord BIGINT REFERENCES statuts_raccord(id_statut_raccord),
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_personnage BIGINT REFERENCES personnages(id_personnage),
+    id_comedien BIGINT REFERENCES comediens(id_comedien)
+);
+
+-- Table de liaison entre raccords et planning de tournage
+CREATE TABLE raccord_planning (
+    id_raccord_planning BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    id_planning_tournage BIGINT REFERENCES planning_tournage(id_planning_tournage) ON DELETE CASCADE,
+    type_liaison VARCHAR(50) NOT NULL, -- 'SOURCE' ou 'CIBLE'
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(id_raccord, id_planning_tournage, type_liaison)
+);
+
+CREATE INDEX idx_raccord_planning_raccord ON raccord_planning(id_raccord);
+CREATE INDEX idx_raccord_planning_planning ON raccord_planning(id_planning_tournage);
+
+
+CREATE OR REPLACE VIEW v_raccords_planning AS
+SELECT 
+    r.id_raccord,
+    r.description,
+    r.est_critique,
+    sr.nom_statut as statut_raccord,
+    sr.code as code_statut,
+    tr.nom_type as type_raccord,
+    ss.id_scene as scene_source_id,
+    ss.titre as scene_source_titre,
+    sc.id_scene as scene_cible_id,
+    sc.titre as scene_cible_titre,
+    p.id_personnage,
+    p.nom as personnage_nom,
+    c.id_comedien,
+    c.nom_comedien,
+    rp_src.id_planning_tournage as planning_source_id,
+    rp_cible.id_planning_tournage as planning_cible_id,
+    pt_src.date_tournage as date_tournage_source,
+    pt_cible.date_tournage as date_tournage_cible,
+    pt_src.heure_debut as heure_debut_source,
+    pt_src.heure_fin as heure_fin_source,
+    pt_cible.heure_debut as heure_debut_cible,
+    pt_cible.heure_fin as heure_fin_cible,
+    -- Calcul de la différence de jours entre les tournages
+    CASE 
+        WHEN pt_src.date_tournage IS NOT NULL AND pt_cible.date_tournage IS NOT NULL 
+        THEN EXTRACT(DAY FROM (pt_cible.date_tournage - pt_src.date_tournage))
+        ELSE NULL
+    END as difference_jours,
+    -- Alerte si différence positive (tournage cible après source)
+    CASE 
+        WHEN pt_src.date_tournage IS NOT NULL AND pt_cible.date_tournage IS NOT NULL 
+             AND pt_cible.date_tournage > pt_src.date_tournage 
+        THEN 'ALERTE: Tournage cible après source'
+        WHEN pt_src.date_tournage IS NOT NULL AND pt_cible.date_tournage IS NOT NULL 
+             AND pt_cible.date_tournage < pt_src.date_tournage 
+        THEN 'OK: Tournage cible avant source'
+        ELSE 'Planning incomplet'
+    END as statut_planning
+FROM raccords r
+LEFT JOIN statuts_raccord sr ON r.id_statut_raccord = sr.id_statut_raccord
+LEFT JOIN types_raccord tr ON r.id_type_raccord = tr.id_type_raccord
+LEFT JOIN scenes ss ON r.scene_source_id = ss.id_scene
+LEFT JOIN scenes sc ON r.scene_cible_id = sc.id_scene
+LEFT JOIN personnages p ON r.id_personnage = p.id_personnage
+LEFT JOIN comediens c ON r.id_comedien = c.id_comedien
+-- Liaison avec planning source
+LEFT JOIN raccord_planning rp_src ON r.id_raccord = rp_src.id_raccord AND rp_src.type_liaison = 'SOURCE'
+LEFT JOIN planning_tournage pt_src ON rp_src.id_planning_tournage = pt_src.id_planning_tournage
+-- Liaison avec planning cible
+LEFT JOIN raccord_planning rp_cible ON r.id_raccord = rp_cible.id_raccord AND rp_cible.type_liaison = 'CIBLE'
+LEFT JOIN planning_tournage pt_cible ON rp_cible.id_planning_tournage = pt_cible.id_planning_tournage;
+
+
+-- Contrainte pour empêcher les doublons scène-source = scène-cible
+ALTER TABLE raccords ADD CONSTRAINT unique_raccord_different_scenes 
+CHECK (scene_source_id != scene_cible_id OR id_type_raccord IS NULL);
+
+-- Table pour stocker les images de référence des raccords
+CREATE TABLE raccord_images (
+    id_raccord_image BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    nom_fichier VARCHAR(255) NOT NULL,
+    chemin_fichier VARCHAR(500) NOT NULL,
+    description_image TEXT,
+    est_image_reference BOOLEAN DEFAULT FALSE,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table pour suivre la vérification des raccords pendant le tournage
+CREATE TABLE verification_raccords (
+    id_verification BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    id_utilisateur BIGINT REFERENCES utilisateurs(id_utilisateur),
+    date_verification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_statut_verification BIGINT REFERENCES statuts_verification(id_statut_verification),
+    notes_verification TEXT,
+    preuve_image VARCHAR(500)
+);
+
+-- Index pour optimiser les performances
+CREATE INDEX idx_raccords_scene_source ON raccords(scene_source_id);
+CREATE INDEX idx_raccords_scene_cible ON raccords(scene_cible_id);
+CREATE INDEX idx_raccords_type ON raccords(id_type_raccord);
+CREATE INDEX idx_raccord_images_raccord ON raccord_images(id_raccord);
+CREATE INDEX idx_verification_raccord ON verification_raccords(id_raccord);
+
+ALTER TABLE raccords DROP CONSTRAINT IF EXISTS unique_raccord_different_scenes;
+
+
+-- Vue pour les alertes de raccords
+CREATE OR REPLACE VIEW v_alertes_raccords AS
+SELECT 
+    r.id_raccord,
+    r.description,
+    r.est_critique,
+    sr.nom_statut as statut_raccord,
+    tr.nom_type as type_raccord,
+    ss.titre as scene_source_titre,
+    sc.titre as scene_cible_titre,
+    st_src.date_tournage as date_tournage_source,
+    st_cible.date_tournage as date_tournage_cible,
+    p.nom as personnage_nom,
+    c.nom_comedien as comedien_nom
+FROM raccords r
+LEFT JOIN statuts_raccord sr ON r.id_statut_raccord = sr.id_statut_raccord
+LEFT JOIN types_raccord tr ON r.id_type_raccord = tr.id_type_raccord
+LEFT JOIN scenes ss ON r.scene_source_id = ss.id_scene
+LEFT JOIN scenes sc ON r.scene_cible_id = sc.id_scene
+LEFT JOIN scene_tournage st_src ON ss.id_scene = st_src.id_scene
+LEFT JOIN scene_tournage st_cible ON sc.id_scene = st_cible.id_scene
+LEFT JOIN personnages p ON r.id_personnage = p.id_personnage
+LEFT JOIN comediens c ON r.id_comedien = c.id_comedien
+WHERE r.est_critique = true 
+   OR sr.code = 'A_VERIFIER';
+
