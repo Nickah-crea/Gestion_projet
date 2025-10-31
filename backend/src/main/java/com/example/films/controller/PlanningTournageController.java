@@ -1,6 +1,7 @@
 package com.example.films.controller;
 
 import com.example.films.dto.*;
+import com.example.films.entity.PlanningTournage;
 import com.example.films.service.*;
 import com.example.films.repository.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -122,6 +123,17 @@ public class PlanningTournageController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    private PlanningTournageDTO convertToDTO(PlanningTournage planning) {
+    PlanningTournageDTO dto = new PlanningTournageDTO();
+    dto.setId(planning.getId());
+    dto.setDateTournage(planning.getDateTournage());
+    dto.setHeureDebut(planning.getHeureDebut());
+    dto.setHeureFin(planning.getHeureFin());
+    dto.setSceneId(planning.getScene().getId());
+    dto.setSceneTitre(planning.getScene().getTitre());
+    dto.setStatutNom(planning.getStatut().getNomStatut());
+    return dto;
+}
 
     // @GetMapping("/form-data")
     // public ResponseEntity<Map<String, Object>> getFormData() {

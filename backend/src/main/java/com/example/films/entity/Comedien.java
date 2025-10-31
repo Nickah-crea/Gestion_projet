@@ -38,6 +38,9 @@ public class Comedien {
     @OneToMany(mappedBy = "comedien", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DisponibiliteComedien> disponibilites = new ArrayList<>();
 
+    @OneToMany(mappedBy = "comedien", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Personnage> personnages = new ArrayList<>();
+
      @ManyToMany
     @JoinTable(
         name = "comedien_scene",

@@ -46,4 +46,17 @@ public interface SceneRepository extends JpaRepository<Scene, Long> {
 
     @Query("SELECT s FROM Scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e WHERE e.projet.id = :projetId")
     List<Scene> findBySequenceEpisodeProjetId(@Param("projetId") Long projetId);
+
+     @Query("SELECT s FROM Scene s " +
+           "LEFT JOIN FETCH s.sequence seq " +
+           "LEFT JOIN FETCH seq.episode e " +
+           "LEFT JOIN FETCH e.projet p " +
+           "WHERE p.id = :projetId")
+    List<Scene> findByProjetId(@Param("projetId") Long projetId);
+    
+    @Query("SELECT s FROM Scene s " +
+           "LEFT JOIN FETCH s.sequence seq " +
+           "LEFT JOIN FETCH seq.episode e " +
+           "LEFT JOIN FETCH e.projet p")
+    List<Scene> findAllWithDetails();
 }

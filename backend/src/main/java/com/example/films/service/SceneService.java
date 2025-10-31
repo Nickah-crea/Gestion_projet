@@ -186,8 +186,10 @@ public class SceneService {
         return convertToDTO(scene);
     }
 
+    @Transactional(readOnly = true)
     public List<SceneDTO> getAllScenes() {
         List<Scene> scenes = sceneRepository.findAllOrdered();
+        
         return scenes.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -196,5 +198,14 @@ public class SceneService {
     public List<RechercheSceneDTO> rechercherScenes(String query) {
         return sceneRepository.rechercherScenes(query.toLowerCase());
     }
+
+    @Transactional(readOnly = true)
+    public List<SceneDTO> getScenesByProjet(Long projetId) {
+        List<Scene> scenes = sceneRepository.findByProjetId(projetId);
+        return scenes.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 }
 
