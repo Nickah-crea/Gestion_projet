@@ -1,0 +1,262 @@
+// =============================================
+// POLICES
+// =============================================
+
+$font-family-primary: 'Hauora Sans', sans-serif;
+
+// Poids de police
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+$font-weight-semibold: 600; // AJOUTÉ
+
+// Tailles de police
+$font-size-h1: 32px;
+$font-size-h2: 24px;
+$font-size-h3: 18px;
+$font-size-h4: 15px;
+$font-size-p1: 13px;
+$font-size-p2: 12px;
+$font-size-p3: 11px;
+
+// Line heights
+$line-height-base: 1.5;
+$line-height-tight: 1.3;
+$line-height-loose: 1.7;
+
+// =============================================
+// COULEURS - NOUVELLE PALETTE
+// =============================================
+
+// Couleurs principales
+$color-dark: #46467A;      // Bleu foncé/violet
+$color-primary: #7766C6;   // Violet principal
+$color-accent: #FFC212;    // Rose fluo
+$color-grey: #E0DEF0;    // Gris claire
+$color-yellow: #FFC212;    // Jaune
+$color-pink: #F9B0C3;      // Rose pâle
+$color-light: #fbfbfb;
+$color-white: #FFFFEC;     // Ivory - Blanc cassé
+$color-red: #EF4444;       // Rouge pour erreurs
+$color-text: #23233c;
+
+// Variantes de couleurs (plus claires/foncées)
+// Utilisation de mix() au lieu de lighten() pour éviter les warnings
+$color-dark-light: mix($color-dark, white, 90%);
+$color-dark-lighter: mix($color-dark, white, 80%);
+$color-primary-light: mix($color-primary, white, 90%);
+$color-primary-lighter: mix($color-primary, white, 80%);
+$color-accent-light: mix($color-accent, white, 90%);
+
+// Couleurs de texte
+$color-text-primary: $color-text;
+$color-text-secondary: mix($color-dark, white, 85%);
+$color-text-muted: mix($color-dark, white, 70%);
+$color-text-light: $color-light;
+
+// Couleurs de fond
+$color-background: $color-light;
+$color-background-alt: mix($color-light, black, 97%);
+$color-background-dark: $color-dark;
+
+// Couleurs d'état
+$color-success: #10B981;
+$color-warning: $color-yellow;
+$color-error: $color-red;
+$color-info: $color-primary;
+
+// =============================================
+// ESPACEMENTS - CORRIGÉ
+// =============================================
+
+// Gaps (espacements entre éléments)
+$gap-xs: 4px;
+$gap-sm: 6px;
+$gap-md: 10px;
+$gap-lg: 14px;
+$gap-xl: 20px;
+$gap-xxl: 30px;
+
+// Paddings - AJOUTÉ
+$padding-xs: 8px;
+$padding-sm: 12px;
+$padding-md: 16px;
+$padding-lg: 20px;
+$padding-xl: 24px;
+
+// Margins - AJOUTÉ
+$margin-xs: 8px;
+$margin-sm: 12px;
+$margin-md: 16px;
+$margin-lg: 20px;
+$margin-xl: 24px;
+
+// Spacings (pour compatibilité) - AJOUTÉ
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// =============================================
+// BORDS & OMBRES
+// =============================================
+
+// Bordures
+$border-radius: 25px;
+$border-radius-sm: 20px;
+$border-radius-lg: 30px;
+$border-radius-pill: 50px;
+
+// Ombres
+$shadow: 0 4px 15px rgba(70, 70, 122, 0.06);
+$shadow-hover: 0 8px 20px rgba(70, 70, 122, 0.1);
+$shadow-lg: 0 10px 25px rgba(70, 70, 122, 0.15);
+$shadow-inset: inset 0 2px 4px rgba(70, 70, 122, 0.05);
+
+// Bordures
+$border-width: 1px;
+$border-color: rgba(70, 70, 122, 0.1);
+$border-color-dark: rgba(70, 70, 122, 0.2);
+
+// =============================================
+// TRANSITIONS & ANIMATIONS
+// =============================================
+
+$transition: all 0.2s ease;
+$transition-slow: all 0.3s ease;
+$transition-fast: all 0.1s ease;
+
+// Durées d'animation
+$duration-fast: 0.15s;
+$duration-normal: 0.3s;
+$duration-slow: 0.5s;
+
+// =============================================
+// BREAKPOINTS (Responsive)
+// =============================================
+
+$breakpoint-xs: 480px;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-xxl: 1400px;
+
+// =============================================
+// Z-INDEX
+// =============================================
+
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal: 1040;
+$z-index-popover: 1050;
+$z-index-tooltip: 1060;
+$z-index-toast: 1070;
+
+// =============================================
+// TYPOGRAPHIE MIXINS (pour réutiliser facilement)
+// =============================================
+
+@mixin typography-h1 {
+  font-size: $font-size-h1;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-md; // CORRIGÉ
+}
+
+@mixin typography-h2 {
+  font-size: $font-size-h2;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm; // CORRIGÉ
+}
+
+@mixin typography-h3 {
+  font-size: $font-size-h3;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm; // CORRIGÉ
+}
+
+@mixin typography-h4 {
+  font-size: $font-size-h4;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-xs; // CORRIGÉ
+}
+
+@mixin typography-p1 {
+  font-size: $font-size-p1;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
+  color: $color-text-secondary;
+  margin-bottom: $margin-sm; // CORRIGÉ
+}
+
+@mixin typography-p2 {
+  font-size: $font-size-p2;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
+  color: $color-text-secondary;
+  margin-bottom: $margin-xs; // CORRIGÉ
+}
+
+@mixin typography-p3 {
+  font-size: $font-size-p3;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
+  color: $color-text-muted;
+  margin-bottom: $margin-xs; // CORRIGÉ
+}
+
+// =============================================
+// MIXINS UTILITAIRES
+// =============================================
+
+// Flexbox centré
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Flexbox entre
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Text truncate
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Screen reader only
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Media queries
+@mixin respond-to($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}

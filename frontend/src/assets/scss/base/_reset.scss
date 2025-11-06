@@ -1,0 +1,71 @@
+@import 'variables';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: $font-size-p1;
+  font-family: $font-family-primary;
+  line-height: $line-height-base;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: $color-background;
+  color: $color-text-primary;
+  font-weight: $font-weight-regular;
+}
+
+// Reset des liens
+a {
+  color: inherit;
+  text-decoration: none;
+  
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+// Reset des listes
+ul, ol {
+  list-style: none;
+}
+
+// Reset des boutons
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  
+  &:focus {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// Reset des inputs
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  
+  &:focus {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// Images responsives
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+

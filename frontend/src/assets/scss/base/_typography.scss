@@ -1,0 +1,47 @@
+@import 'variables';
+
+// Styles de base pour la typographie
+h1, .h1 {
+  @include typography-h1;
+}
+
+h2, .h2 {
+  @include typography-h2;
+}
+
+h3, .h3 {
+  @include typography-h3;
+}
+
+h4, .h4 {
+  @include typography-h4;
+}
+
+p, .p1 {
+  @include typography-p1;
+}
+
+.p2 {
+  @include typography-p2;
+}
+
+.p3 {
+  @include typography-p3;
+}
+
+// Classes utilitaires pour les poids de police
+.text-light { font-weight: $font-weight-light; }
+.text-regular { font-weight: $font-weight-regular; }
+.text-medium { font-weight: $font-weight-medium; }
+.text-semibold { font-weight: $font-weight-semibold; }
+.text-bold { font-weight: $font-weight-bold; }
+
+// Classes utilitaires pour les couleurs de texte
+.text-primary { color: $color-text-primary; }
+.text-secondary { color: $color-text-secondary; }
+.text-muted { color: $color-text-muted; }
+.text-accent { color: $color-accent; }
+.text-yellow { color: $color-yellow; }
+.text-pink { color: $color-pink; }
+.text-light { color: $color-light; }
+
