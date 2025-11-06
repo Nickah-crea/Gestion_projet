@@ -86,6 +86,11 @@
           <span v-if="!isCollapsed" class="link-text">Gestion Raccords</span>
         </router-link>
 
+        <router-link to="/raccords-verification" class="sidebar-link"  @click="toggleSidebarIfMobile">
+          <i class="fas fa-check-circle icon"></i>
+          <span v-if="!isCollapsed" class="link-text">Vérification Raccords</span>
+        </router-link>
+       
         <router-link to="/gestion-equipe" class="sidebar-link" v-if="user?.role === 'ADMIN'"  @click="toggleSidebarIfMobile">
           <i class="fas fa-users-cog icon"></i>
           <span v-if="!isCollapsed" class="link-text">Gestion Équipe</span>
