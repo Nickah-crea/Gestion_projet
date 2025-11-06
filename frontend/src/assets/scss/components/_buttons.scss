@@ -1,0 +1,521 @@
+// =============================================
+// BOUTONS - STYLES GLOBAUX
+// =============================================
+
+@import '../base/variables';
+
+// =============================================
+// BOUTONS PRINCIPAUX
+// =============================================
+
+.add-project-btn-main-Scenariste,
+.add-project-btn-large-Scenariste {
+  background: $color-primary;
+  color: $color-light;
+  border: none;
+  padding: $padding-sm $padding-lg;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p1;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-lg;
+  box-shadow: $shadow;
+  height: 42px; 
+  margin-left: 20px;
+  width: 200px;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba($color-light, 0.7), transparent);
+    transition: left 0.6s ease;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background: linear-gradient(90deg,
+      rgba($color-primary, 25) 0%,
+      rgba($color-accent, 10) 100%);
+    transform: translateX(5px) scale(1.02);
+    box-shadow: $shadow-hover;
+    border-color: $color-grey;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.add-project-btn-large-Scenariste {
+  padding: $padding-md $padding-xl;
+  border-radius: $border-radius;
+  margin: $margin-lg auto 0 auto;
+  font-size: $font-size-h4;
+}
+
+// =============================================
+// BOUTONS DE SIDEBAR (DÉPLACÉS DEPUIS SIDEBAR.SCSS)
+// =============================================
+
+.menu-toggle {
+  background: rgba($color-primary, 0.8);
+  border: 1px solid rgba($color-primary, 0.5);
+  color: $color-white;
+  font-size: $font-size-p2;
+  cursor: pointer;
+  @include flex-center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  transition: all $transition;
+  backdrop-filter: blur(5px);
+
+  &:hover {
+    background: $color-accent;
+    color: $color-dark;
+    transform: scale(1.1) rotate(180deg); /* Animation de rotation */
+    box-shadow: 0 0 12px rgba($color-accent, 0.6);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.theme-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  @include flex-center;
+  cursor: pointer;
+  transition: $transition;
+  color: $color-primary;
+  font-size: $font-size-p3;
+  
+  &:hover {
+    background: rgba($color-primary, 0.2);
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+    color: $color-light;
+    box-shadow: 0 2px 6px rgba($color-primary, 0.4);
+  }
+}
+
+// =============================================
+// BOUTONS D'ACTION (CARTES)
+// =============================================
+
+.action-btn-Scenariste {
+  border: none;
+  padding: $padding-sm;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-p1;
+  background: rgba($color-dark, 0.05);
+  color: $color-text-muted;
+  
+  &:hover {
+    background: rgba($color-dark, 0.1);
+    color: $color-text-primary;
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(1);
+  }
+}
+
+// Boutons d'édition et suppression
+.edit-btn-Scenariste { 
+  color: $color-primary; 
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    color: darken($color-primary, 10%);
+  }
+}
+
+.delete-btn-Scenariste { 
+  color: $color-red; 
+  
+  &:hover {
+    background: rgba($color-red, 0.1);
+    color: darken($color-red, 10%);
+  }
+}
+
+// =============================================
+// BOUTONS PRIMAIRES ET ACCENTUÉS (CARTES)
+// =============================================
+
+.primary-btn-Scenariste {
+  background: $color-primary;
+  color: $color-light;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  border: none;
+  font-weight: $font-weight-semibold;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  font-size: $font-size-p2;
+  flex: 1;
+  justify-content: center;
+  height: 35px;
+
+  &:hover {
+    background: linear-gradient(135deg, $color-accent, $color-primary);
+    transform: translateY(-2px);
+    border: 1 solid $color-accent-light;
+    color: $color-light;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.accent-btn-Scenariste {
+  background: $color-grey;
+  color: $color-primary;
+  // border: 1px solid $color-pink;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-weight: $font-weight-semibold;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  font-size: $font-size-p2;
+  flex: 1;
+  justify-content: center;
+  height: 35px;
+  
+  &:hover {
+    border: 1px solid $color-primary;
+    // background: $color-pink;
+    color: $color-primary;
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+
+.add-btn-ecran {
+  background: $color-accent;
+  color: $color-light;
+  border-radius: $border-radius-sm;
+  font-weight: $font-weight-semibold;
+  // transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  // flex: 1;
+  justify-content: center;
+  height: 35px;
+  width: 150px;
+  
+  &:hover {
+    background: none;
+    border: 1px solid;
+    box-shadow: $shadow-hover;
+    border-color: $color-yellow;
+    color: $color-yellow;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// BOUTONS DE MODAL
+// =============================================
+
+.cancel-btn-Scenariste,
+.save-btn-Scenariste {
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  border: none;
+  cursor: pointer;
+  font-size: $font-size-p1;
+  transition: $transition;
+  font-weight: $font-weight-semibold;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.cancel-btn-Scenariste {
+  background: rgba($color-dark, 0.1);
+  color: $color-text-primary;
+  
+  &:hover {
+    background: rgba($color-dark, 0.2);
+  }
+}
+
+.save-btn-Scenariste {
+  background: $color-primary;
+  color: $color-light;
+  
+  &:hover {
+    background: darken($color-primary, 10%);
+  }
+}
+
+// =============================================
+// BOUTONS DE RECHERCHE
+// =============================================
+
+.clear-search-btn-Scenariste {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: 50%;
+  transition: $transition;
+  font-size: $font-size-p1;
+  
+  &:hover {
+    color: $color-text-primary;
+    background: rgba($color-dark, 0.1);
+    transform: scale(1.1);
+  }
+}
+
+.close-modal-btn-Scenariste {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: 50%;
+  transition: $transition;
+  
+  &:hover {
+    color: $color-text-primary;
+    background: rgba($color-dark, 0.1);
+    transform: scale(1.1);
+  }
+}
+
+.close-results-btn-Scenariste {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-sm;
+  border-radius: $border-radius-sm;
+  transition: $transition;
+  
+  &:hover {
+    color: $color-text-primary;
+    background: rgba($color-dark, 0.1);
+  }
+}
+
+// =============================================
+// BOUTONS SECONDAIRES
+// =============================================
+
+.secondary-btn-Scenariste {
+  background: rgba($color-dark, 0.1);
+  color: $color-text-primary;
+  border: none;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: rgba($color-dark, 0.2);
+    transform: translateY(-1px);
+  }
+}
+
+// =============================================
+// BOUTONS AVEC ICÔNES
+// =============================================
+
+.btn-with-icon-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-sm $padding-md;
+  
+  .icon-Scenariste {
+    font-size: $font-size-p1;
+  }
+}
+
+// =============================================
+// ÉTATS DES BOUTONS
+// =============================================
+
+// Bouton désactivé
+.btn-disabled-Scenariste {
+  opacity: 0.6;
+  cursor: not-allowed;
+  
+  &:hover {
+    transform: none !important;
+    background: inherit !important;
+  }
+}
+
+// Bouton chargement
+.btn-loading-Scenariste {
+  position: relative;
+  color: transparent;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid $color-light;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// =============================================
+// VARIANTES DE TAILLE
+// =============================================
+
+.btn-small-Scenariste {
+  padding: $gap-xs $padding-sm;
+  font-size: $font-size-p3;
+}
+
+.btn-large-Scenariste {
+  padding: $padding-md $padding-xl;
+  font-size: $font-size-p1;
+}
+
+.btn-xlarge-Scenariste {
+  padding: $padding-lg $padding-xl;
+  font-size: $font-size-h4;
+  font-weight: $font-weight-bold;
+}
+
+// =============================================
+// VARIANTES DE COULEUR
+// =============================================
+
+.btn-success-Scenariste {
+  background: $color-success;
+  
+  &:hover {
+    background: darken($color-success, 10%);
+  }
+}
+
+.btn-warning-Scenariste {
+  background: $color-warning;
+  color: $color-dark;
+  
+  &:hover {
+    background: darken($color-warning, 10%);
+  }
+}
+
+.btn-error-Scenariste {
+  background: $color-error;
+  
+  &:hover {
+    background: darken($color-error, 10%);
+  }
+}
+
+.btn-info-Scenariste {
+  background: $color-info;
+  
+  &:hover {
+    background: darken($color-info, 10%);
+  }
+}
+
+// =============================================
+// BOUTONS OUTLINE
+// =============================================
+
+.btn-outline-primary-Scenariste {
+  background: transparent;
+  border: 2px solid $color-primary;
+  color: $color-primary;
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-light;
+  }
+}
+
+.btn-outline-secondary-Scenariste {
+  background: transparent;
+  border: 2px solid $color-text-muted;
+  color: $color-text-muted;
+  
+  &:hover s{
+    background: $color-text-muted;
+    color: $color-light;
+  }
+}
+
+// =============================================
+// BOUTONS GHOST (TRANSPARENT)
+// =============================================
+
+.btn-ghost-Scenariste {
+  background: transparent;
+  border: none;
+  color: $color-text-muted;
+  
+  &:hover {
+    background: rgba($color-dark, 0.05);
+    color: $color-text-primary;
+  }
+}
+

@@ -1,0 +1,25 @@
+// _forms.scss
+@import '../base/variables';
+
+.form-group {
+  margin-bottom: $spacing-md;
+
+  label {
+    display: block;
+    margin-bottom: $spacing-xs;
+    font-weight: bold;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: $spacing-xs;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary; // Utilisez la variable qui existe
+    }
+  }
+}
