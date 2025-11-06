@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +34,7 @@ public class RaccordService {
     private final StatutVerificationRepository statutVerificationRepository;
     private final PersonnageRepository personnageRepository;
     private final ComedienRepository comedienRepository;
+    private final SceneTournageRepository sceneTournageRepository;
     
     private final String uploadDir = "assets/raccords/";
     
@@ -183,26 +185,66 @@ public class RaccordService {
 
     @Transactional
     public RaccordDTO updateRaccord(Long id, CreateRaccordDTO updateRaccordDTO) {
-        Raccord raccord = raccordRepository.findById(id)
+        Raccord raccord = raccordRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new RuntimeException("Raccord non trouvé"));
         
-        // Mettre à jour les champs
+        // Mettre à jour tous les champs
+        if (updateRaccordDTO.getSceneSourceId() != null) {
+            Scene sceneSource = sceneRepository.findById(updateRaccordDTO.getSceneSourceId())
+                    .orElseThrow(() -> new RuntimeException("Scène source non trouvée"));
+            raccord.setSceneSource(sceneSource);
+        }
+        
+        if (updateRaccordDTO.getSceneCibleId() != null) {
+            Scene sceneCible = sceneRepository.findById(updateRaccordDTO.getSceneCibleId())
+                    .orElseThrow(() -> new RuntimeException("Scène cible non trouvée"));
+            raccord.setSceneCible(sceneCible);
+        }
+        
+        if (updateRaccordDTO.getTypeRaccordId() != null) {
+            TypeRaccord typeRaccord = typeRaccordRepository.findById(updateRaccordDTO.getTypeRaccordId())
+                    .orElseThrow(() -> new RuntimeException("Type de raccord non trouvé"));
+            raccord.setTypeRaccord(typeRaccord);
+        }
+        
         if (updateRaccordDTO.getDescription() != null) {
             raccord.setDescription(updateRaccordDTO.getDescription());
         }
+        
         if (updateRaccordDTO.getEstCritique() != null) {
             raccord.setEstCritique(updateRaccordDTO.getEstCritique());
         }
+        
         if (updateRaccordDTO.getStatutRaccordId() != null) {
             StatutRaccord statutRaccord = statutRaccordRepository.findById(updateRaccordDTO.getStatutRaccordId())
                     .orElseThrow(() -> new RuntimeException("Statut de raccord non trouvé"));
             raccord.setStatutRaccord(statutRaccord);
         }
         
+        // Mettre à jour le personnage
+        if (updateRaccordDTO.getPersonnageId() != null) {
+            Personnage personnage = personnageRepository.findById(updateRaccordDTO.getPersonnageId())
+                    .orElseThrow(() -> new RuntimeException("Personnage non trouvé"));
+            raccord.setPersonnage(personnage);
+        } else {
+            raccord.setPersonnage(null);
+        }
+        
+        // Mettre à jour le comédien
+        if (updateRaccordDTO.getComedienId() != null) {
+            Comedien comedien = comedienRepository.findById(updateRaccordDTO.getComedienId())
+                    .orElseThrow(() -> new RuntimeException("Comédien non trouvé"));
+            raccord.setComedien(comedien);
+        } else {
+            raccord.setComedien(null);
+        }
+        
+        raccord.setModifieLe(LocalDateTime.now());
+        
         Raccord updatedRaccord = raccordRepository.save(raccord);
         
         // Ajouter de nouvelles images
-        if (updateRaccordDTO.getImages() != null) {
+        if (updateRaccordDTO.getImages() != null && !updateRaccordDTO.getImages().isEmpty()) {
             for (MultipartFile image : updateRaccordDTO.getImages()) {
                 if (!image.isEmpty()) {
                     try {
@@ -211,7 +253,7 @@ public class RaccordService {
                         raccordImage.setRaccord(updatedRaccord);
                         raccordImage.setNomFichier(image.getOriginalFilename());
                         raccordImage.setCheminFichier(imagePath);
-                        raccordImage.setDescriptionImage("Image ajoutée pour vérification");
+                        raccordImage.setDescriptionImage("Image ajoutée lors de la modification");
                         raccordImage.setEstImageReference(false);
                         raccordImageRepository.save(raccordImage);
                     } catch (IOException e) {
@@ -222,6 +264,12 @@ public class RaccordService {
         }
         
         return convertToDTO(updatedRaccord);
+    }
+
+    @Transactional(readOnly = true)
+    public Raccord findRaccordWithDetails(Long id) {
+        return raccordRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new RuntimeException("Raccord non trouvé"));
     }
     
     @Transactional
@@ -428,6 +476,46 @@ public class RaccordService {
     @Transactional(readOnly = true)
     public List<StatutVerification> getAllStatutsVerification() {
         return statutVerificationRepository.findByEstActifTrueOrderByOrdreAffichage();
+    }
+
+    @Transactional(readOnly = true)
+    public List<RaccordDTO> getRaccordsAvecAlertes() {
+        List<Raccord> raccords = raccordRepository.findAllWithDetails();
+        return raccords.stream()
+                .map(raccord -> {
+                    RaccordDTO dto = convertToDTO(raccord);
+                    // Ajouter les informations de tournage
+                    Optional<SceneTournage> tournageSource = sceneTournageRepository.findBySceneId(raccord.getSceneSource().getId());
+                    Optional<SceneTournage> tournageCible = sceneTournageRepository.findBySceneId(raccord.getSceneCible().getId());
+                    
+                    tournageSource.ifPresent(st -> {
+                        dto.setDateTournageSource(st.getDateTournage());
+                        dto.setStatutTournageSource(st.getStatutTournage());
+                    });
+                    
+                    tournageCible.ifPresent(st -> {
+                        dto.setDateTournageCible(st.getDateTournage());
+                        dto.setStatutTournageCible(st.getStatutTournage());
+                    });
+                    
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional(readOnly = true)
+    public List<TypeRaccordDTO> getAllTypesRaccordDTO() {
+        List<TypeRaccord> types = typeRaccordRepository.findAllByOrderByNomType();
+        return types.stream()
+                .map(type -> {
+                    TypeRaccordDTO dto = new TypeRaccordDTO();
+                    dto.setId(type.getId());
+                    dto.setCode(type.getCode());
+                    dto.setNomType(type.getNomType());
+                    dto.setDescription(type.getDescription());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
     
 }

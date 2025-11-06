@@ -3,6 +3,8 @@ package com.example.films.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,4 +31,11 @@ public class RaccordDTO {
     private LocalDateTime modifieLe;
     private List<RaccordImageDTO> images;
     private List<VerificationRaccordDTO> verifications;
+   
+    private LocalDate dateTournageSource;
+    private String statutTournageSource;
+    private LocalDate dateTournageCible;
+    private String statutTournageCible;
+    private String couleurAlerte;
+    private List<String> alertes;
 }

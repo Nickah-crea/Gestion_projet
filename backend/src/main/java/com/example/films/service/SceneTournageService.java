@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class SceneTournageService {
@@ -395,5 +396,15 @@ public class SceneTournageService {
         } catch (Exception e) {
             return "erreur";
         }
+    }
+
+    public List<SceneTournageDTO> getTournagesBySceneId(Long sceneId) {
+        // Utiliser findBySceneId qui retourne Optional et le convertir en List
+        Optional<SceneTournage> tournageOpt = sceneTournageRepository.findBySceneId(sceneId);
+        List<SceneTournage> tournages = tournageOpt.map(List::of).orElse(List.of());
+        
+        return tournages.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }

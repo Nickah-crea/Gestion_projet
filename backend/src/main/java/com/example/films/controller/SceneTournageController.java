@@ -27,18 +27,25 @@ public class SceneTournageController {
         return sceneTournageService.getTournagesByDate(date);
     }
 
-    @GetMapping("/periode")
+   @GetMapping("/periode")
     public ResponseEntity<?> getTournagesByPeriode(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false) Long projetId) {
+            @RequestParam(required = false) Long projetId,
+            @RequestParam(required = false) Long sceneId) {
         
         try {
             List<SceneTournageDTO> tournages;
             
-            if (projetId != null) {
+            if (sceneId != null) {
+                // Filtrer spécifiquement par scène
+                tournages = sceneTournageService.getTournagesBySceneId(sceneId);
+                // Filtrer également par date range
+                tournages = tournages.stream()
+                    .filter(t -> !t.getDateTournage().isBefore(startDate) && !t.getDateTournage().isAfter(endDate))
+                    .collect(Collectors.toList());
+            } else if (projetId != null) {
                 tournages = sceneTournageService.getTournagesByProjet(projetId);
-                // Filtrer par date range côté Java si nécessaire
                 tournages = tournages.stream()
                     .filter(t -> !t.getDateTournage().isBefore(startDate) && !t.getDateTournage().isAfter(endDate))
                     .collect(Collectors.toList());

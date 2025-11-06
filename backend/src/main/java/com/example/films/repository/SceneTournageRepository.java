@@ -14,7 +14,6 @@ import java.util.Optional;
 public interface SceneTournageRepository extends JpaRepository<SceneTournage, Long> {
 
    
-   
     
     Optional<SceneTournage> findBySceneId(Long sceneId);
     

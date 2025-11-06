@@ -13,4 +13,5 @@ public interface RaccordImageRepository extends JpaRepository<RaccordImage, Long
     
     @Query("SELECT ri FROM RaccordImage ri WHERE ri.raccord.id = :raccordId AND ri.estImageReference = true")
     List<RaccordImage> findReferenceImagesByRaccordId(@Param("raccordId") Long raccordId);
+    long countByRaccordId(Long raccordId);
 }

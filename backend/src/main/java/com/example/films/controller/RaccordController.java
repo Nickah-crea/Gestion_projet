@@ -126,24 +126,41 @@ public class RaccordController {
     }
  
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RaccordDTO> updateRaccord(
+    public ResponseEntity<?> updateRaccord(
             @PathVariable Long id,
+            @RequestParam(value = "sceneSourceId", required = false) Long sceneSourceId,
+            @RequestParam(value = "sceneCibleId", required = false) Long sceneCibleId,
+            @RequestParam(value = "typeRaccordId", required = false) Long typeRaccordId,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "estCritique", required = false) Boolean estCritique,
             @RequestParam(value = "statutRaccordId", required = false) Long statutRaccordId,
-            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+            @RequestParam(value = "personnageId", required = false) Long personnageId,
+            @RequestParam(value = "comedienId", required = false) Long comedienId,
+            @RequestParam(value = "images", required = false) MultipartFile[] images) {
         
         try {
             CreateRaccordDTO updateRaccordDTO = new CreateRaccordDTO();
+            updateRaccordDTO.setSceneSourceId(sceneSourceId);
+            updateRaccordDTO.setSceneCibleId(sceneCibleId);
+            updateRaccordDTO.setTypeRaccordId(typeRaccordId);
             updateRaccordDTO.setDescription(description);
             updateRaccordDTO.setEstCritique(estCritique);
             updateRaccordDTO.setStatutRaccordId(statutRaccordId);
-            updateRaccordDTO.setImages(images);
+            updateRaccordDTO.setPersonnageId(personnageId);
+            updateRaccordDTO.setComedienId(comedienId);
+            
+            if (images != null && images.length > 0) {
+                updateRaccordDTO.setImages(Arrays.asList(images));
+            }
             
             RaccordDTO updatedRaccord = raccordService.updateRaccord(id, updateRaccordDTO);
             return ResponseEntity.ok(updatedRaccord);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur");
         }
     }
     
