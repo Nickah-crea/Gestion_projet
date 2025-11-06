@@ -36,11 +36,52 @@
             <div v-for="day in joursSemaine" :key="day" class="week-day">{{ day }}</div>
           </div>
         </div>
+
+        <!-- Section Alertes Raccords Critiques -->
+        <div class="alertes-section" v-if="showAlertesRaccords && alertesRaccordsCritiques.length > 0">
+          <div class="alertes-header">
+            <h3>
+              <i class="fas fa-exclamation-triangle"></i>
+              Alertes Raccords Critiques
+              <span class="badge badge-danger">{{ alertesRaccordsCritiques.length }}</span>
+            </h3>
+            <button @click="showAlertesRaccords = !showAlertesRaccords" class="btn-toggle">
+              {{ showAlertesRaccords ? 'Masquer' : 'Afficher' }}
+            </button>
+          </div>
+          <div class="alertes-list">
+            <div v-for="alerte in alertesRaccordsCritiques" 
+                :key="alerte.raccordId" 
+                class="alerte-item critique"
+                @click="ouvrirDetailsAlerte(alerte)">
+              <div class="alerte-icon">🚨</div>
+              <div class="alerte-content">
+                <div class="alerte-title">{{ alerte.getTitreAlerte() }}</div>
+                <div class="alerte-date">{{ formatDateDetails(alerte.getDateAlerte()) }}</div>
+                <div class="alerte-scenes">{{ alerte.sceneSourceTitre }} → {{ alerte.sceneCibleTitre }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="calendar-days">
-          <div v-for="day in joursCalendrier" :key="day.date" 
-               :class="['calendar-day', { 'other-month': !day.isCurrentMonth, 'has-tournages': day.tournages.length > 0 }]"
-               @click="ouvrirModalPlanning(day.date)">
-            <div class="day-header">{{ day.day }}</div>
+                <div v-for="day in joursCalendrier" :key="day.date" 
+          :class="['calendar-day', { 
+            'other-month': !day.isCurrentMonth, 
+            'has-tournages': day.tournages.length > 0,
+            'has-alertes-critiques': getAlertesPourDate(day.date).length > 0
+          }]"
+          @click="ouvrirModalPlanning(day.date)">
+        
+        <div class="day-header">
+          {{ day.day }}
+          <span v-if="getAlertesPourDate(day.date).length > 0" 
+                class="alerte-indicator"
+                title="Raccord(s) critique(s)"
+                @click.stop="ouvrirDetailsAlerte(getAlertesPourDate(day.date)[0])">
+            🚨
+          </span>
+        </div>
             <div class="tournages-list">
               <div v-for="tournage in day.tournages" :key="tournage.id"
                    :class="`tournage-item statut-${tournage.statutTournage}`">
@@ -61,6 +102,19 @@
                 <div class="tournage-title">{{ tournage.sceneTitre }}</div>
               </div>
             </div>
+
+            <!-- Alertes raccords critiques -->
+              <div v-if="getAlertesPourDate(day.date).length > 0" 
+                  class="alertes-list-day">
+                <div v-for="alerte in getAlertesPourDate(day.date)" 
+                    :key="alerte.raccordId"
+                    class="alerte-item-day critique"
+                    @click.stop="ouvrirDetailsAlerte(alerte)"
+                    :title="alerte.getDescriptionComplete()">
+                  🚨 Raccord Critique
+                </div>
+              </div>
+
           </div>
         </div>
       </div>
@@ -379,6 +433,9 @@ export default {
       lieuxDisponibles: [],
       plateauxParLieu: [],
       conflitTimeout: null,
+       selectedSceneId: null,
+       alertesRaccordsCritiques: [],
+    showAlertesRaccords: true,
       formPlanning: {
         id: null,
         projetId: '',
@@ -447,19 +504,19 @@ export default {
         
         params.append('startDate', this.formatDateForAPI(startDate));
         params.append('endDate', this.formatDateForAPI(endDate));
+        
         if (this.filtreProjet) params.append('projetId', this.filtreProjet);
+        if (this.selectedSceneId) params.append('sceneId', this.selectedSceneId); // Nouveau filtre
 
         const response = await axios.get(`${url}?${params}`);
         
-        // Filtrer côté client
+        // Filtrer côté client pour les autres filtres
         let tournagesFiltres = response.data;
         
-        // Filtre par statut
         if (this.filtreStatut) {
           tournagesFiltres = tournagesFiltres.filter(t => t.statutTournage === this.filtreStatut);
         }
         
-        // Filtre par date
         if (this.filtreDate) {
           tournagesFiltres = tournagesFiltres.filter(t => t.dateTournage === this.filtreDate);
         }
@@ -830,11 +887,100 @@ async soumettrePlanning() {
       this.filtreStatut = '';
       this.filtreDate = '';
       this.chargerTournages();
+    },
+
+    gererParametresURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sceneId = urlParams.get('sceneId');
+      
+      if (sceneId) {
+        // Filtrer automatiquement par cette scène
+        this.selectedSceneId = parseInt(sceneId);
+        this.chargerTournagesAvecFiltreScene();
+      }
+    },
+
+    async chargerTournagesAvecFiltreScene() {
+      if (!this.selectedSceneId) return;
+      
+      try {
+        const response = await axios.get(`/api/scene-tournage/scene/${this.selectedSceneId}`);
+        if (response.data) {
+          // Afficher les détails de cette scène spécifique
+          this.ouvrirDetailsTournage(response.data);
+          
+          // Optionnel: Centrer le calendrier sur la date de tournage
+          if (response.data.dateTournage) {
+            this.filtreDate = response.data.dateTournage;
+            this.dateCourante = new Date(response.data.dateTournage);
+          }
+        }
+      } catch (error) {
+        console.error('Erreur chargement scène spécifique:', error);
+      }
+    },
+
+     async chargerAlertesRaccordsCritiques() {
+    try {
+      const response = await axios.get('/api/raccords/alertes/critiques/calendrier');
+      this.alertesRaccordsCritiques = response.data;
+    } catch (error) {
+      console.error('Erreur chargement alertes raccords:', error);
     }
+  },
+
+  getAlertesPourDate(date) {
+    return this.alertesRaccordsCritiques.filter(alerte => {
+      const dateAlerte = alerte.dateAlerte;
+      return dateAlerte && dateAlerte === date;
+    });
+  },
+
+  ouvrirDetailsAlerte(alerte) {
+    this.$swal({
+      title: alerte.getTitreAlerte(),
+      html: `
+        <div class="alerte-raccord-content">
+          <div class="alerte-section">
+            <h4>📋 Informations du raccord</h4>
+            <p><strong>Scène Source:</strong> ${alerte.sceneSourceTitre}</p>
+            <p><strong>Scène Cible:</strong> ${alerte.sceneCibleTitre}</p>
+            <p><strong>Type:</strong> ${alerte.typeRaccord}</p>
+            <p><strong>Description:</strong> ${alerte.description}</p>
+          </div>
+          <div class="alerte-section">
+            <h4>⚠️ Alertes</h4>
+            <ul>
+              ${alerte.messagesAlerte.map(msg => `<li>${msg}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="alerte-section">
+            <h4>📅 Dates de tournage</h4>
+            <p><strong>Source:</strong> ${this.formatDateDetails(alerte.dateTournageSource)}</p>
+            <p><strong>Cible:</strong> ${this.formatDateDetails(alerte.dateTournageCible)}</p>
+          </div>
+        </div>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Voir dans Gestion Raccords',
+      cancelButtonText: 'Fermer',
+      customClass: {
+        popup: 'alerte-raccord-modal'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.$router.push('/gestion-raccords');
+      }
+    });
+  },
+
   },
   mounted() {
     this.chargerTournages();
     this.chargerProjets();
+    this.gererParametresURL();
+    this.chargerAlertesRaccordsCritiques();
     this.$watch(
         () => [
             this.formPlanning.sceneId,
@@ -1362,4 +1508,171 @@ async soumettrePlanning() {
   display: flex;
   gap: 2px;
 }
+
+.alertes-section {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.alertes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.alertes-header h3 {
+  margin: 0;
+  color: #856404;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-danger {
+  background-color: #dc3545;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.alertes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alerte-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.alerte-item.critique {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.alerte-item:hover {
+  opacity: 0.8;
+}
+
+.alerte-icon {
+  font-size: 18px;
+}
+
+.alerte-content {
+  flex: 1;
+}
+
+.alerte-title {
+  font-weight: bold;
+  color: #721c24;
+}
+
+.alerte-date {
+  font-size: 12px;
+  color: #856404;
+}
+
+.alerte-scenes {
+  font-size: 12px;
+  color: #495057;
+}
+
+/* Indicateur dans les jours du calendrier */
+.alerte-indicator {
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.calendar-day.has-alertes-critiques {
+  background: #fff3cd !important;
+  border: 2px solid #dc3545 !important;
+}
+
+.alertes-list-day {
+  margin-top: 5px;
+}
+
+.alerte-item-day {
+  background: #dc3545;
+  color: white;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 9px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.alerte-item-day:hover {
+  opacity: 0.8;
+}
+
+/* Modal d'alerte */
+.alerte-raccord-content {
+  text-align: left;
+}
+
+.alerte-section {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.alerte-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.alerte-section h4 {
+  margin: 0 0 8px 0;
+  color: #495057;
+  font-size: 14px;
+}
+
+.alerte-section p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.alerte-section ul {
+  margin: 4px 0;
+  padding-left: 20px;
+}
+
+.alerte-section li {
+  font-size: 13px;
+  margin: 2px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .alertes-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .alerte-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
+
 </style>
