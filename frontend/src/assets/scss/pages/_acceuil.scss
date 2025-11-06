@@ -1,0 +1,594 @@
+// Import des variables pour utiliser les variables globales
+@import '../base/variables';
+@import '../components/buttons'; // Import des boutons
+
+// =============================================
+// ACCUEIL SCÉNARISTE
+// =============================================
+.app-wrapper {
+  background: none;
+}
+
+body {
+background: $color-grey;
+// background: linear-gradient(90deg,
+//     rgba($color-primary, 0.20) 0%,
+//     rgba($color-accent, 0.20) 100%);
+}
+
+.scenariste-accueil-container-Scenariste {
+  min-height: 100vh;
+  padding: $padding-md;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(10px);
+  width: 100%;
+  // max-width: 100vw;
+  overflow-x: hidden;
+  margin-left: 0;
+  font-size: $font-size-p1;
+  // FOND VISIBLE AVEC BORDER-RADIUS
+  // background: rgba($color-white, 0.95);
+  border-radius: $border-radius-lg;
+  margin: $margin-sm;
+  // box-shadow: $shadow-lg;
+}
+
+.main-content-scenariste-Scenariste {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// Header - Bienvenue à gauche, recherche à droite
+.header-section-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: $padding-sm;
+  margin-bottom: $margin-md;
+  border-bottom: 1px solid rgba($color-dark, 0.1);
+  gap: $gap-md;
+}
+
+.welcome-section-Scenariste {
+  flex: 1;
+  
+  h2 {
+    font-size: $font-size-h2;
+    margin-bottom: $gap-sm;
+    color: $color-text-primary;
+  }
+  
+  p {
+    font-size: $font-size-p1;
+    color: $color-text-muted;
+  }
+}
+
+// Recherche à droite
+.search-container-right-Scenariste {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex: 1;
+}
+
+.search-input-wrapper-Scenariste {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+.search-input-Scenariste {
+  width: 100%;
+  padding: $padding-sm $padding-lg;
+  padding-left: 40px; // Plus d'espace pour l'icône
+  border: 2px solid rgba($color-dark, 0.1);
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  font-size: $font-size-p1;
+  color: $color-text-primary;
+  transition: $transition;
+  box-shadow: $shadow;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 2px 15px rgba($color-primary, 0.2);
+  }
+  
+  &::placeholder {
+    color: $color-text-muted;
+    opacity: 0.8;
+  }
+}
+
+.search-icon-Scenariste {
+  position: absolute;
+  left: 15px; // Position ajustée
+  color: $color-text-muted;
+  font-size: $font-size-p1;
+  z-index: 2;
+  pointer-events: none; // Empêche l'icône d'interférer avec les clics
+}
+
+.clear-search-btn-Scenariste {
+  position: absolute;
+  right: 10px; // Position du bouton clear
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: $transition;
+  font-size: $font-size-p1;
+  
+  &:hover {
+    color: $color-text-primary;
+    background: rgba($color-dark, 0.1);
+    transform: scale(1.1);
+  }
+}
+
+// Filtres
+.filters-section-Scenariste {
+  padding: $padding-sm;
+}
+
+.filters-row-Scenariste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $gap-md;
+}
+
+.projects-label-Scenariste {
+  margin: 0;
+  font-size: $font-size-h3;
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+  color: $color-text-primary;
+}
+
+.filters-right-Scenariste {
+  display: flex;
+  gap: $gap-sm;
+  align-items: center;
+}
+
+.filter-group-scenariste {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  box-shadow: $shadow;
+  border-radius: $border-radius-pill;
+    
+  label {
+    font-weight: $font-weight-semibold;
+    color: $color-text-secondary;
+    font-size: $font-size-p2;
+  }
+}
+
+.filter-select-Scenariste,
+.date-input-Scenariste {
+  width: 100%;
+  box-sizing: border-box;
+  padding: $padding-sm;
+  border: 1px solid rgba($color-dark, 0.1);
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  color: $color-text-primary;
+  font-size: $font-size-p2;
+  transition: $transition;
+  box-shadow: none;
+  height: 42px;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+// Boutons centrés
+.add-project-center-Scenariste {
+  display: flex;
+  justify-content: center;
+  margin: $gap-md 0;
+}
+
+// Grille des projets
+.projects-library-Scenariste {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: $gap-md;
+  padding: $padding-sm;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// Cartes de projet avec ombres réduites
+.movie-card-Scenariste {
+  background: $color-white;
+  // background: linear-gradient(135deg, rgba($color-pink, 0.05) 10%, rgba($color-yellow, 0.10) 90%);
+  border-radius: $border-radius-lg;
+  border: 1px solid rgba($color-dark, 0.08);
+  box-shadow: 
+    0 2px 8px rgba($color-dark, 0.08),
+    0 1px 3px rgba($color-dark, 0.04);
+  overflow: hidden;
+  transition: $transition;
+  position: relative;
+  padding: $padding-lg;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 300px;
+  min-height: 280px;
+  margin: 0 auto;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 8px 20px rgba($color-dark, 0.12),
+      0 3px 8px rgba($color-dark, 0.08);
+  }
+}
+
+// Couleurs pastel avec les nouvelles variables
+.movie-card-Scenariste.pastel-pink { 
+  background: rgba($color-pink, 0.3); 
+}
+.movie-card-Scenariste.pastel-yellow { 
+  background: rgba($color-yellow, 0.3); 
+}
+.movie-card-Scenariste.pastel-blue { 
+  background: rgba($color-primary, 0.1); 
+}
+.movie-card-Scenariste.pastel-green { 
+  background: rgba($color-success, 0.1); 
+}
+.movie-card-Scenariste.pastel-purple { 
+  background: rgba($color-accent, 0.1); 
+}
+
+// Header des cartes
+.movie-card-header-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 0 $padding-md 0;
+  margin-bottom: $padding-sm;
+}
+
+.movie-statut-Scenariste {
+  flex: 1;
+}
+
+.statut-badge-Scenariste {
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba($color-primary, 0.1);
+  color: $color-text-primary;
+}
+
+// Classes de statut avec les nouvelles couleurs
+.statut-en-cours { background: rgba($color-primary, 0.2); }
+.statut-termine { background: rgba($color-success, 0.2); }
+.statut-attente { background: rgba($color-yellow, 0.2); }
+.statut-annule { background: rgba($color-red, 0.2); }
+.statut-planifie { background: rgba($color-accent, 0.2); }
+.statut-preparation { background: rgba($color-yellow, 0.2); }
+.statut-tournage { background: rgba($color-primary, 0.2); }
+.statut-tourne { background: rgba($color-success, 0.2); }
+.statut-monte { background: rgba($color-accent, 0.2); }
+.statut-valide { background: rgba($color-success, 0.2); }
+
+// Actions des cartes
+.movie-actions-Scenariste {
+  display: flex;
+  gap: $gap-xs;
+}
+
+// Contenu des cartes
+.movie-info-Scenariste {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-title-Scenariste {
+  font-size: $font-size-h4;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin: 0 0 $gap-xs 0;
+  line-height: $line-height-tight;
+}
+
+.movie-genre-Scenariste {
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-p2;
+  margin: 0 0 $padding-md 0;
+}
+
+.movie-meta-Scenariste {
+  display: flex;
+  gap: $padding-md;
+  margin-bottom: $padding-md;
+}
+
+.meta-item-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  color: $color-text-muted;
+  font-size: $font-size-p3;
+}
+
+.movie-synopsis-Scenariste {
+  color: $color-text-secondary;
+  line-height: $line-height-base;
+  margin-bottom: $padding-md;
+  font-size: $font-size-p2;
+  flex-grow: 1;
+}
+
+// Actions en bas des cartes
+.movie-actions-bottom-Scenariste {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+  margin-top: auto;
+}
+
+.actions-top-Scenariste {
+  display: flex;
+  gap: $gap-sm;
+}
+
+// Aucun projet
+.no-projects-Scenariste {
+  text-align: center;
+  padding: $padding-xl $padding-md;
+  color: $color-text-muted;
+}
+
+.no-projects-icon-Scenariste {
+  font-size: 2.5rem;
+  color: rgba($color-dark, 0.3);
+  margin-bottom: $margin-md;
+}
+
+.no-projects-Scenariste h3 {
+  color: $color-text-secondary;
+  margin-bottom: $padding-md;
+  font-size: $font-size-h3;
+}
+
+.no-projects-Scenariste p {
+  font-size: $font-size-p1;
+}
+
+// Modal
+.edit-project-modal-Scenariste {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($color-dark, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+}
+
+.modal-content-Scenariste {
+  background: $color-light;
+  padding: $padding-lg;
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-header-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  
+  h3 {
+    font-size: $font-size-h3;
+    color: $color-text-primary;
+  }
+}
+
+.form-group-Scenariste {
+  margin-bottom: $margin-md;
+  
+  label {
+    font-size: $font-size-p1;
+    font-weight: $font-weight-semibold;
+    margin-bottom: $gap-xs;
+    display: block;
+    color: $color-text-primary;
+  }
+}
+
+.form-input-Scenariste,
+.form-textarea-Scenariste,
+.form-select-Scenariste {
+  width: 100%;
+  padding: $padding-sm;
+  border: 1px solid rgba($color-dark, 0.1);
+  border-radius: $border-radius-sm;
+  background: $color-light;
+  font-size: $font-size-p1;
+  color: $color-text-primary;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.form-textarea-Scenariste {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modal-footer-Scenariste {
+  display: flex;
+  justify-content: flex-end;
+  gap: $gap-sm;
+}
+
+// Recherche globale
+.global-search-results-Scenariste {
+  margin: $margin-md 0;
+}
+
+.search-results-header-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  
+  h3 {
+    font-size: $font-size-h3;
+    color: $color-text-primary;
+  }
+}
+
+.search-result-item-Scenariste {
+  background: $color-light;
+  border-radius: $border-radius-sm;
+  padding: $padding-md;
+  margin-bottom: $gap-sm;
+  box-shadow: $shadow;
+  cursor: pointer;
+  transition: $transition;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-hover;
+  }
+}
+
+.result-main-info-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $padding-sm;
+}
+
+.result-title-Scenariste {
+  font-size: $font-size-p1;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.result-statut-Scenariste {
+  font-size: $font-size-p3;
+  padding: $gap-xs $gap-sm;
+  border-radius: $border-radius-sm;
+}
+
+.result-type-Scenariste {
+  font-size: $font-size-p3;
+  color: $color-text-muted;
+}
+
+.no-results-Scenariste {
+  text-align: center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+  font-size: $font-size-p1;
+}
+
+// Animations
+@keyframes fadeInUp-Scenariste {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.movie-card-Scenariste,
+.search-result-item-Scenariste {
+  animation: fadeInUp-Scenariste 0.4s ease-out forwards;
+  animation-delay: calc(var(--index) * 0.05s);
+  opacity: 0;
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .scenariste-accueil-container-Scenariste {
+    padding: $padding-sm;
+    margin: $gap-xs; // Marge réduite sur mobile
+  }
+  
+  .header-section-Scenariste {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-md;
+  }
+  
+  .search-container-right-Scenariste {
+    justify-content: stretch;
+  }
+  
+  .search-input-wrapper-Scenariste {
+    max-width: 100%;
+  }
+  
+  .filters-row-Scenariste {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-md;
+  }
+  
+  .filters-right-Scenariste {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .projects-library-Scenariste {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions-top-Scenariste {
+    flex-direction: column;
+  }
+  
+  .welcome-section-Scenariste h2 {
+    font-size: $font-size-h3;
+  }
+  
+  .projects-label-Scenariste {
+    font-size: $font-size-h4;
+  }
+  
+  .search-input-Scenariste {
+    width: 100%;
+    font-size: $font-size-p1;
+  }
+  
+  .filter-group-scenariste {
+    width: 100%;
+  }
+}
+

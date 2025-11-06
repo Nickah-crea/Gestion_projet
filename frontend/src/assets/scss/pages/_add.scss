@@ -1,0 +1,155 @@
+// =============================================
+// _add-episode.scss – VERSION ULTRA-COMPACTE
+// =============================================
+@import '../base/variables';
+@import '../components/buttons';
+
+
+.app-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// Conteneur ultra-condensé
+.add-episode-container {
+  min-height: 100vh;
+  padding: $padding-md;               // était xl → md
+  background: $color-background;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba($color-primary, 0.03) 0%, transparent 15%),
+    radial-gradient(circle at 90% 80%, rgba($color-accent, 0.03) 0%, transparent 15%);
+  font-family: $font-family-primary;
+}
+
+.add-episode-container .main-content {
+  max-width: 900px;                   // était 1200
+  background: $color-light;
+  border-radius: $border-radius-sm;   // plus petit
+  box-shadow: $shadow;
+  padding: $padding-lg;               // était xl
+  border: 1px solid $border-color;
+}
+
+// =============================================
+// EN-TÊTE ULTRA-FIN
+// =============================================
+.add-episode-container .form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $margin-md;          // était xl
+  padding-bottom: $padding-sm;
+  border-bottom: 1px solid $border-color;
+}
+
+.add-episode-container .back-btn {
+  @extend .btn-ghost-Scenariste;
+  padding: $padding-xs;
+  font-size: $font-size-p2;           // plus petit
+}
+
+.add-episode-container .form-header h2 {
+  @include typography-h2;             // h1 → h2
+  margin: 0;
+  font-size: 22px;                    // forcé ultra-petit
+}
+
+// =============================================
+// FORMULAIRE ULTRA-DENSE
+// =============================================
+.add-episode-container .episode-form {
+  gap: $gap-lg;                       // était xl
+}
+
+// 3 champs ultra-serrés
+.add-episode-container .top-row {
+  grid-template-columns: 3fr 1fr 1fr; // titre encore plus large
+  gap: $gap-md;                       // était lg
+}
+
+.add-episode-container .form-group {
+  gap: 3px;                           // ultra-mini
+}
+
+.add-episode-container .form-group label {
+  @include typography-p2;             // p1 → p2
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+// =============================================
+// INPUTS + SELECT → MÊME TAILLE ULTRA-PETITE
+// =============================================
+.add-episode-container .form-input,
+.add-episode-container .form-select,
+.add-episode-container .form-textarea {
+  padding: $padding-sm $padding-md;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  background: $color-light;
+  color: $color-text-primary;
+  font-size: $font-size-p2;        // ← 11px partout !
+  height: 34px;                    // ← fixe ultra-bas
+  box-shadow: none;
+  transition: $transition;
+  height: 42px;
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px rgba($color-accent, 0.2);
+  }
+}
+
+// Flèche TINY sur le select
+.add-episode-container .form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23E00FFD' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+  font-size: $font-size-p1;
+  padding-right: 30px !important;   // ← évite que le texte touche la flèche
+}
+
+// Synopsis compact
+.add-episode-container .form-textarea {
+  height: 80px;                       // était implicite → 80px max
+  resize: none;
+}
+
+// =============================================
+// BOUTONS ULTRA-PETITS
+// =============================================
+.add-episode-container .form-actions {
+  gap: $gap-sm;                       // était md
+  margin-top: $margin-lg;
+  padding-top: $padding-md;
+}
+
+.add-episode-container .cancel-btn {
+  @extend .cancel-btn-Scenariste;
+  @extend .btn-small-Scenariste;      // AJOUTÉ
+  padding: $padding-xs $padding-md;
+  font-size: $font-size-p3;           // 11px
+}
+
+.add-episode-container .submit-btn {
+  @extend .save-btn-Scenariste;
+  @extend .btn-small-Scenariste;      // AJOUTÉ
+  padding: $padding-xs $padding-md;
+  font-size: $font-size-p3;
+}
+
+// =============================================
+// RESPONSIVE ULTRA-FLUIDE
+// =============================================
+@include respond-to($breakpoint-md) {  // 768px au lieu de lg
+  .add-episode-container .top-row {
+    grid-template-columns: 1fr;
+    gap: $gap-sm;
+  }
+}
+

@@ -1,0 +1,1080 @@
+// Import des variables pour utiliser les variables globales
+@import '../base/variables';
+@import '../components/buttons'; // Import des boutons
+
+// =============================================
+// ÉCRAN DE TRAVAIL - STYLES SPÉCIFIQUES
+// =============================================
+
+.ecran-travail-ecran-travail {
+  min-height: 100vh;
+  padding: $padding-md;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(10px);
+  width: 100%;
+  overflow-x: hidden;
+  font-size: $font-size-p1;
+  // FOND VISIBLE AVEC BORDER-RADIUS
+  background: rgba($color-white, 0.95);
+  border-radius: $border-radius-lg;
+  margin: $margin-sm;
+  box-shadow: $shadow-lg;
+}
+
+.app-wrapper-ecran-travail {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// =============================================
+// HEADER ET NAVIGATION - MODIFIÉ
+// =============================================
+
+.header-ecran-travail {
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid rgba($color-dark, 0.1);
+}
+
+.navigation-ecran-travail {
+  display: flex;
+  justify-content: none; // Export/Calendrier à gauche, Précédent/Suivant à droite
+  align-items: center;
+  margin-bottom: $margin-md;
+  gap: $gap-md;
+  flex-wrap: wrap;
+}
+
+// Groupe de gauche : Export + Calendrier
+.navigation-ecran-travail > :first-child {
+  display: flex;
+  gap: $gap-md;
+  align-items: center;
+}
+
+// Groupe de droite : Précédent + Suivant
+.navigation-ecran-travail > :last-child {
+  display: flex;
+  gap: $gap-sm;
+  align-items: center;
+}
+
+.nav-btn-ecran-travail {
+  @extend .secondary-btn-Scenariste;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p1;
+  font-weight: $font-weight-semibold;
+  
+  &:disabled {
+    @extend .btn-disabled-Scenariste;
+    opacity: 0.4;
+  }
+}
+
+.export-container-ecran-travail {
+  display: flex;
+  align-items: center;
+}
+
+.export-dropdown-ecran-travail {
+  position: relative;
+  display: inline-block;
+}
+
+.export-main-btn-ecran-travail {
+  @extend .primary-btn-Scenariste;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+}
+
+.export-dropdown-content-ecran-travail {
+  display: none;
+  position: absolute;
+  background: $color-white;
+  min-width: 200px;
+  box-shadow: $shadow-lg;
+  border-radius: $border-radius-sm;
+  z-index: $z-index-dropdown;
+  right: 0;
+  top: 100%;
+  margin-top: $gap-xs;
+  
+  .export-dropdown-ecran-travail:hover & {
+    display: block;
+  }
+}
+
+.export-option-ecran-travail {
+  @extend .btn-ghost-Scenariste;
+  width: 100%;
+  text-align: left;
+  padding: $padding-sm $padding-md;
+  border-radius: 0;
+  border-bottom: 1px solid rgba($color-dark, 0.05);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+}
+
+// =============================================
+// INFORMATIONS ÉPISODE
+// =============================================
+
+.episode-title-ecran-travail {
+  @include typography-h2;
+  margin-bottom: $margin-sm;
+  text-align: center;
+}
+
+.title-episode-ecran-travail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  margin-bottom: $margin-sm;
+  
+  label {
+    font-size: $font-size-h2;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+  }
+}
+
+.syno-episode-ecran-travail {
+  margin-bottom: $margin-md;
+  text-align: center;
+  
+  label {
+    @include typography-p1;
+    display: block;
+    margin-bottom: $gap-xs;
+  }
+}
+
+.episode-equipe-ecran-travail {
+  margin-bottom: $margin-lg;
+  text-align: center;
+}
+
+.equipe-info-ecran-travail {
+  @include typography-p1;
+  
+  strong {
+    color: $color-text-primary;
+  }
+}
+
+.realisateur-info-ecran-travail,
+.scenariste-info-ecran-travail {
+  margin-left: $margin-md;
+  padding: $gap-xs $gap-sm;
+  background: rgba($color-primary, 0.1);
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+}
+
+// =============================================
+// NAVIGATION ÉPISODES ET SÉQUENCES - CENTRÉES
+// =============================================
+
+.episode-navigation-ecran-travail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  margin-bottom: $margin-lg;
+  padding: $padding-sm;
+  background: rgba($color-dark, 0.03);
+  border-radius: $border-radius;
+  justify-content: center; // Centrage au milieu
+}
+
+.episode-number-ecran-travail {
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  border: 1px solid rgba($color-dark, 0.1);
+  cursor: pointer;
+  transition: $transition;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+  
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-1px);
+  }
+  
+  &.active-ecran-travail {
+    background: $color-primary;
+    color: $color-white;
+    border-color: $color-primary;
+  }
+  
+  &.new-episode-ecran-travail {
+    border: 2px dashed $color-accent;
+  }
+}
+
+.sequence-navigation-container-ecran-travail {
+  margin-bottom: $margin-lg;
+}
+
+.sequence-navigation-ecran-travail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  padding: $padding-sm;
+  background: rgba($color-primary, 0.03);
+  border-radius: $border-radius;
+  justify-content: center; // Centrage au milieu
+}
+
+.sequence-number-ecran-travail {
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  border: 1px solid rgba($color-primary, 0.2);
+  cursor: pointer;
+  transition: $transition;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+  
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-1px);
+  }
+  
+  &.active-ecran-travail {
+    background: $color-primary;
+    color: $color-white;
+    border-color: $color-primary;
+  }
+  
+  &.new-sequence-ecran-travail {
+    border: 2px dashed $color-accent;
+  }
+}
+
+// =============================================
+// LIENS DE CRÉATION - CENTRÉS
+// =============================================
+
+.liens-ecran-travail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $gap-md;
+  margin: $margin-xl 0;
+  padding: $padding-lg;
+  background: rgba($color-dark, 0.02);
+  border-radius: $border-radius;
+  border: 1px dashed rgba($color-dark, 0.1);
+}
+
+.add-scene-btn-ecran-travail {
+  @extend .add-btn-ecran;
+  padding: $padding-sm $padding-md;
+  font-size: $font-size-p1;
+  white-space: nowrap;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// =============================================
+// SÉQUENCES ET SCÈNES - BOUTONS + À DROITE
+// =============================================
+
+.sequence-page-ecran-travail {
+  background: $color-white;
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  margin-bottom: $margin-lg;
+  box-shadow: $shadow;
+}
+
+.sequence-title-ecran-travail {
+  @include typography-h2;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: $margin-md;
+}
+
+.sequence-info-ecran-travail {
+  @include typography-p1;
+  margin-bottom: $margin-sm;
+}
+
+.scenes-section-ecran-travail {
+  margin-top: $margin-xl;
+}
+
+.section-header-ecran-travail {
+  display: flex;
+  justify-content: space-between; // Titre à gauche, boutons à droite
+  align-items: center;
+  margin-bottom: $margin-md;
+  padding-bottom: $padding-sm;
+  border-bottom: 1px solid rgba($color-dark, 0.1);
+  
+  h3, h4 {
+    margin: 0;
+    color: $color-text-primary;
+  }
+}
+
+// Boutons +scène et +dialogue plus petits et à droite
+.scenes-section-ecran-travail .section-header-ecran-travail,
+.scene-card-ecran-travail .section-header-ecran-travail {
+  .add-scene-btn-ecran-travail,
+  .add-dialogue-btn-ecran-travail {
+    @extend .btn-small-Scenariste;
+    padding: $gap-xs $padding-sm;
+    font-size: $font-size-p2;
+    white-space: nowrap;
+    margin-left: auto; // Pousse vers la droite
+  }
+}
+
+.scenes-list-ecran-travail {
+  display: flex;
+  flex-direction: column;
+  gap: $margin-lg;
+}
+
+.scene-card-ecran-travail {
+  background: rgba($color-light, 0.5);
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  border: 1px solid rgba($color-dark, 0.08);
+  box-shadow: $shadow;
+  transition: $transition;
+  
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-2px);
+  }
+}
+
+.scene-title-ecran-travail {
+  @include typography-h3;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: $margin-md;
+}
+
+.scene-info-ecran-travail {
+  @include typography-p1;
+  margin-bottom: $margin-sm;
+}
+
+.scene-actions-ecran-travail {
+  margin-top: $margin-md;
+  display: flex;
+  justify-content: flex-end; // Boutons à droite
+}
+
+.export-dialogues-btn-ecran-travail {
+  @extend .btn-outline-primary-Scenariste;
+  font-size: $font-size-p2;
+  padding: $gap-xs $padding-sm;
+}
+
+// =============================================
+// LIEUX ET PLATEAUX
+// =============================================
+
+.lieux-plateaux-ecran-travail {
+  margin: $margin-md 0;
+}
+
+.lieux-list-ecran-travail {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lieu-item-ecran-travail {
+  background: $color-white;
+  padding: $padding-sm;
+  margin-bottom: $gap-sm;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-dark, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.lieu-description-ecran-travail {
+  @include typography-p2;
+  margin: $gap-xs 0 0 0;
+  color: $color-text-muted;
+}
+
+.no-lieux-ecran-travail {
+  @include typography-p2;
+  color: $color-text-muted;
+  font-style: italic;
+  text-align: center;
+  padding: $padding-md;
+  background: rgba($color-dark, 0.02);
+  border-radius: $border-radius-sm;
+}
+
+// =============================================
+// DIALOGUES
+// =============================================
+
+.dialogues-ecran-travail {
+  margin: $margin-md 0;
+}
+
+.dialogues-list-ecran-travail {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dialogue-item-ecran-travail {
+  background: $color-white;
+  padding: $padding-md;
+  margin-bottom: $gap-md;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-dark, 0.1);
+  transition: $transition;
+  
+  &:hover {
+    border-color: rgba($color-primary, 0.3);
+  }
+}
+
+.dialogue-text-ecran-travail {
+  cursor: pointer;
+  margin-bottom: $gap-sm;
+  line-height: $line-height-base;
+  position: relative;
+}
+
+.dialogue-content-ecran-travail {
+  color: $color-text-primary;
+}
+
+.text-highlight-ecran-travail {
+  padding: 1px 2px;
+  border-radius: 2px;
+  margin: 0 1px;
+}
+
+.dialogue-observation-ecran-travail {
+  @include typography-p3;
+  display: block;
+  color: $color-text-muted;
+  font-style: italic;
+  margin-top: $gap-xs;
+  padding: $gap-xs $gap-sm;
+  background: rgba($color-dark, 0.03);
+  border-radius: $border-radius-sm;
+}
+
+.dialogue-actions-ecran-travail {
+  display: flex;
+  gap: $gap-md;
+  align-items: center;
+  margin-top: $gap-sm;
+  justify-content: flex-end; // Actions à droite
+}
+
+.add-dialogue-btn-ecran-travail {
+  @extend .add-btn-ecran;
+  font-size: $font-size-p2;
+  padding: $gap-xs $padding-sm;
+}
+
+// =============================================
+// COMMENTAIRES
+// =============================================
+
+.comment-section-ecran-travail {
+  background: rgba($color-dark, 0.02);
+  border-radius: $border-radius;
+  padding: $padding-md;
+  margin: $margin-md 0;
+  border: 1px solid rgba($color-dark, 0.05);
+}
+
+.add-comment-ecran-travail {
+  margin-bottom: $margin-md;
+  
+  textarea {
+    width: 100%;
+    padding: $padding-sm;
+    border: 1px solid rgba($color-dark, 0.1);
+    border-radius: $border-radius-sm;
+    background: $color-white;
+    font-size: $font-size-p1;
+    resize: vertical;
+    min-height: 80px;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+}
+
+.add-comment-btn-ecran-travail {
+  @extend .primary-btn-Scenariste;
+  margin-top: $gap-sm;
+  font-size: $font-size-p2;
+  padding: $gap-xs $padding-sm;
+}
+
+.comments-list-ecran-travail {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+}
+
+.comment-item-ecran-travail {
+  background: $color-white;
+  padding: $padding-sm;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-dark, 0.08);
+}
+
+.comment-header-ecran-travail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-xs;
+}
+
+.comment-author-ecran-travail {
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  font-size: $font-size-p2;
+}
+
+.comment-date-ecran-travail {
+  color: $color-text-muted;
+  font-size: $font-size-p3;
+}
+
+.comment-content-ecran-travail {
+  @include typography-p1;
+  color: $color-text-secondary;
+}
+
+.comment-actions-ecran-travail {
+  margin-top: $gap-sm;
+}
+
+.delete-comment-btn-ecran-travail {
+  @extend .btn-error-Scenariste;
+  font-size: $font-size-p3;
+  padding: $gap-xs $gap-sm;
+}
+
+.close-comments-btn-ecran-travail {
+  @extend .secondary-btn-Scenariste;
+  margin-top: $margin-sm;
+}
+
+// =============================================
+// ICÔNES
+// =============================================
+
+.icon-edit-ecran-travail,
+.icon-delete-ecran-travail,
+.comment-icon-ecran-travail,
+.highlight-icon-ecran-travail {
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: 50%;
+  transition: $transition;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: rgba($color-dark, 0.1);
+    transform: scale(1.1);
+  }
+}
+
+.icon-ecran-travail {
+  font-size: $font-size-p1;
+}
+
+// =============================================
+// MODALES
+// =============================================
+
+.modal-overlay-ecran-travail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($color-dark, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $padding-md;
+}
+
+.modal-content-ecran-travail {
+  background: $color-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header-ecran-travail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-lg;
+  border-bottom: 1px solid rgba($color-dark, 0.1);
+  
+  h3 {
+    margin: 0;
+    color: $color-text-primary;
+  }
+}
+
+.close-btn-ecran-travail {
+  @extend .btn-ghost-Scenariste;
+  padding: $gap-xs;
+  border-radius: 50%;
+}
+
+.edit-form-ecran-travail {
+  padding: $padding-lg;
+}
+
+.form-group-ecran-travail {
+  margin-bottom: $margin-md;
+  
+  label {
+    display: block;
+    margin-bottom: $gap-xs;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    font-size: $font-size-p1;
+  }
+}
+
+.form-input-ecran-travail,
+.form-textarea-ecran-travail,
+.form-select-ecran-travail {
+  width: 100%;
+  padding: $padding-sm;
+  border: 1px solid rgba($color-dark, 0.1);
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  font-size: $font-size-p1;
+  color: $color-text-primary;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.form-textarea-ecran-travail {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modal-actions-ecran-travail {
+  display: flex;
+  justify-content: flex-end;
+  gap: $gap-sm;
+  margin-top: $margin-lg;
+}
+
+.cancel-btn-ecran-travail {
+  @extend .cancel-btn-Scenariste;
+}
+
+.save-btn-ecran-travail {
+  @extend .save-btn-Scenariste;
+}
+
+// =============================================
+// ÉTATS ET MESSAGES
+// =============================================
+
+.loading-ecran-travail {
+  text-align: center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+  font-size: $font-size-p1;
+}
+
+.error-message-ecran-travail {
+  background: rgba($color-red, 0.1);
+  color: $color-red;
+  padding: $padding-md;
+  border-radius: $border-radius-sm;
+  margin: $margin-md 0;
+  border: 1px solid rgba($color-red, 0.2);
+}
+
+.retry-btn-ecran-travail {
+  @extend .btn-error-Scenariste;
+  margin-left: $margin-sm;
+  font-size: $font-size-p2;
+  padding: $gap-xs $gap-sm;
+}
+
+.no-data-ecran-travail {
+  text-align: center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+  font-style: italic;
+  background: rgba($color-dark, 0.02);
+  border-radius: $border-radius;
+  margin: $margin-lg 0;
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+
+.blinking-icon-ecran-travail {
+  animation: blink-ecran-travail 2s infinite;
+  margin-left: $gap-xs;
+}
+
+@keyframes blink-ecran-travail {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+
+@media (max-width: $breakpoint-md) {
+  .ecran-travail-ecran-travail {
+    padding: $padding-sm;
+    margin: $gap-xs;
+  }
+  
+  .navigation-ecran-travail {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-sm;
+  }
+  
+  .liens-ecran-travail {
+    flex-direction: column;
+    align-items: center;
+    gap: $gap-sm;
+  }
+  
+  .episode-navigation-ecran-travail,
+  .sequence-navigation-ecran-travail {
+    justify-content: center;
+  }
+  
+  .section-header-ecran-travail {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-sm;
+  }
+  
+  .modal-content-ecran-travail {
+    margin: $padding-sm;
+    width: calc(100% - #{$padding-md});
+  }
+  
+  .modal-actions-ecran-travail {
+    flex-direction: column;
+  }
+  
+  .dialogue-actions-ecran-travail {
+    flex-wrap: wrap;
+    gap: $gap-sm;
+  }
+  
+  .title-episode-ecran-travail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+}
+
+
+
+.fixed-add-btn-links {
+position: fixed;
+  right: 0;
+  top: 20px;
+  z-index: $z-index-sticky;
+  background: $color-white;
+  border-radius: $border-radius-lg 0 0 $border-radius-lg;
+  box-shadow: $shadow-lg;
+  transition: width $transition-slow;
+  overflow: hidden;
+  height: auto;
+  border: 1px solid rgba($color-primary, 0.1);
+
+  // État ouvert
+  &.open {
+    width: 260px;
+  }
+
+  // État fermé
+  &:not(.open) {
+    width: 206px;
+  }
+}
+
+
+// =============================================
+// SIDEBAR OPTIONS À DROITE
+// =============================================
+
+.options-sidebar {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: $z-index-sticky;
+  background: $color-white;
+  border-radius: $border-radius-lg 0 0 $border-radius-lg;
+  box-shadow: $shadow-lg;
+  transition: all $transition-slow;
+  overflow: hidden;
+  border: 1px solid rgba($color-primary, 0.1);
+  height: auto;
+
+  // État fermé
+  &:not(.open) {
+    width: 160px;
+    
+    .sidebar-content {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  // État ouvert
+  &.open {
+    width: 280px;
+    
+    .sidebar-content {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+}
+
+// Bouton de toggle
+.sidebar-toggle {
+  position: absolute;
+  left: -50px;
+  top: 20px;
+  width: 50px;
+  height: 50px;
+  background: $color-primary;
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius-pill 0 0 $border-radius-pill;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: $shadow;
+  transition: $transition;
+  z-index: $z-index-fixed;
+
+  i {
+    width: 800px;
+  }
+
+  &:hover {
+    background: darken($color-primary, 10%);
+    transform: scale(1.05);
+  }
+}
+
+// Contenu de la sidebar
+.sidebar-content {
+  padding: $padding-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $gap-lg;
+  transition: opacity $transition-slow;
+  min-height: 200px;
+}
+
+// Boutons dans la sidebar
+.sidebar-btn {
+  @extend .primary-btn-Scenariste;
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  padding: $padding-md;
+  border-radius: $border-radius-sm;
+  
+  i {
+    margin-right: $gap-md;
+    width: 20px;
+    text-align: center;
+  }
+  
+  &:hover {
+    transform: translateX(-5px);
+  }
+}
+
+// Container Export dans sidebar
+.export-container {
+  width: 100%;
+  
+  .export-dropdown {
+    position: relative;
+    width: 100%;
+    
+    &:hover .export-dropdown-content {
+      display: block;
+    }
+  }
+  
+  .export-main-btn {
+    @extend .accent-btn-Scenariste;
+    width: 100%;
+    justify-content: flex-start;
+    padding: $padding-md;
+    border-radius: $border-radius-sm;
+    
+    i {
+      margin-right: $gap-md;
+      width: 20px;
+      text-align: center;
+      
+      &:last-child {
+        margin-left: auto;
+        margin-right: 0;
+      }
+    }
+    
+    &:hover {
+      border-color: $color-primary;
+      background: rgba($color-primary, 0.1);
+    }
+  }
+  
+  .export-dropdown-content {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-top: $gap-sm;
+    background: $color-white;
+    box-shadow: $shadow-lg;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-primary, 0.1);
+    z-index: $z-index-dropdown;
+    
+    .export-option {
+      @extend .btn-ghost-Scenariste;
+      width: 100%;
+      text-align: left;
+      padding: $padding-md;
+      border-radius: 0;
+      border-bottom: 1px solid rgba($color-dark, 0.05);
+      font-size: $font-size-p2;
+      color: $color-text-primary;
+      
+      i {
+        margin-right: $gap-md;
+        width: 20px;
+        text-align: center;
+        color: $color-primary;
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      &:hover {
+        background: rgba($color-primary, 0.1);
+        color: $color-primary;
+        
+        i {
+          color: $color-primary;
+        }
+      }
+    }
+  }
+}
+
+// Ajustement pour le contenu principal
+.ecran-travail-ecran-travail {
+  transition: margin-right $transition-slow;
+  
+  .options-sidebar.open ~ & {
+    margin-right: 280px;
+  }
+  
+  .options-sidebar:not(.open) ~ & {
+    margin-right: 60px;
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .options-sidebar {
+    &.open {
+      width: 250px;
+    }
+    
+    &:not(.open) {
+      width: 50px;
+    }
+  }
+  
+  .sidebar-toggle {
+    left: -45px;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .sidebar-content {
+    padding: $padding-md;
+  }
+  
+  .ecran-travail-ecran-travail {
+    .options-sidebar.open ~ & {
+      margin-right: 250px;
+    }
+    
+    .options-sidebar:not(.open) ~ & {
+      margin-right: 50px;
+    }
+  }
+}

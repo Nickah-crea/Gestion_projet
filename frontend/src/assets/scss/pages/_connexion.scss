@@ -1,0 +1,584 @@
+@import '../base/variables';
+
+// =============================================
+// VARIABLES SPÉCIFIQUES À LA CONNEXION
+// =============================================
+$conn-form-width: 500px;
+$conn-card-width: 480px;
+$conn-form-inner-width: 400px;
+
+// =============================================
+// STYLES DE LA PAGE CONNEXION
+// =============================================
+.connexion-page {
+  background: $color-pink ;
+  min-height: 100vh;
+}
+
+// =============================================
+// STRUCTURE PRINCIPALE
+// =============================================
+.app-wrapper-co-conn {
+  padding: 0;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.connexion-container-conn {
+  height: 100vh;
+  @include flex-center;
+  position: relative;
+  overflow: hidden;
+}
+
+.connexion-form-section-conn {
+  height: 100vh;
+  width: $conn-form-width;
+  @include flex-center;
+  position: relative;
+  z-index: 10;
+}
+
+// =============================================
+// CARTE DE CONNEXION
+// =============================================
+.connexion-card-conn {
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: $border-radius-lg;
+  border: 1px solid rgba($color-light, 0.25);
+  box-shadow: 
+    0 8px 32px 0 rgba($color-dark, 0.15),
+    inset 0 1px 0 rgba($color-light, 0.3);
+  padding: 0;
+  width: 100%;
+  max-width: $conn-card-width;
+  position: relative;
+  overflow: hidden;
+  animation: slideInUp-conn $duration-normal cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  background: rgba($color-light, 0.1);
+  
+  // Effet de lumière subtil en haut
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($color-light, 0.5),
+      transparent
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  // Effet de reflet subtil
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($color-light, 0.1),
+      transparent
+    );
+    pointer-events: none;
+    z-index: 0;
+    animation: shimmer 3s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    left: -50%;
+    opacity: 0;
+  }
+  50% {
+    left: 150%;
+    opacity: 1;
+  }
+}
+
+// =============================================
+// EN-TÊTE
+// =============================================
+.connex-header-conn {
+  margin-top: $margin-xl;
+  padding: $padding-md;
+  text-align: center;
+  position: relative;
+}
+
+.user-avatar-conn {
+  background: rgba($color-pink, 0.3);
+  color: $color-primary;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  @include flex-center;
+  font-size: 1.5rem;
+  border: 2px solid rgba($color-light, 0.5);
+  margin: 0 auto $margin-md auto;
+}
+
+.connex-header-conn {
+  h1 {
+    @include typography-h2;
+    margin-bottom: $gap-sm;
+  }
+  
+  p {
+    @include typography-p1;
+    color: $color-text-secondary;
+  }
+}
+
+// =============================================
+// FORMULAIRE
+// =============================================
+.connexion-form-conn {
+  padding: $padding-xl;
+  background: transparent !important;
+  width: $conn-form-inner-width;
+  position: relative;
+  z-index: 1;
+}
+
+// =============================================
+// GROUPES DE FORMULAIRE
+// =============================================
+.form-group-connexion-conn {
+  margin-bottom: $margin-lg;
+  position: relative;
+}
+
+.input-container-connexion-conn {
+  position: relative;
+}
+
+.form-input-connexion-conn {
+  width: 100%;
+  padding: $padding-md;
+  border: 1px solid rgba($color-light, 0.4);
+  border-radius: $border-radius-pill;
+  background: rgba($color-light, 0.15);
+  font-size: $font-size-p2;
+  color: $color-text-primary;
+  transition: $transition;
+  font-weight: $font-weight-medium;
+  backdrop-filter: blur(15px) saturate(150%);
+  box-shadow: 0 2px 8px rgba($color-dark, 0.05);
+
+  &:focus {
+    background: rgba($color-light, 0.25);
+    box-shadow: 
+      0 0 0 3px rgba($color-primary, 0.15),
+      0 4px 12px rgba($color-primary, 0.1);
+    transform: translateY(-1px);
+    border-color: rgba($color-primary, 0.4);
+    outline: none;
+  }
+
+  &::placeholder {
+    color: $color-text-muted;
+    transition: $transition;
+  }
+
+  &:focus::placeholder {
+    color: transparent;
+  }
+}
+
+// =============================================
+// OPTIONS DU FORMULAIRE
+// =============================================
+.form-options-connexion-conn {
+  @include flex-between;
+  margin-bottom: $margin-lg;
+  font-size: $font-size-p2;
+}
+
+.checkbox-container-connexion-conn {
+  @include flex-center;
+  gap: $gap-sm;
+  color: $color-text-secondary;
+  cursor: pointer;
+  font-weight: $font-weight-medium;
+  
+  input {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: $gap-xs;
+    border: $border-width * 1.5 solid $border-color-dark;
+    appearance: none;
+    transition: $transition;
+    position: relative;
+
+    &:checked {
+      background: $color-primary;
+      border-color: $color-primary;
+
+      &::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: $color-light;
+        font-size: $font-size-p3;
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+}
+
+.forgot-link-connexion-conn {
+  color: $color-text-secondary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  transition: $transition;
+
+  &:hover {
+    color: $color-primary;
+    text-decoration: underline;
+  }
+}
+
+// =============================================
+// MESSAGE D'ERREUR
+// =============================================
+.error-message-connexion-conn {
+  @include flex-center;
+  gap: $gap-sm;
+  background: rgba($color-accent, 0.05);
+  border: $border-width solid rgba($color-accent, 0.2);
+  color: $color-accent;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  margin-bottom: $margin-lg;
+  animation: slideInDown-conn $duration-fast ease-out;
+}
+
+// =============================================
+// BOUTON DE CONNEXION
+// =============================================
+.connexion-btn-conn {
+  background: $color-primary;
+  color: $color-light;
+  border: none;
+  padding: $padding-md $padding-lg;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  @include flex-center;
+  gap: $gap-sm;
+  width: 100%;
+  box-shadow: $shadow;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba($color-light, 0.2), transparent);
+    transition: $transition;
+  }
+
+  &:hover:not(:disabled) {
+    background: mix($color-primary, black, 90%);
+    transform: translateY(-2px);
+    box-shadow: $shadow-hover;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-icon-connexion-conn {
+  transition: $transition;
+}
+
+.connexion-btn-conn:hover .btn-icon-connexion-conn {
+  transform: translateX(3px);
+}
+
+// =============================================
+// LIEN D'INSCRIPTION
+// =============================================
+.signup-link-connexion-conn {
+  text-align: center;
+  font-size: $font-size-p2;
+  color: $color-text-secondary;
+  margin-top: $margin-lg;
+  padding-top: $margin-lg;
+  border-top: $border-width solid $border-color-dark;
+
+  a {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+    text-decoration: none;
+    transition: $transition;
+
+    &:hover {
+      color: mix($color-primary, black, 90%);
+      text-decoration: underline;
+    }
+  }
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+@keyframes slideInUp-conn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInDown-conn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-md) {
+  .connexion-container-conn {
+    flex-direction: column;
+  }
+
+  .connexion-form-section-conn {
+    height: auto;
+    min-height: 100vh;
+    padding: $padding-md;
+  }
+
+  .connexion-card-conn {
+    max-width: 100%;
+  }
+
+  .connexion-form-conn {
+    padding: $padding-lg;
+    width: 100%;
+  }
+
+  .form-options-connexion-conn {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+}
+
+// =============================================
+// ANIMATIONS D'ENTRÉE POUR ÉLÉMENTS
+// =============================================
+.form-group-connexion-conn,
+.form-options-connexion-conn,
+.connexion-btn-conn,
+.signup-link-connexion-conn {
+  opacity: 0;
+  animation: slideInUp-conn $duration-normal ease-out forwards;
+}
+
+.form-group-connexion-conn:nth-child(1) { animation-delay: 0.2s; }
+.form-group-connexion-conn:nth-child(2) { animation-delay: 0.4s; }
+.form-options-connexion-conn { animation-delay: 0.6s; }
+.connexion-btn-conn { animation-delay: 0.8s; }
+.signup-link-connexion-conn { animation-delay: 1s; }
+
+// =============================================
+// BOUTONS DE THÈME (MODE SOMBRE/CLAIR)
+// =============================================
+.theme-toggle {
+  position: fixed;
+  top: $padding-md;
+  right: $padding-md;
+  display: flex;
+  background: rgba($color-primary, 0.15);
+  border-radius: $border-radius-pill;
+  padding: $gap-xs;
+  gap: $gap-xs;
+  box-shadow: 
+    inset 0 2px 4px rgba($color-dark, 0.1),
+    0 4px 12px rgba($color-dark, 0.15);
+  width: 60px;
+  border: 1px solid rgba($color-light, 0.4);
+  backdrop-filter: blur(10px) saturate(150%);
+  z-index: $z-index-modal;
+  transition: $transition;
+  
+  &:hover {
+    background: rgba($color-primary, 0.2);
+    box-shadow: 
+      inset 0 2px 4px rgba($color-dark, 0.1),
+      0 6px 16px rgba($color-dark, 0.2);
+  }
+}
+
+.theme-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  @include flex-center;
+  cursor: pointer;
+  transition: $transition;
+  color: $color-primary;
+  font-size: $font-size-p3;
+  
+  &:hover {
+    background: rgba($color-primary, 0.2);
+    transform: scale(1.1);
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+    color: $color-light;
+    box-shadow: 0 2px 6px rgba($color-primary, 0.4);
+  }
+  
+  i {
+    font-size: $font-size-p3;
+  }
+}
+
+// Responsive pour les boutons de thème
+@media (max-width: $breakpoint-md) {
+  .theme-toggle {
+    top: $padding-sm;
+    right: $padding-sm;
+    width: 50px;
+    padding: 3px;
+  }
+  
+  .theme-btn {
+    width: 20px;
+    height: 20px;
+    font-size: $font-size-p3;
+  }
+}
+
+// =============================================
+// MODE SOMBRE
+// =============================================
+body.dark-theme {
+  .connexion-card-conn {
+    background: rgba($color-dark, 0.15);
+    border: 1px solid rgba($color-light, 0.15);
+    
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba($color-accent, 0.2),
+        transparent
+      );
+    }
+  }
+  
+  .form-input-connexion-conn {
+    background: rgba($color-dark, 0.2);
+    border: 1px solid rgba($color-light, 0.2);
+    color: $color-light;
+    
+    &::placeholder {
+      color: rgba($color-light, 0.5);
+    }
+    
+    &:focus {
+      background: rgba($color-dark, 0.3);
+      border-color: rgba($color-primary, 0.5);
+    }
+  }
+  
+  .connex-header-conn {
+    h1 {
+      color: $color-light;
+    }
+    
+    p {
+      color: rgba($color-light, 0.7);
+    }
+  }
+  
+  .forgot-link-connexion-conn {
+    color: rgba($color-light, 0.7);
+    
+    &:hover {
+      color: $color-accent;
+    }
+  }
+  
+  .signup-link-connexion-conn {
+    color: rgba($color-light, 0.7);
+    border-top: $border-width solid rgba($color-light, 0.15);
+    
+    a {
+      color: $color-primary;
+      
+      &:hover {
+        color: $color-accent;
+      }
+    }
+  }
+  
+  .theme-toggle {
+    background: rgba($color-dark, 0.3);
+    border: 1px solid rgba($color-light, 0.2);
+    
+    &:hover {
+      background: rgba($color-dark, 0.4);
+    }
+  }
+  
+  .theme-btn {
+    color: $color-light;
+    
+    &:hover {
+      background: rgba($color-primary, 0.3);
+    }
+    
+    &.active {
+      background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+      color: $color-light;
+    }
+  }
+}
+
