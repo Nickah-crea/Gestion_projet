@@ -915,60 +915,6 @@ CREATE INDEX idx_raccord_planning_raccord ON raccord_planning(id_raccord);
 CREATE INDEX idx_raccord_planning_planning ON raccord_planning(id_planning_tournage);
 
 
-CREATE OR REPLACE VIEW v_raccords_planning AS
-SELECT 
-    r.id_raccord,
-    r.description,
-    r.est_critique,
-    sr.nom_statut as statut_raccord,
-    sr.code as code_statut,
-    tr.nom_type as type_raccord,
-    ss.id_scene as scene_source_id,
-    ss.titre as scene_source_titre,
-    sc.id_scene as scene_cible_id,
-    sc.titre as scene_cible_titre,
-    p.id_personnage,
-    p.nom as personnage_nom,
-    c.id_comedien,
-    c.nom_comedien,
-    rp_src.id_planning_tournage as planning_source_id,
-    rp_cible.id_planning_tournage as planning_cible_id,
-    pt_src.date_tournage as date_tournage_source,
-    pt_cible.date_tournage as date_tournage_cible,
-    pt_src.heure_debut as heure_debut_source,
-    pt_src.heure_fin as heure_fin_source,
-    pt_cible.heure_debut as heure_debut_cible,
-    pt_cible.heure_fin as heure_fin_cible,
-    -- Calcul de la différence de jours entre les tournages
-    CASE 
-        WHEN pt_src.date_tournage IS NOT NULL AND pt_cible.date_tournage IS NOT NULL 
-        THEN EXTRACT(DAY FROM (pt_cible.date_tournage - pt_src.date_tournage))
-        ELSE NULL
-    END as difference_jours,
-    -- Alerte si différence positive (tournage cible après source)
-    CASE 
-        WHEN pt_src.date_tournage IS NOT NULL AND pt_cible.date_tournage IS NOT NULL 
-             AND pt_cible.date_tournage > pt_src.date_tournage 
-        THEN 'ALERTE: Tournage cible après source'
-        WHEN pt_src.date_tournage IS NOT NULL AND pt_cible.date_tournage IS NOT NULL 
-             AND pt_cible.date_tournage < pt_src.date_tournage 
-        THEN 'OK: Tournage cible avant source'
-        ELSE 'Planning incomplet'
-    END as statut_planning
-FROM raccords r
-LEFT JOIN statuts_raccord sr ON r.id_statut_raccord = sr.id_statut_raccord
-LEFT JOIN types_raccord tr ON r.id_type_raccord = tr.id_type_raccord
-LEFT JOIN scenes ss ON r.scene_source_id = ss.id_scene
-LEFT JOIN scenes sc ON r.scene_cible_id = sc.id_scene
-LEFT JOIN personnages p ON r.id_personnage = p.id_personnage
-LEFT JOIN comediens c ON r.id_comedien = c.id_comedien
--- Liaison avec planning source
-LEFT JOIN raccord_planning rp_src ON r.id_raccord = rp_src.id_raccord AND rp_src.type_liaison = 'SOURCE'
-LEFT JOIN planning_tournage pt_src ON rp_src.id_planning_tournage = pt_src.id_planning_tournage
--- Liaison avec planning cible
-LEFT JOIN raccord_planning rp_cible ON r.id_raccord = rp_cible.id_raccord AND rp_cible.type_liaison = 'CIBLE'
-LEFT JOIN planning_tournage pt_cible ON rp_cible.id_planning_tournage = pt_cible.id_planning_tournage;
-
 
 -- Contrainte pour empêcher les doublons scène-source = scène-cible
 ALTER TABLE raccords ADD CONSTRAINT unique_raccord_different_scenes 
@@ -1031,4 +977,43 @@ LEFT JOIN personnages p ON r.id_personnage = p.id_personnage
 LEFT JOIN comediens c ON r.id_comedien = c.id_comedien
 WHERE r.est_critique = true 
    OR sr.code = 'A_VERIFIER';
+
+
+
+-- Vue pour les alertes de raccords critiques avec dates de tournage
+CREATE OR REPLACE VIEW v_raccords_critiques_calendrier AS
+SELECT 
+    r.id_raccord,
+    r.description,
+    tr.nom_type as type_raccord,
+    r.est_critique,
+    ss.titre as scene_source_titre,
+    sc.titre as scene_cible_titre,
+    st_src.date_tournage as date_tournage_source,
+    st_cible.date_tournage as date_tournage_cible,
+    -- Déterminer la date d'alerte (priorité à la date cible)
+    COALESCE(st_cible.date_tournage, st_src.date_tournage) as date_alerte,
+    -- Messages d'alerte simulés (à adapter avec votre logique métier)
+    ARRAY[
+        CASE 
+            WHEN st_src.date_tournage IS NOT NULL AND st_cible.date_tournage IS NULL 
+            THEN 'Scène source tournée mais scène cible non planifiée'
+            WHEN st_src.date_tournage IS NOT NULL AND st_cible.date_tournage IS NOT NULL 
+                 AND st_cible.date_tournage < st_src.date_tournage 
+            THEN 'Incohérence chronologique: scène cible avant scène source'
+            ELSE 'Raccord critique nécessite attention'
+        END
+    ] as messages_alerte
+    
+FROM raccords r
+JOIN types_raccord tr ON r.id_type_raccord = tr.id_type_raccord
+JOIN scenes ss ON r.scene_source_id = ss.id_scene
+JOIN scenes sc ON r.scene_cible_id = sc.id_scene
+LEFT JOIN scene_tournage st_src ON ss.id_scene = st_src.id_scene
+LEFT JOIN scene_tournage st_cible ON sc.id_scene = st_cible.id_scene
+WHERE r.est_critique = true
+   AND (st_src.date_tournage IS NOT NULL OR st_cible.date_tournage IS NOT NULL);
+
+
+
 
