@@ -1,0 +1,26 @@
+// Base
+@import 'base/variables';
+@import 'base/reset';
+@import 'base/typography';
+
+// Components
+@import 'components/buttons';
+@import 'components/forms';
+@import 'components/sidebar';
+@import 'components/cinema-icons'; // AJOUTE CETTE LIGNE
+
+// Layouts
+@import 'layouts/header';
+@import 'layouts/footer';
+@import 'layouts/grid';
+
+// Pages
+@import 'pages/acceuil';
+@import 'pages/connexion'; // AJOUTE CETTE LIGNE
+@import 'pages/projet';
+@import 'pages/recherche';
+@import 'pages/ecran';
+@import 'pages/add';
+@import 'pages/_sceneTournage';
+
+
