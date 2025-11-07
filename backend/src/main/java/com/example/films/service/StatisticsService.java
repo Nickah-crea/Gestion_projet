@@ -354,4 +354,4 @@ private String toCamelCase(String snakeCase) {
             return progress;
         });
     }
-}
+} 
