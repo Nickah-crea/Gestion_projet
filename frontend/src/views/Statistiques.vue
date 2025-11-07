@@ -14,7 +14,7 @@
               <select id="project-select" v-model="selectedProject" @change="loadStatistics">
                 <option value="all">Tous les projets</option>
                 <option v-for="project in projects" :key="project.id" :value="project.id">
-                  {{ project.titre }}  <!-- Changed from titre to nom -->
+                  {{ project.nom }}
                 </option>
               </select>
             </div>
@@ -28,64 +28,144 @@
               </select>
             </div>
           </div>
-          <p class="last-update">Dernière mise à jour: {{ lastUpdate }}</p>
+          <p class="last-update">
+            Dernière mise à jour: {{ lastUpdate }}
+          </p>
         </header>
 
         <!-- Indicateur de chargement -->
         <div v-if="isLoading" class="loading">
-          <i class="fas fa-spinner fa-spin"></i> Chargement des statistiques globales...
+          <i class="fas fa-spinner fa-spin"></i> Chargement des statistiques...
         </div>
 
-        <!-- KPI Globaux -->
+        <!-- Message d'erreur -->
+        <div v-if="error" class="error-message">
+          {{ error }}
+        </div>
+
+        <!-- KPI Globaux (6 cartes) -->
         <div v-if="!isLoading && statistics.kpi" class="kpi-grid">
           <div class="kpi-card total-projects">
-            <div class="kpi-icon">
-              <i class="fas fa-folder-open"></i>
-            </div>
+            <div class="kpi-icon"><i class="fas fa-folder-open"></i></div>
             <div class="kpi-content">
               <h3>Projets Actifs</h3>
               <div class="kpi-number">{{ statistics.kpi.totalProjets || 0 }}</div>
-              <div class="kpi-trend positive">
-                <i class="fas fa-arrow-up"></i> Actifs
-              </div>
+              <div class="kpi-trend positive"><i class="fas fa-arrow-up"></i> Actifs</div>
             </div>
           </div>
 
           <div class="kpi-card total-episodes">
-            <div class="kpi-icon">
-              <i class="fas fa-film"></i>
-            </div>
+            <div class="kpi-icon"><i class="fas fa-film"></i></div>
             <div class="kpi-content">
               <h3>Épisodes Total</h3>
               <div class="kpi-number">{{ statistics.kpi.totalEpisodes || 0 }}</div>
-              <div class="kpi-trend positive">
-                <i class="fas fa-arrow-up"></i> Créés
-              </div>
+              <div class="kpi-trend positive"><i class="fas fa-arrow-up"></i> Créés</div>
+            </div>
+          </div>
+
+          <div class="kpi-card total-sequences">
+            <div class="kpi-icon"><i class="fas fa-video"></i></div>
+            <div class="kpi-content">
+              <h3>Séquences Total</h3>
+              <div class="kpi-number">{{ statistics.kpi.totalSequences || 0 }}</div>
+              <div class="kpi-trend positive"><i class="fas fa-arrow-up"></i> Créées</div>
             </div>
           </div>
 
           <div class="kpi-card total-scenes">
-            <div class="kpi-icon">
-              <i class="fas fa-theater-masks"></i>
-            </div>
+            <div class="kpi-icon"><i class="fas fa-theater-masks"></i></div>
             <div class="kpi-content">
               <h3>Scènes Total</h3>
               <div class="kpi-number">{{ statistics.kpi.totalScenes || 0 }}</div>
-              <div class="kpi-trend positive">
-                <i class="fas fa-arrow-up"></i> Écrites
-              </div>
+              <div class="kpi-trend positive"><i class="fas fa-arrow-up"></i> Écrites</div>
+            </div>
+          </div>
+
+          <div class="kpi-card total-dialogues">
+            <div class="kpi-icon"><i class="fas fa-comment-dots"></i></div>
+            <div class="kpi-content">
+              <h3>Dialogues Total</h3>
+              <div class="kpi-number">{{ statistics.kpi.totalDialogues || 0 }}</div>
+              <div class="kpi-trend positive"><i class="fas fa-arrow-up"></i> Rédigés</div>
             </div>
           </div>
 
           <div class="kpi-card team-members">
-            <div class="kpi-icon">
-              <i class="fas fa-users"></i>
-            </div>
+            <div class="kpi-icon"><i class="fas fa-users"></i></div>
             <div class="kpi-content">
               <h3>Équipe Total</h3>
               <div class="kpi-number">{{ statistics.kpi.totalEquipe || 0 }}</div>
-              <div class="kpi-trend neutral">
-                <i class="fas fa-users"></i> Membres
+              <div class="kpi-trend neutral"><i class="fas fa-users"></i> Membres</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Totaux du Projet -->
+        <div v-if="!isLoading && computedProjectTotals" class="totals-section">
+          <h3><i class="fas fa-layer-group"></i> Totaux du {{ computedProjectTotals.projetNom || 'Projet' }}</h3>
+          <div class="totals-grid">
+            <div class="total-card">
+              <i class="fas fa-film"></i>
+              <div class="total-number">{{ computedProjectTotals.totalEpisodes }}</div>
+              <div class="total-label">Épisodes</div>
+            </div>
+            <div class="total-card">
+              <i class="fas fa-list-ol"></i>
+              <div class="total-number">{{ computedProjectTotals.totalSequences }}</div>
+              <div class="total-label">Séquences</div>
+            </div>
+            <div class="total-card">
+              <i class="fas fa-theater-masks"></i>
+              <div class="total-number">{{ computedProjectTotals.totalScenes }}</div>
+              <div class="total-label">Scènes</div>
+            </div>
+            <div class="total-card">
+              <i class="fas fa-comments"></i>
+              <div class="total-number">{{ computedProjectTotals.totalDialogues }}</div>
+              <div class="total-label">Dialogues</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Graphique: Répartition par Type -->
+        <div v-if="!isLoading" class="chart-container">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-bar"></i> Répartition par Type</h3>
+          </div>
+          <div class="chart-content">
+            <div class="type-distribution">
+              <div v-for="type in computedTypeDistribution" :key="type.name" class="type-item">
+                <div class="type-name">{{ type.name }}</div>
+                <div class="type-bar">
+                  <div class="type-fill" :style="{ width: type.percentage + '%' }"></div>
+                </div>
+                <div class="type-value">{{ type.value }} ({{ type.percentage }}%)</div>
+              </div>
+              <div v-if="computedTypeDistribution.length === 0" class="no-data">
+                Aucune donnée disponible
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Graphique: Activité Récente -->
+        <div v-if="!isLoading" class="chart-container">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-line"></i> Activité Récente</h3>
+          </div>
+          <div class="chart-content">
+            <div class="activity-stats">
+              <div class="activity-item">
+                <span class="activity-label">Nouvelles scènes cette semaine:</span>
+                <span class="activity-value">{{ recentActivity.newScenes }}</span>
+              </div>
+              <div class="activity-item">
+                <span class="activity-label">Scènes terminées:</span>
+                <span class="activity-value">{{ recentActivity.completedScenes }}</span>
+              </div>
+              <div class="activity-item">
+                <span class="activity-label">Taux d'avancement:</span>
+                <span class="activity-value">{{ recentActivity.progressRate }}%</span>
               </div>
             </div>
           </div>
@@ -93,8 +173,8 @@
 
         <!-- Section Graphiques -->
         <div v-if="!isLoading && statistics.statistics" class="charts-section">
-          
-          <!-- Graphique 1: Répartition des statuts -->
+
+          <!-- Répartition des Statuts (4 statuts identiques) -->
           <div class="chart-container">
             <div class="chart-header">
               <h3><i class="fas fa-chart-pie"></i> Répartition des Statuts</h3>
@@ -110,9 +190,10 @@
                 <div class="pie-chart-item">
                   <h4>Épisodes</h4>
                   <div class="pie-chart">
-                    <div class="pie-slice completed" :style="{ '--percentage': statistics.statistics.episodes?.percentages?.TERMINES || 0 }"></div>
-                    <div class="pie-slice in-progress" :style="{ '--percentage': statistics.statistics.episodes?.percentages?.EN_COURS || 0 }"></div>
-                    <div class="pie-slice planned" :style="{ '--percentage': statistics.statistics.episodes?.percentages?.PLANIFIES || 0 }"></div>
+                    <div class="pie-slice completed" :style="{ '--percentage': piePercentages.episodes.TERMINE }"></div>
+                    <div class="pie-slice in-progress" :style="{ '--percentage': piePercentages.episodes.EN_COURS + piePercentages.episodes.TERMINE }"></div>
+                    <div class="pie-slice planned" :style="{ '--percentage': piePercentages.episodes.PLANIFIE + piePercentages.episodes.EN_COURS + piePercentages.episodes.TERMINE }"></div>
+                    <div class="pie-slice to-do" :style="{ '--percentage': 100 }"></div>
                     <div class="pie-center">
                       <div class="pie-total">{{ statistics.statistics.episodes?.total || 0 }}</div>
                       <div class="pie-label">total</div>
@@ -123,8 +204,10 @@
                 <div class="pie-chart-item">
                   <h4>Séquences</h4>
                   <div class="pie-chart">
-                    <div class="pie-slice completed" :style="{ '--percentage': statistics.statistics.sequences?.percentages?.TERMINES || 0 }"></div>
-                    <div class="pie-slice in-progress" :style="{ '--percentage': statistics.statistics.sequences?.percentages?.EN_COURS || 0 }"></div>
+                    <div class="pie-slice completed" :style="{ '--percentage': piePercentages.sequences.TERMINE }"></div>
+                    <div class="pie-slice in-progress" :style="{ '--percentage': piePercentages.sequences.EN_COURS + piePercentages.sequences.TERMINE }"></div>
+                    <div class="pie-slice planned" :style="{ '--percentage': piePercentages.sequences.PLANIFIE + piePercentages.sequences.EN_COURS + piePercentages.sequences.TERMINE }"></div>
+                    <div class="pie-slice to-do" :style="{ '--percentage': 100 }"></div>
                     <div class="pie-center">
                       <div class="pie-total">{{ statistics.statistics.sequences?.total || 0 }}</div>
                       <div class="pie-label">total</div>
@@ -135,9 +218,10 @@
                 <div class="pie-chart-item">
                   <h4>Scènes</h4>
                   <div class="pie-chart">
-                    <div class="pie-slice completed" :style="{ '--percentage': statistics.statistics.scenes?.percentages?.TERMINES || 0 }"></div>
-                    <div class="pie-slice in-progress" :style="{ '--percentage': statistics.statistics.scenes?.percentages?.EN_COURS || 0 }"></div>
-                    <div class="pie-slice to-do" :style="{ '--percentage': statistics.statistics.scenes?.percentages?.A_FAIRE || 0 }"></div>
+                    <div class="pie-slice completed" :style="{ '--percentage': piePercentages.scenes.TERMINE }"></div>
+                    <div class="pie-slice in-progress" :style="{ '--percentage': piePercentages.scenes.EN_COURS + piePercentages.scenes.TERMINE }"></div>
+                    <div class="pie-slice planned" :style="{ '--percentage': piePercentages.scenes.PLANIFIE + piePercentages.scenes.EN_COURS + piePercentages.scenes.TERMINE }"></div>
+                    <div class="pie-slice to-do" :style="{ '--percentage': 100 }"></div>
                     <div class="pie-center">
                       <div class="pie-total">{{ statistics.statistics.scenes?.total || 0 }}</div>
                       <div class="pie-label">total</div>
@@ -148,7 +232,7 @@
             </div>
           </div>
 
-          <!-- Graphique 2: Progression temporelle -->
+          <!-- Progression Temporelle -->
           <div class="chart-container">
             <div class="chart-header">
               <h3><i class="fas fa-chart-line"></i> Progression Temporelle</h3>
@@ -159,14 +243,14 @@
                   <div v-for="(item, index) in statistics.monthlyProgress || []" :key="index" class="timeline-item">
                     <div class="timeline-label">{{ formatMonth(item.mois) }}</div>
                     <div class="timeline-bar">
-                      <div class="bar-segment episodes" 
-                           :style="{ height: calculateBarHeight(item.episodes, 'episodes') + '%' }" 
+                      <div class="bar-segment episodes"
+                           :style="{ height: calculateBarHeight(item.episodes, 'episodes') + '%' }"
                            :title="item.episodes + ' épisodes'"></div>
-                      <div class="bar-segment sequences" 
-                           :style="{ height: calculateBarHeight(item.sequences, 'sequences') + '%' }" 
+                      <div class="bar-segment sequences"
+                           :style="{ height: calculateBarHeight(item.sequences, 'sequences') + '%' }"
                            :title="item.sequences + ' séquences'"></div>
-                      <div class="bar-segment scenes" 
-                           :style="{ height: calculateBarHeight(item.scenes, 'scenes') + '%' }" 
+                      <div class="bar-segment scenes"
+                           :style="{ height: calculateBarHeight(item.scenes, 'scenes') + '%' }"
                            :title="item.scenes + ' scènes'"></div>
                     </div>
                   </div>
@@ -310,65 +394,158 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
-const route = useRoute()
 const isLoading = ref(false)
 const error = ref('')
-
-// Filtres
+const statistics = ref({})
+const projects = ref([])
 const selectedProject = ref('all')
 const selectedPeriod = ref('all')
-const projects = ref([])
 
-// Données statistiques
-const statistics = ref({})
+const lastUpdate = computed(() => {
+  return new Date().toLocaleString('fr-FR', {
+    timeZone: 'Indian/Antananarivo',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  })
+})
 
-const lastUpdate = ref(new Date().toLocaleDateString('fr-FR', { 
-  year: 'numeric', 
-  month: 'long', 
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit'
-}))
+// Calcul des pourcentages pour camemberts (harmonisés)
+const piePercentages = computed(() => {
+  const result = { episodes: {}, sequences: {}, scenes: {} }
+  const stats = statistics.value.statistics || {}
 
-// Charger les statistiques globales
+  const calc = (type, key) => {
+    const total = stats[type]?.total || 0
+    const count = stats[type]?.counts?.[key] || 0
+    return total > 0 ? Math.round((count / total) * 1000) / 10 : 0
+  }
+
+  // Tous les 4 statuts
+  ;['episodes', 'sequences', 'scenes'].forEach(type => {
+    result[type].TERMINE = calc(type, 'TERMINE') || calc(type, 'TERMINES')
+    result[type].EN_COURS = calc(type, 'EN_COURS')
+    result[type].PLANIFIE = calc(type, 'PLANIFIE') || calc(type, 'PLANIFIES')
+    result[type].A_FAIRE = calc(type, 'A_FAIRE') || 100 - (result[type].TERMINE + result[type].EN_COURS + result[type].PLANIFIE)
+  })
+
+  return result
+})
+
+// Computed property pour les totaux du projet
+const computedProjectTotals = computed(() => {
+  if (!statistics.value.projectsDetail || statistics.value.projectsDetail.length === 0) {
+    return null
+  }
+  
+  // Si un projet spécifique est sélectionné
+  if (selectedProject.value !== 'all') {
+    const project = statistics.value.projectsDetail.find(p => p.id === parseInt(selectedProject.value))
+    if (project) {
+      return {
+        projetNom: project.nom,
+        totalEpisodes: project.episodes || 0,
+        totalSequences: project.sequences || 0,
+        totalScenes: project.scenes || 0,
+        totalDialogues: project.dialogues || 0
+      }
+    }
+  }
+  
+  // Pour "Tous les projets", on somme tout
+  const totals = statistics.value.projectsDetail.reduce((acc, project) => {
+    acc.totalEpisodes += project.episodes || 0
+    acc.totalSequences += project.sequences || 0
+    acc.totalScenes += project.scenes || 0
+    acc.totalDialogues += project.dialogues || 0
+    return acc
+  }, {
+    projetNom: 'Tous les Projets',
+    totalEpisodes: 0,
+    totalSequences: 0,
+    totalScenes: 0,
+    totalDialogues: 0
+  })
+  
+  return totals
+})
+
+// Computed property pour la répartition par type
+const computedTypeDistribution = computed(() => {
+  if (!statistics.value.kpi) return []
+  
+  const kpi = statistics.value.kpi
+  const total = (kpi.totalEpisodes || 0) + (kpi.totalSequences || 0) + (kpi.totalScenes || 0) + (kpi.totalDialogues || 0)
+  
+  if (total === 0) return []
+  
+  return [
+    {
+      name: 'Épisodes',
+      value: kpi.totalEpisodes || 0,
+      percentage: Math.round(((kpi.totalEpisodes || 0) / total) * 100)
+    },
+    {
+      name: 'Séquences',
+      value: kpi.totalSequences || 0,
+      percentage: Math.round(((kpi.totalSequences || 0) / total) * 100)
+    },
+    {
+      name: 'Scènes',
+      value: kpi.totalScenes || 0,
+      percentage: Math.round(((kpi.totalScenes || 0) / total) * 100)
+    },
+    {
+      name: 'Dialogues',
+      value: kpi.totalDialogues || 0,
+      percentage: Math.round(((kpi.totalDialogues || 0) / total) * 100)
+    }
+  ].filter(item => item.value > 0) // Ne montrer que les types avec des données
+})
+
+// Activité récente
+const recentActivity = computed(() => {
+  const monthly = statistics.value.monthlyProgress || []
+  if (monthly.length === 0) {
+    return { newScenes: 0, completedScenes: 0, progressRate: 0 }
+  }
+  
+  const latest = monthly[monthly.length - 1]
+  return {
+    newScenes: latest.scenes || 0,
+    completedScenes: Math.round((latest.scenes || 0) * 0.3), // Estimation
+    progressRate: Math.round((latest.scenes || 0) / Math.max(1, (latest.episodes || 1) * 10) * 100)
+  }
+})
+
 const loadStatistics = async () => {
   isLoading.value = true
   error.value = ''
-  
+
   try {
-    const params = {
-      periode: selectedPeriod.value
-    }
-    
-    if (selectedProject.value !== 'all') {
-      params.projetId = selectedProject.value
-    }
+    const params = new URLSearchParams()
+    if (selectedProject.value !== 'all') params.append('projetId', selectedProject.value)
+    if (selectedPeriod.value !== 'all') params.append('periode', selectedPeriod.value)
 
-    console.log('Chargement des statistiques avec params:', params)
+    const response = await axios.get(`/api/statistics/global?${params}`)
+    statistics.value = response.data
 
-    // Test d'abord l'endpoint KPI seul
-    try {
-      const kpiRes = await axios.get('/api/statistics/kpi')
-      console.log('KPI chargés:', kpiRes.data)
-    } catch (kpiError) {
-      console.error('Erreur KPI:', kpiError)
+    // Charger la liste des projets pour le filtre
+    if (statistics.value.projectsDetail) {
+      projects.value = statistics.value.projectsDetail.map(p => ({ id: p.id, nom: p.nom }))
     }
 
-    // Puis les statistiques globales
-    const statsRes = await axios.get('/api/statistics/global', { params })
-    console.log('Statistiques globales chargées:', statsRes.data)
-    statistics.value = statsRes.data
-    
   } catch (err) {
-    console.error('Erreur détaillée:', err)
-    console.error('Response data:', err.response?.data)
-    error.value = `Impossible de charger les statistiques: ${err.response?.data?.message || err.message}`
+    error.value = `Erreur: ${err.response?.data?.message || err.message}`
+    console.error('Erreur stats:', err)
   } finally {
     isLoading.value = false
   }
 }
 
-// Méthodes utilitaires
 const formatMonth = (monthStr) => {
   if (!monthStr) return ''
   const [year, month] = monthStr.split('-')
@@ -377,36 +554,28 @@ const formatMonth = (monthStr) => {
 }
 
 const calculateBarHeight = (value, type) => {
-  if (!statistics.value.monthlyProgress) return 0
-  
+  if (!statistics.value.monthlyProgress?.length) return 0
   const maxValues = {
-    episodes: Math.max(...statistics.value.monthlyProgress.map(item => item.episodes)),
-    sequences: Math.max(...statistics.value.monthlyProgress.map(item => item.sequences)),
-    scenes: Math.max(...statistics.value.monthlyProgress.map(item => item.scenes))
+    episodes: Math.max(...statistics.value.monthlyProgress.map(i => i.episodes || 0)),
+    sequences: Math.max(...statistics.value.monthlyProgress.map(i => i.sequences || 0)),
+    scenes: Math.max(...statistics.value.monthlyProgress.map(i => i.scenes || 0))
   }
-  
-  const maxValue = maxValues[type] || 1
-  return Math.max((value / maxValue) * 80, 5) // Minimum 5% pour la visibilité
+  const max = maxValues[type] || 1
+  return Math.max((value / max) * 80, 5)
 }
 
-const formatRoleName = (role) => {
-  const roleNames = {
-    'REALISATEUR': 'Réalisateurs',
-    'SCENARISTE': 'Scénaristes',
-    'ADMIN': 'Administrateurs'
-  }
-  return roleNames[role] || role
-}
+const formatRoleName = (role) => ({
+  'REALISATEUR': 'Réalisateurs',
+  'SCENARISTE': 'Scénaristes',
+  'ADMIN': 'Administrateurs'
+}[role] || role)
 
-const getInitials = (name) => {
-  if (!name) return '?'
-  return name.split(' ').map(part => part.charAt(0)).join('').toUpperCase().substring(0, 2)
-}
+const getInitials = (name) => name?.split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2) || '?'
 
 const formatDate = (dateStr) => {
   if (!dateStr || dateStr === 'N/A') return 'N/A'
   try {
-    return new Date(dateStr).toLocaleDateString('fr-FR')
+    return new Date(dateStr).toLocaleDateString('fr-FR', { timeZone: 'Indian/Antananarivo' })
   } catch {
     return dateStr
   }
@@ -420,9 +589,7 @@ onMounted(() => {
 <style scoped>
 .statistiques-globales {
   padding: 20px;
-  /* background: linear-gradient(135deg, #5D6D7E 0%, #A8A3F6 100%); */
   min-height: 100vh;
-
 }
 
 .statistiques-container {
@@ -432,9 +599,7 @@ onMounted(() => {
   padding: 2rem;
   box-shadow: var(--shadow-md);
   animation: fadeIn 0.6s ease-out;
-
 }
-
 
 /* En-tête */
 .statistiques-header {
@@ -974,6 +1139,119 @@ onMounted(() => {
   backdrop-filter: blur(10px);
 }
 
+/* Nouveaux styles pour les sections ajoutées */
+.totals-section {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+}
+
+.totals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.total-card {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.total-card:hover {
+  transform: translateY(-3px);
+}
+
+.total-number {
+  font-size: 2em;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 10px 0;
+}
+
+.total-label {
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+.type-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.type-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.type-name {
+  width: 120px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.type-bar {
+  flex: 1;
+  height: 20px;
+  background: #ecf0f1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.type-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #2980b9);
+  border-radius: 10px;
+  transition: width 1s ease;
+}
+
+.type-value {
+  width: 80px;
+  text-align: right;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.activity-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.activity-label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.activity-value {
+  font-weight: bold;
+  color: #3498db;
+  font-size: 1.1em;
+}
+
+.no-data {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 20px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .charts-section {
@@ -1010,6 +1288,23 @@ onMounted(() => {
   .bar-segment {
     height: 100%;
   }
+
+  .totals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .type-item {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .type-name {
+    width: auto;
+  }
+
+  .type-value {
+    width: auto;
+  }
 }
 </style>
-

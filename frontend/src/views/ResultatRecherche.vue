@@ -12,6 +12,11 @@
         
         <!-- Boutons d'export séparés -->
        <div class="export-buttons">
+          <!-- NOUVEAU BOUTON : Navigation vers écran de travail -->
+          <button @click="naviguerVersEcranTravail" class="btn-ecran-travail">
+            {{ getEcranTravailButtonText() }}
+          </button>
+          
           <button @click="exporterPDF" class="btn-export-pdf" :disabled="exportEnCours">
             📄 {{ exportEnCours ? 'Génération...' : 'Télécharger PDF' }}
           </button>
@@ -681,7 +686,8 @@ export default {
         toEmails: [], 
         subject: 'Export PDF - Détails du résultat',
         message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
-      }
+      },
+      nouvelEmail: ''
     }
   },
   computed: {
@@ -733,6 +739,72 @@ export default {
     await this.chargerDetails()
   },
   methods: {
+    // NOUVELLE MÉTHODE : Navigation vers écran de travail
+    naviguerVersEcranTravail() {
+      if (!this.resultat) return
+      
+      let routePath = ''
+      let queryParams = {}
+      
+      switch (this.resultat.type) {
+        case 'scene':
+          // Pour une scène, on va vers l'écran de travail avec l'épisode et la séquence
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          queryParams = {
+            episodeId: this.resultat.episodeId,
+            sequenceId: this.resultat.sequenceId
+          }
+          break
+          
+        case 'personnage':
+          // Pour un personnage, on va vers l'écran de travail du projet
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          // Optionnel : on pourrait filtrer pour montrer les scènes du personnage
+          queryParams = {
+            filterPersonnage: this.resultat.id
+          }
+          break
+          
+        case 'lieu':
+          // Pour un lieu, filtrer les scènes à ce lieu
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          queryParams = {
+            filterLieu: this.resultat.id
+          }
+          break
+          
+        case 'plateau':
+          // Pour un plateau, filtrer les scènes sur ce plateau
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          queryParams = {
+            filterPlateau: this.resultat.id
+          }
+          break
+          
+        default:
+          // Navigation simple vers le projet
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+      }
+      
+      this.$router.push({
+        path: routePath,
+        query: queryParams
+      })
+    },
+
+    // Méthode utilitaire pour déterminer le texte du bouton
+    getEcranTravailButtonText() {
+      if (!this.resultat) return 'Voir dans le projet'
+      
+      switch (this.resultat.type) {
+        case 'scene': return '🎬 Voir la scène dans le projet'
+        case 'personnage': return '👤 Voir le personnage dans le projet'
+        case 'lieu': return '🏛️ Voir le lieu dans le projet'
+        case 'plateau': return '🎭 Voir le plateau dans le projet'
+        default: return '📁 Voir dans le projet'
+      }
+    },
+
     async chargerDetails() {
       this.chargement = true
       this.erreur = null
@@ -1521,4 +1593,34 @@ export default {
 }
 </script>
 
+<style scoped>
+/* Styles pour le nouveau bouton */
+.btn-ecran-travail {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+}
 
+.btn-ecran-travail:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-ecran-travail:active {
+  transform: translateY(0);
+}
+
+/* Ajustement des boutons d'export */
+.export-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+</style>
