@@ -5,12 +5,14 @@ import com.example.films.dto.EpisodeDTO;
 import com.example.films.dto.SceneDTO;
 import com.example.films.dto.SceneLieuDTO;
 import com.example.films.dto.SequenceDTO;
+import com.example.films.dto.ProjetDTO;
 import com.example.films.service.AuthorizationService;
 import com.example.films.service.DialogueService;
 import com.example.films.service.EpisodeService;
 import com.example.films.service.SceneLieuService;
 import com.example.films.service.SceneService;
 import com.example.films.service.SequenceService;
+import com.example.films.service.ProjetService; // Ajouter cette importation
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -30,18 +32,33 @@ public class EcranTravailController {
     private final SceneLieuService sceneLieuService;
     private final DialogueService dialogueService;
     private final AuthorizationService authorizationService;
+    private final ProjetService projetService; // Ajouter cette déclaration
 
     public EcranTravailController(EpisodeService episodeService, SequenceService sequenceService,
                                   SceneService sceneService, SceneLieuService sceneLieuService,
-                                  DialogueService dialogueService, AuthorizationService authorizationService) {
+                                  DialogueService dialogueService, AuthorizationService authorizationService,
+                                  ProjetService projetService) { // Ajouter ce paramètre
         this.episodeService = episodeService;
         this.sequenceService = sequenceService;
         this.sceneService = sceneService;
         this.sceneLieuService = sceneLieuService;
         this.dialogueService = dialogueService;
         this.authorizationService = authorizationService;
+        this.projetService = projetService; // Initialiser le service
     }
 
+    // Récupérer tous les informations d'un projet
+    @GetMapping("/projets/{projetId}/infos")
+    public ResponseEntity<ProjetDTO> getProjetInfos(@PathVariable Long projetId) {
+        logger.info("Récupération infos projet ID: {}", projetId);
+        try {
+            ProjetDTO projet = projetService.getProjetById(projetId); // Maintenant ça fonctionnera
+            return ResponseEntity.ok(projet);
+        } catch (RuntimeException e) {
+            logger.error("Projet non trouvé ID: {}", projetId);
+            return ResponseEntity.notFound().build();
+        }
+    }
  
     // Récupérer tous les épisodes d'un projet
     @GetMapping("/projets/{projetId}/episodes")
@@ -243,3 +260,5 @@ public class EcranTravailController {
         return ResponseEntity.ok(sequence);
     }
 }
+
+

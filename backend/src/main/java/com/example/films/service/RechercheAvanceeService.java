@@ -52,26 +52,42 @@ public class RechercheAvanceeService {
     
     
     public List<RechercheAvanceeDTO> rechercherAvance(CritereRechercheDTO criteres) {
-    // CORRECTION : Implémentation sans getTypeRecherche()
-    List<RechercheAvanceeDTO> resultats = new ArrayList<>();
-    
-    if (criteres == null) {
+        List<RechercheAvanceeDTO> resultats = new ArrayList<>();
+        
+        if (criteres == null) {
+            return resultats;
+        }
+        
+        // Filtrer par types de recherche sélectionnés
+        if (criteres.getTypesRecherche() == null || criteres.getTypesRecherche().isEmpty()) {
+            // Par défaut, rechercher dans tous les types
+            resultats.addAll(rechercherScenes(criteres));
+            resultats.addAll(rechercherPersonnages(criteres));
+            resultats.addAll(rechercherLieux(criteres));
+            resultats.addAll(rechercherPlateaux(criteres));
+        } else {
+            // Rechercher uniquement dans les types sélectionnés
+            if (criteres.getTypesRecherche().contains("scenes")) {
+                resultats.addAll(rechercherScenes(criteres));
+            }
+            if (criteres.getTypesRecherche().contains("personnages")) {
+                resultats.addAll(rechercherPersonnages(criteres));
+            }
+            if (criteres.getTypesRecherche().contains("lieux")) {
+                resultats.addAll(rechercherLieux(criteres));
+            }
+            if (criteres.getTypesRecherche().contains("plateaux")) {
+                resultats.addAll(rechercherPlateaux(criteres));
+            }
+        }
+        
+        // Appliquer le regroupement si demandé
+        if (criteres.getRegroupement() != null && !criteres.getRegroupement().isEmpty()) {
+            resultats = regrouperResultats(resultats, criteres.getRegroupement());
+        }
+        
         return resultats;
     }
-    
-    // Recherche dans tous les types par défaut
-    resultats.addAll(rechercherScenes(criteres));
-    resultats.addAll(rechercherPersonnages(criteres));
-    resultats.addAll(rechercherLieux(criteres));
-    resultats.addAll(rechercherPlateaux(criteres));
-    
-    // Appliquer le regroupement si demandé
-    if (criteres.getRegroupement() != null && !criteres.getRegroupement().isEmpty()) {
-        resultats = regrouperResultats(resultats, criteres.getRegroupement());
-    }
-    
-    return resultats;
-}
 
 
     private List<Map<String, Object>> recupererDialoguesScene(Long sceneId) {
@@ -603,59 +619,142 @@ public class RechercheAvanceeService {
     
     // Les méthodes existantes de recherche et conversion restent inchangées
     private List<RechercheAvanceeDTO> rechercherScenes(CritereRechercheDTO criteres) {
-        return sceneTournageRepository.findByDateTournageBetween(
+        List<SceneTournage> tournages;
+        
+        if (criteres.getProjetId() != null) {
+            // CORRECTION : Filtrer par projet
+            tournages = sceneTournageRepository.findAll().stream()
+                .filter(tournage -> tournage.getScene() != null &&
+                                tournage.getScene().getSequence() != null &&
+                                tournage.getScene().getSequence().getEpisode() != null &&
+                                tournage.getScene().getSequence().getEpisode().getProjet() != null &&
+                                tournage.getScene().getSequence().getEpisode().getProjet().getId().equals(criteres.getProjetId()))
+                .collect(Collectors.toList());
+        } else {
+            // Recherche sans filtre projet
+            tournages = sceneTournageRepository.findByDateTournageBetween(
                 criteres.getDateDebut() != null ? criteres.getDateDebut() : LocalDate.of(1900, 1, 1),
-                criteres.getDateFin() != null ? criteres.getDateFin() : LocalDate.now().plusYears(10))
-            .stream()
+                criteres.getDateFin() != null ? criteres.getDateFin() : LocalDate.now().plusYears(10)
+            );
+        }
+        
+        return tournages.stream()
             .filter(tournage -> filtreParTermeEtStatut(tournage, criteres))
             .map(this::convertirSceneTournageEnDTO)
             .collect(Collectors.toList());
     }
     
     private List<RechercheAvanceeDTO> rechercherPersonnages(CritereRechercheDTO criteres) {
+        List<Personnage> personnages;
+        
+        if (criteres.getProjetId() != null) {
+            // CORRECTION : Filtrer par projet
+            personnages = personnageRepository.findAll().stream()
+                .filter(personnage -> personnage.getProjet() != null && 
+                                    personnage.getProjet().getId().equals(criteres.getProjetId()))
+                .collect(Collectors.toList());
+        } else {
+            // Tous les personnages
+            personnages = personnageRepository.findAll();
+        }
+        
         String terme = criteres.getTermeRecherche() != null ? 
             criteres.getTermeRecherche().toLowerCase() : "";
         
-        return personnageRepository.findAll().stream()
+        return personnages.stream()
             .filter(personnage -> 
+                terme.isEmpty() ||
                 personnage.getNom().toLowerCase().contains(terme) ||
                 (personnage.getDescription() != null && 
-                 personnage.getDescription().toLowerCase().contains(terme)) ||
+                personnage.getDescription().toLowerCase().contains(terme)) ||
                 (personnage.getComedien() != null && 
-                 personnage.getComedien().getNom().toLowerCase().contains(terme)))
+                personnage.getComedien().getNom().toLowerCase().contains(terme)))
             .map(this::convertirPersonnageEnDTO)
             .collect(Collectors.toList());
     }
     
     private List<RechercheAvanceeDTO> rechercherLieux(CritereRechercheDTO criteres) {
+        List<Lieu> lieux;
+        
+        if (criteres.getProjetId() != null) {
+            // CORRECTION : Filtrer par projet
+            lieux = lieuRepository.findAll().stream()
+                .filter(lieu -> lieu.getProjet() != null && 
+                            lieu.getProjet().getId().equals(criteres.getProjetId()))
+                .collect(Collectors.toList());
+        } else {
+            // Tous les lieux
+            lieux = lieuRepository.findAll();
+        }
+        
         String terme = criteres.getTermeRecherche() != null ? 
             criteres.getTermeRecherche().toLowerCase() : "";
         
-        return lieuRepository.findAll().stream()
+        return lieux.stream()
             .filter(lieu -> 
+                terme.isEmpty() ||
                 lieu.getNomLieu().toLowerCase().contains(terme) ||
                 (lieu.getAdresse() != null && 
-                 lieu.getAdresse().toLowerCase().contains(terme)) ||
+                lieu.getAdresse().toLowerCase().contains(terme)) ||
                 lieu.getTypeLieu().toLowerCase().contains(terme))
             .map(this::convertirLieuEnDTO)
             .collect(Collectors.toList());
     }
     
-    private List<RechercheAvanceeDTO> rechercherPlateaux(CritereRechercheDTO criteres) {
-        String terme = criteres.getTermeRecherche() != null ? 
-            criteres.getTermeRecherche().toLowerCase() : "";
-        
-        return plateauRepository.findAll().stream()
-            .filter(plateau -> 
-                plateau.getNom().toLowerCase().contains(terme) ||
-                (plateau.getDescription() != null && 
-                 plateau.getDescription().toLowerCase().contains(terme)) ||
-                plateau.getTypePlateau().toLowerCase().contains(terme) ||
-                (plateau.getLieu() != null && 
-                 plateau.getLieu().getNomLieu().toLowerCase().contains(terme)))
-            .map(this::convertirPlateauEnDTO)
+   private List<RechercheAvanceeDTO> rechercherPlateaux(CritereRechercheDTO criteres) {
+    List<Plateau> plateaux;
+    
+    if (criteres.getProjetId() != null) {
+        // CORRECTION : Filtrer les plateaux par projet
+        // Récupérer d'abord tous les plateaux, puis filtrer côté Java
+        plateaux = plateauRepository.findAll().stream()
+            .filter(plateau -> plateau.getLieu() != null && 
+                              plateau.getLieu().getProjet() != null && 
+                              plateau.getLieu().getProjet().getId().equals(criteres.getProjetId()))
             .collect(Collectors.toList());
+    } else {
+        // Tous les plateaux
+        plateaux = plateauRepository.findAll();
     }
+    
+    String terme = criteres.getTermeRecherche() != null ? 
+        criteres.getTermeRecherche().toLowerCase() : "";
+    
+    return plateaux.stream()
+        .filter(plateau -> 
+            terme.isEmpty() ||
+            plateau.getNom().toLowerCase().contains(terme) ||
+            (plateau.getDescription() != null && 
+             plateau.getDescription().toLowerCase().contains(terme)) ||
+            plateau.getTypePlateau().toLowerCase().contains(terme) ||
+            (plateau.getLieu() != null && 
+             plateau.getLieu().getNomLieu().toLowerCase().contains(terme)))
+        .map(this::convertirPlateauEnDTO)
+        .collect(Collectors.toList());
+}
+    
+    // private boolean filtreParTermeEtStatut(SceneTournage tournage, CritereRechercheDTO criteres) {
+    //     String terme = criteres.getTermeRecherche() != null ? 
+    //         criteres.getTermeRecherche().toLowerCase() : "";
+        
+    //     boolean matchesTerme = terme.isEmpty() ||
+    //         tournage.getScene().getTitre().toLowerCase().contains(terme) ||
+    //         (tournage.getScene().getSynopsis() != null && 
+    //         tournage.getScene().getSynopsis().toLowerCase().contains(terme)) ||
+    //         (tournage.getLieu() != null && 
+    //         tournage.getLieu().getNomLieu().toLowerCase().contains(terme)) ||
+    //         (tournage.getPlateau() != null && 
+    //         tournage.getPlateau().getNom().toLowerCase().contains(terme)) ||
+    //         // Recherche dans les dialogues
+    //         dialogueRepository.findBySceneId(tournage.getScene().getId()).stream()
+    //             .anyMatch(dialogue -> dialogue.getTexte().toLowerCase().contains(terme));
+        
+    //     boolean matchesStatut = criteres.getStatuts() == null || 
+    //         criteres.getStatuts().isEmpty() ||
+    //         criteres.getStatuts().contains(tournage.getStatutTournage());
+        
+    //     return matchesTerme && matchesStatut;
+    // }
     
     private boolean filtreParTermeEtStatut(SceneTournage tournage, CritereRechercheDTO criteres) {
         String terme = criteres.getTermeRecherche() != null ? 
@@ -664,19 +763,29 @@ public class RechercheAvanceeService {
         boolean matchesTerme = terme.isEmpty() ||
             tournage.getScene().getTitre().toLowerCase().contains(terme) ||
             (tournage.getScene().getSynopsis() != null && 
-             tournage.getScene().getSynopsis().toLowerCase().contains(terme)) ||
+            tournage.getScene().getSynopsis().toLowerCase().contains(terme)) ||
             (tournage.getLieu() != null && 
-             tournage.getLieu().getNomLieu().toLowerCase().contains(terme)) ||
+            tournage.getLieu().getNomLieu().toLowerCase().contains(terme)) ||
             (tournage.getPlateau() != null && 
-             tournage.getPlateau().getNom().toLowerCase().contains(terme));
+            tournage.getPlateau().getNom().toLowerCase().contains(terme)) ||
+            // Recherche dans les dialogues
+            dialogueRepository.findBySceneId(tournage.getScene().getId()).stream()
+                .anyMatch(dialogue -> dialogue.getTexte().toLowerCase().contains(terme));
         
         boolean matchesStatut = criteres.getStatuts() == null || 
             criteres.getStatuts().isEmpty() ||
             criteres.getStatuts().contains(tournage.getStatutTournage());
         
-        return matchesTerme && matchesStatut;
+        // CORRECTION : Vérifier aussi le projet si spécifié
+        boolean matchesProjet = criteres.getProjetId() == null ||
+            (tournage.getScene().getSequence() != null &&
+            tournage.getScene().getSequence().getEpisode() != null &&
+            tournage.getScene().getSequence().getEpisode().getProjet() != null &&
+            tournage.getScene().getSequence().getEpisode().getProjet().getId().equals(criteres.getProjetId()));
+        
+        return matchesTerme && matchesStatut && matchesProjet;
     }
-    
+
     private List<RechercheAvanceeDTO> regrouperResultats(List<RechercheAvanceeDTO> resultats, String regroupement) {
         Map<String, List<RechercheAvanceeDTO>> groupes = new HashMap<>();
         
@@ -831,5 +940,19 @@ public class RechercheAvanceeService {
         
         return dto;
     }
+
+    // NOUVELLE MÉTHODE - Récupérer les statuts disponibles pour un projet spécifique
+    public List<String> getStatutsDisponiblesParProjet(Long projetId) {
+        // Récupérer les statuts distincts des scènes de tournage pour ce projet
+        List<String> statuts = sceneTournageRepository.findStatutsDistinctsByProjetId(projetId);
+        
+        // Si aucun statut trouvé, retourner les statuts par défaut
+        if (statuts.isEmpty()) {
+            return List.of("planifie", "confirme", "en_cours", "termine", "reporte");
+        }
+        
+        return statuts;
+    }
 }
+
 

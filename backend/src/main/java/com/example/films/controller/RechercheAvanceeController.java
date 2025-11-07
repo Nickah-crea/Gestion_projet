@@ -82,5 +82,17 @@ public class RechercheAvanceeController {
             return ResponseEntity.notFound().build();
         }
     }
+
+     // NOUVEL ENDPOINT - Statuts disponibles par projet
+    @GetMapping("/statuts/projet/{projetId}")
+    public ResponseEntity<List<String>> getStatutsParProjet(@PathVariable Long projetId) {
+        try {
+            List<String> statuts = rechercheAvanceeService.getStatutsDisponiblesParProjet(projetId);
+            return ResponseEntity.ok(statuts);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
+
 

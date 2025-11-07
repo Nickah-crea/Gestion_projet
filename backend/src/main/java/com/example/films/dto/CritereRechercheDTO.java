@@ -18,16 +18,6 @@ public class CritereRechercheDTO {
     private String regroupement; // "plateau", "lieu", "personnage", "statut"
     private Integer page = 0;
     private Integer taille = 20;
-
-    // // Getters et setters
-    // public String getTypeRecherche() {
-    //     return typeRecherche;
-    // }
-    
-    // public void setTypeRecherche(String typeRecherche) {
-    //     this.typeRecherche = typeRecherche;
-    // }
-
 }
 
     

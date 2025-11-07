@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface SceneTournageRepository extends JpaRepository<SceneTournage, Long> {
 
-   
-    
     Optional<SceneTournage> findBySceneId(Long sceneId);
     
     List<SceneTournage> findByDateTournage(LocalDate date);
@@ -38,8 +36,15 @@ public interface SceneTournageRepository extends JpaRepository<SceneTournage, Lo
     @Query("SELECT st FROM SceneTournage st LEFT JOIN FETCH st.scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e LEFT JOIN FETCH e.projet WHERE st.id = :id")
     Optional<SceneTournage> findByIdWithDetails(@Param("id") Long id);
 
-   
-
+    // NOUVELLE MÉTHODE : Trouver les statuts distincts par projet
+        @Query("SELECT DISTINCT st.statutTournage FROM SceneTournage st " +
+            "JOIN st.scene s " +
+            "JOIN s.sequence seq " +
+            "JOIN seq.episode e " +
+            "JOIN e.projet p " +
+            "WHERE p.id = :projetId")
+        List<String> findStatutsDistinctsByProjetId(@Param("projetId") Long projetId);
+        
     // @Query("SELECT st FROM SceneTournage st " +
     //        "JOIN st.scene s " +
     //        "JOIN ComedienScene cs ON s.id = cs.scene.id " +
@@ -52,3 +57,4 @@ public interface SceneTournageRepository extends JpaRepository<SceneTournage, Lo
      // SceneTournageRepository.java                  
         List<SceneTournage> findByPlateauId(Long plateauId);
 }
+
