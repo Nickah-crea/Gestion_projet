@@ -139,7 +139,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { watch } from 'vue';
 import axios from 'axios';
-import '../assets/css/ecran_travail.css';
+// import '../assets/css/ecran_travail.css';
 
 const route = useRoute();
 const store = useEcranTravailStore();
@@ -840,3 +840,4 @@ body {
   position: relative;
 }
 </style>
+

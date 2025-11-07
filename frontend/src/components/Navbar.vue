@@ -1,25 +1,31 @@
 <template>
   <nav class="sidebar" :class="{ 'collapsed': isCollapsed }">
-    <div class="sidebar-brand">
-      <div class="user-profile-header">
-        <div class="user-avatar">
-          <i class="fas fa-user-circle"></i>
-        </div>
-        <div v-if="!isCollapsed" class="user-profile-info">
-          <span class="user-name">{{ user?.nom || 'Utilisateur' }}</span>
-          <span class="user-storage">Rôle: {{ user?.role || 'Utilisateur' }}</span>
-        </div>
-      </div>
+        
+    <div class="menu-toggle-section">
       <button @click="toggleSidebar" class="menu-toggle">
-        <span v-if="!isCollapsed" class="menu-icon"><i class="fas fa-bars"></i></span>
-        <span v-else class="menu-icon"><i class="fas fa-arrow-left"></i></span>
+        <i class="fas" :class="isCollapsed ? 'fa-arrow-right' : 'fa-arrow-left'"></i>
       </button>
     </div>
-
     
-    <div class="sidebar-menu">
-      <div class="sidebar-links">
-        <!-- Accueil : visible pour tous SAUF ADMIN et SCENARISTE -->
+    <!-- HEADER -->
+    <div class="sidebar-header">
+      <div class="user-profile-section">
+        <div class="user-profile-header">
+          <div class="user-avatar icon">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div v-if="!isCollapsed" class="user-profile-info">
+            <span class="user-name">{{ user?.nom || 'Utilisateur' }}</span>
+            <span class="user-role">Rôle: {{ user?.role || 'Utilisateur' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENU SCROLLABLE + FOOTER FIXE -->
+    <div class="sidebar-content-wrapper">
+      <!-- MENU DES LIENS SCROLLABLE -->
+      <div class="sidebar-links-scrollable">
         <router-link to="/accueil" class="sidebar-link" v-if="user?.role !== 'ADMIN' && user?.role !== 'SCENARISTE'"  @click="toggleSidebarIfMobile">
           <i class="fas fa-home icon"></i>
           <span v-if="!isCollapsed" class="link-text">Accueil</span>
@@ -37,7 +43,7 @@
 
         <router-link to="/creation-comedien" class="sidebar-link"  @click="toggleSidebarIfMobile">
           <i class="fas fa-users icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Gestion Comédiens</span>
+          <span v-if="!isCollapsed" class="link-text"> Comédiens</span>
         </router-link>
 
         <router-link to="/utilisateurs" class="sidebar-link" v-if="user?.role === 'ADMIN'"  @click="toggleSidebarIfMobile">
@@ -45,7 +51,6 @@
           <span v-if="!isCollapsed" class="link-text">Utilisateurs</span>
         </router-link>
 
-        <!-- Statistiques : visible seulement pour ADMIN et SCENARISTE -->
         <router-link to="/statistiques" class="sidebar-link" v-if="user?.role === 'ADMIN' || user?.role === 'SCENARISTE'"  @click="toggleSidebarIfMobile">
           <i class="fas fa-chart-bar icon"></i>
           <span v-if="!isCollapsed" class="link-text">Statistiques</span>
@@ -63,65 +68,60 @@
 
         <router-link to="/creation-personnage" class="sidebar-link"  @click="toggleSidebarIfMobile">
           <i class="fas fa-user-astronaut icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Gestion Personnages</span>
+          <span v-if="!isCollapsed" class="link-text">Personnages</span>
         </router-link>
 
         <router-link to="/creation-dialogue" class="sidebar-link"  @click="toggleSidebarIfMobile">
           <i class="fas fa-comment-dots icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Gestion Dialogues</span>
+          <span v-if="!isCollapsed" class="link-text">Dialogues</span>
         </router-link>
 
         <router-link to="/creation-lieu" class="sidebar-link"  @click="toggleSidebarIfMobile">
           <i class="fas fa-map-marker-alt icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Gestion Lieux</span>
+          <span v-if="!isCollapsed" class="link-text">Lieux</span>
         </router-link>
 
         <router-link to="/creation-plateau" class="sidebar-link"  @click="toggleSidebarIfMobile">
           <i class="fas fa-camera icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Gestion Plateaux</span>
+          <span v-if="!isCollapsed" class="link-text">Plateaux</span>
         </router-link>
-        
+
+        <router-link to="/equipe" class="sidebar-link" v-if="user?.role === 'ADMIN'"  @click="toggleSidebarIfMobile">
+          <i class="fas fa-users-cog icon"></i>
+          <span v-if="!isCollapsed" class="link-text">Équipe</span>
+        </router-link>
+
         <router-link to="/raccords" class="sidebar-link"  @click="toggleSidebarIfMobile">
           <i class="fas fa-link icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Gestion Raccords</span>
+          <span v-if="!isCollapsed" class="link-text">Raccords</span>
         </router-link>
-
-        <router-link to="/raccords-verification" class="sidebar-link"  @click="toggleSidebarIfMobile">
-          <i class="fas fa-check-circle icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Vérification Raccords</span>
-        </router-link>
-       
-        <router-link to="/gestion-equipe" class="sidebar-link" v-if="user?.role === 'ADMIN'"  @click="toggleSidebarIfMobile">
-          <i class="fas fa-users-cog icon"></i>
-          <span v-if="!isCollapsed" class="link-text">Gestion Équipe</span>
-        </router-link>
-
-
       </div>
       
-      <div class="sidebar-footer">
-        <!-- Déconnexion comme un lien normal -->
+      <!-- FOOTER FIXE EN BAS -->
+      <div class="sidebar-footer fixed-footer">
+        <div class="theme-toggle-footer">
+          <div class="theme-toggle-footer-2">
+            <button class="theme-btn moon-btn" :class="{ 'active': !isDarkMode }" @click="toggleTheme('light')">
+              <i class="fas fa-sun"></i>
+            </button>
+            <button class="theme-btn sun-btn" :class="{ 'active': isDarkMode }" @click="toggleTheme('dark')">
+              <i class="fas fa-moon"></i>
+            </button>
+          </div>
+        </div>
+
         <a href="#" @click="logout" class="sidebar-link logout-link">
           <i class="fas fa-sign-out-alt icon"></i>
           <span v-if="!isCollapsed" class="link-text">Déconnexion</span>
         </a>
-        
-        <!-- Icônes Lune et Soleil côte à côte avec border-radius 50px -->
-        <div class="theme-toggle">
-          <button class="theme-btn moon-btn" :class="{ 'active': !isDarkMode }" @click="toggleTheme('light')">
-            <i class="fas fa-sun"></i>
-          </button>
-          <button class="theme-btn sun-btn" :class="{ 'active': isDarkMode }" @click="toggleTheme('dark')">
-            <i class="fas fa-moon"></i>
-          </button>
-        </div>
       </div>
     </div>
   </nav>
 </template>
 
+
 <script>
-import '../assets/css/sidebar.css';
+
 export default {
   name: 'Sidebar',
   data() {
@@ -161,6 +161,11 @@ export default {
     },
     toggleSidebar() {
       this.isCollapsed = !this.isCollapsed;
+      if (this.isCollapsed) {
+        document.body.classList.add('sidebar-collapsed-global');
+      } else {
+        document.body.classList.remove('sidebar-collapsed-global');
+      }
     },
     toggleSidebarIfMobile() {
       if (this.isMobile) {
@@ -188,3 +193,4 @@ export default {
   }
 };
 </script>
+

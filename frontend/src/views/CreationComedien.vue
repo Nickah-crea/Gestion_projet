@@ -65,64 +65,69 @@
           <input type="hidden" v-model="formData.projetId" required />
         </div>
 
-        <div class="form-group">
-          <label for="photo">Photo</label>
-          <div class="photo-upload">
-            <input
-              type="file"
-              id="photo"
-              ref="photoInput"
-              @change="handlePhotoUpload"
-              accept="image/*"
-              class="photo-input"
-            />
-            <label for="photo" class="photo-label">
-              <span v-if="!previewPhoto">📷 Choisir une photo</span>
-              <span v-else>📷 Changer la photo</span>
-            </label>
-            <div v-if="previewPhoto" class="photo-preview">
-              <img :src="previewPhoto" alt="Aperçu de la photo" class="preview-image" />
-              <button type="button" @click="removePhoto" class="remove-photo-btn">×</button>
+        <!-- === DISPONIBILITÉS + PHOTO CÔTE À CÔTE === -->
+        <div class="form-row-split">
+          <!-- COLONNE 1 : Disponibilités -->
+          <div class="form-group disponibilites-section">
+            <label>Disponibilités</label>
+            <div class="disponibilites-list">
+              <div v-for="(dispo, index) in formData.disponibilites" :key="index" class="disponibilite-item">
+                <div class="disponibilite-inputs">
+                  <input
+                    type="date"
+                    v-model="dispo.date"
+                    class="date-input"
+                    placeholder="Date"
+                  />
+                  <select v-model="dispo.statut" class="statut-select">
+                    <option value="DISPONIBLE">Disponible</option>
+                    <option value="INDISPONIBLE">Indisponible</option>
+                    <option value="OCCUPE">Occupé</option>
+                  </select>
+                  <button
+                    type="button"
+                    @click="removeDisponibilite(index)"
+                    class="remove-dispo-btn"
+                    title="Supprimer"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
             </div>
+            <button
+              type="button"
+              @click="addDisponibilite"
+              class="btn-add-dispo"
+            >
+              + Ajouter une disponibilité
+            </button>
           </div>
-        </div>
 
-        <!-- Section Disponibilités -->
-        <div class="form-group disponibilites-section">
-          <label>Disponibilités</label>
-          <div class="disponibilites-list">
-            <div v-for="(dispo, index) in formData.disponibilites" :key="index" class="disponibilite-item">
-              <div class="disponibilite-inputs">
-                <input
-                  type="date"
-                  v-model="dispo.date"
-                  class="date-input"
-                  placeholder="Date"
-                />
-                <select v-model="dispo.statut" class="statut-select">
-                  <option value="DISPONIBLE">Disponible</option>
-                  <option value="INDISPONIBLE">Indisponible</option>
-                  <option value="OCCUPE">Occupé</option>
-                </select>
-                <button
-                  type="button"
-                  @click="removeDisponibilite(index)"
-                  class="remove-dispo-btn"
-                  title="Supprimer"
-                >
-                  ×
-                </button>
+          <!-- COLONNE 2 : Photo -->
+          <div class="form-group photo-section">
+            <label for="photo">Photo</label>
+            <div class="photo-upload">
+              <input
+                type="file"
+                id="photo"
+                ref="photoInput"
+                @change="handlePhotoUpload"
+                accept="image/*"
+                class="photo-input"
+              />
+              <label for="photo" class="photo-label">
+                <span v-if="!previewPhoto">Choisir une photo</span>
+                <span v-else>Changer la photo</span>
+              </label>
+              <div v-if="previewPhoto" class="photo-preview">
+                <img :src="previewPhoto" alt="Aperçu de la photo" class="preview-image" />
+                <button type="button" @click="removePhoto" class="remove-photo-btn">×</button>
               </div>
             </div>
           </div>
-          <button
-            type="button"
-            @click="addDisponibilite"
-            class="btn-add-dispo"
-          >
-            + Ajouter une disponibilité
-          </button>
         </div>
+        <!-- === FIN DU BLOC CÔTE À CÔTE === -->
 
         <div class="form-actions">
           <button
@@ -136,7 +141,7 @@
             v-if="isEditing"
             type="button"
             @click="resetForm"
-            class="btn-secondary"
+            class="#"
           >
             Annuler
           </button>
@@ -144,12 +149,11 @@
       </form>
     </div>
 
-    <!-- Liste des comédiens -->
+    <!-- Liste des comédiens (inchangée) -->
     <div class="comediens-list">
       <div class="list-header">
         <h3>Liste des comédiens</h3>
         
-        <!-- Zone de recherche des comédiens -->
         <div class="search-section">
           <div class="search-group">
             <label for="comedienSearch">Rechercher un comédien</label>
@@ -163,7 +167,6 @@
             />
           </div>
           
-          <!-- Filtres supplémentaires -->
           <div class="filters-group">
             <div class="filter-item">
               <label for="projetFilter">Filtrer par projet</label>
@@ -212,7 +215,7 @@
               :alt="comedien.nom"
               class="photo"
             />
-            <div v-else class="photo-placeholder">📷</div>
+            <div v-else class="photo-placeholder">No photo</div>
           </div>
           
           <div class="comedien-info">
@@ -221,7 +224,6 @@
             <p><strong>Email:</strong> {{ comedien.email }}</p>
             <p><strong>Projet:</strong> {{ comedien.projetTitre || 'Non assigné' }}</p>
             
-            <!-- Affichage des disponibilités -->
             <div v-if="comedien.disponibilites && comedien.disponibilites.length > 0" class="disponibilites-display">
               <strong>Disponibilités:</strong>
               <div v-for="dispo in comedien.disponibilites" :key="dispo.id" class="dispo-item">
@@ -244,21 +246,21 @@
               class="btn-edit"
               title="Modifier"
             >
-              ✏️
+              Edit
             </button>
-             <button
-                @click="goToSceneComedien(comedien.id)"
-                class="btn-link"
-                title="Lier à une scène"
-              >
-                🎬
-              </button>
+            <button
+              @click="goToSceneComedien(comedien.id)"
+              class="btn-link"
+              title="Lier à une scène"
+            >
+              Scene
+            </button>
             <button
               @click="deleteComedien(comedien.id)"
               class="btn-delete"
               title="Supprimer"
             >
-              🗑️
+              Delete
             </button>
           </div>
         </div>
@@ -585,4 +587,57 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+/* === GRILLE CÔTE À CÔTE : Disponibilités + Photo === */
+.form-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .form-row-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Ajustement hauteur photo */
+.photo-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.photo-upload {
+  flex: 1;
+}
+
+.photo-preview {
+  position: relative;
+  margin-top: 10px;
+}
+
+.preview-image {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px dashed #ccc;
+}
+
+.remove-photo-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
 

@@ -12,7 +12,7 @@
       <div class="add-sequence-form">
         <form @submit.prevent="submitForm">
           <div class="form-group">
-            <label for="titre">Titre de la séquence *</label>
+            <label for="titre">Titre de la séquence</label>
             <input
               id="titre"
               v-model="formData.titre"
@@ -23,7 +23,7 @@
           </div>
 
           <div class="form-group">
-            <label for="ordre">Ordre dans l'épisode *</label>
+            <label for="ordre">Ordre dans l'épisode</label>
             <input
               id="ordre"
               v-model="formData.ordre"
@@ -44,7 +44,7 @@
           </div>
 
           <div class="form-group">
-            <label for="synopsis">Synopsis *</label>
+            <label for="synopsis">Synopsis</label>
             <textarea
               id="synopsis"
               v-model="formData.synopsis"
@@ -519,3 +519,4 @@ export default {
   }
 }
 </style>
+

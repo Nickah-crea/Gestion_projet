@@ -1,6 +1,15 @@
 <template>
   <div class="app-wrapper-co-conn">
     
+    <!-- Animation de fond minimaliste -->
+    <div class="background-animation-connexion">
+      <div class="animated-bg-connexion">
+        <div class="bg-shape-connexion shape-1-connexion"></div>
+        <div class="bg-shape-connexion shape-2-connexion"></div>
+        <div class="bg-shape-connexion shape-3-connexion"></div>
+      </div>
+    </div>
+    
     <div class="connexion-container-conn">
       <!-- Arrière-plan avec quadrillage -->
       <div class="background-grid-conn"></div>
@@ -131,7 +140,6 @@
 
 <script>
 import axios from 'axios';
-import '../assets/css/connexion.css';
 
 export default {
   name: 'ConnexionView',
@@ -141,10 +149,28 @@ export default {
       password: '',
       rememberMe: false,
       loading: false,
-      error: ''
+      error: '',
+      isDarkMode: false
     };
   },
+  mounted() {
+    // Vérifier le thème au chargement
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      this.isDarkMode = savedTheme === 'dark';
+      document.body.classList.toggle('dark-theme', this.isDarkMode);
+    } else {
+      // Détecter la préférence système
+      this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.body.classList.toggle('dark-theme', this.isDarkMode);
+    }
+  },
   methods: {
+    toggleTheme(theme) {
+      this.isDarkMode = theme === 'dark';
+      document.body.classList.toggle('dark-theme', this.isDarkMode);
+      localStorage.setItem('theme', theme);
+    },
     async seConnecter() {
       this.loading = true;
       this.error = '';

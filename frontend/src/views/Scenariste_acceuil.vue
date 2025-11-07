@@ -1,24 +1,17 @@
 <template>
-  <div class="scenariste-accueil-container-Scenariste">
-    <main class="main-content-scenariste-Scenariste">
-      <!-- Header avec barre de recherche, filtres Statut Recherche et Date spécifique à gauche, bouton à droite -->
-      <div class="header-section-Scenariste">
-        <div class="search-and-filters-Scenariste">
-           <div class="welcome-section-Scenariste">
-              <h2>Bienvenue, {{ user?.nom }} !</h2>
-              <p>Vous êtes connecté en tant que {{ user?.role }}</p>
-            </div>
-            
-            <!-- Bouton Nouveau Projet à droite -->
-        <div class="add-project-center-Scenariste">
-          <button class="add-project-btn-main-Scenariste" @click="goToAddProject">
-            <i class="fas fa-plus-circle icon-Scenariste"></i> 
-            Nouveau Projet
-          </button>
-        </div>
-        
-          <!-- Barre de recherche -->
-          <div class="search-container-Scenariste">
+  <div class="app-wrapper">
+    <div class="scenariste-accueil-container-Scenariste">
+      <main class="main-content-scenariste-Scenariste">
+        <!-- Header avec bienvenue à gauche et barre de recherche à droite -->
+        <div class="header-section-Scenariste">
+          <!-- Bienvenue à gauche -->
+          <div class="welcome-section-Scenariste">
+            <h2>Bienvenue, {{ user?.nom }} !</h2>
+            <p>Vous êtes connecté en tant que {{ user?.role }}</p>
+          </div>
+
+          <!-- Barre de recherche à droite -->
+          <div class="search-container-right-Scenariste">
             <div class="search-input-wrapper-Scenariste">
               <i class="fas fa-search search-icon-Scenariste"></i>
               <input 
@@ -29,304 +22,279 @@
                 class="search-input-Scenariste"
               />
               <button v-if="globalSearchQuery" @click="clearGlobalSearch" class="clear-search-btn-Scenariste">
-                <i class="fas fa-times"></i>
+                <!-- <i class="fas fa-times"></i> -->
               </button>
             </div>  
           </div>
-          <!-- Filtres Statut Recherche et Date spécifique -->
-          <div class="header-filters-Scenariste">
-            <!-- <div class="filter-group-scenariste-Scenariste">
-              <select v-model="searchStatut" @change="performGlobalSearch" class="filter-select-Scenariste">
-                <option value="">Tous les statuts</option>
-                <option v-for="statut in allStatuts" :key="statut" :value="statut">
-                  {{ statut }}
-                </option>
-              </select>
-            </div> -->
-            <div class="filter-group-scenariste-Scenariste">
-              <input 
-                type="date" 
-                v-model="searchSpecificDate" 
-                @change="performGlobalSearch"
-                class="date-input-Scenariste"
-              />
-            </div>
-          </div>
         </div>
-        
-        
-      </div>
 
-      <!-- Filtres restants avec la phrase "Les projets existants" à gauche -->
-      <div class="filters-section-Scenariste">
-        <div class="filters-row-Scenariste">
-          <h3 class="projects-label-Scenariste">Les projets existants</h3>
-          <div class="filters-right-Scenariste">
-            <div class="filter-group-scenariste">
-              <!-- <label>Période:</label> -->
-              <select v-model="filterTimePeriod" class="filter-select-Scenariste">
-                <option value="all">Tous périodes</option>
-                <option value="today">Aujourd'hui</option>
-                <option value="this_week">Cette semaine</option>
-                <option value="this_month">Ce mois-ci</option>
-                <option value="this_year">Cette année</option>
-                <option value="recent">Récent (7 jours)</option>
-              </select>
-            </div>
-            <div class="filter-group-scenariste">
-              <!-- <label>Genre:</label> -->
-              <select v-model="filterGenre" class="filter-select-Scenariste">
-                <option value="">Tous genre</option>
-                <option v-for="genre in genres" :key="genre.idGenre" :value="genre.nomGenre">{{ genre.nomGenre }}</option>
-              </select>
-            </div>
-            <div class="filter-group-scenariste">
-              <!-- <label>Statut:</label> -->
-              <select v-model="filterStatut" class="filter-select-Scenariste">
-                <option value="">Tous statuts</option>
-                <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.nomStatutsProjet">{{ statut.nomStatutsProjet }}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Résultats de recherche globale -->
-      <div v-if="showGlobalSearchResults" class="global-search-results-Scenariste">
-        <div class="search-results-header-Scenariste">
-          <h3>Résultats de recherche ({{ totalResults }})</h3>
-          <button @click="clearGlobalSearch" class="close-results-btn-Scenariste">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        
-        <!-- Résultats des projets -->
-        <div v-if="globalSearchResults.projets.length > 0" class="search-results-group-Scenariste">
-          <h4>Projets ({{ globalSearchResults.projets.length }})</h4>
-          <div v-for="projet in globalSearchResults.projets" :key="projet.id" class="search-result-item-Scenariste">
-            <div class="result-header-Scenariste" @click="toggleProjectDetails(projet)">
-              <div class="result-main-info-Scenariste">
-                <i class="fas fa-film result-icon-Scenariste"></i>
-                <span class="result-title-Scenariste">{{ projet.titre }}</span>
-                <span class="result-statut-Scenariste" :class="getStatutClass(projet.statutNom)">
-                  {{ projet.statutNom }}
-                </span>
+        <!-- Filtres restants avec la phrase "Les projets existants" à gauche -->
+        <div class="filters-section-Scenariste">
+          <div class="filters-row-Scenariste">
+            <h3 class="projects-label-Scenariste">Les projets existants</h3>
+            <div class="filters-right-Scenariste">
+              <div class="filter-group-scenariste">
+                <select v-model="filterTimePeriod" class="filter-select-Scenariste">
+                  <option value="all">Tous périodes</option>
+                  <option value="today">Aujourd'hui</option>
+                  <option value="this_week">Cette semaine</option>
+                  <option value="this_month">Ce mois-ci</option>
+                  <option value="this_year">Cette année</option>
+                  <option value="recent">Récent (7 jours)</option>
+                </select>
               </div>
-              <div class="result-actions-Scenariste">
-                <button @click.stop="navigateToEcranTravail(projet)" class="action-btn-Scenariste">
-                  <i class="fas fa-external-link-alt"></i>
-                </button>
-                <i class="fas fa-chevron-down toggle-icon-Scenariste" :class="{ 'rotated': projet.showDetails }"></i>
+              <div class="filter-group-scenariste">
+                <select v-model="filterGenre" class="filter-select-Scenariste">
+                  <option value="">Tous genre</option>
+                  <option v-for="genre in genres" :key="genre.idGenre" :value="genre.nomGenre">{{ genre.nomGenre }}</option>
+                </select>
               </div>
-            </div>
-            
-            <!-- Contenu détaillé du projet -->
-            <div v-if="projet.showDetails" class="project-details-Scenariste">
-              <div v-if="projet.contenu">
-                <!-- Épisodes -->
-                <div v-if="projet.contenu.episodes.length > 0" class="content-section-Scenariste">
-                  <h5>Épisodes</h5>
-                  <div v-for="episode in projet.contenu.episodes" :key="episode.id" 
-                       class="content-item-Scenariste" @click="navigateToEcranTravail(episode)">
-                    <i class="fas fa-list-alt"></i>
-                    <span>Épisode {{ episode.ordre }}: {{ episode.titre }}</span>
-                  </div>
-                </div>
-                
-                <!-- Séquences -->
-                <div v-if="projet.contenu.sequences.length > 0" class="content-section-Scenariste">
-                  <h5>Séquences</h5>
-                  <div v-for="sequence in projet.contenu.sequences" :key="sequence.id" 
-                       class="content-item-Scenariste" @click="navigateToEcranTravail(sequence)">
-                    <i class="fas fa-layer-group"></i>
-                    <span>Séquence {{ sequence.ordre }}: {{ sequence.titre }}</span>
-                  </div>
-                </div>
-                
-                <!-- Scènes -->
-                <div v-if="projet.contenu.scenes.length > 0" class="content-section-Scenariste">
-                  <h5>Scènes</h5>
-                  <div v-for="scene in projet.contenu.scenes" :key="scene.id" 
-                       class="content-item-Scenariste" @click="navigateToEcranTravail(scene)">
-                    <i class="fas fa-clipboard"></i>
-                    <span>Scène {{ scene.ordre }}: {{ scene.titre }}</span>
-                  </div>
-                </div>
+              <div class="filter-group-scenariste">
+                <select v-model="filterStatut" class="filter-select-Scenariste">
+                  <option value="">Tous statuts</option>
+                  <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.nomStatutsProjet">{{ statut.nomStatutsProjet }}</option>
+                </select>
               </div>
-              
-              <div v-else class="loading-content-Scenariste">
-                Chargement du contenu...
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Autres résultats -->
-        <div v-if="globalSearchResults.autres.length > 0" class="search-results-group-Scenariste">
-          <h4>Autres éléments ({{ globalSearchResults.autres.length }})</h4>
-          <div v-for="result in globalSearchResults.autres" :key="result.id" 
-               class="search-result-item-Scenariste" @click="navigateToEcranTravail(result)">
-            <div class="result-main-info-Scenariste">
-              <i :class="getResultIcon(result.type)" class="result-icon-Scenariste"></i>
-              <span class="result-title-Scenariste">{{ result.titre }}</span>
-              <span class="result-type-Scenariste">{{ getTypeLabel(result.type) }}</span>
-              <span class="result-statut-Scenariste" :class="getStatutClass(result.statutNom)">
-                {{ result.statutNom }}
-              </span>
-            </div>
-            <div class="result-actions-Scenariste">
-              <button class="action-btn-Scenariste">
-                <i class="fas fa-external-link-alt"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div v-if="totalResults === 0" class="no-results-Scenariste">
-          Aucun résultat trouvé pour "{{ globalSearchQuery }}"
-        </div>
-      </div>
-
-      <!-- Grille des projets -->
-      <div class="projects-library-Scenariste">
-        <div v-for="(project, index) in filteredProjects" :key="project.id" class="movie-card-Scenariste" :style="{'--index': index + 1}">
-       <!-- Header de la carte avec statut à gauche et actions à droite -->
-          <div class="movie-card-header-Scenariste">
-            <div class="movie-statut-Scenariste">
-              <span class="statut-badge-Scenariste" :class="getStatutClass(project.statutNom)">
-                {{ project.statutNom }}
-              </span>
-            </div>
-            <div class="movie-actions-Scenariste">
-              <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEdit(project)" title="Modifier">
-                <i class="fas fa-pen"></i>
-              </button>
-              <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="deleteProject(project.id)" title="Supprimer">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          </div>
-          
-          <!-- Contenu de la carte -->
-          <div class="movie-info-Scenariste">
-            <h3 class="movie-title-Scenariste">{{ project.titre }}</h3>
-            <p class="movie-genre-Scenariste">{{ project.genreNom }}</p>
-            
-            <div class="movie-meta-Scenariste">
-              <div class="meta-item-Scenariste">
-                <i class="fas fa-calendar-plus"></i>
-                <span>{{ formatShortDate(project.creeLe) }}</span>
-              </div>
-              <!-- <div class="meta-item-Scenariste">
-                <i class="fas fa-calendar-check"></i>
-                <span>{{ formatShortDate(project.modifieLe) }}</span>
-              </div> -->
-            </div>
-            
-            <div class="movie-synopsis-Scenariste" v-if="project.synopsis">
-              <p>{{ truncateText(project.synopsis, 120) }}</p>
-            </div>
-            
-            <!-- Actions en bas de carte -->
-            <div class="movie-actions-bottom-Scenariste">
-              <div class="actions-top-Scenariste">
-                <button class="action-btn-Scenariste primary-btn-Scenariste" @click="$router.push(`/projet/${project.id}`)" title="Détails">
-                  <i class="fas fa-info-circle"></i>
-                  <span>Détails</span>
-                </button>
-                <!-- <button class="action-btn-Scenariste secondary-btn-Scenariste" @click="goToAddEpisode(project.id)" title="Ajouter un épisode">
-                  <i class="fas fa-plus-circle"></i>
-                  <span>Épisode</span>
-                </button> -->
-                <button class="action-btn-Scenariste accent-btn-Scenariste" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
-                  <i class="fas fa-desktop"></i>
-                  <span>Écran</span>
+              <!-- Bouton centré -->
+              <div class="add-project-center-Scenariste">
+                <button class="add-project-btn-main-Scenariste" @click="goToAddProject">
+                  <i class="fas fa-plus-circle icon-Scenariste"></i> 
+                  Nouveau Projet
                 </button>
               </div>
-              <!-- <div class="actions-bottom-Scenariste">
-                <button class="action-btn-Scenariste accent-btn-Scenariste" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
-                  <i class="fas fa-desktop"></i>
-                  <span>Écran de Travail</span>
-                </button>
-              </div> -->
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Message si aucun projet -->
-      <div v-if="filteredProjects.length === 0" class="no-projects-Scenariste">
-        <div class="no-projects-icon-Scenariste">
-          <i class="fas fa-film"></i>
-        </div>
-        <h3>Aucun projet trouvé</h3>
-        <p>Commencez par créer votre premier projet !</p>
-        <button class="add-project-btn-large-Scenariste" @click="goToAddProject">
-          <i class="fas fa-plus-circle"></i>
-          Créer un projet
-        </button>
-      </div>
-
-      <!-- Modal d'édition -->
-      <div v-if="editingProject" class="edit-project-modal-Scenariste">
-        <div class="modal-content-Scenariste">
-          <div class="modal-header-Scenariste">
-            <h3>Modifier le projet</h3>
-            <button @click="cancelEdit" class="close-modal-btn-Scenariste">
+        <!-- Résultats de recherche globale -->
+        <div v-if="showGlobalSearchResults" class="global-search-results-Scenariste">
+          <div class="search-results-header-Scenariste">
+            <h3>Résultats de recherche ({{ totalResults }})</h3>
+            <button @click="clearGlobalSearch" class="close-results-btn-Scenariste">
               <i class="fas fa-times"></i>
             </button>
           </div>
           
-          <div class="modal-body-Scenariste">
-            <div v-if="editError" class="error-message-Scenariste">
-              {{ editError }}
-            </div>
-            
-            <div class="form-group-Scenariste">
-              <label>Titre:</label>
-              <input v-model="editForm.titre" type="text" class="form-input-Scenariste">
-            </div>
-            
-            <div class="form-group-Scenariste">
-              <label>Synopsis:</label>
-              <textarea v-model="editForm.synopsis" class="form-textarea-Scenariste" rows="4"></textarea>
-            </div>
-            
-            <div class="form-group-Scenariste">
-              <label>Genre:</label>
-              <select v-model="editForm.genreId" class="form-select-Scenariste">
-                <option value="">Sélectionnez un genre</option>
-                <option v-for="genre in genres" :key="genre.idGenre" :value="genre.idGenre">
-                  {{ genre.nomGenre }}
-                </option>
-              </select>
-            </div>
-            
-            <div class="form-group-Scenariste">
-              <label>Statut:</label>
-              <select v-model="editForm.statutId" class="form-select-Scenariste">
-                <option value="">Sélectionnez un statut</option>
-                <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.idStatutProjet">
-                  {{ statut.nomStatutsProjet }}
-                </option>
-              </select>
-            </div>
-            
-            <div class="form-group-Scenariste">
-              <label>Date de fin:</label>
-              <input v-model="editForm.dateFin" type="date" class="form-input-Scenariste">
+          <!-- Résultats des projets -->
+          <div v-if="globalSearchResults.projets.length > 0" class="search-results-group-Scenariste">
+            <h4>Projets ({{ globalSearchResults.projets.length }})</h4>
+            <div v-for="projet in globalSearchResults.projets" :key="projet.id" class="search-result-item-Scenariste">
+              <div class="result-header-Scenariste" @click="toggleProjectDetails(projet)">
+                <div class="result-main-info-Scenariste">
+                  <i class="fas fa-film result-icon-Scenariste"></i>
+                  <span class="result-title-Scenariste">{{ projet.titre }}</span>
+                  <span class="result-statut-Scenariste" :class="getStatutClass(projet.statutNom)">
+                    {{ projet.statutNom }}
+                  </span>
+                </div>
+                <div class="result-actions-Scenariste">
+                  <button @click.stop="navigateToEcranTravail(projet)" class="action-btn-Scenariste">
+                    <i class="fas fa-external-link-alt"></i>
+                  </button>
+                  <i class="fas fa-chevron-down toggle-icon-Scenariste" :class="{ 'rotated': projet.showDetails }"></i>
+                </div>
+              </div>
+              
+              <!-- Contenu détaillé du projet -->
+              <div v-if="projet.showDetails" class="project-details-Scenariste">
+                <div v-if="projet.contenu">
+                  <!-- Épisodes -->
+                  <div v-if="projet.contenu.episodes.length > 0" class="content-section-Scenariste">
+                    <h5>Épisodes</h5>
+                    <div v-for="episode in projet.contenu.episodes" :key="episode.id" 
+                         class="content-item-Scenariste" @click="navigateToEcranTravail(episode)">
+                      <i class="fas fa-list-alt"></i>
+                      <span>Épisode {{ episode.ordre }}: {{ episode.titre }}</span>
+                    </div>
+                  </div>
+                  
+                  <!-- Séquences -->
+                  <div v-if="projet.contenu.sequences.length > 0" class="content-section-Scenariste">
+                    <h5>Séquences</h5>
+                    <div v-for="sequence in projet.contenu.sequences" :key="sequence.id" 
+                         class="content-item-Scenariste" @click="navigateToEcranTravail(sequence)">
+                      <i class="fas fa-layer-group"></i>
+                      <span>Séquence {{ sequence.ordre }}: {{ sequence.titre }}</span>
+                    </div>
+                  </div>
+                  
+                  <!-- Scènes -->
+                  <div v-if="projet.contenu.scenes.length > 0" class="content-section-Scenariste">
+                    <h5>Scènes</h5>
+                    <div v-for="scene in projet.contenu.scenes" :key="scene.id" 
+                         class="content-item-Scenariste" @click="navigateToEcranTravail(scene)">
+                      <i class="fas fa-clipboard"></i>
+                      <span>Scène {{ scene.ordre }}: {{ scene.titre }}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div v-else class="loading-content-Scenariste">
+                  Chargement du contenu...
+                </div>
+              </div>
             </div>
           </div>
           
-          <div class="modal-footer-Scenariste">
-            <button @click="cancelEdit" class="cancel-btn-Scenariste">Annuler</button>
-            <button @click="submitEdit" :disabled="editLoading" class="save-btn-Scenariste">
-              {{ editLoading ? 'Enregistrement...' : 'Enregistrer' }}
-            </button>
+          <!-- Autres résultats -->
+          <div v-if="globalSearchResults.autres.length > 0" class="search-results-group-Scenariste">
+            <h4>Autres éléments ({{ globalSearchResults.autres.length }})</h4>
+            <div v-for="result in globalSearchResults.autres" :key="result.id" 
+                 class="search-result-item-Scenariste" @click="navigateToEcranTravail(result)">
+              <div class="result-main-info-Scenariste">
+                <i :class="getResultIcon(result.type)" class="result-icon-Scenariste"></i>
+                <span class="result-title-Scenariste">{{ result.titre }}</span>
+                <span class="result-type-Scenariste">{{ getTypeLabel(result.type) }}</span>
+                <span class="result-statut-Scenariste" :class="getStatutClass(result.statutNom)">
+                  {{ result.statutNom }}
+                </span>
+              </div>
+              <div class="result-actions-Scenariste">
+                <button class="action-btn-Scenariste">
+                  <i class="fas fa-external-link-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div v-if="totalResults === 0" class="no-results-Scenariste">
+            Aucun résultat trouvé pour "{{ globalSearchQuery }}"
           </div>
         </div>
-      </div>
-    </main>
+
+        <!-- Grille des projets -->
+        <div class="projects-library-Scenariste">
+          <div 
+            v-for="(project, index) in filteredProjects" 
+            :key="project.id" 
+            class="movie-card-Scenariste" 
+            :style="{'--index': index + 1}"
+            :data-genre="project.genreNom"
+          >
+            <!-- Header de la carte avec statut à gauche et actions à droite -->
+            <div class="movie-card-header-Scenariste">
+              <div class="movie-statut-Scenariste">
+                <span class="statut-badge-Scenariste" :class="getStatutClass(project.statutNom)">
+                  {{ project.statutNom }}
+                </span>
+              </div>
+              <div class="movie-actions-Scenariste">
+                <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEdit(project)" title="Modifier">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="deleteProject(project.id)" title="Supprimer">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Contenu de la carte -->
+            <div class="movie-info-Scenariste">
+              <h3 class="movie-title-Scenariste">{{ project.titre }}</h3>
+              <p class="movie-genre-Scenariste">{{ project.genreNom }}</p>
+              
+              <div class="movie-meta-Scenariste">
+                <div class="meta-item-Scenariste">
+                  <i class="fas fa-calendar-plus"></i>
+                  <span>{{ formatShortDate(project.creeLe) }}</span>
+                </div>
+              </div>
+              
+              <div class="movie-synopsis-Scenariste" v-if="project.synopsis">
+                <p>{{ truncateText(project.synopsis, 120) }}</p>
+              </div>
+              
+              <!-- Actions en bas de carte -->
+              <div class="movie-actions-bottom-Scenariste">
+                <div class="actions-top-Scenariste">
+                  <button class="action-btn-Scenariste accent-btn-Scenariste" @click="$router.push(`/projet/${project.id}`)" title="Détails">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Détails</span>
+                  </button>
+                  <button class="action-btn-Scenariste primary-btn-Scenariste" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
+                      <i class="fas fa-laptop"></i>                    
+                      <span>Écran</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message si aucun projet -->e
+        <div v-if="filteredProjects.length === 0" class="no-projects-Scenariste">
+          <div class="no-projects-icon-Scenariste">
+            <i class="fas fa-film"></i>
+          </div>
+          <h3>Aucun projet trouvé</h3>
+          <p>Commencez par créer votre premier projet !</p>
+          <button class="add-project-btn-large-Scenariste" @click="goToAddProject">
+            <i class="fas fa-plus-circle"></i>
+            Créer un projet
+          </button>
+        </div>
+
+        <!-- Modal d'édition -->
+        <div v-if="editingProject" class="edit-project-modal-Scenariste">
+          <div class="modal-content-Scenariste">
+            <div class="modal-header-Scenariste">
+              <h3>Modifier le projet</h3>
+              <button @click="cancelEdit" class="close-modal-btn-Scenariste">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div class="modal-body-Scenariste">
+              <div v-if="editError" class="error-message-Scenariste">
+                {{ editError }}
+              </div>
+              
+              <div class="form-group-Scenariste">
+                <label>Titre:</label>
+                <input v-model="editForm.titre" type="text" class="form-input-Scenariste">
+              </div>
+              
+              <div class="form-group-Scenariste">
+                <label>Synopsis:</label>
+                <textarea v-model="editForm.synopsis" class="form-textarea-Scenariste" rows="4"></textarea>
+              </div>
+              
+              <div class="form-group-Scenariste">
+                <label>Genre:</label>
+                <select v-model="editForm.genreId" class="form-select-Scenariste">
+                  <option value="">Sélectionnez un genre</option>
+                  <option v-for="genre in genres" :key="genre.idGenre" :value="genre.idGenre">
+                    {{ genre.nomGenre }}
+                  </option>
+                </select>
+              </div>
+              
+              <div class="form-group-Scenariste">
+                <label>Statut:</label>
+                <select v-model="editForm.statutId" class="form-select-Scenariste">
+                  <option value="">Sélectionnez un statut</option>
+                  <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.idStatutProjet">
+                    {{ statut.nomStatutsProjet }}
+                  </option>
+                </select>
+              </div>
+              
+              <div class="form-group-Scenariste">
+                <label>Date de fin:</label>
+                <input v-model="editForm.dateFin" type="date" class="form-input-Scenariste">
+              </div>
+            </div>
+            
+            <div class="modal-footer-Scenariste">
+              <button @click="cancelEdit" class="cancel-btn-Scenariste">Annuler</button>
+              <button @click="submitEdit" :disabled="editLoading" class="save-btn-Scenariste">
+                {{ editLoading ? 'Enregistrement...' : 'Enregistrer' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
@@ -782,3 +750,5 @@ export default {
   }
 };
 </script>
+
+

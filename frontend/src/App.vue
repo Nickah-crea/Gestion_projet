@@ -30,7 +30,7 @@ export default {
 }
 
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Hauora', sans-serif;
   background-color: #23364a;
   color: #333;
 }
@@ -38,5 +38,20 @@ body {
 #app {
   min-height: 100vh;
 }
+
+.app-wrapper {
+  margin-left: 190px; /* Largeur de la sidebar ouverte */
+  transition: margin-left var(--transition);
+  min-height: 100vh;
+  width: calc(100% - 190px);
+  background: #fff;
+}
+
+.sidebar.collapsed ~ .app-wrapper {
+  margin-left: 50px; /* Largeur de la sidebar fermée */
+  width: calc(100% - 50px);
+}
+
 </style>
+
 

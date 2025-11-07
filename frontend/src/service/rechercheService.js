@@ -55,11 +55,24 @@ export const getStatistiques = async (type, id) => {
   }
 }
 
+// NOUVELLE MÉTHODE : Récupérer la liste des projets
+export const getProjets = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/projets`);
+    return response.data;
+  } catch (error) {
+    console.error('Erreur chargement projets:', error);
+    throw error;
+  }
+};
+
+
 export default {
   rechercheAvancee,
   getStatutsDisponibles,
   getResultatDetails,
   getResultatDetailsComplets,
-  getStatistiques
+  getStatistiques,
+  getProjets
 }
 

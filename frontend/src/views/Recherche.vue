@@ -1,5 +1,5 @@
 <template>
-  <div class="recherche-avancee">
+  <div class="app-wrapper">
     <!-- Header compact -->
     <div class="search-header-compact">
       <div class="header-content">
@@ -11,9 +11,24 @@
     <!-- Filtres principaux compacts -->
     <div class="main-filters-compact">
       <div class="filters-row">
+        <!-- Sélection du Projet - EN PREMIER -->
+        <div class="filter-group-compact">
+          <label class="filter-label">📁 Projet</label>
+          <select v-model="criteres.projetId" class="filter-select" @change="onProjetChange">
+            <option value="">Tous les projets</option>
+            <option 
+              v-for="projet in projets" 
+              :key="projet.id" 
+              :value="projet.id"
+            >
+              {{ projet.titre }}
+            </option>
+          </select>
+        </div>
+
         <!-- Types de recherche - Dropdown -->
         <div class="filter-group-compact">
-          <label class="filter-label">Types</label>
+          <label class="filter-label">🎯 Types</label>
           <div class="dropdown-filter">
             <button @click="toggleTypesDropdown" class="dropdown-trigger">
               <span class="dropdown-text">
@@ -70,7 +85,7 @@
 
         <!-- Statuts - Dropdown -->
         <div class="filter-group-compact">
-          <label class="filter-label">Statuts</label>
+          <label class="filter-label">📊 Statuts</label>
           <div class="dropdown-filter">
             <button @click="toggleStatutsDropdown" class="dropdown-trigger">
               <span class="dropdown-text">
@@ -101,7 +116,7 @@
 
         <!-- Regroupement - Select normal -->
         <div class="filter-group-compact">
-          <label class="filter-label">Regrouper par</label>
+          <label class="filter-label">🔀 Regrouper par</label>
           <select v-model="criteres.regroupement" class="filter-select">
             <option value="">Aucun</option>
             <option value="plateau">🎭 Plateau</option>
@@ -118,6 +133,18 @@
             {{ chargement ? 'Recherche...' : 'Rechercher' }}
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Indicateur de filtre projet actif -->
+    <div v-if="criteres.projetId" class="projet-filter-indicator">
+      <div class="projet-indicator-content">
+        <span class="projet-label">📁 Projet sélectionné :</span>
+        <span class="projet-nom">{{ getProjetNom() }}</span>
+        <button @click="reinitialiserProjet" class="clear-projet-btn">
+          <i class="fas fa-times"></i>
+          Changer de projet
+        </button>
       </div>
     </div>
 
@@ -168,7 +195,12 @@
       <div v-if="resultats.length === 0 && !chargement" class="empty-state">
         <div class="empty-icon">🔍</div>
         <h3>Aucun résultat</h3>
-        <p>Utilisez les filtres ci-dessus pour lancer une recherche</p>
+        <p v-if="criteres.projetId">
+          Aucun résultat trouvé pour le projet "{{ getProjetNom() }}" avec les critères actuels
+        </p>
+        <p v-else>
+          Utilisez les filtres ci-dessus pour lancer une recherche
+        </p>
       </div>
 
       <div v-else-if="chargement" class="loading-state">
@@ -180,6 +212,9 @@
         <div class="results-header flex-header">
           <h2>📋 Résultats ({{ resultats.length }})</h2>
           <div class="results-info">
+            <span v-if="criteres.projetId" class="projet-info">
+              Projet : <strong>{{ getProjetNom() }}</strong> •
+            </span>
             Groupés par : <strong>{{ getRegroupementLabel() }}</strong>
           </div>
           <button @click="reinitialiser" class="reset-all-btn">
@@ -366,7 +401,7 @@
 </template>
 
 <script>
-import { rechercheAvancee, getStatutsDisponibles } from '../service/rechercheService'
+import { rechercheAvancee, getStatutsDisponibles, getProjets } from '../service/rechercheService'
 import '../assets/css/recherche.css';
 
 export default {
@@ -376,6 +411,7 @@ export default {
       showTypesDropdown: false,
       showStatutsDropdown: false,
       showDateFilters: false,
+      projets: [],
       criteres: {
         termeRecherche: '',
         typesRecherche: ['scenes', 'personnages', 'lieux', 'plateaux'],
@@ -383,6 +419,7 @@ export default {
         dateFin: null,
         statuts: [],
         regroupement: '',
+        projetId: null,
         page: 0,
         taille: 50
       },
@@ -425,6 +462,7 @@ export default {
     }
   },
   async mounted() {
+    await this.chargerProjets()
     await this.chargerStatuts()
     document.addEventListener('click', this.handleClickOutside)
   },
@@ -432,6 +470,30 @@ export default {
     document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
+    async chargerProjets() {
+      try {
+        this.projets = await getProjets()
+      } catch (error) {
+        console.error('Erreur chargement projets:', error)
+        this.projets = []
+      }
+    },
+
+    async onProjetChange() {
+      // Quand le projet change, on peut recharger les statuts si nécessaire
+      console.log('Projet sélectionné:', this.criteres.projetId)
+    },
+
+    getProjetNom() {
+      if (!this.criteres.projetId) return ''
+      const projet = this.projets.find(p => p.id === this.criteres.projetId)
+      return projet ? projet.titre : 'Projet inconnu'
+    },
+
+    reinitialiserProjet() {
+      this.criteres.projetId = null
+    },
+
     toggleTypesDropdown() {
       this.showTypesDropdown = !this.showTypesDropdown
       this.showStatutsDropdown = false
@@ -497,23 +559,50 @@ export default {
       }
     },
     
-    async rechercher() {
-      this.chargement = true
-      try {
-        const criteresNettoyes = { ...this.criteres }
-        if (!criteresNettoyes.termeRecherche) delete criteresNettoyes.termeRecherche
-        if (criteresNettoyes.statuts.length === 0) delete criteresNettoyes.statuts
-        if (!criteresNettoyes.regroupement) delete criteresNettoyes.regroupement
+    // async rechercher() {
+    //   this.chargement = true
+    //   try {
+    //     const criteresNettoyes = { ...this.criteres }
+    //     if (!criteresNettoyes.termeRecherche) delete criteresNettoyes.termeRecherche
+    //     if (criteresNettoyes.statuts.length === 0) delete criteresNettoyes.statuts
+    //     if (!criteresNettoyes.regroupement) delete criteresNettoyes.regroupement
+    //     if (!criteresNettoyes.projetId) delete criteresNettoyes.projetId
 
-        this.resultats = await rechercheAvancee(criteresNettoyes)
-      } catch (error) {
-        console.error('Erreur recherche:', error)
-        alert('Erreur lors de la recherche')
-      } finally {
-        this.chargement = false
-      }
-    },
+    //     this.resultats = await rechercheAvancee(criteresNettoyes)
+    //   } catch (error) {
+    //     console.error('Erreur recherche:', error)
+    //     alert('Erreur lors de la recherche')
+    //   } finally {
+    //     this.chargement = false
+    //   }
+    // },
     
+    async rechercher() {
+  this.chargement = true
+  try {
+    const criteresNettoyes = { ...this.criteres }
+    
+    // Convertir les types de recherche pour le backend
+    if (criteresNettoyes.typesRecherche && criteresNettoyes.typesRecherche.length > 0) {
+      criteresNettoyes.typesRecherche = criteresNettoyes.typesRecherche.map(type => 
+        type.replace('scenes', 'scenes')
+            .replace('personnages', 'personnages')
+            .replace('lieux', 'lieux')
+            .replace('plateaux', 'plateaux')
+      );
+    }
+    
+    console.log('Critères envoyés:', criteresNettoyes); // Pour debug
+    
+    this.resultats = await rechercheAvancee(criteresNettoyes)
+  } catch (error) {
+    console.error('Erreur recherche:', error)
+    alert('Erreur lors de la recherche')
+  } finally {
+    this.chargement = false
+  }
+},
+
     reinitialiser() {
       this.criteres = {
         termeRecherche: '',
@@ -522,6 +611,7 @@ export default {
         dateFin: null,
         statuts: [],
         regroupement: '',
+        projetId: null,
         page: 0,
         taille: 50
       }

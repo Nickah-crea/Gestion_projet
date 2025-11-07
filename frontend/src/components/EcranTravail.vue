@@ -1,25 +1,65 @@
 <template>
   <div class="app-wrapper">
-    <div class="ecran-travail">
+
+    <div class="fixed-add-btn-links">
+      
+       <div class="options-sidebar" :class="{ 'open': sidebarOpen }">
+      <button class="sidebar-toggle" @click="toggleSidebar">
+        <i class="fas" :class="sidebarOpen ? 'fa-chevron-right' : 'fa-cog'"></i>
+      </button>
+
+
+      <div class="liens-ecran-travail">
+        <button class="nav-btn-ecran-travail" @click="goToCalendrierTournage">
+            <i class="fas fa-calendar-alt"></i> Calendrier
+          </button>
+
+            <button 
+        v-if="episodes.length === 0 || userPermissions.canEditEpisode" 
+        class="add-scene-btn-ecran-travail" 
+        @click="goToAddEpisode"
+      >
+        <i class="fas fa-plus-circle" style="color: #21294F;"></i> Episode
+        </button>     
+          <button v-if="userPermissions.canCreateSequence" class="add-scene-btn-ecran-travail" @click="goToAddSequence">
+            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Séquence
+          </button>
+          <button v-if="userPermissions.canCreateLieu" class="add-scene-btn-ecran-travail" @click="goToAddLieu">
+            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Lieu
+          </button>
+          <button v-if="userPermissions.canCreatePlateau" class="add-scene-btn-ecran-travail" @click="goToAddPlateau">
+            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Plateau
+          </button>
+          <button v-if="userPermissions.canCreateComedien" class="add-scene-btn-ecran-travail" @click="goToAddComedien">
+            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Comedien
+          </button>
+          <button v-if="userPermissions.canCreatePersonnage" class="add-scene-btn-ecran-travail" @click="goToAddPersonnage">
+            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Personnage
+          </button>
+      </div>
+    </div>
+    </div>
+
+    <div class="ecran-travail-ecran-travail">
       <!-- Header avec titre de l'épisode -->
-      <header class="">
-        <div class="navigation">
-          <button class="nav-btn" @click="goToPrevPage" :disabled="!hasPrev || isLoading">Précédent</button>
-          <button class="nav-btn" @click="goToNextPage" :disabled="!hasNext || isLoading">Suivant</button>
-           <button class="nav-btn" @click="goToCalendrierTournage">
+      <header class="header-ecran-travail">
+        <div class="navigation-ecran-travail">
+          <button class="nav-btn-ecran-travail" @click="goToPrevPage" :disabled="!hasPrev || isLoading">Précédent</button>
+          <button class="nav-btn-ecran-travail" @click="goToNextPage" :disabled="!hasNext || isLoading">Suivant</button>
+           <button class="nav-btn-ecran-travail" @click="goToCalendrierTournage">
               <i class="fas fa-calendar-alt"></i> Calendrier
             </button>
-          <div class="">
-          <div class="export-dropdown">
-            <button class="export-main-btn">
+          <div class="export-container-ecran-travail">
+          <div class="export-dropdown-ecran-travail">
+            <button class="export-main-btn-ecran-travail">
               <i class="fas fa-file-export"></i> Exporter en PDF
               <i class="fas fa-chevron-down"></i>
             </button>
-            <div class="export-dropdown-content">
+            <div class="export-dropdown-content-ecran-travail">
               <!-- Export PDF des scènes seulement -->
               <button 
                 v-if="currentSequence" 
-                class="export-option" 
+                class="export-option-ecran-travail" 
                 @click="exportScenesOnlyPDF"
                 title="Exporter les scènes en PDF"
               >
@@ -29,7 +69,7 @@
               <!-- Export PDF des dialogues d'une scène -->
               <button 
                 v-if="currentSequence" 
-                class="export-option" 
+                class="export-option-ecran-travail" 
                 @click="exportSequenceDialoguesPDF"
                 title="Exporter tous les dialogues de la séquence en PDF"
               >
@@ -39,7 +79,7 @@
               <!-- Export PDF séquence complète -->
               <button 
                 v-if="currentSequence" 
-                class="export-option" 
+                class="export-option-ecran-travail" 
                 @click="exportSequenceCompletePDF"
                 title="Exporter la séquence complète en PDF"
               >
@@ -49,7 +89,7 @@
               <!-- Export PDF épisode avec séquence -->
               <button 
                 v-if="currentEpisode" 
-                class="export-option" 
+                class="export-option-ecran-travail" 
                 @click="exportEpisodeWithSequencePDF"
                 title="Exporter l'épisode avec séquence en PDF"
               >
@@ -61,34 +101,93 @@
         </div>
 
         
+        <!-- En-tête avec les informations du projet -->
+    <div class="project-header" v-if="store.projetInfos">
+      <div class="project-info-card">
+        <div class="project-header-top">
+          <h1 class="project-title">{{ store.projetTitle }}</h1>
+          <div class="project-actions">
+              <!-- Bouton Modifier -->
+              <button class="action-btn edit-btn" @click="startEdit(store.projetInfos)" title="Modifier le projet">
+                <i class="fas fa-pen"></i>
+              </button>
+              <!-- Bouton Supprimer -->
+              <button class="action-btn delete-btn" @click="deleteProject(store.projetInfos.id)" title="Supprimer le projet">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          <span 
+            class="project-status" 
+            :style="{ backgroundColor: store.statusColor }"
+          >
+            {{ store.projetStatus }}
+          </span>
+        </div>
+        
+        
+        <div class="project-meta">
+          <span class="project-author" v-if="store.projetAuteur">
+            <i class="fas fa-user"></i> Par {{ store.projetAuteur }}
+          </span>
+          <span class="project-date" v-if="store.projetInfos.dateCreation">
+            <i class="fas fa-calendar"></i> Créé le {{ formatDate(store.projetInfos.dateCreation) }}
+          </span>
+        </div>
 
-        <h2> Épisode {{ currentEpisode?.ordre }} : </h2><br>     
+        <!-- Synopsis du projet -->
+        <div class="project-synopsis" v-if="store.projetSynopsis">
+          <h3>Synopsis</h3>
+          <p>{{ store.projetSynopsis }}</p>
+        </div>
 
-       <div class="title-episode">
+        <p class="project-description" v-if="store.projetDescription">
+          {{ store.projetDescription }}
+        </p>
+
+        <div class="project-stats" v-if="store.episodes.length > 0">
+          <span class="stat">
+            <i class="fas fa-film"></i>
+            {{ store.episodes.length }} épisode(s)
+          </span>
+          <span class="stat">
+            <i class="fas fa-list-ol"></i>
+            {{ store.totalSequences }} séquence(s)
+          </span>
+          <span class="stat" v-if="store.projetInfos.dureeTotale">
+            <i class="fas fa-clock"></i>
+            {{ store.projetInfos.dureeTotale }} min
+          </span>
+        </div>
+      </div>
+    </div>
+
+        <h2 class="episode-title-ecran-travail"> Épisode {{ currentEpisode?.ordre }} : </h2><br>     
+
+       <div class="title-episode-ecran-travail">
           <label> {{ currentEpisode?.titre || 'Chargement...' }} </label>
 
           <!-- Afficher le bouton modifier seulement si l'utilisateur a la permission -->
-          <span v-if="userPermissions.canEditEpisode" class="icon-edit" @click="startEditEpisode">
-            <i class="fas fa-pen icon" style="background: none;"></i>
+          <span v-if="userPermissions.canEditEpisode" class="icon-edit-ecran-travail" @click="startEditEpisode">
+            <i class="fas fa-pen icon-ecran-travail" style="background: none;"></i>
           </span> <br>
-          <span v-if="userPermissions.canEditEpisode" class="icon-delete" @click="confirmDeleteEpisode">
-            <i class="fas fa-trash icon" style="color: #dc3545; background: none;"></i>
+          <span v-if="userPermissions.canEditEpisode" class="icon-delete-ecran-travail" @click="confirmDeleteEpisode">
+            <i class="fas fa-trash icon-ecran-travail" style="color: #dc3545; background: none;"></i>
           </span>
           <br>
         </div>
         
-        <div class="syno-episode">
+        <div class="syno-episode-ecran-travail">
           <label><strong>Synopsis :</strong> {{ currentEpisode?.synopsis || 'Chargement...' }} </label><br>
           <label><strong>Statut :</strong> {{ currentEpisode?.statutNom || 'Chargement...' }} </label>
         </div>
 
-        <div class="episode-equipe" v-if="currentEpisode">
-          <div class="equipe-info">
+        <div class="episode-equipe-ecran-travail" v-if="currentEpisode">
+          <div class="equipe-info-ecran-travail">
             <strong>Équipe de l'épisode :</strong>
-            <span v-if="currentEpisode.realisateur" class="realisateur-info">
+            <span v-if="currentEpisode.realisateur" class="realisateur-info-ecran-travail">
               Réalisateur : {{ currentEpisode.realisateur.nom }}
             </span>
-            <span v-if="currentEpisode.scenariste" class="scenariste-info">
+            <span v-if="currentEpisode.scenariste" class="scenariste-info-ecran-travail">
               Scénariste : {{ currentEpisode.scenariste.nom }}
             </span>
           </div>
@@ -96,147 +195,144 @@
       </header>
 
       <!-- Navigation par numéros d'épisodes -->
-        <div class="episode-navigation">
+        <div class="episode-navigation-ecran-travail">
           <span
             v-for="episode in episodes"
             :key="episode.idEpisode"
-            class="episode-number"
-            :class="{ 'active': episode.idEpisode === currentEpisode?.idEpisode, 'new-episode': episode.idEpisode === newlyCreatedEpisodeId }"
+            class="episode-number-ecran-travail"
+            :class="{ 'active-ecran-travail': episode.idEpisode === currentEpisode?.idEpisode, 'new-episode-ecran-travail': episode.idEpisode === newlyCreatedEpisodeId }"
             @click="selectEpisode(episode.idEpisode)"
           >Ep
             {{ episode.ordre }}
-            <span v-if="episode.idEpisode === newlyCreatedEpisodeId" class="blinking-icon">✨</span>
+            <span v-if="episode.idEpisode === newlyCreatedEpisodeId" class="blinking-icon-ecran-travail">✨</span>
           </span>
         </div>
 
       <!-- Indicateur de chargement -->
-      <div v-if="isLoading" class="loading">Chargement en cours...</div>
+      <div v-if="isLoading" class="loading-ecran-travail">Chargement en cours...</div>
 
       <!-- Message d'erreur -->
-      <div v-if="error && !isLoading" class="error-message">
+      <div v-if="error && !isLoading" class="error-message-ecran-travail">
         {{ error }}
-        <button class="retry-btn" @click="retryFetch">Réessayer</button>
+        <button class="retry-btn-ecran-travail" @click="retryFetch">Réessayer</button>
       </div>
 
        <!-- Liens de création - Masquer ceux non autorisés -->
-      <div class="liens">
+      <div class="liens-ecran-travail">
             <button 
         v-if="episodes.length === 0 || userPermissions.canEditEpisode" 
-        class="add-scene-btn" 
+        class="add-scene-btn-ecran-travail" 
         @click="goToAddEpisode"
       >
         <i class="fas fa-plus-circle" style="color: #21294F;"></i> Episode
       </button>     
-        <button v-if="userPermissions.canCreateSequence" class="add-scene-btn" @click="goToAddSequence">
+        <button v-if="userPermissions.canCreateSequence" class="add-scene-btn-ecran-travail" @click="goToAddSequence">
           <i class="fas fa-plus-circle " style="color: #21294F;"></i> Séquence
         </button>
-        <button v-if="userPermissions.canCreateLieu" class="add-scene-btn" @click="goToAddLieu">
+        <button v-if="userPermissions.canCreateLieu" class="add-scene-btn-ecran-travail" @click="goToAddLieu">
           <i class="fas fa-plus-circle " style="color: #21294F;"></i> Lieu
         </button>
-        <button v-if="userPermissions.canCreatePlateau" class="add-scene-btn" @click="goToAddPlateau">
+        <button v-if="userPermissions.canCreatePlateau" class="add-scene-btn-ecran-travail" @click="goToAddPlateau">
           <i class="fas fa-plus-circle " style="color: #21294F;"></i> Plateau
         </button>
-        <button v-if="userPermissions.canCreateComedien" class="add-scene-btn" @click="goToAddComedien">
+        <button v-if="userPermissions.canCreateComedien" class="add-scene-btn-ecran-travail" @click="goToAddComedien">
           <i class="fas fa-plus-circle " style="color: #21294F;"></i> Comedien
         </button>
-        <button v-if="userPermissions.canCreatePersonnage" class="add-scene-btn" @click="goToAddPersonnage">
+        <button v-if="userPermissions.canCreatePersonnage" class="add-scene-btn-ecran-travail" @click="goToAddPersonnage">
           <i class="fas fa-plus-circle " style="color: #21294F;"></i> Personnage
         </button>
       </div>
 
-      <!-- <div class="#">
+      <div class="sequences-title-ecran-travail">
         <h2>Les séquences :</h2>
-      </div> -->
+      </div>
 
-      <div class="#">
+      <div class="sequence-navigation-container-ecran-travail">
         <!-- Navigation par numéros de séquences -->
-        <div v-if="currentEpisode && !isLoading" class="sequence-navigation">
+        <div v-if="currentEpisode && !isLoading" class="sequence-navigation-ecran-travail">
           <span
             v-for="(sequence, index) in sequences"
             :key="sequence.idSequence"
-            class="sequence-number"
-            :class="{ 'active': sequence.idSequence === currentSequence?.idSequence, 'new-sequence': sequence.idSequence === newlyCreatedSequenceId }"
+            class="sequence-number-ecran-travail"
+            :class="{ 'active-ecran-travail': sequence.idSequence === currentSequence?.idSequence, 'new-sequence-ecran-travail': sequence.idSequence === newlyCreatedSequenceId }"
             @click="selectSequence(sequence.idSequence)"
           >
             <span v-if="index > 0"></span>Seq
             {{ sequence.ordre }}
-            <span v-if="sequence.idSequence === newlyCreatedSequenceId" class="blinking-icon">✨</span>
+            <span v-if="sequence.idSequence === newlyCreatedSequenceId" class="blinking-icon-ecran-travail">✨</span>
           </span>
         </div>
       </div>
 
-      
-
       <!-- Contenu de la séquence -->
-       <main class="sequence-page" v-if="currentSequence && !isLoading">
-        <h2>
+       <main class="sequence-page-ecran-travail" v-if="currentSequence && !isLoading">
+        <h2 class="sequence-title-ecran-travail">
           Séquence 0{{ currentSequence.ordre }} : {{ currentSequence.titre }}
-          <span v-if="userPermissions.canCreateSequence" class="icon-edit" @click="startEditSequence(currentSequence)">
+          <span v-if="userPermissions.canCreateSequence" class="icon-edit-ecran-travail" @click="startEditSequence(currentSequence)">
             <i class="fas fa-pen" style="color: #17a2b8;"></i>
           </span>
-          <span v-if="userPermissions.canCreateSequence" class="icon-delete" @click="deleteSequence(currentSequence.idSequence)">
+          <span v-if="userPermissions.canCreateSequence" class="icon-delete-ecran-travail" @click="deleteSequence(currentSequence.idSequence)">
             <i class="fas fa-trash " style="color: #dc3545;"></i>
           </span>
-          <span class="comment-icon" @click="toggleSequenceCommentSection">
+          <span class="comment-icon-ecran-travail" @click="toggleSequenceCommentSection">
             <h3><i class="fas fa-comments " style="color: #21294F;"></i>{{ sequenceCommentCount }}</h3>
           </span>
         </h2>
 
         <!-- Section commentaires séquence -->
-        <div v-if="showSequenceCommentSection" class="comment-section">
-          <h4><i class="fas fa-comments icon" style="color: #21294F;"></i>Commentaires sur la séquence</h4>
-          <div class="add-comment">
+        <div v-if="showSequenceCommentSection" class="comment-section-ecran-travail">
+          <h4><i class="fas fa-comments icon-ecran-travail" style="color: #21294F;"></i>Commentaires sur la séquence</h4>
+          <div class="add-comment-ecran-travail">
             <textarea v-model="newSequenceComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-            <button @click="addSequenceComment" class="add-comment-btn"><i class="fas fa-plus-circle"></i>Ajouter</button>
+            <button @click="addSequenceComment" class="add-comment-btn-ecran-travail"><i class="fas fa-plus-circle"></i>Ajouter</button>
           </div>
-          <div class="comments-list">
-            <div v-for="comment in sequenceComments" :key="comment.id" class="comment-item">
-              <div class="comment-header">
-                <span class="comment-author">{{ comment.utilisateurNom }}</span>
-                <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+          <div class="comments-list-ecran-travail">
+            <div v-for="comment in sequenceComments" :key="comment.id" class="comment-item-ecran-travail">
+              <div class="comment-header-ecran-travail">
+                <span class="comment-author-ecran-travail">{{ comment.utilisateurNom }}</span>
+                <span class="comment-date-ecran-travail">{{ formatDate(comment.creeLe) }}</span>
               </div>
-              <div class="comment-content">
+              <div class="comment-content-ecran-travail">
                 {{ comment.contenu }}
               </div>
-              <div class="comment-actions" v-if="comment.utilisateurId === user.id">
-                <button @click="deleteSequenceComment(comment.id)" class="delete-comment-btn"><i class="fas fa-trash icon"></i>Supprimer</button>
+              <div class="comment-actions-ecran-travail" v-if="comment.utilisateurId === user.id">
+                <button @click="deleteSequenceComment(comment.id)" class="delete-comment-btn-ecran-travail"><i class="fas fa-trash icon-ecran-travail"></i>Supprimer</button>
               </div>
             </div>
           </div>
         </div>
         
-        <p><strong>Synopsis:</strong> {{ currentSequence.synopsis || 'Aucun synopsis' }}</p>
-        <p><strong>Statut:</strong> {{ currentSequence.statutNom || 'Non défini' }}</p>
+        <p class="sequence-info-ecran-travail"><strong>Synopsis:</strong> {{ currentSequence.synopsis || 'Aucun synopsis' }}</p>
+        <p class="sequence-info-ecran-travail"><strong>Statut:</strong> {{ currentSequence.statutNom || 'Non défini' }}</p>
 
         <!-- Section scènes -->
-        <div class="scenes-section">
-          <div class="section-header">
+        <div class="scenes-section-ecran-travail">
+          <div class="section-header-ecran-travail">
             <h3>Scènes</h3>
-            <button class="add-scene-btn" @click="goToAddScene"><i class="fas fa-plus-circle " style="color: #21294F;"></i> Scène</button>
+            <button class="add-scene-btn-ecran-travail" @click="goToAddScene"><i class="fas fa-plus-circle " style="color: #21294F;"></i> Scène</button>
           </div>
 
-
           <!-- Liste des scènes -->
-          <div class="scenes-list">
+          <div class="scenes-list-ecran-travail">
             
-            <div v-for="scene in currentSequence.scenes" :key="scene.idScene" class="scene-card">
-            <h3>
+            <div v-for="scene in currentSequence.scenes" :key="scene.idScene" class="scene-card-ecran-travail">
+            <h3 class="scene-title-ecran-travail">
               Scène {{ scene.ordre }}: {{ scene.titre }}
-              <span v-if="userPermissions.canCreateScene" class="icon-edit" @click="startEditScene(scene)">
+              <span v-if="userPermissions.canCreateScene" class="icon-edit-ecran-travail" @click="startEditScene(scene)">
                 <i class="fas fa-pen" style="color: #17a2b8;"></i>
               </span>
-              <span v-if="userPermissions.canCreateScene" class="icon-delete" @click="deleteScene(scene.idScene)">
+              <span v-if="userPermissions.canCreateScene" class="icon-delete-ecran-travail" @click="deleteScene(scene.idScene)">
                 <i class="fas fa-trash " style="color: #dc3545;"></i>
               </span>
-              <span class="comment-icon" @click="toggleSceneCommentSection(scene)">
+              <span class="comment-icon-ecran-travail" @click="toggleSceneCommentSection(scene)">
                 <i class="fas fa-comments" style="color: #21294F;"></i> {{ getSceneCommentCount(scene.idScene) }}
               </span>
 
                <!-- Dans chaque scene-card, remplacer le bouton existant par : -->
-                <div class="scene-actions">
+                <div class="scene-actions-ecran-travail">
                   <button 
                     v-if="userPermissions.canCreateScene" 
-                    class="export-dialogues-btn pdf-btn" 
+                    class="export-dialogues-btn-ecran-travail pdf-btn-ecran-travail" 
                     @click="exportSceneDialoguesPDF(scene)"
                     title="Exporter les dialogues de cette scène en PDF"
                   >
@@ -254,79 +350,79 @@
             />
 
               <!-- Section commentaires scène -->
-              <div v-if="showSceneCommentModal && selectedScene?.idScene === scene.idScene" class="comment-section">
+              <div v-if="showSceneCommentModal && selectedScene?.idScene === scene.idScene" class="comment-section-ecran-travail">
                 <h4>Commentaires sur la scène</h4>
-                <div class="add-comment">
+                <div class="add-comment-ecran-travail">
                   <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-                  <button @click="addSceneComment" class="add-comment-btn"><i class="fas fa-plus-circle"></i>Ajouter</button>
+                  <button @click="addSceneComment" class="add-comment-btn-ecran-travail"><i class="fas fa-plus-circle"></i>Ajouter</button>
                 </div>
 
-                <div class="comments-list">
-                  <div v-for="comment in sceneComments" :key="comment.id" class="comment-item">
-                    <div class="comment-header">
-                      <span class="comment-author">{{ comment.utilisateurNom }}</span>
-                      <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+                <div class="comments-list-ecran-travail">
+                  <div v-for="comment in sceneComments" :key="comment.id" class="comment-item-ecran-travail">
+                    <div class="comment-header-ecran-travail">
+                      <span class="comment-author-ecran-travail">{{ comment.utilisateurNom }}</span>
+                      <span class="comment-date-ecran-travail">{{ formatDate(comment.creeLe) }}</span>
                     </div>
-                    <div class="comment-content">
+                    <div class="comment-content-ecran-travail">
                       {{ comment.contenu }}
                     </div>
-                    <div class="comment-actions" v-if="comment.utilisateurId === user.id">
-                      <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn"><i class="fas fa-trash icon"></i>Supprimer</button>
+                    <div class="comment-actions-ecran-travail" v-if="comment.utilisateurId === user.id">
+                      <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn-ecran-travail"><i class="fas fa-trash icon-ecran-travail"></i>Supprimer</button>
                     </div>
                   </div>
                 </div>
-                <button @click="closeSceneCommentModal" class="close-comments-btn">Fermer</button>
+                <button @click="closeSceneCommentModal" class="close-comments-btn-ecran-travail">Fermer</button>
               </div>
 
-              <p><strong>Synopsis:</strong> {{ scene.synopsis || 'Aucun synopsis' }}</p>
-              <p><strong>Statut:</strong> {{ scene.statutNom || 'Non défini' }}</p>
+              <p class="scene-info-ecran-travail"><strong>Synopsis:</strong> {{ scene.synopsis || 'Aucun synopsis' }}</p>
+              <p class="scene-info-ecran-travail"><strong>Statut:</strong> {{ scene.statutNom || 'Non défini' }}</p>
 
-              <div class="section-header">
+              <div class="section-header-ecran-travail">
                 <h4><i class="fas fa-map-pin" style="color: #dc3545;"></i>Lieux et Plateaux:</h4>
-                <button v-if="userPermissions.canCreateLieu" class="add-lieu-btn" @click="openAddLieuModal(scene)">
+                <button v-if="userPermissions.canCreateLieu" class="add-lieu-btn-ecran-travail" @click="openAddLieuModal(scene)">
                   <i class="fas fa-plus-circle" style="color: #21294F;"></i>Lieu/Plateau
                 </button>
               </div>
 
               <!-- Lieux et Plateaux -->
-              <div class="lieux-plateaux" v-if="scene.sceneLieus?.length">
-                <ul>
-                  <li v-for="sceneLieu in scene.sceneLieus" :key="sceneLieu.id">
+              <div class="lieux-plateaux-ecran-travail" v-if="scene.sceneLieus?.length">
+                <ul class="lieux-list-ecran-travail">
+                  <li v-for="sceneLieu in scene.sceneLieus" :key="sceneLieu.id" class="lieu-item-ecran-travail">
                     <strong>{{ sceneLieu.lieuNom || 'Lieu inconnu' }}</strong>
                     <span v-if="sceneLieu.plateauNom"> - <strong>Plateau:</strong> {{ sceneLieu.plateauNom }}</span>
-                    <span v-if="userPermissions.canCreateLieu" class="icon-delete" @click="deleteSceneLieu(sceneLieu.id)">
+                    <span v-if="userPermissions.canCreateLieu" class="icon-delete-ecran-travail" @click="deleteSceneLieu(sceneLieu.id)">
                       <i class="fas fa-trash" style="color: #dc3545;"></i>
                     </span>
-                    <p v-if="sceneLieu.descriptionUtilisation">Description: {{ sceneLieu.descriptionUtilisation }}</p>
+                    <p v-if="sceneLieu.descriptionUtilisation" class="lieu-description-ecran-travail">Description: {{ sceneLieu.descriptionUtilisation }}</p>
                   </li>
                 </ul>
               </div>
-              <p v-else>Aucun lieu ou plateau associé.</p>
+              <p v-else class="no-lieux-ecran-travail">Aucun lieu ou plateau associé.</p>
 
-              <div class="section-header">
+              <div class="section-header-ecran-travail">
                     <h4><i class="fas fa-comments" ></i>Dialogues:</h4> 
                 </div>
               <!-- Dialogues -->
             
 
               <!-- Modifier la section des dialogues dans le template -->
-              <div class="dialogues" v-if="scene.dialogues?.length">
-                <ul>
-                  <li v-for="dialogue in scene.dialogues" :key="dialogue.id" class="dialogue-item">
+              <div class="dialogues-ecran-travail" v-if="scene.dialogues?.length">
+                <ul class="dialogues-list-ecran-travail">
+                  <li v-for="dialogue in scene.dialogues" :key="dialogue.id" class="dialogue-item-ecran-travail">
                     <div 
-                      class="dialogue-text" 
+                      class="dialogue-text-ecran-travail" 
                       @mouseup="openHighlightModal(dialogue, $event)"
                       :data-dialogue-id="dialogue.id"
                     >
                       <strong>{{ dialogue.personnageNom || 'Narrateur' }}:</strong> 
-                      <span class="dialogue-content">{{ dialogue.texte }}</span>
+                      <span class="dialogue-content-ecran-travail">{{ dialogue.texte }}</span>
                       
                       <!-- Afficher les surlignages -->
                       <template v-if="dialogueHighlights[dialogue.id]">
                         <span 
                           v-for="highlight in dialogueHighlights[dialogue.id]" 
                           :key="highlight.id"
-                          class="text-highlight"
+                          class="text-highlight-ecran-travail"
                           :style="{ backgroundColor: highlight.couleur.valeurHex }"
                           :title="`Surligné par ${highlight.utilisateurNom}`"
                         >
@@ -335,22 +431,22 @@
                       </template>
                     </div>
                     
-                    <span v-if="dialogue.observation" class="dialogue-observation">
+                    <span v-if="dialogue.observation" class="dialogue-observation-ecran-travail">
                       {{ dialogue.observation }}
                     </span>
                     
-                    <div class="dialogue-actions">
-                      <span v-if="userPermissions.canCreateDialogue" class="icon-edit" @click="startEditDialogue(dialogue)">
+                    <div class="dialogue-actions-ecran-travail">
+                      <span v-if="userPermissions.canCreateDialogue" class="icon-edit-ecran-travail" @click="startEditDialogue(dialogue)">
                         <i class="fas fa-pen" style="color: #17a2b8;"></i>
                       </span>
-                      <span v-if="userPermissions.canCreateDialogue" class="icon-delete" @click="deleteDialogue(dialogue.id)">
+                      <span v-if="userPermissions.canCreateDialogue" class="icon-delete-ecran-travail" @click="deleteDialogue(dialogue.id)">
                         <i class="fas fa-trash" style="color: #dc3545;"></i>
                       </span>
-                      <span class="comment-icon" @click="toggleDialogueCommentSection(dialogue)">
+                      <span class="comment-icon-ecran-travail" @click="toggleDialogueCommentSection(dialogue)">
                         <i class="fas fa-comment" style="color: #21294F;"></i> 
                         {{ getDialogueCommentCount(dialogue.id) }}
                       </span>
-                      <span v-if="userPermissions.canCreateDialogue" class="highlight-icon" @click="openHighlightModal(dialogue, $event)" title="Surligner">
+                      <span v-if="userPermissions.canCreateDialogue" class="highlight-icon-ecran-travail" @click="openHighlightModal(dialogue, $event)" title="Surligner">
                         <i class="fas fa-highlighter" style="color: #ffeb3b;"></i>
                       </span>
                     </div>
@@ -358,9 +454,9 @@
                 </ul>
               </div>
 
-              <div class="section-header">
+              <div class="section-header-ecran-travail">
                   <h4><i class="fas fa-comments" ></i></h4> 
-                 <button v-if="userPermissions.canCreateDialogue" class="add-dialogue-btn" @click="goToAddDialogue(scene.idScene)">
+                 <button v-if="userPermissions.canCreateDialogue" class="add-dialogue-btn-ecran-travail" @click="goToAddDialogue(scene.idScene)">
                     <i class="fas fa-plus-circle" style="color: #21294F;"></i> Dialogue
                   </button>
               </div>                    
@@ -369,36 +465,36 @@
           </div>
         </div>
       </main>
-     <div v-else-if="!isLoading" class="no-data">
+     <div v-else-if="!isLoading" class="no-data-ecran-travail">
       <p>Aucune séquence disponible pour cet épisode.</p>
     </div>
 
       <!-- Ajouter cette modale après les autres modales -->
-      <div v-if="showHighlightModal" class="modal-overlay" @click="closeHighlightModal">
-        <div class="modal-content" @click.stop>
-          <div class="modal-header">
+      <div v-if="showHighlightModal" class="modal-overlay-ecran-travail" @click="closeHighlightModal">
+        <div class="modal-content-ecran-travail" @click.stop>
+          <div class="modal-header-ecran-travail">
             <h3>
               <i class="fas fa-highlighter"></i>
               Surligner le texte
             </h3>
-            <button @click="closeHighlightModal" class="close-btn">
+            <button @click="closeHighlightModal" class="close-btn-ecran-travail">
               <i class="fas fa-times"></i>
             </button>
           </div>
           
-          <div class="highlight-preview">
+          <div class="highlight-preview-ecran-travail">
             <p><strong>Texte sélectionné :</strong></p>
-            <div class="selected-text-preview">{{ selectedText }}</div>
+            <div class="selected-text-preview-ecran-travail">{{ selectedText }}</div>
           </div>
           
-          <div class="color-selection">
+          <div class="color-selection-ecran-travail">
             <h4>Choisir une couleur :</h4>
-            <div class="color-palette">
+            <div class="color-palette-ecran-travail">
               <div 
                 v-for="color in availableColors" 
                 :key="color.id"
-                class="color-option"
-                :class="{ 'selected': selectedColor?.id === color.id }"
+                class="color-option-ecran-travail"
+                :class="{ 'selected-ecran-travail': selectedColor?.id === color.id }"
                 :style="{ backgroundColor: color.valeurHex }"
                 @click="selectedColor = color"
                 :title="color.nom"
@@ -406,37 +502,37 @@
             </div>
           </div>
           
-          <div v-if="dialogueHighlights[selectedDialogueForHighlight?.id]?.length" class="existing-highlights">
+          <div v-if="dialogueHighlights[selectedDialogueForHighlight?.id]?.length" class="existing-highlights-ecran-travail">
             <h4>Surlignages existants :</h4>
             <div 
               v-for="highlight in dialogueHighlights[selectedDialogueForHighlight?.id]" 
               :key="highlight.id"
-              class="highlight-item"
+              class="highlight-item-ecran-travail"
             >
               <span 
-                class="highlight-sample"
+                class="highlight-sample-ecran-travail"
                 :style="{ backgroundColor: highlight.couleur.valeurHex }"
               ></span>
-              <span class="highlight-text">{{ highlight.texteSurligne }}</span>
-              <span class="highlight-info">par {{ highlight.utilisateurNom }}</span>
+              <span class="highlight-text-ecran-travail">{{ highlight.texteSurligne }}</span>
+              <span class="highlight-info-ecran-travail">par {{ highlight.utilisateurNom }}</span>
               <button 
                 v-if="highlight.utilisateurId === user.id"
                 @click="removeHighlight(highlight.id)"
-                class="delete-highlight-btn"
+                class="delete-highlight-btn-ecran-travail"
               >
                 <i class="fas fa-trash"></i>
               </button>
             </div>
           </div>
           
-          <div class="modal-actions">
-            <button type="button" @click="closeHighlightModal" class="cancel-btn">
+          <div class="modal-actions-ecran-travail">
+            <button type="button" @click="closeHighlightModal" class="cancel-btn-ecran-travail">
               Annuler
             </button>
             <button 
               type="button" 
               @click="applyHighlight" 
-              class="save-btn"
+              class="save-btn-ecran-travail"
               :disabled="!selectedColor"
             >
               <i class="fas fa-highlighter"></i> Appliquer
@@ -446,52 +542,52 @@
       </div>
 
       <!-- Modale pour éditer l'épisode -->
-      <div v-if="showEditEpisodeModal" class="modal-overlay">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div v-if="showEditEpisodeModal" class="modal-overlay-ecran-travail">
+        <div class="modal-content-ecran-travail">
+          <div class="modal-header-ecran-travail">
             <h3>
               <i class="fas fa-edit"></i>
               Modifier l'épisode
             </h3>
-            <button @click="closeEditEpisodeModal" class="close-btn"><i class="fas fa-times"></i></button>
+            <button @click="closeEditEpisodeModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
           </div>
-          <form @submit.prevent="saveEditedEpisode" class="edit-form">
-            <div class="form-group">
+          <form @submit.prevent="saveEditedEpisode" class="edit-form-ecran-travail">
+            <div class="form-group-ecran-travail">
               <label for="edit-episode-titre">Titre</label>
               <input
                 type="text"
                 id="edit-episode-titre"
                 v-model="editingEpisode.titre"
                 required
-                class="form-input"
+                class="form-input-ecran-travail"
               />
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-episode-synopsis">Synopsis</label>
               <textarea
                 id="edit-episode-synopsis"
                 v-model="editingEpisode.synopsis"
                 rows="4"
-                class="form-textarea"
+                class="form-textarea-ecran-travail"
               ></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-episode-ordre">Ordre</label>
               <input
                 type="number"
                 id="edit-episode-ordre"
                 v-model="editingEpisode.ordre"
                 required
-                class="form-input"
+                class="form-input-ecran-travail"
               />
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-episode-statut">Statut</label>
               <select
                 id="edit-episode-statut"
                 v-model="editingEpisode.statutId"
                 required
-                class="form-select"
+                class="form-select-ecran-travail"
               >
                 <option value="">Sélectionnez un statut</option>
                 <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
@@ -499,12 +595,12 @@
                 </option>
               </select>
             </div>
-            <div v-if="editEpisodeError" class="error-message">
+            <div v-if="editEpisodeError" class="error-message-ecran-travail">
               {{ editEpisodeError }}
             </div>
-            <div class="modal-actions">
-              <button type="button" @click="closeEditEpisodeModal" class="cancel-btn">Annuler</button>
-              <button type="submit" class="save-btn" :disabled="editEpisodeLoading">
+            <div class="modal-actions-ecran-travail">
+              <button type="button" @click="closeEditEpisodeModal" class="cancel-btn-ecran-travail">Annuler</button>
+              <button type="submit" class="save-btn-ecran-travail" :disabled="editEpisodeLoading">
                 {{ editEpisodeLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
               </button>
             </div>
@@ -513,52 +609,52 @@
       </div>
 
       <!-- Modale pour éditer la séquence -->
-      <div v-if="showEditSequenceModal" class="modal-overlay">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div v-if="showEditSequenceModal" class="modal-overlay-ecran-travail">
+        <div class="modal-content-ecran-travail">
+          <div class="modal-header-ecran-travail">
             <h3>
               <i class="fas fa-edit"></i>
               Modifier la séquence
             </h3>
-            <button @click="closeEditSequenceModal" class="close-btn"><i class="fas fa-times"></i></button>
+            <button @click="closeEditSequenceModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
           </div>
-          <form @submit.prevent="saveEditedSequence" class="edit-form">
-            <div class="form-group">
+          <form @submit.prevent="saveEditedSequence" class="edit-form-ecran-travail">
+            <div class="form-group-ecran-travail">
               <label for="edit-sequence-titre">Titre</label>
               <input
                 type="text"
                 id="edit-sequence-titre"
                 v-model="editingSequence.titre"
                 required
-                class="form-input"
+                class="form-input-ecran-travail"
               />
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-sequence-synopsis">Synopsis</label>
               <textarea
                 id="edit-sequence-synopsis"
                 v-model="editingSequence.synopsis"
                 rows="4"
-                class="form-textarea"
+                class="form-textarea-ecran-travail"
               ></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-sequence-ordre">Ordre</label>
               <input
                 type="number"
                 id="edit-sequence-ordre"
                 v-model="editingSequence.ordre"
                 required
-                class="form-input"
+                class="form-input-ecran-travail"
               />
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-sequence-statut">Statut</label>
               <select
                 id="edit-sequence-statut"
                 v-model="editingSequence.statutId"
                 required
-                class="form-select"
+                class="form-select-ecran-travail"
               >
                 <option value="">Sélectionnez un statut</option>
                 <option v-for="statut in statutsSequence" :key="statut.id" :value="statut.id">
@@ -566,12 +662,12 @@
                 </option>
               </select>
             </div>
-            <div v-if="editSequenceError" class="error-message">
+            <div v-if="editSequenceError" class="error-message-ecran-travail">
               {{ editSequenceError }}
             </div>
-            <div class="modal-actions">
-              <button type="button" @click="closeEditSequenceModal" class="cancel-btn">Annuler</button>
-              <button type="submit" class="save-btn" :disabled="editSequenceLoading">
+            <div class="modal-actions-ecran-travail">
+              <button type="button" @click="closeEditSequenceModal" class="cancel-btn-ecran-travail">Annuler</button>
+              <button type="submit" class="save-btn-ecran-travail" :disabled="editSequenceLoading">
                 {{ editSequenceLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
               </button>
             </div>
@@ -580,52 +676,52 @@
       </div>
 
       <!-- Modale pour éditer la scène -->
-      <div v-if="showEditSceneModal" class="modal-overlay">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div v-if="showEditSceneModal" class="modal-overlay-ecran-travail">
+        <div class="modal-content-ecran-travail">
+          <div class="modal-header-ecran-travail">
             <h3>
               <i class="fas fa-edit"></i>
               Modifier la scène
             </h3>
-            <button @click="closeEditSceneModal" class="close-btn"><i class="fas fa-times"></i></button>
+            <button @click="closeEditSceneModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
           </div>
-          <form @submit.prevent="saveEditedScene" class="edit-form">
-            <div class="form-group">
+          <form @submit.prevent="saveEditedScene" class="edit-form-ecran-travail">
+            <div class="form-group-ecran-travail">
               <label for="edit-scene-titre">Titre</label>
               <input
                 type="text"
                 id="edit-scene-titre"
                 v-model="editingScene.titre"
                 required
-                class="form-input"
+                class="form-input-ecran-travail"
               />
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-scene-synopsis">Synopsis</label>
               <textarea
                 id="edit-scene-synopsis"
                 v-model="editingScene.synopsis"
                 rows="4"
-                class="form-textarea"
+                class="form-textarea-ecran-travail"
               ></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-scene-ordre">Ordre</label>
               <input
                 type="number"
                 id="edit-scene-ordre"
                 v-model="editingScene.ordre"
                 required
-                class="form-input"
+                class="form-input-ecran-travail"
               />
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-scene-statut">Statut</label>
               <select
                 id="edit-scene-statut"
                 v-model="editingScene.statutId"
                 required
-                class="form-select"
+                class="form-select-ecran-travail"
               >
                 <option value="">Sélectionnez un statut</option>
                 <option v-for="statut in statutsScene" :key="statut.id" :value="statut.id">
@@ -633,12 +729,12 @@
                 </option>
               </select>
             </div>
-            <div v-if="editSceneError" class="error-message">
+            <div v-if="editSceneError" class="error-message-ecran-travail">
               {{ editSceneError }}
             </div>
-            <div class="modal-actions">
-              <button type="button" @click="closeEditSceneModal" class="cancel-btn">Annuler</button>
-              <button type="submit" class="save-btn" :disabled="editSceneLoading">
+            <div class="modal-actions-ecran-travail">
+              <button type="button" @click="closeEditSceneModal" class="cancel-btn-ecran-travail">Annuler</button>
+              <button type="submit" class="save-btn-ecran-travail" :disabled="editSceneLoading">
                 {{ editSceneLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
               </button>
             </div>
@@ -647,23 +743,23 @@
       </div>
 
       <!-- Modale pour éditer le dialogue -->
-      <div v-if="showEditDialogueModal" class="modal-overlay">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div v-if="showEditDialogueModal" class="modal-overlay-ecran-travail">
+        <div class="modal-content-ecran-travail">
+          <div class="modal-header-ecran-travail">
             <h3>
               <i class="fas fa-edit"></i>
               Modifier le dialogue
             </h3>
-            <button @click="closeEditDialogueModal" class="close-btn"><i class="fas fa-times"></i></button>
+            <button @click="closeEditDialogueModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
           </div>
-          <form @submit.prevent="saveEditedDialogue" class="edit-form">
-            <div class="form-group">
+          <form @submit.prevent="saveEditedDialogue" class="edit-form-ecran-travail">
+            <div class="form-group-ecran-travail">
               <label for="edit-dialogue-personnage">Personnage</label>
               <select
                 id="edit-dialogue-personnage"
                 v-model="editingDialogue.personnageId"
                 required
-                class="form-select"
+                class="form-select-ecran-travail"
               >
                 <option :value="null">Narration (sans personnage)</option>
                 <option v-for="personnage in personnages" :key="personnage.id" :value="personnage.id">
@@ -671,45 +767,45 @@
                 </option>
               </select>
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-dialogue-texte">Texte</label>
               <textarea
                 id="edit-dialogue-texte"
                 v-model="editingDialogue.texte"
                 rows="4"
-                class="form-textarea"
+                class="form-textarea-ecran-travail"
                 required
               ></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-dialogue-ordre">Ordre</label>
               <input
                 type="number"
                 id="edit-dialogue-ordre"
                 v-model="editingDialogue.ordre"
                 required
-                class="form-input"
+                class="form-input-ecran-travail"
                 @blur="validateOrder"
               />
-              <div v-if="suggestedOrder" class="suggestion">Suggestion: {{ suggestedOrder }}</div>
-              <div v-if="orderError" class="error-message">{{ orderError }}</div>
+              <div v-if="suggestedOrder" class="suggestion-ecran-travail">Suggestion: {{ suggestedOrder }}</div>
+              <div v-if="orderError" class="error-message-ecran-travail">{{ orderError }}</div>
             </div>
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="edit-dialogue-observation">Observation</label>
               <textarea
                 id="edit-dialogue-observation"
                 v-model="editingDialogue.observation"
                 rows="3"
-                class="form-textarea"
+                class="form-textarea-ecran-travail"
                 placeholder="Observation optionnelle"
               ></textarea>
             </div>
-            <div v-if="editDialogueError" class="error-message">
+            <div v-if="editDialogueError" class="error-message-ecran-travail">
               {{ editDialogueError }}
             </div>
-            <div class="modal-actions">
-              <button type="button" @click="closeEditDialogueModal" class="cancel-btn">Annuler</button>
-              <button type="submit" class="save-btn" :disabled="editDialogueLoading">
+            <div class="modal-actions-ecran-travail">
+              <button type="button" @click="closeEditDialogueModal" class="cancel-btn-ecran-travail">Annuler</button>
+              <button type="submit" class="save-btn-ecran-travail" :disabled="editDialogueLoading">
                 {{ editDialogueLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
               </button>
             </div>
@@ -718,27 +814,27 @@
       </div>
 
       <!-- Modale pour commentaires de dialogue -->
-      <div v-if="showDialogueCommentModal" class="modal-overlay">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div v-if="showDialogueCommentModal" class="modal-overlay-ecran-travail">
+        <div class="modal-content-ecran-travail">
+          <div class="modal-header-ecran-travail">
             <h3>Commentaires du dialogue</h3>
-            <button @click="closeDialogueCommentModal" class="close-btn"><i class="fas fa-times"></i></button>
+            <button @click="closeDialogueCommentModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
           </div>
-          <div class="add-comment">
+          <div class="add-comment-ecran-travail">
             <textarea v-model="newDialogueComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-            <button @click="addDialogueComment" class="add-comment-btn">Ajouter</button>
+            <button @click="addDialogueComment" class="add-comment-btn-ecran-travail">Ajouter</button>
           </div>
-          <div class="comments-list">
-            <div v-for="comment in dialogueComments" :key="comment.id" class="comment-item">
-              <div class="comment-header">
-                <span class="comment-author">{{ comment.utilisateurNom }}</span>
-                <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+          <div class="comments-list-ecran-travail">
+            <div v-for="comment in dialogueComments" :key="comment.id" class="comment-item-ecran-travail">
+              <div class="comment-header-ecran-travail">
+                <span class="comment-author-ecran-travail">{{ comment.utilisateurNom }}</span>
+                <span class="comment-date-ecran-travail">{{ formatDate(comment.creeLe) }}</span>
               </div>
-              <div class="comment-content">
+              <div class="comment-content-ecran-travail">
                 {{ comment.contenu }}
               </div>
-              <div class="comment-actions" v-if="comment.utilisateurId === user.id">
-                <button @click="deleteDialogueComment(comment.id)" class="delete-comment-btn">Supprimer</button>
+              <div class="comment-actions-ecran-travail" v-if="comment.utilisateurId === user.id">
+                <button @click="deleteDialogueComment(comment.id)" class="delete-comment-btn-ecran-travail">Supprimer</button>
               </div>
             </div>
           </div>
@@ -746,17 +842,17 @@
       </div>
 
       <!-- Modale pour ajouter un lieu/plateau -->
-      <div v-if="showAddLieuModal" class="modal-overlay" @click="closeAddLieuModal">
-        <div class="modal-content" @click.stop>
-          <div class="modal-header">
+      <div v-if="showAddLieuModal" class="modal-overlay-ecran-travail" @click="closeAddLieuModal">
+        <div class="modal-content-ecran-travail" @click.stop>
+          <div class="modal-header-ecran-travail">
             <h3>Ajouter un Lieu/Plateau à la scène: {{ selectedSceneForLieu?.titre }}</h3>
-            <button @click="closeAddLieuModal" class="close-btn"><i class="fas fa-times"></i></button>
+            <button @click="closeAddLieuModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
           </div>
           
-          <form @submit.prevent="addSceneLieu" class="edit-form">
-            <div class="form-group">
+          <form @submit.prevent="addSceneLieu" class="edit-form-ecran-travail">
+            <div class="form-group-ecran-travail">
               <label for="lieu-select">Sélectionner un lieu existant</label>
-              <select id="lieu-select" v-model="selectedLieuId" @change="loadAvailablePlateaux" class="form-select" required>
+              <select id="lieu-select" v-model="selectedLieuId" @change="loadAvailablePlateaux" class="form-select-ecran-travail" required>
                 <option value="">Choisir un lieu</option>
                 <option v-if="availableLieux.length === 0" disabled>Aucun lieu disponible pour ce projet</option>
                 <option v-for="lieu in availableLieux" :key="lieu.id" :value="lieu.id">
@@ -765,9 +861,9 @@
               </select>
             </div>
             
-            <div class="form-group" v-if="availablePlateaux.length > 0">
+            <div class="form-group-ecran-travail" v-if="availablePlateaux.length > 0">
               <label for="plateau-select">Sélectionner un plateau existant (optionnel)</label>
-              <select id="plateau-select" v-model="selectedPlateauId" class="form-select">
+              <select id="plateau-select" v-model="selectedPlateauId" class="form-select-ecran-travail">
                 <option value="">Aucun plateau</option>
                 <option v-for="plateau in availablePlateaux" :key="plateau.id" :value="plateau.id">
                   {{ plateau.nom }} ({{ plateau.typePlateau }})
@@ -775,55 +871,116 @@
               </select>
             </div>
             
-            <div class="form-group">
+            <div class="form-group-ecran-travail">
               <label for="description-utilisation">Description d'utilisation</label>
               <textarea 
                 id="description-utilisation" 
                 v-model="descriptionUtilisation" 
                 rows="3" 
-                class="form-textarea" 
+                class="form-textarea-ecran-travail" 
                 placeholder="Description de l'utilisation de ce lieu/plateau dans la scène..."
               ></textarea>
             </div>
             
-            <div v-if="addLieuError" class="error-message">
+            <div v-if="addLieuError" class="error-message-ecran-travail">
               {{ addLieuError }}
             </div>
             
-            <div class="modal-actions">
-              <button type="button" @click="closeAddLieuModal" class="cancel-btn">Annuler</button>
-              <button type="submit" class="save-btn" :disabled="addLieuLoading">
+            <div class="modal-actions-ecran-travail">
+              <button type="button" @click="closeAddLieuModal" class="cancel-btn-ecran-travail">Annuler</button>
+              <button type="submit" class="save-btn-ecran-travail" :disabled="addLieuLoading">
                 {{ addLieuLoading ? 'Ajout en cours...' : 'Ajouter' }}
               </button>
             </div>
           </form>
           
           <!-- Liste des lieux déjà associés à cette scène -->
-          <div class="associated-lieux" v-if="sceneLieus.length > 0">
+          <div class="associated-lieux-ecran-travail" v-if="sceneLieus.length > 0">
             <h4>Lieux déjà associés:</h4>
-            <div v-for="sceneLieu in sceneLieus" :key="sceneLieu.id" class="scene-lieu-item">
-              <div class="scene-lieu-info">
+            <div v-for="sceneLieu in sceneLieus" :key="sceneLieu.id" class="scene-lieu-item-ecran-travail">
+              <div class="scene-lieu-info-ecran-travail">
                 <strong>{{ sceneLieu.lieuNom }}</strong>
                 <span v-if="sceneLieu.plateauNom"> - Plateau: {{ sceneLieu.plateauNom }}</span>
                 - {{ sceneLieu.descriptionUtilisation || 'Aucune description' }}
               </div>
-              <button @click="removeLieuFromScene(sceneLieu.id)" class="delete-btn" title="Supprimer">
+              <button @click="removeLieuFromScene(sceneLieu.id)" class="delete-btn-ecran-travail" title="Supprimer">
                 🗑️
               </button>
             </div>
           </div>
         </div>
+        
+         <!-- Modal d'édition du projet -->
+    <div v-if="editingProject" class="edit-project-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Modifier le projet</h3>
+          <button @click="cancelEdit" class="close-modal-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div v-if="editError" class="error-message">
+            {{ editError }}
+          </div>
+          
+          <div class="form-group">
+            <label>Titre:</label>
+            <input v-model="editForm.titre" type="text" class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label>Synopsis:</label>
+            <textarea v-model="editForm.synopsis" class="form-textarea" rows="4"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>Genre:</label>
+            <select v-model="editForm.genreId" class="form-select">
+              <option value="">Sélectionnez un genre</option>
+              <option v-for="genre in genres" :key="genre.id" :value="genre.id">
+                {{ genre.nomGenre }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Statut:</label>
+            <select v-model="editForm.statutId" class="form-select">
+              <option value="">Sélectionnez un statut</option>
+              <option v-for="statut in statuts" :key="statut.id" :value="statut.id">
+                {{ statut.nomStatutsProjet }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Date de fin:</label>
+            <input v-model="editForm.dateFin" type="date" class="form-input">
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button @click="cancelEdit" class="cancel-btn">Annuler</button>
+          <button @click="submitEdit" :disabled="editLoading" class="save-btn">
+            {{ editLoading ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { useEcranTravailStore } from '../stores/ecranTravailStore';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import '../assets/css/ecran_travail.css';
 import SceneTournageSection from './SceneTournageSection.vue';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -842,6 +999,7 @@ const selectedText = ref('');
 const selectedColor = ref(null);
 const availableColors = ref([]);
 const dialogueHighlights = ref({});
+
 
 const userPermissions = ref({
     canEditEpisode: false,
@@ -2974,8 +3132,11 @@ const exportEpisodeWithSequencePDF = async () => {
     console.error('Erreur lors de l\'export PDF épisode + séquence:', error);
     alert('Erreur lors de l\'export PDF');
   }
+
+  
 };
 
 
 </script>
+
 
