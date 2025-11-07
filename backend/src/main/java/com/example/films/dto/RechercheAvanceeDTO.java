@@ -29,4 +29,9 @@ public class RechercheAvanceeDTO {
     // Pour le regroupement
     private String groupeKey;
     private String groupeValeur;
+
+     private Long projetId;
+    private Long episodeId; 
+    private Long sequenceId;
+    private Long sceneId;
 }

@@ -66,4 +66,38 @@ public class GlobalStatisticsDTO {
         private Long sequences;
         private Long scenes;
     }
+
+    // Ajouter dans GlobalStatisticsDTO.java
+        
+    @Data
+    public static class ProjectTotals {
+        private String projetNom;
+        private Long totalEpisodes;
+        private Long totalSequences;
+        private Long totalScenes;
+        private Long totalDialogues;
+        private Long totalRealisateurs;
+        private Long totalScenaristes;
+        // getters/setters
+    }
+    
+    @Data
+    public static class DetailedStatusStats {
+        private Long episodesValides;
+        private Long episodesTournage;
+        private Long scenesValidees;
+        private Long scenesTournage;
+        private Long scenesPlanifiees;
+        private Long scenesEcrites;
+        // getters/setters
+    }
+    
+    @Data
+    public static class TimelineStats {
+        private String periode;
+        private Long nouvellesScenes;
+        private Long scenesTerminees;
+        private Long progressionMoyenne;
+        // getters/setters
+    }
 }

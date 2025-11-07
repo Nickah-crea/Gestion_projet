@@ -873,6 +873,16 @@ public class RechercheAvanceeService {
                 }
             }
         }
+
+         if (tournage.getScene().getSequence() != null) {
+            dto.setSequenceId(tournage.getScene().getSequence().getId());
+            if (tournage.getScene().getSequence().getEpisode() != null) {
+                dto.setEpisodeId(tournage.getScene().getSequence().getEpisode().getId());
+                if (tournage.getScene().getSequence().getEpisode().getProjet() != null) {
+                    dto.setProjetId(tournage.getScene().getSequence().getEpisode().getProjet().getId());
+                }
+            }
+        }
         
         dto.setModifieLe(tournage.getModifieLe());
         
@@ -904,6 +914,10 @@ public class RechercheAvanceeService {
         
         dto.setModifieLe(personnage.getModifieLe());
         
+         // Ajouter l'ID du projet
+        if (personnage.getProjet() != null) {
+            dto.setProjetId(personnage.getProjet().getId());
+        }
         return dto;
     }
     
@@ -921,6 +935,9 @@ public class RechercheAvanceeService {
         
         dto.setModifieLe(lieu.getModifieLe());
         
+        if (lieu.getProjet() != null) {
+            dto.setProjetId(lieu.getProjet().getId());
+        }
         return dto;
     }
     
@@ -938,6 +955,9 @@ public class RechercheAvanceeService {
         
         dto.setModifieLe(plateau.getModifieLe());
         
+        if (plateau.getLieu() != null && plateau.getLieu().getProjet() != null) {
+            dto.setProjetId(plateau.getLieu().getProjet().getId());
+        }
         return dto;
     }
 

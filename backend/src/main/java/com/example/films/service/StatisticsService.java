@@ -354,4 +354,71 @@ private String toCamelCase(String snakeCase) {
             return progress;
         });
     }
+
+    // Ajouter ces méthodes dans StatisticsService.java
+
+private Map<String, Object> getProjectTotals(Long projetId) {
+    String sql = """
+        SELECT 
+            p.titre as projet_nom,
+            COUNT(DISTINCT e.id_episode) as total_episodes,
+            COUNT(DISTINCT s.id_sequence) as total_sequences,
+            COUNT(DISTINCT sc.id_scene) as total_scenes,
+            COUNT(DISTINCT d.id_dialogue) as total_dialogues,
+            COUNT(DISTINCT CASE WHEN u.role = 'REALISATEUR' THEN u.id_utilisateur END) as total_realisateurs,
+            COUNT(DISTINCT CASE WHEN u.role = 'SCENARISTE' THEN u.id_utilisateur END) as total_scenaristes
+        FROM projets p
+        LEFT JOIN episodes e ON p.id_projet = e.id_projet
+        LEFT JOIN sequences s ON e.id_episode = s.id_episode
+        LEFT JOIN scenes sc ON s.id_sequence = sc.id_sequence
+        LEFT JOIN dialogues d ON sc.id_scene = d.id_scene
+        LEFT JOIN episode_realisateurs er ON e.id_episode = er.id_episode
+        LEFT JOIN realisateurs r ON er.id_realisateur = r.id_realisateur
+        LEFT JOIN utilisateurs u_r ON r.id_utilisateur = u_r.id_utilisateur
+        LEFT JOIN episode_scenaristes es ON e.id_episode = es.id_episode
+        LEFT JOIN scenaristes scena ON es.id_scenariste = scena.id_scenariste
+        LEFT JOIN utilisateurs u_s ON scena.id_utilisateur = u_s.id_utilisateur
+        WHERE p.id_projet = ? OR ? IS NULL
+        GROUP BY p.id_projet, p.titre
+        """;
+    
+    return jdbcTemplate.queryForMap(sql, projetId, projetId);
+}
+
+// Nouvelle méthode pour les statuts détaillés par projet
+private Map<String, Object> getDetailedStatusStatistics(Long projetId) {
+    String sql = """
+        -- Statistiques détaillées des statuts
+        SELECT 
+            -- Épisodes par statut
+            (SELECT COUNT(*) FROM episodes e 
+             JOIN episode_statuts es ON e.id_episode = es.id_episode AND es.date_fin IS NULL
+             JOIN statuts_episode se ON es.id_statut = se.id_statut_episode
+             WHERE (e.id_projet = ? OR ? IS NULL) AND se.code = 'valide') as episodes_valides,
+             
+            (SELECT COUNT(*) FROM episodes e 
+             JOIN episode_statuts es ON e.id_episode = es.id_episode AND es.date_fin IS NULL
+             JOIN statuts_episode se ON es.id_statut = se.id_statut_episode
+             WHERE (e.id_projet = ? OR ? IS NULL) AND se.code = 'tournage') as episodes_tournage,
+             
+            -- Scènes par statut
+            (SELECT COUNT(*) FROM scenes sc
+             JOIN sequences seq ON sc.id_sequence = seq.id_sequence
+             JOIN episodes e ON seq.id_episode = e.id_episode
+             JOIN scene_statuts ss ON sc.id_scene = ss.id_scene AND ss.date_fin IS NULL
+             JOIN statuts_scene sts ON ss.id_statut = sts.id_statut_scene
+             WHERE (e.id_projet = ? OR ? IS NULL) AND sts.code = 'validee') as scenes_validees,
+             
+            (SELECT COUNT(*) FROM scenes sc
+             JOIN sequences seq ON sc.id_sequence = seq.id_sequence
+             JOIN episodes e ON seq.id_episode = e.id_episode
+             JOIN scene_statuts ss ON sc.id_scene = ss.id_scene AND ss.date_fin IS NULL
+             JOIN statuts_scene sts ON ss.id_statut = sts.id_statut_scene
+             WHERE (e.id_projet = ? OR ? IS NULL) AND sts.code = 'tournage') as scenes_tournage
+        """;
+    
+    return jdbcTemplate.queryForMap(sql, 
+        projetId, projetId, projetId, projetId, projetId, projetId, projetId, projetId);
+}
+
 } 
