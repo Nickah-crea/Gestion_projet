@@ -1,95 +1,57 @@
 <template>
-  <div class="app-wrapper">
-
-    <div class="fixed-add-btn-links">
-      
-       <div class="options-sidebar" :class="{ 'open': sidebarOpen }">
+  <div class="app-wrapper-global">
+    
+    <!-- Sidebar fixée à droite -->
+    <div class="options-sidebar" :class="{ 'open': sidebarOpen }">
+      <!-- Dans votre template -->
       <button class="sidebar-toggle" @click="toggleSidebar">
-        <i class="fas" :class="sidebarOpen ? 'fa-chevron-right' : 'fa-cog'"></i>
+        <!-- <i class="fas" :class="sidebarOpen ? 'fa-chevron-right' : 'fa-cog'"></i> -->
+        <i class="fas" :class="sidebarOpen ? 'fa-chevron-right' : 'fa-plus-circle'"></i>
       </button>
 
-
-      <div class="liens-ecran-travail">
+      <div class="sidebar-content">
         <button class="nav-btn-ecran-travail" @click="goToCalendrierTournage">
             <i class="fas fa-calendar-alt"></i> Calendrier
           </button>
 
-            <button 
-        v-if="episodes.length === 0 || userPermissions.canEditEpisode" 
-        class="add-scene-btn-ecran-travail" 
-        @click="goToAddEpisode"
-      >
-        <i class="fas fa-plus-circle" style="color: #21294F;"></i> Episode
-        </button>     
-          <button v-if="userPermissions.canCreateSequence" class="add-scene-btn-ecran-travail" @click="goToAddSequence">
-            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Séquence
-          </button>
-          <button v-if="userPermissions.canCreateLieu" class="add-scene-btn-ecran-travail" @click="goToAddLieu">
-            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Lieu
-          </button>
-          <button v-if="userPermissions.canCreatePlateau" class="add-scene-btn-ecran-travail" @click="goToAddPlateau">
-            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Plateau
-          </button>
-          <button v-if="userPermissions.canCreateComedien" class="add-scene-btn-ecran-travail" @click="goToAddComedien">
-            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Comedien
-          </button>
-          <button v-if="userPermissions.canCreatePersonnage" class="add-scene-btn-ecran-travail" @click="goToAddPersonnage">
-            <i class="fas fa-plus-circle " style="color: #21294F;"></i> Personnage
-          </button>
-      </div>
-    </div>
-    </div>
-
-    <div class="ecran-travail-ecran-travail">
-      <!-- Header avec titre de l'épisode -->
-      <header class="header-ecran-travail">
-        <div class="navigation-ecran-travail">
-          <button class="nav-btn-ecran-travail" @click="goToPrevPage" :disabled="!hasPrev || isLoading">Précédent</button>
-          <button class="nav-btn-ecran-travail" @click="goToNextPage" :disabled="!hasNext || isLoading">Suivant</button>
-           <button class="nav-btn-ecran-travail" @click="goToCalendrierTournage">
-              <i class="fas fa-calendar-alt"></i> Calendrier
-            </button>
-          <div class="export-container-ecran-travail">
-          <div class="export-dropdown-ecran-travail">
-            <button class="export-main-btn-ecran-travail">
+        <!-- Section Export dans la sidebar -->
+        <div class="export-container">
+          <div class="export-dropdown">
+            <button class="export-main-btn">
               <i class="fas fa-file-export"></i> Exporter en PDF
               <i class="fas fa-chevron-down"></i>
             </button>
-            <div class="export-dropdown-content-ecran-travail">
-              <!-- Export PDF des scènes seulement -->
+            <div class="export-dropdown-content">
               <button 
                 v-if="currentSequence" 
-                class="export-option-ecran-travail" 
+                class="export-option" 
                 @click="exportScenesOnlyPDF"
                 title="Exporter les scènes en PDF"
               >
                 <i class="fas fa-file-pdf"></i> Scènes PDF
               </button>
 
-              <!-- Export PDF des dialogues d'une scène -->
               <button 
                 v-if="currentSequence" 
-                class="export-option-ecran-travail" 
+                class="export-option" 
                 @click="exportSequenceDialoguesPDF"
                 title="Exporter tous les dialogues de la séquence en PDF"
               >
                 <i class="fas fa-file-pdf"></i> Dialogues PDF
               </button>
 
-              <!-- Export PDF séquence complète -->
               <button 
                 v-if="currentSequence" 
-                class="export-option-ecran-travail" 
+                class="export-option" 
                 @click="exportSequenceCompletePDF"
                 title="Exporter la séquence complète en PDF"
               >
                 <i class="fas fa-file-pdf"></i> Séquence PDF
               </button>
 
-              <!-- Export PDF épisode avec séquence -->
               <button 
                 v-if="currentEpisode" 
-                class="export-option-ecran-travail" 
+                class="export-option" 
                 @click="exportEpisodeWithSequencePDF"
                 title="Exporter l'épisode avec séquence en PDF"
               >
@@ -98,6 +60,111 @@
             </div>
           </div>
         </div>
+
+        <div class="liens-ecran-travail">
+
+
+          <button 
+            v-if="episodes.length === 0 || userPermissions.canEditEpisode" 
+            class="add-scene-btn-ecran-travail" 
+            @click="goToAddEpisode"
+          >
+            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Episode
+          </button>     
+          
+          <button v-if="userPermissions.canCreateSequence" class="add-scene-btn-ecran-travail" @click="goToAddSequence">
+            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Séquence
+          </button>
+          
+          <button v-if="userPermissions.canCreateLieu" class="add-scene-btn-ecran-travail" @click="goToAddLieu">
+            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Lieu
+          </button>
+          
+          <button v-if="userPermissions.canCreatePlateau" class="add-scene-btn-ecran-travail" @click="goToAddPlateau">
+            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Plateau
+          </button>
+          
+          <button v-if="userPermissions.canCreateComedien" class="add-scene-btn-ecran-travail" @click="goToAddComedien">
+            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Comedien
+          </button>
+          
+          <button v-if="userPermissions.canCreatePersonnage" class="add-scene-btn-ecran-travail" @click="goToAddPersonnage">
+            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Personnage
+          </button>
+        </div>
+
+        
+      </div>
+    </div>
+
+    
+    <!-- Contenu principal -->
+    <div class="ecran-travail-ecran-travail">
+      <!-- Header avec titre de l'épisode -->
+      <header class="header-ecran-travail">
+        <div class="navigation-ecran-travail">
+          <!-- Groupe de GAUCHE : Titre du projet -->
+          <div class="project-title-section">
+            <!-- <h1 class="project-title">{{ store.projetTitle }}</h1> -->
+            <button class="nav-btn-ecran-travail" @click="goToCalendrierTournage">
+              <i class="fas fa-calendar-alt"></i> Calendrier
+            </button>
+
+            <!-- Section Export dans la sidebar -->
+        <div class="export-container">
+          <div class="export-dropdown">
+            <button class="export-main-btn">
+              <i class="fas fa-file-export"></i> Exporter en PDF
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="export-dropdown-content">
+              <button 
+                v-if="currentSequence" 
+                class="export-option" 
+                @click="exportScenesOnlyPDF"
+                title="Exporter les scènes en PDF"
+              >
+                <i class="fas fa-file-pdf"></i> Scènes PDF
+              </button>
+
+              <button 
+                v-if="currentSequence" 
+                class="export-option" 
+                @click="exportSequenceDialoguesPDF"
+                title="Exporter tous les dialogues de la séquence en PDF"
+              >
+                <i class="fas fa-file-pdf"></i> Dialogues PDF
+              </button>
+
+              <button 
+                v-if="currentSequence" 
+                class="export-option" 
+                @click="exportSequenceCompletePDF"
+                title="Exporter la séquence complète en PDF"
+              >
+                <i class="fas fa-file-pdf"></i> Séquence PDF
+              </button>
+
+              <button 
+                v-if="currentEpisode" 
+                class="export-option" 
+                @click="exportEpisodeWithSequencePDF"
+                title="Exporter l'épisode avec séquence en PDF"
+              >
+                <i class="fas fa-file-pdf"></i> Épisode PDF
+              </button>
+            </div>
+          </div>
+        </div>
+          </div>
+
+          <!-- Groupe de DROITE : Précédent/Suivant + Calendrier -->
+          <div class="navigation-right-section">
+            <button class="nav-btn-ecran-travail" @click="goToPrevPage" :disabled="!hasPrev || isLoading">Précédent</button>
+            <button class="nav-btn-ecran-travail" @click="goToNextPage" :disabled="!hasNext || isLoading">Suivant</button>
+          </div>
+
+  
         </div>
 
         
@@ -993,6 +1060,9 @@ const route = useRoute();
 const router = useRouter();
 const store = useEcranTravailStore();
 
+// État de la sidebar
+const sidebarOpen = ref(false);
+
 const showHighlightModal = ref(false);
 const selectedDialogueForHighlight = ref(null);
 const selectedText = ref('');
@@ -1011,6 +1081,13 @@ const userPermissions = ref({
     canCreateComedien: false,
     canCreatePersonnage: false
 });
+
+
+// Méthode pour toggle la sidebar
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value;
+  console.log('Sidebar ouverte:', sidebarOpen.value); // Pour debug
+};
 
 // Variables réactives pour validation ordre
 const existingOrders = ref([]);

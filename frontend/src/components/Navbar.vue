@@ -86,7 +86,7 @@
           <span v-if="!isCollapsed" class="link-text">Plateaux</span>
         </router-link>
 
-        <router-link to="/equipe" class="sidebar-link" v-if="user?.role === 'ADMIN'"  @click="toggleSidebarIfMobile">
+        <router-link to="/gestion-equipe" class="sidebar-link" v-if="user?.role === 'ADMIN'"  @click="toggleSidebarIfMobile">
           <i class="fas fa-users-cog icon"></i>
           <span v-if="!isCollapsed" class="link-text">Équipe</span>
         </router-link>
@@ -162,9 +162,9 @@ export default {
     toggleSidebar() {
       this.isCollapsed = !this.isCollapsed;
       if (this.isCollapsed) {
-        document.body.classList.add('sidebar-collapsed-global');
+        document.body.classList.add('sidebar-collapsed');
       } else {
-        document.body.classList.remove('sidebar-collapsed-global');
+        document.body.classList.remove('sidebar-collapsed');
       }
     },
     toggleSidebarIfMobile() {
