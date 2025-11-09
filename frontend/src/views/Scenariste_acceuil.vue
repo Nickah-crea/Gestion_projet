@@ -1,6 +1,6 @@
 <template>
-  <div class="app-wrapper">
-    <div class="scenariste-accueil-container-Scenariste">
+  <div class="app-wrapper-global">
+    <div class="#">
       <main class="main-content-scenariste-Scenariste">
         <!-- Header avec bienvenue à gauche et barre de recherche à droite -->
         <div class="header-section-Scenariste">
@@ -221,7 +221,7 @@
           </div>
         </div>
 
-        <!-- Message si aucun projet -->e
+        <!-- Message si aucun projet -->
         <div v-if="filteredProjects.length === 0" class="no-projects-Scenariste">
           <div class="no-projects-icon-Scenariste">
             <i class="fas fa-film"></i>

@@ -126,6 +126,7 @@
         </div>
       </div>
     </div>
+    
     <!-- Icônes Lune et Soleil côte à côte avec border-radius 50px -->
         <div class="theme-toggle">
           <button class="theme-btn moon-btn" :class="{ 'active': !isDarkMode }" @click="toggleTheme('light')">

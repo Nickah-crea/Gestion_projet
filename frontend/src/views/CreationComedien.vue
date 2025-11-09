@@ -1,4 +1,5 @@
 <template>
+  <div class="app-wrapper-global">
   <div class="creation-comedien">
     <h2>Création et Gestion des Comédiens</h2>
     
@@ -266,6 +267,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
