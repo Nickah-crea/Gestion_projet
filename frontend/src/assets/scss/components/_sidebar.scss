@@ -25,7 +25,7 @@
 .sidebar {
   position: fixed;
   top: 0; left: 0;
-  width: 200px;
+  width: 210px;
   height: 100vh;
   padding: $padding-md;
   border-radius: 0 $border-radius-sm $border-radius-sm 0;
@@ -59,47 +59,30 @@
 /* === HEADER + TOGGLE PEPS === */
 .sidebar-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: $gap-md;
   padding-bottom: $gap-sm;
   border-bottom: 1px solid rgba($color-primary, 0.2);
 }
 
-.menu-toggle {
-  background: rgba($color-primary, 0.8);
-  border: 1px solid rgba($color-primary, 0.5);
-  color: $color-white;
-  font-size: $font-size-p2;
-  cursor: pointer;
-  @include flex-center;
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  transition: all $transition;
-  backdrop-filter: blur(5px);
-
-  &:hover {
-    background: $color-accent;
-    color: $color-dark;
-    transform: scale(1.1) rotate(180deg);
-    box-shadow: 0 0 12px rgba($color-accent, 0.6);
-  }
-}
-
-/* === PROFIL : AVATAR GAUCHE, NOM+RÔLE DROITE === */
+/* === PROFIL : AVATAR + INFOS À GAUCHE === */
 .user-profile-section {
-  margin-bottom: $gap-xs;
+  margin-bottom: 0;
+  flex: 1;
 }
 
 .user-profile-header {
   display: flex;
   align-items: center;
-  gap: $gap-lg;
-  padding: $padding-sm;
+  gap: $gap-sm;
+  padding: 0;
   border-radius: $border-radius-sm;
   background: transparent;
   transition: $transition;
-  width: 100%;
+  width: auto;
   cursor: pointer;
+  justify-content: flex-start;
 
   &:hover {
     .user-avatar {
@@ -113,15 +96,16 @@
 }
 
 .user-avatar {
-  width: 36px; height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
   @include flex-center;
   color: $color-white;
   font-weight: $font-weight-semibold;
-  font-size: $font-size-h4;
-  box-shadow: 0 6px 16px rgba($color-primary, 0.3);
-  border: 2px solid $color-accent;
+  font-size: $font-size-p2;
+  box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+  border: 1.5px solid $color-accent;
   flex-shrink: 0;
   transition: all $transition;
 }
@@ -129,14 +113,14 @@
 .user-profile-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   flex: 1;
   min-width: 0;
 }
 
 .user-name {
   font-weight: $font-weight-semibold;
-  font-size: $font-size-p1;
+  font-size: $font-size-p2;
   color: $color-text-primary;
   line-height: 1.2;
   @include text-truncate;
@@ -151,15 +135,82 @@
   @include text-truncate;
 }
 
-/* === LIENS PEPS + GRADIENT === */
-.sidebar-links {
+/* === BOUTON TOGGLE PLUS PETIT À DROITE === */
+.menu-toggle-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.menu-toggle {
+  background: rgba($color-primary, 0.8);
+  border: 1px solid rgba($color-primary, 0.5);
+  color: $color-white;
+  font-size: $font-size-p3;
+  cursor: pointer;
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: all $transition;
+  backdrop-filter: blur(5px);
+  flex-shrink: 0;
+
+  &:hover {
+    background: $color-accent;
+    color: $color-dark;
+    transform: scale(1.1) rotate(180deg);
+    box-shadow: 0 0 10px rgba($color-accent, 0.6);
+  }
+}
+
+/* === STRUCTURE PRINCIPALE AVEC CONTENU SCROLLABLE === */
+.sidebar-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  flex: 1;
+  position: relative;
+}
+
+/* === MENU DES LIENS SCROLLABLE === */
+.sidebar-links-scrollable {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: $gap-sm;
   margin: $gap-md 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  max-height: calc(100% - 100px);
+  
+  /* Scrollbar personnalisée */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-primary, 0.1);
+    border-radius: $border-radius-pill;
+    margin: 5px 0;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-primary, 0.3);
+    border-radius: $border-radius-pill;
+    
+    &:hover {
+      background: rgba($color-primary, 0.5);
+    }
+  }
+  
+  /* Pour Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba($color-primary, 0.3) rgba($color-primary, 0.1);
 }
 
+/* === LIENS PEPS + GRADIENT === */
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -176,6 +227,7 @@
   border: 1px solid rgba($color-grey, 0.3);
   height: 42px;
   margin-left: 3px;
+  flex-shrink: 0;
 
   background: linear-gradient(90deg,
     rgba($color-primary, 0.08) 0%,
@@ -228,17 +280,16 @@
 
   &.router-link-active {
     background: linear-gradient(90deg,
-      rgba($color-primary, 0) 0%,
-      rgba($color-pink, 15) 100%);
-    color: $color-text;
+      rgba($color-primary, 0.35) 0%,
+      rgba($color-accent, 0.15) 100%);
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
     box-shadow: $shadow-inset;
-      // 0 0 15px rgba($color-accent, 0.5),
-      // 0 0 25px rgba($color-primary, 50);
     border-color: $color-background;
     transform: translateX(6px);
 
     .icon {
-      // background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
+      background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
       color: $color-white;
       animation: pulse 1.5s infinite;
       transform: scale(1.15);
@@ -262,271 +313,6 @@
   100% { left: 100%; }
 }
 
-/* === COLLAPSED === */
-.sidebar.collapsed {
-  .user-profile-header {
-    justify-content: center;
-    padding: $padding-xs;
-  }
-  .user-avatar {
-    width: 32px; height: 32px;
-    font-size: $font-size-p1;
-  }
-  .user-profile-info,
-  .user-name,
-  .user-role,
-  .link-text {
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
-    transition: all $transition;
-  }
-  .sidebar-link {
-    justify-content: center;
-    padding: $padding-sm;
-    .icon { margin: 0 auto; }
-  }
-}
-
-/* === FOOTER === */
-.sidebar-footer {
-  padding-top: $padding-md;
-  border-top: 1px solid rgba($color-primary, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.theme-toggle-footer-2 {
-  background: rgba($color-primary, 0.15);
-  border-radius: $border-radius-pill;
-  padding: 4px;
-  width: 60px;
-  margin: 0 auto;
-  display: flex;
-  gap: 4px;
-  border: 1px solid rgba($color-primary, 0.4);
-  backdrop-filter: blur(5px);
-
-  .theme-btn {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    @include flex-center;
-    font-size: $font-size-p3;
-    color: $color-primary;
-    transition: all $transition;
-
-    &.active {
-      background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
-      color: $color-white;
-      box-shadow: 0 0 12px rgba($color-accent, 0.5);
-    }
-  }
-}
-
-.logout-link {
-  @include flex-center;
-  gap: $gap-sm;
-  padding: #{$padding-sm} #{$padding-md};
-  border-radius: $border-radius-pill;
-  border: 2px solid $color-primary;
-  color: $color-primary;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-medium;
-  transition: all $transition;
-
-  &:hover {
-    background: linear-gradient(90deg, $color-accent 0%, $color-primary 100%);
-    color: $color-white;
-    transform: translateX(3px) scale(1.02);
-    box-shadow: 0 0 15px rgba($color-accent, 0.4);
-    border-color: transparent;
-  }
-}
-
-/* === DARK MODE === */
-.dark-theme {
-  .sidebar {
-    background: linear-gradient(135deg,
-      rgba($color-dark, 0.9) 0%,
-      rgba($color-dark, 0.8) 100%);
-    border-right: 1px solid rgba($color-primary, 0.3);
-    color: #f0e6e0;
-  }
-
-  .user-name, .link-text, .sidebar-link { color: #f0e6e0; }
-  .user-role { color: $color-pink; }
-
-  .sidebar-link {
-    background: linear-gradient(90deg,
-      rgba($color-primary, 0.1) 0%,
-      rgba($color-accent, 0.05) 100%);
-    border: 1px solid rgba($color-primary, 0.2);
-
-    &:hover, &.router-link-active {
-      background: linear-gradient(90deg,
-        rgba($color-accent, 0.25) 0%,
-        rgba($color-primary, 0.15) 100%);
-      box-shadow: 0 0 20px rgba($color-accent, 0.3);
-    }
-
-    .icon {
-      background: $color-primary;
-      color: $color-white;
-    }
-
-    &.router-link-active .icon {
-      background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
-    }
-  }
-
-  .menu-toggle:hover {
-    background: $color-accent;
-    color: $color-dark;
-  }
-
-  .logout-link {
-    border-color: $color-primary;
-    color: $color-primary;
-
-    &:hover {
-      color: $color-white;
-    }
-  }
-}
-
-/* === STRUCTURE PRINCIPALE AVEC CONTENU SCROLLABLE === */
-.sidebar-content-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 120px); /* Hauteur totale moins le header */
-  flex: 1;
-  position: relative;
-}
-
-/* === MENU DES LIENS SCROLLABLE === */
-.sidebar-links-scrollable {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-  margin: $gap-md 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px; /* Espace pour la scrollbar */
-  max-height: calc(100% - 100px); /* Réserve de l'espace pour le footer */
-  
-  /* Scrollbar personnalisée */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: rgba($color-primary, 0.1);
-    border-radius: $border-radius-pill;
-    margin: 5px 0;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba($color-primary, 0.3);
-    border-radius: $border-radius-pill;
-    
-    &:hover {
-      background: rgba($color-primary, 0.5);
-    }
-  }
-  
-  /* Pour Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: rgba($color-primary, 0.3) rgba($color-primary, 0.1);
-}
-
-/* === LIENS PEPS + GRADIENT === */
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  padding: #{$padding-sm} #{$padding-md};
-  border-radius: $border-radius-pill;
-  color: $color-text-primary;
-  font-weight: $font-weight-medium;
-  font-size: $font-size-p2;
-  text-decoration: none;
-  transition: all $transition;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba($color-grey, 0.3);
-  height: 42px;
-  margin-left: 3px;
-  flex-shrink: 0; /* Empêche le rétrécissement */
-
-  .icon {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: $color-primary;
-    @include flex-center;
-    color: $color-white;
-    font-size: $font-size-p2;
-    transition: all $transition;
-    flex-shrink: 0;
-  }
-
-  .link-text {
-    white-space: nowrap;
-    transition: opacity $transition;
-    margin-left: 5px;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($color-light, 0.7), transparent);
-    transition: left 0.6s ease;
-    pointer-events: none;
-  }
-
-  &:hover {
-    background: linear-gradient(90deg,
-      rgba($color-primary, 0.25) 0%,
-      rgba($color-accent, 0.2) 100%);
-    transform: translateX(5px) scale(1.02);
-    box-shadow: $shadow-hover;
-    border-color: $color-grey;
-
-    .icon {
-      background: $color-light;
-      color: $color-primary;
-      transform: scale(1.1) rotate(360deg);
-    }
-
-    &::before { left: 100%; }
-  }
-
-  &.router-link-active {
-    background: linear-gradient(90deg,
-      rgba($color-primary, 0.35) 0%,
-      rgba($color-accent, 0.15) 100%);
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-    box-shadow: $shadow-inset;
-    border-color: $color-background;
-    transform: translateX(6px);
-
-    .icon {
-      background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
-      color: $color-white;
-      animation: pulse 1.5s infinite;
-      transform: scale(1.15);
-    }
-
-    &::before {
-      animation: light-scan 2s ease-in-out infinite;
-    }
-  }
-}
-
 /* === FOOTER FIXE EN BAS === */
 .sidebar-footer {
   padding-top: $padding-md;
@@ -534,12 +320,12 @@
   display: flex;
   flex-direction: column;
   gap: $gap-sm;
-  flex-shrink: 0; /* Empêche le rétrécissement */
+  flex-shrink: 0;
   
   &.fixed-footer {
     background: inherit;
     backdrop-filter: inherit;
-    margin-top: auto; /* Pousse le footer vers le bas */
+    margin-top: auto;
     position: sticky;
     bottom: 0;
     padding-bottom: $padding-sm;
@@ -595,7 +381,50 @@
 }
 
 /* === CORRECTION POUR LE MODE COLLAPSED === */
+/* === CORRECTION POUR LE MODE COLLAPSED === */
 .sidebar.collapsed {
+  .sidebar-header {
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: $gap-md; // ← AUGMENTÉ l'espace entre profil et flèche
+    padding-bottom: $gap-sm;
+  }
+
+  .user-profile-header {
+    justify-content: center;
+    padding: 0;
+    margin-bottom: 0; // ← ASSURE qu'il n'y a pas de marge supplémentaire
+  }
+
+  .user-avatar {
+    margin-top: 10px;
+    width: 28px;
+    height: 28px;
+    font-size: $font-size-p3;
+  }
+
+  .user-profile-info,
+  .user-name,
+  .user-role,
+  .link-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    transition: all $transition;
+  }
+
+  .menu-toggle-section {
+    justify-content: center;
+    width: 100%;
+    margin-top: $gap-sm; // ← AJOUTÉ un espace au-dessus de la flèche
+  }
+
+  .menu-toggle {
+    width: 22px;
+    height: 22px;
+  }
+
   .sidebar-links-scrollable {
     .sidebar-link {
       justify-content: center;
@@ -621,6 +450,57 @@
   }
 }
 
+/* === DARK MODE === */
+.dark-theme {
+  .sidebar {
+    background: linear-gradient(135deg,
+      rgba($color-dark, 0.9) 0%,
+      rgba($color-dark, 0.8) 100%);
+    border-right: 1px solid rgba($color-primary, 0.3);
+    color: #f0e6e0;
+  }
+
+  .user-name, .link-text, .sidebar-link { color: #f0e6e0; }
+  .user-role { color: $color-pink; }
+
+  .sidebar-link {
+    background: linear-gradient(90deg,
+      rgba($color-primary, 0.1) 0%,
+      rgba($color-accent, 0.05) 100%);
+    border: 1px solid rgba($color-primary, 0.2);
+
+    &:hover, &.router-link-active {
+      background: linear-gradient(90deg,
+        rgba($color-accent, 0.25) 0%,
+        rgba($color-primary, 0.15) 100%);
+      box-shadow: 0 0 20px rgba($color-accent, 0.3);
+    }
+
+    .icon {
+      background: $color-primary;
+      color: $color-white;
+    }
+
+    &.router-link-active .icon {
+      background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
+    }
+  }
+
+  .menu-toggle:hover {
+    background: $color-accent;
+    color: $color-dark;
+  }
+
+  .logout-link {
+    border-color: $color-primary;
+    color: $color-primary;
+
+    &:hover {
+      color: $color-white;
+    }
+  }
+}
+
 /* === RESPONSIVE MOBILE === */
 @media (max-width: 768px) {
   .sidebar-content-wrapper {
@@ -632,20 +512,43 @@
   }
   
   .sidebar-footer.fixed-footer {
-    padding-bottom: max($padding-sm, env(safe-area-inset-bottom)); /* Safe area pour mobile */
+    padding-bottom: max($padding-sm, env(safe-area-inset-bottom));
+  }
+
+  .sidebar-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-profile-header {
+    gap: $gap-sm;
+  }
+
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .menu-toggle {
+    width: 26px;
+    height: 26px;
   }
 }
 
-// .computer-circle {
-//   width: 24px;
-//   height: 24px;
-//   border-radius: 50%;
-//   background: $color-primary;
-//   @include flex-center;
-//   color: $color-white;
-  
-//   .fas {
-//     font-size: 12px;
-//   }
-// }
+/* Pour les très petits écrans */
+@media (max-width: 480px) {
+  .sidebar-header {
+    gap: $gap-sm;
+  }
+
+  .user-profile-info {
+    .user-name {
+      font-size: $font-size-p3;
+    }
+    .user-role {
+      font-size: 10px;
+    }
+  }
+}
 
