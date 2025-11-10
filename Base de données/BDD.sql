@@ -839,6 +839,8 @@ CREATE INDEX idx_scene_tournage_plateau ON scene_tournage(id_plateau);
 
 
 
+
+
 -- Table pour les statuts de raccord (doit être créée avant raccords)
 CREATE TABLE statuts_raccord (
     id_statut_raccord BIGSERIAL PRIMARY KEY,
@@ -1013,7 +1015,6 @@ LEFT JOIN scene_tournage st_src ON ss.id_scene = st_src.id_scene
 LEFT JOIN scene_tournage st_cible ON sc.id_scene = st_cible.id_scene
 WHERE r.est_critique = true
    AND (st_src.date_tournage IS NOT NULL OR st_cible.date_tournage IS NOT NULL);
-
 
 
 

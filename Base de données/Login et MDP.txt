@@ -9,3 +9,348 @@ SCENARISTE :
     email : marc.leroy@gmail.com
     mot de passe : mdpScenariste1
     role : SCENARISTE
+
+    ALTER TABLE raccords
+ADD COLUMN id_planning_tournage BIGINT REFERENCES planning_tournage(id_planning_tournage);
+
+
+
+-- Table pour stocker les types de raccords
+CREATE TABLE types_raccord (
+    id_type_raccord BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_type VARCHAR(100) NOT NULL,
+    description TEXT,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+INSERT INTO types_raccord (code, nom_type, description) VALUES
+('decor', 'Décor', 'Raccord de décor et environnement'),
+('costume', 'Costume', 'Raccord de vêtements et accessoires vestimentaires'),
+('accessoire', 'Accessoire', 'Raccord d''objets et accessoires'),
+('coiffure', 'Coiffure', 'Raccord de coiffure et maquillage'),
+('lumière', 'Lumière', 'Raccord d''éclairage et ambiance lumineuse'),
+('position', 'Position', 'Raccord de position des acteurs et objets');
+
+-- Table principale des raccords
+CREATE TABLE raccords (
+    id_raccord BIGSERIAL PRIMARY KEY,
+    scene_source_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    scene_cible_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    id_type_raccord BIGINT REFERENCES types_raccord(id_type_raccord),
+    description TEXT NOT NULL,
+    est_critique BOOLEAN DEFAULT FALSE,
+    id_statut_raccord BIGINT REFERENCES statuts_raccord(id_statut_raccord),
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+);
+
+-- Ajouter une nouvelle contrainte qui permet les doublons seulement si c'est la même scène
+ALTER TABLE raccords ADD CONSTRAINT unique_raccord_different_scenes 
+CHECK (scene_source_id != scene_cible_id OR id_type_raccord IS NULL);
+
+
+
+-- Table pour stocker les images de référence des raccords
+CREATE TABLE raccord_images (
+    id_raccord_image BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    nom_fichier VARCHAR(255) NOT NULL,
+    chemin_fichier VARCHAR(500) NOT NULL,
+    description_image TEXT,
+    est_image_reference BOOLEAN DEFAULT FALSE,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table pour suivre la vérification des raccords pendant le tournage
+CREATE TABLE verification_raccords (
+    id_verification BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    id_utilisateur BIGINT REFERENCES utilisateurs(id_utilisateur),
+    date_verification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_statut_verification BIGINT REFERENCES statuts_verification(id_statut_verification),
+    notes_verification TEXT,
+    preuve_image VARCHAR(500) -- Chemin vers l'image de vérification
+);
+
+-- Index pour optimiser les performances
+CREATE INDEX idx_raccords_scene_source ON raccords(scene_source_id);
+CREATE INDEX idx_raccords_scene_cible ON raccords(scene_cible_id);
+CREATE INDEX idx_raccords_type ON raccords(id_type_raccord);
+CREATE INDEX idx_raccord_images_raccord ON raccord_images(id_raccord);
+CREATE INDEX idx_verification_raccord ON verification_raccords(id_raccord);
+
+
+-- Table pour les statuts de raccord (optionnel)
+CREATE TABLE statuts_raccord (
+    id_statut_raccord BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_statut VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+
+INSERT INTO statuts_raccord (code, nom_statut, description) VALUES
+('A_VERIFIER', 'À vérifier', 'Raccord à vérifier'),
+('VALIDE', 'Validé', 'Raccord validé'),
+('NON_CONFORME', 'Non conforme', 'Raccord non conforme'),
+('CORRIGE', 'Corrigé', 'Raccord corrigé');
+
+CREATE TABLE statuts_verification (
+    id_statut_verification BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_statut VARCHAR(100) NOT NULL,
+    description TEXT,
+    ordre_affichage INTEGER DEFAULT 1,
+    est_actif BOOLEAN DEFAULT TRUE,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+INSERT INTO statuts_verification (code, nom_statut, description, ordre_affichage) VALUES
+('CONFORME', 'Conforme', 'Le raccord est conforme', 1),
+('NON_CONFORME', 'Non conforme', 'Le raccord présente des incohérences', 2),
+('A_CORRIGER', 'À corriger', 'Le raccord nécessite des corrections', 3);
+
+
+ALTER TABLE raccords
+ADD COLUMN id_personnage BIGINT REFERENCES personnages(id_personnage),
+ADD COLUMN id_comedien BIGINT REFERENCES comediens(id_comedien);
+
+
+
+-- Remplacer cette contrainte :
+-- UNIQUE(scene_source_id, scene_cible_id, id_type_raccord)
+
+-- Par cette version qui permet les raccords sur la même scène :
+-- ALTER TABLE raccords DROP CONSTRAINT IF EXISTS raccords_scene_source_id_scene_cible_id_id_type_raccord_key;
+
+-- Mettre à jour les statuts pour correspondre aux enums
+UPDATE raccords SET statut = 'A_VERIFIER' WHERE statut = 'a_verifier';
+UPDATE raccords SET statut = 'VALIDE' WHERE statut = 'valide';
+UPDATE raccords SET statut = 'NON_CONFORME' WHERE statut = 'non_conforme';
+UPDATE raccords SET statut = 'CORRIGE' WHERE statut = 'corrige';
+
+
+
+-- ===========================
+-- SUPPRESSION DES VUES
+-- ===========================
+DROP VIEW IF EXISTS v_raccords_critiques_calendrier CASCADE;
+DROP VIEW IF EXISTS v_alertes_raccords CASCADE;
+DROP VIEW IF EXISTS v_raccords_planning CASCADE;
+
+-- ===========================
+-- SUPPRESSION DES TABLES
+-- ===========================
+-- Tables dépendantes en premier
+DROP TABLE IF EXISTS verification_raccords CASCADE;
+DROP TABLE IF EXISTS raccord_images CASCADE;
+DROP TABLE IF EXISTS raccord_planning CASCADE;
+DROP TABLE IF EXISTS raccords CASCADE;
+
+-- Tables parentes ensuite
+DROP TABLE IF EXISTS types_raccord CASCADE;
+DROP TABLE IF EXISTS statuts_verification CASCADE;
+DROP TABLE IF EXISTS statuts_raccord CASCADE;
+
+-- ===========================
+-- SUPPRESSION DES INDEX (optionnel, car CASCADE les supprime déjà)
+-- ===========================
+-- DROP INDEX IF EXISTS idx_raccord_planning_raccord;
+-- DROP INDEX IF EXISTS idx_raccord_planning_planning;
+-- DROP INDEX IF EXISTS idx_raccords_scene_source;
+-- DROP INDEX IF EXISTS idx_raccords_scene_cible;
+-- DROP INDEX IF EXISTS idx_raccords_type;
+-- DROP INDEX IF EXISTS idx_raccord_images_raccord;
+-- DROP INDEX IF EXISTS idx_verification_raccord;
+
+-- ===========================
+-- CONFIRMATION
+-- ===========================
+-- Vérifier que toutes les tables et vues sont bien supprimées
+-- (à exécuter après)
+-- \dt raccord*;
+-- \dv v_*;
+
+
+
+
+
+-- Table pour les statuts de raccord (doit être créée avant raccords)
+CREATE TABLE statuts_raccord (
+    id_statut_raccord BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_statut VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+INSERT INTO statuts_raccord (code, nom_statut, description) VALUES
+('A_VERIFIER', 'À vérifier', 'Raccord à vérifier'),
+('VALIDE', 'Validé', 'Raccord validé'),
+('NON_CONFORME', 'Non conforme', 'Raccord non conforme'),
+('CORRIGE', 'Corrigé', 'Raccord corrigé');
+
+-- Table pour les statuts de vérification (doit être créée avant verification_raccords)
+CREATE TABLE statuts_verification (
+    id_statut_verification BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_statut VARCHAR(100) NOT NULL,
+    description TEXT,
+    ordre_affichage INTEGER DEFAULT 1,
+    est_actif BOOLEAN DEFAULT TRUE,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO statuts_verification (code, nom_statut, description, ordre_affichage) VALUES
+('CONFORME', 'Conforme', 'Le raccord est conforme', 1),
+('NON_CONFORME', 'Non conforme', 'Le raccord présente des incohérences', 2),
+('A_CORRIGER', 'À corriger', 'Le raccord nécessite des corrections', 3);
+
+CREATE TABLE types_raccord (
+    id_type_raccord BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    nom_type VARCHAR(100) NOT NULL,
+    description TEXT,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+INSERT INTO types_raccord (code, nom_type, description) VALUES
+('decor', 'Décor', 'Raccord de décor et environnement'),
+('costume', 'Costume', 'Raccord de vêtements et accessoires vestimentaires'),
+('accessoire', 'Accessoire', 'Raccord d''objets et accessoires'),
+('coiffure', 'Coiffure', 'Raccord de coiffure et maquillage'),
+('lumière', 'Lumière', 'Raccord d''éclairage et ambiance lumineuse'),
+('position', 'Position', 'Raccord de position des acteurs et objets');
+
+-- Table principale des raccords
+CREATE TABLE raccords (
+    id_raccord BIGSERIAL PRIMARY KEY,
+    scene_source_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    scene_cible_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    id_type_raccord BIGINT REFERENCES types_raccord(id_type_raccord),
+    description TEXT NOT NULL,
+    est_critique BOOLEAN DEFAULT FALSE,
+    id_statut_raccord BIGINT REFERENCES statuts_raccord(id_statut_raccord),
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modifie_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_personnage BIGINT REFERENCES personnages(id_personnage),
+    id_comedien BIGINT REFERENCES comediens(id_comedien)
+);
+
+-- Table de liaison entre raccords et planning de tournage
+CREATE TABLE raccord_planning (
+    id_raccord_planning BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    id_planning_tournage BIGINT REFERENCES planning_tournage(id_planning_tournage) ON DELETE CASCADE,
+    type_liaison VARCHAR(50) NOT NULL, -- 'SOURCE' ou 'CIBLE'
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(id_raccord, id_planning_tournage, type_liaison)
+);
+
+CREATE INDEX idx_raccord_planning_raccord ON raccord_planning(id_raccord);
+CREATE INDEX idx_raccord_planning_planning ON raccord_planning(id_planning_tournage);
+
+
+
+-- Contrainte pour empêcher les doublons scène-source = scène-cible
+ALTER TABLE raccords ADD CONSTRAINT unique_raccord_different_scenes 
+CHECK (scene_source_id != scene_cible_id OR id_type_raccord IS NULL);
+
+-- Table pour stocker les images de référence des raccords
+CREATE TABLE raccord_images (
+    id_raccord_image BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    nom_fichier VARCHAR(255) NOT NULL,
+    chemin_fichier VARCHAR(500) NOT NULL,
+    description_image TEXT,
+    est_image_reference BOOLEAN DEFAULT FALSE,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table pour suivre la vérification des raccords pendant le tournage
+CREATE TABLE verification_raccords (
+    id_verification BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    id_utilisateur BIGINT REFERENCES utilisateurs(id_utilisateur),
+    date_verification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_statut_verification BIGINT REFERENCES statuts_verification(id_statut_verification),
+    notes_verification TEXT,
+    preuve_image VARCHAR(500)
+);
+
+-- Index pour optimiser les performances
+CREATE INDEX idx_raccords_scene_source ON raccords(scene_source_id);
+CREATE INDEX idx_raccords_scene_cible ON raccords(scene_cible_id);
+CREATE INDEX idx_raccords_type ON raccords(id_type_raccord);
+CREATE INDEX idx_raccord_images_raccord ON raccord_images(id_raccord);
+CREATE INDEX idx_verification_raccord ON verification_raccords(id_raccord);
+
+ALTER TABLE raccords DROP CONSTRAINT IF EXISTS unique_raccord_different_scenes;
+
+
+-- Vue pour les alertes de raccords
+CREATE OR REPLACE VIEW v_alertes_raccords AS
+SELECT 
+    r.id_raccord,
+    r.description,
+    r.est_critique,
+    sr.nom_statut as statut_raccord,
+    tr.nom_type as type_raccord,
+    ss.titre as scene_source_titre,
+    sc.titre as scene_cible_titre,
+    st_src.date_tournage as date_tournage_source,
+    st_cible.date_tournage as date_tournage_cible,
+    p.nom as personnage_nom,
+    c.nom_comedien as comedien_nom
+FROM raccords r
+LEFT JOIN statuts_raccord sr ON r.id_statut_raccord = sr.id_statut_raccord
+LEFT JOIN types_raccord tr ON r.id_type_raccord = tr.id_type_raccord
+LEFT JOIN scenes ss ON r.scene_source_id = ss.id_scene
+LEFT JOIN scenes sc ON r.scene_cible_id = sc.id_scene
+LEFT JOIN scene_tournage st_src ON ss.id_scene = st_src.id_scene
+LEFT JOIN scene_tournage st_cible ON sc.id_scene = st_cible.id_scene
+LEFT JOIN personnages p ON r.id_personnage = p.id_personnage
+LEFT JOIN comediens c ON r.id_comedien = c.id_comedien
+WHERE r.est_critique = true 
+   OR sr.code = 'A_VERIFIER';
+
+
+
+-- Vue pour les alertes de raccords critiques avec dates de tournage
+CREATE OR REPLACE VIEW v_raccords_critiques_calendrier AS
+SELECT 
+    r.id_raccord,
+    r.description,
+    tr.nom_type as type_raccord,
+    r.est_critique,
+    ss.titre as scene_source_titre,
+    sc.titre as scene_cible_titre,
+    st_src.date_tournage as date_tournage_source,
+    st_cible.date_tournage as date_tournage_cible,
+    -- Déterminer la date d'alerte (priorité à la date cible)
+    COALESCE(st_cible.date_tournage, st_src.date_tournage) as date_alerte,
+    -- Messages d'alerte simulés (à adapter avec votre logique métier)
+    ARRAY[
+        CASE 
+            WHEN st_src.date_tournage IS NOT NULL AND st_cible.date_tournage IS NULL 
+            THEN 'Scène source tournée mais scène cible non planifiée'
+            WHEN st_src.date_tournage IS NOT NULL AND st_cible.date_tournage IS NOT NULL 
+                 AND st_cible.date_tournage < st_src.date_tournage 
+            THEN 'Incohérence chronologique: scène cible avant scène source'
+            ELSE 'Raccord critique nécessite attention'
+        END
+    ] as messages_alerte
+    
+FROM raccords r
+JOIN types_raccord tr ON r.id_type_raccord = tr.id_type_raccord
+JOIN scenes ss ON r.scene_source_id = ss.id_scene
+JOIN scenes sc ON r.scene_cible_id = sc.id_scene
+LEFT JOIN scene_tournage st_src ON ss.id_scene = st_src.id_scene
+LEFT JOIN scene_tournage st_cible ON sc.id_scene = st_cible.id_scene
+WHERE r.est_critique = true
+   AND (st_src.date_tournage IS NOT NULL OR st_cible.date_tournage IS NOT NULL);
+
+
+
+

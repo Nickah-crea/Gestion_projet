@@ -1,6 +1,6 @@
 <template>
   <div class="statistiques-globales">
-    <div class="app-wrapper">
+    <div class="app-wrapper-global">
       <div class="statistiques-container">
         <!-- En-tête global -->
         <header class="statistiques-header">
@@ -593,7 +593,7 @@ onMounted(() => {
 }
 
 .statistiques-container {
-  max-width: 1300px;
+  width: 1200px;
   margin: 0 auto;  
   width: 100%;
   padding: 2rem;
@@ -1308,3 +1308,5 @@ onMounted(() => {
   }
 }
 </style>
+
+
