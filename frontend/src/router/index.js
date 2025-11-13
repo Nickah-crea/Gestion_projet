@@ -241,6 +241,11 @@ const routes = [
       requiresAuth: true
     }
   },
+  {
+    path: '/inscription',
+    name: 'inscription',
+    component: () => import('../views/Inscription.vue')
+  },
 ]
 
 const router = createRouter({
