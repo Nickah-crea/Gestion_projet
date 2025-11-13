@@ -903,6 +903,31 @@ CREATE TABLE raccords (
     id_comedien BIGINT REFERENCES comediens(id_comedien)
 );
 
+ALTER TABLE raccords 
+ADD COLUMN date_creation_raccord TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN est_raccord_replanification BOOLEAN DEFAULT FALSE,
+ADD COLUMN tournage_source_id BIGINT REFERENCES scene_tournage(id_scene_tournage),
+ADD COLUMN est_actif BOOLEAN DEFAULT TRUE;
+
+CREATE TABLE raccord_types_photos (
+  id_raccord_type_photo BIGSERIAL PRIMARY KEY,
+  id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+  id_type_raccord BIGINT REFERENCES types_raccord(id_type_raccord),
+  cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(id_raccord, id_type_raccord)
+);
+
+CREATE TABLE replanification (
+    id BIGSERIAL PRIMARY KEY,
+    raccord_id BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    scene_source_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    scene_cible_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    nouvelle_date DATE NOT NULL,
+    raison TEXT,
+    statut VARCHAR(50) DEFAULT 'PLANIFIEE',
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Table de liaison entre raccords et planning de tournage
 CREATE TABLE raccord_planning (
     id_raccord_planning BIGSERIAL PRIMARY KEY,
