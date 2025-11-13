@@ -5,6 +5,8 @@ import router from './router';
 
 import './assets/scss/main.scss';
 
+document.documentElement.setAttribute('data-theme', 'light')
+
 const app = createApp(App);
 app.use(createPinia());
 app.use(router);
