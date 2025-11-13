@@ -23,5 +23,25 @@ server: {
     emptyOutDir: true,
     assetsDir: 'assets',
     sourcemap: false,
-  }
+  },css: {
+     postcss: './postcss.config.js'
+    // plugins: [
+    //     postcssNesting(),
+    //     tailwindcss({
+    //       content: [
+    //         "./index.html",
+    //         "./src/**/*.{vue,js,ts,jsx,tsx,scss}",
+    //       ],
+    //       theme: {
+    //         extend: {},
+    //       },
+    //       plugins: [require("daisyui")],
+    //       daisyui: {
+    //         themes: ["light", "dark", "cupcake"],
+    //       },
+    //     }),
+    //     autoprefixer(),
+    //   ],
+  },
 })
+
