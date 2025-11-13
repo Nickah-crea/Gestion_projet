@@ -223,7 +223,7 @@
   position: relative;
   overflow: hidden;
   border: 1px solid rgba($color-white, 0.3);
-  height: 42px;
+  height: 40px;
   margin-left: $gap-xs;
   flex-shrink: 0;
   background: linear-gradient(90deg, 
@@ -327,11 +327,12 @@
 
 /* === FOOTER === */
 .sidebar-footer {
-  padding-top: $padding-md;
+  height: 80px;
+  padding-top: $padding-xs;
   border-top: 1px solid rgba($color-primary, 0.15);
   display: flex;
   flex-direction: column;
-  gap: $gap-sm;
+  gap: $gap-xs;
   flex-shrink: 0;
 
   &.fixed-footer {
@@ -340,27 +341,26 @@
     margin-top: auto;
     position: sticky;
     bottom: 0;
-    padding-bottom: $padding-sm;
   }
 }
 
 .theme-toggle-footer-2 {
   background: rgba($color-text-primary, 0.8);
-  border-radius: $border-radius-pill;
+  border-radius: 50px;
   padding: $gap-xs;
-  width: 100px;
-
-  margin: 0;
+  width:28px;
+  height: 40px;
+  margin: 0px;
   display: flex;
   gap: $gap-xs;
-  border: 2px solid rgba($color-text-secondary, 0.5);
+  border: 1px solid rgba($color-text-secondary, 0.5);
   backdrop-filter: blur(5px);
   align-self: flex-start;
 
   .theme-btn { 
-    width: 36px; 
-    height: 36px;
-    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    border-radius: 50px;
     @include flex-center;
     font-size: $font-size-p1;
     color: $color-text-light;
@@ -373,14 +373,12 @@
       position: absolute;
       top: 0;
       left: -100%;
-      width: 100%;
-      height: 100%;
       background: linear-gradient(90deg, transparent, rgba($color-white, 0.2), transparent);
       transition: left 0.7s ease;
     }
     
     &:hover::before {
-      left: 100%;
+      left: 10px;
     }
     
     &:hover {

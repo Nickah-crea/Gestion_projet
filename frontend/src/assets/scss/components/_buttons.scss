@@ -10,7 +10,7 @@
 
 .add-project-btn-main-Scenariste,
 .add-project-btn-large-Scenariste {
-  background: $color-primary;
+  background: $color-primary-dark;
   color: $color-white;
   border: none;
   padding: $padding-sm $padding-lg;
@@ -43,7 +43,7 @@
 
   &:hover {
     background: linear-gradient(90deg,
-      rgba($color-primary, 0.8) 0%,
+      rgba($color-primary-dark, 0.8) 0%,
       rgba($color-accent, 0.6) 100%);
     transform: translateX(5px) scale(1.02);
     box-shadow: $shadow-hover;
@@ -96,8 +96,8 @@
   border: none;
   background: transparent;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
+  width: 25px;
+  height: 20px;
   @include flex-center;
   cursor: pointer;
   transition: $transition;
@@ -134,7 +134,7 @@
   align-items: center;
   justify-content: center;
   font-size: $font-size-p1;
-  background: rgba($color-text-primary, 0.05);
+  background: rgba($color-text-muted, 0.05);
   color: $color-text-muted;
   
   &:hover {
@@ -172,7 +172,7 @@
 // =============================================
 
 .primary-btn-Scenariste {
-  background: $color-primary;
+  background: $color-primary-dark;
   color: $color-white;
   padding: $padding-sm $padding-md;
   border-radius: $border-radius-sm;
@@ -201,8 +201,8 @@
 }
 
 .accent-btn-Scenariste {
-  background: rgba($color-primary, 0.1);
-  color: $color-primary;
+  background: rgba($color-text-muted, 0.10);
+  color: $color-text-secondary;
   border: 1px solid rgba($color-primary, 0.3);
   padding: $padding-sm $padding-md;
   border-radius: $border-radius-sm;
@@ -521,3 +521,404 @@
     color: $color-text-primary;
   }
 }
+
+
+// =============================================
+// BOUTONS DANGER/SUPPRESSION
+// =============================================
+
+.btn-danger-Scenariste {
+  background: $color-error;
+  color: $color-white;
+  border: none;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: darken($color-error, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba($color-error, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Variante outline pour le danger
+.btn-outline-danger-Scenariste {
+  background: transparent;
+  border: 2px solid $color-error;
+  color: $color-error;
+  
+  &:hover {
+    background: $color-error;
+    color: $color-white;
+  }
+}
+
+// =============================================
+// BOUTONS SECONDAIRES (COMPLÉMENT)
+// =============================================
+
+.btn-secondary-Scenariste {
+  background: rgba($color-text-primary, 0.1);
+  color: $color-text-primary;
+  border: none;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: rgba($color-text-primary, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// BOUTONS PRIMAIRES (COMPLÉMENT)
+// =============================================
+
+.btn-primary-Scenariste {
+  background: $color-primary;
+  color: $color-white;
+  border: none;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: darken($color-primary, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba($color-primary, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// BOUTONS POUR FORMULAIRES COMÉDIENS
+// =============================================
+
+.btn-add-dispo-Scenariste {
+  background: rgba($color-success, 0.1);
+  color: $color-success;
+  border: 1px dashed rgba($color-success, 0.3);
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: rgba($color-success, 0.2);
+    border-color: $color-success;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-remove-Scenariste {
+  background: rgba($color-error, 0.1);
+  color: $color-error;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: $font-size-p1;
+  cursor: pointer;
+  transition: $transition;
+  @include flex-center;
+  
+  &:hover {
+    background: rgba($color-error, 0.2);
+    transform: scale(1.1);
+  }
+}
+
+// =============================================
+// BOUTONS DE NAVIGATION
+// =============================================
+
+.btn-back-Scenariste {
+  background: transparent;
+  border: 1px solid rgba($color-text-primary, 0.2);
+  color: $color-text-primary;
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: rgba($color-text-primary, 0.05);
+    border-color: $color-text-primary;
+  }
+}
+
+.btn-next-Scenariste {
+  background: $color-primary;
+  color: $color-white;
+  border: none;
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: darken($color-primary, 10%);
+    transform: translateX(2px);
+  }
+}
+
+// =============================================
+// BOUTONS DE FILTRES
+// =============================================
+
+.btn-filter-Scenariste {
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  border: none;
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p3;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: rgba($color-primary, 0.2);
+  }
+  
+  &.active {
+    background: $color-primary;
+    color: $color-white;
+  }
+}
+
+// =============================================
+// BOUTONS D'ACTION RAPIDE
+// =============================================
+
+.btn-quick-action-Scenariste {
+  background: $color-white;
+  border: 1px solid $border-color;
+  color: $color-text-primary;
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p3;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  box-shadow: $shadow;
+  
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-hover;
+    transform: translateY(-1px);
+  }
+}
+
+// =============================================
+// BOUTONS AVEC ÉTATS SPÉCIAUX
+// =============================================
+
+.btn-pending-Scenariste {
+  background: rgba($color-warning, 0.1);
+  color: $color-warning;
+  border: 1px solid rgba($color-warning, 0.3);
+  
+  &:hover {
+    background: rgba($color-warning, 0.2);
+  }
+}
+
+.btn-completed-Scenariste {
+  background: rgba($color-success, 0.1);
+  color: $color-success;
+  border: 1px solid rgba($color-success, 0.3);
+  
+  &:hover {
+    background: rgba($color-success, 0.2);
+  }
+}
+
+// =============================================
+// BOUTONS ICONIQUES (SANS TEXTE)
+// =============================================
+
+.btn-icon-only-Scenariste {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  @include flex-center;
+  border-radius: $border-radius-sm;
+  
+  &.small {
+    width: 24px;
+    height: 24px;
+    font-size: $font-size-p3;
+  }
+  
+  &.large {
+    width: 40px;
+    height: 40px;
+    font-size: $font-size-p1;
+  }
+}
+
+// =============================================
+// GROUPES DE BOUTONS
+// =============================================
+
+.btn-group-Scenariste {
+  display: flex;
+  gap: 1px;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  
+  .btn-Scenariste {
+    border-radius: 0;
+    border: none;
+    flex: 1;
+    
+    &:first-child {
+      border-radius: $border-radius-sm 0 0 $border-radius-sm;
+    }
+    
+    &:last-child {
+      border-radius: 0 $border-radius-sm $border-radius-sm 0;
+    }
+  }
+}
+
+// =============================================
+// BOUTON GÉNÉRIQUE DE BASE
+// =============================================
+
+.btn-Scenariste {
+  background: $color-primary;
+  color: $color-white;
+  border: none;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+  text-decoration: none;
+  
+  &:hover {
+    background: darken($color-primary, 10%);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  // Variantes de couleur
+  &.secondary {
+    background: rgba($color-text-primary, 0.1);
+    color: $color-text-primary;
+    
+    &:hover {
+      background: rgba($color-text-primary, 0.2);
+    }
+  }
+  
+  &.danger {
+    background: $color-error;
+    
+    &:hover {
+      background: darken($color-error, 10%);
+    }
+  }
+  
+  &.success {
+    background: $color-success;
+    
+    &:hover {
+      background: darken($color-success, 10%);
+    }
+  }
+  
+  // Variantes de taille
+  &.small {
+    padding: $gap-xs $padding-sm;
+    font-size: $font-size-p3;
+  }
+  
+  &.large {
+    padding: $padding-md $padding-lg;
+    font-size: $font-size-p1;
+  }
+  
+  // Variante outline
+  &.outline {
+    background: transparent;
+    border: 2px solid currentColor;
+    
+    &.primary {
+      color: $color-primary;
+      
+      &:hover {
+        background: $color-primary;
+        color: $color-white;
+      }
+    }
+    
+    &.danger {
+      color: $color-error;
+      
+      &:hover {
+        background: $color-error;
+        color: $color-white;
+      }
+    }
+  }
+}
+

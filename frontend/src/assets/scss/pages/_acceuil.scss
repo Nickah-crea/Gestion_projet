@@ -12,8 +12,9 @@
 }
 
 body {
-  background: none;
-  width: 100%;
+  background: linear-gradient(90deg, 
+    rgba($color-text-primary, 0.05) 0%, 
+    rgba($color-text-primary, 0.15) 100%);  width: 100%;
   overflow-x: hidden;
 }
 
@@ -215,10 +216,10 @@ body {
 .movie-card-Scenariste {
   background: $color-white;
   border-radius: $border-radius-lg;
-  border: 1px solid rgba($color-text-primary, 0.08);
+  // border: 1px solid rgba($color-text-primary, 0.08);
   box-shadow: 
-    0 2px 8px rgba($color-text-primary, 0.08),
-    0 1px 3px rgba($color-text-primary, 0.04);
+    0 1px 5px rgba($color-text-primary, 0.08),
+    0 1px 13px rgba($color-text-primary, 0.04);
   overflow: hidden;
   transition: $transition;
   position: relative;

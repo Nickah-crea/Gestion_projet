@@ -1,0 +1,528 @@
+// =============================================
+// _comedien.scss – STYLE ULTRA-COMPACT
+// =============================================
+@import '../base/variables';
+@import '../components/buttons';
+
+// Conteneur principal
+.creation-comedien {
+margin-left: 50px;
+  min-height: 100vh;
+  padding: $padding-md;
+  background: $color-background;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba($color-primary, 0.03) 0%, transparent 15%),
+    radial-gradient(circle at 90% 80%, rgba($color-accent, 0.03) 0%, transparent 15%);
+  font-family: $font-family-primary;
+}
+
+.creation-comedien h2 {
+  @include typography-h2;
+  margin-bottom: $margin-lg;
+  text-align: center;
+}
+
+// =============================================
+// FORMULAIRE ULTRA-COMPACT
+// =============================================
+.creation-comedien .form-container {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow;
+  padding: $padding-lg;
+  border: 1px solid $border-color;
+  margin-bottom: $margin-xl;
+}
+
+.creation-comedien .form-container h3 {
+  @include typography-h3;
+  margin-bottom: $margin-md;
+  padding-bottom: $padding-sm;
+  border-bottom: 1px solid $border-color;
+}
+
+.creation-comedien .comedien-form {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-lg;
+}
+
+// Grille pour les champs de base
+.creation-comedien .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $gap-md;
+}
+
+.creation-comedien .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.creation-comedien .form-group label {
+  @include typography-p2;
+  font-size: $font-size-p2;
+  opacity: 0.9;
+  font-weight: $font-weight-medium;
+}
+
+// Inputs compacts
+.creation-comedien .form-input,
+.creation-comedien .form-select,
+.creation-comedien .form-textarea {
+  padding: $padding-sm $padding-md;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  color: $color-text-primary;
+  font-size: $font-size-p2;
+  height: 42px;
+  box-shadow: none;
+  transition: $transition;
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px rgba($color-accent, 0.2);
+  }
+}
+
+.creation-comedien .form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23E00FFD' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $padding-md center;
+  background-size: 10px;
+  padding-right: $padding-xl !important;
+}
+
+// Section disponibilités + photo côte à côte
+.creation-comedien .form-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $gap-lg;
+  align-items: start;
+}
+
+.creation-comedien .disponibilites-section,
+.creation-comedien .photo-section {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.creation-comedien .disponibilites-list {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.creation-comedien .disponibilite-item {
+  background: rgba($color-primary, 0.05);
+  border-radius: $border-radius-sm;
+  padding: $padding-sm;
+}
+
+.creation-comedien .disponibilite-inputs {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: $gap-sm;
+  align-items: center;
+}
+
+.creation-comedien .remove-dispo-btn {
+  @extend .btn-danger-Scenariste;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: $font-size-p1;
+}
+
+.creation-comedien .btn-add-dispo {
+  @extend .btn-secondary-Scenariste;
+  @extend .btn-small-Scenariste;
+  width: fit-content;
+  font-size: $font-size-p3;
+}
+
+// Upload photo compact
+.creation-comedien .photo-upload {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.creation-comedien .photo-input {
+  display: none;
+}
+
+.creation-comedien .photo-label {
+  @extend .btn-secondary-Scenariste;
+  @extend .btn-small-Scenariste;
+  text-align: center;
+  cursor: pointer;
+  padding: $padding-sm;
+}
+
+.creation-comedien .photo-preview {
+  position: relative;
+  margin-top: $gap-sm;
+}
+
+.creation-comedien .preview-image {
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: $border-radius-sm;
+  border: 1px solid $border-color;
+}
+
+.creation-comedien .remove-photo-btn {
+  @extend .btn-danger-Scenariste;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  font-size: $font-size-p2;
+}
+
+// Actions du formulaire
+.creation-comedien .form-actions {
+  display: flex;
+  gap: $gap-sm;
+  justify-content: flex-end;
+  margin-top: $margin-md;
+  padding-top: $padding-md;
+  border-top: 1px solid $border-color;
+}
+
+.creation-comedien .btn-primary {
+  @extend .save-btn-Scenariste;
+  @extend .btn-small-Scenariste;
+}
+
+.creation-comedien .btn-secondary {
+  @extend .cancel-btn-Scenariste;
+  @extend .btn-small-Scenariste;
+}
+
+// =============================================
+// TABLEAU DES COMÉDIENS - STYLE ULTRA-COMPACT
+// =============================================
+.creation-comedien .comediens-list {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow;
+  padding: $padding-lg;
+  border: 1px solid $border-color;
+}
+
+.creation-comedien .list-header {
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $border-color;
+}
+
+.creation-comedien .list-header h3 {
+  @include typography-h3;
+  margin-bottom: $margin-md;
+}
+
+// Recherche et filtres
+.creation-comedien .search-section {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: $gap-lg;
+  align-items: end;
+}
+
+.creation-comedien .search-group,
+.creation-comedien .filters-group {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.creation-comedien .filters-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $gap-md;
+}
+
+.creation-comedien .search-group label,
+.creation-comedien .filter-item label {
+  @include typography-p2;
+  font-size: $font-size-p2;
+  opacity: 0.9;
+  font-weight: $font-weight-medium;
+}
+
+.creation-comedien .search-input,
+.creation-comedien .filter-select {
+  padding: $padding-sm $padding-md;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  color: $color-text-primary;
+  font-size: $font-size-p2;
+  height: 36px;
+  box-shadow: none;
+  transition: $transition;
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent;
+    box-shadow: 0 0 0 2px rgba($color-accent, 0.2);
+  }
+}
+
+// Tableau compact
+.creation-comedien .comediens-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-p2;
+}
+
+.creation-comedien .comediens-table th {
+  @include typography-p2;
+  font-weight: $font-weight-semibold;
+  text-align: left;
+  padding: $padding-sm $padding-md;
+  background: rgba($color-primary, 0.05);
+  border-bottom: 2px solid $border-color;
+  color: $color-text-primary;
+}
+
+.creation-comedien .comediens-table td {
+  padding: $padding-sm $padding-md;
+  border-bottom: 1px solid $border-color;
+  vertical-align: middle;
+}
+
+.creation-comedien .comediens-table tr:hover {
+  background: rgba($color-primary, 0.02);
+}
+
+// Photo dans le tableau
+.creation-comedien .table-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: $border-radius-sm;
+  object-fit: cover;
+  border: 1px solid $border-color;
+}
+
+.creation-comedien .photo-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: $border-radius-sm;
+  background: rgba($color-primary, 0.1);
+  @include flex-center;
+  font-size: $font-size-p3;
+  color: $color-text-muted;
+}
+
+// Disponibilités dans le tableau
+.creation-comedien .table-disponibilites {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.creation-comedien .table-dispo-item {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  font-size: $font-size-p3;
+}
+
+.creation-comedien .dispo-statut {
+  padding: 1px $gap-xs;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-medium;
+
+  &.statut-disponible {
+    background: rgba($color-success, 0.1);
+    color: darken($color-success, 10%);
+  }
+  
+  &.statut-indisponible {
+    background: rgba($color-error, 0.1);
+    color: darken($color-error, 10%);
+  }
+  
+  &.statut-occupe {
+    background: rgba($color-warning, 0.1);
+    color: darken($color-warning, 10%);
+  }
+}
+
+// Actions dans le tableau
+.creation-comedien .table-actions {
+  display: flex;
+  gap: $gap-xs;
+  justify-content: flex-end;
+}
+
+.creation-comedien .btn-edit,
+.creation-comedien .btn-link,
+.creation-comedien .btn-delete {
+  @extend .btn-small-Scenariste;
+  padding: $padding-xs $padding-sm;
+  font-size: $font-size-p3;
+}
+
+.creation-comedien .btn-edit {
+  @extend .btn-secondary-Scenariste;
+}
+
+.creation-comedien .btn-link {
+  @extend .btn-primary-Scenariste;
+}
+
+.creation-comedien .btn-delete {
+  @extend .btn-danger-Scenariste;
+}
+
+// États vides
+.creation-comedien .empty-state {
+  @include flex-center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+  font-style: italic;
+  text-align: center;
+}
+
+.creation-comedien .loading {
+  @include flex-center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@include respond-to($breakpoint-md) {
+  .creation-comedien {
+    padding: $padding-sm;
+  }
+  
+  .creation-comedien .form-container,
+  .creation-comedien .comediens-list {
+    padding: $padding-md;
+  }
+  
+  .creation-comedien .form-row-split {
+    grid-template-columns: 1fr;
+  }
+  
+  .creation-comedien .search-section {
+    grid-template-columns: 1fr;
+    gap: $gap-md;
+  }
+  
+  .creation-comedien .filters-group {
+    grid-template-columns: 1fr;
+  }
+  
+  .creation-comedien .comediens-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+@include respond-to($breakpoint-sm) {
+  .creation-comedien {
+    padding: $padding-xs;
+  }
+  
+  .creation-comedien .form-container,
+  .creation-comedien .comediens-list {
+    padding: $padding-sm;
+    border-radius: $border-radius-sm;
+  }
+  
+  .creation-comedien .form-actions {
+    flex-direction: column;
+  }
+  
+  .creation-comedien .table-actions {
+    flex-direction: column;
+  }
+}
+
+// =============================================
+// MODE SOMBRE
+// =============================================
+body.dark-theme {
+  .creation-comedien {
+    background: linear-gradient(135deg, $color-background-dark 0%, lighten($color-background-dark, 5%) 100%);
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba($color-primary, 0.05) 0%, transparent 15%),
+      radial-gradient(circle at 90% 80%, rgba($color-accent, 0.05) 0%, transparent 15%);
+  }
+  
+  .creation-comedien .form-container,
+  .creation-comedien .comediens-list {
+    background: rgba($color-background-dark, 0.15);
+    border: 1px solid rgba($color-white, 0.15);
+    color: $color-text-light;
+  }
+  
+  .creation-comedien .form-container h3,
+  .creation-comedien .list-header h3 {
+    color: $color-text-light;
+    border-bottom-color: rgba($color-white, 0.15);
+  }
+  
+  .creation-comedien .form-input,
+  .creation-comedien .form-select,
+  .creation-comedien .form-textarea,
+  .creation-comedien .search-input,
+  .creation-comedien .filter-select {
+    background: rgba($color-background-dark, 0.2);
+    border: 1px solid rgba($color-white, 0.2);
+    color: $color-text-light;
+    
+    &::placeholder {
+      color: rgba($color-text-light, 0.5);
+    }
+    
+    &:focus {
+      border-color: rgba($color-accent, 0.5);
+      box-shadow: 0 0 0 3px rgba($color-accent, 0.2);
+    }
+  }
+  
+  .creation-comedien .form-group label,
+  .creation-comedien .search-group label,
+  .creation-comedien .filter-item label {
+    color: rgba($color-text-light, 0.8);
+  }
+  
+  .creation-comedien .comediens-table th {
+    background: rgba($color-primary, 0.1);
+    border-bottom-color: rgba($color-white, 0.15);
+    color: $color-text-light;
+  }
+  
+  .creation-comedien .comediens-table td {
+    border-bottom-color: rgba($color-white, 0.1);
+    color: $color-text-light;
+  }
+  
+  .creation-comedien .comediens-table tr:hover {
+    background: rgba($color-primary, 0.05);
+  }
+  
+  .creation-comedien .photo-placeholder {
+    background: rgba($color-primary, 0.2);
+    color: rgba($color-text-light, 0.6);
+  }
+}
+
+

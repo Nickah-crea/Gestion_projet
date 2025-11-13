@@ -203,7 +203,7 @@
         </div>
       </div>
 
-      <div v-else class="comediens-grid">
+      <!-- <div v-else class="comediens-grid">
         <div
           v-for="comedien in filteredComediens"
           :key="comedien.id"
@@ -265,8 +265,69 @@
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </div> -->
+    <div v-else class="comediens-table-container">
+  <table class="comediens-table">
+    <thead>
+      <tr>
+        <th>Photo</th>
+        <th>Nom</th>
+        <th>Âge</th>
+        <th>Email</th>
+        <th>Projet</th>
+        <th>Disponibilités</th>
+        <th>Date création</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="comedien in filteredComediens" :key="comedien.id">
+        <td>
+          <img 
+            v-if="comedien.photoPath" 
+            :src="getPhotoUrl(comedien.photoPath)" 
+            :alt="comedien.nom"
+            class="table-photo"
+          />
+          <div v-else class="photo-placeholder">No photo</div>
+        </td>
+        <td>{{ comedien.nom }}</td>
+        <td>{{ comedien.age }} ans</td>
+        <td>{{ comedien.email }}</td>
+        <td>{{ comedien.projetTitre || 'Non assigné' }}</td>
+        <td>
+          <div class="table-disponibilites">
+            <div v-for="dispo in comedien.disponibilites" :key="dispo.id" class="table-dispo-item">
+              <span class="dispo-date">{{ formatDateSimple(dispo.date) }}</span>
+              <span class="dispo-statut" :class="getStatutClass(dispo.statut)">
+                {{ getStatutText(dispo.statut) }}
+              </span>
+            </div>
+            <div v-if="!comedien.disponibilites || comedien.disponibilites.length === 0" class="no-disponibilites">
+              Aucune
+            </div>
+          </div>
+        </td>
+        <td>{{ formatDate(comedien.creeLe) }}</td>
+        <td>
+          <div class="table-actions">
+            <button @click="editComedien(comedien)" class="btn-edit" title="Modifier">
+              Edit
+            </button>
+            <button @click="goToSceneComedien(comedien.id)" class="btn-link" title="Lier à une scène">
+              Scene
+            </button>
+            <button @click="deleteComedien(comedien.id)" class="btn-delete" title="Supprimer">
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
   </div>
   </div>
 </template>
