@@ -47,7 +47,7 @@
         <i class="fas fa-film-alt cinema-icon-conn cinema-icon-29-conn"></i>
         <i class="fas fa-project-diagram cinema-icon-conn cinema-icon-30-conn"></i>
       </div>
-
+  
       <!-- Section formulaire BIEN AU MILIEU -->
       <div class="connexio-form-section-conn">
         <div class="connexion-card-conn">
