@@ -21,42 +21,49 @@
   font-weight: $font-weight-bold;
 }
 
-/* === SIDEBAR PEPS + GLASS + GRADIENT === */
+/* === SIDEBAR PRINCIPALE === */
 .sidebar {
   position: fixed;
-  top: 0; left: 0;
-  width: 210px;
-  height: 100vh;
+  top: 0; 
+  left: 0;
+  width: 225px;
+  height: 100dvh;
   padding: $padding-md;
   border-radius: 0 $border-radius-sm $border-radius-sm 0;
-  box-shadow: 
-    3px 0 10px rgba($color-dark, 0.2),
-    inset -5px 0 15px rgba($color-light, 0.4);
+  box-shadow:
+    3px 0 10px rgba($color-text-primary, 0.2),
+    inset -5px 0 15px rgba($color-white, 0.4);
   display: flex;
   flex-direction: column;
-  transition: width $transition-slow, padding $transition-slow;
+  transition: 
+    width $duration-slow cubic-bezier(0.4, 0, 0.2, 1),
+    padding $duration-slow cubic-bezier(0.4, 0, 0.2, 1),
+    background $duration-normal ease,
+    backdrop-filter $duration-normal ease;
   z-index: $z-index-fixed;
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);
   border-right: 1px solid rgba($color-primary, 0.3);
-  background: linear-gradient(135deg,
-    rgba($color-background, 0.95) 0%,
-    rgba($color-background, 0.75) 50%,
-    rgba($color-background, 0.85) 100%);
   overflow: hidden;
   font-family: $font-family-primary;
   color: $color-text-primary;
+  background: linear-gradient(135deg, 
+    rgba($color-white, 0.8) 0%, 
+    rgba($color-background, 0.7) 50%, 
+    rgba($color-white, 0.6) 100%);
+  transform: translateZ(0);
+  will-change: width, padding;
 
   &.collapsed {
-    width: 56px;
-    padding: $padding-sm;
-    background: rgba($color-background, 0.9);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    width: 56px !important;
+    padding: $padding-sm !important;
+    background: rgba($color-white, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 }
 
-/* === HEADER + TOGGLE PEPS === */
+/* === HEADER + TOGGLE === */
 .sidebar-header {
   display: flex;
   justify-content: space-between;
@@ -66,7 +73,7 @@
   border-bottom: 1px solid rgba($color-primary, 0.2);
 }
 
-/* === PROFIL : AVATAR + INFOS À GAUCHE === */
+/* === PROFIL UTILISATEUR === */
 .user-profile-section {
   margin-bottom: 0;
   flex: 1;
@@ -80,7 +87,6 @@
   border-radius: $border-radius-sm;
   background: transparent;
   transition: $transition;
-  width: auto;
   cursor: pointer;
   justify-content: flex-start;
 
@@ -107,7 +113,7 @@
   box-shadow: 0 4px 12px rgba($color-primary, 0.3);
   border: 1.5px solid $color-accent;
   flex-shrink: 0;
-  transition: all $transition;
+  transition: $transition;
 }
 
 .user-profile-info {
@@ -122,7 +128,7 @@
   font-weight: $font-weight-semibold;
   font-size: $font-size-p2;
   color: $color-text-primary;
-  line-height: 1.2;
+  line-height: $line-height-tight;
   @include text-truncate;
   transition: color $transition;
 }
@@ -131,11 +137,11 @@
   font-size: $font-size-p3;
   color: $color-primary;
   font-weight: $font-weight-medium;
-  line-height: 1.2;
+  line-height: $line-height-tight;
   @include text-truncate;
 }
 
-/* === BOUTON TOGGLE PLUS PETIT À DROITE === */
+/* === BOUTON TOGGLE === */
 .menu-toggle-section {
   display: flex;
   justify-content: flex-end;
@@ -152,28 +158,26 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  transition: all $transition;
+  transition: $transition;
   backdrop-filter: blur(5px);
   flex-shrink: 0;
 
   &:hover {
     background: $color-accent;
-    color: $color-dark;
+    color: $color-text-primary;
     transform: scale(1.1) rotate(180deg);
     box-shadow: 0 0 10px rgba($color-accent, 0.6);
   }
 }
 
-/* === STRUCTURE PRINCIPALE AVEC CONTENU SCROLLABLE === */
+/* === CONTENU SCROLLABLE === */
 .sidebar-content-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px);
   flex: 1;
-  position: relative;
+  height: 100%;
 }
 
-/* === MENU DES LIENS SCROLLABLE === */
 .sidebar-links-scrollable {
   flex: 1;
   display: flex;
@@ -182,119 +186,121 @@
   margin: $gap-md 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 4px;
-  max-height: calc(100% - 100px);
-  
+  padding-right: $gap-xs;
+
   /* Scrollbar personnalisée */
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
   &::-webkit-scrollbar-track {
     background: rgba($color-primary, 0.1);
     border-radius: $border-radius-pill;
-    margin: 5px 0;
+    margin: $gap-xs 0;
   }
-  
   &::-webkit-scrollbar-thumb {
     background: rgba($color-primary, 0.3);
     border-radius: $border-radius-pill;
-    
     &:hover {
       background: rgba($color-primary, 0.5);
     }
   }
-  
-  /* Pour Firefox */
   scrollbar-width: thin;
   scrollbar-color: rgba($color-primary, 0.3) rgba($color-primary, 0.1);
 }
 
-/* === LIENS PEPS + GRADIENT === */
+/* === LIENS === */
 .sidebar-link {
   display: flex;
   align-items: center;
   gap: $gap-sm;
-  padding: #{$padding-sm} #{$padding-md};
+  padding: $padding-sm $padding-md;
   border-radius: $border-radius-pill;
   color: $color-text-primary;
   font-weight: $font-weight-medium;
   font-size: $font-size-p2;
   text-decoration: none;
-  transition: all $transition;
+  transition: $transition;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba($color-grey, 0.3);
+  border: 1px solid rgba($color-white, 0.3);
   height: 42px;
-  margin-left: 3px;
+  margin-left: $gap-xs;
   flex-shrink: 0;
-
-  background: linear-gradient(90deg,
-    rgba($color-primary, 0.08) 0%,
-    rgba($color-accent, 0.08) 100%);
+  background: linear-gradient(90deg, 
+    rgba($color-text-primary, 0.05) 0%, 
+    rgba($color-text-primary, 0.15) 100%);
+  width: 180px;
+  backdrop-filter: blur(5px);
 
   .icon {
-    width: 20px; height: 20px;
+    width: 20px; 
+    height: 20px;
     border-radius: 50%;
-    background: $color-primary;
+    background: $color-text-primary;
     @include flex-center;
-    color: $color-white;
+    color: $color-primary;
     font-size: $font-size-p2;
-    transition: all $transition;
+    transition: $transition;
     flex-shrink: 0;
   }
 
   .link-text {
     white-space: nowrap;
-    transition: opacity $transition;
-    margin-left: 5px;
+    transition: opacity $transition-slow;
+    margin-left: $gap-xs;
+    color: $color-text-primary;
   }
 
   &::before {
     content: '';
     position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($color-light, 0.7), transparent);
+    top: 0; 
+    left: -100%;
+    width: 100%; 
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba($color-white, 0.7), transparent);
     transition: left 0.6s ease;
     pointer-events: none;
   }
 
   &:hover {
-    background: linear-gradient(90deg,
-      rgba($color-primary, 0.25) 0%,
-      rgba($color-accent, 0.2) 100%);
+    background: linear-gradient(90deg, 
+      rgba($color-primary, 0.8) 0%, 
+      rgba($color-accent, 0.8) 100%);
     transform: translateX(5px) scale(1.02);
-    box-shadow: $shadow-hover;
-    border-color: $color-grey;
-    color: $color-dark;
-
+    box-shadow: 0 5px 15px rgba($color-primary, 0.4);
+    border-color: rgba($color-white, 0.5);
+    color: $color-text-primary;
+    
     .icon {
-      background: $color-light;
+      background: rgba($color-text-primary, 0.9);
       color: $color-primary;
       transform: scale(1.1) rotate(360deg);
     }
-
-    &::before { left: 100%; }
+    
+    &::before { 
+      left: 100%; 
+    }
   }
 
   &.router-link-active {
-    background: linear-gradient(90deg,
-      rgba($color-primary, 0.35) 0%,
-      rgba($color-accent, 0.15) 100%);
+    background: linear-gradient(90deg, 
+      rgba($color-primary, 0.9) 0%, 
+      rgba($color-accent, 0.9) 100%);
     color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-    box-shadow: $shadow-inset;
-    border-color: $color-background;
+    font-size: $font-size-p1;
+    box-shadow: 0 0 10px rgba($color-primary, 0.6);
+    border-color: rgba($color-white, 0.6);
     transform: translateX(6px);
-
+    width: 182px;
+    
     .icon {
-      background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
-      color: $color-white;
+      background: rgba($color-text-primary, 0.9);
+      color: $color-primary;
       animation: pulse 1.5s infinite;
       transform: scale(1.15);
     }
-
+    
     &::before {
       animation: light-scan 2s ease-in-out infinite;
     }
@@ -303,8 +309,14 @@
 
 /* === ANIMATIONS === */
 @keyframes pulse {
-  0%, 100% { transform: scale(1.1); box-shadow: 0 0 0 0 rgba($color-accent, 0.4); }
-  50% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba($color-accent, 0.2); }
+  0%, 100% { 
+    transform: scale(1.1); 
+    box-shadow: 0 0 0 0 rgba($color-accent, 0.4); 
+  }
+  50% { 
+    transform: scale(1.2); 
+    box-shadow: 0 0 0 8px rgba($color-accent, 0.2); 
+  }
 }
 
 @keyframes light-scan {
@@ -313,7 +325,7 @@
   100% { left: 100%; }
 }
 
-/* === FOOTER FIXE EN BAS === */
+/* === FOOTER === */
 .sidebar-footer {
   padding-top: $padding-md;
   border-top: 1px solid rgba($color-primary, 0.15);
@@ -321,7 +333,7 @@
   flex-direction: column;
   gap: $gap-sm;
   flex-shrink: 0;
-  
+
   &.fixed-footer {
     background: inherit;
     backdrop-filter: inherit;
@@ -333,28 +345,76 @@
 }
 
 .theme-toggle-footer-2 {
-  background: rgba($color-primary, 0.15);
+  background: rgba($color-text-primary, 0.8);
   border-radius: $border-radius-pill;
-  padding: 4px;
-  width: 60px;
-  margin: 0 auto;
-  display: flex;
-  gap: 4px;
-  border: 1px solid rgba($color-primary, 0.4);
-  backdrop-filter: blur(5px);
+  padding: $gap-xs;
+  width: 100px;
 
-  .theme-btn {
-    width: 22px; height: 22px;
+  margin: 0;
+  display: flex;
+  gap: $gap-xs;
+  border: 2px solid rgba($color-text-secondary, 0.5);
+  backdrop-filter: blur(5px);
+  align-self: flex-start;
+
+  .theme-btn { 
+    width: 36px; 
+    height: 36px;
     border-radius: 50%;
     @include flex-center;
-    font-size: $font-size-p3;
-    color: $color-primary;
-    transition: all $transition;
-
+    font-size: $font-size-p1;
+    color: $color-text-light;
+    transition: $transition;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba($color-white, 0.2), transparent);
+      transition: left 0.7s ease;
+    }
+    
+    &:hover::before {
+      left: 100%;
+    }
+    
+    &:hover {
+      background: rgba($color-white, 0.1);
+      transform: scale(1.1);
+      color: $color-primary;
+    }
+    
     &.active {
       background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
       color: $color-white;
-      box-shadow: 0 0 12px rgba($color-accent, 0.5);
+      box-shadow: 0 3px 10px rgba($color-primary, 0.4);
+      transform: scale(1.05);
+    }
+  }
+}
+
+/* Correction spécifique pour le theme toggle en mode collapsed */
+.sidebar.collapsed .theme-toggle-footer-2 {
+  width: 28px !important;         /* Réduit de 26px à 24px */
+  height: 52px !important;        /* Réduit de 56px à 52px */
+  flex-direction: column !important;
+  padding: 4px 3px !important;    /* Padding réduit */
+  gap: 4px !important;            /* Gap réduit */
+  margin: 0 auto !important;
+
+  .theme-btn {
+    width: 18px !important;       /* Réduit de 16px à 14px */
+    height: 18px !important;
+    font-size: 8px !important;    /* Réduit de 9px à 8px */
+
+    &.active::after {
+      width: 16px;                /* Réduit de 20px à 16px */
+      height: 16px;
     }
   }
 }
@@ -362,14 +422,16 @@
 .logout-link {
   @include flex-center;
   gap: $gap-sm;
-  padding: #{$padding-sm} #{$padding-md};
+  padding: $padding-sm $padding-md;
   border-radius: $border-radius-pill;
-  border: 2px solid $color-primary;
-  color: $color-primary;
+  border: 2px solid $color-text-primary;
+  color: $color-text-primary;
   font-size: $font-size-p2;
   font-weight: $font-weight-medium;
-  transition: all $transition;
+  transition: $transition;
   flex-shrink: 0;
+  background: transparent;
+  backdrop-filter: blur(5px);
 
   &:hover {
     background: linear-gradient(90deg, $color-accent 0%, $color-primary 100%);
@@ -377,31 +439,39 @@
     transform: translateX(3px) scale(1.02);
     box-shadow: 0 0 15px rgba($color-accent, 0.4);
     border-color: transparent;
+    
+    .icon {
+      background: rgba($color-white, 0.9);
+      color: $color-accent;
+    }
   }
 }
 
-/* === CORRECTION POUR LE MODE COLLAPSED === */
-/* === CORRECTION POUR LE MODE COLLAPSED === */
+/* === MODE COLLAPSED === */
 .sidebar.collapsed {
+  background: $color-white;
+
   .sidebar-header {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    gap: $gap-md; // ← AUGMENTÉ l'espace entre profil et flèche
+    gap: $gap-md;
     padding-bottom: $gap-sm;
   }
 
   .user-profile-header {
     justify-content: center;
     padding: 0;
-    margin-bottom: 0; // ← ASSURE qu'il n'y a pas de marge supplémentaire
+    margin-bottom: 0;
+    width: 100%;
   }
 
   .user-avatar {
-    margin-top: 10px;
+    margin-top: $gap-md;
     width: 28px;
     height: 28px;
     font-size: $font-size-p3;
+    margin-left: 0;
   }
 
   .user-profile-info,
@@ -410,145 +480,195 @@
   .link-text {
     opacity: 0;
     width: 0;
+    height: 0;
     overflow: hidden;
-    transition: all $transition;
+    transition: $transition-slow;
+    margin: 0;
   }
 
   .menu-toggle-section {
     justify-content: center;
     width: 100%;
-    margin-top: $gap-sm; // ← AJOUTÉ un espace au-dessus de la flèche
+    margin-top: $gap-sm;
   }
 
   .menu-toggle {
     width: 22px;
     height: 22px;
+    margin-right: 0;
   }
 
   .sidebar-links-scrollable {
-    .sidebar-link {
-      justify-content: center;
-      padding: $padding-sm;
-      
-      .icon { 
-        margin: 0 auto; 
+    margin: $gap-md 0;
+    padding-right: 0;
+  }
+
+  .sidebar-links-scrollable .sidebar-link {
+    justify-content: center;
+    padding: $padding-sm;
+    width: auto;
+    margin-left: 0;
+    min-width: 32px;
+    
+    .icon { 
+      margin: 0;
+      transform: none;
+    }
+    
+    .link-text { 
+      opacity: 0; 
+      width: 0; 
+      height: 0;
+      overflow: hidden; 
+      margin: 0;
+    }
+
+    &:hover {
+      transform: scale(1.05);
+      .icon {
+        transform: scale(1.1) rotate(360deg);
       }
-      
-      .link-text {
-        opacity: 0;
-        width: 0;
-        overflow: hidden;
+    }
+
+    &.router-link-active {
+      transform: scale(1.05);
+      width: auto;
+      margin-left: 0;
+      .icon {
+        transform: scale(1.15);
       }
     }
   }
-  
-  .sidebar-footer.fixed-footer {
-    .logout-link {
-      justify-content: center;
-      padding: $padding-sm;
+
+  .sidebar-footer.fixed-footer .logout-link {
+    justify-content: center;
+    padding: $padding-sm;
+    width: auto;
+    margin-left: 0;
+
+    .icon {
+      margin: 0;
+    }
+
+    .link-text {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      margin: 0;
     }
   }
 }
 
 /* === DARK MODE === */
 .dark-theme {
-  .sidebar {
-    background: linear-gradient(135deg,
-      rgba($color-dark, 0.9) 0%,
-      rgba($color-dark, 0.8) 100%);
-    border-right: 1px solid rgba($color-primary, 0.3);
-    color: #f0e6e0;
+  body {
+    background: $color-background-dark;
+    color: $color-text-light;
   }
 
-  .user-name, .link-text, .sidebar-link { color: #f0e6e0; }
-  .user-role { color: $color-pink; }
+  .sidebar {
+    background: linear-gradient(135deg, 
+      rgba($color-text-secondary, 0.8) 0%, 
+      rgba($color-background-dark, 0.7) 100%);
+    border-right: 1px solid rgba($color-primary, 0.3);
+    color: $color-text-light;
+  }
+
+  .user-name, 
+  .link-text, 
+  .sidebar-link { 
+    color: $color-text-light; 
+  }
+  
+  .user-role { 
+    color: $color-accent; 
+  }
 
   .sidebar-link {
-    background: linear-gradient(90deg,
-      rgba($color-primary, 0.1) 0%,
-      rgba($color-accent, 0.05) 100%);
-    border: 1px solid rgba($color-primary, 0.2);
-
-    &:hover, &.router-link-active {
-      background: linear-gradient(90deg,
-        rgba($color-accent, 0.25) 0%,
-        rgba($color-primary, 0.15) 100%);
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba($color-white, 0.1) 100%);
+    border: 1px solid rgba($color-white, 0.1);
+    
+    &:hover, 
+    &.router-link-active {
+      background: linear-gradient(90deg, 
+        rgba($color-primary, 0.8) 0%, 
+        rgba($color-accent, 0.8) 100%);
       box-shadow: 0 0 20px rgba($color-accent, 0.3);
+      color: $color-text-primary;
     }
-
+    
     .icon {
-      background: $color-primary;
-      color: $color-white;
+      background: $color-text-light;
+      color: $color-primary;
     }
-
+    
     &.router-link-active .icon {
-      background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
+      background: rgba($color-text-primary, 0.9);
+      color: $color-primary;
     }
   }
 
   .menu-toggle:hover {
     background: $color-accent;
-    color: $color-dark;
+    color: $color-text-primary;
   }
 
   .logout-link {
-    border-color: $color-primary;
-    color: $color-primary;
-
-    &:hover {
-      color: $color-white;
+    border-color: $color-text-light;
+    color: $color-text-light;
+    
+    &:hover { 
+      color: $color-white; 
     }
+  }
+
+  .theme-toggle-footer-2 {
+    background: rgba($color-text-secondary, 0.8);
+    border-color: rgba($color-text-muted, 0.5);
   }
 }
 
-/* === RESPONSIVE MOBILE === */
-@media (max-width: 768px) {
-  .sidebar-content-wrapper {
-    height: calc(100vh - 100px);
-  }
-  
-  .sidebar-links-scrollable {
-    max-height: calc(100% - 80px);
-  }
-  
-  .sidebar-footer.fixed-footer {
-    padding-bottom: max($padding-sm, env(safe-area-inset-bottom));
-  }
-
+/* === RESPONSIVE === */
+@include respond-to($breakpoint-md) {
   .sidebar-header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
-
-  .user-profile-header {
-    gap: $gap-sm;
+  
+  .user-avatar { 
+    width: 30px; 
+    height: 30px; 
   }
-
-  .user-avatar {
-    width: 30px;
-    height: 30px;
+  
+  .menu-toggle { 
+    width: 26px; 
+    height: 26px; 
   }
-
-  .menu-toggle {
-    width: 26px;
-    height: 26px;
-  }
-}
-
-/* Pour les très petits écrans */
-@media (max-width: 480px) {
-  .sidebar-header {
-    gap: $gap-sm;
-  }
-
-  .user-profile-info {
-    .user-name {
-      font-size: $font-size-p3;
-    }
-    .user-role {
-      font-size: 10px;
-    }
+  
+  .sidebar-footer.fixed-footer {
+    padding-bottom: max($padding-sm, env(safe-area-inset-bottom));
   }
 }
 
+@include respond-to($breakpoint-xs) {
+  .user-name { 
+    font-size: $font-size-p3; 
+  }
+  
+  .user-role { 
+    font-size: $font-size-p3; 
+  }
+  
+  .theme-toggle-footer-2 {
+    width: 90px;
+  }
+  
+  .theme-toggle-footer-2 .theme-btn {
+    width: 32px;
+    height: 32px;
+    font-size: $font-size-p2;
+  }
+}

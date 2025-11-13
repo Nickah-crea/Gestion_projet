@@ -47,7 +47,7 @@ body {
   align-items: flex-start;
   padding: $padding-sm 0;
   margin-bottom: $margin-md;
-  border-bottom: 1px solid rgba($color-dark, 0.1);
+  border-bottom: 1px solid rgba($color-text-primary, 0.1);
   gap: $gap-md;
 }
 
@@ -86,7 +86,7 @@ body {
   width: 100%;
   padding: $padding-sm $padding-lg;
   padding-left: 40px; // Plus d'espace pour l'icône
-  border: 2px solid rgba($color-dark, 0.1);
+  border: 2px solid rgba($color-text-primary, 0.1);
   border-radius: $border-radius-sm;
   background: $color-white;
   font-size: $font-size-p1;
@@ -129,7 +129,7 @@ body {
   
   &:hover {
     color: $color-text-primary;
-    background: rgba($color-dark, 0.1);
+    background: rgba($color-text-primary, 0.1);
     transform: scale(1.1);
   }
 }
@@ -179,7 +179,7 @@ body {
   width: 100%;
   box-sizing: border-box;
   padding: $padding-sm;
-  border: 1px solid rgba($color-dark, 0.1);
+  border: 1px solid rgba($color-text-primary, 0.1);
   border-radius: $border-radius-sm;
   background: $color-white;
   color: $color-text-primary;
@@ -215,10 +215,10 @@ body {
 .movie-card-Scenariste {
   background: $color-white;
   border-radius: $border-radius-lg;
-  border: 1px solid rgba($color-dark, 0.08);
+  border: 1px solid rgba($color-text-primary, 0.08);
   box-shadow: 
-    0 2px 8px rgba($color-dark, 0.08),
-    0 1px 3px rgba($color-dark, 0.04);
+    0 2px 8px rgba($color-text-primary, 0.08),
+    0 1px 3px rgba($color-text-primary, 0.04);
   overflow: hidden;
   transition: $transition;
   position: relative;
@@ -232,26 +232,26 @@ body {
   &:hover {
     transform: translateY(-4px);
     box-shadow: 
-      0 8px 20px rgba($color-dark, 0.12),
-      0 3px 8px rgba($color-dark, 0.08);
+      0 8px 20px rgba($color-text-primary, 0.12),
+      0 3px 8px rgba($color-text-primary, 0.08);
   }
 }
 
 // Couleurs pastel avec les nouvelles variables
-.movie-card-Scenariste.pastel-pink { 
-  background: rgba($color-pink, 0.3); 
-}
-.movie-card-Scenariste.pastel-yellow { 
-  background: rgba($color-yellow, 0.3); 
-}
 .movie-card-Scenariste.pastel-blue { 
   background: rgba($color-primary, 0.1); 
+}
+.movie-card-Scenariste.pastel-purple { 
+  background: rgba($color-accent, 0.1); 
 }
 .movie-card-Scenariste.pastel-green { 
   background: rgba($color-success, 0.1); 
 }
-.movie-card-Scenariste.pastel-purple { 
-  background: rgba($color-accent, 0.1); 
+.movie-card-Scenariste.pastel-yellow { 
+  background: rgba($color-warning, 0.1); 
+}
+.movie-card-Scenariste.pastel-pink { 
+  background: rgba(255, 228, 228, 0.3); 
 }
 
 // Header des cartes
@@ -279,16 +279,16 @@ body {
 }
 
 // Classes de statut avec les nouvelles couleurs
-.statut-en-cours { background: rgba($color-primary, 0.2); }
-.statut-termine { background: rgba($color-success, 0.2); }
-.statut-attente { background: rgba($color-yellow, 0.2); }
-.statut-annule { background: rgba($color-red, 0.2); }
-.statut-planifie { background: rgba($color-accent, 0.2); }
-.statut-preparation { background: rgba($color-yellow, 0.2); }
-.statut-tournage { background: rgba($color-primary, 0.2); }
-.statut-tourne { background: rgba($color-success, 0.2); }
-.statut-monte { background: rgba($color-accent, 0.2); }
-.statut-valide { background: rgba($color-success, 0.2); }
+.statut-en-cours { background: rgba($color-primary, 0.2); color: $color-primary; }
+.statut-termine { background: rgba($color-success, 0.2); color: $color-success; }
+.statut-attente { background: rgba($color-warning, 0.2); color: $color-warning; }
+.statut-annule { background: rgba($color-error, 0.2); color: $color-error; }
+.statut-planifie { background: rgba($color-accent, 0.2); color: $color-accent; }
+.statut-preparation { background: rgba($color-warning, 0.2); color: $color-warning; }
+.statut-tournage { background: rgba($color-primary, 0.2); color: $color-primary; }
+.statut-tourne { background: rgba($color-success, 0.2); color: $color-success; }
+.statut-monte { background: rgba($color-accent, 0.2); color: $color-accent; }
+.statut-valide { background: rgba($color-success, 0.2); color: $color-success; }
 
 // Actions des cartes
 .movie-actions-Scenariste {
@@ -320,8 +320,18 @@ body {
 
 .movie-meta-Scenariste {
   display: flex;
-  gap: $padding-md;
+  align-items: center;
+  gap: $gap-sm;
   margin-bottom: $padding-md;
+  color: $color-text-secondary;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+}
+
+.meta-separator-Scenariste {
+  color: $color-text-muted;
+  font-weight: $font-weight-regular;
+  margin: 0 $gap-xs;
 }
 
 .meta-item-Scenariste {
@@ -362,7 +372,7 @@ body {
 
 .no-projects-icon-Scenariste {
   font-size: 2.5rem;
-  color: rgba($color-dark, 0.3);
+  color: rgba($color-text-primary, 0.3);
   margin-bottom: $margin-md;
 }
 
@@ -383,7 +393,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba($color-dark, 0.4);
+  background: rgba($color-text-primary, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -391,7 +401,7 @@ body {
 }
 
 .modal-content-Scenariste {
-  background: $color-light;
+  background: $color-white;
   padding: $padding-lg;
   border-radius: $border-radius;
   box-shadow: $shadow-lg;
@@ -428,9 +438,9 @@ body {
 .form-select-Scenariste {
   width: 100%;
   padding: $padding-sm;
-  border: 1px solid rgba($color-dark, 0.1);
+  border: 1px solid rgba($color-text-primary, 0.1);
   border-radius: $border-radius-sm;
-  background: $color-light;
+  background: $color-white;
   font-size: $font-size-p1;
   color: $color-text-primary;
   
@@ -469,7 +479,7 @@ body {
 }
 
 .search-result-item-Scenariste {
-  background: $color-light;
+  background: $color-white;
   border-radius: $border-radius-sm;
   padding: $padding-md;
   margin-bottom: $gap-sm;

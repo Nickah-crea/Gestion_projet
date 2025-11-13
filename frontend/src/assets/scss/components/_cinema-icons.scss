@@ -3,10 +3,10 @@
 
 // Variables pour les icônes - Utilisant la palette globale
 $icon-colors: (
-  1: $color-primary,      // Violet principal
-  2: $color-accent,       // Rose fluo
-  3: $color-primary-light, // Violet clair
-  4: $color-yellow        // Jaune pour variété
+  1: $color-primary,      // #7BBBFF - Bleu clair principal
+  2: $color-accent,       // #B8A9FF - Violet/lavande accent
+  3: $color-primary-light, // #A3D1FF - Variante claire du bleu
+  4: $color-warning       // #F59E0B - Jaune pour variété
 );
 
 $icon-sizes: (
@@ -150,10 +150,10 @@ $icon-sizes: (
 }
 
 /* Responsive pour les icônes éloignées */
-@media (max-width: 500px) {
+@include respond-to($breakpoint-xs) {
   .cinema-icons-conn {
-    width: calc(100% - 50px);
-    height: calc(100% - 50px);
+    width: calc(100% - 100px);
+    height: calc(100% - 100px);
     top: 50px;
     left: 50px;
   }
@@ -166,31 +166,79 @@ $icon-sizes: (
 
 /* Design des icônes comme dans la sidebar */
 .cinema-icon-design {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  color: $color-light;
+  color: $color-white;
   font-size: $font-size-p2;
   transition: $transition;
   flex-shrink: 0;
   background: $color-primary;
   
   &.icon-yellow {
-    background: $color-yellow;
-    color: $color-dark;
+    background: $color-warning;
+    color: $color-text-primary;
   }
   
   &.icon-primary {
     background: $color-primary;
-    color: $color-light;
+    color: $color-white;
   }
   
   &.icon-accent {
     background: $color-accent;
-    color: $color-light;
+    color: $color-white;
   }
 }
 
+/* Variantes de taille pour les icônes design */
+.cinema-icon-design {
+  &.icon-small {
+    width: 16px;
+    height: 16px;
+    font-size: $font-size-p3;
+  }
+  
+  &.icon-medium {
+    width: 20px;
+    height: 20px;
+    font-size: $font-size-p2;
+  }
+  
+  &.icon-large {
+    width: 24px;
+    height: 24px;
+    font-size: $font-size-p1;
+  }
+}
+ 
+/* États interactifs */
+.cinema-icon-design {
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba($color-primary, 0.4);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Animation pour les icônes design */
+@keyframes icon-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($color-primary, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba($color-primary, 0.2);
+  }
+}
+
+.cinema-icon-design.pulse {
+  animation: icon-pulse 2s infinite;
+}
