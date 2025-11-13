@@ -405,6 +405,12 @@
                   >
                     <i class="fas fa-file-pdf"></i> Exporter Dialogues PDF
                   </button>
+                   <RaccordsPhotosComponent 
+                      :scene-id="scene.idScene"
+                      :scene-info="scene"
+                      @raccords-updated="onRaccordsUpdated"
+                    />
+
                 </div>
             </h3>
 
@@ -1051,9 +1057,11 @@ import axios from 'axios';
 import SceneTournageSection from './SceneTournageSection.vue';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import RaccordsPhotosComponent from './RaccordsPhotosComponent.vue'
 
 components: {
-  SceneTournageSection
+  SceneTournageSection,
+  RaccordsPhotosComponent
 }
 
 const route = useRoute();
@@ -1082,6 +1090,11 @@ const userPermissions = ref({
     canCreatePersonnage: false
 });
 
+// Méthode pour gérer les mises à jour
+const onRaccordsUpdated = () => {
+  console.log('Raccords mis à jour')
+  // Recharger les données si nécessaire
+}
 
 // Méthode pour toggle la sidebar
 const toggleSidebar = () => {
