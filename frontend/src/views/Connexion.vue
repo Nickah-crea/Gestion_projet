@@ -120,7 +120,7 @@
             </button>
             
             <div class="signup-link-connexion-conn">
-              Pas encore inscrit? <a href="#">Créer un compte</a>
+              Pas encore inscrit? <a href="/inscription">Créer un compte</a>
             </div>
           </form>
         </div>
