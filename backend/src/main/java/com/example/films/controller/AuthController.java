@@ -38,8 +38,12 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(creerReponseErreur("Le mot de passe doit contenir au moins 6 caractères"));
             }
 
-            if (request.getRole() == null || request.getRole().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(creerReponseErreur("Le rôle est obligatoire"));
+            // Le rôle n'est plus obligatoire, on utilise "UTILISATEUR" par défaut
+            if (request.getRole() != null && !request.getRole().trim().isEmpty()) {
+                String roleUpper = request.getRole().toUpperCase();
+                if (!roleUpper.equals("SCENARISTE") && !roleUpper.equals("REALISATEUR") && !roleUpper.equals("ADMIN") && !roleUpper.equals("UTILISATEUR")) {
+                    return ResponseEntity.badRequest().body(creerReponseErreur("Rôle non valide. Rôles acceptés: SCENARISTE, REALISATEUR, ADMIN, UTILISATEUR"));
+                }
             }
 
             UtilisateurCreeDTO utilisateurCree = authService.register(request);
