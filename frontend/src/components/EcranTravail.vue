@@ -395,7 +395,7 @@
                 <i class="fas fa-comments" style="color: #21294F;"></i> {{ getSceneCommentCount(scene.idScene) }}
               </span>
 
-               <!-- Dans chaque scene-card, remplacer le bouton existant par : -->
+               
                 <div class="scene-actions-ecran-travail">
                   <button 
                     v-if="userPermissions.canCreateScene" 
@@ -405,12 +405,27 @@
                   >
                     <i class="fas fa-file-pdf"></i> Exporter Dialogues PDF
                   </button>
+
                    <RaccordsPhotosComponent 
                       :scene-id="scene.idScene"
                       :scene-info="scene"
                       @raccords-updated="onRaccordsUpdated"
                     />
 
+                       <RaccordSceneComponent 
+                            :projet-id="projetId"
+                            :episode-id="currentEpisode?.idEpisode"
+                            :sequence-id="currentSequence?.idSequence"
+                            :scene-source-id="scene.idScene"  
+                            @raccord-created="onRaccordCreated"
+                        />
+
+                     <!-- <ReplanificationComponent 
+                      :scene-id="scene.idScene"
+                      :scene-info="scene"
+                      :projet-id="projetId"
+                      @replanification-updated="onReplanificationUpdated"
+                    /> -->
                 </div>
             </h3>
 
@@ -420,8 +435,8 @@
               :projet-id="projetId"
               :user-permissions="userPermissions"
               @tournage-updated="onTournageUpdated"
+              @replanification-appliquee="onReplanificationDansScene"
             />
-
               <!-- Section commentaires scène -->
               <div v-if="showSceneCommentModal && selectedScene?.idScene === scene.idScene" class="comment-section-ecran-travail">
                 <h4>Commentaires sur la scène</h4>
@@ -1057,11 +1072,17 @@ import axios from 'axios';
 import SceneTournageSection from './SceneTournageSection.vue';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import RaccordsPhotosComponent from './RaccordsPhotosComponent.vue'
+import RaccordSceneComponent from './RaccordSceneComponent.vue';
+import RaccordsPhotosComponent from './RaccordsPhotosComponent.vue';
+// import ReplanificationComponent from './ReplanificationComponent.vue'
+
 
 components: {
   SceneTournageSection,
-  RaccordsPhotosComponent
+  RaccordsPhotosComponent,
+  // ReplanificationComponent,
+  RaccordSceneComponent
+ 
 }
 
 const route = useRoute();
@@ -1095,6 +1116,19 @@ const onRaccordsUpdated = () => {
   console.log('Raccords mis à jour')
   // Recharger les données si nécessaire
 }
+
+// const onReplanificationUpdated = () => {
+//   console.log('Replanification mise à jour')
+//   // Recharger les données si nécessaire
+// }
+
+const onRaccordCreated = () => {
+  console.log('Raccord entre scènes créé avec succès');
+  // Recharger les données si nécessaire
+  if (store.currentSequence) {
+    store.fetchSequenceDetails(store.currentSequence.idSequence);
+  }
+};
 
 // Méthode pour toggle la sidebar
 const toggleSidebar = () => {
@@ -2546,6 +2580,15 @@ const deleteSceneLieu = async (sceneLieuId) => {
       console.error('Erreur lors de la suppression du lieu/plateau:', error);
       alert('Erreur lors de la suppression du lieu/plateau');
     }
+  }
+};
+
+const onReplanificationDansScene = (data) => {
+  console.log('🔄 Replanification dans scène détectée:', data)
+  
+  // Recharger les données de la séquence pour s'assurer que tout est synchronisé
+  if (store.currentSequence) {
+    store.fetchSequenceDetails(store.currentSequence.idSequence)
   }
 };
 
