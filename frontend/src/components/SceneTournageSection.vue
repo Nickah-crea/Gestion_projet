@@ -17,6 +17,15 @@
                 class="btn-planifier">
           <i class="fas fa-calendar-plus"></i> Planifier
         </button>
+
+        <ReplanificationComponent 
+            v-if="tournage"
+            :sceneId="scene.idScene"
+            :showTriggerButton="true"
+            :sceneInfo="scene"
+            @tournage-updated="chargerTournage"
+            @replanification-appliquee="onReplanificationAppliquee"
+          />
         
         <!-- Boutons de changement de statut rapide -->
         <template v-if="tournage && userPermissions.canCreateScene">
@@ -49,7 +58,7 @@
           </button>
         </template>
         
-        <!-- Modifier - toujours disponible sauf si terminé -->
+       
         <button v-if="tournage && tournage.statutTournage !== 'termine' && userPermissions.canCreateScene" 
                 @click="ouvrirModalModification" 
                 class="btn-modifier">
@@ -101,6 +110,47 @@
         Aucun tournage planifié pour cette scène
       </p>
     </div>
+
+    <!-- bouton pour masquer l'historique -->
+     <div v-if="historiqueReplanifications.length > 0" class="historique-toggle">
+      <button 
+        @click="afficherHistorique = !afficherHistorique" 
+        class="btn-historique"
+        :class="{ 'active': afficherHistorique }"
+      >
+        <i class="fas fa-history"></i>
+        {{ afficherHistorique ? 'Masquer' : 'Voir' }} l'historique des planifications
+        <i class="fas" :class="afficherHistorique ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </button>
+    </div>
+
+
+     <!-- Nouvelle section pour l'historique des replanifications -->
+    <div v-if="afficherHistorique && historiqueReplanifications.length > 0" class="historique-section">
+      <h5>
+        <i class="fas fa-history"></i>
+        Historique des planifications
+      </h5>
+      <div class="historique-list">
+        <div 
+          v-for="historique in historiqueReplanifications" 
+          :key="historique.id"
+          class="historique-item"
+        >
+          <div class="historique-header">
+            <strong>Ancienne date: {{ formatDate(historique.ancienneDate) }}</strong>
+            <span class="historique-statut">{{ historique.ancienStatut }}</span>
+          </div>
+          <p class="historique-raison">
+            <strong>Raison:</strong> {{ historique.raisonReplanification }}
+          </p>
+          <p class="historique-date">
+            Replanifié le: {{ formatDateTime(historique.dateReplanification) }}
+          </p>
+        </div>
+      </div>
+    </div>
+
 
     <!-- Modal de planification/modification -->
     <div v-if="showModal" class="modal-overlay" @click="fermerModal">
@@ -253,9 +303,13 @@
 <script>
 import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
+import ReplanificationComponent from './ReplanificationComponent.vue'; 
 
 export default {
   name: 'SceneTournageSection',
+  components: {
+    ReplanificationComponent
+  },
   props: {
     scene: {
       type: Object,
@@ -278,9 +332,10 @@ export default {
     const isModification = ref(false);
     const chargement = ref(false);
     const erreur = ref('');
-    
+    const afficherHistorique = ref(false);
     const lieuxDisponibles = ref([]);
     const plateauxDisponibles = ref([]);
+    const historiqueReplanifications = ref([]);
     
     const formData = ref({
       sceneId: null,
@@ -406,6 +461,27 @@ export default {
       }
     };
 
+    const onReplanificationAppliquee = (data) => {
+        console.log('🔄 Replanification appliquée, mise à jour du tournage:', data)
+        
+        // Utiliser props.scene au lieu de scene
+        if (data.sceneId === props.scene.idScene && data.nouveauTournage) {
+          // Mettre à jour directement l'objet tournage avec les nouvelles données
+          tournage.value = {
+            ...tournage.value,
+            dateTournage: data.nouveauTournage.dateTournage,
+            heureDebut: data.nouveauTournage.heureDebut || tournage.value.heureDebut,
+            heureFin: data.nouveauTournage.heureFin || tournage.value.heureFin,
+            statutTournage: data.nouveauTournage.statutTournage || tournage.value.statutTournage
+          }
+          
+          // Émettre l'événement pour informer le parent
+          emit('tournage-updated', tournage.value)
+          
+          console.log('✅ Tournage mis à jour sans rechargement:', tournage.value)
+        }
+      };
+
     const initialiserFormData = () => {
       if (isModification.value && tournage.value) {
         // Remplir avec les données existantes
@@ -436,6 +512,24 @@ export default {
           statutTournage: 'planifie', // NOUVEAU : statut par défaut
           notes: ''
         };
+      }
+    };
+
+    const formatDateTime = (dateTimeString) => {
+      if (!dateTimeString) return '';
+      
+      try {
+        const date = new Date(dateTimeString);
+        return date.toLocaleString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch (error) {
+        console.error('Erreur formatDateTime:', error);
+        return dateTimeString;
       }
     };
 
@@ -675,6 +769,26 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       return heureString;
     };
 
+    // Méthode pour charger l'historique
+    const chargerHistoriqueReplanifications = async () => {
+      try {
+        const response = await axios.get(`/api/historique-planning/scene/${props.scene.idScene}`);
+        historiqueReplanifications.value = response.data;
+      } catch (error) {
+        console.error('Erreur chargement historique:', error);
+        historiqueReplanifications.value = [];
+      }
+    };
+
+    // Charger l'historique au montage
+    onMounted(() => {
+      chargerHistoriqueReplanifications();
+    });
+
+    watch(() => tournage.value, () => {
+      chargerHistoriqueReplanifications();
+    });
+
     return {
       tournage,
       showModal,
@@ -684,6 +798,7 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       lieuxDisponibles,
       plateauxDisponibles,
       formData,
+      afficherHistorique, 
       ouvrirModalPlanification,
       ouvrirModalModification,
       supprimerTournage,
@@ -693,9 +808,154 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       verifierConflitsTempsReel,
       formatDate,
       formatHeure,
-      getStatutLibelle
+      formatDateTime,
+      getStatutLibelle,
+      historiqueReplanifications,
+      chargerHistoriqueReplanifications,
+      onReplanificationAppliquee
     };
   }
 };
 </script>
 
+<style scoped>
+.historique-section {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  background: #f8f9fa;
+}
+
+.historique-section h5 {
+  margin: 0 0 15px 0;
+  color: #495057;
+  font-size: 1.1em;
+}
+
+.historique-list {
+  display: grid;
+  gap: 10px;
+}
+
+.historique-item {
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: white;
+}
+
+.historique-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.historique-statut {
+  padding: 2px 6px;
+  background: #6c757d;
+  color: white;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+.historique-raison {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.historique-date {
+  font-size: 0.8em;
+  color: #999;
+  text-align: right;
+}
+
+.historique-toggle {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.btn-historique {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-historique:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.btn-historique.active {
+  background: #495057;
+}
+
+.historique-section {
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  background: #f8f9fa;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.historique-section h5 {
+  margin: 0 0 15px 0;
+  color: #495057;
+  font-size: 1.1em;
+}
+
+.historique-list {
+  display: grid;
+  gap: 10px;
+}
+
+.historique-item {
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: white;
+}
+
+.historique-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.historique-statut {
+  padding: 2px 6px;
+  background: #6c757d;
+  color: white;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+.historique-raison {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.historique-date {
+  font-size: 0.8em;
+  color: #999;
+  text-align: right;
+}
+</style>
