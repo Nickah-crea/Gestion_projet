@@ -385,4 +385,35 @@ public UtilisateurCreeDTO modifierUtilisateur(Long id, CreationUtilisateurReques
     return response;
 }
 
+    @Transactional
+    public UtilisateurCreeDTO creerUtilisateurStandard(CreationUtilisateurRequest request) {
+        // Vérifier si l'email existe déjà
+        Optional<Utilisateur> utilisateurExistant = utilisateurRepository.findByEmail(request.getEmail());
+        if (utilisateurExistant.isPresent()) {
+            throw new RuntimeException("Un utilisateur avec cet email existe déjà");
+        }
+
+        // Créer l'utilisateur standard
+        Utilisateur utilisateur = new Utilisateur();
+        utilisateur.setNom(request.getNom());
+        utilisateur.setEmail(request.getEmail());
+        utilisateur.setMotDePasse(passwordEncoder.encode(request.getMotDePasse()));
+        utilisateur.setRole("UTILISATEUR");
+        
+        Utilisateur utilisateurSauvegarde = utilisateurRepository.save(utilisateur);
+
+        // Retourner le DTO de réponse
+        UtilisateurCreeDTO response = new UtilisateurCreeDTO();
+        response.setIdUtilisateur(utilisateurSauvegarde.getId());
+        response.setIdRole(null);
+        response.setNom(utilisateurSauvegarde.getNom());
+        response.setEmail(utilisateurSauvegarde.getEmail());
+        response.setRole(utilisateurSauvegarde.getRole());
+        response.setSpecialite(null);
+        response.setBiographie(null);
+        response.setMessage("Utilisateur créé avec succès");
+
+        return response;
+    }
+
 }
