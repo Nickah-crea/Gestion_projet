@@ -35,14 +35,22 @@ public class AuthService {
             throw new RuntimeException("Un utilisateur avec cet email existe déjà");
         }
 
+        // Déterminer le rôle (par défaut "UTILISATEUR" si non spécifié)
+        String role = request.getRole();
+        if (role == null || role.trim().isEmpty()) {
+            role = "UTILISATEUR";
+        }
+
         // Créer l'utilisateur selon le rôle
-        switch (request.getRole().toUpperCase()) {
+        switch (role.toUpperCase()) {
             case "SCENARISTE":
                 return utilisateurService.creerScenariste(request);
             case "REALISATEUR":
                 return utilisateurService.creerRealisateur(request);
             case "ADMIN":
                 return utilisateurService.creerAdmin(request);
+            case "UTILISATEUR":
+                return utilisateurService.creerUtilisateurStandard(request);
             default:
                 throw new RuntimeException("Rôle non valide: " + request.getRole());
         }
