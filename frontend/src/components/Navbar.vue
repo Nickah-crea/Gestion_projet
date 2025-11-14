@@ -96,10 +96,10 @@
           <span v-if="!isCollapsed" class="link-text">Raccords</span>
         </router-link>
           
-        <router-link to="/raccords-verification" class="sidebar-link"  @click="toggleSidebarIfMobile">
+        <!-- <router-link to="/raccords-verification" class="sidebar-link"  @click="toggleSidebarIfMobile">
           <i class="fas fa-check-circle icon"></i>
           <span v-if="!isCollapsed" class="link-text">Vérification Raccords</span>
-        </router-link>
+        </router-link> -->
         
       </div>
       
