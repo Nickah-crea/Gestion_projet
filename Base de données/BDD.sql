@@ -909,24 +909,29 @@ ADD COLUMN est_raccord_replanification BOOLEAN DEFAULT FALSE,
 ADD COLUMN tournage_source_id BIGINT REFERENCES scene_tournage(id_scene_tournage),
 ADD COLUMN est_actif BOOLEAN DEFAULT TRUE;
 
-CREATE TABLE raccord_types_photos (
-  id_raccord_type_photo BIGSERIAL PRIMARY KEY,
-  id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
-  id_type_raccord BIGINT REFERENCES types_raccord(id_type_raccord),
-  cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(id_raccord, id_type_raccord)
-);
+-- CREATE TABLE raccord_types_photos (
+--   id_raccord_type_photo BIGSERIAL PRIMARY KEY,
+--   id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+--   id_type_raccord BIGINT REFERENCES types_raccord(id_type_raccord),
+--   cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--   UNIQUE(id_raccord, id_type_raccord)
+-- ); Pas besoin pour l'instant
+
 
 CREATE TABLE replanification (
     id BIGSERIAL PRIMARY KEY,
     raccord_id BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
-    scene_source_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
-    scene_cible_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
     nouvelle_date DATE NOT NULL,
     raison TEXT,
     statut VARCHAR(50) DEFAULT 'PLANIFIEE',
-    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    scene_id BIGINT REFERENCES scenes(id_scene),
+    raccord_ids TEXT
 );
+
+ALTER TABLE replanification 
+ADD COLUMN nouvelle_heure_debut TIME,
+ADD COLUMN nouvelle_heure_fin TIME;
 
 -- Table de liaison entre raccords et planning de tournage
 CREATE TABLE raccord_planning (
@@ -1043,3 +1048,28 @@ WHERE r.est_critique = true
 
 
 
+
+CREATE TABLE historique_planning (
+    id_historique BIGSERIAL PRIMARY KEY,
+    id_scene BIGINT NOT NULL,
+    type_planning VARCHAR(50) NOT NULL,
+    ancienne_date DATE,
+    ancienne_heure_debut VARCHAR(10),
+    ancienne_heure_fin VARCHAR(10),
+    ancien_statut VARCHAR(50),
+    ancien_lieu_id BIGINT,
+    ancien_plateau_id BIGINT,
+    raison_replanification TEXT,
+    date_replanification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_replanification BIGINT REFERENCES replanification(id) ON DELETE SET NULL
+);
+
+
+-- Index pour optimiser les recherches
+CREATE INDEX idx_historique_scene ON historique_planning(id_scene);
+CREATE INDEX idx_historique_date ON historique_planning(date_replanification);
+
+-- Commentaires sur la table
+COMMENT ON TABLE historique_planning IS 'Historique des replanifications de tournage';
+COMMENT ON COLUMN historique_planning.type_planning IS 'Type de planning: SCENE_TOURNAGE ou PLANNING_TOURNAGE';
+COMMENT ON COLUMN historique_planning.raison_replanification IS 'Raison de la replanification';

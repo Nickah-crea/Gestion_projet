@@ -354,3 +354,53 @@ WHERE r.est_critique = true
 
 
 
+
+
+
+
+-- Table de liaison entre raccords et planning de tournage
+CREATE TABLE raccord_planning (
+    id_raccord_planning BIGSERIAL PRIMARY KEY,
+    id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    id_planning_tournage BIGINT REFERENCES planning_tournage(id_planning_tournage) ON DELETE CASCADE,
+    type_liaison VARCHAR(50) NOT NULL, -- 'SOURCE' ou 'CIBLE'
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(id_raccord, id_planning_tournage, type_liaison)
+);
+
+CREATE INDEX idx_raccord_planning_raccord ON raccord_planning(id_raccord);
+CREATE INDEX idx_raccord_planning_planning ON raccord_planning(id_planning_tournage);
+
+
+
+
+CREATE TABLE replanification (
+    id BIGSERIAL PRIMARY KEY,
+    raccord_id BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+    scene_source_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    scene_cible_id BIGINT REFERENCES scenes(id_scene) ON DELETE CASCADE,
+    nouvelle_date DATE NOT NULL,
+    raison TEXT,
+    statut VARCHAR(50) DEFAULT 'PLANIFIEE',
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE replanification ADD COLUMN scene_id BIGINT;
+
+UPDATE replanification r 
+SET scene_id = (
+    SELECT scene_source_id 
+    FROM raccords 
+    WHERE id = r.raccord_id
+)
+WHERE scene_id IS NULL;
+
+ALTER TABLE replanification 
+ADD CONSTRAINT fk_replanification_scene 
+FOREIGN KEY (scene_id) REFERENCES scenes(id_scene);
+
+ALTER TABLE replanification ADD COLUMN raccord_ids TEXT;
+
+ALTER TABLE replanification 
+    DROP COLUMN IF EXISTS scene_source_id,
+    DROP COLUMN IF EXISTS scene_cible_id;
