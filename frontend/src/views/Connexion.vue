@@ -213,6 +213,7 @@
                   <option value="">Choisir un rôle (optionnel)</option>
                   <option value="SCENARISTE">Scénariste</option>
                   <option value="REALISATEUR">Réalisateur</option>
+                  <option value="ADMIN">Administrateur</option>
                 </select>
               </div>
             </div>
@@ -458,7 +459,6 @@ export default {
     },
 
     // Redirection par rôle
-    // Redirection par rôle
     redirectByRole(role) {
       let route = '/accueil';
       
@@ -501,6 +501,4 @@ export default {
   }
 };
 </script>
-
-
 
