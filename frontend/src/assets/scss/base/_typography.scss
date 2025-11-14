@@ -30,18 +30,130 @@ p, .p1 {
 }
 
 // Classes utilitaires pour les poids de police
-.text-light { font-weight: $font-weight-light; }
-.text-regular { font-weight: $font-weight-regular; }
-.text-medium { font-weight: $font-weight-medium; }
-.text-semibold { font-weight: $font-weight-semibold; }
-.text-bold { font-weight: $font-weight-bold; }
+.font-light { font-weight: $font-weight-light; }
+.font-regular { font-weight: $font-weight-regular; }
+.font-medium { font-weight: $font-weight-medium; }
+.font-semibold { font-weight: $font-weight-semibold; }
+.font-bold { font-weight: $font-weight-bold; }
 
 // Classes utilitaires pour les couleurs de texte
-.text-primary { color: $color-text-primary; }
-.text-secondary { color: $color-text-secondary; }
-.text-muted { color: $color-text-muted; }
-.text-accent { color: $color-accent; }
-.text-yellow { color: $color-yellow; }
-.text-pink { color: $color-pink; }
-.text-light { color: $color-light; }
+.text-primary { color: $color-primary; }           // #7BBBFF - Bleu clair principal
+.text-primary-light { color: $color-primary-light; } // #A3D1FF - Bleu clair light
+.text-primary-dark { color: $color-primary-dark; }   // #5AA9FF - Bleu clair dark
+.text-accent { color: $color-accent; }             // #B8A9FF - Violet/lavande accent
+.text-accent-light { color: $color-accent-light; }   // #D0C7FF - Violet light
+
+// Couleurs de texte principales
+.text-primary-dark { color: $color-text-primary; }    // #050F2A - Texte principal
+.text-secondary { color: $color-text-secondary; }     // #1A2A4D - Texte secondaire
+.text-muted { color: $color-text-muted; }             // #4A5A7D - Texte muted
+
+// Couleurs de fond et neutres
+.text-background { color: $color-background; }        // #F2FDFF - Arrière-plan
+.text-white { color: $color-white; }                  // #FFFFFF - Blanc pur
+.text-grey { color: $color-grey; }                    // #E0E8F5 - Gris bleuté
+
+// Classes pour les états
+.text-success { color: $color-success; }              // #10B981 - Vert
+.text-warning { color: $color-warning; }              // #F59E0B - Orange
+.text-error { color: $color-error; }                  // #EF4444 - Rouge
+.text-info { color: $color-info; }                    // #7BBBFF - Info (bleu principal)
+
+// Classes pour les couleurs pastel (nouvelles)
+.text-pastel-pink { color: $color-pastel-pink; }
+.text-pastel-yellow { color: $color-pastel-yellow; }
+.text-pastel-blue { color: $color-pastel-blue; }
+.text-pastel-green { color: $color-pastel-green; }
+.text-pastel-purple { color: $color-pastel-purple; }
+
+// Classes utilitaires pour les arrière-plans
+.bg-primary { background-color: $color-primary; }
+.bg-primary-light { background-color: $color-primary-light; }
+.bg-primary-dark { background-color: $color-primary-dark; }
+.bg-accent { background-color: $color-accent; }
+.bg-accent-light { background-color: $color-accent-light; }
+.bg-background { background-color: $color-background; }
+.bg-white { background-color: $color-white; }
+.bg-grey { background-color: $color-grey; }
+
+// Backgrounds pour les états
+.bg-success { background-color: $color-success; }
+.bg-warning { background-color: $color-warning; }
+.bg-error { background-color: $color-error; }
+.bg-info { background-color: $color-info; }
+
+// Backgrounds pastel (nouvelles)
+.bg-pastel-pink { background-color: $color-pastel-pink; }
+.bg-pastel-yellow { background-color: $color-pastel-yellow; }
+.bg-pastel-blue { background-color: $color-pastel-blue; }
+.bg-pastel-green { background-color: $color-pastel-green; }
+.bg-pastel-purple { background-color: $color-pastel-purple; }
+
+// Classes pour les surfaces (glassmorphism)
+.bg-surface { background-color: $color-surface; }
+.bg-surface-hover { background-color: $color-surface-hover; }
+
+// Classes pour les bordures
+.border-primary { border-color: $color-primary; }
+.border-accent { border-color: $color-accent; }
+.border-light { border-color: $color-border; }
+.border-dark { border-color: $color-border-dark; }
+.border-white { border-color: $color-white; }
+
+// Classes utilitaires pour les espacements
+.gap-xs { gap: $gap-xs; }
+.gap-sm { gap: $gap-sm; }
+.gap-md { gap: $gap-md; }
+.gap-lg { gap: $gap-lg; }
+.gap-xl { gap: $gap-xl; }
+
+.p-xs { padding: $padding-xs; }
+.p-sm { padding: $padding-sm; }
+.p-md { padding: $padding-md; }
+.p-lg { padding: $padding-lg; }
+.p-xl { padding: $padding-xl; }
+
+.m-xs { margin: $margin-xs; }
+.m-sm { margin: $margin-sm; }
+.m-md { margin: $margin-md; }
+.m-lg { margin: $margin-lg; }
+.m-xl { margin: $margin-xl; }
+
+// Classes pour les bordures arrondies
+.rounded-xs { border-radius: $border-radius-xs; }
+.rounded-sm { border-radius: $border-radius-sm; }
+.rounded { border-radius: $border-radius; }
+.rounded-lg { border-radius: $border-radius-lg; }
+.rounded-pill { border-radius: $border-radius-pill; }
+
+// Classes pour les ombres
+.shadow { box-shadow: $shadow; }
+.shadow-hover { box-shadow: $shadow-hover; }
+.shadow-lg { box-shadow: $shadow-lg; }
+.shadow-inset { box-shadow: $shadow-inset; }
+
+// Classes pour les transitions
+.transition { transition: $transition; }
+.transition-slow { transition: $transition-slow; }
+.transition-fast { transition: $transition-fast; }
+
+// Mixin glassmorphism disponible via classe
+.glassmorphism {
+  @include glassmorphism;
+}
+
+// Mixins pastel disponibles via classes
+.pastel-pink { @include pastel-pink; }
+.pastel-yellow { @include pastel-yellow; }
+.pastel-blue { @include pastel-blue; }
+.pastel-green { @include pastel-green; }
+.pastel-purple { @include pastel-purple; }
+
+// Flexbox utilities
+.flex-center { @include flex-center; }
+.flex-between { @include flex-between; }
+
+// Text utilities
+.text-truncate { @include text-truncate; }
+.sr-only { @include sr-only; }
 

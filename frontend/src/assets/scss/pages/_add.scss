@@ -4,7 +4,6 @@
 @import '../base/variables';
 @import '../components/buttons';
 
-
 .app-wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -15,7 +14,7 @@
 // Conteneur ultra-condensé
 .add-episode-container {
   min-height: 100vh;
-  padding: $padding-md;               // était xl → md
+  padding: $padding-md;
   background: $color-background;
   background-image: 
     radial-gradient(circle at 10% 20%, rgba($color-primary, 0.03) 0%, transparent 15%),
@@ -24,11 +23,11 @@
 }
 
 .add-episode-container .main-content {
-  max-width: 900px;                   // était 1200
-  background: $color-light;
-  border-radius: $border-radius-sm;   // plus petit
+  max-width: 900px;
+  background: $color-white;
+  border-radius: $border-radius-sm;
   box-shadow: $shadow;
-  padding: $padding-lg;               // était xl
+  padding: $padding-lg;
   border: 1px solid $border-color;
 }
 
@@ -39,7 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: $margin-md;          // était xl
+  margin-bottom: $margin-md;
   padding-bottom: $padding-sm;
   border-bottom: 1px solid $border-color;
 }
@@ -47,35 +46,35 @@
 .add-episode-container .back-btn {
   @extend .btn-ghost-Scenariste;
   padding: $padding-xs;
-  font-size: $font-size-p2;           // plus petit
+  font-size: $font-size-p2;
 }
 
 .add-episode-container .form-header h2 {
-  @include typography-h2;             // h1 → h2
+  @include typography-h2;
   margin: 0;
-  font-size: 22px;                    // forcé ultra-petit
+  font-size: $font-size-h2;
 }
 
 // =============================================
 // FORMULAIRE ULTRA-DENSE
 // =============================================
 .add-episode-container .episode-form {
-  gap: $gap-lg;                       // était xl
+  gap: $gap-lg;
 }
 
 // 3 champs ultra-serrés
 .add-episode-container .top-row {
-  grid-template-columns: 3fr 1fr 1fr; // titre encore plus large
-  gap: $gap-md;                       // était lg
+  grid-template-columns: 3fr 1fr 1fr;
+  gap: $gap-md;
 }
 
 .add-episode-container .form-group {
-  gap: 3px;                           // ultra-mini
+  gap: $gap-xs;
 }
 
 .add-episode-container .form-group label {
-  @include typography-p2;             // p1 → p2
-  font-size: 11px;
+  @include typography-p2;
+  font-size: $font-size-p2;
   opacity: 0.9;
 }
 
@@ -88,13 +87,12 @@
   padding: $padding-sm $padding-md;
   border: 1px solid $border-color;
   border-radius: $border-radius-sm;
-  background: $color-light;
+  background: $color-white;
   color: $color-text-primary;
-  font-size: $font-size-p2;        // ← 11px partout !
-  height: 34px;                    // ← fixe ultra-bas
+  font-size: $font-size-p2;
+  height: 42px;
   box-shadow: none;
   transition: $transition;
-  height: 42px;
 
   &:focus {
     outline: none;
@@ -108,37 +106,40 @@
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23E00FFD' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
+  background-position: right $padding-md center;
   background-size: 10px;
-  font-size: $font-size-p1;
-  padding-right: 30px !important;   // ← évite que le texte touche la flèche
+  font-size: $font-size-p2;
+  padding-right: $padding-xl !important;
 }
 
 // Synopsis compact
 .add-episode-container .form-textarea {
-  height: 80px;                       // était implicite → 80px max
+  height: 80px;
   resize: none;
+  font-size: $font-size-p2;
 }
 
 // =============================================
 // BOUTONS ULTRA-PETITS
 // =============================================
 .add-episode-container .form-actions {
-  gap: $gap-sm;                       // était md
+  gap: $gap-sm;
   margin-top: $margin-lg;
   padding-top: $padding-md;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .add-episode-container .cancel-btn {
   @extend .cancel-btn-Scenariste;
-  @extend .btn-small-Scenariste;      // AJOUTÉ
+  @extend .btn-small-Scenariste;
   padding: $padding-xs $padding-md;
-  font-size: $font-size-p3;           // 11px
+  font-size: $font-size-p3;
 }
 
 .add-episode-container .submit-btn {
   @extend .save-btn-Scenariste;
-  @extend .btn-small-Scenariste;      // AJOUTÉ
+  @extend .btn-small-Scenariste;
   padding: $padding-xs $padding-md;
   font-size: $font-size-p3;
 }
@@ -146,10 +147,171 @@
 // =============================================
 // RESPONSIVE ULTRA-FLUIDE
 // =============================================
-@include respond-to($breakpoint-md) {  // 768px au lieu de lg
+@include respond-to($breakpoint-md) {
+  .add-episode-container {
+    padding: $padding-sm;
+  }
+  
+  .add-episode-container .main-content {
+    padding: $padding-md;
+  }
+  
   .add-episode-container .top-row {
     grid-template-columns: 1fr;
     gap: $gap-sm;
+  }
+  
+  .add-episode-container .form-actions {
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+  
+  .add-episode-container .cancel-btn,
+  .add-episode-container .submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@include respond-to($breakpoint-sm) {
+  .add-episode-container {
+    padding: $padding-xs;
+  }
+  
+  .add-episode-container .main-content {
+    padding: $padding-sm;
+    border-radius: $border-radius-sm;
+  }
+  
+  .add-episode-container .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-sm;
+  }
+  
+  .add-episode-container .form-header h2 {
+    font-size: $font-size-h3;
+  }
+}
+
+// =============================================
+// ÉTATS ET VALIDATION
+// =============================================
+.add-episode-container .form-input:invalid,
+.add-episode-container .form-select:invalid,
+.add-episode-container .form-textarea:invalid {
+  border-color: rgba($color-error, 0.3);
+}
+
+.add-episode-container .form-input:valid,
+.add-episode-container .form-select:valid,
+.add-episode-container .form-textarea:valid {
+  border-color: rgba($color-success, 0.3);
+}
+
+.add-episode-container .error-message {
+  @include typography-p3;
+  color: $color-error;
+  margin-top: $gap-xs;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.add-episode-container .success-message {
+  @include typography-p2;
+  color: $color-success;
+  background: rgba($color-success, 0.1);
+  padding: $padding-sm;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-success, 0.2);
+  margin-top: $margin-md;
+}
+
+// =============================================
+// CHARGEMENT ET ÉTATS DESACTIVÉS
+// =============================================
+.add-episode-container .submit-btn:disabled {
+  @extend .btn-disabled-Scenariste;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.add-episode-container .submit-btn.loading {
+  @extend .btn-loading-Scenariste;
+  position: relative;
+  color: transparent;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid $color-white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// =============================================
+// MODE SOMBRE
+// =============================================
+body.dark-theme {
+  .add-episode-container {
+    background: linear-gradient(135deg, $color-background-dark 0%, lighten($color-background-dark, 5%) 100%);
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba($color-primary, 0.05) 0%, transparent 15%),
+      radial-gradient(circle at 90% 80%, rgba($color-accent, 0.05) 0%, transparent 15%);
+  }
+  
+  .add-episode-container .main-content {
+    background: rgba($color-background-dark, 0.15);
+    border: 1px solid rgba($color-white, 0.15);
+    color: $color-text-light;
+  }
+  
+  .add-episode-container .form-header {
+    border-bottom: 1px solid rgba($color-white, 0.15);
+    
+    h2 {
+      color: $color-text-light;
+    }
+  }
+  
+  .add-episode-container .form-input,
+  .add-episode-container .form-select,
+  .add-episode-container .form-textarea {
+    background: rgba($color-background-dark, 0.2);
+    border: 1px solid rgba($color-white, 0.2);
+    color: $color-text-light;
+    
+    &::placeholder {
+      color: rgba($color-text-light, 0.5);
+    }
+    
+    &:focus {
+      border-color: rgba($color-accent, 0.5);
+      box-shadow: 0 0 0 3px rgba($color-accent, 0.2);
+    }
+  }
+  
+  .add-episode-container .form-group label {
+    color: rgba($color-text-light, 0.8);
+  }
+  
+  .add-episode-container .back-btn {
+    color: rgba($color-text-light, 0.7);
+    
+    &:hover {
+      color: $color-text-light;
+      background: rgba($color-primary, 0.2);
+    }
   }
 }
 

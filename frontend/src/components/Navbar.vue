@@ -125,9 +125,7 @@
   </nav>
 </template>
 
-
 <script>
-
 export default {
   name: 'Sidebar',
   data() {
@@ -199,4 +197,3 @@ export default {
   }
 };
 </script>
-

@@ -12,7 +12,7 @@
   background: rgba($color-white, 0.95);
   border-radius: $border-radius-lg;
   box-shadow: $shadow;
-  border: 1px solid rgba($color-dark, 0.08);
+  border: 1px solid rgba($color-text-primary, 0.08);
 }
 
 // Header de section
@@ -22,7 +22,7 @@
   align-items: center;
   margin-bottom: $margin-md;
   padding-bottom: $padding-sm;
-  border-bottom: 1px solid rgba($color-dark, 0.1);
+  border-bottom: 1px solid rgba($color-text-primary, 0.1);
 
   h4 {
     @include typography-h4;
@@ -50,23 +50,23 @@
   // Classes de statut cohérentes avec l'accueil
   &.statut-planifie { 
     background: rgba($color-accent, 0.2); 
-    color: darken($color-accent, 20%);
+    color: $color-accent;
   }
   &.statut-confirme { 
     background: rgba($color-primary, 0.2); 
     color: $color-primary;
   }
   &.statut-en_cours { 
-    background: rgba($color-yellow, 0.2); 
-    color: darken($color-yellow, 30%);
+    background: rgba($color-warning, 0.2); 
+    color: $color-warning;
   }
   &.statut-termine { 
     background: rgba($color-success, 0.2); 
     color: $color-success;
   }
   &.statut-reporte { 
-    background: rgba($color-red, 0.2); 
-    color: $color-red;
+    background: rgba($color-error, 0.2); 
+    color: $color-error;
   }
 }
 
@@ -106,13 +106,13 @@
   }
   
   .btn-commencer {
-    background: rgba($color-yellow, 0.1);
-    color: darken($color-yellow, 20%);
-    border: 1px solid rgba($color-yellow, 0.3);
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+    border: 1px solid rgba($color-warning, 0.3);
     
     &:hover {
-      background: $color-yellow;
-      color: $color-dark;
+      background: $color-warning;
+      color: $color-text-primary;
     }
   }
   
@@ -129,12 +129,12 @@
   
   .btn-reporter {
     background: rgba($color-warning, 0.1);
-    color: darken($color-warning, 20%);
+    color: $color-warning;
     border: 1px solid rgba($color-warning, 0.3);
     
     &:hover {
       background: $color-warning;
-      color: $color-dark;
+      color: $color-text-primary;
     }
   }
   
@@ -157,9 +157,9 @@
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: $gap-md;
   padding: $padding-md;
-  background: rgba($color-light, 0.5);
+  background: rgba($color-white, 0.5);
   border-radius: $border-radius;
-  border: 1px solid rgba($color-dark, 0.05);
+  border: 1px solid rgba($color-text-primary, 0.05);
 }
 
 .detail-item {
@@ -202,9 +202,9 @@
 .no-tournage {
   text-align: center;
   padding: $padding-xl;
-  background: rgba($color-dark, 0.02);
+  background: rgba($color-text-primary, 0.02);
   border-radius: $border-radius;
-  border: 1px dashed rgba($color-dark, 0.1);
+  border: 1px dashed rgba($color-text-primary, 0.1);
 }
 
 .no-data-message {
@@ -216,7 +216,7 @@
   gap: $gap-sm;
   
   i {
-    color: rgba($color-dark, 0.3);
+    color: rgba($color-text-primary, 0.3);
     font-size: $font-size-h3;
   }
 }
@@ -231,7 +231,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba($color-dark, 0.5);
+  background: rgba($color-text-primary, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -254,7 +254,7 @@
   justify-content: space-between;
   align-items: center;
   padding: $padding-lg;
-  border-bottom: 1px solid rgba($color-dark, 0.1);
+  border-bottom: 1px solid rgba($color-text-primary, 0.1);
   
   h3 {
     @include typography-h3;
@@ -313,7 +313,7 @@
 .form-textarea {
   width: 100%;
   padding: $padding-sm;
-  border: 1px solid rgba($color-dark, 0.1);
+  border: 1px solid rgba($color-text-primary, 0.1);
   border-radius: $border-radius-sm;
   background: $color-white;
   font-size: $font-size-p1;
@@ -327,7 +327,7 @@
   }
   
   &:disabled {
-    background: rgba($color-dark, 0.05);
+    background: rgba($color-text-primary, 0.05);
     color: $color-text-muted;
     cursor: not-allowed;
   }
@@ -342,11 +342,11 @@
 // Message d'erreur
 .error-message {
   @include typography-p2;
-  background: rgba($color-red, 0.1);
-  color: $color-red;
+  background: rgba($color-error, 0.1);
+  color: $color-error;
   padding: $padding-sm;
   border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-red, 0.2);
+  border: 1px solid rgba($color-error, 0.2);
   display: flex;
   align-items: center;
   gap: $gap-sm;
@@ -406,7 +406,7 @@
 // RESPONSIVE
 // =============================================
 
-@media (max-width: $breakpoint-md) {
+@include respond-to($breakpoint-md) {
   .tournage-section {
     padding: $padding-md;
     margin: $margin-md 0;
@@ -470,7 +470,7 @@
   }
 }
 
-@media (max-width: $breakpoint-sm) {
+@include respond-to($breakpoint-sm) {
   .tournage-actions {
     flex-direction: column;
     
@@ -486,5 +486,139 @@
   .modal-overlay {
     padding: $padding-sm;
   }
+  
+  .modal-content {
+    margin: $padding-xs;
+    width: calc(100% - #{$padding-sm});
+  }
+  
+  .tournage-form {
+    padding: $padding-md;
+  }
+  
+  .modal-header {
+    padding: $padding-md;
+  }
+}
+
+// =============================================
+// MODE SOMBRE
+// =============================================
+
+body.dark-theme {
+  .tournage-section {
+    background: rgba($color-background-dark, 0.15);
+    border: 1px solid rgba($color-white, 0.15);
+  }
+  
+  .section-header {
+    border-bottom: 1px solid rgba($color-white, 0.1);
+    
+    h4 {
+      color: $color-text-light;
+    }
+  }
+  
+  .tournage-details {
+    background: rgba($color-background-dark, 0.2);
+    border: 1px solid rgba($color-white, 0.1);
+  }
+  
+  .detail-item {
+    strong {
+      color: $color-text-light;
+      
+      i {
+        color: $color-primary;
+      }
+    }
+    
+    span {
+      color: rgba($color-text-light, 0.7);
+    }
+    
+    &.notes span {
+      background: rgba($color-background-dark, 0.3);
+      border-left: 3px solid $color-primary;
+    }
+  }
+  
+  .no-tournage {
+    background: rgba($color-text-light, 0.02);
+    border: 1px dashed rgba($color-text-light, 0.1);
+  }
+  
+  .no-data-message {
+    color: rgba($color-text-light, 0.6);
+    
+    i {
+      color: rgba($color-text-light, 0.3);
+    }
+  }
+  
+  .modal-content {
+    background: rgba($color-background-dark, 0.15);
+    border: 1px solid rgba($color-white, 0.15);
+  }
+  
+  .modal-header {
+    border-bottom: 1px solid rgba($color-white, 0.1);
+    
+    h3 {
+      color: $color-text-light;
+    }
+  }
+  
+  .form-group label {
+    color: $color-text-light;
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    background: rgba($color-background-dark, 0.2);
+    border: 1px solid rgba($color-white, 0.2);
+    color: $color-text-light;
+    
+    &::placeholder {
+      color: rgba($color-text-light, 0.5);
+    }
+    
+    &:focus {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+    }
+    
+    &:disabled {
+      background: rgba($color-text-light, 0.05);
+      color: rgba($color-text-light, 0.5);
+    }
+  }
+}
+
+// =============================================
+// ÉTATS DE CHARGEMENT
+// =============================================
+
+.tournage-section.loading {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($color-white, 0.8);
+    border-radius: $border-radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+body.dark-theme .tournage-section.loading::after {
+  background: rgba($color-background-dark, 0.8);
 }
 

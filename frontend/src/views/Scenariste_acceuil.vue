@@ -191,17 +191,17 @@
             <!-- Contenu de la carte -->
             <div class="movie-info-Scenariste">
               <h3 class="movie-title-Scenariste">{{ project.titre }}</h3>
-              <p class="movie-genre-Scenariste">{{ project.genreNom }}</p>
-              
-              <div class="movie-meta-Scenariste">
-                <div class="meta-item-Scenariste">
-                  <i class="fas fa-calendar-plus"></i>
-                  <span>{{ formatShortDate(project.creeLe) }}</span>
-                </div>
-              </div>
+
               
               <div class="movie-synopsis-Scenariste" v-if="project.synopsis">
                 <p>{{ truncateText(project.synopsis, 120) }}</p>
+              </div>
+                            
+              <!-- Type et Date côte à côte avec séparateur (version compacte) -->
+              <div class="movie-meta-Scenariste">
+                <i class="fas fa-film"></i><span>{{ project.genreNom }}</span>
+                <span class="meta-separator-Scenariste">|</span>
+                <i class="fas fa-calendar"></i><span>{{ formatShortDate(project.creeLe) }}</span>
               </div>
               
               <!-- Actions en bas de carte -->

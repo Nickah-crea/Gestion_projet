@@ -1,200 +1,223 @@
 <template>
-  <div class="app-wrapper-utilisateur">
-    <div class="utilisateurs-container-utilisateur">
-      <h1 class="title-utilisateur">Liste des Utilisateurs</h1>
-      
-      <!-- Boutons d'action -->
-      <div class="actions-bar-utilisateur">
-        <button @click="showCreateForm = true" class="btn-utilisateur btn-primary-utilisateur">
-          + Ajouter un Utilisateur
-        </button>
-        <button @click="fetchUtilisateurs" class="btn-utilisateur btn-secondary-utilisateur">
-          🔄 Actualiser
-        </button>
-      </div>
+  <div class="utilisateurs-container">
+    <!-- Header -->
+    <div class="utilisateurs-header">
+      <h1>Gestion des Utilisateurs</h1>
+      <p>Administrez les comptes administrateurs, scénaristes et réalisateurs</p>
+    </div>
 
-      <!-- Tableau des utilisateurs -->
-      <table class="utilisateurs-table-utilisateur">
+    <!-- Bouton d'ajout -->
+    <div class="actions-bar">
+      <button class="btn-add" @click="showAddModal = true">
+        <i class="fas fa-plus"></i>
+        Ajouter un utilisateur
+      </button>
+      
+      <div class="search-bar">
+        <input 
+          type="text" 
+          v-model="searchQuery" 
+          placeholder="Rechercher un utilisateur..."
+          class="search-input"
+        >
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+
+    <!-- Tableau des utilisateurs -->
+    <div class="table-container">
+      <table class="utilisateurs-table">
         <thead>
           <tr>
             <th>ID</th>
             <th>Nom</th>
             <th>Email</th>
             <th>Rôle</th>
-            <th>Créé le</th>
-            <th>Modifié le</th>
+            <th>Spécialité</th>
+            <th>Date création</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="utilisateur in utilisateurs" :key="utilisateur.id" class="table-row-utilisateur">
-            <td>{{ utilisateur.id }}</td>
-            <td>{{ utilisateur.nom }}</td>
-            <td>{{ utilisateur.email }}</td>
+          <tr v-for="user in filteredUsers" :key="user.idUtilisateur || user.id">
+            <td>{{ user.idUtilisateur || user.id }}</td>
+            <td class="user-name">
+              <div class="avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              {{ user.nom }}
+            </td>
+            <td>{{ user.email }}</td>
             <td>
-              <span :class="['role-badge-utilisateur', utilisateur.role.toLowerCase()]">
-                {{ utilisateur.role }}
+              <span class="role-badge" :class="getRoleClass(user.role)">
+                {{ getRoleLabel(user.role) }}
               </span>
             </td>
-            <td>{{ formatDate(utilisateur.creeLe) }}</td>
-            <td>{{ formatDate(utilisateur.modifieLe) }}</td>
-            <td class="actions-utilisateur">
-              <button @click="editUtilisateur(utilisateur)" class="btn-edit-utilisateur">
-                ✏️ Modifier
+            <td>{{ user.specialite || '-' }}</td>
+            <td>{{ formatDate(user.creeLe) }}</td>
+            <td class="actions">
+              <button class="btn-edit" @click="editUser(user)" title="Modifier">
+                <i class="fas fa-edit"></i>
               </button>
-              <button @click="deleteUtilisateur(utilisateur)" class="btn-delete-utilisateur">
-                🗑️ Supprimer
+              <button class="btn-delete" @click="confirmDelete(user)" title="Supprimer">
+                <i class="fas fa-trash"></i>
               </button>
             </td>
           </tr>
         </tbody>
       </table>
+      
+      <div v-if="filteredUsers.length === 0" class="no-data">
+        <i class="fas fa-users"></i>
+        <p>Aucun utilisateur trouvé</p>
+      </div>
+    </div>
 
-      <!-- Modal de création -->
-      <div v-if="showCreateForm" class="modal-overlay-utilisateur">
-        <div class="modal-content-utilisateur">
-          <h2 class="modal-title-utilisateur">Créer un Utilisateur</h2>
-          
-          <form @submit.prevent="submitForm" class="modal-form-utilisateur">
-            <div class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Nom *</label>
-              <input v-model="formData.nom" type="text" required class="form-input-utilisateur">
-            </div>
-            
-            <div class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Email *</label>
-              <input v-model="formData.email" type="email" required class="form-input-utilisateur">
-            </div>
-            
-            <div class="form-group-utilisateur password-group-utilisateur">
-              <label class="form-label-utilisateur">Mot de passe *</label>
-              <div class="password-input-container-utilisateur">
-                <input 
-                  v-model="formData.motDePasse" 
-                  :type="showPassword ? 'text' : 'password'" 
-                  required
-                  class="password-input-utilisateur">
-                <button 
-                  type="button" 
-                  @click="showPassword = !showPassword"
-                  class="password-toggle-utilisateur">
-                  {{ showPassword ? '👁️' : '👁️‍🗨️' }}
-                </button>
-              </div>
-            </div>
-            
-            <div class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Rôle *</label>
-              <input v-model="formData.role" type="text" required placeholder="Ex: ADMIN, SCENARISTE, REALISATEUR" class="form-input-utilisateur">
-              <small class="form-hint-utilisateur">Saisissez le rôle librement (majuscules recommandées).</small>
-            </div>
+    <!-- Modal d'ajout/modification -->
+    <div v-if="showAddModal || showEditModal" class="modal-overlay" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>{{ showAddModal ? 'Ajouter un utilisateur' : 'Modifier l\'utilisateur' }}</h2>
+          <button class="btn-close" @click="closeModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
 
-            <div v-if="isRoleWithDetails" class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Spécialité</label>
-              <input v-model="formData.specialite" type="text" class="form-input-utilisateur">
-            </div>
+        <form @submit.prevent="submitForm" class="user-form">
+          <div class="form-group">
+            <label for="nom">Nom complet *</label>
+            <input 
+              type="text" 
+              id="nom"
+              v-model="formData.nom" 
+              required 
+              placeholder="Entrez le nom complet"
+            >
+          </div>
 
-            <div v-if="isRoleWithDetails" class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Biographie</label>
-              <textarea v-model="formData.biographie" rows="3" class="form-textarea-utilisateur"></textarea>
-            </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input 
+              type="email" 
+              id="email"
+              v-model="formData.email" 
+              required 
+              placeholder="Entrez l'email"
+            >
+          </div>
 
-            <div class="form-actions-utilisateur">
-              <button type="submit" class="btn-utilisateur btn-primary-utilisateur">
-                Créer
-              </button>
-              <button type="button" @click="closeModal" class="btn-utilisateur btn-secondary-utilisateur">
-                Annuler
-              </button>
-            </div>
-          </form>
+          <div class="form-group">
+            <label for="password">
+              Mot de passe {{ showAddModal ? '*' : '' }}
+              <span v-if="!showAddModal" class="hint">(Laisser vide pour ne pas modifier)</span>
+            </label>
+            <input 
+              type="password" 
+              id="password"
+              v-model="formData.motDePasse" 
+              :required="showAddModal"
+              placeholder="Entrez le mot de passe"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="role">Rôle *</label>
+            <select id="role" v-model="formData.role" required>
+              <option value="" disabled>Sélectionnez un rôle</option>
+              <option value="ADMIN">Administrateur</option>
+              <option value="SCENARISTE">Scénariste</option>
+              <option value="REALISATEUR">Réalisateur</option>
+            </select>
+          </div>
+
+          <div v-if="formData.role === 'SCENARISTE' || formData.role === 'REALISATEUR'" class="form-group">
+            <label for="specialite">Spécialité</label>
+            <input 
+              type="text" 
+              id="specialite"
+              v-model="formData.specialite" 
+              placeholder="Entrez la spécialité"
+            >
+          </div>
+
+          <div v-if="formData.role === 'SCENARISTE' || formData.role === 'REALISATEUR'" class="form-group">
+            <label for="biographie">Biographie</label>
+            <textarea 
+              id="biographie"
+              v-model="formData.biographie" 
+              placeholder="Entrez la biographie"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" @click="closeModal">
+              Annuler
+            </button>
+            <button type="submit" class="btn-submit" :disabled="loading">
+              <span v-if="loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ showAddModal ? 'Création...' : 'Modification...' }}
+              </span>
+              <span v-else>
+                {{ showAddModal ? 'Créer' : 'Modifier' }}
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div v-if="showDeleteModal" class="modal-overlay" @click="showDeleteModal = false">
+      <div class="modal-content delete-modal" @click.stop>
+        <div class="modal-header">
+          <h2>Confirmer la suppression</h2>
+        </div>
+        <div class="modal-body">
+          <i class="fas fa-exclamation-triangle warning-icon"></i>
+          <p>Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>{{ userToDelete?.nom }}</strong> ?</p>
+          <p class="warning-text">Cette action est irréversible.</p>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" @click="showDeleteModal = false">
+            Annuler
+          </button>
+          <button type="button" class="btn-delete-confirm" @click="deleteUser" :disabled="loading">
+            <span v-if="loading" class="loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              Suppression...
+            </span>
+            <span v-else>
+              Supprimer
+            </span>
+          </button>
         </div>
       </div>
+    </div>
 
-      <!-- Modal de modification -->
-      <div v-if="editingUtilisateur" class="modal-overlay-utilisateur">
-        <div class="modal-content-utilisateur">
-          <h2 class="modal-title-utilisateur">Modifier l'Utilisateur</h2>
-          
-          <form @submit.prevent="submitForm" class="modal-form-utilisateur">
-            <div class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Nom *</label>
-              <input v-model="formData.nom" type="text" required class="form-input-utilisateur">
-            </div>
-            
-            <div class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Email *</label>
-              <input v-model="formData.email" type="email" required class="form-input-utilisateur">
-            </div>
-            
-            <div class="form-group-utilisateur password-group-utilisateur">
-              <label class="form-label-utilisateur">Mot de passe (laisser vide pour ne pas modifier)</label>
-              <div class="password-input-container-utilisateur">
-                <input 
-                  v-model="formData.motDePasse" 
-                  :type="showPassword ? 'text' : 'password'" 
-                  class="password-input-utilisateur">
-                <button 
-                  type="button" 
-                  @click="showPassword = !showPassword"
-                  class="password-toggle-utilisateur">
-                  {{ showPassword ? '👁️' : '👁️‍🗨️' }}
-                </button>
-              </div>
-            </div>
-            
-            <div class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Rôle *</label>
-              <input v-model="formData.role" type="text" required disabled class="form-input-utilisateur">
-              <small class="role-note-utilisateur">Le rôle ne peut pas être modifié</small>
-            </div>
-
-            <div v-if="isRoleWithDetails" class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Spécialité</label>
-              <input v-model="formData.specialite" type="text" class="form-input-utilisateur">
-            </div>
-
-            <div v-if="isRoleWithDetails" class="form-group-utilisateur">
-              <label class="form-label-utilisateur">Biographie</label>
-              <textarea v-model="formData.biographie" rows="3" class="form-textarea-utilisateur"></textarea>
-            </div>
-
-            <div class="form-actions-utilisateur">
-              <button type="submit" class="btn-utilisateur btn-primary-utilisateur">
-                Modifier
-              </button>
-              <button type="button" @click="closeModal" class="btn-utilisateur btn-secondary-utilisateur">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- Chargement et messages -->
-      <div v-if="loading" class="loading-utilisateur">Chargement...</div>
-      <div v-if="message" :class="['message-utilisateur', messageType + '-utilisateur']">
-        {{ message }}
-      </div>
+    <!-- Toast de notification -->
+    <div v-if="toast.show" class="toast" :class="toast.type">
+      <i class="fas" :class="toast.icon"></i>
+      <span>{{ toast.message }}</span>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import '../assets/css/user_view.css';
 
 export default {
   name: 'UtilisateursView',
   data() {
     return {
-      utilisateurs: [],
+      users: [],
       loading: false,
-      message: '',
-      messageType: 'success',
-      showCreateForm: false,
-      editingUtilisateur: null,
-      showPassword: false,
+      searchQuery: '',
+      showAddModal: false,
+      showEditModal: false,
+      showDeleteModal: false,
+      userToDelete: null,
       formData: {
         nom: '',
         email: '',
@@ -202,150 +225,92 @@ export default {
         role: '',
         specialite: '',
         biographie: ''
+      },
+      toast: {
+        show: false,
+        message: '',
+        type: 'success',
+        icon: 'fa-check'
       }
     };
   },
   computed: {
-    isRoleWithDetails() {
-      const role = this.formData.role ? this.formData.role.toUpperCase() : '';
-      return role === 'SCENARISTE' || role === 'REALISATEUR';
+    filteredUsers() {
+      if (!this.searchQuery) {
+        return this.users;
+      }
+      const query = this.searchQuery.toLowerCase();
+      return this.users.filter(user => 
+        user.nom.toLowerCase().includes(query) ||
+        user.email.toLowerCase().includes(query) ||
+        user.role.toLowerCase().includes(query) ||
+        (user.specialite && user.specialite.toLowerCase().includes(query))
+      );
     }
   },
-  created() {
-    this.fetchUtilisateurs();
+  async mounted() {
+    await this.loadUsers();
   },
   methods: {
-    async fetchUtilisateurs() {
-      this.loading = true;
+    async loadUsers() {
       try {
-        const [scenaristes, realisateurs, allUtilisateurs] = await Promise.all([
-          axios.get('/api/utilisateurs/scenaristes'),
-          axios.get('/api/utilisateurs/realisateurs'),
-          axios.get('/api/utilisateurs')
-        ]);
-
-        // Scénaristes avec détails
-        const scenMap = scenaristes.data.map(s => ({
-          id: s.idUtilisateur,
-          nom: s.nom,
-          email: s.email,
-          role: 'SCENARISTE',
-          creeLe: s.creeLe || new Date().toISOString(),
-          modifieLe: s.modifieLe || new Date().toISOString(),
-          specialite: s.specialite,
-          biographie: s.biographie
-        }));
-
-        // Réalisateurs avec détails
-        const realMap = realisateurs.data.map(r => ({
-          id: r.idUtilisateur,
-          nom: r.nom,
-          email: r.email,
-          role: 'REALISATEUR',
-          creeLe: r.creeLe || new Date().toISOString(),
-          modifieLe: r.modifieLe || new Date().toISOString(),
-          specialite: r.specialite,
-          biographie: r.biographie
-        }));
-
-        // Admins (de /utilisateurs, filtrés)
-        const admins = allUtilisateurs.data
-          .filter(u => u.role === 'ADMIN')
-          .map(a => ({
-            id: a.id,
-            nom: a.nom,
-            email: a.email,
-            role: a.role,
-            creeLe: a.creeLe || new Date().toISOString(),
-            modifieLe: a.modifieLe || new Date().toISOString(),
-            specialite: '',
-            biographie: ''
-          }));
-
-        this.utilisateurs = [...scenMap, ...realMap, ...admins];
+        this.loading = true;
+        // Charger tous les utilisateurs
+        const response = await axios.get('/api/utilisateurs');
+        this.users = response.data;
       } catch (error) {
-        console.error('Erreur lors du chargement:', error);
-        this.showMessage('Erreur lors du chargement des utilisateurs', 'error');
+        console.error('Erreur chargement utilisateurs:', error);
+        this.showToast('Erreur lors du chargement des utilisateurs', 'error');
       } finally {
         this.loading = false;
       }
     },
 
-    async submitForm() {
-      try {
-        const data = { ...this.formData };
-        data.role = data.role.toUpperCase();
-
-        let endpoint;
-        if (this.showCreateForm) {
-          // Création
-          if (data.role === 'SCENARISTE') {
-            endpoint = '/api/utilisateurs/creer-scenariste';
-          } else if (data.role === 'REALISATEUR') {
-            endpoint = '/api/utilisateurs/creer-realisateur';
-          } else if (data.role === 'ADMIN') {
-            endpoint = '/api/utilisateurs/creer-admin';
-            delete data.specialite;
-            delete data.biographie;
-          } else {
-            throw new Error('Rôle non supporté pour la création');
-          }
-          const response = await axios.post(endpoint, data);
-          this.showMessage(response.data.message || 'Utilisateur créé avec succès', 'success');
-        } else if (this.editingUtilisateur) {
-          // Modification unifiée par id_utilisateur
-          endpoint = `/api/utilisateurs/${this.editingUtilisateur.id}`;
-          if (data.motDePasse === '') delete data.motDePasse;
-          if (!this.isRoleWithDetails) {
-            delete data.specialite;
-            delete data.biographie;
-          }
-          const response = await axios.put(endpoint, data);
-          this.showMessage(response.data.message || 'Utilisateur modifié avec succès', 'success');
-        }
-
-        this.closeModal();
-        this.fetchUtilisateurs();
-      } catch (error) {
-        console.error('Erreur lors de la soumission:', error);
-        const errorMessage = error.response?.data?.message || 'Erreur lors de la soumission';
-        this.showMessage(errorMessage, 'error');
-      }
-    },
-
-    async deleteUtilisateur(utilisateur) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-        return;
-      }
-
-      try {
-        const endpoint = `/api/utilisateurs/${utilisateur.id}`;
-        await axios.delete(endpoint);
-        this.showMessage('Utilisateur supprimé avec succès', 'success');
-        this.fetchUtilisateurs();
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-        const errorMessage = error.response?.data?.message || 'Erreur lors de la suppression';
-        this.showMessage(errorMessage, 'error');
-      }
-    },
-
-    editUtilisateur(utilisateur) {
-      this.editingUtilisateur = utilisateur;
-      this.formData = {
-        nom: utilisateur.nom,
-        email: utilisateur.email,
-        motDePasse: '',
-        role: utilisateur.role,
-        specialite: utilisateur.specialite || '',
-        biographie: utilisateur.biographie || ''
+    getRoleClass(role) {
+      const roleClasses = {
+        'ADMIN': 'role-admin',
+        'SCENARISTE': 'role-scenariste',
+        'REALISATEUR': 'role-realisateur'
       };
-      this.showPassword = false;
+      return roleClasses[role] || 'role-default';
+    },
+
+    getRoleLabel(role) {
+      const roleLabels = {
+        'ADMIN': 'Administrateur',
+        'SCENARISTE': 'Scénariste',
+        'REALISATEUR': 'Réalisateur'
+      };
+      return roleLabels[role] || role;
+    },
+
+    formatDate(dateString) {
+      if (!dateString) return '-';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fr-FR');
+    },
+
+    editUser(user) {
+      this.formData = {
+        nom: user.nom,
+        email: user.email,
+        motDePasse: '',
+        role: user.role,
+        specialite: user.specialite || '',
+        biographie: user.biographie || ''
+      };
+      this.userToDelete = user;
+      this.showEditModal = true;
+    },
+
+    confirmDelete(user) {
+      this.userToDelete = user;
+      this.showDeleteModal = true;
     },
 
     closeModal() {
-      this.showCreateForm = false;
-      this.editingUtilisateur = null;
+      this.showAddModal = false;
+      this.showEditModal = false;
       this.formData = {
         nom: '',
         email: '',
@@ -354,22 +319,479 @@ export default {
         specialite: '',
         biographie: ''
       };
-      this.showPassword = false;
+      this.userToDelete = null;
     },
 
-    showMessage(text, type) {
-      this.message = text;
-      this.messageType = type;
+    async submitForm() {
+      try {
+        this.loading = true;
+        
+        if (this.showAddModal) {
+          // Création
+          await axios.post('/api/auth/register', this.formData);
+          this.showToast('Utilisateur créé avec succès', 'success');
+        } else {
+          // Modification
+          await axios.put(`/api/utilisateurs/${this.userToDelete.idUtilisateur || this.userToDelete.id}`, this.formData);
+          this.showToast('Utilisateur modifié avec succès', 'success');
+        }
+        
+        this.closeModal();
+        await this.loadUsers();
+        
+      } catch (error) {
+        console.error('Erreur soumission formulaire:', error);
+        const message = error.response?.data?.message || 'Erreur lors de l\'opération';
+        this.showToast(message, 'error');
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async deleteUser() {
+      try {
+        this.loading = true;
+        
+        // Utiliser l'endpoint de suppression approprié selon le rôle
+        let endpoint = `/api/utilisateurs/${this.userToDelete.idUtilisateur || this.userToDelete.id}`;
+        
+        await axios.delete(endpoint);
+        this.showToast('Utilisateur supprimé avec succès', 'success');
+        this.showDeleteModal = false;
+        await this.loadUsers();
+        
+      } catch (error) {
+        console.error('Erreur suppression:', error);
+        const message = error.response?.data?.message || 'Erreur lors de la suppression';
+        this.showToast(message, 'error');
+      } finally {
+        this.loading = false;
+        this.userToDelete = null;
+      }
+    },
+
+    showToast(message, type = 'success') {
+      this.toast = {
+        show: true,
+        message,
+        type,
+        icon: type === 'success' ? 'fa-check' : 'fa-exclamation-circle'
+      };
+      
       setTimeout(() => {
-        this.message = '';
-      }, 5000);
-    },
-
-    formatDate(dateString) {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      return date.toLocaleString();
+        this.toast.show = false;
+      }, 3000);
     }
   }
 };
 </script>
+
+<style scoped>
+.utilisateurs-container {
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.utilisateurs-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.utilisateurs-header h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.utilisateurs-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+.btn-add {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.search-bar {
+  position: relative;
+  width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7f8c8d;
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.utilisateurs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.utilisateurs-table th {
+  background: #f8f9fa;
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.utilisateurs-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.user-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.role-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-admin {
+  background: #ffeaa7;
+  color: #e17055;
+}
+
+.role-scenariste {
+  background: #a29bfe;
+  color: white;
+}
+
+.role-realisateur {
+  background: #74b9ff;
+  color: white;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit, .btn-delete {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-edit {
+  background: #74b9ff;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #0984e3;
+}
+
+.btn-delete {
+  background: #ff7675;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #d63031;
+}
+
+.no-data {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+}
+
+.no-data i {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.delete-modal {
+  max-width: 400px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+.user-form {
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.hint {
+  font-weight: normal;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.btn-cancel, .btn-submit, .btn-delete-confirm {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #7f8c8d;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-delete-confirm {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-delete-confirm:hover:not(:disabled) {
+  background: #c0392b;
+}
+
+.btn-submit:disabled, .btn-delete-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-body {
+  padding: 24px;
+  text-align: center;
+}
+
+.warning-icon {
+  font-size: 3rem;
+  color: #e74c3c;
+  margin-bottom: 20px;
+}
+
+.warning-text {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1001;
+  animation: slideIn 0.3s ease;
+}
+
+.toast.success {
+  background: #27ae60;
+}
+
+.toast.error {
+  background: #e74c3c;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .utilisateurs-container {
+    padding: 15px;
+  }
+  
+  .actions-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-bar {
+    width: 100%;
+  }
+  
+  .utilisateurs-table {
+    font-size: 14px;
+  }
+  
+  .utilisateurs-table th,
+  .utilisateurs-table td {
+    padding: 12px 8px;
+  }
+  
+  .actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+</style>

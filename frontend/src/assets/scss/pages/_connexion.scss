@@ -8,14 +8,6 @@ $conn-card-width: 480px;
 $conn-form-inner-width: 400px;
 
 // =============================================
-// STYLES DE LA PAGE CONNEXION
-// =============================================
-.connexion-page {
-  background: $color-pink ;
-  min-height: 100vh;
-}
-
-// =============================================
 // STRUCTURE PRINCIPALE
 // =============================================
 .app-wrapper-co-conn {
@@ -23,6 +15,7 @@ $conn-form-inner-width: 400px;
   height: 100vh;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
 .connexion-container-conn {
@@ -37,29 +30,30 @@ $conn-form-inner-width: 400px;
   width: $conn-form-width;
   @include flex-center;
   position: relative;
-  z-index: 10;
+  z-index: $z-index-modal;
 }
-
+ 
 // =============================================
-// CARTE DE CONNEXION
+// CARTE DE CONNEXION - CORRIGÉ EN BLANC
 // =============================================
 .connexion-card-conn {
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   border-radius: $border-radius-lg;
-  border: 1px solid rgba($color-light, 0.25);
+  border: 1px solid rgba($color-white, 0.8);
   box-shadow: 
-    0 8px 32px 0 rgba($color-dark, 0.15),
-    inset 0 1px 0 rgba($color-light, 0.3);
+    0 8px 32px 0 rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 rgba($color-white, 0.9);
   padding: 0;
   width: 100%;
   max-width: $conn-card-width;
   position: relative;
   overflow: hidden;
   animation: slideInUp-conn $duration-normal cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 10;
-  background: rgba($color-light, 0.1);
-  
+  z-index: $z-index-modal;
+  background: rgba($color-white, 0.95);
+  width: 400px;
+
   // Effet de lumière subtil en haut
   &::before {
     content: '';
@@ -71,7 +65,7 @@ $conn-form-inner-width: 400px;
     background: linear-gradient(
       90deg,
       transparent,
-      rgba($color-light, 0.5),
+      rgba($color-white, 0.8),
       transparent
     );
     pointer-events: none;
@@ -89,7 +83,7 @@ $conn-form-inner-width: 400px;
     background: linear-gradient(
       90deg,
       transparent,
-      rgba($color-light, 0.1),
+      rgba($color-white, 0.3),
       transparent
     );
     pointer-events: none;
@@ -120,21 +114,23 @@ $conn-form-inner-width: 400px;
 }
 
 .user-avatar-conn {
-  background: rgba($color-pink, 0.3);
+  background: rgba($color-white, 0.9);
   color: $color-primary;
   width: 50px;
   height: 50px;
   border-radius: 50%;
   @include flex-center;
   font-size: 1.5rem;
-  border: 2px solid rgba($color-light, 0.5);
+  border: 2px solid rgba($color-primary, 0.3);
   margin: 0 auto $margin-md auto;
+  box-shadow: 0 4px 12px rgba($color-text-primary, 0.1);
 }
 
 .connex-header-conn {
   h1 {
     @include typography-h2;
     margin-bottom: $gap-sm;
+    color: $color-text-primary;
   }
   
   p {
@@ -155,7 +151,7 @@ $conn-form-inner-width: 400px;
 }
 
 // =============================================
-// GROUPES DE FORMULAIRE
+// INPUTS - CORRIGÉS EN BLANC
 // =============================================
 .form-group-connexion-conn {
   margin-bottom: $margin-lg;
@@ -169,23 +165,23 @@ $conn-form-inner-width: 400px;
 .form-input-connexion-conn {
   width: 100%;
   padding: $padding-md;
-  border: 1px solid rgba($color-light, 0.4);
+  border: 1px solid #e2e8f0;
   border-radius: $border-radius-pill;
-  background: rgba($color-light, 0.15);
+  background: rgba($color-white, 0.9);
   font-size: $font-size-p2;
   color: $color-text-primary;
   transition: $transition;
   font-weight: $font-weight-medium;
   backdrop-filter: blur(15px) saturate(150%);
-  box-shadow: 0 2px 8px rgba($color-dark, 0.05);
+  box-shadow: 0 2px 8px rgba($color-text-primary, 0.05);
 
   &:focus {
-    background: rgba($color-light, 0.25);
+    background: rgba($color-white, 1);
     box-shadow: 
       0 0 0 3px rgba($color-primary, 0.15),
       0 4px 12px rgba($color-primary, 0.1);
     transform: translateY(-1px);
-    border-color: rgba($color-primary, 0.4);
+    border-color: $color-primary;
     outline: none;
   }
 
@@ -219,10 +215,11 @@ $conn-form-inner-width: 400px;
     width: 1.1rem;
     height: 1.1rem;
     border-radius: $gap-xs;
-    border: $border-width * 1.5 solid $border-color-dark;
+    border: $border-width * 1.5 solid #cbd5e0;
     appearance: none;
     transition: $transition;
     position: relative;
+    background: $color-white;
 
     &:checked {
       background: $color-primary;
@@ -234,7 +231,7 @@ $conn-form-inner-width: 400px;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        color: $color-light;
+        color: $color-white;
         font-size: $font-size-p3;
         font-weight: $font-weight-bold;
       }
@@ -260,9 +257,9 @@ $conn-form-inner-width: 400px;
 .error-message-connexion-conn {
   @include flex-center;
   gap: $gap-sm;
-  background: rgba($color-accent, 0.05);
-  border: $border-width solid rgba($color-accent, 0.2);
-  color: $color-accent;
+  background: rgba($color-error, 0.05);
+  border: $border-width solid rgba($color-error, 0.2);
+  color: $color-error;
   padding: $padding-sm $padding-md;
   border-radius: $border-radius-sm;
   font-size: $font-size-p2;
@@ -275,7 +272,7 @@ $conn-form-inner-width: 400px;
 // =============================================
 .connexion-btn-conn {
   background: $color-primary;
-  color: $color-light;
+  color: $color-white;
   border: none;
   padding: $padding-md $padding-lg;
   border-radius: $border-radius-pill;
@@ -297,12 +294,12 @@ $conn-form-inner-width: 400px;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($color-light, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba($color-white, 0.2), transparent);
     transition: $transition;
   }
 
   &:hover:not(:disabled) {
-    background: mix($color-primary, black, 90%);
+    background: $color-primary-dark;
     transform: translateY(-2px);
     box-shadow: $shadow-hover;
   }
@@ -334,7 +331,7 @@ $conn-form-inner-width: 400px;
   color: $color-text-secondary;
   margin-top: $margin-lg;
   padding-top: $margin-lg;
-  border-top: $border-width solid $border-color-dark;
+  border-top: $border-width solid #e2e8f0;
 
   a {
     color: $color-primary;
@@ -343,7 +340,7 @@ $conn-form-inner-width: 400px;
     transition: $transition;
 
     &:hover {
-      color: mix($color-primary, black, 90%);
+      color: $color-primary-dark;
       text-decoration: underline;
     }
   }
@@ -375,9 +372,84 @@ $conn-form-inner-width: 400px;
 }
 
 // =============================================
+// BOUTONS DE THÈME
+// =============================================
+.theme-toggle {
+  position: fixed;
+  top: $padding-md;
+  right: $padding-md;
+  display: flex;
+  background: rgba($color-primary, 0.15);
+  border-radius: $border-radius-pill;
+  padding: $gap-xs;
+  gap: $gap-xs;
+  box-shadow: 
+    inset 0 2px 4px rgba($color-text-primary, 0.1),
+    0 4px 12px rgba($color-text-primary, 0.15);
+  width: 60px;
+  border: 1px solid rgba($color-white, 0.4);
+  backdrop-filter: blur(10px) saturate(150%);
+  z-index: $z-index-modal;
+  transition: $transition;
+  
+  &:hover {
+    background: rgba($color-primary, 0.2);
+    box-shadow: 
+      inset 0 2px 4px rgba($color-text-primary, 0.1),
+      0 6px 16px rgba($color-text-primary, 0.2);
+  }
+}
+
+.theme-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  @include flex-center;
+  cursor: pointer;
+  transition: $transition;
+  color: $color-primary;
+  font-size: $font-size-p3;
+  
+  &:hover {
+    background: rgba($color-primary, 0.2);
+    transform: scale(1.1);
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+    color: $color-white;
+    box-shadow: 0 2px 6px rgba($color-primary, 0.4);
+  }
+  
+  i {
+    font-size: $font-size-p3;
+  }
+}
+
+// =============================================
+// ANIMATIONS D'ENTRÉE POUR ÉLÉMENTS
+// =============================================
+.form-group-connexion-conn,
+.form-options-connexion-conn,
+.connexion-btn-conn,
+.signup-link-connexion-conn {
+  opacity: 0;
+  animation: slideInUp-conn $duration-normal ease-out forwards;
+}
+
+.form-group-connexion-conn:nth-child(1) { animation-delay: 0.2s; }
+.form-group-connexion-conn:nth-child(2) { animation-delay: 0.4s; }
+.form-options-connexion-conn { animation-delay: 0.6s; }
+.connexion-btn-conn { animation-delay: 0.8s; }
+.signup-link-connexion-conn { animation-delay: 1s; }
+
+// =============================================
 // RESPONSIVE
 // =============================================
-@media (max-width: $breakpoint-md) {
+@include respond-to($breakpoint-md) {
   .connexion-container-conn {
     flex-direction: column;
   }
@@ -402,85 +474,7 @@ $conn-form-inner-width: 400px;
     align-items: flex-start;
     gap: $gap-md;
   }
-}
 
-// =============================================
-// ANIMATIONS D'ENTRÉE POUR ÉLÉMENTS
-// =============================================
-.form-group-connexion-conn,
-.form-options-connexion-conn,
-.connexion-btn-conn,
-.signup-link-connexion-conn {
-  opacity: 0;
-  animation: slideInUp-conn $duration-normal ease-out forwards;
-}
-
-.form-group-connexion-conn:nth-child(1) { animation-delay: 0.2s; }
-.form-group-connexion-conn:nth-child(2) { animation-delay: 0.4s; }
-.form-options-connexion-conn { animation-delay: 0.6s; }
-.connexion-btn-conn { animation-delay: 0.8s; }
-.signup-link-connexion-conn { animation-delay: 1s; }
-
-// =============================================
-// BOUTONS DE THÈME (MODE SOMBRE/CLAIR)
-// =============================================
-.theme-toggle {
-  position: fixed;
-  top: $padding-md;
-  right: $padding-md;
-  display: flex;
-  background: rgba($color-primary, 0.15);
-  border-radius: $border-radius-pill;
-  padding: $gap-xs;
-  gap: $gap-xs;
-  box-shadow: 
-    inset 0 2px 4px rgba($color-dark, 0.1),
-    0 4px 12px rgba($color-dark, 0.15);
-  width: 60px;
-  border: 1px solid rgba($color-light, 0.4);
-  backdrop-filter: blur(10px) saturate(150%);
-  z-index: $z-index-modal;
-  transition: $transition;
-  
-  &:hover {
-    background: rgba($color-primary, 0.2);
-    box-shadow: 
-      inset 0 2px 4px rgba($color-dark, 0.1),
-      0 6px 16px rgba($color-dark, 0.2);
-  }
-}
-
-.theme-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  @include flex-center;
-  cursor: pointer;
-  transition: $transition;
-  color: $color-primary;
-  font-size: $font-size-p3;
-  
-  &:hover {
-    background: rgba($color-primary, 0.2);
-    transform: scale(1.1);
-  }
-  
-  &.active {
-    background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
-    color: $color-light;
-    box-shadow: 0 2px 6px rgba($color-primary, 0.4);
-  }
-  
-  i {
-    font-size: $font-size-p3;
-  }
-}
-
-// Responsive pour les boutons de thème
-@media (max-width: $breakpoint-md) {
   .theme-toggle {
     top: $padding-sm;
     right: $padding-sm;
@@ -499,9 +493,13 @@ $conn-form-inner-width: 400px;
 // MODE SOMBRE
 // =============================================
 body.dark-theme {
+  .app-wrapper-co-conn {
+    background: linear-gradient(135deg, $color-background-dark 0%, lighten($color-background-dark, 5%) 100%);
+  }
+
   .connexion-card-conn {
-    background: rgba($color-dark, 0.15);
-    border: 1px solid rgba($color-light, 0.15);
+    background: rgba($color-background-dark, 0.15);
+    border: 1px solid rgba($color-white, 0.15);
     
     &::before {
       background: linear-gradient(
@@ -514,32 +512,32 @@ body.dark-theme {
   }
   
   .form-input-connexion-conn {
-    background: rgba($color-dark, 0.2);
-    border: 1px solid rgba($color-light, 0.2);
-    color: $color-light;
+    background: rgba($color-background-dark, 0.2);
+    border: 1px solid rgba($color-white, 0.2);
+    color: $color-text-light;
     
     &::placeholder {
-      color: rgba($color-light, 0.5);
+      color: rgba($color-text-light, 0.5);
     }
     
     &:focus {
-      background: rgba($color-dark, 0.3);
+      background: rgba($color-background-dark, 0.3);
       border-color: rgba($color-primary, 0.5);
     }
   }
   
   .connex-header-conn {
     h1 {
-      color: $color-light;
+      color: $color-text-light;
     }
     
     p {
-      color: rgba($color-light, 0.7);
+      color: rgba($color-text-light, 0.7);
     }
   }
   
   .forgot-link-connexion-conn {
-    color: rgba($color-light, 0.7);
+    color: rgba($color-text-light, 0.7);
     
     &:hover {
       color: $color-accent;
@@ -547,8 +545,8 @@ body.dark-theme {
   }
   
   .signup-link-connexion-conn {
-    color: rgba($color-light, 0.7);
-    border-top: $border-width solid rgba($color-light, 0.15);
+    color: rgba($color-text-light, 0.7);
+    border-top: $border-width solid rgba($color-text-light, 0.15);
     
     a {
       color: $color-primary;
@@ -560,16 +558,16 @@ body.dark-theme {
   }
   
   .theme-toggle {
-    background: rgba($color-dark, 0.3);
-    border: 1px solid rgba($color-light, 0.2);
+    background: rgba($color-background-dark, 0.3);
+    border: 1px solid rgba($color-text-light, 0.2);
     
     &:hover {
-      background: rgba($color-dark, 0.4);
+      background: rgba($color-background-dark, 0.4);
     }
   }
   
   .theme-btn {
-    color: $color-light;
+    color: $color-text-light;
     
     &:hover {
       background: rgba($color-primary, 0.3);
@@ -577,7 +575,7 @@ body.dark-theme {
     
     &.active {
       background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
-      color: $color-light;
+      color: $color-text-light;
     }
   }
 }

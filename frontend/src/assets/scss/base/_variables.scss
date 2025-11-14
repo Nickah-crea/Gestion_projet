@@ -9,7 +9,7 @@ $font-weight-light: 300;
 $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-bold: 700;
-$font-weight-semibold: 600; // AJOUTÉ
+$font-weight-semibold: 600;
 
 // Tailles de police
 $font-size-h1: 32px;
@@ -26,45 +26,49 @@ $line-height-tight: 1.3;
 $line-height-loose: 1.7;
 
 // =============================================
-// COULEURS - NOUVELLE PALETTE
+// COULEURS - UNIFIÉES AVEC SCÉNARISTE
 // =============================================
 
-// Couleurs principales
-$color-dark: #46467A;      // Bleu foncé/violet
-$color-primary: #7766C6;   // Violet principal
-$color-accent: #FFC212;    // Rose fluo
-$color-grey: #E0DEF0;    // Gris claire
-$color-yellow: #FFC212;    // Jaune
-$color-pink: #F9B0C3;      // Rose pâle
-$color-light: #fbfbfb;
-$color-white: #FFFFEC;     // Ivory - Blanc cassé
-$color-red: #EF4444;       // Rouge pour erreurs
-$color-text: #23233c;
-
-// Variantes de couleurs (plus claires/foncées)
-// Utilisation de mix() au lieu de lighten() pour éviter les warnings
-$color-dark-light: mix($color-dark, white, 90%);
-$color-dark-lighter: mix($color-dark, white, 80%);
-$color-primary-light: mix($color-primary, white, 90%);
-$color-primary-lighter: mix($color-primary, white, 80%);
-$color-accent-light: mix($color-accent, white, 90%);
-
-// Couleurs de texte
-$color-text-primary: $color-text;
-$color-text-secondary: mix($color-dark, white, 85%);
-$color-text-muted: mix($color-dark, white, 70%);
-$color-text-light: $color-light;
+// Couleurs principales (identiques au CSS Scénariste)
+$color-primary: #7BBBFF;      // --primary-Scenariste
+$color-primary-light: #A3D1FF; // --primary-light-Scenariste
+$color-primary-dark: #5AA9FF;  // --primary-dark-Scenariste
+$color-accent: #B8A9FF;       // --accent-Scenariste
+$color-accent-light: #D0C7FF; // --accent-light-Scenariste
 
 // Couleurs de fond
-$color-background: $color-light;
-$color-background-alt: mix($color-light, black, 97%);
-$color-background-dark: $color-dark;
+$color-background: #F2FDFF;   // --background-Scenariste
+$color-background-alt: darken(#F2FDFF, 5%);
+$color-background-dark: #050F2A;
+
+// Couleurs de texte
+$color-text-primary: #050F2A; // --text-primary-Scenariste
+$color-text-secondary: #1A2A4D; // --text-secondary-Scenariste
+$color-text-muted: #4A5A7D;   // --text-muted-Scenariste
+$color-text-light: #F2FDFF;
+
+// Couleurs neutres
+$color-white: #FFFFFF;
+$color-grey: #E0E8F5;
 
 // Couleurs d'état
 $color-success: #10B981;
-$color-warning: $color-yellow;
-$color-error: $color-red;
-$color-info: $color-primary;
+$color-warning: #F59E0B;
+$color-error: #EF4444;
+$color-info: #7BBBFF;
+
+// Couleurs pastel pour les cartes (ajoutées depuis le CSS Scénariste)
+$color-pastel-pink: rgba(255, 228, 228, 0.3);
+$color-pastel-yellow: rgba(255, 249, 214, 0.3);
+$color-pastel-blue: rgba(227, 242, 255, 0.3);
+$color-pastel-green: rgba(228, 255, 228, 0.3);
+$color-pastel-purple: rgba(240, 228, 255, 0.3);
+
+// Surfaces et bordures
+$color-surface: rgba(255, 255, 255, 0.15); // --surface-Scenariste
+$color-surface-hover: rgba(255, 255, 255, 0.25); // --surface-hover-Scenariste
+$color-border: rgba(255, 255, 255, 0.2); // --border-Scenariste
+$color-border-dark: rgba(5, 15, 42, 0.3); // --border-dark-Scenariste
 
 // =============================================
 // ESPACEMENTS - CORRIGÉ
@@ -78,21 +82,21 @@ $gap-lg: 14px;
 $gap-xl: 20px;
 $gap-xxl: 30px;
 
-// Paddings - AJOUTÉ
+// Paddings
 $padding-xs: 8px;
 $padding-sm: 12px;
 $padding-md: 16px;
 $padding-lg: 20px;
 $padding-xl: 24px;
 
-// Margins - AJOUTÉ
+// Margins
 $margin-xs: 8px;
 $margin-sm: 12px;
 $margin-md: 16px;
 $margin-lg: 20px;
 $margin-xl: 24px;
 
-// Spacings (pour compatibilité) - AJOUTÉ
+// Spacings (pour compatibilité)
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 16px;
@@ -100,13 +104,14 @@ $spacing-lg: 24px;
 $spacing-xl: 32px;
 
 // =============================================
-// BORDS & OMBRES
+// BORDS & OMBRES - UNIFIÉS AVEC SCÉNARISTE
 // =============================================
 
 // Bordures
+$border-radius-xs: 15px;
 $border-radius: 25px;
 $border-radius-sm: 20px;
-$border-radius-lg: 30px;
+$border-radius-lg: 30px;  // --radius-Scenariste
 $border-radius-pill: 50px;
 
 // Ombres
@@ -121,12 +126,12 @@ $border-color: rgba(70, 70, 122, 0.1);
 $border-color-dark: rgba(70, 70, 122, 0.2);
 
 // =============================================
-// TRANSITIONS & ANIMATIONS
+// TRANSITIONS & ANIMATIONS - UNIFIÉS
 // =============================================
 
-$transition: all 0.2s ease;
-$transition-slow: all 0.3s ease;
-$transition-fast: all 0.1s ease;
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // --transition-Scenariste
+$transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
 // Durées d'animation
 $duration-fast: 0.15s;
@@ -157,7 +162,7 @@ $z-index-tooltip: 1060;
 $z-index-toast: 1070;
 
 // =============================================
-// TYPOGRAPHIE MIXINS (pour réutiliser facilement)
+// TYPOGRAPHIE MIXINS
 // =============================================
 
 @mixin typography-h1 {
@@ -165,7 +170,7 @@ $z-index-toast: 1070;
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
   color: $color-text-primary;
-  margin-bottom: $margin-md; // CORRIGÉ
+  margin-bottom: $margin-md;
 }
 
 @mixin typography-h2 {
@@ -173,7 +178,7 @@ $z-index-toast: 1070;
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
   color: $color-text-primary;
-  margin-bottom: $margin-sm; // CORRIGÉ
+  margin-bottom: $margin-sm;
 }
 
 @mixin typography-h3 {
@@ -181,7 +186,7 @@ $z-index-toast: 1070;
   font-weight: $font-weight-medium;
   line-height: $line-height-tight;
   color: $color-text-primary;
-  margin-bottom: $margin-sm; // CORRIGÉ
+  margin-bottom: $margin-sm;
 }
 
 @mixin typography-h4 {
@@ -189,7 +194,7 @@ $z-index-toast: 1070;
   font-weight: $font-weight-medium;
   line-height: $line-height-tight;
   color: $color-text-primary;
-  margin-bottom: $margin-xs; // CORRIGÉ
+  margin-bottom: $margin-xs;
 }
 
 @mixin typography-p1 {
@@ -197,7 +202,7 @@ $z-index-toast: 1070;
   font-weight: $font-weight-regular;
   line-height: $line-height-base;
   color: $color-text-secondary;
-  margin-bottom: $margin-sm; // CORRIGÉ
+  margin-bottom: $margin-sm;
 }
 
 @mixin typography-p2 {
@@ -205,7 +210,7 @@ $z-index-toast: 1070;
   font-weight: $font-weight-regular;
   line-height: $line-height-base;
   color: $color-text-secondary;
-  margin-bottom: $margin-xs; // CORRIGÉ
+  margin-bottom: $margin-xs;
 }
 
 @mixin typography-p3 {
@@ -213,7 +218,7 @@ $z-index-toast: 1070;
   font-weight: $font-weight-regular;
   line-height: $line-height-base;
   color: $color-text-muted;
-  margin-bottom: $margin-xs; // CORRIGÉ
+  margin-bottom: $margin-xs;
 }
 
 // =============================================
@@ -260,3 +265,19 @@ $z-index-toast: 1070;
     @content;
   }
 }
+
+// Glassmorphism effect (nouveau mixin depuis le CSS Scénariste)
+@mixin glassmorphism {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(60px);
+  -webkit-backdrop-filter: blur(60px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// Pastel backgrounds (nouveaux mixins depuis le CSS Scénariste)
+@mixin pastel-pink { background: $color-pastel-pink; }
+@mixin pastel-yellow { background: $color-pastel-yellow; }
+@mixin pastel-blue { background: $color-pastel-blue; }
+@mixin pastel-green { background: $color-pastel-green; }
+@mixin pastel-purple { background: $color-pastel-purple; }
+

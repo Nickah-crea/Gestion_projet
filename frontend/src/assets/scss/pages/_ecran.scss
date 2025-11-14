@@ -1,67 +1,60 @@
-// Import des variables pour utiliser les variables globales
+// _ecran-travail.scss
 @import '../base/variables';
-@import '../components/buttons'; // Import des boutons
 
 // =============================================
-// ÉCRAN DE TRAVAIL - STYLES SPÉCIFIQUES
+// ÉCRAN DE TRAVAIL - STYLES COMPACTS
 // =============================================
 
 .ecran-travail-ecran-travail {
   min-height: 100vh;
-  padding: $padding-md;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(10px);
-  width: 100%;
-  overflow-x: hidden;
-  font-size: $font-size-p1;
-  // FOND VISIBLE AVEC BORDER-RADIUS
-  background: rgba($color-white, 0.95);
-  border-radius: $border-radius-lg;
-  margin: $margin-sm;
-  box-shadow: $shadow-lg;
-  
-  // MÊME STRUCTURE QUE _ACCUEIL.SCSS
-  max-width: 1250px;
-  margin-left: 30px;
+  background: $color-white;
+  font-family: $font-family-primary;
+  color: $color-text-primary;
+  line-height: $line-height-base;
+  padding: $spacing-md;
+  margin: 0;
+  max-width: 1200px;
+  margin-left: 70px;
   margin-right: auto;
   
-  @media (max-width: $breakpoint-md) {
-    padding: 0 15px;
-    margin-left: 15px;
+  @include respond-to($breakpoint-md) {
+    padding: $spacing-sm;
   }
   
-  @media (max-width: $breakpoint-sm) {
-    padding: 0 10px;
-    margin-left: 10px;
+  @include respond-to($breakpoint-sm) {
+    padding: $spacing-xs;
   }
 }
 
-.app-wrapper-ecran-travail {
-  max-width: 1400px;
-  margin: 0 auto;
+.app-wrapper-global {
   width: 100%;
   box-sizing: border-box;
 }
 
 // =============================================
-// HEADER ET NAVIGATION - MODIFIÉ
+// HEADER ET NAVIGATION COMPACTS
 // =============================================
 
 .header-ecran-travail {
-  margin-bottom: $margin-lg;
-  padding-bottom: $padding-md;
-  border-bottom: 1px solid rgba($color-dark, 0.1);
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid rgba($color-primary, 0.2);
 }
 
 .navigation-ecran-travail {
   display: flex;
-  justify-content: space-between; // Titre à gauche, navigation à droite
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: $margin-md;
+  margin-bottom: $spacing-md;
   gap: $gap-md;
   flex-wrap: wrap;
+  
+  @include respond-to($breakpoint-md) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-md;
+  }
 }
-
 
 .project-title-section {
   flex: 1;
@@ -69,10 +62,8 @@
   .project-title {
     @include typography-h2;
     margin: 0;
-    color: $color-text-primary;
   }
 }
-
 
 .navigation-right-section {
   display: flex;
@@ -82,105 +73,171 @@
 }
 
 .nav-btn-ecran-travail {
-  @extend .secondary-btn-Scenariste;
-  padding: $padding-sm $padding-md;
+  padding: $padding-xs $padding-sm;
+  border: 1px solid rgba($color-primary, 0.2);
   border-radius: $border-radius-sm;
-  font-size: $font-size-p1;
-  font-weight: $font-weight-semibold;
-  white-space: nowrap;
-  
-  &:disabled {
-    @extend .btn-disabled-Scenariste;
-    opacity: 0.4;
-  }
-}
-
-// Groupe de gauche : Export + Calendrier
-.navigation-ecran-travail > :first-child {
-  display: flex;
-  gap: $gap-md;
-  align-items: center;
-}
-
-// Groupe de droite : Précédent + Suivant
-.navigation-ecran-travail > :last-child {
-  display: flex;
-  gap: $gap-sm;
-  align-items: center;
-}
-
-.nav-btn-ecran-travail {
-  @extend .secondary-btn-Scenariste;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p1;
-  font-weight: $font-weight-semibold;
-  
-  &:disabled {
-    @extend .btn-disabled-Scenariste;
-    opacity: 0.4;
-  }
-}
-
-.export-container-ecran-travail {
-  display: flex;
-  align-items: center;
-}
-
-.export-dropdown-ecran-travail {
-  position: relative;
-  display: inline-block;
-}
-
-.export-main-btn-ecran-travail {
-  @extend .primary-btn-Scenariste;
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-}
-
-.export-dropdown-content-ecran-travail {
-  display: none;
-  position: absolute;
   background: $color-white;
-  min-width: 200px;
-  box-shadow: $shadow-lg;
-  border-radius: $border-radius-sm;
-  z-index: $z-index-dropdown;
-  right: 0;
-  top: 100%;
-  margin-top: $gap-xs;
+  color: $color-text-primary;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
   
-  .export-dropdown-ecran-travail:hover & {
-    display: block;
-  }
-}
-
-.export-option-ecran-travail {
-  @extend .btn-ghost-Scenariste;
-  width: 100%;
-  text-align: left;
-  padding: $padding-sm $padding-md;
-  border-radius: 0;
-  border-bottom: 1px solid rgba($color-dark, 0.05);
-  
-  &:last-child {
-    border-bottom: none;
-  }
-  
-  &:hover {
-    background: rgba($color-primary, 0.1);
+  &:hover:not(:disabled) {
+    border-color: $color-primary;
     color: $color-primary;
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 
 // =============================================
-// INFORMATIONS ÉPISODE
+// INFORMATIONS PROJET COMPACTES
+// =============================================
+
+.project-header {
+  margin-bottom: $spacing-lg;
+}
+
+.project-info-card {
+  background: $color-white;
+  padding: $spacing-md;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+}
+
+.project-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-sm;
+  
+  @include respond-to($breakpoint-sm) {
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+}
+
+.project-actions {
+  display: flex;
+  gap: $gap-xs;
+  
+  .action-btn {
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba($color-primary, 0.2);
+    border-radius: $border-radius-sm;
+    background: $color-white;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: $transition;
+    font-size: $font-size-p2;
+    
+    &:hover {
+      border-color: $color-primary;
+      color: $color-primary;
+      
+      &.edit-btn {
+        border-color: $color-info;
+        color: $color-info;
+      }
+      
+      &.delete-btn {
+        border-color: $color-error;
+        color: $color-error;
+      }
+    }
+  }
+}
+
+.project-status {
+  display: inline-block;
+  padding: $gap-xs $gap-sm;
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-medium;
+}
+
+.project-meta {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-sm;
+  flex-wrap: wrap;
+  
+  .project-author, .project-date {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    color: $color-text-muted;
+    font-size: $font-size-p2;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p2;
+    }
+  }
+}
+
+.project-synopsis {
+  margin-bottom: $spacing-md;
+  
+  h3 {
+    @include typography-h3;
+    margin-bottom: $gap-sm;
+  }
+  
+  p {
+    @include typography-p1;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.project-description {
+  @include typography-p1;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-md;
+}
+
+.project-stats {
+  display: flex;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+  
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    padding: $gap-xs $gap-sm;
+    background: rgba($color-primary, 0.05);
+    border-radius: $border-radius-sm;
+    color: $color-text-secondary;
+    font-size: $font-size-p2;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p2;
+    }
+  }
+}
+
+// =============================================
+// INFORMATIONS ÉPISODE COMPACTES
 // =============================================
 
 .episode-title-ecran-travail {
   @include typography-h2;
-  margin-bottom: $margin-sm;
+  margin-bottom: $gap-sm;
   text-align: center;
 }
 
@@ -189,33 +246,38 @@
   align-items: center;
   justify-content: center;
   gap: $gap-sm;
-  margin-bottom: $margin-sm;
+  margin-bottom: $spacing-sm;
   
   label {
-    font-size: $font-size-h2;
-    font-weight: $font-weight-bold;
-    color: $color-text-primary;
+    @include typography-h2;
+    margin: 0;
   }
 }
 
 .syno-episode-ecran-travail {
-  margin-bottom: $margin-md;
+  margin-bottom: $spacing-md;
   text-align: center;
   
   label {
     @include typography-p1;
     display: block;
     margin-bottom: $gap-xs;
+    color: $color-text-secondary;
+    
+    strong {
+      color: $color-text-primary;
+    }
   }
 }
 
 .episode-equipe-ecran-travail {
-  margin-bottom: $margin-lg;
+  margin-bottom: $spacing-lg;
   text-align: center;
 }
 
 .equipe-info-ecran-travail {
   @include typography-p1;
+  color: $color-text-secondary;
   
   strong {
     color: $color-text-primary;
@@ -224,40 +286,44 @@
 
 .realisateur-info-ecran-travail,
 .scenariste-info-ecran-travail {
-  margin-left: $margin-md;
+  margin-left: $spacing-sm;
   padding: $gap-xs $gap-sm;
   background: rgba($color-primary, 0.1);
   border-radius: $border-radius-sm;
   font-size: $font-size-p2;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
 }
 
 // =============================================
-// NAVIGATION ÉPISODES ET SÉQUENCES - CENTRÉES
+// NAVIGATION ÉPISODES ET SÉQUENCES COMPACTES
 // =============================================
 
 .episode-navigation-ecran-travail {
   display: flex;
   flex-wrap: wrap;
-  gap: $gap-sm;
-  margin-bottom: $margin-lg;
-  padding: $padding-sm;
-  background: rgba($color-dark, 0.03);
+  gap: $gap-xs;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-sm;
+  background: rgba($color-primary, 0.05);
   border-radius: $border-radius;
-  justify-content: center; // Centrage au milieu
+  justify-content: center;
 }
 
 .episode-number-ecran-travail {
-  padding: $gap-xs $padding-sm;
+  padding: $gap-xs $gap-sm;
   border-radius: $border-radius-sm;
   background: $color-white;
-  border: 1px solid rgba($color-dark, 0.1);
+  border: 1px solid rgba($color-primary, 0.2);
   cursor: pointer;
   transition: $transition;
   font-size: $font-size-p2;
   font-weight: $font-weight-medium;
+  color: $color-text-secondary;
   
   &:hover {
     border-color: $color-primary;
+    color: $color-primary;
     transform: translateY(-1px);
   }
   
@@ -273,21 +339,21 @@
 }
 
 .sequence-navigation-container-ecran-travail {
-  margin-bottom: $margin-lg;
+  margin-bottom: $spacing-lg;
 }
 
 .sequence-navigation-ecran-travail {
   display: flex;
   flex-wrap: wrap;
-  gap: $gap-sm;
-  padding: $padding-sm;
-  background: rgba($color-primary, 0.03);
+  gap: $gap-xs;
+  padding: $spacing-sm;
+  background: rgba($color-primary, 0.1);
   border-radius: $border-radius;
-  justify-content: center; // Centrage au milieu
+  justify-content: center;
 }
 
 .sequence-number-ecran-travail {
-  padding: $gap-xs $padding-sm;
+  padding: $gap-xs $gap-sm;
   border-radius: $border-radius-sm;
   background: $color-white;
   border: 1px solid rgba($color-primary, 0.2);
@@ -295,9 +361,11 @@
   transition: $transition;
   font-size: $font-size-p2;
   font-weight: $font-weight-medium;
+  color: $color-text-secondary;
   
   &:hover {
     border-color: $color-primary;
+    color: $color-primary;
     transform: translateY(-1px);
   }
   
@@ -312,8 +380,17 @@
   }
 }
 
+.sequences-title-ecran-travail {
+  margin-bottom: $spacing-md;
+  
+  h2 {
+    @include typography-h2;
+    margin: 0;
+  }
+}
+
 // =============================================
-// LIENS DE CRÉATION - CENTRÉS
+// LIENS DE CRÉATION COMPACTS
 // =============================================
 
 .liens-ecran-travail {
@@ -322,33 +399,48 @@
   align-items: center;
   flex-wrap: wrap;
   gap: $gap-md;
-  margin: $margin-xl 0;
-  padding: $padding-lg;
-  background: rgba($color-dark, 0.02);
+  margin: $spacing-lg 0;
+  padding: $spacing-md;
+  background: rgba($color-text-primary, 0.02);
   border-radius: $border-radius;
-  border: 1px dashed rgba($color-dark, 0.1);
+  border: 1px dashed rgba($color-primary, 0.2);
 }
 
 .add-scene-btn-ecran-travail {
-  @extend .add-btn-ecran;
-  padding: $padding-sm $padding-md;
-  font-size: $font-size-p1;
-  white-space: nowrap;
+  padding: $padding-xs $padding-sm;
+  border: 1px solid $color-primary;
+  border-radius: $border-radius-sm;
+  background: $color-primary;
+  color: $color-white;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
   
   &:hover {
-    transform: translateY(-2px);
+    background: darken($color-primary, 10%);
+    border-color: darken($color-primary, 10%);
+    transform: translateY(-1px);
+  }
+  
+  i {
+    color: $color-white;
+    font-size: $font-size-p2;
   }
 }
 
 // =============================================
-// SÉQUENCES ET SCÈNES - BOUTONS + À DROITE
+// SÉQUENCES ET SCÈNES COMPACTES
 // =============================================
 
 .sequence-page-ecran-travail {
   background: $color-white;
   border-radius: $border-radius;
-  padding: $padding-lg;
-  margin-bottom: $margin-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
   box-shadow: $shadow;
 }
 
@@ -357,25 +449,37 @@
   display: flex;
   align-items: center;
   gap: $gap-sm;
-  margin-bottom: $margin-md;
+  margin-bottom: $spacing-md;
+  flex-wrap: wrap;
 }
 
 .sequence-info-ecran-travail {
   @include typography-p1;
-  margin-bottom: $margin-sm;
+  margin-bottom: $spacing-sm;
+  color: $color-text-secondary;
+  
+  strong {
+    color: $color-text-primary;
+  }
 }
 
 .scenes-section-ecran-travail {
-  margin-top: $margin-xl;
+  margin-top: $spacing-lg;
 }
 
 .section-header-ecran-travail {
   display: flex;
-  justify-content: space-between; // Titre à gauche, boutons à droite
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: $margin-md;
-  padding-bottom: $padding-sm;
-  border-bottom: 1px solid rgba($color-dark, 0.1);
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid rgba($color-primary, 0.2);
+  
+  @include respond-to($breakpoint-sm) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-sm;
+  }
   
   h3, h4 {
     margin: 0;
@@ -383,36 +487,23 @@
   }
 }
 
-// Boutons +scène et +dialogue plus petits et à droite
-.scenes-section-ecran-travail .section-header-ecran-travail,
-.scene-card-ecran-travail .section-header-ecran-travail {
-  .add-scene-btn-ecran-travail,
-  .add-dialogue-btn-ecran-travail {
-    @extend .btn-small-Scenariste;
-    padding: $gap-xs $padding-sm;
-    font-size: $font-size-p2;
-    white-space: nowrap;
-    margin-left: auto; // Pousse vers la droite
-  }
-}
-
 .scenes-list-ecran-travail {
   display: flex;
   flex-direction: column;
-  gap: $margin-lg;
+  gap: $spacing-md;
 }
 
 .scene-card-ecran-travail {
-  background: rgba($color-light, 0.5);
+  background: rgba($color-primary, 0.05);
   border-radius: $border-radius;
-  padding: $padding-lg;
-  border: 1px solid rgba($color-dark, 0.08);
+  padding: $spacing-md;
+  border: 1px solid rgba($color-primary, 0.2);
   box-shadow: $shadow;
   transition: $transition;
   
   &:hover {
     box-shadow: $shadow-hover;
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
 }
 
@@ -421,49 +512,76 @@
   display: flex;
   align-items: center;
   gap: $gap-sm;
-  margin-bottom: $margin-md;
+  margin-bottom: $spacing-sm;
+  flex-wrap: wrap;
 }
 
 .scene-info-ecran-travail {
   @include typography-p1;
-  margin-bottom: $margin-sm;
+  margin-bottom: $spacing-sm;
+  color: $color-text-secondary;
+  
+  strong {
+    color: $color-text-primary;
+  }
 }
 
 .scene-actions-ecran-travail {
-  margin-top: $margin-md;
+  margin-top: $spacing-md;
   display: flex;
-  justify-content: flex-end; // Boutons à droite
+  justify-content: flex-end;
 }
 
 .export-dialogues-btn-ecran-travail {
-  @extend .btn-outline-primary-Scenariste;
+  padding: $gap-xs $gap-sm;
+  border: 1px solid $color-primary;
+  border-radius: $border-radius-sm;
+  background: transparent;
+  color: $color-primary;
   font-size: $font-size-p2;
-  padding: $gap-xs $padding-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
 }
 
 // =============================================
-// LIEUX ET PLATEAUX
+// LIEUX ET PLATEAUX COMPACTS
 // =============================================
 
 .lieux-plateaux-ecran-travail {
-  margin: $margin-md 0;
+  margin: $spacing-sm 0;
 }
 
 .lieux-list-ecran-travail {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
 }
 
 .lieu-item-ecran-travail {
   background: $color-white;
-  padding: $padding-sm;
-  margin-bottom: $gap-sm;
+  padding: $spacing-sm;
   border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-dark, 0.1);
+  border: 1px solid rgba($color-primary, 0.2);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  transition: $transition;
+  
+  &:hover {
+    border-color: rgba($color-primary, 0.4);
+  }
 }
 
 .lieu-description-ecran-travail {
@@ -473,39 +591,41 @@
 }
 
 .no-lieux-ecran-travail {
-  @include typography-p2;
+  @include typography-p1;
   color: $color-text-muted;
   font-style: italic;
   text-align: center;
-  padding: $padding-md;
-  background: rgba($color-dark, 0.02);
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.05);
   border-radius: $border-radius-sm;
 }
 
 // =============================================
-// DIALOGUES
+// DIALOGUES COMPACTS
 // =============================================
 
 .dialogues-ecran-travail {
-  margin: $margin-md 0;
+  margin: $spacing-md 0;
 }
 
 .dialogues-list-ecran-travail {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
 }
 
 .dialogue-item-ecran-travail {
   background: $color-white;
-  padding: $padding-md;
-  margin-bottom: $gap-md;
+  padding: $spacing-md;
   border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-dark, 0.1);
+  border: 1px solid rgba($color-primary, 0.2);
   transition: $transition;
   
   &:hover {
-    border-color: rgba($color-primary, 0.3);
+    border-color: rgba($color-primary, 0.4);
   }
 }
 
@@ -521,7 +641,7 @@
 }
 
 .text-highlight-ecran-travail {
-  padding: 1px 2px;
+  padding: 1px gap-xs;
   border-radius: 2px;
   margin: 0 1px;
 }
@@ -533,7 +653,7 @@
   font-style: italic;
   margin-top: $gap-xs;
   padding: $gap-xs $gap-sm;
-  background: rgba($color-dark, 0.03);
+  background: rgba($color-primary, 0.05);
   border-radius: $border-radius-sm;
 }
 
@@ -542,65 +662,101 @@
   gap: $gap-md;
   align-items: center;
   margin-top: $gap-sm;
-  justify-content: flex-end; // Actions à droite
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .add-dialogue-btn-ecran-travail {
-  @extend .add-btn-ecran;
+  padding: $gap-xs $gap-sm;
+  border: 1px solid $color-primary;
+  border-radius: $border-radius-sm;
+  background: $color-primary;
+  color: $color-white;
   font-size: $font-size-p2;
-  padding: $gap-xs $padding-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: darken($color-primary, 10%);
+    border-color: darken($color-primary, 10%);
+  }
 }
 
 // =============================================
-// COMMENTAIRES
+// COMMENTAIRES COMPACTS
 // =============================================
 
 .comment-section-ecran-travail {
-  background: rgba($color-dark, 0.02);
+  background: rgba($color-primary, 0.05);
   border-radius: $border-radius;
-  padding: $padding-md;
-  margin: $margin-md 0;
-  border: 1px solid rgba($color-dark, 0.05);
+  padding: $spacing-md;
+  margin: $spacing-md 0;
+  border: 1px solid rgba($color-primary, 0.2);
 }
 
 .add-comment-ecran-travail {
-  margin-bottom: $margin-md;
+  margin-bottom: $spacing-md;
   
   textarea {
     width: 100%;
-    padding: $padding-sm;
-    border: 1px solid rgba($color-dark, 0.1);
+    padding: $spacing-sm;
+    border: 1px solid rgba($color-primary, 0.2);
     border-radius: $border-radius-sm;
     background: $color-white;
     font-size: $font-size-p1;
+    color: $color-text-primary;
     resize: vertical;
     min-height: 80px;
+    transition: $transition;
     
     &:focus {
       outline: none;
       border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+    
+    &::placeholder {
+      color: $color-text-muted;
     }
   }
 }
 
 .add-comment-btn-ecran-travail {
-  @extend .primary-btn-Scenariste;
-  margin-top: $gap-sm;
+  padding: $gap-xs $gap-sm;
+  border: 1px solid $color-primary;
+  border-radius: $border-radius-sm;
+  background: $color-primary;
+  color: $color-white;
   font-size: $font-size-p2;
-  padding: $gap-xs $padding-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  margin-top: $gap-sm;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: darken($color-primary, 10%);
+    border-color: darken($color-primary, 10%);
+  }
 }
 
 .comments-list-ecran-travail {
   display: flex;
   flex-direction: column;
-  gap: $gap-md;
+  gap: $spacing-sm;
 }
 
 .comment-item-ecran-travail {
   background: $color-white;
-  padding: $padding-sm;
+  padding: $spacing-sm;
   border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-dark, 0.08);
+  border: 1px solid rgba($color-primary, 0.2);
 }
 
 .comment-header-ecran-travail {
@@ -624,6 +780,7 @@
 .comment-content-ecran-travail {
   @include typography-p1;
   color: $color-text-secondary;
+  line-height: $line-height-base;
 }
 
 .comment-actions-ecran-travail {
@@ -631,18 +788,45 @@
 }
 
 .delete-comment-btn-ecran-travail {
-  @extend .btn-error-Scenariste;
-  font-size: $font-size-p3;
   padding: $gap-xs $gap-sm;
+  border: 1px solid $color-error;
+  border-radius: $border-radius-sm;
+  background: $color-error;
+  color: $color-white;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover {
+    background: darken($color-error, 10%);
+    border-color: darken($color-error, 10%);
+  }
 }
 
 .close-comments-btn-ecran-travail {
-  @extend .secondary-btn-Scenariste;
-  margin-top: $margin-sm;
+  padding: $gap-xs $gap-sm;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  color: $color-text-primary;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  margin-top: $spacing-sm;
+  
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
 }
 
 // =============================================
-// ICÔNES
+// ICÔNES COMPACTES
 // =============================================
 
 .icon-edit-ecran-travail,
@@ -656,262 +840,92 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: $font-size-p2;
   
   &:hover {
-    background: rgba($color-dark, 0.1);
+    background: rgba($color-primary, 0.1);
     transform: scale(1.1);
   }
 }
 
 .icon-ecran-travail {
-  font-size: $font-size-p1;
-}
-
-// =============================================
-// MODALES
-// =============================================
-
-.modal-overlay-ecran-travail {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba($color-dark, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: $z-index-modal;
-  padding: $padding-md;
-}
-
-.modal-content-ecran-travail {
-  background: $color-white;
-  border-radius: $border-radius;
-  box-shadow: $shadow-lg;
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header-ecran-travail {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $padding-lg;
-  border-bottom: 1px solid rgba($color-dark, 0.1);
-  
-  h3 {
-    margin: 0;
-    color: $color-text-primary;
-  }
-}
-
-.close-btn-ecran-travail {
-  @extend .btn-ghost-Scenariste;
-  padding: $gap-xs;
-  border-radius: 50%;
-}
-
-.edit-form-ecran-travail {
-  padding: $padding-lg;
-}
-
-.form-group-ecran-travail {
-  margin-bottom: $margin-md;
-  
-  label {
-    display: block;
-    margin-bottom: $gap-xs;
-    font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-    font-size: $font-size-p1;
-  }
-}
-
-.form-input-ecran-travail,
-.form-textarea-ecran-travail,
-.form-select-ecran-travail {
-  width: 100%;
-  padding: $padding-sm;
-  border: 1px solid rgba($color-dark, 0.1);
-  border-radius: $border-radius-sm;
-  background: $color-white;
-  font-size: $font-size-p1;
-  color: $color-text-primary;
-  
-  &:focus {
-    outline: none;
-    border-color: $color-primary;
-  }
-}
-
-.form-textarea-ecran-travail {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.modal-actions-ecran-travail {
-  display: flex;
-  justify-content: flex-end;
-  gap: $gap-sm;
-  margin-top: $margin-lg;
-}
-
-.cancel-btn-ecran-travail {
-  @extend .cancel-btn-Scenariste;
-}
-
-.save-btn-ecran-travail {
-  @extend .save-btn-Scenariste;
-}
-
-// =============================================
-// ÉTATS ET MESSAGES
-// =============================================
-
-.loading-ecran-travail {
-  text-align: center;
-  padding: $padding-xl;
-  color: $color-text-muted;
-  font-size: $font-size-p1;
-}
-
-.error-message-ecran-travail {
-  background: rgba($color-red, 0.1);
-  color: $color-red;
-  padding: $padding-md;
-  border-radius: $border-radius-sm;
-  margin: $margin-md 0;
-  border: 1px solid rgba($color-red, 0.2);
-}
-
-.retry-btn-ecran-travail {
-  @extend .btn-error-Scenariste;
-  margin-left: $margin-sm;
   font-size: $font-size-p2;
-  padding: $gap-xs $gap-sm;
-}
-
-.no-data-ecran-travail {
-  text-align: center;
-  padding: $padding-xl;
-  color: $color-text-muted;
-  font-style: italic;
-  background: rgba($color-dark, 0.02);
-  border-radius: $border-radius;
-  margin: $margin-lg 0;
 }
 
 // =============================================
-// ANIMATIONS
+// SIDEBAR OPTIONS COMPACTE
 // =============================================
 
-.blinking-icon-ecran-travail {
-  animation: blink-ecran-travail 2s infinite;
-  margin-left: $gap-xs;
-}
-
-@keyframes blink-ecran-travail {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.3; }
-}
-
-// =============================================
-// SIDEBAR OPTIONS À DROITE - CORRIGÉ
-// =============================================
 .options-sidebar {
   position: fixed;
   right: 0;
-  top: 20px; // ← CHANGÉ : en haut à droite
-  transform: none; // ← SUPPRIMÉ le translateY
+  top: $spacing-md;
   z-index: $z-index-fixed;
   background: $color-white;
-  border-radius: $border-radius-lg 0 0 $border-radius-lg;
+  border-radius: $border-radius 0 0 $border-radius;
   box-shadow: $shadow-lg;
-  transition: all $transition-slow;
-  overflow: hidden;
+  transition: $transition-slow;
   border: 1px solid rgba($color-primary, 0.2);
-  height: auto;
   display: flex;
   flex-direction: column;
 
-  // État fermé
   &:not(.open) {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     
     .sidebar-content {
       display: none;
     }
-    
-    .sidebar-toggle {
-      width: 100%;
-      height: 100%;
-      border-radius: $border-radius-lg 0 0 $border-radius-lg;
-    }
   }
 
-  // État ouvert
   &.open {
-    width: 280px;
-    min-height: 400px;
-    top: 20px; // ← MAINTIENT la position en haut
+    width: 250px;
+    min-height: 300px;
     
     .sidebar-content {
       display: flex;
-      opacity: 1;
-      visibility: visible;
     }
   }
 }
 
-// Bouton de toggle
 .sidebar-toggle {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   background: $color-primary;
   color: $color-white;
   border: none;
-  border-radius: $border-radius-lg 0 0 $border-radius-lg;
+  border-radius: $border-radius 0 0 $border-radius;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
-  box-shadow: $shadow;
   transition: $transition;
-  z-index: $z-index-fixed;
 
   &:hover {
     background: darken($color-primary, 10%);
-    transform: scale(1.05);
   }
 }
 
-// Contenu de la sidebar - TOUJOURS VISIBLE QUAND OUVERT
 .sidebar-content {
-  padding: $padding-lg;
+  padding: $spacing-md;
   display: flex;
   flex-direction: column;
-  gap: $gap-lg;
+  gap: $spacing-sm;
   flex: 1;
-  opacity: 1;
-  visibility: visible;
   
   .liens-ecran-travail {
     display: flex;
     flex-direction: column;
-    gap: $gap-sm;
+    gap: $gap-xs;
     
     .nav-btn-ecran-travail,
     .add-scene-btn-ecran-travail {
       width: 100%;
       justify-content: flex-start;
       text-align: left;
-      padding: $padding-sm $padding-md;
+      padding: $spacing-sm;
       border-radius: $border-radius-sm;
       font-size: $font-size-p2;
       white-space: nowrap;
@@ -921,22 +935,22 @@
       transition: $transition;
       
       i {
-        margin-right: $gap-sm;
-        width: 20px;
+        margin-right: $gap-xs;
+        width: 16px;
         text-align: center;
         color: $color-primary;
+        font-size: $font-size-p2;
       }
       
       &:hover {
         background: rgba($color-primary, 0.2);
-        transform: translateX(-3px);
+        transform: translateX(-2px);
         border-color: $color-primary;
       }
     }
   }
 }
 
-// Correction pour l'export
 .export-container {
   width: 100%;
   
@@ -947,7 +961,7 @@
     .export-main-btn {
       width: 100%;
       justify-content: flex-start;
-      padding: $padding-sm $padding-md;
+      padding: $spacing-sm;
       border-radius: $border-radius-sm;
       font-size: $font-size-p2;
       background: rgba($color-accent, 0.1);
@@ -956,10 +970,11 @@
       transition: $transition;
       
       i {
-        margin-right: $gap-sm;
-        width: 20px;
+        margin-right: $gap-xs;
+        width: 16px;
         text-align: center;
         color: $color-accent;
+        font-size: $font-size-p2;
         
         &:last-child {
           margin-left: auto;
@@ -979,30 +994,34 @@
       left: 0;
       right: 0;
       top: 100%;
-      margin-top: $gap-sm;
+      margin-top: $gap-xs;
       background: $color-white;
-      box-shadow: $shadow-lg;
+      box-shadow: $shadow;
       border-radius: $border-radius-sm;
-      border: 1px solid rgba($color-primary, 0.1);
+      border: 1px solid rgba($color-primary, 0.2);
       z-index: $z-index-dropdown;
       
       .export-option {
         width: 100%;
         text-align: left;
-        padding: $padding-sm $padding-md;
+        padding: $spacing-sm;
         border-radius: 0;
-        border-bottom: 1px solid rgba($color-dark, 0.05);
+        border-bottom: 1px solid rgba($color-primary, 0.1);
         font-size: $font-size-p2;
         background: transparent;
         border: none;
         color: $color-text-primary;
         transition: $transition;
+        display: flex;
+        align-items: center;
+        gap: $gap-xs;
         
         i {
-          margin-right: $gap-sm;
-          width: 20px;
+          margin-right: $gap-xs;
+          width: 16px;
           text-align: center;
           color: $color-primary;
+          font-size: $font-size-p2;
         }
         
         &:last-child {
@@ -1026,35 +1045,242 @@
   }
 }
 
-// Ajustement pour le contenu principal
-.ecran-travail-ecran-travail {
-  transition: margin-right $transition-slow;
+// =============================================
+// MODALES COMPACTES
+// =============================================
+
+.modal-overlay-ecran-travail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($color-text-primary, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-sm;
+}
+
+.modal-content-ecran-travail {
+  background: $color-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header-ecran-travail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  border-bottom: 1px solid rgba($color-primary, 0.2);
   
-  .options-sidebar.open ~ & {
-    margin-right: 280px;
-    margin-top: 0; // ← Pas de marge en haut
-  }
-  
-  .options-sidebar:not(.open) ~ & {
-    margin-right: 60px;
-    margin-top: 0; // ← Pas de marge en haut
+  h3 {
+    margin: 0;
+    color: $color-text-primary;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    i {
+      color: $color-primary;
+    }
   }
 }
 
+.close-btn-ecran-travail {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: $color-text-muted;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: $transition;
+  font-size: $font-size-p2;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    color: $color-text-primary;
+  }
+}
+
+.edit-form-ecran-travail {
+  padding: $spacing-md;
+}
+
+.form-group-ecran-travail {
+  margin-bottom: $spacing-md;
+  
+  label {
+    display: block;
+    margin-bottom: $gap-xs;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    font-size: $font-size-p1;
+  }
+}
+
+.form-input-ecran-travail,
+.form-textarea-ecran-travail,
+.form-select-ecran-travail {
+  width: 100%;
+  padding: $spacing-sm;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  font-size: $font-size-p1;
+  color: $color-text-primary;
+  transition: $transition;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+}
+
+.form-textarea-ecran-travail {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modal-actions-ecran-travail {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+  
+  @include respond-to($breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.cancel-btn-ecran-travail {
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  color: $color-text-primary;
+  font-size: $font-size-p1;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+}
+
+.save-btn-ecran-travail {
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $color-primary;
+  border-radius: $border-radius-sm;
+  background: $color-primary;
+  color: $color-white;
+  font-size: $font-size-p1;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+  
+  &:hover:not(:disabled) {
+    background: darken($color-primary, 10%);
+    border-color: darken($color-primary, 10%);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
 
 // =============================================
-// RESPONSIVE
+// ÉTATS ET MESSAGES COMPACTS
 // =============================================
 
-@media (max-width: $breakpoint-md) {
+.loading-ecran-travail {
+  text-align: center;
+  padding: $spacing-lg;
+  color: $color-text-muted;
+  @include typography-p1;
+}
+
+.error-message-ecran-travail {
+  background: rgba($color-error, 0.1);
+  color: $color-error;
+  padding: $spacing-md;
+  border-radius: $border-radius-sm;
+  margin: $spacing-md 0;
+  border: 1px solid rgba($color-error, 0.2);
+  @include typography-p1;
+}
+
+.retry-btn-ecran-travail {
+  padding: $gap-xs $gap-sm;
+  border: 1px solid $color-error;
+  border-radius: $border-radius-sm;
+  background: $color-error;
+  color: $color-white;
+  font-size: $font-size-p2;
+  cursor: pointer;
+  transition: $transition;
+  margin-left: $spacing-sm;
+  
+  &:hover {
+    background: darken($color-error, 10%);
+    border-color: darken($color-error, 10%);
+  }
+}
+
+.no-data-ecran-travail {
+  text-align: center;
+  padding: $spacing-lg;
+  color: $color-text-muted;
+  font-style: italic;
+  background: rgba($color-primary, 0.05);
+  border-radius: $border-radius;
+  margin: $spacing-lg 0;
+  @include typography-p1;
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+
+.blinking-icon-ecran-travail {
+  animation: blink-ecran-travail 2s infinite;
+  margin-left: $gap-xs;
+  font-size: $font-size-p2;
+}
+
+@keyframes blink-ecran-travail {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+// =============================================
+// RESPONSIVE COMPACT
+// =============================================
+
+@include respond-to($breakpoint-md) {
   .ecran-travail-ecran-travail {
-    padding: $padding-sm;
-    margin: $gap-xs;
+    padding: $spacing-sm;
+    max-width: 100%;
+  }
+  
+  .header-ecran-travail {
+    margin-bottom: $spacing-md;
   }
   
   .navigation-ecran-travail {
     flex-direction: column;
-    align-items: stretch;
     gap: $gap-md;
   }
   
@@ -1066,26 +1292,52 @@
   
   .episode-navigation-ecran-travail,
   .sequence-navigation-ecran-travail {
-    justify-content: center;
+    padding: $spacing-sm;
   }
   
+  .sequence-header-ecran-travail,
+  .scene-header-ecran-travail,
   .section-header-ecran-travail {
     flex-direction: column;
     align-items: stretch;
     gap: $gap-sm;
   }
   
-  .project-title-section {
-    text-align: center;
+  .options-sidebar {
+    top: $spacing-sm;
+    
+    &.open {
+      width: 200px;
+    }
+    
+    &:not(.open) {
+      width: 35px;
+      height: 35px;
+    }
   }
   
-  .navigation-right-section {
-    justify-content: center;
+  .sidebar-toggle {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
   }
+  
+  .sidebar-content {
+    padding: $spacing-sm;
+  }
+}
 
+@include respond-to($breakpoint-sm) {
+  .project-meta,
+  .project-stats {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-sm;
+  }
+  
   .modal-content-ecran-travail {
-    margin: $padding-sm;
-    width: calc(100% - #{$padding-md});
+    margin: $spacing-xs;
+    width: calc(100% - #{$spacing-sm});
   }
   
   .modal-actions-ecran-travail {
@@ -1094,7 +1346,8 @@
   
   .dialogue-actions-ecran-travail {
     flex-wrap: wrap;
-    gap: $gap-sm;
+    gap: $gap-xs;
+    justify-content: center;
   }
   
   .title-episode-ecran-travail {
@@ -1102,39 +1355,6 @@
     align-items: flex-start;
     gap: $gap-xs;
   }
-  
-  // Responsive sidebar
-   .options-sidebar {
-    top: 10px; // ← Ajusté pour mobile
-    
-    &.open {
-      width: 200px;
-    }
-    
-    &:not(.open) {
-      width: 40px;
-      height: 40px;
-    }
-  }
-  
-  .sidebar-toggle {
-    width: 50px;
-    height: 50px;
-    font-size: 18px;
-  }
-  
-  .sidebar-content {
-    padding: $padding-md;
-  }
-  
-  .ecran-travail-ecran-travail {
-    .options-sidebar.open ~ & {
-      margin-right: 250px;
-    }
-    
-    .options-sidebar:not(.open) ~ & {
-      margin-right: 50px;
-    }
-  }
 }
+
 

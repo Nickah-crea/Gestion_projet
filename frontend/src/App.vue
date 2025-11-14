@@ -39,7 +39,7 @@ body {
   min-height: 100vh;
 }
 
-.app-wrapper {
+.app-wrapper-global {
   margin-left: 190px; /* Largeur de la sidebar ouverte */
   transition: margin-left var(--transition);
   min-height: 100vh;
@@ -47,7 +47,7 @@ body {
   background: #fff;
 }
 
-.sidebar.collapsed ~ .app-wrapper {
+.sidebar.collapsed ~ .app-wrapper-global {
   margin-left: 50px; /* Largeur de la sidebar fermée */
   width: calc(100% - 50px);
 }

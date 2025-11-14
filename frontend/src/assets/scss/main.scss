@@ -13,6 +13,7 @@
 @import 'components/forms';
 @import 'components/sidebar';
 @import 'components/cinema-icons'; // AJOUTE CETTE LIGNE
+@import 'components/lightDark'; // AJOUTE CETTE LIGNE
 
 // Layouts
 @import 'layouts/header';
@@ -27,5 +28,6 @@
 @import 'pages/ecran';
 @import 'pages/add';
 @import 'pages/_sceneTournage';
+@import 'pages/_add-comedien';
 
 

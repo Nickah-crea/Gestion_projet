@@ -1,41 +1,82 @@
 package com.example.films.service;
 
-import com.example.films.dto.LoginResponse;
+import com.example.films.dto.CreationUtilisateurRequest;
+import com.example.films.dto.UtilisateurCreeDTO;
 import com.example.films.entity.Utilisateur;
 import com.example.films.repository.UtilisateurRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AuthService {
     
     private final UtilisateurRepository utilisateurRepository;
-    
-    public AuthService(UtilisateurRepository utilisateurRepository) {
+    private final PasswordEncoder passwordEncoder;
+    private final UtilisateurService utilisateurService;
+
+    public AuthService(UtilisateurRepository utilisateurRepository, 
+                      PasswordEncoder passwordEncoder,
+                      UtilisateurService utilisateurService) {
         this.utilisateurRepository = utilisateurRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.utilisateurService = utilisateurService;
     }
-    
-    public LoginResponse login(String email, String password) throws Exception {
-        // Rechercher l'utilisateur par email
-        Utilisateur utilisateur = utilisateurRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("Email ou mot de passe incorrect"));
-        
-        // Vérifier le mot de passe (comparaison simple pour l'exemple)
-        if (!utilisateur.getMotDePasse().equals(password)) {
-            throw new Exception("Email ou mot de passe incorrect");
+
+    @Transactional
+    public UtilisateurCreeDTO register(CreationUtilisateurRequest request) {
+        // Vérifier si l'email existe déjà
+        Optional<Utilisateur> utilisateurExistant = utilisateurRepository.findByEmail(request.getEmail());
+        if (utilisateurExistant.isPresent()) {
+            throw new RuntimeException("Un utilisateur avec cet email existe déjà");
         }
-        
-        // Générer un token simple (en production, utiliser JWT)
-        String token = generateSimpleToken(utilisateur);
-        
-        return new LoginResponse(token, utilisateur);
+
+        // Créer l'utilisateur selon le rôle
+        switch (request.getRole().toUpperCase()) {
+            case "SCENARISTE":
+                return utilisateurService.creerScenariste(request);
+            case "REALISATEUR":
+                return utilisateurService.creerRealisateur(request);
+            case "ADMIN":
+                return utilisateurService.creerAdmin(request);
+            default:
+                throw new RuntimeException("Rôle non valide: " + request.getRole());
+        }
     }
-    
-    private String generateSimpleToken(Utilisateur utilisateur) {
-        // Token simple basé sur l'ID utilisateur et timestamp
-        String tokenData = utilisateur.getId() + ":" + utilisateur.getEmail() + ":" + new Date().getTime();
-        return Base64.getEncoder().encodeToString(tokenData.getBytes());
+
+    public Map<String, Object> login(String email, String password) {
+        Optional<Utilisateur> utilisateurOpt = utilisateurRepository.findByEmail(email);
+        
+        if (utilisateurOpt.isEmpty() || !passwordEncoder.matches(password, utilisateurOpt.get().getMotDePasse())) {
+            throw new RuntimeException("Email ou mot de passe incorrect");
+        }
+
+        Utilisateur utilisateur = utilisateurOpt.get();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Connexion réussie");
+        
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("id", utilisateur.getId());
+        userData.put("nom", utilisateur.getNom());
+        userData.put("email", utilisateur.getEmail());
+        userData.put("role", utilisateur.getRole());
+        
+        response.put("user", userData);
+        response.put("token", genererTokenSimule(utilisateur)); // À remplacer par JWT
+
+        return response;
     }
-} 
+
+    private String genererTokenSimule(Utilisateur utilisateur) {
+        // Pour l'instant, génération d'un token simple
+        // À remplacer par une implémentation JWT réelle
+        return "token-simule-" + utilisateur.getId() + "-" + System.currentTimeMillis();
+    }
+}
+
