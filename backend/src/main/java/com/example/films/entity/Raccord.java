@@ -53,6 +53,9 @@ public class Raccord {
     // @JoinColumn(name = "id_planning_tournage")
     // private PlanningTournage planningTournage;
 
+    @Column(name = "est_raccord_replanification")
+    private Boolean estRaccordReplanification = false;
+
     @OneToMany(mappedBy = "raccord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RaccordImage> images = new ArrayList<>();
 

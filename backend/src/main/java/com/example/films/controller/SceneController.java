@@ -44,13 +44,27 @@ public class SceneController {
             return ResponseEntity.badRequest().build();
         }
     }
-    
 
-    // Endpoint pour récupérer toutes les scènes
+    // Endpoint UNIQUE pour récupérer les scènes avec filtres optionnels
     @GetMapping
-    public ResponseEntity<List<SceneDTO>> getAllScenes() {
+    public ResponseEntity<List<SceneDTO>> getScenes(
+            @RequestParam(value = "projetId", required = false) Long projetId,
+            @RequestParam(value = "episodeId", required = false) Long episodeId,
+            @RequestParam(value = "sequenceId", required = false) Long sequenceId) {
+        
         try {
-            List<SceneDTO> scenes = sceneService.getAllScenes();
+            List<SceneDTO> scenes;
+            
+            if (projetId != null) {
+                scenes = sceneService.getScenesByProjetId(projetId);
+            } else if (episodeId != null) {
+                scenes = sceneService.getScenesByEpisodeId(episodeId);
+            } else if (sequenceId != null) {
+                scenes = sceneService.getScenesBySequenceId(sequenceId);
+            } else {
+                scenes = sceneService.getAllScenes();
+            }
+            
             return ResponseEntity.ok(scenes);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -119,4 +133,3 @@ public class SceneController {
         }
     }
 }
-

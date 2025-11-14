@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlanningTournageRepository extends JpaRepository<PlanningTournage, Long> {
@@ -17,6 +18,9 @@ public interface PlanningTournageRepository extends JpaRepository<PlanningTourna
     
     @Query("SELECT p FROM PlanningTournage p LEFT JOIN FETCH p.scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e LEFT JOIN FETCH e.projet WHERE p.scene.id = :sceneId")
     List<PlanningTournage> findBySceneId(@Param("sceneId") Long sceneId);
+
+     @Query("SELECT p FROM PlanningTournage p LEFT JOIN FETCH p.scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e LEFT JOIN FETCH e.projet WHERE p.scene.id = :sceneId")
+    Optional<PlanningTournage> findFirstBySceneId(@Param("sceneId") Long sceneId);
     
     @Query("SELECT p FROM PlanningTournage p LEFT JOIN FETCH p.scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e LEFT JOIN FETCH e.projet WHERE e.projet.id = :projetId")
     List<PlanningTournage> findByProjetId(@Param("projetId") Long projetId);

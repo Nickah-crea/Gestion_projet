@@ -1,6 +1,8 @@
 package com.example.films.repository;
 
 import com.example.films.entity.Raccord;
+import com.example.films.entity.Scene;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -186,5 +188,17 @@ List<Raccord> findRaccordsCritiquesNonValides(@Param("dateLimite") LocalDate dat
        "OR sc.id IN (SELECT pt.scene.id FROM PlanningTournage pt WHERE pt.dateTournage = :date))")
 List<Raccord> findRaccordsParDateTournage(@Param("date") LocalDate date);
 
+@Query("SELECT r FROM Raccord r " +
+       "LEFT JOIN FETCH r.sceneSource " +
+       "LEFT JOIN FETCH r.sceneCible " +
+       "LEFT JOIN FETCH r.typeRaccord " +
+       "LEFT JOIN FETCH r.statutRaccord " +
+       "LEFT JOIN FETCH r.images " +
+       "WHERE r.sceneSource = :sceneSource AND r.sceneCible = :sceneCible " +
+       "ORDER BY r.id DESC")
+Optional<Raccord> findTopBySceneSourceAndSceneCibleOrderByIdDesc(
+    @Param("sceneSource") Scene sceneSource, 
+    @Param("sceneCible") Scene sceneCible);
+    
 }
 

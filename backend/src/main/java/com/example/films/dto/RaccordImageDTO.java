@@ -15,4 +15,5 @@ public class RaccordImageDTO {
     private String descriptionImage;
     private Boolean estImageReference;
     private LocalDateTime creeLe;
+     private Long typeRaccordId;
 }

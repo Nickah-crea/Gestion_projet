@@ -180,10 +180,18 @@ public class SceneService {
             newOrder++;
         }
     }
+
     public SceneDTO getSceneById(Long id) {
         Scene scene = sceneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Scène non trouvée"));
         return convertToDTO(scene);
+    }
+
+    public List<SceneDTO> getScenesByEpisodeId(Long episodeId) {
+        List<Scene> scenes = sceneRepository.findByEpisodeId(episodeId);
+        return scenes.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
