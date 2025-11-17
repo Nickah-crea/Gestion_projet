@@ -96,6 +96,73 @@
             </div>
           </div>
 
+          <div class="form-section">
+            <h4><i class="fas fa-user"></i> Personnage et Comédien</h4>
+            <p class="section-description">
+              Optionnel - Liez ce raccord à un personnage spécifique
+            </p>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="personnage">Personnage</label>
+                <select 
+                  id="personnage"
+                  v-model="raccordData.personnageId"
+                  @change="onPersonnageChange"
+                  class="form-select"
+                >
+                  <option value="">Aucun personnage</option>
+                  <option 
+                    v-for="personnage in personnages" 
+                    :key="personnage.id" 
+                    :value="personnage.id"
+                  >
+                    {{ personnage.nom }}
+                    <span v-if="personnage.comedienNom"> - {{ personnage.comedienNom }}</span>
+                  </option>
+                </select>
+                <small class="field-description">
+                  Sélectionnez un personnage pour lier automatiquement le comédien
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label for="comedien">Comédien (automatique)</label>
+                <input 
+                  id="comedien"
+                  type="text" 
+                  :value="getComedienNameFromPersonnage(raccordData.personnageId)" 
+                  disabled 
+                  class="form-select disabled-input"
+                  placeholder="Sélectionnez un personnage d'abord"
+                >
+                <small class="field-description">
+                  Le comédien est automatiquement déterminé par le personnage sélectionné
+                </small>
+              </div>
+            </div>
+
+            <!-- Affichage des informations du personnage sélectionné -->
+            <div v-if="selectedPersonnageInfo" class="personnage-info">
+              <h5>Informations du personnage sélectionné</h5>
+              <div class="info-grid">
+                <div class="info-item">
+                  <strong>Personnage:</strong> {{ selectedPersonnageInfo.nom }}
+                </div>
+                <div v-if="selectedPersonnageInfo.description" class="info-item">
+                  <strong>Description:</strong> {{ selectedPersonnageInfo.description }}
+                </div>
+                <div v-if="selectedPersonnageInfo.comedienNom" class="info-item">
+                  <strong>Comédien:</strong> {{ selectedPersonnageInfo.comedienNom }}
+                </div>
+                <div v-if="selectedPersonnageInfo.projetTitre" class="info-item">
+                  <strong>Projet:</strong> {{ selectedPersonnageInfo.projetTitre }}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+
           <!-- Sélection des types de raccord -->
           <div class="form-section">
             <h4><i class="fas fa-tags"></i> Types de Raccord</h4>
@@ -312,6 +379,8 @@ const filteredPhotos = ref([])
 const selectedPhotoType = ref('')
 const sceneSourceInfo = ref(null)
 const sceneCibleInfo = ref(null)
+const personnages = ref([])
+const selectedPersonnageInfo = ref(null)
 
 // Données du raccord
 const raccordData = ref({
@@ -320,7 +389,9 @@ const raccordData = ref({
   selectedTypes: [],
   description: '',
   estCritique: false,
-  statutRaccordId: 1
+  statutRaccordId: 1,
+  personnageId: null,   
+  comedienId: null
 })
 
 const selectedPhotos = ref([])
@@ -383,7 +454,8 @@ const loadInitialData = async () => {
     await Promise.all([
       loadScenes(),
       loadTypesRaccord(),
-      loadStatutsRaccord()
+      loadStatutsRaccord(),
+      loadPersonnages() 
     ])
   } catch (error) {
     console.error('Erreur lors du chargement des données:', error)
@@ -417,6 +489,51 @@ const loadScenes = async () => {
     console.error('Erreur lors du chargement des scènes:', error)
   }
 }
+
+const loadPersonnages = async () => {
+  try {
+    let url = '/api/personnages'
+    
+    // Si un projetId est spécifié, filtrer les personnages par projet
+    if (props.projetId) {
+      url += `?projetId=${props.projetId}`
+    }
+    
+    const response = await axios.get(url)
+    personnages.value = response.data
+    console.log('Personnages chargés:', personnages.value.length)
+  } catch (error) {
+    console.error('Erreur lors du chargement des personnages:', error)
+    personnages.value = []
+  }
+}
+
+const onPersonnageChange = () => {
+  if (raccordData.value.personnageId) {
+    // Trouver les informations du personnage sélectionné
+    const personnage = personnages.value.find(p => p.id === raccordData.value.personnageId)
+    selectedPersonnageInfo.value = personnage || null
+    
+    // Mettre à jour automatiquement l'ID du comédien
+    if (personnage && personnage.comedienId) {
+      raccordData.value.comedienId = personnage.comedienId
+    } else {
+      raccordData.value.comedienId = null
+    }
+  } else {
+    selectedPersonnageInfo.value = null
+    raccordData.value.comedienId = null
+  }
+}
+
+const getComedienNameFromPersonnage = (personnageId) => {
+  if (!personnageId) return 'Aucun comédien'
+  const personnage = personnages.value.find(p => p.id === personnageId)
+  return personnage && personnage.comedienNom 
+    ? personnage.comedienNom 
+    : 'Aucun comédien assigné'
+}
+
 
 const loadTypesRaccord = async () => {
   try {
@@ -585,7 +702,9 @@ const createRaccord = async () => {
       estCritique: raccordData.value.estCritique,
       statutRaccordId: raccordData.value.statutRaccordId,
       typesRaccord: raccordData.value.selectedTypes,
-      photosIds: selectedPhotos.value.map(photo => photo.id)
+      photosIds: selectedPhotos.value.map(photo => photo.id),
+      personnageId: raccordData.value.personnageId,  
+      comedienId: raccordData.value.comedienId 
     }
 
     const response = await axios.post('/api/raccords/scene-liaison', raccordPayload)
@@ -608,10 +727,13 @@ const resetForm = () => {
     selectedTypes: [],
     description: '',
     estCritique: false,
-    statutRaccordId: 1
+    statutRaccordId: 1,
+    personnageId: null,  
+    comedienId: null   
   }
   selectedPhotos.value = []
   sceneCibleInfo.value = null
+  selectedPersonnageInfo.value = null
   
   // Mettre à jour le filtre avec la bonne structure d'ID
   if (availableScenes.value.length > 0 && props.sceneSourceId) {
@@ -640,6 +762,7 @@ onMounted(() => {
   // Charger les données de base
   loadTypesRaccord()
   loadStatutsRaccord()
+  loadPersonnages()
 })
 </script>
 <style scoped>
@@ -1146,6 +1269,48 @@ input[type="checkbox"] {
   background: #f9f9f9;
   border-radius: 8px;
   border: 2px dashed #ddd;
+}
+
+.personnage-info {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #17a2b8;
+  margin-top: 15px;
+}
+
+.personnage-info h5 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.info-item {
+  font-size: 13px;
+  color: #495057;
+}
+
+.info-item strong {
+  color: #2c3e50;
+}
+
+.disabled-input {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 </style>
