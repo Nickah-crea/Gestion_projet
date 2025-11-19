@@ -1,28 +1,35 @@
 @import '../base/variables';
+@import '../components/buttons';
 
 // =============================================
 // VARIABLES SPÉCIFIQUES À LA CONNEXION
 // =============================================
-$conn-form-width: 500px;
-$conn-card-width: 480px;
-$conn-form-inner-width: 400px;
+$conn-form-width: 400px;
+$conn-card-width: 380px;
+$conn-form-inner-width: 340px;
 
 // =============================================
-// STRUCTURE PRINCIPALE
+// ARRIÈRE-PLAN - SUPPRIMER L'IMAGE
 // =============================================
 .app-wrapper-co-conn {
   padding: 0;
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, rgba($color-primary, 0.1) 0%, rgba($color-accent, 0.1) 100%);
+  
+  // SUPPRIMEZ COMPLÈTEMENT les ::before et ::after existants
 }
 
 .connexion-container-conn {
   height: 100vh;
   @include flex-center;
   position: relative;
-  overflow: hidden;
+  z-index: 1;
+}
+
+.background-animation-connexion {
+  display: none;
 }
 
 .connexion-form-section-conn {
@@ -32,29 +39,215 @@ $conn-form-inner-width: 400px;
   position: relative;
   z-index: $z-index-modal;
 }
- 
+
 // =============================================
-// CARTE DE CONNEXION - CORRIGÉ EN BLANC
+// ANIMATION BOBINES DE FILM - EFFET VAGUES
+// =============================================
+
+.film-strips-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.film-strip {
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg width='120' height='40' viewBox='0 0 120 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.15'%3E%3Crect width='120' height='40' fill='%231A237E'/%3E%3Ccircle cx='20' cy='20' r='8' fill='%23000051'/%3E%3Ccircle cx='40' cy='20' r='8' fill='%23000051'/%3E%3Ccircle cx='60' cy='20' r='8' fill='%23000051'/%3E%3Ccircle cx='80' cy='20' r='8' fill='%23000051'/%3E%3Ccircle cx='100' cy='20' r='8' fill='%23000051'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  height: 40px;
+  opacity: 0.4;
+  animation: film-wave 20s linear infinite;
+  
+  // Différentes tailles et positions pour créer l'effet de profondeur
+  &.strip-1 {
+    top: 10%;
+    width: 150%;
+    animation-duration: 25s;
+    background-size: 120px 40px;
+    filter: hue-rotate(0deg);
+  }
+  
+  &.strip-2 {
+    top: 30%;
+    width: 180%;
+    animation-duration: 20s;
+    animation-delay: -5s;
+    background-size: 100px 35px;
+    filter: hue-rotate(30deg);
+    opacity: 0.3;
+  }
+  
+  &.strip-3 {
+    top: 50%;
+    width: 200%;
+    animation-duration: 15s;
+    animation-delay: -10s;
+    background-size: 80px 30px;
+    filter: hue-rotate(60deg);
+    opacity: 0.25;
+  }
+  
+  &.strip-4 {
+    top: 70%;
+    width: 170%;
+    animation-duration: 18s;
+    animation-delay: -7s;
+    background-size: 90px 32px;
+    filter: hue-rotate(90deg);
+    opacity: 0.35;
+  }
+  
+  &.strip-5 {
+    top: 85%;
+    width: 160%;
+    animation-duration: 22s;
+    animation-delay: -12s;
+    background-size: 110px 38px;
+    filter: hue-rotate(120deg);
+    opacity: 0.2;
+  }
+}
+
+// Animation d'onde pour les bobines
+@keyframes film-wave {
+  0% {
+    transform: translateX(-20%) translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-15%) translateY(-8px) rotate(0.5deg);
+  }
+  50% {
+    transform: translateX(-10%) translateY(0px) rotate(0deg);
+  }
+  75% {
+    transform: translateX(-15%) translateY(8px) rotate(-0.5deg);
+  }
+  100% {
+    transform: translateX(-20%) translateY(0px) rotate(0deg);
+  }
+}
+
+// Version améliorée avec effet de vague plus prononcé
+@keyframes film-wave-enhanced {
+  0% {
+    transform: translateX(-25%) translateY(0px) rotate(0deg) scaleY(1);
+  }
+  20% {
+    transform: translateX(-20%) translateY(-12px) rotate(1deg) scaleY(1.1);
+  }
+  40% {
+    transform: translateX(-15%) translateY(-5px) rotate(0.5deg) scaleY(1.05);
+  }
+  60% {
+    transform: translateX(-10%) translateY(8px) rotate(-0.5deg) scaleY(0.95);
+  }
+  80% {
+    transform: translateX(-15%) translateY(12px) rotate(-1deg) scaleY(0.9);
+  }
+  100% {
+    transform: translateX(-25%) translateY(0px) rotate(0deg) scaleY(1);
+  }
+}
+
+// Effet de lumière de projecteur qui balaye
+@keyframes spotlight-sweep {
+  0% {
+    background-position: -100% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+// =============================================
+// ADAPTATION DU CONTENEUR PRINCIPAL
+// =============================================
+
+.app-wrapper-co-conn {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0A0A0A 0%, #1A237E 50%, #0A0A0A 100%);
+  overflow: hidden;
+}
+
+.connexion-container-conn {
+  position: relative;
+  z-index: 10; // Au-dessus des bobines
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Amélioration de la carte de connexion pour qu'elle ressorte
+.connexion-card-conn {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 80px rgba(26, 35, 126, 0.2);
+  
+  .dark-theme & {
+    background: rgba(10, 10, 10, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(183, 28, 28, 0.2);
+  }
+}
+
+// =============================================
+// ANIMATIONS SPÉCIALES CINÉMA
+// =============================================
+
+// Effet de scintillement comme des lumières de projecteur
+@keyframes film-twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+// Animation de défilement de pellicule
+@keyframes film-scroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 120px 0; }
+}
+
+// Appliquer l'animation améliorée
+.film-strip {
+  animation: film-wave-enhanced 20s ease-in-out infinite;
+  
+  // Ajouter un effet de scintillement aléatoire
+  &:nth-child(odd) {
+    animation: film-wave-enhanced 25s ease-in-out infinite, film-twinkle 4s ease-in-out infinite;
+  }
+  
+  &:nth-child(even) {
+    animation: film-wave-enhanced 18s ease-in-out infinite, film-twinkle 6s ease-in-out infinite;
+    animation-delay: -2s, -1s;
+  }
+}
+
+// =============================================
+// CARTE DE CONNEXION - CORRIGÉE
 // =============================================
 .connexion-card-conn {
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-radius: $border-radius-lg;
+  border-radius: $border-radius-xs;
   border: 1px solid rgba($color-white, 0.8);
   box-shadow: 
     0 8px 32px 0 rgba(31, 38, 135, 0.15),
     inset 0 1px 0 rgba($color-white, 0.9);
   padding: 0;
-  width: 100%;
-  max-width: $conn-card-width;
+  width: $conn-card-width; // CORRECTION: 380px au lieu de 8000px
   position: relative;
   overflow: hidden;
   animation: slideInUp-conn $duration-normal cubic-bezier(0.4, 0, 0.2, 1);
   z-index: $z-index-modal;
   background: rgba($color-white, 0.95);
-  width: 400px;
 
-  // Effet de lumière subtil en haut
   &::before {
     content: '';
     position: absolute;
@@ -62,17 +255,11 @@ $conn-form-inner-width: 400px;
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba($color-white, 0.8),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba($color-white, 0.8), transparent);
     pointer-events: none;
     z-index: 1;
   }
   
-  // Effet de reflet subtil
   &::after {
     content: '';
     position: absolute;
@@ -80,12 +267,7 @@ $conn-form-inner-width: 400px;
     left: -50%;
     width: 50%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba($color-white, 0.3),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba($color-white, 0.3), transparent);
     pointer-events: none;
     z-index: 0;
     animation: shimmer 3s infinite;
@@ -93,21 +275,13 @@ $conn-form-inner-width: 400px;
 }
 
 @keyframes shimmer {
-  0%, 100% {
-    left: -50%;
-    opacity: 0;
-  }
-  50% {
-    left: 150%;
-    opacity: 1;
-  }
+  0%, 100% { left: -50%; opacity: 0; }
+  50% { left: 150%; opacity: 1; }
 }
 
-// =============================================
-// EN-TÊTE
-// =============================================
+// ... (le reste de votre CSS existant reste le même)
 .connex-header-conn {
-  margin-top: $margin-xl;
+  margin-top: $margin-lg;
   padding: $padding-md;
   text-align: center;
   position: relative;
@@ -116,45 +290,75 @@ $conn-form-inner-width: 400px;
 .user-avatar-conn {
   background: rgba($color-white, 0.9);
   color: $color-primary;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   @include flex-center;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   border: 2px solid rgba($color-primary, 0.3);
-  margin: 0 auto $margin-md auto;
+  margin: 0 auto $margin-sm auto;
   box-shadow: 0 4px 12px rgba($color-text-primary, 0.1);
 }
 
-.connex-header-conn {
-  h1 {
-    @include typography-h2;
-    margin-bottom: $gap-sm;
-    color: $color-text-primary;
-  }
-  
-  p {
-    @include typography-p1;
-    color: $color-text-secondary;
-  }
+.connex-header-conn h1 {
+  font-size: 20px;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $gap-sm;
 }
 
-// =============================================
-// FORMULAIRE
-// =============================================
+.connex-header-conn p {
+  font-size: 12px;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
+  color: $color-text-secondary;
+}
+
 .connexion-form-conn {
-  padding: $padding-xl;
+  padding: $padding-lg;
   background: transparent !important;
-  width: $conn-form-inner-width;
+  width: 100%;
   position: relative;
   z-index: 1;
 }
 
+// Adaptation pour le mode sombre
+body.dark-theme {
+  .app-wrapper-co-conn {
+    background: linear-gradient(135deg, rgba($color-primary, 0.15) 0%, rgba($color-accent, 0.15) 100%);
+    
+    // Supprimez aussi les anciens ::before et ::after du mode sombre
+  }
+
+  .film-strip {
+    background: 
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 18px,
+        rgba(0, 0, 0, 0.9) 18px,
+        rgba(0, 0, 0, 0.9) 22px,
+        transparent 22px,
+        transparent 40px
+      ),
+      linear-gradient(
+        rgba(60, 45, 30, 0.6) 0%,
+        rgba(80, 60, 40, 0.5) 50%,
+        rgba(60, 45, 30, 0.6) 100%
+      );
+    border-top: 2px solid rgba(240, 200, 140, 0.3);
+    border-bottom: 2px solid rgba(240, 200, 140, 0.3);
+  }
+
+  // ... (le reste du mode sombre)
+}
+
 // =============================================
-// INPUTS - CORRIGÉS EN BLANC
+// INPUTS - PLUS PETITS
 // =============================================
 .form-group-connexion-conn {
-  margin-bottom: $margin-lg;
+  margin-bottom: $margin-md; // Réduit
   position: relative;
 }
 
@@ -164,11 +368,11 @@ $conn-form-inner-width: 400px;
 
 .form-input-connexion-conn {
   width: 100%;
-  padding: $padding-md;
+  padding: 12px 16px; // Réduit
   border: 1px solid #e2e8f0;
   border-radius: $border-radius-pill;
   background: rgba($color-white, 0.9);
-  font-size: $font-size-p2;
+  font-size: 13px; // Réduit
   color: $color-text-primary;
   transition: $transition;
   font-weight: $font-weight-medium;
@@ -187,6 +391,7 @@ $conn-form-inner-width: 400px;
 
   &::placeholder {
     color: $color-text-muted;
+    font-size: 12px; // Réduit
     transition: $transition;
   }
 
@@ -200,83 +405,20 @@ $conn-form-inner-width: 400px;
 // =============================================
 .form-options-connexion-conn {
   @include flex-between;
-  margin-bottom: $margin-lg;
-  font-size: $font-size-p2;
-}
-
-.checkbox-container-connexion-conn {
-  @include flex-center;
-  gap: $gap-sm;
-  color: $color-text-secondary;
-  cursor: pointer;
-  font-weight: $font-weight-medium;
-  
-  input {
-    width: 1.1rem;
-    height: 1.1rem;
-    border-radius: $gap-xs;
-    border: $border-width * 1.5 solid #cbd5e0;
-    appearance: none;
-    transition: $transition;
-    position: relative;
-    background: $color-white;
-
-    &:checked {
-      background: $color-primary;
-      border-color: $color-primary;
-
-      &::after {
-        content: '✓';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: $color-white;
-        font-size: $font-size-p3;
-        font-weight: $font-weight-bold;
-      }
-    }
-  }
-}
-
-.forgot-link-connexion-conn {
-  color: $color-text-secondary;
-  text-decoration: none;
-  font-weight: $font-weight-medium;
-  transition: $transition;
-
-  &:hover {
-    color: $color-primary;
-    text-decoration: underline;
-  }
+  margin-bottom: $margin-md; // Réduit
+  font-size: 12px; // Réduit
 }
 
 // =============================================
-// MESSAGE D'ERREUR
-// =============================================
-.error-message-connexion-conn {
-  @include flex-center;
-  gap: $gap-sm;
-  background: rgba($color-error, 0.05);
-  border: $border-width solid rgba($color-error, 0.2);
-  color: $color-error;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  margin-bottom: $margin-lg;
-  animation: slideInDown-conn $duration-fast ease-out;
-}
-
-// =============================================
-// BOUTON DE CONNEXION
+// BOUTON DE CONNEXION - PLUS PETIT
 // =============================================
 .connexion-btn-conn {
   background: $color-primary;
   color: $color-white;
   border: none;
-  padding: $padding-md $padding-lg;
+  padding: 12px 20px; // Réduit
   border-radius: $border-radius-pill;
-  font-size: $font-size-p2;
+  font-size: 13px; // Réduit
   font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: $transition;
@@ -287,64 +429,142 @@ $conn-form-inner-width: 400px;
   position: relative;
   overflow: hidden;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($color-white, 0.2), transparent);
-    transition: $transition;
-  }
-
   &:hover:not(:disabled) {
-    background: $color-primary-dark;
+    background: darken($color-primary, 10%);
     transform: translateY(-2px);
-    box-shadow: $shadow-hover;
-  }
-
-  &:hover::before {
-    left: 100%;
+    box-shadow: 0 6px 20px rgba($color-primary, 0.4);
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
   }
 }
 
-.btn-icon-connexion-conn {
-  transition: $transition;
-}
-
-.connexion-btn-conn:hover .btn-icon-connexion-conn {
-  transform: translateX(3px);
-}
-
 // =============================================
-// LIEN D'INSCRIPTION
+// LIEN D'INSCRIPTION - PLUS PETIT
 // =============================================
 .signup-link-connexion-conn {
   text-align: center;
-  font-size: $font-size-p2;
+  font-size: 12px; // Réduit
   color: $color-text-secondary;
-  margin-top: $margin-lg;
-  padding-top: $margin-lg;
+  margin-top: $margin-md; // Réduit
+  padding-top: $margin-md; // Réduit
   border-top: $border-width solid #e2e8f0;
 
   a {
     color: $color-primary;
-    font-weight: $font-weight-semibold;
     text-decoration: none;
-    transition: $transition;
+    font-weight: $font-weight-semibold;
 
     &:hover {
-      color: $color-primary-dark;
+      color: $color-accent;
       text-decoration: underline;
     }
   }
 }
+
+// =============================================
+// TOGGLE FORMULAIRE
+// =============================================
+.form-toggle-conn {
+  display: flex;
+  background: rgba($color-white, 0.8);
+  border-radius: $border-radius-pill;
+  padding: 4px;
+  margin: 0 $padding-lg $margin-md $padding-lg;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba($color-text-primary, 0.1);
+  border: 1px solid rgba($color-primary, 0.1);
+}
+
+.toggle-btn-conn {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: $border-radius-pill;
+  background: transparent;
+  color: $color-text-secondary;
+  font-size: 12px;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+
+  &.active {
+    background: $color-primary;
+    color: $color-white;
+    box-shadow: 0 2px 6px rgba($color-primary, 0.3);
+  }
+
+  &:hover:not(.active) {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+}
+
+// =============================================
+// ÉTATS EMAIL ET MOT DE PASSE
+// =============================================
+.email-status-conn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  .fa-check {
+    color: $color-success;
+  }
+  
+  .fa-times {
+    color: $color-error;
+  }
+}
+
+.email-error-conn {
+  color: $color-error;
+  font-size: 10px;
+  font-weight: $font-weight-medium;
+}
+
+.password-hint-conn {
+  font-size: 10px;
+  color: $color-error;
+  margin-top: 4px;
+  padding-left: 16px;
+}
+
+.form-input-connexion-conn.error {
+  border-color: $color-error;
+  background: rgba($color-error, 0.05);
+}
+
+.textarea-conn {
+  resize: vertical;
+  min-height: 60px;
+  font-family: $font-family-primary;
+}
+
+// =============================================
+// ANIMATIONS D'ENTRÉE POUR ÉLÉMENTS
+// =============================================
+.form-group-connexion-conn,
+.form-options-connexion-conn,
+.connexion-btn-conn,
+.signup-link-connexion-conn {
+  opacity: 0;
+  animation: slideInUp-conn $duration-normal ease-out forwards;
+}
+
+.form-group-connexion-conn:nth-child(1) { animation-delay: 0.2s; }
+.form-group-connexion-conn:nth-child(2) { animation-delay: 0.4s; }
+.form-options-connexion-conn { animation-delay: 0.6s; }
+.connexion-btn-conn { animation-delay: 0.8s; }
+.signup-link-connexion-conn { animation-delay: 1s; }
 
 // =============================================
 // ANIMATIONS
@@ -430,23 +650,6 @@ $conn-form-inner-width: 400px;
 }
 
 // =============================================
-// ANIMATIONS D'ENTRÉE POUR ÉLÉMENTS
-// =============================================
-.form-group-connexion-conn,
-.form-options-connexion-conn,
-.connexion-btn-conn,
-.signup-link-connexion-conn {
-  opacity: 0;
-  animation: slideInUp-conn $duration-normal ease-out forwards;
-}
-
-.form-group-connexion-conn:nth-child(1) { animation-delay: 0.2s; }
-.form-group-connexion-conn:nth-child(2) { animation-delay: 0.4s; }
-.form-options-connexion-conn { animation-delay: 0.6s; }
-.connexion-btn-conn { animation-delay: 0.8s; }
-.signup-link-connexion-conn { animation-delay: 1s; }
-
-// =============================================
 // RESPONSIVE
 // =============================================
 @include respond-to($breakpoint-md) {
@@ -494,7 +697,16 @@ $conn-form-inner-width: 400px;
 // =============================================
 body.dark-theme {
   .app-wrapper-co-conn {
-    background: linear-gradient(135deg, $color-background-dark 0%, lighten($color-background-dark, 5%) 100%);
+    // Supprime le dégradé pour le mode sombre
+    background: none;
+    
+    &::before {
+      filter: blur(8px) brightness(0.4); // Plus sombre en mode nuit
+    }
+    
+    &::after {
+      background: linear-gradient(135deg, rgba($color-primary, 0.2) 0%, rgba($color-accent, 0.2) 100%);
+    }
   }
 
   .connexion-card-conn {
