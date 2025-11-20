@@ -226,9 +226,6 @@
                 </span>
               </div>
 
-              <!-- Badge de planning -->
-              <RaccordPlanningBadge :raccord="raccord" />
-
               <div class="raccord-info">
                 <p v-if="raccord.personnageNom"><strong>Personnage:</strong> {{ raccord.personnageNom }}</p>
                 <p v-if="raccord.comedienNom"><strong>Comédien:</strong> {{ raccord.comedienNom }}</p>
@@ -349,12 +346,11 @@ computed: {
   methods: {
     async loadInitialData() {
       try {
-        const [projetsRes, scenesRes, typesRes, statutsRes, verificationRes, personnagesRes, comediensRes] = await Promise.all([
+        const [projetsRes, scenesRes, typesRes, statutsRes, personnagesRes, comediensRes] = await Promise.all([
           axios.get('/api/projets'),
           axios.get('/api/scenes'),
           axios.get('/api/raccords/types'),
           axios.get('/api/raccords/statuts'),
-          axios.get('/api/raccords/statuts-verification'),
           axios.get('/api/personnages'),
           axios.get('/api/comediens')
         ]);
@@ -363,7 +359,6 @@ computed: {
         this.scenes = scenesRes.data;
         this.typesRaccord = typesRes.data;
         this.statutsRaccord = statutsRes.data;
-        this.statutsVerification = verificationRes.data;
         this.personnages = personnagesRes.data;
         this.comediens = comediensRes.data;
       } catch (error) {
@@ -516,13 +511,6 @@ formatDateForAPI(date) {
       });
     },
 
-    handleAdditionalImages(event) {
-      this.additionalImages = Array.from(event.target.files);
-    },
-
-    handlePreuveImage(event) {
-      this.verificationData.preuveImage = event.target.files[0];
-    },
 
     removePreview(index) {
       this.previewImages.splice(index, 1);
