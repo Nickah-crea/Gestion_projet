@@ -1,1 +1,590 @@
- 
+ // _liste-projet.scss
+@import '../base/variables';
+
+.projects-list-container {
+  width: 1250px;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  margin-left: 50px;
+
+  .projects-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+    
+    h1 {
+      @include typography-cinzel-h1;
+      color: $color-primary;
+      margin-bottom: 0;
+      font-weight: $font-weight-bold;
+    }
+    
+    p {
+      @include typography-p1;
+      color: $color-text-secondary;
+      margin-bottom: 0;
+    }
+  }
+
+  .toolbar {
+    @include flex-between;
+    flex-wrap: wrap;
+    gap: $gap-lg;
+    padding: $padding-lg;
+    background-color: $color-background-alt;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+
+    @include respond-to($breakpoint-md) {
+      flex-wrap: nowrap;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+      max-width: 400px;
+
+      .fa-search {
+        position: absolute;
+        left: $padding-md;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $color-text-muted;
+        z-index: 1;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: $padding-sm $padding-sm $padding-sm ($padding-xl + $padding-md);
+        background-color: $color-background;
+        border: $border-width solid $color-border;
+        border-radius: $border-radius;
+        font-family: $font-family-primary;
+        @include typography-p1;
+        transition: $transition;
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: $shadow-primary;
+        }
+
+        &::placeholder {
+          color: $color-text-muted;
+        }
+      }
+    }
+
+    .filters {
+      display: flex;
+      gap: $gap-md;
+      flex-wrap: wrap;
+
+      @include respond-to($breakpoint-sm) {
+        flex-wrap: nowrap;
+      }
+
+      .filter-select {
+        padding: $padding-sm $padding-md;
+        background-color: $color-background;
+        border: $border-width solid $color-border;
+        border-radius: $border-radius;
+        font-family: $font-family-primary;
+        @include typography-p1;
+        color: $color-text-primary;
+        cursor: pointer;
+        transition: $transition;
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: $shadow-primary;
+        }
+      }
+    }
+
+    .add-btn {
+      @include btn-cinema-primary;
+      display: flex;
+      align-items: center;
+      gap: $gap-md;
+      white-space: nowrap;
+
+      i {
+        font-size: $font-size-p1;
+      }
+    }
+  }
+
+  .table-container {
+    background-color: $color-background;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+    overflow: hidden;
+
+    .projects-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
+        background-color: $color-background-alt;
+        border-bottom: $border-width solid $color-border;
+
+        th {
+          @include typography-h4;
+          padding: $padding-lg $padding-md;
+          text-align: left;
+          color: $color-text-primary;
+          font-weight: $font-weight-semibold;
+
+          &:first-child {
+            padding-left: $padding-xl;
+          }
+
+          &:last-child {
+            padding-right: $padding-xl;
+          }
+        }
+      }
+
+      tbody {
+        .project-row {
+          transition: $transition;
+          border-bottom: $border-width solid $color-border;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          &:hover {
+            background-color: $color-surface-hover;
+          }
+
+          td {
+            padding: $padding-lg $padding-md;
+            vertical-align: top;
+
+            &:first-child {
+              padding-left: $padding-xl;
+            }
+
+            &:last-child {
+              padding-right: $padding-xl;
+            }
+          }
+
+          .project-title {
+            .title-wrapper {
+              display: flex;
+              align-items: flex-start;
+              gap: $gap-lg;
+
+              .project-icon {
+                color: $color-primary;
+                margin-top: $gap-xs;
+                font-size: $font-size-h3;
+              }
+
+              .synopsis-preview {
+                @include typography-p2;
+                color: $color-text-muted;
+                margin-top: $gap-xs;
+                margin-bottom: 0;
+              }
+            }
+          }
+
+          .genre-tag {
+            display: inline-block;
+            padding: $gap-xs $gap-md;
+            background-color: $color-pastel-blue;
+            color: $color-primary;
+            border-radius: $border-radius-pill;
+            @include typography-p2;
+            font-weight: $font-weight-medium;
+          }
+
+          .status-badge {
+            display: inline-block;
+            padding: $gap-xs $gap-md;
+            border-radius: $border-radius-pill;
+            @include typography-p2;
+            font-weight: $font-weight-medium;
+
+            &.statut-en-cours {
+              background-color: rgba($color-success, 0.1);
+              color: $color-success;
+            }
+
+            &.statut-termine {
+              background-color: rgba($color-primary, 0.1);
+              color: $color-primary;
+            }
+
+            &.statut-attente {
+              background-color: rgba($color-warning, 0.1);
+              color: $color-warning;
+            }
+
+            &.statut-annule {
+              background-color: rgba($color-error, 0.1);
+              color: $color-error;
+            }
+
+            &.statut-default {
+              background-color: $color-surface;
+              color: $color-text-secondary;
+            }
+          }
+
+          .action-buttons {
+            display: flex;
+            gap: $gap-xs;
+
+            .btn-icon {
+              @include flex-center;
+              width: 32px;
+              height: 32px;
+              border: none;
+              border-radius: $border-radius;
+              background: transparent;
+              cursor: pointer;
+              transition: $transition;
+              font-size: $font-size-p1;
+
+              &.edit-btn {
+                color: $color-info;
+
+                &:hover {
+                  background-color: rgba($color-info, 0.1);
+                }
+              }
+
+              &.view-btn {
+                color: $color-success;
+
+                &:hover {
+                  background-color: rgba($color-success, 0.1);
+                }
+              }
+
+              &.work-btn {
+                color: $color-primary;
+
+                &:hover {
+                  background-color: rgba($color-primary, 0.1);
+                }
+              }
+
+              &.delete-btn {
+                color: $color-error;
+
+                &:hover {
+                  background-color: rgba($color-error, 0.1);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .no-projects {
+      text-align: center;
+      padding: $spacing-xl * 2;
+      color: $color-text-muted;
+
+      .no-projects-icon {
+        font-size: 64px;
+        color: $color-surface;
+        margin-bottom: $margin-lg;
+      }
+
+      h3 {
+        @include typography-h3;
+        color: $color-text-muted;
+        margin-bottom: $margin-sm;
+      }
+
+      p {
+        @include typography-p1;
+        color: $color-text-muted;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba($color-black, 0.5);
+    @include flex-center;
+    z-index: $z-index-modal;
+    padding: $spacing-md;
+
+    .modal-content {
+      background-color: $color-background;
+      border-radius: $border-radius-lg;
+      box-shadow: $shadow-xl;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+
+      .modal-header {
+        @include flex-between;
+        padding: $padding-xl;
+        border-bottom: $border-width solid $color-border;
+        margin-bottom: 0;
+
+        h3 {
+          @include typography-h3;
+          margin-bottom: 0;
+          color: $color-text-primary;
+        }
+
+        .close-btn {
+          @include flex-center;
+          width: 32px;
+          height: 32px;
+          border: none;
+          background: transparent;
+          border-radius: $border-radius;
+          cursor: pointer;
+          transition: $transition;
+          color: $color-text-muted;
+
+          &:hover {
+            background-color: $color-surface;
+            color: $color-text-primary;
+          }
+        }
+      }
+
+      .modal-form {
+        padding: $padding-xl;
+        display: flex;
+        flex-direction: column;
+        gap: $gap-xl;
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: $gap-sm;
+
+          label {
+            @include typography-p1;
+            font-weight: $font-weight-medium;
+            color: $color-text-primary;
+            margin-bottom: 0;
+          }
+
+          .form-input,
+          .form-textarea,
+          .form-select {
+            padding: $padding-sm $padding-md;
+            background-color: $color-background;
+            border: $border-width solid $color-border;
+            border-radius: $border-radius;
+            font-family: $font-family-primary;
+            @include typography-p1;
+            color: $color-text-primary;
+            transition: $transition;
+
+            &:focus {
+              outline: none;
+              border-color: $color-primary;
+              box-shadow: $shadow-primary;
+            }
+
+            &::placeholder {
+              color: $color-text-muted;
+            }
+          }
+
+          .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+          }
+        }
+
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: $gap-lg;
+
+          @include respond-to($breakpoint-sm) {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+
+        .error-message {
+          @include typography-p2;
+          color: $color-error;
+          background-color: rgba($color-error, 0.1);
+          padding: $padding-md;
+          border-radius: $border-radius;
+          border-left: $border-width-md solid $color-error;
+        }
+
+        .form-actions {
+          display: flex;
+          gap: $gap-md;
+          justify-content: flex-end;
+          padding-top: $padding-lg;
+          border-top: $border-width solid $color-border;
+
+          .cancel-btn {
+            @include flex-center;
+            gap: $gap-md;
+            padding: $padding-sm $padding-lg;
+            background-color: transparent;
+            border: $border-width solid $color-border;
+            border-radius: $border-radius;
+            @include typography-p1;
+            font-weight: $font-weight-medium;
+            color: $color-text-secondary;
+            cursor: pointer;
+            transition: $transition;
+
+            &:hover {
+              background-color: $color-surface;
+              border-color: $color-text-muted;
+            }
+          }
+
+          .submit-btn {
+            @include btn-cinema-primary;
+            @include flex-center;
+            gap: $gap-md;
+
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+              transform: none !important;
+
+              &:hover {
+                transform: none !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: $breakpoint-md) {
+  .projects-list-container {
+    padding: $spacing-md;
+
+    .toolbar {
+      padding: $padding-md;
+      flex-direction: column;
+      align-items: stretch;
+
+      .search-box {
+        min-width: 100%;
+        max-width: 100%;
+      }
+
+      .filters {
+        flex-direction: column;
+        width: 100%;
+
+        .filter-select {
+          width: 100%;
+        }
+      }
+
+      .add-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .table-container {
+      overflow-x: auto;
+
+      .projects-table {
+        min-width: 800px;
+
+        thead {
+          display: none;
+        }
+
+        tbody {
+          .project-row {
+            display: block;
+            border-bottom: $border-width solid $color-border;
+            padding: $padding-lg;
+
+            td {
+              display: block;
+              padding: $padding-sm 0;
+              border: none;
+
+              &[data-label]::before {
+                content: attr(data-label);
+                @include typography-p1;
+                font-weight: $font-weight-semibold;
+                color: $color-text-muted;
+                display: block;
+                margin-bottom: $gap-xs;
+              }
+            }
+
+            .action-buttons {
+              justify-content: center;
+              margin-top: $margin-md;
+            }
+          }
+        }
+      }
+    }
+
+    .modal-overlay {
+      padding: $spacing-sm;
+
+      .modal-content {
+        .modal-form {
+          padding: $padding-lg;
+
+          .form-actions {
+            flex-direction: column;
+
+            .cancel-btn,
+            .submit-btn {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animation pour les modales
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-content {
+  animation: modalFadeIn $duration-normal $ease-out-cinema;
+}
+

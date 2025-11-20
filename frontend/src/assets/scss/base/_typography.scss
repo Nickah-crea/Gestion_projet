@@ -37,34 +37,43 @@ p, .p1 {
 .font-bold { font-weight: $font-weight-bold; }
 
 // Classes utilitaires pour les couleurs de texte
-.text-primary { color: $color-primary; }           // #7BBBFF - Bleu clair principal
-.text-primary-light { color: $color-primary-light; } // #A3D1FF - Bleu clair light
-.text-primary-dark { color: $color-primary-dark; }   // #5AA9FF - Bleu clair dark
-.text-accent { color: $color-accent; }             // #B8A9FF - Violet/lavande accent
-.text-accent-light { color: $color-accent-light; }   // #D0C7FF - Violet light
+.text-primary { color: $color-primary; }           // #1A237E - Bleu nuit
+.text-primary-light { color: $color-primary-light; } // #534BAE - Bleu nuit clair
+.text-primary-dark { color: $color-primary-dark; }   // #000051 - Bleu nuit foncé
+.text-accent { color: $color-accent; }             // #B71C1C - Rouge bordeaux
+.text-accent-light { color: $color-accent-light; }   // #F05545 - Rouge clair
+.text-accent-dark { color: $color-accent-dark; }     // #7F0000 - Rouge foncé
+
+// Couleurs tertiaires (cinéma)
+.text-tertiary { color: $color-tertiary; }         // #E5C687 - Or/doré
+.text-tertiary-light { color: $color-tertiary-light; } // #F4E4B3 - Or clair
+.text-tertiary-dark { color: $color-tertiary-dark; }   // #B8943C - Or foncé
 
 // Couleurs de texte principales
-.text-primary-dark { color: $color-text-primary; }    // #050F2A - Texte principal
-.text-secondary { color: $color-text-secondary; }     // #1A2A4D - Texte secondaire
-.text-muted { color: $color-text-muted; }             // #4A5A7D - Texte muted
+.text-primary-dark { color: $color-text-primary; }    // #000000 - Texte principal noir
+.text-secondary { color: $color-text-secondary; }     // #424242 - Texte secondaire
+.text-muted { color: $color-text-muted; }             // #757575 - Texte atténué
+.text-light { color: $color-text-light; }             // #FFFFFF - Texte clair
 
 // Couleurs de fond et neutres
-.text-background { color: $color-background; }        // #F2FDFF - Arrière-plan
+.text-background { color: $color-background; }        // #FFFFFF - Arrière-plan
+.text-background-alt { color: $color-background-alt; } // #F8F9FA - Fond alternatif
+.text-background-dark { color: $color-background-dark; } // #0A0A0A - Fond sombre
 .text-white { color: $color-white; }                  // #FFFFFF - Blanc pur
-.text-grey { color: $color-grey; }                    // #E0E8F5 - Gris bleuté
+.text-black { color: $color-black; }                  // #000000 - Noir pur
 
 // Classes pour les états
-.text-success { color: $color-success; }              // #10B981 - Vert
-.text-warning { color: $color-warning; }              // #F59E0B - Orange
-.text-error { color: $color-error; }                  // #EF4444 - Rouge
-.text-info { color: $color-info; }                    // #7BBBFF - Info (bleu principal)
+.text-success { color: $color-success; }              // #2E7D32 - Vert
+.text-warning { color: $color-warning; }              // #F57C00 - Orange
+.text-error { color: $color-error; }                  // #D32F2F - Rouge
+.text-info { color: $color-info; }                    // #1976D2 - Bleu info
 
-// Classes pour les couleurs pastel (nouvelles)
-.text-pastel-pink { color: $color-pastel-pink; }
-.text-pastel-yellow { color: $color-pastel-yellow; }
+// Classes pour les couleurs pastel (cinéma)
 .text-pastel-blue { color: $color-pastel-blue; }
-.text-pastel-green { color: $color-pastel-green; }
+.text-pastel-red { color: $color-pastel-red; }
+.text-pastel-gold { color: $color-pastel-gold; }
 .text-pastel-purple { color: $color-pastel-purple; }
+.text-pastel-dark { color: $color-pastel-dark; }
 
 // Classes utilitaires pour les arrière-plans
 .bg-primary { background-color: $color-primary; }
@@ -72,9 +81,19 @@ p, .p1 {
 .bg-primary-dark { background-color: $color-primary-dark; }
 .bg-accent { background-color: $color-accent; }
 .bg-accent-light { background-color: $color-accent-light; }
+.bg-accent-dark { background-color: $color-accent-dark; }
+
+// Couleurs tertiaires (cinéma)
+.bg-tertiary { background-color: $color-tertiary; }
+.bg-tertiary-light { background-color: $color-tertiary-light; }
+.bg-tertiary-dark { background-color: $color-tertiary-dark; }
+
+// Arrière-plans de base
 .bg-background { background-color: $color-background; }
+.bg-background-alt { background-color: $color-background-alt; }
+.bg-background-dark { background-color: $color-background-dark; }
 .bg-white { background-color: $color-white; }
-.bg-grey { background-color: $color-grey; }
+.bg-black { background-color: $color-black; }
 
 // Backgrounds pour les états
 .bg-success { background-color: $color-success; }
@@ -82,23 +101,25 @@ p, .p1 {
 .bg-error { background-color: $color-error; }
 .bg-info { background-color: $color-info; }
 
-// Backgrounds pastel (nouvelles)
-.bg-pastel-pink { background-color: $color-pastel-pink; }
-.bg-pastel-yellow { background-color: $color-pastel-yellow; }
+// Backgrounds pastel (cinéma)
 .bg-pastel-blue { background-color: $color-pastel-blue; }
-.bg-pastel-green { background-color: $color-pastel-green; }
+.bg-pastel-red { background-color: $color-pastel-red; }
+.bg-pastel-gold { background-color: $color-pastel-gold; }
 .bg-pastel-purple { background-color: $color-pastel-purple; }
+.bg-pastel-dark { background-color: $color-pastel-dark; }
 
-// Classes pour les surfaces (glassmorphism)
+// Classes pour les surfaces
 .bg-surface { background-color: $color-surface; }
 .bg-surface-hover { background-color: $color-surface-hover; }
 
 // Classes pour les bordures
 .border-primary { border-color: $color-primary; }
 .border-accent { border-color: $color-accent; }
+.border-tertiary { border-color: $color-tertiary; }
 .border-light { border-color: $color-border; }
 .border-dark { border-color: $color-border-dark; }
 .border-white { border-color: $color-white; }
+.border-black { border-color: $color-black; }
 
 // Classes utilitaires pour les espacements
 .gap-xs { gap: $gap-xs; }
@@ -106,6 +127,7 @@ p, .p1 {
 .gap-md { gap: $gap-md; }
 .gap-lg { gap: $gap-lg; }
 .gap-xl { gap: $gap-xl; }
+.gap-xxl { gap: $gap-xxl; }
 
 .p-xs { padding: $padding-xs; }
 .p-sm { padding: $padding-sm; }
@@ -124,30 +146,65 @@ p, .p1 {
 .rounded-sm { border-radius: $border-radius-sm; }
 .rounded { border-radius: $border-radius; }
 .rounded-lg { border-radius: $border-radius-lg; }
+.rounded-xl { border-radius: $border-radius-xl; }
 .rounded-pill { border-radius: $border-radius-pill; }
 
 // Classes pour les ombres
 .shadow { box-shadow: $shadow; }
-.shadow-hover { box-shadow: $shadow-hover; }
+.shadow-md { box-shadow: $shadow-md; }
 .shadow-lg { box-shadow: $shadow-lg; }
+.shadow-xl { box-shadow: $shadow-xl; }
+.shadow-hover { box-shadow: $shadow-hover; }
 .shadow-inset { box-shadow: $shadow-inset; }
+
+// Ombres colorées cinéma
+.shadow-primary { box-shadow: $shadow-primary; }
+.shadow-accent { box-shadow: $shadow-accent; }
+.shadow-gold { box-shadow: $shadow-gold; }
 
 // Classes pour les transitions
 .transition { transition: $transition; }
 .transition-slow { transition: $transition-slow; }
 .transition-fast { transition: $transition-fast; }
 
-// Mixin glassmorphism disponible via classe
+// Classes pour les durées d'animation
+.duration-fast { animation-duration: $duration-fast; }
+.duration-normal { animation-duration: $duration-normal; }
+.duration-slow { animation-duration: $duration-slow; }
+.duration-cinematic { animation-duration: $duration-cinematic; }
+
+// Mixins glassmorphism disponibles via classe
 .glassmorphism {
   @include glassmorphism;
 }
 
+.glassmorphism-dark {
+  @include glassmorphism-dark;
+}
+
+.spotlight-effect {
+  @include spotlight-effect;
+}
+
 // Mixins pastel disponibles via classes
-.pastel-pink { @include pastel-pink; }
-.pastel-yellow { @include pastel-yellow; }
 .pastel-blue { @include pastel-blue; }
-.pastel-green { @include pastel-green; }
+.pastel-red { @include pastel-red; }
+.pastel-gold { @include pastel-gold; }
 .pastel-purple { @include pastel-purple; }
+.pastel-dark { @include pastel-dark; }
+
+// Boutons cinéma
+.btn-cinema-primary {
+  @include btn-cinema-primary;
+}
+
+.btn-cinema-accent {
+  @include btn-cinema-accent;
+}
+
+.btn-cinema-gold {
+  @include btn-cinema-gold;
+}
 
 // Flexbox utilities
 .flex-center { @include flex-center; }
@@ -156,4 +213,38 @@ p, .p1 {
 // Text utilities
 .text-truncate { @include text-truncate; }
 .sr-only { @include sr-only; }
+
+// Classes typographiques spéciales Cinzel
+.cinzel-h1 {
+  @include typography-cinzel-h1;
+}
+
+.cinzel-h2 {
+  @include typography-cinzel-h2;
+}
+
+// Classes utilitaires pour les largeurs de bordure
+.border-1 { border-width: $border-width; }
+.border-2 { border-width: $border-width-md; }
+.border-3 { border-width: $border-width-lg; }
+
+// Classes pour les courbes d'animation
+.ease-cinema { transition-timing-function: $ease-in-out-cinema; }
+.ease-out-cinema { transition-timing-function: $ease-out-cinema; }
+
+// Classes responsive
+@include respond-to($breakpoint-sm) {
+  .sm\:flex-center { @include flex-center; }
+  .sm\:flex-between { @include flex-between; }
+}
+
+@include respond-to($breakpoint-md) {
+  .md\:flex-center { @include flex-center; }
+  .md\:flex-between { @include flex-between; }
+}
+
+@include respond-to($breakpoint-lg) {
+  .lg\:flex-center { @include flex-center; }
+  .lg\:flex-between { @include flex-between; }
+}
 

@@ -21,7 +21,7 @@
   font-weight: $font-weight-bold;
 }
 
-/* === SIDEBAR PRINCIPALE === */
+/* === SIDEBAR PRINCIPALE - STYLE CINÉMA LIGHT === */
 .sidebar {
   position: fixed;
   top: 0; 
@@ -31,8 +31,8 @@
   padding: $padding-md;
   border-radius: 0 $border-radius-sm $border-radius-sm 0;
   box-shadow:
-    3px 0 10px rgba($color-text-primary, 0.2),
-    inset -5px 0 15px rgba($color-white, 0.4);
+    3px 0 20px rgba($color-primary-dark, 0.3),
+    inset -5px 0 15px rgba($color-primary-light, 0.3);
   display: flex;
   flex-direction: column;
   transition: 
@@ -41,25 +41,26 @@
     background $duration-normal ease,
     backdrop-filter $duration-normal ease;
   z-index: $z-index-fixed;
-  backdrop-filter: blur(50px);
-  -webkit-backdrop-filter: blur(50px);
-  border-right: 1px solid rgba($color-primary, 0.3);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-right: 2px solid rgba($color-primary, 0.4);
   overflow: hidden;
   font-family: $font-family-primary;
   color: $color-text-primary;
   background: linear-gradient(135deg, 
-    rgba($color-white, 0.8) 0%, 
-    rgba($color-background, 0.7) 50%, 
-    rgba($color-white, 0.6) 100%);
+    rgba($color-primary-light, 0.9) 0%, 
+    rgba($color-white, 0.8) 50%, 
+    rgba($color-primary-light, 0.7) 100%);
   transform: translateZ(0);
   will-change: width, padding;
 
   &.collapsed {
     width: 56px !important;
     padding: $padding-sm !important;
-    background: rgba($color-white, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba($color-primary-light, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    margin-right: 50px;
   }
 }
 
@@ -70,7 +71,18 @@
   align-items: flex-start;
   margin-bottom: $gap-md;
   padding-bottom: $gap-sm;
-  border-bottom: 1px solid rgba($color-primary, 0.2);
+  border-bottom: 2px solid rgba($color-primary, 0.3);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $color-primary, transparent);
+  }
 }
 
 /* === PROFIL UTILISATEUR === */
@@ -83,35 +95,41 @@
   display: flex;
   align-items: center;
   gap: $gap-sm;
-  padding: 0;
-  border-radius: $border-radius-sm;
-  background: transparent;
+  padding: $gap-xs;
+  border-radius: $border-radius;
+  background: rgba($color-white, 0.6);
   transition: $transition;
   cursor: pointer;
   justify-content: flex-start;
+  border: 1px solid rgba($color-primary, 0.2);
+  backdrop-filter: blur(10px);
 
   &:hover {
+    background: rgba($color-white, 0.8);
+    transform: translateY(-2px);
+    box-shadow: $shadow-gold;
+    
     .user-avatar {
       transform: scale(1.08);
-      box-shadow: 0 0 16px rgba($color-accent, 0.5);
+      box-shadow: 0 0 20px rgba($color-primary, 0.4);
     }
     .user-name {
-      color: $color-primary;
+      color: $color-primary-dark;
     }
   }
 }
 
 .user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
   @include flex-center;
   color: $color-white;
-  font-weight: $font-weight-semibold;
-  font-size: $font-size-p2;
-  box-shadow: 0 4px 12px rgba($color-primary, 0.3);
-  border: 1.5px solid $color-accent;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-p1;
+  box-shadow: $shadow-primary;
+  border: 2px solid $color-white;
   flex-shrink: 0;
   transition: $transition;
 }
@@ -119,14 +137,14 @@
 .user-profile-info {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   flex: 1;
   min-width: 0;
 }
 
 .user-name {
   font-weight: $font-weight-semibold;
-  font-size: $font-size-p2;
+  font-size: $font-size-p1;
   color: $color-text-primary;
   line-height: $line-height-tight;
   @include text-truncate;
@@ -135,7 +153,7 @@
 
 .user-role {
   font-size: $font-size-p3;
-  color: $color-primary;
+  color: $color-primary-dark;
   font-weight: $font-weight-medium;
   line-height: $line-height-tight;
   @include text-truncate;
@@ -149,24 +167,25 @@
 }
 
 .menu-toggle {
-  background: rgba($color-primary, 0.8);
-  border: 1px solid rgba($color-primary, 0.5);
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  border: 2px solid rgba($color-white, 0.8);
   color: $color-white;
-  font-size: $font-size-p3;
+  font-size: $font-size-p2;
   cursor: pointer;
   @include flex-center;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   transition: $transition;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
   flex-shrink: 0;
+  box-shadow: $shadow;
 
   &:hover {
-    background: $color-accent;
-    color: $color-text-primary;
-    transform: scale(1.1) rotate(180deg);
-    box-shadow: 0 0 10px rgba($color-accent, 0.6);
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+    color: $color-white;
+    transform: scale(1.15) rotate(180deg);
+    box-shadow: $shadow-lg;
   }
 }
 
@@ -188,7 +207,7 @@
   overflow-x: hidden;
   padding-right: $gap-xs;
 
-  /* Scrollbar personnalisée */
+  /* Scrollbar personnalisée style cinéma */
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -198,23 +217,23 @@
     margin: $gap-xs 0;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba($color-primary, 0.3);
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
     border-radius: $border-radius-pill;
     &:hover {
-      background: rgba($color-primary, 0.5);
+      background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
     }
   }
   scrollbar-width: thin;
-  scrollbar-color: rgba($color-primary, 0.3) rgba($color-primary, 0.1);
+  scrollbar-color: rgba($color-primary, 0.6) rgba($color-primary, 0.1);
 }
 
-/* === LIENS === */
+/* === LIENS - STYLE CINÉMA === */
 .sidebar-link {
   display: flex;
   align-items: center;
   gap: $gap-sm;
   padding: $padding-sm $padding-md;
-  border-radius: $border-radius-pill;
+  border-radius: $border-radius;
   color: $color-text-primary;
   font-weight: $font-weight-medium;
   font-size: $font-size-p2;
@@ -222,26 +241,27 @@
   transition: $transition;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba($color-white, 0.3);
-  height: 40px;
+  border: 1px solid rgba($color-primary, 0.2);
+  height: 44px;
   margin-left: $gap-xs;
   flex-shrink: 0;
   background: linear-gradient(90deg, 
-    rgba($color-text-primary, 0.05) 0%, 
-    rgba($color-text-primary, 0.15) 100%);
+    rgba($color-primary-light, 0.3) 0%, 
+    rgba($color-white, 0.6) 100%);
   width: 180px;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
 
   .icon {
-    width: 20px; 
-    height: 20px;
+    width: 22px; 
+    height: 22px;
     border-radius: 50%;
-    background: $color-text-primary;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
     @include flex-center;
-    color: $color-primary;
+    color: $color-white;
     font-size: $font-size-p2;
     transition: $transition;
     flex-shrink: 0;
+    box-shadow: $shadow;
   }
 
   .link-text {
@@ -249,6 +269,7 @@
     transition: opacity $transition-slow;
     margin-left: $gap-xs;
     color: $color-text-primary;
+    font-weight: $font-weight-medium;
   }
 
   &::before {
@@ -258,7 +279,7 @@
     left: -100%;
     width: 100%; 
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($color-white, 0.7), transparent);
+    background: linear-gradient(90deg, transparent, rgba($color-white, 0.8), transparent);
     transition: left 0.6s ease;
     pointer-events: none;
   }
@@ -266,16 +287,21 @@
   &:hover {
     background: linear-gradient(90deg, 
       rgba($color-primary, 0.8) 0%, 
-      rgba($color-accent, 0.8) 100%);
+      rgba($color-primary-dark, 0.8) 100%);
     transform: translateX(5px) scale(1.02);
-    box-shadow: 0 5px 15px rgba($color-primary, 0.4);
-    border-color: rgba($color-white, 0.5);
-    color: $color-text-primary;
+    box-shadow: $shadow-primary;
+    border-color: rgba($color-primary, 0.4);
+    color: $color-white;
     
     .icon {
-      background: rgba($color-text-primary, 0.9);
+      background: rgba($color-white, 0.9);
       color: $color-primary;
       transform: scale(1.1) rotate(360deg);
+      box-shadow: $shadow-lg;
+    }
+    
+    .link-text {
+      color: $color-white;
     }
     
     &::before { 
@@ -286,19 +312,24 @@
   &.router-link-active {
     background: linear-gradient(90deg, 
       rgba($color-primary, 0.9) 0%, 
-      rgba($color-accent, 0.9) 100%);
-    color: $color-text-primary;
+      rgba($color-primary-dark, 0.9) 100%);
+    color: $color-white;
     font-size: $font-size-p1;
-    box-shadow: 0 0 10px rgba($color-primary, 0.6);
-    border-color: rgba($color-white, 0.6);
+    box-shadow: $shadow-primary;
+    border-color: rgba($color-primary, 0.6);
     transform: translateX(6px);
     width: 182px;
     
     .icon {
-      background: rgba($color-text-primary, 0.9);
+      background: rgba($color-white, 0.9);
       color: $color-primary;
       animation: pulse 1.5s infinite;
       transform: scale(1.15);
+    }
+    
+    .link-text {
+      color: $color-white;
+      font-weight: $font-weight-semibold;
     }
     
     &::before {
@@ -307,15 +338,15 @@
   }
 }
 
-/* === ANIMATIONS === */
+/* === ANIMATIONS CINÉMA === */
 @keyframes pulse {
   0%, 100% { 
     transform: scale(1.1); 
-    box-shadow: 0 0 0 0 rgba($color-accent, 0.4); 
+    box-shadow: 0 0 0 0 rgba($color-primary, 0.4); 
   }
   50% { 
     transform: scale(1.2); 
-    box-shadow: 0 0 0 8px rgba($color-accent, 0.2); 
+    box-shadow: 0 0 0 8px rgba($color-primary, 0.2); 
   }
 }
 
@@ -329,11 +360,22 @@
 .sidebar-footer {
   height: 80px;
   padding-top: $padding-xs;
-  border-top: 1px solid rgba($color-primary, 0.15);
+  border-top: 2px solid rgba($color-primary, 0.3);
   display: flex;
   flex-direction: column;
-  gap: $gap-xs;
+  gap: $gap-sm;
   flex-shrink: 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $color-primary, transparent);
+  }
 
   &.fixed-footer {
     background: inherit;
@@ -345,52 +387,57 @@
 }
 
 .theme-toggle-footer-2 {
-  background: rgba($color-text-primary, 0.8);
-  border-radius: 50px;
+  background: rgba($color-primary-light, 0.8);
+  border-radius: $border-radius-pill;
   padding: $gap-xs;
-  width:28px;
+  width: 120px;
   height: 40px;
   margin: 0px;
   display: flex;
   gap: $gap-xs;
-  border: 1px solid rgba($color-text-secondary, 0.5);
-  backdrop-filter: blur(5px);
+  border: 1px solid rgba($color-primary, 0.3);
+  backdrop-filter: blur(10px);
   align-self: flex-start;
+  box-shadow: $shadow;
 
   .theme-btn { 
-    width: 15px;
-    height: 15px;
-    border-radius: 50px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
     @include flex-center;
-    font-size: $font-size-p1;
-    color: $color-text-light;
+    font-size: $font-size-p2;
+    color: $color-text-primary;
     transition: $transition;
     position: relative;
     overflow: hidden;
+    background: rgba($color-white, 0.6);
     
     &::before {
       content: '';
       position: absolute;
       top: 0;
       left: -100%;
-      background: linear-gradient(90deg, transparent, rgba($color-white, 0.2), transparent);
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba($color-white, 0.4), transparent);
       transition: left 0.7s ease;
     }
     
     &:hover::before {
-      left: 10px;
+      left: 100%;
     }
     
     &:hover {
-      background: rgba($color-white, 0.1);
+      background: rgba($color-primary, 0.8);
       transform: scale(1.1);
-      color: $color-primary;
+      color: $color-white;
+      box-shadow: $shadow;
     }
     
     &.active {
-      background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
       color: $color-white;
-      box-shadow: 0 3px 10px rgba($color-primary, 0.4);
+      box-shadow: $shadow-primary;
       transform: scale(1.05);
     }
   }
@@ -398,21 +445,21 @@
 
 /* Correction spécifique pour le theme toggle en mode collapsed */
 .sidebar.collapsed .theme-toggle-footer-2 {
-  width: 28px !important;         /* Réduit de 26px à 24px */
-  height: 52px !important;        /* Réduit de 56px à 52px */
+  width: 32px !important;
+  height: 120px !important;
   flex-direction: column !important;
-  padding: 4px 3px !important;    /* Padding réduit */
-  gap: 4px !important;            /* Gap réduit */
+  padding: 6px 4px !important;
+  gap: 6px !important;
   margin: 0 auto !important;
 
   .theme-btn {
-    width: 18px !important;       /* Réduit de 16px à 14px */
-    height: 18px !important;
-    font-size: 8px !important;    /* Réduit de 9px à 8px */
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 10px !important;
 
     &.active::after {
-      width: 16px;                /* Réduit de 20px à 16px */
-      height: 16px;
+      width: 18px;
+      height: 18px;
     }
   }
 }
@@ -421,34 +468,51 @@
   @include flex-center;
   gap: $gap-sm;
   padding: $padding-sm $padding-md;
-  border-radius: $border-radius-pill;
-  border: 2px solid $color-text-primary;
+  border-radius: $border-radius;
+  border: 2px solid rgba($color-primary, 0.4);
   color: $color-text-primary;
   font-size: $font-size-p2;
   font-weight: $font-weight-medium;
   transition: $transition;
   flex-shrink: 0;
-  background: transparent;
-  backdrop-filter: blur(5px);
+  background: linear-gradient(135deg, 
+    rgba($color-primary-light, 0.4) 0%, 
+    rgba($color-white, 0.6) 100%);
+  backdrop-filter: blur(10px);
+
+  .icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+    @include flex-center;
+    color: $color-white;
+    font-size: $font-size-p2;
+    transition: $transition;
+  }
 
   &:hover {
-    background: linear-gradient(90deg, $color-accent 0%, $color-primary 100%);
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
     color: $color-white;
     transform: translateX(3px) scale(1.02);
-    box-shadow: 0 0 15px rgba($color-accent, 0.4);
+    box-shadow: $shadow-primary;
     border-color: transparent;
     
     .icon {
       background: rgba($color-white, 0.9);
-      color: $color-accent;
+      color: $color-primary;
+      transform: scale(1.1) rotate(360deg);
     }
   }
 }
 
 /* === MODE COLLAPSED === */
 .sidebar.collapsed {
-  background: $color-white;
-
+  background: linear-gradient(135deg, 
+    rgba($color-primary-light, 0.95) 0%, 
+    rgba($color-white, 0.9) 100%);
+  margin-right: 500px;
+  
   .sidebar-header {
     justify-content: center;
     flex-direction: column;
@@ -459,16 +523,17 @@
 
   .user-profile-header {
     justify-content: center;
-    padding: 0;
+    padding: $gap-xs;
     margin-bottom: 0;
     width: 100%;
+    background: rgba($color-white, 0.7);
   }
 
   .user-avatar {
     margin-top: $gap-md;
-    width: 28px;
-    height: 28px;
-    font-size: $font-size-p3;
+    width: 32px;
+    height: 32px;
+    font-size: $font-size-p2;
     margin-left: 0;
   }
 
@@ -491,8 +556,8 @@
   }
 
   .menu-toggle {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     margin-right: 0;
   }
 
@@ -506,7 +571,8 @@
     padding: $padding-sm;
     width: auto;
     margin-left: 0;
-    min-width: 32px;
+    min-width: 36px;
+    background: rgba($color-white, 0.6);
     
     .icon { 
       margin: 0;
@@ -523,6 +589,7 @@
 
     &:hover {
       transform: scale(1.05);
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
       .icon {
         transform: scale(1.1) rotate(360deg);
       }
@@ -532,6 +599,7 @@
       transform: scale(1.05);
       width: auto;
       margin-left: 0;
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
       .icon {
         transform: scale(1.15);
       }
@@ -543,6 +611,7 @@
     padding: $padding-sm;
     width: auto;
     margin-left: 0;
+    background: rgba($color-white, 0.6);
 
     .icon {
       margin: 0;
@@ -554,22 +623,40 @@
       height: 0;
       margin: 0;
     }
+
+    &:hover {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+    }
   }
 }
 
-/* === DARK MODE === */
+/* === DARK MODE - COHÉRENT AVEC BACK.SCSS === */
 .dark-theme {
-  body {
-    background: $color-background-dark;
-    color: $color-text-light;
-  }
-
   .sidebar {
     background: linear-gradient(135deg, 
-      rgba($color-text-secondary, 0.8) 0%, 
-      rgba($color-background-dark, 0.7) 100%);
-    border-right: 1px solid rgba($color-primary, 0.3);
+      rgba($color-background-dark, 0.95) 0%, 
+      rgba($color-text-secondary, 0.8) 100%);
+    border-right: 2px solid rgba($color-primary, 0.4);
     color: $color-text-light;
+    box-shadow:
+      3px 0 20px rgba($color-primary, 0.2),
+      inset -5px 0 15px rgba($color-primary, 0.1);
+  }
+
+  .sidebar-header {
+    border-bottom: 2px solid rgba($color-primary, 0.3);
+  }
+
+  .user-profile-header {
+    background: rgba($color-background-dark, 0.6);
+    border: 1px solid rgba($color-primary, 0.3);
+    
+    &:hover {
+      background: rgba($color-primary, 0.2);
+      .user-name {
+        color: $color-primary-light;
+      }
+    }
   }
 
   .user-name, 
@@ -579,52 +666,71 @@
   }
   
   .user-role { 
-    color: $color-accent; 
+    color: $color-primary-light; 
   }
 
   .sidebar-link {
     background: linear-gradient(90deg, 
-      transparent 0%, 
-      rgba($color-white, 0.1) 100%);
-    border: 1px solid rgba($color-white, 0.1);
+      rgba($color-primary, 0.1) 0%, 
+      rgba($color-background-dark, 0.3) 100%);
+    border: 1px solid rgba($color-primary, 0.2);
     
     &:hover, 
     &.router-link-active {
       background: linear-gradient(90deg, 
         rgba($color-primary, 0.8) 0%, 
-        rgba($color-accent, 0.8) 100%);
-      box-shadow: 0 0 20px rgba($color-accent, 0.3);
-      color: $color-text-primary;
+        rgba($color-primary-dark, 0.8) 100%);
+      box-shadow: $shadow-gold;
+      color: $color-white;
     }
     
     .icon {
-      background: $color-text-light;
-      color: $color-primary;
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+      color: $color-background-dark;
     }
     
     &.router-link-active .icon {
-      background: rgba($color-text-primary, 0.9);
+      background: rgba($color-white, 0.9);
       color: $color-primary;
     }
   }
 
-  .menu-toggle:hover {
-    background: $color-accent;
-    color: $color-text-primary;
+  .menu-toggle {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    &:hover {
+      background: linear-gradient(135deg, $color-primary-light 0%, $color-primary 100%);
+    }
   }
 
   .logout-link {
-    border-color: $color-text-light;
+    background: linear-gradient(135deg, 
+      rgba($color-primary, 0.1) 0%, 
+      rgba($color-background-dark, 0.3) 100%);
+    border-color: rgba($color-primary, 0.3);
     color: $color-text-light;
     
     &:hover { 
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
       color: $color-white; 
     }
   }
 
   .theme-toggle-footer-2 {
-    background: rgba($color-text-secondary, 0.8);
-    border-color: rgba($color-text-muted, 0.5);
+    background: rgba($color-background-dark, 0.8);
+    border-color: rgba($color-primary, 0.3);
+    
+    .theme-btn {
+      background: rgba($color-primary, 0.2);
+      color: $color-text-light;
+      
+      &:hover {
+        background: rgba($color-primary, 0.6);
+      }
+      
+      &.active {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+      }
+    }
   }
 }
 
@@ -637,8 +743,8 @@
   }
   
   .user-avatar { 
-    width: 30px; 
-    height: 30px; 
+    width: 34px; 
+    height: 34px; 
   }
   
   .menu-toggle { 
@@ -661,12 +767,13 @@
   }
   
   .theme-toggle-footer-2 {
-    width: 90px;
+    width: 110px;
   }
   
   .theme-toggle-footer-2 .theme-btn {
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     font-size: $font-size-p2;
   }
 }
+

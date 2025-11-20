@@ -79,19 +79,36 @@
   
   // Boutons d'action spécifiques au tournage
   button {
-    @extend .btn-small-Scenariste;
+    background: rgba($color-text-primary, 0.1);
+    color: $color-text-primary;
+    border: none;
+    padding: $padding-xs $padding-sm;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-p2;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: $transition;
     display: flex;
     align-items: center;
     gap: $gap-xs;
-    font-weight: $font-weight-medium;
     
     i {
       font-size: $font-size-p2;
     }
+    
+    &:hover {
+      background: rgba($color-text-primary, 0.2);
+      transform: translateY(-1px);
+    }
   }
   
   .btn-planifier {
-    @extend .primary-btn-Scenariste;
+    background: $color-primary;
+    color: $color-white;
+    
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
   }
   
   .btn-confirmer {
@@ -139,11 +156,24 @@
   }
   
   .btn-modifier {
-    @extend .accent-btn-Scenariste;
+    background: rgba($color-text-muted, 0.10);
+    color: $color-text-secondary;
+    border: 1px solid rgba($color-primary, 0.3);
+    
+    &:hover {
+      border: 1px solid $color-primary;
+      background: rgba($color-primary, 0.2);
+      color: $color-primary;
+    }
   }
   
   .btn-supprimer {
-    @extend .btn-error-Scenariste;
+    background: $color-error;
+    color: $color-white;
+    
+    &:hover {
+      background: darken($color-error, 10%);
+    }
   }
 }
 
@@ -270,10 +300,19 @@
 }
 
 .close-btn {
-  @extend .btn-ghost-Scenariste;
+  background: transparent;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
   padding: $gap-xs;
   border-radius: 50%;
+  transition: $transition;
   font-size: $font-size-p1;
+  
+  &:hover {
+    color: $color-text-primary;
+    background: rgba($color-text-primary, 0.1);
+  }
 }
 
 // Formulaire de tournage
@@ -365,19 +404,43 @@
   margin-top: $margin-lg;
   
   .btn {
-    @extend .btn-with-icon-Scenariste;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $padding-sm $padding-md;
     border-radius: $border-radius-sm;
+    font-size: $font-size-p1;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition;
+    border: none;
     
     &.btn-secondary {
-      @extend .secondary-btn-Scenariste;
+      background: rgba($color-text-primary, 0.1);
+      color: $color-text-primary;
+      
+      &:hover {
+        background: rgba($color-text-primary, 0.2);
+      }
     }
     
     &.btn-primary {
-      @extend .primary-btn-Scenariste;
+      background: $color-primary;
+      color: $color-white;
+      
+      &:hover {
+        background: darken($color-primary, 10%);
+      }
     }
     
     &:disabled {
-      @extend .btn-disabled-Scenariste;
+      opacity: 0.6;
+      cursor: not-allowed;
+      
+      &:hover {
+        transform: none !important;
+        background: inherit !important;
+      }
     }
   }
 }
@@ -592,6 +655,15 @@ body.dark-theme {
     &:disabled {
       background: rgba($color-text-light, 0.05);
       color: rgba($color-text-light, 0.5);
+    }
+  }
+  
+  .close-btn {
+    color: rgba($color-text-light, 0.7);
+    
+    &:hover {
+      color: $color-text-light;
+      background: rgba($color-primary, 0.2);
     }
   }
 }

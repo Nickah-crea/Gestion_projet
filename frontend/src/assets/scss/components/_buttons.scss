@@ -1,93 +1,410 @@
-// =============================================
-// BOUTONS - STYLES GLOBAUX
-// =============================================
-
 @import '../base/variables';
 
 // =============================================
-// BOUTONS PRINCIPAUX
+// VARIABLES SPÉCIFIQUES À LA CONNEXION
 // =============================================
+$conn-form-width: 400px;
+$conn-card-width: 380px;
+$conn-form-inner-width: 340px;
 
-.add-project-btn-main-Scenariste,
-.add-project-btn-large-Scenariste {
-  background: $color-primary-dark;
-  color: $color-white;
-  border: none;
-  padding: $padding-sm $padding-lg;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p1;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-md;
-  box-shadow: $shadow;
-  height: 42px; 
-  margin-left: $margin-lg;
-  width: 200px;
-  justify-content: center;
+// =============================================
+// STRUCTURE PRINCIPALE
+// =============================================
+.app-wrapper-co-conn {
+  padding: 0;
+  height: 100vh;
   position: relative;
+  overflow: hidden;
+  
+  // Overlay
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba($color-primary, 0.1) 0%, rgba($color-accent, 0.1) 100%);
+    z-index: 0;
+  }
+}
 
+.connexion-container-conn {
+  height: 100vh;
+  @include flex-center;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.connexion-form-section-conn {
+  height: 100vh;
+  width: $conn-form-width;
+  @include flex-center;
+  position: relative;
+  z-index: $z-index-modal;
+}
+ 
+// =============================================
+// CARTE DE CONNEXION
+// =============================================
+.connexion-card-conn {
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: $border-radius-lg;
+  border: 1px solid rgba($color-white, 0.8);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 rgba($color-white, 0.9);
+  padding: 0;
+  width: 100%;
+  max-width: $conn-card-width;
+  position: relative;
+  overflow: hidden;
+  animation: slideInUp-conn $duration-normal cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: $z-index-modal;
+  background: rgba($color-white, 0.95);
+
+  // Effet de lumière subtil en haut
   &::before {
     content: '';
     position: absolute;
-    top: 0; 
-    left: -100%;
-    width: 100%; 
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($color-white, 0.3), transparent);
-    transition: left 0.6s ease;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($color-white, 0.8),
+      transparent
+    );
     pointer-events: none;
-  }
-
-  &:hover {
-    background: linear-gradient(90deg,
-      rgba($color-primary-dark, 0.8) 0%,
-      rgba($color-accent, 0.6) 100%);
-    transform: translateX(5px) scale(1.02);
-    box-shadow: $shadow-hover;
-    border-color: $color-primary;
+    z-index: 1;
   }
   
-  &:active {
+  // Effet de reflet subtil
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($color-white, 0.3),
+      transparent
+    );
+    pointer-events: none;
+    z-index: 0;
+    animation: shimmer 3s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    left: -50%;
+    opacity: 0;
+  }
+  50% {
+    left: 150%;
+    opacity: 1;
+  }
+}
+
+// =============================================
+// EN-TÊTE
+// =============================================
+.connex-header-conn {
+  margin-top: $margin-lg;
+  padding: $padding-md;
+  text-align: center;
+  position: relative;
+}
+
+.user-avatar-conn {
+  background: rgba($color-white, 0.9);
+  color: $color-primary;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  @include flex-center;
+  font-size: 1.2rem;
+  border: 2px solid rgba($color-primary, 0.3);
+  margin: 0 auto $margin-sm auto;
+  box-shadow: 0 4px 12px rgba($color-text-primary, 0.1);
+}
+
+.connex-header-conn {
+  h1 {
+    font-size: 20px;
+    font-weight: $font-weight-bold;
+    line-height: $line-height-tight;
+    color: $color-text-primary;
+    margin-bottom: $gap-sm;
+  }
+  
+  p {
+    font-size: 12px;
+    font-weight: $font-weight-regular;
+    line-height: $line-height-base;
+    color: $color-text-secondary;
+  }
+}
+
+// =============================================
+// FORMULAIRE
+// =============================================
+.connexion-form-conn {
+  padding: $padding-lg;
+  background: transparent !important;
+  width: $conn-form-inner-width;
+  position: relative;
+  z-index: 1;
+}
+
+// =============================================
+// INPUTS
+// =============================================
+.form-group-connexion-conn {
+  margin-bottom: $margin-md;
+  position: relative;
+}
+
+.input-container-connexion-conn {
+  position: relative;
+}
+
+.form-input-connexion-conn {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-pill;
+  background: rgba($color-white, 0.9);
+  font-size: 13px;
+  color: $color-text-primary;
+  transition: $transition;
+  font-weight: $font-weight-medium;
+  backdrop-filter: blur(15px) saturate(150%);
+  box-shadow: 0 2px 8px rgba($color-text-primary, 0.05);
+
+  &:focus {
+    background: rgba($color-white, 1);
+    box-shadow: 
+      0 0 0 3px rgba($color-primary, 0.15),
+      0 4px 12px rgba($color-primary, 0.1);
+    transform: translateY(-1px);
+    border-color: $color-primary;
+    outline: none;
+  }
+
+  &::placeholder {
+    color: $color-text-muted;
+    font-size: 12px;
+    transition: $transition;
+  }
+
+  &:focus::placeholder {
+    color: transparent;
+  }
+}
+
+// =============================================
+// OPTIONS DU FORMULAIRE
+// =============================================
+.form-options-connexion-conn {
+  @include flex-between;
+  margin-bottom: $margin-md;
+  font-size: 12px;
+}
+
+// =============================================
+// BOUTON DE CONNEXION
+// =============================================
+.connexion-btn-conn {
+  @include btn-cinema-primary;
+  padding: 12px 20px;
+  font-size: 13px;
+  width: 100%;
+}
+
+// =============================================
+// LIEN D'INSCRIPTION
+// =============================================
+.signup-link-connexion-conn {
+  text-align: center;
+  font-size: 12px;
+  color: $color-text-secondary;
+  margin-top: $margin-md;
+  padding-top: $margin-md;
+  border-top: $border-width solid $color-border;
+
+  a {
+    color: $color-primary;
+    text-decoration: none;
+    font-weight: $font-weight-semibold;
+
+    &:hover {
+      color: $color-accent;
+      text-decoration: underline;
+    }
+  }
+}
+
+// =============================================
+// TOGGLE FORMULAIRE
+// =============================================
+.form-toggle-conn {
+  display: flex;
+  background: rgba($color-white, 0.8);
+  border-radius: $border-radius-pill;
+  padding: 4px;
+  margin: 0 $padding-lg $margin-md $padding-lg;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba($color-text-primary, 0.1);
+  border: 1px solid rgba($color-primary, 0.1);
+}
+
+.toggle-btn-conn {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: $border-radius-pill;
+  background: transparent;
+  color: $color-text-secondary;
+  font-size: 12px;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition;
+
+  &.active {
+    background: $color-primary;
+    color: $color-white;
+    box-shadow: 0 2px 6px rgba($color-primary, 0.3);
+  }
+
+  &:hover:not(.active) {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+}
+
+// =============================================
+// ÉTATS EMAIL ET MOT DE PASSE
+// =============================================
+.email-status-conn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  .fa-check {
+    color: $color-success;
+  }
+  
+  .fa-times {
+    color: $color-error;
+  }
+}
+
+.email-error-conn {
+  color: $color-error;
+  font-size: 10px;
+  font-weight: $font-weight-medium;
+}
+
+.password-hint-conn {
+  font-size: 10px;
+  color: $color-error;
+  margin-top: 4px;
+  padding-left: 16px;
+}
+
+.form-input-connexion-conn.error {
+  border-color: $color-error;
+  background: rgba($color-error, 0.05);
+}
+
+.textarea-conn {
+  resize: vertical;
+  min-height: 60px;
+  font-family: $font-family-primary;
+}
+
+// =============================================
+// ANIMATIONS D'ENTRÉE POUR ÉLÉMENTS
+// =============================================
+.form-group-connexion-conn,
+.form-options-connexion-conn,
+.connexion-btn-conn,
+.signup-link-connexion-conn {
+  opacity: 0;
+  animation: slideInUp-conn $duration-normal ease-out forwards;
+}
+
+.form-group-connexion-conn:nth-child(1) { animation-delay: 0.2s; }
+.form-group-connexion-conn:nth-child(2) { animation-delay: 0.4s; }
+.form-options-connexion-conn { animation-delay: 0.6s; }
+.connexion-btn-conn { animation-delay: 0.8s; }
+.signup-link-connexion-conn { animation-delay: 1s; }
+
+// =============================================
+// ANIMATIONS
+// =============================================
+@keyframes slideInUp-conn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInDown-conn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
-.add-project-btn-large-Scenariste {
-  padding: $padding-md $padding-xl;
-  border-radius: $border-radius;
-  margin: $margin-lg auto 0 auto;
-  font-size: $font-size-h4;
-}
-
 // =============================================
-// BOUTONS DE SIDEBAR (DÉPLACÉS DEPUIS SIDEBAR.SCSS)
+// BOUTONS DE THÈME
 // =============================================
-
-.menu-toggle {
-  background: rgba($color-primary, 0.8);
-  border: 1px solid rgba($color-primary, 0.5);
-  color: $color-white;
-  font-size: $font-size-p2;
-  cursor: pointer;
-  @include flex-center;
-  width: 28px; 
-  height: 28px;
-  border-radius: 50%;
+.theme-toggle {
+  position: fixed;
+  top: $padding-md;
+  right: $padding-md;
+  display: flex;
+  background: rgba($color-primary, 0.15);
+  border-radius: $border-radius-pill;
+  padding: $gap-xs;
+  gap: $gap-xs;
+  box-shadow: 
+    inset 0 2px 4px rgba($color-text-primary, 0.1),
+    0 4px 12px rgba($color-text-primary, 0.15);
+  width: 60px;
+  border: 1px solid rgba($color-white, 0.4);
+  backdrop-filter: blur(10px) saturate(150%);
+  z-index: $z-index-modal;
   transition: $transition;
-  backdrop-filter: blur(5px);
-
-  &:hover {
-    background: $color-accent;
-    color: $color-text-primary;
-    transform: scale(1.1) rotate(180deg);
-    box-shadow: 0 0 12px rgba($color-accent, 0.6);
-  }
   
-  &:active {
-    transform: scale(0.95);
+  &:hover {
+    background: rgba($color-primary, 0.2);
+    box-shadow: 
+      inset 0 2px 4px rgba($color-text-primary, 0.1),
+      0 6px 16px rgba($color-text-primary, 0.2);
   }
 }
 
@@ -96,8 +413,8 @@
   border: none;
   background: transparent;
   border-radius: 50%;
-  width: 25px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   @include flex-center;
   cursor: pointer;
   transition: $transition;
@@ -106,11 +423,7 @@
   
   &:hover {
     background: rgba($color-primary, 0.2);
-    transform: scale(1.05);
-  }
-  
-  &:active {
-    transform: scale(0.95);
+    transform: scale(1.1);
   }
   
   &.active {
@@ -118,806 +431,151 @@
     color: $color-white;
     box-shadow: 0 2px 6px rgba($color-primary, 0.4);
   }
-}
-
-// =============================================
-// BOUTONS D'ACTION (CARTES)
-// =============================================
-
-.action-btn-Scenariste {
-  border: none;
-  padding: $padding-sm;
-  border-radius: $border-radius-sm;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-p1;
-  background: rgba($color-text-muted, 0.05);
-  color: $color-text-muted;
   
-  &:hover {
-    background: rgba($color-text-primary, 0.1);
-    color: $color-text-primary;
-    transform: scale(1.05);
-  }
-  
-  &:active {
-    transform: scale(1);
-  }
-}
-
-// Boutons d'édition et suppression
-.edit-btn-Scenariste { 
-  color: $color-primary; 
-  
-  &:hover {
-    background: rgba($color-primary, 0.1);
-    color: darken($color-primary, 10%);
-  }
-}
-
-.delete-btn-Scenariste { 
-  color: $color-error; 
-  
-  &:hover {
-    background: rgba($color-error, 0.1);
-    color: darken($color-error, 10%);
+  i {
+    font-size: $font-size-p3;
   }
 }
 
 // =============================================
-// BOUTONS PRIMAIRES ET ACCENTUÉS (CARTES)
+// RESPONSIVE
 // =============================================
+@include respond-to($breakpoint-md) {
+  .connexion-container-conn {
+    flex-direction: column;
+  }
 
-.primary-btn-Scenariste {
-  background: $color-primary-dark;
-  color: $color-white;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  border: none;
-  font-weight: $font-weight-semibold;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  font-size: $font-size-p2;
-  flex: 1;
-  justify-content: center;
-  height: 35px;
+  .connexion-form-section-conn {
+    height: auto;
+    min-height: 100vh;
+    padding: $padding-md;
+  }
 
-  &:hover {
-    background: linear-gradient(135deg, $color-accent, $color-primary);
-    transform: translateY(-2px);
-    border: 1px solid rgba($color-accent, 0.5);
-    color: $color-white;
-    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+  .connexion-card-conn {
+    max-width: 100%;
+  }
+
+  .connexion-form-conn {
+    padding: $padding-lg;
+    width: 100%;
+  }
+
+  .form-options-connexion-conn {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+
+  .theme-toggle {
+    top: $padding-sm;
+    right: $padding-sm;
+    width: 50px;
+    padding: 3px;
   }
   
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.accent-btn-Scenariste {
-  background: rgba($color-text-muted, 0.10);
-  color: $color-text-secondary;
-  border: 1px solid rgba($color-primary, 0.3);
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-weight: $font-weight-semibold;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  font-size: $font-size-p2;
-  flex: 1;
-  justify-content: center;
-  height: 35px;
-  
-  &:hover {
-    border: 1px solid $color-primary;
-    background: rgba($color-primary, 0.2);
-    color: $color-primary;
-    transform: translateY(-2px);
-  }
-  
-  &:active {
-    transform: translateY(0);
+  .theme-btn {
+    width: 20px;
+    height: 20px;
+    font-size: $font-size-p3;
   }
 }
 
-.add-btn-ecran {
-  background: $color-accent;
-  color: $color-text-primary;
-  border-radius: $border-radius-sm;
-  font-weight: $font-weight-semibold;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  justify-content: center;
-  height: 35px;
-  width: 150px;
-  border: none;
-  
-  &:hover {
+// =============================================
+// MODE SOMBRE
+// =============================================
+body.dark-theme {
+  .app-wrapper-co-conn {
+    // Supprime le dégradé pour le mode sombre
     background: none;
-    border: 1px solid;
-    box-shadow: $shadow-hover;
-    border-color: $color-accent;
-    color: $color-accent;
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-// =============================================
-// BOUTONS DE MODAL
-// =============================================
-
-.cancel-btn-Scenariste,
-.save-btn-Scenariste {
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  border: none;
-  cursor: pointer;
-  font-size: $font-size-p1;
-  transition: $transition;
-  font-weight: $font-weight-semibold;
-  
-  &:hover {
-    transform: translateY(-1px);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.cancel-btn-Scenariste {
-  background: rgba($color-text-primary, 0.1);
-  color: $color-text-primary;
-  
-  &:hover {
-    background: rgba($color-text-primary, 0.2);
-  }
-}
-
-.save-btn-Scenariste {
-  background: $color-primary;
-  color: $color-white;
-  
-  &:hover {
-    background: darken($color-primary, 10%);
-  }
-}
-
-// =============================================
-// BOUTONS DE RECHERCHE
-// =============================================
-
-.clear-search-btn-Scenariste {
-  background: none;
-  border: none;
-  color: $color-text-muted;
-  cursor: pointer;
-  padding: $gap-xs;
-  border-radius: 50%;
-  transition: $transition;
-  font-size: $font-size-p1;
-  
-  &:hover {
-    color: $color-text-primary;
-    background: rgba($color-text-primary, 0.1);
-    transform: scale(1.1);
-  }
-}
-
-.close-modal-btn-Scenariste {
-  background: none;
-  border: none;
-  color: $color-text-muted;
-  cursor: pointer;
-  padding: $gap-xs;
-  border-radius: 50%;
-  transition: $transition;
-  
-  &:hover {
-    color: $color-text-primary;
-    background: rgba($color-text-primary, 0.1);
-    transform: scale(1.1);
-  }
-}
-
-.close-results-btn-Scenariste {
-  background: none;
-  border: none;
-  color: $color-text-muted;
-  cursor: pointer;
-  padding: $gap-sm;
-  border-radius: $border-radius-sm;
-  transition: $transition;
-  
-  &:hover {
-    color: $color-text-primary;
-    background: rgba($color-text-primary, 0.1);
-  }
-}
-
-// =============================================
-// BOUTONS SECONDAIRES
-// =============================================
-
-.secondary-btn-Scenariste {
-  background: rgba($color-text-primary, 0.1);
-  color: $color-text-primary;
-  border: none;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    background: rgba($color-text-primary, 0.2);
-    transform: translateY(-1px);
-  }
-}
-
-// =============================================
-// BOUTONS AVEC ICÔNES
-// =============================================
-
-.btn-with-icon-Scenariste {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  padding: $padding-sm $padding-md;
-  
-  .icon-Scenariste {
-    font-size: $font-size-p1;
-  }
-}
-
-// =============================================
-// ÉTATS DES BOUTONS
-// =============================================
-
-// Bouton désactivé
-.btn-disabled-Scenariste {
-  opacity: 0.6;
-  cursor: not-allowed;
-  
-  &:hover {
-    transform: none !important;
-    background: inherit !important;
-  }
-}
-
-// Bouton chargement
-.btn-loading-Scenariste {
-  position: relative;
-  color: transparent;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border: 2px solid transparent;
-    border-top: 2px solid $color-white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// =============================================
-// VARIANTES DE TAILLE
-// =============================================
-
-.btn-small-Scenariste {
-  padding: $gap-xs $padding-sm;
-  font-size: $font-size-p3;
-}
-
-.btn-large-Scenariste {
-  padding: $padding-md $padding-xl;
-  font-size: $font-size-p1;
-}
-
-.btn-xlarge-Scenariste {
-  padding: $padding-lg $padding-xl;
-  font-size: $font-size-h4;
-  font-weight: $font-weight-bold;
-}
-
-// =============================================
-// VARIANTES DE COULEUR
-// =============================================
-
-.btn-success-Scenariste {
-  background: $color-success;
-  
-  &:hover {
-    background: darken($color-success, 10%);
-  }
-}
-
-.btn-warning-Scenariste {
-  background: $color-warning;
-  color: $color-text-primary;
-  
-  &:hover {
-    background: darken($color-warning, 10%);
-  }
-}
-
-.btn-error-Scenariste {
-  background: $color-error;
-  
-  &:hover {
-    background: darken($color-error, 10%);
-  }
-}
-
-.btn-info-Scenariste {
-  background: $color-info;
-  
-  &:hover {
-    background: darken($color-info, 10%);
-  }
-}
-
-// =============================================
-// BOUTONS OUTLINE
-// =============================================
-
-.btn-outline-primary-Scenariste {
-  background: transparent;
-  border: 2px solid $color-primary;
-  color: $color-primary;
-  
-  &:hover {
-    background: $color-primary;
-    color: $color-white;
-  }
-}
-
-.btn-outline-secondary-Scenariste {
-  background: transparent;
-  border: 2px solid $color-text-muted;
-  color: $color-text-muted;
-  
-  &:hover {
-    background: $color-text-muted;
-    color: $color-white;
-  }
-}
-
-// =============================================
-// BOUTONS GHOST (TRANSPARENT)
-// =============================================
-
-.btn-ghost-Scenariste {
-  background: transparent;
-  border: none;
-  color: $color-text-muted;
-  
-  &:hover {
-    background: rgba($color-text-primary, 0.05);
-    color: $color-text-primary;
-  }
-}
-
-
-// =============================================
-// BOUTONS DANGER/SUPPRESSION
-// =============================================
-
-.btn-danger-Scenariste {
-  background: $color-error;
-  color: $color-white;
-  border: none;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    background: darken($color-error, 10%);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba($color-error, 0.3);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-// Variante outline pour le danger
-.btn-outline-danger-Scenariste {
-  background: transparent;
-  border: 2px solid $color-error;
-  color: $color-error;
-  
-  &:hover {
-    background: $color-error;
-    color: $color-white;
-  }
-}
-
-// =============================================
-// BOUTONS SECONDAIRES (COMPLÉMENT)
-// =============================================
-
-.btn-secondary-Scenariste {
-  background: rgba($color-text-primary, 0.1);
-  color: $color-text-primary;
-  border: none;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    background: rgba($color-text-primary, 0.2);
-    transform: translateY(-1px);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-// =============================================
-// BOUTONS PRIMAIRES (COMPLÉMENT)
-// =============================================
-
-.btn-primary-Scenariste {
-  background: $color-primary;
-  color: $color-white;
-  border: none;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    background: darken($color-primary, 10%);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba($color-primary, 0.3);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-// =============================================
-// BOUTONS POUR FORMULAIRES COMÉDIENS
-// =============================================
-
-.btn-add-dispo-Scenariste {
-  background: rgba($color-success, 0.1);
-  color: $color-success;
-  border: 1px dashed rgba($color-success, 0.3);
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    background: rgba($color-success, 0.2);
-    border-color: $color-success;
-    transform: translateY(-1px);
-  }
-}
-
-.btn-remove-Scenariste {
-  background: rgba($color-error, 0.1);
-  color: $color-error;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  font-size: $font-size-p1;
-  cursor: pointer;
-  transition: $transition;
-  @include flex-center;
-  
-  &:hover {
-    background: rgba($color-error, 0.2);
-    transform: scale(1.1);
-  }
-}
-
-// =============================================
-// BOUTONS DE NAVIGATION
-// =============================================
-
-.btn-back-Scenariste {
-  background: transparent;
-  border: 1px solid rgba($color-text-primary, 0.2);
-  color: $color-text-primary;
-  padding: $padding-xs $padding-sm;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    background: rgba($color-text-primary, 0.05);
-    border-color: $color-text-primary;
-  }
-}
-
-.btn-next-Scenariste {
-  background: $color-primary;
-  color: $color-white;
-  border: none;
-  padding: $padding-xs $padding-sm;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    background: darken($color-primary, 10%);
-    transform: translateX(2px);
-  }
-}
-
-// =============================================
-// BOUTONS DE FILTRES
-// =============================================
-
-.btn-filter-Scenariste {
-  background: rgba($color-primary, 0.1);
-  color: $color-primary;
-  border: none;
-  padding: $padding-xs $padding-sm;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p3;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    background: rgba($color-primary, 0.2);
-  }
-  
-  &.active {
-    background: $color-primary;
-    color: $color-white;
-  }
-}
-
-// =============================================
-// BOUTONS D'ACTION RAPIDE
-// =============================================
-
-.btn-quick-action-Scenariste {
-  background: $color-white;
-  border: 1px solid $border-color;
-  color: $color-text-primary;
-  padding: $padding-xs $padding-sm;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p3;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  box-shadow: $shadow;
-  
-  &:hover {
-    border-color: $color-primary;
-    box-shadow: $shadow-hover;
-    transform: translateY(-1px);
-  }
-}
-
-// =============================================
-// BOUTONS AVEC ÉTATS SPÉCIAUX
-// =============================================
-
-.btn-pending-Scenariste {
-  background: rgba($color-warning, 0.1);
-  color: $color-warning;
-  border: 1px solid rgba($color-warning, 0.3);
-  
-  &:hover {
-    background: rgba($color-warning, 0.2);
-  }
-}
-
-.btn-completed-Scenariste {
-  background: rgba($color-success, 0.1);
-  color: $color-success;
-  border: 1px solid rgba($color-success, 0.3);
-  
-  &:hover {
-    background: rgba($color-success, 0.2);
-  }
-}
-
-// =============================================
-// BOUTONS ICONIQUES (SANS TEXTE)
-// =============================================
-
-.btn-icon-only-Scenariste {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  @include flex-center;
-  border-radius: $border-radius-sm;
-  
-  &.small {
-    width: 24px;
-    height: 24px;
-    font-size: $font-size-p3;
-  }
-  
-  &.large {
-    width: 40px;
-    height: 40px;
-    font-size: $font-size-p1;
-  }
-}
-
-// =============================================
-// GROUPES DE BOUTONS
-// =============================================
-
-.btn-group-Scenariste {
-  display: flex;
-  gap: 1px;
-  border-radius: $border-radius-sm;
-  overflow: hidden;
-  border: 1px solid $border-color;
-  
-  .btn-Scenariste {
-    border-radius: 0;
-    border: none;
-    flex: 1;
     
-    &:first-child {
-      border-radius: $border-radius-sm 0 0 $border-radius-sm;
+    &::before {
+      filter: blur(8px) brightness(0.4); // Plus sombre en mode nuit
     }
     
-    &:last-child {
-      border-radius: 0 $border-radius-sm $border-radius-sm 0;
+    &::after {
+      background: linear-gradient(135deg, rgba($color-primary, 0.2) 0%, rgba($color-accent, 0.2) 100%);
     }
   }
-}
 
-// =============================================
-// BOUTON GÉNÉRIQUE DE BASE
-// =============================================
-
-.btn-Scenariste {
-  background: $color-primary;
-  color: $color-white;
-  border: none;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  display: inline-flex;
-  align-items: center;
-  gap: $gap-xs;
-  text-decoration: none;
-  
-  &:hover {
-    background: darken($color-primary, 10%);
-    transform: translateY(-1px);
+  .connexion-card-conn {
+    background: rgba($color-background-dark, 0.15);
+    border: 1px solid rgba($color-white, 0.15);
+    
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba($color-accent, 0.2),
+        transparent
+      );
+    }
   }
   
-  &:active {
-    transform: translateY(0);
+  .form-input-connexion-conn {
+    background: rgba($color-background-dark, 0.2);
+    border: 1px solid rgba($color-white, 0.2);
+    color: $color-text-light;
+    
+    &::placeholder {
+      color: rgba($color-text-light, 0.5);
+    }
+    
+    &:focus {
+      background: rgba($color-background-dark, 0.3);
+      border-color: rgba($color-primary, 0.5);
+    }
   }
   
-  // Variantes de couleur
-  &.secondary {
-    background: rgba($color-text-primary, 0.1);
-    color: $color-text-primary;
+  .connex-header-conn {
+    h1 {
+      color: $color-text-light;
+    }
+    
+    p {
+      color: rgba($color-text-light, 0.7);
+    }
+  }
+  
+  .forgot-link-connexion-conn {
+    color: rgba($color-text-light, 0.7);
     
     &:hover {
-      background: rgba($color-text-primary, 0.2);
+      color: $color-accent;
     }
   }
   
-  &.danger {
-    background: $color-error;
+  .signup-link-connexion-conn {
+    color: rgba($color-text-light, 0.7);
+    border-top: $border-width solid rgba($color-text-light, 0.15);
     
-    &:hover {
-      background: darken($color-error, 10%);
-    }
-  }
-  
-  &.success {
-    background: $color-success;
-    
-    &:hover {
-      background: darken($color-success, 10%);
-    }
-  }
-  
-  // Variantes de taille
-  &.small {
-    padding: $gap-xs $padding-sm;
-    font-size: $font-size-p3;
-  }
-  
-  &.large {
-    padding: $padding-md $padding-lg;
-    font-size: $font-size-p1;
-  }
-  
-  // Variante outline
-  &.outline {
-    background: transparent;
-    border: 2px solid currentColor;
-    
-    &.primary {
+    a {
       color: $color-primary;
       
       &:hover {
-        background: $color-primary;
-        color: $color-white;
+        color: $color-accent;
       }
     }
+  }
+  
+  .theme-toggle {
+    background: rgba($color-background-dark, 0.3);
+    border: 1px solid rgba($color-text-light, 0.2);
     
-    &.danger {
-      color: $color-error;
-      
-      &:hover {
-        background: $color-error;
-        color: $color-white;
-      }
+    &:hover {
+      background: rgba($color-background-dark, 0.4);
+    }
+  }
+  
+  .theme-btn {
+    color: $color-text-light;
+    
+    &:hover {
+      background: rgba($color-primary, 0.3);
+    }
+    
+    &.active {
+      background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+      color: $color-text-light;
     }
   }
 }
