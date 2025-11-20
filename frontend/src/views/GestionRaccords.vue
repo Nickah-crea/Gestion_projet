@@ -161,12 +161,6 @@
       </form>
     </div>
 
-    <!-- Section Intégration Planning -->
-    <div class="planning-integration-section">
-      <h2>Intégration Planning</h2>
-      <RaccordPlanningIntegration />
-    </div>
-
     <!-- Filtres -->
     <div class="filters-section">
       <h3>Filtrer les raccords</h3>
@@ -203,95 +197,102 @@
       </div>
     </div>
 
-    <!-- Liste des raccords -->
+    <!-- Liste des raccords groupés -->
     <div class="raccords-section">
       <h3>Liste des raccords</h3>
       
       <div v-if="loadingRaccords" class="loading">Chargement...</div>
       
-      <div v-else class="raccords-grid">
-        <div v-for="raccord in raccords" :key="raccord.id" class="raccord-card">
-          <div class="raccord-header">
-            <h3>{{ raccord.typeRaccordNom }}</h3>
-            <span :class="`status-badge status-${raccord.statutRaccordNom.toLowerCase()}`">
-              {{ raccord.statutRaccordNom }}
-            </span>
+      <div v-else class="scene-groups">
+        <div v-for="groupe in groupesRaccords" :key="groupe.sceneSourceId + '-' + groupe.sceneCibleId" class="scene-group">
+          
+          <!-- En-tête du groupe -->
+          <div class="scene-group-header">
+            <h4 class="group-title">
+              <i class="fas fa-arrow-right"></i>
+              {{ groupe.titreGroupe }}
+            </h4>
+            <span class="badge-count">{{ groupe.raccords.length }} raccord(s)</span>
           </div>
 
-          <!-- Badge de planning -->
-          <RaccordPlanningBadge :raccord="raccord" />
+          <!-- Liste des raccords dans ce groupe -->
+          <div class="raccords-list">
+            <div v-for="raccord in groupe.raccords" :key="raccord.id" class="raccord-item">
+              
+              <div class="raccord-header">
+                <h5>{{ raccord.typeRaccordNom }}</h5>
+                <span :class="`status-badge status-${raccord.statutRaccordNom.toLowerCase()}`">
+                  {{ raccord.statutRaccordNom }}
+                </span>
+              </div>
 
-          <div class="raccord-info">
-            <p><strong>De:</strong> {{ raccord.sceneSourceTitre }}</p>
-            <p><strong>Vers:</strong> {{ raccord.sceneCibleTitre }}</p>
-            <p v-if="raccord.personnageNom"><strong>Personnage:</strong> {{ raccord.personnageNom }}</p>
-            <p v-if="raccord.comedienNom"><strong>Comédien:</strong> {{ raccord.comedienNom }}</p>
-            <p class="description">{{ raccord.description }}</p>
-            <p v-if="raccord.estCritique" class="critique">⚠️ Raccord critique</p>
-          </div>
+              <!-- Badge de planning -->
+              <RaccordPlanningBadge :raccord="raccord" />
 
-          <!-- Images du raccord -->
-          <div v-if="raccord.images && raccord.images.length" class="raccord-images">
-            <h4>Images de référence</h4>
-            <div class="images-grid">
-              <div v-for="image in raccord.images" :key="image.id" class="image-item">
-                <img 
-                  :src="`/api/raccords/image/${image.cheminFichier}`" 
-                  :alt="image.descriptionImage"
-                  @click="showImageModal(image)"
-                >
-                <div class="image-info">
-                  <p>{{ image.descriptionImage }}</p>
-                  <button 
-                    @click="deleteImage(raccord.id, image.id)" 
-                    class="btn btn-danger btn-sm"
-                  >
-                    Supprimer
-                  </button>
+              <div class="raccord-info">
+                <p v-if="raccord.personnageNom"><strong>Personnage:</strong> {{ raccord.personnageNom }}</p>
+                <p v-if="raccord.comedienNom"><strong>Comédien:</strong> {{ raccord.comedienNom }}</p>
+                <p class="description">{{ raccord.description }}</p>
+                <p v-if="raccord.estCritique" class="critique">⚠️ Raccord critique</p>
+              </div>
+
+              <!-- Images du raccord -->
+              <div v-if="raccord.images && raccord.images.length" class="raccord-images">
+                <h6>Images de référence</h6>
+                <div class="images-grid">
+                  <div v-for="image in raccord.images" :key="image.id" class="image-item">
+                    <img 
+                      :src="`/api/raccords/image/${image.cheminFichier}`" 
+                      :alt="image.descriptionImage"
+                      @click="showImageModal(image)"
+                    >
+                  </div>
                 </div>
               </div>
+
+              <div class="raccord-actions">
+                <button @click="editRaccord(raccord)" class="btn btn-secondary btn-sm">
+                  Modifier
+                </button>
+                
+                <!-- Actions de planning -->
+                <button 
+                  v-if="raccord.dateTournageSource || raccord.dateTournageCible"
+                  @click="ouvrirModalAjustementPlanning(raccord)" 
+                  class="btn btn-warning btn-sm"
+                >
+                  <i class="fas fa-calendar-alt"></i> Ajuster Planning
+                </button>
+                
+                <button 
+                  @click="ouvrirCalendrierScene(raccord.sceneSourceId)" 
+                  class="btn btn-outline-primary btn-sm"
+                >
+                  <i class="fas fa-calendar"></i> Planning Source
+                </button>
+                
+                <button 
+                  @click="ouvrirCalendrierScene(raccord.sceneCibleId)" 
+                  class="btn btn-outline-secondary btn-sm"
+                >
+                  <i class="fas fa-calendar"></i> Planning Cible
+                </button>
+                
+                <!-- Actions existantes -->
+                <button @click="addImagesToRaccord(raccord.id)" class="btn btn-info btn-sm">
+                  Ajouter images
+                </button>
+                <button @click="verifierRaccord(raccord.id)" class="btn btn-success btn-sm">
+                  Vérifier
+                </button>
+                <button @click="deleteRaccord(raccord.id)" class="btn btn-danger btn-sm">
+                  Supprimer
+                </button>
+              </div>
+              
             </div>
           </div>
-
-          <div class="raccord-actions">
-            <button @click="editRaccord(raccord)" class="btn btn-secondary btn-sm">
-              Modifier
-            </button>
-            
-            <!-- Actions de planning -->
-            <button 
-              v-if="raccord.dateTournageSource || raccord.dateTournageCible"
-              @click="ouvrirModalAjustementPlanning(raccord)" 
-              class="btn btn-warning btn-sm"
-            >
-              <i class="fas fa-calendar-alt"></i> Ajuster Planning
-            </button>
-            
-            <button 
-              @click="ouvrirCalendrierScene(raccord.sceneSourceId)" 
-              class="btn btn-outline-primary btn-sm"
-            >
-              <i class="fas fa-calendar"></i> Planning Source
-            </button>
-            
-            <button 
-              @click="ouvrirCalendrierScene(raccord.sceneCibleId)" 
-              class="btn btn-outline-secondary btn-sm"
-            >
-              <i class="fas fa-calendar"></i> Planning Cible
-            </button>
-            
-            <!-- Actions existantes -->
-            <button @click="addImagesToRaccord(raccord.id)" class="btn btn-info btn-sm">
-              Ajouter images
-            </button>
-            <button @click="verifierRaccord(raccord.id)" class="btn btn-success btn-sm">
-              Vérifier
-            </button>
-            <button @click="deleteRaccord(raccord.id)" class="btn btn-danger btn-sm">
-              Supprimer
-            </button>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -508,6 +509,11 @@ export default {
     await this.loadRaccords();
     this.filteredScenesCible = [...this.scenes];
   },
+computed: {
+  groupesRaccords() {
+    return this.grouperRaccordsParScene(this.raccords);
+  }
+},
   methods: {
     async loadInitialData() {
       try {
@@ -995,7 +1001,8 @@ async chargerHierarchiePourRaccord(raccord) {
     console.warn('Impossible de charger la scène:', sceneError);
   }
 },
-    async deleteRaccord(id) {
+
+async deleteRaccord(id) {
       if (confirm('Êtes-vous sûr de vouloir supprimer ce raccord ?')) {
         try {
           await axios.delete(`/api/raccords/${id}`);
@@ -1005,7 +1012,7 @@ async chargerHierarchiePourRaccord(raccord) {
           alert('Erreur lors de la suppression du raccord');
         }
       }
-    },
+},
 
     async deleteImage(raccordId, imageId) {
       if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
@@ -1018,6 +1025,33 @@ async chargerHierarchiePourRaccord(raccord) {
         }
       }
     },
+
+
+  grouperRaccordsParScene(raccords) {
+    const groupes = {};
+    
+    raccords.forEach(raccord => {
+      // Créer une clé unique pour chaque paire de scènes
+      const sceneKey = `${raccord.sceneSourceId}-${raccord.sceneCibleId}`;
+      const sceneTitre = `${raccord.sceneSourceTitre} → ${raccord.sceneCibleTitre}`;
+      
+      if (!groupes[sceneKey]) {
+        groupes[sceneKey] = {
+          sceneSourceId: raccord.sceneSourceId,
+          sceneCibleId: raccord.sceneCibleId,
+          sceneSourceTitre: raccord.sceneSourceTitre,
+          sceneCibleTitre: raccord.sceneCibleTitre,
+          titreGroupe: sceneTitre,
+          raccords: []
+        };
+      }
+      
+      groupes[sceneKey].raccords.push(raccord);
+    });
+    
+    return Object.values(groupes);
+  },
+  
 
     async ouvrirModalAjustementPlanning(raccord) {
       this.raccordAjustement = raccord;
@@ -1772,6 +1806,139 @@ async chargerHierarchiePourRaccord(raccord) {
   .modal {
     width: 95%;
     padding: 20px;
+  }
+}
+/* Styles pour le groupement par scène */
+.scene-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.scene-group {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.scene-group-header {
+  background: #f8f9fa;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.group-title {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-count {
+  background: #007bff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.raccords-list {
+  padding: 0;
+}
+
+.raccord-item {
+  padding: 20px;
+  border-bottom: 1px solid #f1f1f1;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.raccord-item:hover {
+  background-color: #fafafa;
+}
+
+.raccord-item:last-child {
+  border-bottom: none;
+}
+
+.raccord-item .raccord-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.raccord-item .raccord-header h5 {
+  margin: 0;
+  color: #495057;
+  font-size: 14px;
+}
+
+.raccord-item .raccord-info {
+  margin-bottom: 15px;
+}
+
+.raccord-item .raccord-info p {
+  margin: 3px 0;
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.raccord-item .raccord-images h6 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #495057;
+}
+
+.raccord-item .images-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.raccord-item .image-item {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.raccord-item .image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.raccord-item .raccord-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .scene-group-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .raccord-item .raccord-actions {
+    justify-content: center;
+  }
+  
+  .raccord-item .raccord-header {
+    flex-direction: column;
+    gap: 8px;
   }
 }
 </style>
