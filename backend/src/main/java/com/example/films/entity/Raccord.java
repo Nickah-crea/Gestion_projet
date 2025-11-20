@@ -59,9 +59,6 @@ public class Raccord {
     @OneToMany(mappedBy = "raccord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RaccordImage> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "raccord", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VerificationRaccord> verifications = new ArrayList<>();
-
     @Column(name = "cree_le")
     private LocalDateTime creeLe = LocalDateTime.now();
 

@@ -31,7 +31,6 @@ public class RaccordService {
     private final RaccordImageRepository raccordImageRepository;
     private final SceneRepository sceneRepository;
     private final UtilisateurRepository utilisateurRepository;
-    private final StatutVerificationRepository statutVerificationRepository;
     private final PersonnageRepository personnageRepository;
     private final ComedienRepository comedienRepository;
     private final SceneTournageRepository sceneTournageRepository;
@@ -289,85 +288,6 @@ public class RaccordService {
         raccordRepository.delete(raccord);
     }
     
-    @Transactional
-    public void addImagesToRaccord(Long raccordId, List<MultipartFile> images, String description) {
-        Raccord raccord = raccordRepository.findById(raccordId)
-                .orElseThrow(() -> new RuntimeException("Raccord non trouvé"));
-        
-        for (MultipartFile image : images) {
-            if (!image.isEmpty()) {
-                try {
-                    String imagePath = saveImage(image);
-                    RaccordImage raccordImage = new RaccordImage();
-                    raccordImage.setRaccord(raccord);
-                    raccordImage.setNomFichier(image.getOriginalFilename());
-                    raccordImage.setCheminFichier(imagePath);
-                    raccordImage.setDescriptionImage(description);
-                    raccordImage.setEstImageReference(false);
-                    raccordImageRepository.save(raccordImage);
-                } catch (IOException e) {
-                    throw new RuntimeException("Erreur lors de la sauvegarde de l'image", e);
-                }
-            }
-        }
-    }
-    
-    @Transactional
-    public void deleteImage(Long imageId) {
-        RaccordImage image = raccordImageRepository.findById(imageId)
-                .orElseThrow(() -> new RuntimeException("Image non trouvée"));
-        
-        try {
-            deleteImage(image.getCheminFichier());
-        } catch (IOException e) {
-            System.err.println("Erreur lors de la suppression de l'image: " + e.getMessage());
-        }
-        
-        raccordImageRepository.delete(image);
-    }
-    
-    @Transactional
-    public VerificationRaccordDTO verifierRaccord(Long raccordId, Long utilisateurId, 
-                                                Long statutVerificationId, String notes, 
-                                                MultipartFile preuveImage) {
-        Raccord raccord = raccordRepository.findById(raccordId)
-                .orElseThrow(() -> new RuntimeException("Raccord non trouvé"));
-        Utilisateur utilisateur = utilisateurRepository.findById(utilisateurId)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-        StatutVerification statutVerification = statutVerificationRepository.findById(statutVerificationId)
-                .orElseThrow(() -> new RuntimeException("Statut de vérification non trouvé"));
-        
-        VerificationRaccord verification = new VerificationRaccord();
-        verification.setRaccord(raccord);
-        verification.setUtilisateur(utilisateur);
-        verification.setStatutVerification(statutVerification);
-        verification.setNotesVerification(notes);
-        
-        if (preuveImage != null && !preuveImage.isEmpty()) {
-            try {
-                String imagePath = saveImage(preuveImage);
-                verification.setPreuveImage(imagePath);
-            } catch (IOException e) {
-                throw new RuntimeException("Erreur lors de la sauvegarde de l'image de preuve", e);
-            }
-        }
-        
-        // Mettre à jour le statut du raccord si nécessaire
-        if ("CONFORME".equals(statutVerification.getCode())) {
-            StatutRaccord statutValide = statutRaccordRepository.findByCode("VALIDE")
-                    .orElseThrow(() -> new RuntimeException("Statut VALIDE non trouvé"));
-            raccord.setStatutRaccord(statutValide);
-            raccordRepository.save(raccord);
-        } else if ("NON_CONFORME".equals(statutVerification.getCode())) {
-            StatutRaccord statutNonConforme = statutRaccordRepository.findByCode("NON_CONFORME")
-                    .orElseThrow(() -> new RuntimeException("Statut NON_CONFORME non trouvé"));
-            raccord.setStatutRaccord(statutNonConforme);
-            raccordRepository.save(raccord);
-        }
-        
-        return convertVerificationToDTO(verification);
-    }
-    
     private String saveImage(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new RuntimeException("Le fichier est vide");
@@ -428,14 +348,6 @@ public class RaccordService {
             dto.setImages(imagesDTO);
         }
         
-        // Convertir les vérifications
-        if (raccord.getVerifications() != null) {
-            List<VerificationRaccordDTO> verificationsDTO = raccord.getVerifications().stream()
-                    .map(this::convertVerificationToDTO)
-                    .collect(Collectors.toList());
-            dto.setVerifications(verificationsDTO);
-        }
-        
         return dto;
     }
     
@@ -450,19 +362,6 @@ public class RaccordService {
         return dto;
     }
     
-    private VerificationRaccordDTO convertVerificationToDTO(VerificationRaccord verification) {
-        VerificationRaccordDTO dto = new VerificationRaccordDTO();
-        dto.setId(verification.getId());
-        dto.setUtilisateurId(verification.getUtilisateur().getId());
-        dto.setUtilisateurNom(verification.getUtilisateur().getNom());
-        dto.setDateVerification(verification.getDateVerification());
-        dto.setStatutVerificationId(verification.getStatutVerification().getId());
-        dto.setStatutVerificationNom(verification.getStatutVerification().getNomStatut());
-        dto.setNotesVerification(verification.getNotesVerification());
-        dto.setPreuveImage(verification.getPreuveImage());
-        return dto;
-    }
-    
     @Transactional(readOnly = true)
     public List<TypeRaccord> getAllTypesRaccord() {
         return typeRaccordRepository.findAllByOrderByNomType();
@@ -471,11 +370,6 @@ public class RaccordService {
     @Transactional(readOnly = true)
     public List<StatutRaccord> getAllStatutsRaccord() {
         return statutRaccordRepository.findAll();
-    }
-    
-    @Transactional(readOnly = true)
-    public List<StatutVerification> getAllStatutsVerification() {
-        return statutVerificationRepository.findByEstActifTrueOrderByOrdreAffichage();
     }
 
     @Transactional(readOnly = true)

@@ -30,7 +30,7 @@ public class RaccordAlerteController {
     @GetMapping("/raccord/{raccordId}")
     public ResponseEntity<RaccordAlerteDTO> getAlertePourRaccord(@PathVariable Long raccordId) {
         try {
-            // Implémentation pour une alerte spécifique
+
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -50,7 +50,7 @@ public class RaccordAlerteController {
                 
             return ResponseEntity.ok(alertesCalendrier);
         } catch (Exception e) {
-            e.printStackTrace(); // Pour le debug
+            e.printStackTrace(); 
             return ResponseEntity.badRequest().build();
         }
     }
@@ -65,7 +65,6 @@ public class RaccordAlerteController {
         dto.setDateTournageSource(alerte.getDateTournageSource());
         dto.setDateTournageCible(alerte.getDateTournageCible());
         
-        // UTILISER LES GETTERS CORRECTS
         dto.setSceneSourceTitre(alerte.getSceneSourceTitre());
         dto.setSceneCibleTitre(alerte.getSceneCibleTitre());
         

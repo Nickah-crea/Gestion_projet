@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import com.example.films.entity.TypeRaccord; 
 import com.example.films.entity.StatutRaccord; 
-import com.example.films.entity.StatutVerification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -174,47 +173,6 @@ public class RaccordController {
         }
     }
     
-    @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> addImagesToRaccord(
-            @PathVariable Long id,
-            @RequestParam("images") List<MultipartFile> images,
-            @RequestParam(value = "description", defaultValue = "") String description) {
-        
-        try {
-            raccordService.addImagesToRaccord(id, images, description);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    
-    @DeleteMapping("/images/{imageId}")
-    public ResponseEntity<Void> deleteImage(@PathVariable Long imageId) {
-        try {
-            raccordService.deleteImage(imageId);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    @PostMapping(value = "/{id}/verification", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<VerificationRaccordDTO> verifierRaccord(
-            @PathVariable Long id,
-            @RequestParam("utilisateurId") Long utilisateurId,
-            @RequestParam("statutVerificationId") Long statutVerificationId,
-            @RequestParam(value = "notes", defaultValue = "") String notes,
-            @RequestParam(value = "preuveImage", required = false) MultipartFile preuveImage) {
-        
-        try {
-            VerificationRaccordDTO verification = raccordService.verifierRaccord(
-                    id, utilisateurId, statutVerificationId, notes, preuveImage);
-            return ResponseEntity.ok(verification);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-    
     @GetMapping("/image/{filename}")
     public ResponseEntity<byte[]> getImage(@PathVariable String filename) {
         try {
@@ -246,15 +204,6 @@ public class RaccordController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/statuts-verification")
-    public ResponseEntity<List<StatutVerification>> getAllStatutsVerification() {
-        try {
-            List<StatutVerification> statuts = raccordService.getAllStatutsVerification();
-            return ResponseEntity.ok(statuts);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }   
+
 
 }
