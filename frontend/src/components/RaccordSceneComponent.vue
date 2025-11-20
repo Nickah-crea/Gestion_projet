@@ -29,6 +29,35 @@
           <!-- Sélection des scènes -->
             <div class="form-section">
             <h4><i class="fas fa-film"></i> Sélection des Scènes</h4>
+
+             <!-- ALERTE D'INCOHÉRENCE CHRONOLOGIQUE -->
+            <div 
+              v-if="showChronologyAlert" 
+              class="chronology-alert"
+              :class="{ critical: hasCriticalChronologyIssue }"
+            >
+              <div class="alert-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="alert-text">
+                  <h5>⚠️ Incohérence chronologique détectée</h5>
+                  <p>{{ chronologyAlertMessage }}</p>
+                  <p class="alert-details">
+                    <strong>Scène source:</strong> {{ formatDate(sceneSourceTournageInfo?.dateTournage) || 'Non planifiée' }}<br>
+                    <strong>Scène cible:</strong> {{ formatDate(sceneCibleTournageInfo?.dateTournage) || 'Non planifiée' }}
+                  </p>
+                  <div v-if="hasCriticalChronologyIssue" class="alert-actions">
+                    <!-- <button 
+                      class="btn-adjust-planning"
+                      @click="openPlanningAdjustment"
+                    >
+                      <i class="fas fa-calendar-alt"></i>
+                      Ajuster le planning
+                    </button> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
             
             <div class="form-row">
               <div class="form-group">
@@ -76,25 +105,39 @@
               </div>
             </div>
 
-            <!-- Informations des scènes sélectionnées -->
+             <!-- Informations des scènes sélectionnées AVEC DATES DE TOURNAGE -->
             <div v-if="sceneSourceInfo || sceneCibleInfo" class="scenes-info">
-              <!-- Scène Source (toujours affichée si définie) -->
+              <!-- Scène Source -->
               <div v-if="sceneSourceInfo" class="scene-info">
                 <h5>Scène Source (fixe)</h5>
                 <p><strong>Titre:</strong> {{ sceneSourceInfo.titre }}</p>
-                <p><strong>Synopsis:</strong> {{ sceneSourceInfo.synopsis || 'Aucun' }}</p>
-                <p><strong>Statut:</strong> {{ sceneSourceInfo.statutNom || 'Non défini' }}</p>
+                <p><strong>Ordre:</strong> {{ sceneSourceInfo.ordre }}</p>
+                <p><strong>Date tournage:</strong> 
+                  <span :class="{ 'date-warning': !sceneSourceTournageInfo }">
+                    {{ sceneSourceTournageInfo ? formatDate(sceneSourceTournageInfo.dateTournage) : 'Non planifiée' }}
+                  </span>
+                </p>
+                <p><strong>Statut:</strong> {{ sceneSourceTournageInfo?.statutTournage || 'Non défini' }}</p>
               </div>
 
               <!-- Scène Cible -->
               <div v-if="sceneCibleInfo" class="scene-info">
                 <h5>Scène Cible</h5>
                 <p><strong>Titre:</strong> {{ sceneCibleInfo.titre }}</p>
-                <p><strong>Synopsis:</strong> {{ sceneCibleInfo.synopsis || 'Aucun' }}</p>
-                <p><strong>Statut:</strong> {{ sceneCibleInfo.statutNom || 'Non défini' }}</p>
+                <p><strong>Ordre:</strong> {{ sceneCibleInfo.ordre }}</p>
+                <p><strong>Date tournage:</strong> 
+                  <span :class="{ 
+                    'date-warning': !sceneCibleTournageInfo,
+                    'date-error': hasCriticalChronologyIssue 
+                  }">
+                    {{ sceneCibleTournageInfo ? formatDate(sceneCibleTournageInfo.dateTournage) : 'Non planifiée' }}
+                  </span>
+                </p>
+                <p><strong>Statut:</strong> {{ sceneCibleTournageInfo?.statutTournage || 'Non défini' }}</p>
               </div>
             </div>
           </div>
+
 
           <div class="form-section">
             <h4><i class="fas fa-user"></i> Personnage et Comédien</h4>
@@ -397,6 +440,11 @@ const raccordData = ref({
 const selectedPhotos = ref([])
 const filteredScenesCible = ref([])
 
+
+const sceneSourceTournageInfo = ref(null)
+const sceneCibleTournageInfo = ref(null)
+const chronologyAlertMessage = ref('')
+
 // Computed properties
 const canOpenModal = computed(() => {
   return props.projetId !== null && props.sceneSourceId !== null
@@ -406,6 +454,27 @@ const canCreateRaccord = computed(() => {
   return raccordData.value.sceneSourceId && 
          raccordData.value.sceneCibleId && 
          raccordData.value.selectedTypes.length > 0
+})
+
+const showChronologyAlert = computed(() => {
+  return hasChronologyIssue.value
+})
+
+
+const hasChronologyIssue = computed(() => {
+  if (!sceneSourceTournageInfo.value || !sceneCibleTournageInfo.value) {
+    return false
+  }
+  
+  const sourceDate = new Date(sceneSourceTournageInfo.value.dateTournage)
+  const targetDate = new Date(sceneCibleTournageInfo.value.dateTournage)
+  
+  // Vérifier si la scène cible est tournée avant la scène source
+  return targetDate < sourceDate
+})
+
+const hasCriticalChronologyIssue = computed(() => {
+  return hasChronologyIssue.value
 })
 
 // Watcher pour la prop sceneSourceId
@@ -455,7 +524,8 @@ const loadInitialData = async () => {
       loadScenes(),
       loadTypesRaccord(),
       loadStatutsRaccord(),
-      loadPersonnages() 
+      loadPersonnages(),
+      checkSceneChronology()
     ])
   } catch (error) {
     console.error('Erreur lors du chargement des données:', error)
@@ -488,6 +558,109 @@ const loadScenes = async () => {
   } catch (error) {
     console.error('Erreur lors du chargement des scènes:', error)
   }
+}
+
+// Méthode pour charger les informations de tournage d'une scène
+const loadSceneTournageInfo = async (sceneId, type) => {
+  try {
+    // Essayer d'abord avec l'endpoint scene-tournage
+    try {
+      const response = await axios.get(`/api/scene-tournage/scene/${sceneId}`)
+      if (response.data) {
+        if (type === 'source') {
+          sceneSourceTournageInfo.value = response.data
+        } else {
+          sceneCibleTournageInfo.value = response.data
+        }
+        updateChronologyAlert()
+        return
+      }
+    } catch (error) {
+      console.log(`Aucun tournage trouvé via scene-tournage pour la scène ${sceneId}`)
+    }
+
+    // Fallback: essayer avec planning-tournage
+    try {
+      const planningResponse = await axios.get(`/api/planning-tournage/scene/${sceneId}`)
+      if (planningResponse.data && planningResponse.data.length > 0) {
+        const tournageInfo = planningResponse.data[0]
+        const formattedInfo = {
+          dateTournage: tournageInfo.dateTournage,
+          statutTournage: tournageInfo.statut?.nomStatut || tournageInfo.statutTournage,
+          heureDebut: tournageInfo.heureDebut,
+          heureFin: tournageInfo.heureFin
+        }
+        
+        if (type === 'source') {
+          sceneSourceTournageInfo.value = formattedInfo
+        } else {
+          sceneCibleTournageInfo.value = formattedInfo
+        }
+        updateChronologyAlert()
+        return
+      }
+    } catch (error) {
+      console.log(`Aucun planning trouvé pour la scène ${sceneId}`)
+    }
+
+    // Si aucun tournage trouvé
+    if (type === 'source') {
+      sceneSourceTournageInfo.value = null
+    } else {
+      sceneCibleTournageInfo.value = null
+    }
+    updateChronologyAlert()
+    
+  } catch (error) {
+    console.error(`Erreur lors du chargement des infos de tournage pour la scène ${type}:`, error)
+    if (type === 'source') {
+      sceneSourceTournageInfo.value = null
+    } else {
+      sceneCibleTournageInfo.value = null
+    }
+    updateChronologyAlert()
+  }
+}
+
+
+// Méthode pour mettre à jour le message d'alerte
+const updateChronologyAlert = () => {
+  if (!sceneSourceTournageInfo.value || !sceneCibleTournageInfo.value) {
+    chronologyAlertMessage.value = ''
+    return
+  }
+
+  const sourceDate = new Date(sceneSourceTournageInfo.value.dateTournage)
+  const targetDate = new Date(sceneCibleTournageInfo.value.dateTournage)
+  
+  if (targetDate < sourceDate) {
+    const daysDifference = Math.ceil((sourceDate - targetDate) / (1000 * 60 * 60 * 24))
+    chronologyAlertMessage.value = `La scène cible est tournée ${daysDifference} jour(s) AVANT la scène source. Cette incohérence peut causer des problèmes de continuité.`
+  } else {
+    chronologyAlertMessage.value = ''
+  }
+}
+
+// // Méthode pour ouvrir la modification du planning
+// const openPlanningAdjustment = () => {
+//   if (sceneCibleInfo.value) {
+//     adjustScenePlanning(sceneCibleInfo.value.idScene || sceneCibleInfo.value.id)
+//   }
+// }
+
+// // Méthode pour ajuster le planning d'une scène
+// const adjustScenePlanning = (sceneId) => {
+//   // Navigation vers la page de gestion du planning avec la scène présélectionnée
+//   window.open(`/calendrier-tournage?sceneId=${sceneId}`, '_blank')
+// }
+
+const checkSceneChronology = (sourceScene, targetScene) => {
+  if (!sourceScene || !targetScene) return true
+  
+  const sourceOrder = sourceScene.ordre
+  const targetOrder = targetScene.ordre
+  
+  return targetOrder >= sourceOrder
 }
 
 const loadPersonnages = async () => {
@@ -626,10 +799,34 @@ const loadSceneInfo = async (sceneId, type) => {
     } else {
       sceneCibleInfo.value = response.data
     }
+    
+    // Charger les informations de tournage
+    await loadSceneTournageInfo(sceneId, type)
+    
   } catch (error) {
     console.error(`Erreur lors du chargement des infos de la scène ${type}:`, error)
   }
 }
+
+// Watcher pour la scène cible
+watch(() => raccordData.value.sceneCibleId, async (newSceneCibleId) => {
+  console.log('Scène cible changée:', newSceneCibleId)
+  if (newSceneCibleId) {
+    await loadSceneInfo(newSceneCibleId, 'cible')
+  } else {
+    sceneCibleInfo.value = null
+    sceneCibleTournageInfo.value = null
+    chronologyAlertMessage.value = ''
+  }
+  await loadPhotosForScenes()
+})
+
+// Watcher pour la scène source (au cas où elle changerait)
+watch(() => raccordData.value.sceneSourceId, async (newSceneSourceId) => {
+  if (newSceneSourceId) {
+    await loadSceneInfo(newSceneSourceId, 'source')
+  }
+})
 
 const updateScenesCibleFilter = () => {
   if (raccordData.value.sceneSourceId && availableScenes.value.length > 0) {
@@ -688,7 +885,13 @@ const getTypeName = (typeId) => {
 }
 
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('fr-FR')
+  if (!dateString) return 'Non planifiée'
+  return new Date(dateString).toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
 }
 
 const createRaccord = async () => {
@@ -731,9 +934,12 @@ const resetForm = () => {
     personnageId: null,  
     comedienId: null   
   }
-  selectedPhotos.value = []
+selectedPhotos.value = []
   sceneCibleInfo.value = null
+  sceneCibleTournageInfo.value = null
+  sceneSourceTournageInfo.value = null
   selectedPersonnageInfo.value = null
+  chronologyAlertMessage.value = ''
   
   // Mettre à jour le filtre avec la bonne structure d'ID
   if (availableScenes.value.length > 0 && props.sceneSourceId) {
@@ -1312,5 +1518,158 @@ input[type="checkbox"] {
     grid-template-columns: 1fr;
   }
 }
+
+.chronology-alert {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+  animation: pulse-alert 2s infinite;
+}
+
+.chronology-alert.critical {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border-color: #dc3545;
+}
+
+.alert-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.alert-content i {
+  color: #856404;
+  font-size: 1.5em;
+  margin-top: 2px;
+}
+
+.chronology-alert.critical .alert-content i {
+  color: #721c24;
+}
+
+.alert-text h5 {
+  margin: 0 0 8px 0;
+  color: #856404;
+  font-weight: 600;
+}
+
+.chronology-alert.critical .alert-text h5 {
+  color: #721c24;
+}
+
+.alert-text p {
+  margin: 4px 0;
+  color: #856404;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.chronology-alert.critical .alert-text p {
+  color: #721c24;
+}
+
+.alert-details {
+  font-size: 13px !important;
+  font-style: italic;
+  opacity: 0.9;
+  margin-top: 8px;
+}
+
+.alert-actions {
+  margin-top: 10px;
+}
+
+.btn-adjust-planning {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-adjust-planning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+@keyframes pulse-alert {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
+
+.chronology-alert.critical {
+  animation: pulse-critical 2s infinite;
+}
+
+@keyframes pulse-critical {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+  }
+}
+
+/* Styles pour les dates dans les informations des scènes */
+.date-warning {
+  color: #856404;
+  font-weight: 600;
+}
+
+.date-error {
+  color: #dc3545;
+  font-weight: 700;
+}
+
+.scene-actions {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.btn-adjust-scene {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.btn-adjust-scene:hover {
+  background: #138496;
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .alert-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .alert-content i {
+    margin-bottom: 8px;
+  }
+}
+
 
 </style>
