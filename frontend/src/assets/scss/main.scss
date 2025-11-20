@@ -1,4 +1,6 @@
 // ===== IMPORTS TAILWIND & DAISYUI =====
+@use "sass:color";
+
 @import 'tailwindcss/base';
 @import 'tailwindcss/components'; 
 @import 'tailwindcss/utilities';
@@ -19,6 +21,7 @@
 @import 'layouts/header';
 @import 'layouts/footer';
 @import 'layouts/grid';
+@import 'layouts/back';
 
 // Pages
 @import 'pages/acceuil';
@@ -27,7 +30,9 @@
 @import 'pages/recherche';
 @import 'pages/ecran';
 @import 'pages/add';
-@import 'pages/_sceneTournage';
-@import 'pages/_add-comedien';
+@import 'pages/admin';
+@import 'pages/calendrier';
+@import 'pages/sceneTournage';
+@import 'pages/add-comedien';
 
 
