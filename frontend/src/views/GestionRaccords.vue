@@ -254,16 +254,8 @@
                 <button @click="editRaccord(raccord)" class="btn btn-secondary btn-sm">
                   Modifier
                 </button>
-                
-                <!-- Actions de planning -->
-                <button 
-                  v-if="raccord.dateTournageSource || raccord.dateTournageCible"
-                  @click="ouvrirModalAjustementPlanning(raccord)" 
-                  class="btn btn-warning btn-sm"
-                >
-                  <i class="fas fa-calendar-alt"></i> Ajuster Planning
-                </button>
-                
+              
+               
                 <button 
                   @click="ouvrirCalendrierScene(raccord.sceneSourceId)" 
                   class="btn btn-outline-primary btn-sm"
@@ -277,14 +269,7 @@
                 >
                   <i class="fas fa-calendar"></i> Planning Cible
                 </button>
-                
-                <!-- Actions existantes -->
-                <button @click="addImagesToRaccord(raccord.id)" class="btn btn-info btn-sm">
-                  Ajouter images
-                </button>
-                <button @click="verifierRaccord(raccord.id)" class="btn btn-success btn-sm">
-                  Vérifier
-                </button>
+        
                 <button @click="deleteRaccord(raccord.id)" class="btn btn-danger btn-sm">
                   Supprimer
                 </button>
@@ -297,65 +282,6 @@
       </div>
     </div>
 
-    <!-- Modal pour ajouter des images -->
-    <div v-if="showImageModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Ajouter des images au raccord</h3>
-        <input 
-          type="file" 
-          multiple 
-          accept="image/*" 
-          @change="handleAdditionalImages"
-          class="file-input"
-        >
-        <textarea 
-          v-model="additionalImagesDescription" 
-          placeholder="Description des images..."
-          rows="3"
-        ></textarea>
-        <div class="modal-actions">
-          <button @click="submitAdditionalImages" class="btn btn-primary">
-            Ajouter
-          </button>
-          <button @click="showImageModal = false" class="btn btn-secondary">
-            Annuler
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de vérification -->
-    <div v-if="showVerificationModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Vérifier le raccord</h3>
-        <select v-model="verificationData.statutVerificationId" required>
-          <option value="">Sélectionner un statut</option>
-          <option v-for="statut in statutsVerification" :key="statut.id" :value="statut.id">
-            {{ statut.nomStatut }}
-          </option>
-        </select>
-        <textarea 
-          v-model="verificationData.notes" 
-          placeholder="Notes de vérification..."
-          rows="4"
-        ></textarea>
-        <input 
-          type="file" 
-          accept="image/*" 
-          @change="handlePreuveImage"
-          class="file-input"
-        >
-        <div class="modal-actions">
-          <button @click="submitVerification" class="btn btn-primary">
-            Valider
-          </button>
-          <button @click="showVerificationModal = false" class="btn btn-secondary">
-            Annuler
-          </button>
-        </div>
-      </div>
-    </div>
-
     <!-- Modal d'affichage d'image -->
     <div v-if="selectedImage" class="image-modal-overlay" @click="selectedImage = null">
       <div class="image-modal">
@@ -363,91 +289,14 @@
         <p>{{ selectedImage.descriptionImage }}</p>
       </div>
     </div>
-
-    <!-- Modal d'ajustement de planning -->
-    <div v-if="showModalAjustementPlanning" class="modal-overlay" @click="fermerModalAjustementPlanning">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h4>
-            <i class="fas fa-calendar-alt"></i>
-            Ajuster le Planning
-          </h4>
-          <button @click="fermerModalAjustementPlanning" class="close-btn">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        
-        <div class="modal-body">
-          <div v-if="suggestionsReplanification.length > 0" class="suggestions-section">
-            <h5>Suggestions de replanification:</h5>
-            <div class="suggestions-list">
-              <div v-for="(date, index) in suggestionsReplanification" 
-                   :key="index" class="suggestion-item">
-                <span>{{ formatDate(date) }}</span>
-                <button @click="appliquerSuggestion(date)" class="btn btn-success btn-sm">
-                  <i class="fas fa-check"></i> Appliquer
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label>Scène à ajuster:</label>
-            <select v-model="sceneAAjuster" class="form-control">
-              <option :value="raccordAjustement?.sceneSourceId">
-                Source: {{ raccordAjustement?.sceneSourceTitre }}
-              </option>
-              <option :value="raccordAjustement?.sceneCibleId">
-                Cible: {{ raccordAjustement?.sceneCibleTitre }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label>Nouvelle date de tournage:</label>
-            <input type="date" v-model="nouvelleDateTournage" class="form-control">
-          </div>
-          
-          <div class="form-group">
-            <label>Heure de début:</label>
-            <input type="time" v-model="nouvelleHeureDebut" class="form-control">
-          </div>
-          
-          <div class="form-group">
-            <label>Heure de fin:</label>
-            <input type="time" v-model="nouvelleHeureFin" class="form-control">
-          </div>
-          
-          <div class="form-group">
-            <label>Raison de l'ajustement:</label>
-            <textarea v-model="raisonAjustement" class="form-control" rows="3"></textarea>
-          </div>
-        </div>
-        
-        <div class="modal-actions">
-          <button @click="fermerModalAjustementPlanning" class="btn btn-secondary">
-            Annuler
-          </button>
-          <button @click="appliquerAjustementPlanning" class="btn btn-primary">
-            <i class="fas fa-save"></i> Appliquer les modifications
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import RaccordPlanningIntegration from '../components/RaccordPlanningIntegration.vue';
-import RaccordPlanningBadge from '../components/RaccordPlanningBadge.vue';
 
 export default {
   name: 'GestionRaccords',
-  components: {
-    RaccordPlanningIntegration,
-    RaccordPlanningBadge
-  },
   data() {
     return {
       showForm: false,
@@ -461,12 +310,8 @@ export default {
       selectedScene: '',
       editingRaccord: null,
       selectedImage: null,
-      showImageModal: false,
-      showVerificationModal: false,
-      currentRaccordId: null,
        currentUserId: 1,
       additionalImagesDescription: '',
-      preuveImage: null,
       personnages: [],
       comediens: [],
       selectedPersonnage: '',
@@ -487,21 +332,8 @@ export default {
         personnageId: '',
         comedienId: ''
       },
-      verificationData: {
-        statutVerificationId: '',
-        notes: '',
-        preuveImage: null
-      },
       previewImages: [],
-      additionalImages: [],
-      showModalAjustementPlanning: false,
-      raccordAjustement: null,
-      sceneAAjuster: null,
-      nouvelleDateTournage: '',
-      nouvelleHeureDebut: '09:00',
-      nouvelleHeureFin: '12:00',
-      raisonAjustement: '',
-      suggestionsReplanification: []
+      additionalImages: []
     };
   },
   async mounted() {
@@ -787,66 +619,6 @@ formatDateForAPI(date) {
       }
     },
 
-    async addImagesToRaccord(raccordId) {
-      this.currentRaccordId = raccordId;
-      this.showImageModal = true;
-    },
-
-    async submitAdditionalImages() {
-      try {
-        const formData = new FormData();
-        this.additionalImages.forEach(image => {
-          formData.append('images', image);
-        });
-        formData.append('description', this.additionalImagesDescription);
-
-        await axios.post(`/api/raccords/${this.currentRaccordId}/images`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-
-        this.showImageModal = false;
-        this.additionalImages = [];
-        this.additionalImagesDescription = '';
-        await this.loadRaccords();
-      } catch (error) {
-        console.error('Erreur lors de l\'ajout des images:', error);
-        alert('Erreur lors de l\'ajout des images');
-      }
-    },
-
-    async verifierRaccord(raccordId) {
-      this.currentRaccordId = raccordId;
-      this.showVerificationModal = true;
-    },
-
-    async submitVerification() {
-      try {
-        const formData = new FormData();
-        formData.append('utilisateurId', 1); // À remplacer par l'ID de l'utilisateur connecté
-        formData.append('statutVerificationId', this.verificationData.statutVerificationId);
-        formData.append('notes', this.verificationData.notes);
-        
-        if (this.verificationData.preuveImage) {
-          formData.append('preuveImage', this.verificationData.preuveImage);
-        }
-
-        await axios.post(`/api/raccords/${this.currentRaccordId}/verification`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-
-        this.showVerificationModal = false;
-        this.verificationData = {
-          statutVerificationId: '',
-          notes: '',
-          preuveImage: null
-        };
-        await this.loadRaccords();
-      } catch (error) {
-        console.error('Erreur lors de la vérification:', error);
-        alert('Erreur lors de la vérification du raccord');
-      }
-    },
-
     updateComedienFromPersonnage() {
       if (this.formData.personnageId) {
         const selectedPersonnage = this.personnages.find(p => p.id === this.formData.personnageId);
@@ -1051,74 +823,6 @@ async deleteRaccord(id) {
     
     return Object.values(groupes);
   },
-  
-
-    async ouvrirModalAjustementPlanning(raccord) {
-      this.raccordAjustement = raccord;
-      this.sceneAAjuster = raccord.sceneCibleId; // Par défaut, ajuster la scène cible
-      
-      try {
-        const response = await axios.get(`/api/raccords/${raccord.id}/suggestions-replanification`);
-        this.suggestionsReplanification = response.data;
-      } catch (error) {
-        console.error('Erreur chargement suggestions:', error);
-        this.suggestionsReplanification = [];
-      }
-      
-      this.showModalAjustementPlanning = true;
-    },
-    
-    fermerModalAjustementPlanning() {
-      this.showModalAjustementPlanning = false;
-      this.raccordAjustement = null;
-      this.sceneAAjuster = null;
-      this.nouvelleDateTournage = '';
-      this.raisonAjustement = '';
-      this.suggestionsReplanification = [];
-    },
-    
-    appliquerSuggestion(date) {
-      this.nouvelleDateTournage = this.formatDateForInput(date);
-    },
-    
-   async appliquerAjustementPlanning() {
-  if (!this.nouvelleDateTournage) {
-    alert('Veuillez sélectionner une date');
-    return;
-  }
-  
-  try {
-    const ajustementDTO = {
-      sceneId: this.sceneAAjuster,
-      nouvelleDate: this.nouvelleDateTournage,
-      nouvelleHeureDebut: this.nouvelleHeureDebut,
-      nouvelleHeureFin: this.nouvelleHeureFin,
-      raisonAjustement: this.raisonAjustement || `Ajustement pour raccord: ${this.raccordAjustement.description}`,
-      utilisateurId: 1, // Remplacer par l'ID utilisateur réel
-      notifierEquipe: true,
-      notesSupplementaires: 'Ajustement automatique basé sur les contraintes de raccord'
-    };
-    
-    // IMPORTANT: Utiliser application/json et envoyer en JSON
-    await axios.put(`/api/raccords/${this.raccordAjustement.id}/ajuster-planning`, 
-      ajustementDTO,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    
-    alert('Planning ajusté avec succès!');
-    this.fermerModalAjustementPlanning();
-    await this.loadRaccords();
-    
-  } catch (error) {
-    console.error('Erreur ajustement planning:', error);
-    const errorMessage = error.response?.data?.message || error.response?.data || error.message;
-    alert('Erreur lors de l\'ajustement du planning: ' + errorMessage);
-  }
-},
     
     ouvrirCalendrierScene(sceneId) {
       // Navigation vers le calendrier avec filtre sur la scène
