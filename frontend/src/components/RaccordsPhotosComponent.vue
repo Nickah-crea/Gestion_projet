@@ -70,44 +70,56 @@
             ></textarea>
           </div>
 
-          <!-- Upload de photos -->
+          <!-- Upload de photos - MÊME LOGIQUE QUE GestionRaccords.vue -->
           <div class="upload-section">
             <label>Photos pour ce type de raccord *</label>
-            <div class="upload-area" @click="triggerFileInput">
-              <input
-                ref="fileInput"
-                type="file"
-                multiple
-                accept="image/*"
-                @change="handleFileSelect"
-                style="display: none"
-              >
-              <div class="upload-placeholder">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p>Cliquez pour sélectionner des photos</p>
-                <small>Formats supportés: JPG, PNG, JPEG</small>
+            <input 
+              type="file" 
+              multiple 
+              accept="image/*" 
+              @change="handleImageUpload"
+              class="file-input"
+            >
+            <div v-if="previewImages.length" class="image-previews">
+              <div v-for="(preview, index) in previewImages" :key="index" class="image-preview">
+                <img :src="preview" alt="Preview">
+                <button @click="removePreview(index)" class="remove-btn">×</button>
               </div>
             </div>
+            <small class="field-note">Formats supportés: JPG, PNG, JPEG</small>
+          </div>
 
-            <!-- Aperçu des photos sélectionnées -->
-            <div v-if="selectedFiles.length > 0" class="files-preview">
-              <h5>Photos sélectionnées ({{ selectedFiles.length }})</h5>
-              <div class="preview-grid">
-                <div 
-                  v-for="(file, index) in selectedFiles" 
-                  :key="index"
-                  class="preview-item"
+          <!-- Options supplémentaires -->
+          <div class="form-options">
+            <div class="checkbox-group">
+              <label>
+                <input 
+                  type="checkbox" 
+                  v-model="newRaccord.estCritique"
                 >
-                  <img :src="getFilePreview(file)" alt="Preview">
-                  <button 
-                    class="remove-file-btn"
-                    @click="removeFile(index)"
-                  >
-                    <i class="fas fa-times"></i>
-                  </button>
-                  <span class="file-name">{{ file.name }}</span>
-                </div>
-              </div>
+                <span class="checkmark"></span>
+                Raccord critique
+              </label>
+              <small class="option-description">
+                Ce raccord est essentiel pour la continuité du film
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="statut-raccord">Statut du raccord</label>
+              <select 
+                id="statut-raccord"
+                v-model="newRaccord.statutRaccordId"
+                class="form-select"
+              >
+                <option 
+                  v-for="statut in availableStatuts" 
+                  :key="statut.id" 
+                  :value="statut.id"
+                >
+                  {{ statut.nomStatut }}
+                </option>
+              </select>
             </div>
           </div>
 
@@ -122,10 +134,10 @@
             <button 
               class="btn-add"
               @click="addRaccord"
-              :disabled="!canAddRaccord"
+              :disabled="!canAddRaccord || loading"
             >
               <i class="fas fa-save"></i>
-              Ajouter les raccords
+              {{ loading ? 'Enregistrement...' : 'Ajouter les raccords' }}
             </button>
           </div>
         </div>
@@ -134,7 +146,7 @@
         <div class="existing-raccords-section">
           <h4><i class="fas fa-list"></i> Raccords existants</h4>
           
-          <div v-if="loading" class="loading">
+          <div v-if="loadingRaccords" class="loading">
             <i class="fas fa-spinner fa-spin"></i> Chargement...
           </div>
 
@@ -150,7 +162,7 @@
             >
               <div class="raccord-header">
                 <div class="raccord-info">
-                <h5>{{ raccord.typeRaccordNom || getTypeName(raccord.typeRaccordId) }}</h5>
+                  <h5>{{ raccord.typeRaccordNom || getTypeName(raccord.typeRaccordId) }}</h5>
                   <span class="raccord-date">
                     Créé le {{ formatDate(raccord.creeLe) }}
                   </span>
@@ -202,7 +214,7 @@
         <div v-if="showImageModal" class="image-modal-overlay" @click="closeImageModal">
           <div class="image-modal-content" @click.stop>
             <div class="image-modal-header">
-               <h4>{{ selectedRaccord ? (selectedRaccord.typeRaccordNom || getTypeName(selectedRaccord.typeRaccordId)) : 'Photos' }}</h4>
+              <h4>{{ selectedRaccord ? (selectedRaccord.typeRaccordNom || getTypeName(selectedRaccord.typeRaccordId)) : 'Photos' }}</h4>
               <button class="close-btn" @click="closeImageModal">
                 <i class="fas fa-times"></i>
               </button>
@@ -254,23 +266,25 @@ const emit = defineEmits(['raccords-updated'])
 const showModal = ref(false)
 const showImageModal = ref(false)
 const loading = ref(false)
+const loadingRaccords = ref(false)
 const availableTypes = ref([])
+const availableStatuts = ref([])
 const existingRaccords = ref([])
 const selectedRaccord = ref(null)
+const previewImages = ref([])
 
-// Nouveau raccord
+// Nouveau raccord - MÊME STRUCTURE QUE GestionRaccords.vue
 const newRaccord = ref({
   typeId: null,
   description: '',
-  files: []
+  estCritique: false,
+  statutRaccordId: 1,
+  images: []
 })
-
-const selectedFiles = ref([])
-const fileInput = ref(null)
 
 // Computed properties
 const canAddRaccord = computed(() => {
-  return newRaccord.value.typeId && selectedFiles.value.length > 0
+  return newRaccord.value.typeId && newRaccord.value.images.length > 0
 })
 
 // Méthodes
@@ -290,17 +304,18 @@ const closeImageModal = () => {
 }
 
 const loadData = async () => {
-  loading.value = true
+  loadingRaccords.value = true
   try {
     await Promise.all([
       loadTypesRaccord(),
+      loadStatutsRaccord(),
       loadExistingRaccords()
     ])
   } catch (error) {
     console.error('Erreur lors du chargement des données:', error)
     alert('Erreur lors du chargement des données')
   } finally {
-    loading.value = false
+    loadingRaccords.value = false
   }
 }
 
@@ -313,6 +328,19 @@ const loadTypesRaccord = async () => {
   }
 }
 
+const loadStatutsRaccord = async () => {
+  try {
+    const response = await axios.get('/api/raccords/statuts')
+    availableStatuts.value = response.data
+    // Définir le statut par défaut
+    if (availableStatuts.value.length > 0 && !newRaccord.value.statutRaccordId) {
+      newRaccord.value.statutRaccordId = availableStatuts.value[0].id
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des statuts de raccord:', error)
+  }
+}
+
 const loadExistingRaccords = async () => {
   try {
     const response = await axios.get(`/api/raccords/scene/${props.sceneId}`)
@@ -322,62 +350,71 @@ const loadExistingRaccords = async () => {
   }
 }
 
-const triggerFileInput = () => {
-  fileInput.value?.click()
-}
-
-const handleFileSelect = (event) => {
-  const files = Array.from(event.target.files)
-  
-  // Vérifier le type des fichiers
-  const validFiles = files.filter(file => 
-    file.type.startsWith('image/') && 
-    ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)
-  )
-  
-  if (validFiles.length !== files.length) {
-    alert('Seules les images JPG, JPEG et PNG sont autorisées')
+// MÊME LOGIQUE D'UPLOAD QUE GestionRaccords.vue
+const handleImageUpload = (event) => {
+  const files = event.target.files
+  if (files && files.length > 0) {
+    newRaccord.value.images = Array.from(files)
+    
+    // Créer les previews
+    previewImages.value = []
+    Array.from(files).forEach(file => {
+      // Vérifier le type de fichier
+      if (!file.type.startsWith('image/')) {
+        alert('Seules les images sont autorisées')
+        return
+      }
+      
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        previewImages.value.push(e.target.result)
+      }
+      reader.readAsDataURL(file)
+    })
   }
-  
-  selectedFiles.value = [...selectedFiles.value, ...validFiles]
-  event.target.value = '' // Reset l'input
 }
 
-const getFilePreview = (file) => {
-  return URL.createObjectURL(file)
-}
-
-const removeFile = (index) => {
-  selectedFiles.value.splice(index, 1)
+const removePreview = (index) => {
+  previewImages.value.splice(index, 1)
+  newRaccord.value.images.splice(index, 1)
 }
 
 const resetNewRaccord = () => {
   newRaccord.value = {
     typeId: null,
     description: '',
-    files: []
+    estCritique: false,
+    statutRaccordId: 1,
+    images: []
   }
-  selectedFiles.value = []
+  previewImages.value = []
 }
 
+// MÊME LOGIQUE DE SAUVEGARDE QUE GestionRaccords.vue
 const addRaccord = async () => {
   if (!canAddRaccord.value) return
 
   loading.value = true
   try {
     const formData = new FormData()
-    formData.append('sceneSourceId', props.sceneId)
-    formData.append('sceneCibleId', props.sceneId) // Même scène pour les raccords de conservation
-    formData.append('typeRaccordId', newRaccord.value.typeId)
-    formData.append('description', newRaccord.value.description)
-    formData.append('estCritique', 'false')
-    formData.append('statutRaccordId', '1') // Statut "À vérifier" par défaut
+    
+    // Ajouter les champs du raccord - MÊME STRUCTURE QUE GestionRaccords.vue
+    formData.append('sceneSourceId', props.sceneId.toString())
+    formData.append('sceneCibleId', props.sceneId.toString()) // Même scène pour les raccords de conservation
+    formData.append('typeRaccordId', newRaccord.value.typeId.toString())
+    formData.append('description', newRaccord.value.description || '')
+    formData.append('estCritique', newRaccord.value.estCritique.toString())
+    formData.append('statutRaccordId', newRaccord.value.statutRaccordId.toString())
+    
+    // Ajouter les images - MÊME MÉTHODE QUE GestionRaccords.vue
+    if (newRaccord.value.images && newRaccord.value.images.length > 0) {
+      newRaccord.value.images.forEach(image => {
+        formData.append('images', image)
+      })
+    }
 
-    // Ajouter les fichiers
-    selectedFiles.value.forEach(file => {
-      formData.append('images', file)
-    })
-
+    console.log('Envoi des données au backend...')
+    
     const response = await axios.post('/api/raccords', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -391,8 +428,9 @@ const addRaccord = async () => {
       emit('raccords-updated')
     }
   } catch (error) {
-    console.error('Erreur lors de la sauvegarde des raccords:', error)
-    alert('Erreur lors de la sauvegarde des raccords: ' + (error.response?.data || error.message))
+    console.error('Erreur détaillée lors de la sauvegarde:', error)
+    console.error('Response error:', error.response?.data)
+    alert('Erreur lors de la sauvegarde des raccords: ' + (error.response?.data?.message || error.message))
   } finally {
     loading.value = false
   }
@@ -420,7 +458,6 @@ const deleteRaccord = async (raccordId) => {
 }
 
 const viewImage = (image) => {
-  // Ouvrir l'image dans un nouvel onglet ou afficher en grand
   window.open(getImageUrl(image.cheminFichier), '_blank')
 }
 
@@ -439,8 +476,8 @@ const formatDate = (dateString) => {
 
 // Initialisation
 onMounted(() => {
-  // Charger les types de raccord au montage
   loadTypesRaccord()
+  loadStatutsRaccord()
 })
 </script>
 
@@ -551,7 +588,8 @@ onMounted(() => {
 }
 
 .form-select,
-.form-textarea {
+.form-textarea,
+.file-input {
   width: 100%;
   padding: 10px;
   border: 2px solid #e1e5e9;
@@ -561,91 +599,81 @@ onMounted(() => {
 }
 
 .form-select:focus,
-.form-textarea:focus {
+.form-textarea:focus,
+.file-input:focus {
   outline: none;
   border-color: #667eea;
 }
 
-/* Upload Section */
-.upload-area {
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  padding: 30px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 15px;
-}
-
-.upload-area:hover {
-  border-color: #667eea;
-  background: #f8f9ff;
-}
-
-.upload-placeholder i {
-  font-size: 2em;
-  color: #667eea;
-  margin-bottom: 10px;
-}
-
-.upload-placeholder p {
-  margin: 0 0 5px 0;
-  color: #666;
-}
-
-.upload-placeholder small {
-  color: #999;
-}
-
-/* Files Preview */
-.files-preview h5 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.preview-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+/* Image Previews - MÊME STYLE QUE GestionRaccords.vue */
+.image-previews {
+  display: flex;
   gap: 10px;
+  flex-wrap: wrap;
   margin-top: 10px;
 }
 
-.preview-item {
+.image-preview {
   position: relative;
+  width: 100px;
+  height: 100px;
   border: 1px solid #ddd;
   border-radius: 6px;
   overflow: hidden;
 }
 
-.preview-item img {
+.image-preview img {
   width: 100%;
-  height: 80px;
+  height: 100%;
   object-fit: cover;
 }
 
-.remove-file-btn {
+.remove-btn {
   position: absolute;
   top: 2px;
   right: 2px;
-  background: rgba(255, 0, 0, 0.8);
+  background: #dc3545;
   color: white;
   border: none;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 10px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
+  font-size: 14px;
 }
 
-.file-name {
-  display: block;
-  padding: 5px;
-  font-size: 10px;
-  text-align: center;
-  background: #f5f5f5;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.field-note {
+  font-size: 12px;
+  color: #6c757d;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Form Options */
+.form-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.option-description {
+  color: #666;
+  font-size: 12px;
+  margin-left: 28px;
 }
 
 /* Action Buttons */
@@ -876,6 +904,10 @@ onMounted(() => {
     margin: 20px;
   }
   
+  .form-options {
+    grid-template-columns: 1fr;
+  }
+  
   .raccord-header {
     flex-direction: column;
     gap: 10px;
@@ -888,5 +920,16 @@ onMounted(() => {
   .image-gallery {
     grid-template-columns: 1fr;
   }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+/* Custom Checkbox */
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
 </style>
