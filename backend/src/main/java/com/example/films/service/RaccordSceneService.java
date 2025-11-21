@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,89 +24,138 @@ public class RaccordSceneService {
     private final SceneStatutRepository sceneStatutRepository;
     private final PersonnageRepository personnageRepository;
     private final ComedienRepository comedienRepository;
+    private final RaccordImagePartageRepository raccordImagePartageRepository;
+
+
+    @Transactional(readOnly = true)
+    public List<RaccordImageDTO> getSharedImages(Long raccordId) {
+        List<RaccordImagePartage> partages = raccordImagePartageRepository.findByRaccordId(raccordId);
+        return partages.stream()
+                .map(RaccordImagePartage::getRaccordImage)
+                .map(this::convertImageToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public RaccordDTO createRaccordAvecPartageImages(CreateRaccordSceneDTO createRaccordSceneDTO) {
+        return createRaccordAvecPhotosExistantes(createRaccordSceneDTO);
+    }
+
+     @Transactional(readOnly = true)
+        public List<RaccordImageDTO> getAllPhotosForScene(Long sceneId) {
+            List<Raccord> raccords = raccordRepository.findBySceneId(sceneId);
+            List<RaccordImageDTO> allImages = new ArrayList<>();
+            
+            for (Raccord raccord : raccords) {
+                // Images propres au raccord
+                List<RaccordImageDTO> ownImages = raccord.getImages().stream()
+                        .map(this::convertImageToDTO)
+                        .collect(Collectors.toList());
+                allImages.addAll(ownImages);
+                
+                // Images partagées
+                List<RaccordImageDTO> sharedImages = getSharedImages(raccord.getId());
+                allImages.addAll(sharedImages);
+            }
+            
+            return allImages;
+        }
+        
+        @Transactional
+        public void dissocierImagePartagee(Long raccordId, Long imageId) {
+            Optional<RaccordImagePartage> partage = raccordImagePartageRepository
+                    .findByRaccordIdAndRaccordImageId(raccordId, imageId);
+            
+            if (partage.isPresent()) {
+                raccordImagePartageRepository.delete(partage.get());
+            } else {
+                throw new RuntimeException("Association d'image partagée non trouvée");
+            }
+        }
     
    @Transactional
     public RaccordDTO createRaccordAvecPhotosExistantes(CreateRaccordSceneDTO createRaccordSceneDTO) {
-    // Vérifier que les scènes existent
-    Scene sceneSource = sceneRepository.findById(createRaccordSceneDTO.getSceneSourceId())
-            .orElseThrow(() -> new RuntimeException("Scène source non trouvée"));
-    Scene sceneCible = sceneRepository.findById(createRaccordSceneDTO.getSceneCibleId())
-            .orElseThrow(() -> new RuntimeException("Scène cible non trouvée"));
-    
-    // Récupérer le personnage (peut être null)
-    Personnage personnage = null;
-    if (createRaccordSceneDTO.getPersonnageId() != null) {
-        personnage = personnageRepository.findById(createRaccordSceneDTO.getPersonnageId())
-                .orElseThrow(() -> new RuntimeException("Personnage non trouvé"));
-    }
-    
-    // Récupérer le comédien (peut être null)
-    Comedien comedien = null;
-    if (createRaccordSceneDTO.getComedienId() != null) {
-        comedien = comedienRepository.findById(createRaccordSceneDTO.getComedienId())
-                .orElseThrow(() -> new RuntimeException("Comédien non trouvé"));
-    }
-
-    Raccord dernierRaccordCree = null;
-    
-    // Pour chaque type sélectionné, créer un raccord
-    for (Long typeId : createRaccordSceneDTO.getTypesRaccord()) {
-        TypeRaccord typeRaccord = typeRaccordRepository.findById(typeId)
-                .orElseThrow(() -> new RuntimeException("Type de raccord non trouvé"));
+        // Vérifier que les scènes existent
+        Scene sceneSource = sceneRepository.findById(createRaccordSceneDTO.getSceneSourceId())
+                .orElseThrow(() -> new RuntimeException("Scène source non trouvée"));
+        Scene sceneCible = sceneRepository.findById(createRaccordSceneDTO.getSceneCibleId())
+                .orElseThrow(() -> new RuntimeException("Scène cible non trouvée"));
         
-        StatutRaccord statutRaccord = statutRaccordRepository.findById(createRaccordSceneDTO.getStatutRaccordId())
-                .orElseThrow(() -> new RuntimeException("Statut de raccord non trouvé"));
-        
-        // Vérifier si un raccord existe déjà pour ce type entre ces scènes
-        if (raccordRepository.existsByScenesAndType(
-                createRaccordSceneDTO.getSceneSourceId(),
-                createRaccordSceneDTO.getSceneCibleId(),
-                typeId)) {
-            throw new RuntimeException("Un raccord de type " + typeRaccord.getNomType() + " existe déjà entre ces scènes");
+        // Récupérer le personnage (peut être null)
+        Personnage personnage = null;
+        if (createRaccordSceneDTO.getPersonnageId() != null) {
+            personnage = personnageRepository.findById(createRaccordSceneDTO.getPersonnageId())
+                    .orElseThrow(() -> new RuntimeException("Personnage non trouvé"));
         }
         
-        // Créer le raccord
-        Raccord raccord = new Raccord();
-        raccord.setSceneSource(sceneSource);
-        raccord.setSceneCible(sceneCible);
-        raccord.setTypeRaccord(typeRaccord);
-        raccord.setDescription(createRaccordSceneDTO.getDescription());
-        raccord.setEstCritique(createRaccordSceneDTO.getEstCritique());
-        raccord.setStatutRaccord(statutRaccord);
-        raccord.setPersonnage(personnage);  
-        raccord.setComedien(comedien);     
+        // Récupérer le comédien (peut être null)
+        Comedien comedien = null;
+        if (createRaccordSceneDTO.getComedienId() != null) {
+            comedien = comedienRepository.findById(createRaccordSceneDTO.getComedienId())
+                    .orElseThrow(() -> new RuntimeException("Comédien non trouvé"));
+        }
+
+        Raccord dernierRaccordCree = null;
         
-        Raccord savedRaccord = raccordRepository.save(raccord);
-        dernierRaccordCree = savedRaccord;
-        
-        // Associer les photos existantes à ce raccord
-        if (createRaccordSceneDTO.getPhotosIds() != null && !createRaccordSceneDTO.getPhotosIds().isEmpty()) {
-            for (Long photoId : createRaccordSceneDTO.getPhotosIds()) {
-                RaccordImage image = raccordImageRepository.findById(photoId)
-                        .orElseThrow(() -> new RuntimeException("Photo non trouvée"));
-                
-                // Vérifier que la photo correspond au type de raccord
-                if (image.getRaccord().getTypeRaccord().getId().equals(typeId)) {
-                    // Créer une nouvelle instance de l'image pour ce raccord 
-                    RaccordImage newImage = new RaccordImage();
-                    newImage.setRaccord(savedRaccord);
-                    newImage.setNomFichier(image.getNomFichier());
-                    newImage.setCheminFichier(image.getCheminFichier());
-                    newImage.setDescriptionImage(image.getDescriptionImage());
-                    newImage.setEstImageReference(true);
+        // Pour chaque type sélectionné, créer un raccord
+        for (Long typeId : createRaccordSceneDTO.getTypesRaccord()) {
+            TypeRaccord typeRaccord = typeRaccordRepository.findById(typeId)
+                    .orElseThrow(() -> new RuntimeException("Type de raccord non trouvé"));
+            
+            StatutRaccord statutRaccord = statutRaccordRepository.findById(createRaccordSceneDTO.getStatutRaccordId())
+                    .orElseThrow(() -> new RuntimeException("Statut de raccord non trouvé"));
+            
+            // Vérifier si un raccord existe déjà pour ce type entre ces scènes
+            if (raccordRepository.existsByScenesAndType(
+                    createRaccordSceneDTO.getSceneSourceId(),
+                    createRaccordSceneDTO.getSceneCibleId(),
+                    typeId)) {
+                throw new RuntimeException("Un raccord de type " + typeRaccord.getNomType() + " existe déjà entre ces scènes");
+            }
+            
+            // Créer le raccord
+            Raccord raccord = new Raccord();
+            raccord.setSceneSource(sceneSource);
+            raccord.setSceneCible(sceneCible);
+            raccord.setTypeRaccord(typeRaccord);
+            raccord.setDescription(createRaccordSceneDTO.getDescription());
+            raccord.setEstCritique(createRaccordSceneDTO.getEstCritique());
+            raccord.setStatutRaccord(statutRaccord);
+            raccord.setPersonnage(personnage);  
+            raccord.setComedien(comedien);     
+            
+            Raccord savedRaccord = raccordRepository.save(raccord);
+            dernierRaccordCree = savedRaccord;
+            
+            // Associer les photos existantes à ce raccord
+             if (createRaccordSceneDTO.getPhotosIds() != null && !createRaccordSceneDTO.getPhotosIds().isEmpty()) {
+                for (Long photoId : createRaccordSceneDTO.getPhotosIds()) {
+                    RaccordImage image = raccordImageRepository.findById(photoId)
+                            .orElseThrow(() -> new RuntimeException("Photo non trouvée"));
                     
-                    raccordImageRepository.save(newImage);
+                    // Vérifier que la photo correspond au type de raccord
+                    if (image.getRaccord().getTypeRaccord().getId().equals(typeId)) {
+                        // Vérifier si l'association existe déjà
+                        if (!raccordImagePartageRepository.existsByRaccordIdAndRaccordImageId(
+                                savedRaccord.getId(), photoId)) {
+                            
+                            // Créer l'association
+                            RaccordImagePartage partage = new RaccordImagePartage();
+                            partage.setRaccord(savedRaccord);
+                            partage.setRaccordImage(image);
+                            raccordImagePartageRepository.save(partage);
+                        }
+                    }
                 }
             }
         }
-    }
-    
-    // Retourner le dernier raccord créé
-    if (dernierRaccordCree != null) {
-        return convertToDTO(dernierRaccordCree);
-    } else {
-        throw new RuntimeException("Aucun raccord n'a été créé");
-    }
+        
+        // Retourner le dernier raccord créé
+        if (dernierRaccordCree != null) {
+            return convertToDTO(dernierRaccordCree);
+        } else {
+            throw new RuntimeException("Aucun raccord n'a été créé");
+        }
 }
     
     @Transactional(readOnly = true)
@@ -166,11 +216,22 @@ public class RaccordSceneService {
             dto.setComedienNom(raccord.getComedien().getNom());
         }
         
-        // Convertir les images
+        // Convertir les images propres au raccord
         List<RaccordImageDTO> imagesDTO = raccord.getImages().stream()
                 .map(this::convertImageToDTO)
                 .collect(Collectors.toList());
         dto.setImages(imagesDTO);
+
+        // Récupérer les images partagées
+        List<RaccordImageDTO> imagesPartagees = raccordImagePartageRepository
+                .findByRaccordId(raccord.getId())
+                .stream()
+                .map(RaccordImagePartage::getRaccordImage)
+                .map(this::convertImageToDTO)
+                .collect(Collectors.toList());
+        
+        // Ajouter les images partagées comme propriété séparée
+        dto.setSharedImages(imagesPartagees); 
         
         return dto;
     }
@@ -207,8 +268,6 @@ public class RaccordSceneService {
         } else {
             dto.setStatutNom("Non défini");
         }
-        
-        // Récupérer les informations de la séquence
         if (scene.getSequence() != null) {
             dto.setSequenceId(scene.getSequence().getId());
             dto.setSequenceTitre(scene.getSequence().getTitre());

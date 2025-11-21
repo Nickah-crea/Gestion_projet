@@ -31,7 +31,7 @@ public class RaccordDTO {
     private LocalDateTime modifieLe;
     private List<RaccordImageDTO> images;
     private List<VerificationRaccordDTO> verifications;
-   
+   private List<RaccordImageDTO> sharedImages;
     private LocalDate dateTournageSource;
     private String statutTournageSource;
     private LocalDate dateTournageCible;

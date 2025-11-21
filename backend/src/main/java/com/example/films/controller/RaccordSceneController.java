@@ -69,4 +69,48 @@ public class RaccordSceneController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/{raccordId}/shared-images")
+    public ResponseEntity<List<RaccordImageDTO>> getSharedImages(@PathVariable Long raccordId) {
+        try {
+            List<RaccordImageDTO> sharedImages = raccordSceneService.getSharedImages(raccordId);
+            return ResponseEntity.ok(sharedImages);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/scene-liaison-shared")
+    public ResponseEntity<?> createRaccordAvecPartage(@RequestBody CreateRaccordSceneDTO createRaccordSceneDTO) {
+        try {
+            RaccordDTO createdRaccord = raccordSceneService.createRaccordAvecPartageImages(createRaccordSceneDTO);
+            return new ResponseEntity<>(createdRaccord, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne du serveur");
+        }
+    }
+
+     @GetMapping("/scenes/{sceneId}/all-photos")
+    public ResponseEntity<List<RaccordImageDTO>> getAllPhotosForScene(@PathVariable Long sceneId) {
+        try {
+            List<RaccordImageDTO> photos = raccordSceneService.getAllPhotosForScene(sceneId);
+            return ResponseEntity.ok(photos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping("/{raccordId}/shared-images/{imageId}")
+    public ResponseEntity<Void> dissocierImagePartagee(@PathVariable Long raccordId, @PathVariable Long imageId) {
+        try {
+            raccordSceneService.dissocierImagePartagee(raccordId, imageId);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
