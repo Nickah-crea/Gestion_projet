@@ -166,6 +166,15 @@
                   <span class="raccord-date">
                     Créé le {{ formatDate(raccord.creeLe) }}
                   </span>
+                  <!-- Indicateur d'images partagées (information seulement) -->
+                  <span 
+                    v-if="raccord.sharedImages && raccord.sharedImages.length > 0" 
+                    class="shared-badge info-only"
+                    title="Ce raccord utilise des images partagées depuis d'autres scènes"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                    {{ raccord.sharedImages.length }} image(s) partagée(s)
+                  </span>
                 </div>
                 <div class="raccord-actions">
                   <button 
@@ -189,10 +198,10 @@
                 {{ raccord.description }}
               </p>
 
-              <!-- Miniatures des photos -->
-              <div v-if="raccord.images && raccord.images.length > 0" class="photos-miniatures">
+              <!-- Miniatures des photos (propres + partagées) -->
+              <div v-if="getAllImagesForRaccord(raccord).length > 0" class="photos-miniatures">
                 <div 
-                  v-for="image in raccord.images.slice(0, 4)" 
+                  v-for="image in getAllImagesForRaccord(raccord).slice(0, 4)" 
                   :key="image.id"
                   class="miniature"
                   @click="viewImage(image)"
@@ -200,10 +209,10 @@
                   <img :src="getImageUrl(image.cheminFichier)" alt="Miniature">
                 </div>
                 <div 
-                  v-if="raccord.images.length > 4" 
+                  v-if="getAllImagesForRaccord(raccord).length > 4" 
                   class="miniature more-count"
                 >
-                  +{{ raccord.images.length - 4 }}
+                  +{{ getAllImagesForRaccord(raccord).length - 4 }}
                 </div>
               </div>
             </div>
@@ -345,8 +354,24 @@ const loadExistingRaccords = async () => {
   try {
     const response = await axios.get(`/api/raccords/scene/${props.sceneId}`)
     existingRaccords.value = response.data
+    
+    for (const raccord of existingRaccords.value) {
+      await loadSharedImages(raccord.id)
+    }
   } catch (error) {
     console.error('Erreur lors du chargement des raccords existants:', error)
+  }
+}
+
+const loadSharedImages = async (raccordId) => {
+  try {
+    const response = await axios.get(`/api/raccords/${raccordId}/shared-images`)
+    const raccordIndex = existingRaccords.value.findIndex(r => r.id === raccordId)
+    if (raccordIndex !== -1) {
+      existingRaccords.value[raccordIndex].sharedImages = response.data
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des images partagées:', error)
   }
 }
 
@@ -390,7 +415,7 @@ const resetNewRaccord = () => {
   previewImages.value = []
 }
 
-// MÊME LOGIQUE DE SAUVEGARDE QUE GestionRaccords.vue
+
 const addRaccord = async () => {
   if (!canAddRaccord.value) return
 
@@ -398,23 +423,21 @@ const addRaccord = async () => {
   try {
     const formData = new FormData()
     
-    // Ajouter les champs du raccord - MÊME STRUCTURE QUE GestionRaccords.vue
+    // Ajouter les champs du raccord
     formData.append('sceneSourceId', props.sceneId.toString())
-    formData.append('sceneCibleId', props.sceneId.toString()) // Même scène pour les raccords de conservation
+    formData.append('sceneCibleId', props.sceneId.toString())
     formData.append('typeRaccordId', newRaccord.value.typeId.toString())
     formData.append('description', newRaccord.value.description || '')
     formData.append('estCritique', newRaccord.value.estCritique.toString())
     formData.append('statutRaccordId', newRaccord.value.statutRaccordId.toString())
     
-    // Ajouter les images - MÊME MÉTHODE QUE GestionRaccords.vue
+    // Ajouter les images
     if (newRaccord.value.images && newRaccord.value.images.length > 0) {
       newRaccord.value.images.forEach(image => {
         formData.append('images', image)
       })
     }
 
-    console.log('Envoi des données au backend...')
-    
     const response = await axios.post('/api/raccords', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -429,7 +452,6 @@ const addRaccord = async () => {
     }
   } catch (error) {
     console.error('Erreur détaillée lors de la sauvegarde:', error)
-    console.error('Response error:', error.response?.data)
     alert('Erreur lors de la sauvegarde des raccords: ' + (error.response?.data?.message || error.message))
   } finally {
     loading.value = false
@@ -442,7 +464,7 @@ const viewRaccord = (raccord) => {
 }
 
 const deleteRaccord = async (raccordId) => {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer ce raccord ?')) {
+  if (!confirm('Êtes-vous sûr de vouloir supprimer ce raccord ? Cette action supprimera également les associations d\'images partagées.')) {
     return
   }
 
@@ -455,6 +477,10 @@ const deleteRaccord = async (raccordId) => {
     console.error('Erreur lors de la suppression du raccord:', error)
     alert('Erreur lors de la suppression du raccord')
   }
+}
+
+const getAllImagesForRaccord = (raccord) => {
+  return raccord.images || []
 }
 
 const viewImage = (image) => {
@@ -932,4 +958,53 @@ input[type="checkbox"] {
   height: 18px;
   cursor: pointer;
 }
+
+/* Styles pour les indicateurs d'images partagées */
+.shared-badge {
+  background: #17a2b8;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  margin-left: 8px;
+}
+
+.shared-overlay {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(23, 162, 184, 0.9);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.shared-indicator {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: #17a2b8;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.photo-item.shared {
+  border-left: 3px solid #17a2b8;
+}
+
+.miniature.shared {
+  border: 2px solid #17a2b8;
+}
+
 </style>

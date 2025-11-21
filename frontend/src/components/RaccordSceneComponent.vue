@@ -275,29 +275,37 @@
               </div>
 
               <!-- Liste des photos disponibles -->
-              <div class="photos-grid">
-                <div 
-                  v-for="photo in filteredPhotos" 
-                  :key="photo.id"
-                  class="photo-item"
-                  :class="{ selected: isPhotoSelected(photo.id) }"
-                  @click="togglePhotoSelection(photo)"
-                >
-                  <div class="photo-image">
-                    <img :src="getImageUrl(photo.cheminFichier)" :alt="photo.descriptionImage">
-                    <div class="photo-overlay">
-                      <i class="fas fa-check"></i>
+               <div class="photos-grid">
+                  <div 
+                    v-for="photo in filteredPhotos" 
+                    :key="photo.id"
+                    class="photo-item"
+                    :class="{ 
+                      selected: isPhotoSelected(photo.id),
+                      shared: photo.isShared 
+                    }"
+                    @click="togglePhotoSelection(photo)"
+                  >
+                    <div class="photo-image">
+                      <img :src="getImageUrl(photo.cheminFichier)" :alt="photo.descriptionImage">
+                      <div class="photo-overlay">
+                        <i class="fas fa-check"></i>
+                      </div>
+                      <!-- Indicateur d'image partagée -->
+                      <div v-if="photo.isShared" class="shared-indicator" title="Image partagée">
+                        <i class="fas fa-share-alt"></i>
+                      </div>
+                    </div>
+                    <div class="photo-info">
+                      <span class="photo-type">{{ getTypeName(photo.typeRaccordId) }}</span>
+                      <span class="photo-date">{{ formatDate(photo.creeLe) }}</span>
+                      <span v-if="photo.isShared" class="shared-badge">Partagée</span>
+                      <p class="photo-description" v-if="photo.descriptionImage">
+                        {{ photo.descriptionImage }}
+                      </p>
                     </div>
                   </div>
-                  <div class="photo-info">
-                    <span class="photo-type">{{ getTypeName(photo.typeRaccordId) }}</span>
-                    <span class="photo-date">{{ formatDate(photo.creeLe) }}</span>
-                    <p class="photo-description" v-if="photo.descriptionImage">
-                      {{ photo.descriptionImage }}
-                    </p>
-                  </div>
                 </div>
-              </div>
 
               <!-- Photos sélectionnées -->
               <div v-if="selectedPhotos.length > 0" class="selected-photos">
@@ -754,16 +762,27 @@ const loadPhotosForScenes = async () => {
     
     const responses = await Promise.all(requests)
     
-    // Extraire les images de tous les raccords
+    // Extraire les images de tous les raccords avec info de partage
     availablePhotos.value = responses.flatMap((response, index) => 
-      response.data.flatMap(raccord => 
-        raccord.images?.map(image => ({
+      response.data.flatMap(raccord => {
+        const ownImages = raccord.images?.map(image => ({
           ...image,
           typeRaccordId: raccord.typeRaccordId,
           sceneId: sceneIds[index],
-          raccordId: raccord.id
+          raccordId: raccord.id,
+          isShared: false // Image propre au raccord
         })) || []
-      )
+        
+        const sharedImages = raccord.sharedImages?.map(image => ({
+          ...image,
+          typeRaccordId: raccord.typeRaccordId,
+          sceneId: sceneIds[index],
+          raccordId: raccord.id,
+          isShared: true // Image partagée
+        })) || []
+        
+        return [...ownImages, ...sharedImages]
+      })
     )
     
     console.log('Photos disponibles:', availablePhotos.value)
@@ -910,10 +929,11 @@ const createRaccord = async () => {
       comedienId: raccordData.value.comedienId 
     }
 
-    const response = await axios.post('/api/raccords/scene-liaison', raccordPayload)
+    // Utiliser le nouvel endpoint pour la création avec partage
+    const response = await axios.post('/api/raccords/scene-liaison-shared', raccordPayload)
     
     if (response.status === 201) {
-      alert('Raccord créé avec succès!')
+      alert('Raccord créé avec succès avec partage d\'images!')
       emit('raccord-created', response.data)
       closeModal()
     }
@@ -1671,5 +1691,52 @@ input[type="checkbox"] {
   }
 }
 
+/* Styles pour les indicateurs d'images partagées */
+.shared-badge {
+  background: #17a2b8;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  margin-left: 8px;
+}
+
+.shared-overlay {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(23, 162, 184, 0.9);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.shared-indicator {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: #17a2b8;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.photo-item.shared {
+  border-left: 3px solid #17a2b8;
+}
+
+.miniature.shared {
+  border: 2px solid #17a2b8;
+}
 
 </style>
