@@ -200,5 +200,36 @@ Optional<Raccord> findTopBySceneSourceAndSceneCibleOrderByIdDesc(
     @Param("sceneSource") Scene sceneSource, 
     @Param("sceneCible") Scene sceneCible);
     
+
+    @Query("SELECT r FROM Raccord r " +
+       "LEFT JOIN FETCH r.sceneSource ss " +
+       "LEFT JOIN FETCH ss.sequence seq " +
+       "LEFT JOIN FETCH seq.episode e " +
+       "LEFT JOIN FETCH e.projet p " +
+       "LEFT JOIN FETCH r.sceneCible sc " +
+       "LEFT JOIN FETCH r.typeRaccord " +
+       "LEFT JOIN FETCH r.statutRaccord " +
+       "LEFT JOIN FETCH r.personnage " +
+       "LEFT JOIN FETCH r.comedien " +
+       "LEFT JOIN FETCH r.images " +
+       "WHERE r.typeRaccord.code IN ('ACCESSOIRE', 'VETEMENTS', 'COIFFURE') " +
+       "AND r.comedien.id = :comedienId")
+List<Raccord> findRaccordsAccessoiresByComedien(@Param("comedienId") Long comedienId);
+
+@Query("SELECT r FROM Raccord r " +
+       "LEFT JOIN FETCH r.sceneSource ss " +
+       "LEFT JOIN FETCH ss.sequence seqs " +
+       "LEFT JOIN FETCH seqs.episode eps " +
+       "LEFT JOIN FETCH r.sceneCible sc " +
+       "LEFT JOIN FETCH sc.sequence seqc " +
+       "LEFT JOIN FETCH seqc.episode epc " +
+       "LEFT JOIN FETCH r.typeRaccord " +
+       "LEFT JOIN FETCH r.statutRaccord " +
+       "LEFT JOIN FETCH r.images " +
+       "LEFT JOIN FETCH r.personnage " +
+       "LEFT JOIN FETCH r.comedien " +
+       "WHERE eps.projet.id = :projetId OR epc.projet.id = :projetId")
+List<Raccord> findByProjetId(@Param("projetId") Long projetId);
+
 }
 

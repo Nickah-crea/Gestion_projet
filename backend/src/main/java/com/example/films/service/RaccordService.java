@@ -77,7 +77,6 @@ public class RaccordService {
          System.out.println("Création raccord - SceneSource: " + createRaccordDTO.getSceneSourceId());
         System.out.println("Création raccord - SceneCible: " + createRaccordDTO.getSceneCibleId());
         
-        // MODIFICATION : Permettre les raccords sur la même scène
         // Vérifier si le raccord existe déjà seulement si les scènes sont différentes
         if (!createRaccordDTO.getSceneSourceId().equals(createRaccordDTO.getSceneCibleId())) {
             if (raccordRepository.existsByScenesAndType(
@@ -141,8 +140,7 @@ public class RaccordService {
                         String imagePath = saveImage(image);
                         RaccordImage raccordImage = new RaccordImage();
                         raccordImage.setRaccord(savedRaccord);
-                        raccordImage.setNomFichier(image.getOriginalFilename());
-                        raccordImage.setCheminFichier(imagePath);
+                        raccordImage.setNomFichier(imagePath);                         raccordImage.setCheminFichier(imagePath);
                         raccordImage.setDescriptionImage("Image de référence pour le raccord");
                         raccordImage.setEstImageReference(true);
                         raccordImageRepository.save(raccordImage);
@@ -250,8 +248,7 @@ public class RaccordService {
                         String imagePath = saveImage(image);
                         RaccordImage raccordImage = new RaccordImage();
                         raccordImage.setRaccord(updatedRaccord);
-                        raccordImage.setNomFichier(image.getOriginalFilename());
-                        raccordImage.setCheminFichier(imagePath);
+                        raccordImage.setNomFichier(imagePath);                         raccordImage.setCheminFichier(imagePath);
                         raccordImage.setDescriptionImage("Image ajoutée lors de la modification");
                         raccordImage.setEstImageReference(false);
                         raccordImageRepository.save(raccordImage);

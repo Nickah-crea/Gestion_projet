@@ -35,4 +35,20 @@ public class RaccordImage {
 
     @Column(name = "cree_le")
     private LocalDateTime creeLe = LocalDateTime.now();
+
+    public String getNomFichier() {
+        return nomFichier;
+    }
+    
+    public void setNomFichier(String nomFichier) {
+        this.nomFichier = nomFichier;
+    }
+    
+    public String getCheminFichier() {
+        return cheminFichier;
+    }
+    
+    public void setCheminFichier(String cheminFichier) {
+        this.cheminFichier = cheminFichier;
+    }
 }
