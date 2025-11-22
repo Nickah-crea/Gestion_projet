@@ -153,6 +153,25 @@
               >
                 <i class="fas fa-file-pdf"></i> Épisode PDF
               </button>
+
+              <!-- Sélecteur de comédien pour l'export -->
+              <div class="comedien-selector-ecran-travail" v-if="comediens.length">
+                <label for="comedien-select">Exporter les raccords pour :</label>
+                <select id="comedien-select" v-model="selectedComedien" class="select-ecran-travail">
+                  <option value="">Sélectionner un comédien</option>
+                  <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
+                    {{ comedien.nom }}
+                  </option>
+                </select>
+                
+                <button 
+                  @click="exportRaccordsByComedien(selectedComedien)" 
+                  :disabled="!selectedComedien"
+                  class="export-btn-ecran-travail"
+                >
+                  <i class="fas fa-file-pdf"></i> Export Raccords Comédien
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -395,7 +414,60 @@
                 <i class="fas fa-comments" style="color: #21294F;"></i> {{ getSceneCommentCount(scene.idScene) }}
               </span>
 
-               
+              <!-- Dans la section des boutons d'export existants -->
+            <div class="export-buttons-ecran-travail">
+              <!-- Bouton pour exporter tous les raccords du projet -->
+              <button @click="exportRaccordsByProjet(projetId)" class="export-btn-ecran-travail">
+                <i class="fas fa-file-pdf"></i> Export Tous Raccords
+              </button>
+
+              <button 
+                @click="exportRaccordsByComedien(selectedComedien)" 
+                :disabled="!selectedComedien"
+                class="export-btn-ecran-travail"
+              >
+                <i class="fas fa-file-pdf"></i> Export Raccords Comédien
+              </button>
+
+               <!-- Sélecteur de comédien pour l'export -->
+            <div class="comedien-selector-ecran-travail" v-if="comediens.length">
+              <label for="comedien-select">Exporter les raccords pour :</label>
+              <select id="comedien-select" v-model="selectedComedien" class="select-ecran-travail">
+                <option value="">Sélectionner un comédien</option>
+                <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
+                  {{ comedien.nom }}
+                </option>
+              </select>
+              
+              <button 
+                @click="exportRaccordsByComedien(selectedComedien)" 
+                :disabled="!selectedComedien"
+                class="export-btn-ecran-travail"
+              >
+                <i class="fas fa-file-pdf"></i> Export Raccords Comédien
+              </button>
+            </div>
+
+            </div>
+
+            <button 
+              class="export-option" 
+              @click="exportRaccordsProjetPDF"
+              title="Exporter les raccords du projet en PDF"
+            >
+              <i class="fas fa-file-pdf"></i> Raccords Projet PDF
+            </button>
+
+
+            <!-- Dans la carte de scène -->
+            <button 
+              @click="exportRaccordsByScene(scene.idScene)" 
+              class="export-scene-raccords-btn-ecran-travail"
+              title="Exporter les raccords de cette scène"
+            >
+              <i class="fas fa-file-pdf"></i> Raccords
+            </button>
+
                 <div class="scene-actions-ecran-travail">
                   <button 
                     v-if="userPermissions.canCreateScene" 
@@ -1089,6 +1161,9 @@ const route = useRoute();
 const router = useRouter();
 const store = useEcranTravailStore();
 
+const comediens = ref([]);
+const selectedComedien = ref(null);
+
 // État de la sidebar
 const sidebarOpen = ref(false);
 
@@ -1435,7 +1510,6 @@ onMounted(async () => {
 
   await store.fetchEpisodes(projetId.value);
   
-  
   // Charger les données supplémentaires
   if (store.currentSequence) {
     await loadSequenceCommentCount();
@@ -1463,6 +1537,7 @@ onMounted(async () => {
   if (sequenceId) {
     await store.selectSequenceById(sequenceId);
   }
+
 });
 
 
@@ -3265,11 +3340,559 @@ const exportEpisodeWithSequencePDF = async () => {
     console.error('Erreur lors de l\'export PDF épisode + séquence:', error);
     alert('Erreur lors de l\'export PDF');
   }
+};
 
-  
+
+const loadImageBase64 = async (filename) => {
+  if (!filename) return null;
+  try {
+    const response = await axios.get(`/api/images/raccord/${filename}`, {
+      responseType: 'blob'
+    });
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(response.data);
+    });
+  } catch (err) {
+    console.warn('Impossible de charger l\'image:', filename);
+    return null;
+  }
+};
+
+// Fonction utilitaire améliorée pour charger les images
+const getBase64FromUrl = async (filename, raccordId) => {
+  if (!filename || filename.includes('undefined') || filename === 'undefined') {
+    console.warn('Nom de fichier invalide:', filename);
+    return null;
+  }
+
+  // Ajouter des logs de débogage
+  console.log('Tentative de chargement image:', filename);
+
+  try {
+    // Essayer d'abord le serveur statique (avec le context path /api)
+    const staticUrl = `http://localhost:8080/api/images/raccords/${filename}`;
+    console.log('URL statique:', staticUrl);
+    
+    const staticResponse = await axios.get(staticUrl, {
+      responseType: 'blob',
+      timeout: 5000
+    });
+    
+    console.log('Image chargée via serveur statique:', filename);
+    
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(staticResponse.data);
+    });
+  } catch (staticError) {
+    console.warn('Erreur avec serveur statique:', staticError.message);
+    
+    // Fallback vers l'API
+    try {
+      const apiUrl = `http://localhost:8080/api/api/images/raccord/${filename}`;
+      console.log('URL API:', apiUrl);
+      
+      const apiResponse = await axios.get(apiUrl, {
+        responseType: 'blob',
+        timeout: 5000
+      });
+      
+      console.log('Image chargée via API:', filename);
+      
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(apiResponse.data);
+      });
+    } catch (apiError) {
+      console.warn('Échec des deux méthodes pour:', filename, apiError.message);
+      return null;
+    }
+  }
+};
+
+// Export tous les raccords du projet - VERSION CORRIGÉE
+const exportRaccordsProjetPDF = async () => {
+  if (!store.projetInfos?.id) {
+    alert("Aucun projet sélectionné");
+    return;
+  }
+
+  try {
+    console.log('Début export PDF pour projet:', store.projetInfos.id);
+    
+    const response = await axios.get(`/api/raccords/export/projet/${store.projetInfos.id}`);
+    const raccords = response.data;
+
+    console.log('Raccords reçus:', raccords);
+
+    if (!raccords || raccords.length === 0) {
+      alert("Aucun raccord trouvé pour ce projet");
+      return;
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+
+    // Page de garde
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 297, 'F');
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(24);
+    pdf.text("FICHE RACCORDS", 105, 100, { align: 'center' });
+    pdf.setFontSize(18);
+    pdf.text(store.projetTitle.toUpperCase(), 105, 115, { align: 'center' });
+    pdf.setFontSize(12);
+    pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
+
+    pdf.addPage();
+    let y = 30;
+
+    // En-tête
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 25, 'F');
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.text("TOUS LES RACCORDS DU PROJET", 105, 15, { align: 'center' });
+
+    // Parcourir tous les raccords
+    for (const [index, r] of raccords.entries()) {
+      if (y > 250) {
+        pdf.addPage();
+        y = 30;
+      }
+
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'} – ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 15, y);
+      y += 8;
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      
+      // Informations détaillées
+      if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 6;
+      if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 6;
+      if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 6;
+      if (r.comedienNom) pdf.text(`Comédien: ${r.comedienNom}`, 20, y), y += 6;
+      if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 6;
+      
+      if (r.description) {
+        const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
+        pdf.text(lines, 20, y);
+        y += lines.length * 5 + 4;
+      }
+
+      pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
+      y += 6;
+
+      if (r.dateTournageSource || r.dateTournageCible) {
+        pdf.text(`Tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
+        y += 6;
+      }
+
+      // IMAGES - VERSION CORRIGÉE AVEC DÉBOGAGE
+      if (r.images && r.images.length > 0) {
+        console.log(`Raccord ${index} a ${r.images.length} images:`, r.images);
+        
+        pdf.text('Images associées:', 20, y);
+        y += 8;
+        
+        let x = 20;
+        let imagesAdded = 0;
+        
+        for (const img of r.images) {
+          if (imagesAdded >= 2) break; // Limiter à 2 images maximum
+          
+          // Vérifier que le nom de fichier est valide
+          if (!img.nomFichier || img.nomFichier.includes('undefined')) {
+            console.warn('Nom de fichier invalide ignoré:', img.nomFichier);
+            continue;
+          }
+          
+          try {
+            console.log('Tentative de chargement image:', img.nomFichier);
+            const base64 = await getBase64FromUrl(img.nomFichier);
+            
+            if (base64) {
+              pdf.addImage(base64, 'JPEG', x, y, 35, 35);
+              x += 40;
+              imagesAdded++;
+              
+              if (x > 150) {
+                x = 20;
+                y += 40;
+              }
+              
+              console.log('Image chargée avec succès:', img.nomFichier);
+            } else {
+              console.warn('Échec chargement image:', img.nomFichier);
+            }
+          } catch (imgError) {
+            console.warn('Erreur lors du chargement image:', img.nomFichier, imgError);
+          }
+        }
+        
+        if (imagesAdded > 0) {
+          y += 40; // Espace après les images
+          console.log(`${imagesAdded} images ajoutées pour le raccord ${index}`);
+        } else {
+          pdf.setFontSize(9);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text('Aucune image disponible', 20, y);
+          y += 15;
+          console.log('Aucune image disponible pour le raccord', index);
+        }
+      } else {
+        console.log('Aucune image pour le raccord', index);
+      }
+
+      y += 10;
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(15, y - 5, 195, y - 5);
+      y += 5;
+    }
+
+    // Pied de page
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 2; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(9);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text(`Projet: ${store.projetTitle} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
+    }
+
+    pdf.save(`raccords-projet-${store.projetInfos.id}.pdf`);
+    console.log('Export PDF terminé avec succès');
+
+  } catch (err) {
+    console.error('Erreur export raccords:', err);
+    if (err.response?.status === 404) {
+      alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
+    } else {
+      alert("Erreur lors de la génération du PDF: " + (err.response?.data?.message || err.message));
+    }
+  }
+};
+
+// Export par comédien - VERSION CORRIGÉE
+const exportRaccordsByComedien = async (comedienId) => {
+  if (!comedienId) {
+    alert('Veuillez sélectionner un comédien');
+    return;
+  }
+
+  try {
+    console.log('Début export PDF pour comédien:', comedienId);
+    
+    const response = await axios.get(`/api/raccords/export/comedien/${comedienId}`);
+    const raccords = response.data;
+
+    console.log('Raccords reçus pour comédien:', raccords);
+
+    if (!raccords || raccords.length === 0) {
+      alert('Aucun raccord trouvé pour ce comédien');
+      return;
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+    const comedienNom = raccords[0]?.comedienNom || 'Comédien inconnu';
+
+    // Page de garde
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 297, 'F');
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(24);
+    pdf.text(`RACCORDS POUR`, 105, 90, { align: 'center' });
+    pdf.text(`${comedienNom.toUpperCase()}`, 105, 105, { align: 'center' });
+    pdf.setFontSize(14);
+    pdf.text('Accessoires • Vêtements • Coiffure', 105, 120, { align: 'center' });
+    pdf.setFontSize(12);
+    pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
+
+    pdf.addPage();
+    let y = 30;
+
+    // En-tête
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 25, 'F');
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.text(`RACCORDS - ${comedienNom.toUpperCase()}`, 105, 15, { align: 'center' });
+
+    for (const [index, r] of raccords.entries()) {
+      if (y > 250) {
+        pdf.addPage();
+        y = 30;
+      }
+
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'}`, 15, y);
+      y += 7;
+      
+      pdf.setFontSize(10);
+      pdf.text(`Scènes: ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 20, y);
+      y += 6;
+
+      pdf.setFont("helvetica", "normal");
+      
+      if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 5;
+      if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 5;
+      if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 5;
+      if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 5;
+      
+      if (r.description) {
+        const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
+        pdf.text(lines, 20, y);
+        y += lines.length * 5 + 4;
+      }
+
+      pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
+      y += 6;
+
+      if (r.dateTournageSource || r.dateTournageCible) {
+        pdf.text(`Dates tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
+        y += 6;
+      }
+
+      // Images avec gestion d'erreur améliorée
+      if (r.images && r.images.length > 0) {
+        console.log(`Raccord ${index} a ${r.images.length} images:`, r.images);
+        
+        pdf.text('Images:', 20, y);
+        y += 8;
+        
+        let x = 20;
+        let imagesAdded = 0;
+        
+        for (const img of r.images.slice(0, 2)) {
+          if (!img.nomFichier || img.nomFichier.includes('undefined')) {
+            console.warn('Nom de fichier invalide ignoré:', img.nomFichier);
+            continue;
+          }
+          
+          try {
+            console.log('Tentative de chargement image:', img.nomFichier);
+            const base64 = await getBase64FromUrl(img.nomFichier);
+            
+            if (base64) {
+              pdf.addImage(base64, 'JPEG', x, y, 35, 35);
+              x += 40;
+              imagesAdded++;
+              
+              if (x > 150) {
+                x = 20;
+                y += 40;
+              }
+            }
+          } catch (imgError) {
+            console.warn('Erreur chargement image:', img.nomFichier);
+          }
+        }
+        
+        if (imagesAdded > 0) {
+          y += 45;
+        }
+      }
+
+      y += 10;
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(15, y - 5, 195, y - 5);
+      y += 5;
+    }
+
+    // Pied de page
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 2; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(9);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text(`Raccords pour ${comedienNom} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
+    }
+
+    pdf.save(`raccords-${comedienNom.replace(/\s+/g, '-')}.pdf`);
+    console.log('Export PDF comédien terminé avec succès');
+    
+  } catch (err) {
+    console.error('Erreur export comédien:', err);
+    if (err.response?.status === 404) {
+      alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
+    } else {
+      alert('Erreur lors de l\'export PDF: ' + (err.response?.data?.message || err.message));
+    }
+  }
+};
+
+
+// Export par scène
+const exportRaccordsByScene = async (sceneId) => {
+  try {
+    const response = await axios.get(`/api/raccords/export/scene/${sceneId}`);
+    const raccords = response.data;
+
+    if (!raccords || raccords.length === 0) {
+      alert('Aucun raccord trouvé pour cette scène');
+      return;
+    }
+
+    const scene = store.currentSequence?.scenes?.find(s => s.idScene === sceneId);
+    const sceneTitre = scene?.titre || `Scène ${sceneId}`;
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+
+    // Page de garde
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 297, 'F');
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(22);
+    pdf.text(`RACCORDS DE LA SCÈNE`, 105, 100, { align: 'center' });
+    pdf.setFontSize(18);
+    pdf.text(sceneTitre.toUpperCase(), 105, 115, { align: 'center' });
+    pdf.setFontSize(12);
+    pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
+
+    pdf.addPage();
+    let y = 30;
+
+    // En-tête
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 25, 'F');
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.text(`RACCORDS - ${sceneTitre.toUpperCase()}`, 105, 15, { align: 'center' });
+
+    for (const [index, r] of raccords.entries()) {
+      if (y > 250) {
+        pdf.addPage();
+        y = 30;
+      }
+
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'}`, 15, y);
+      y += 7;
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      
+      pdf.text(`Scène cible: ${r.sceneCibleTitre || '?'}`, 20, y);
+      y += 5;
+      
+      if (r.comedienNom) pdf.text(`Comédien: ${r.comedienNom}`, 20, y), y += 5;
+      if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 5;
+      
+      if (r.description) {
+        const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
+        pdf.text(lines, 20, y);
+        y += lines.length * 5 + 4;
+      }
+
+      // Images
+      if (r.images && r.images.length > 0) {
+        pdf.text('Images:', 20, y);
+        y += 8;
+        
+        let x = 20;
+        let imagesAdded = 0;
+        
+        for (const img of r.images) {
+          try {
+            const imageUrl = `/api/images/raccord/${img.nomFichier}`;
+            const base64 = await getBase64FromUrl(imageUrl);
+            
+            if (base64) {
+              pdf.addImage(base64, 'JPEG', x, y, 40, 40);
+              x += 45;
+              imagesAdded++;
+              
+              if (x > 150) {
+                x = 20;
+                y += 45;
+              }
+            }
+          } catch (imgError) {
+            console.warn('Image non chargée:', img.nomFichier);
+          }
+        }
+        
+        if (imagesAdded > 0) {
+          y += 50;
+        }
+      }
+
+      y += 10;
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(15, y - 5, 195, y - 5);
+      y += 5;
+    }
+
+    // Pied de page
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 2; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(9);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text(`Raccords ${sceneTitre} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
+    }
+
+    pdf.save(`raccords-${sceneTitre.replace(/\s+/g, '-')}.pdf`);
+    
+  } catch (err) {
+    console.error('Erreur export scène:', err);
+    if (err.response?.status === 404) {
+      alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
+    } else {
+      alert('Erreur lors de l\'export PDF: ' + (err.response?.data?.message || err.message));
+    }
+  }
 };
 
 
 </script>
 
 
+<style scoped>
+.export-buttons-ecran-travail {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.export-btn-ecran-travail {
+  background: linear-gradient(135deg, #21294F, #2c3e50);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-btn-ecran-travail:hover {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 41, 79, 0.3);
+}
+
+.export-btn-ecran-travail i {
+  font-size: 16px;
+}
+</style>
