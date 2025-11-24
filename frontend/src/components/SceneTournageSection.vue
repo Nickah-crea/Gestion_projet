@@ -202,6 +202,7 @@
             </div>
           </div>
           
+        
           <div class="form-row">
             <div class="form-group">
               <label for="lieuId">Lieu</label>
@@ -210,6 +211,7 @@
                 v-model="formData.lieuId" 
                 class="form-select"
                 @change="chargerPlateaux"
+                :disabled="hasSceneLieu && !isModification"
               >
                 <option value="">Sélectionner un lieu</option>
                 <option 
@@ -220,6 +222,10 @@
                   {{ lieu.nomLieu }} ({{ lieu.typeLieu }})
                 </option>
               </select>
+              <small v-if="hasSceneLieu && !isModification" class="field-info">
+                <i class="fas fa-info-circle"></i>
+                Lieu pré-défini pour cette scène
+              </small>
             </div>
             
             <div class="form-group">
@@ -228,7 +234,7 @@
                 id="plateauId"
                 v-model="formData.plateauId" 
                 class="form-select"
-                :disabled="!formData.lieuId"
+                :disabled="(!formData.lieuId) || (hasSceneLieu && !isModification)"
               >
                 <option value="">Sélectionner un plateau</option>
                 <option 
@@ -239,6 +245,10 @@
                   {{ plateau.nom }} ({{ plateau.typePlateau }})
                 </option>
               </select>
+              <small v-if="hasSceneLieu && !isModification" class="field-info">
+                <i class="fas fa-info-circle"></i>
+                Plateau pré-défini pour cette scène
+              </small>
             </div>
           </div>
 
@@ -336,7 +346,13 @@ export default {
     const lieuxDisponibles = ref([]);
     const plateauxDisponibles = ref([]);
     const historiqueReplanifications = ref([]);
-    
+    const sceneLieus = ref([]);
+    const hasSceneLieu = ref(false);
+    const sceneLieuData = ref({
+      lieuId: null,
+      plateauId: null
+    });
+        
     const formData = ref({
       sceneId: null,
       dateTournage: '',
@@ -356,20 +372,33 @@ export default {
     onMounted(async () => {
       await Promise.all([
         chargerTournage(),
-        chargerLieuxDisponibles()
+        chargerLieuxDisponibles(),
+         chargerSceneLieus() 
       ]);
     });
 
     // Watcher pour recharger quand la scène change
-    watch(() => props.scene.idScene, async (newSceneId) => {
+   watch(() => props.scene.idScene, async (newSceneId) => {
       if (newSceneId) {
         formData.value.sceneId = newSceneId;
-        await chargerTournage();
+        await Promise.all([
+          chargerTournage(),
+          chargerSceneLieus() 
+        ]);
       }
     });
 
-    // Méthodes
+       watch(() => formData.value.lieuId, (newLieuId) => {
+          if (newLieuId && !hasSceneLieu.value) {
+            // Charger les plateaux seulement si l'utilisateur peut modifier le lieu
+            chargerPlateaux();
+          } else if (!newLieuId) {
+            // Si aucun lieu sélectionné, vider la liste des plateaux
+            plateauxDisponibles.value = [];
+          }
+        });
 
+    // Méthodes
     const chargerTournage = async () => {
       try {
         const response = await axios.get(`/api/scene-tournage/scene/${props.scene.idScene}`);
@@ -484,15 +513,15 @@ export default {
 
     const initialiserFormData = () => {
       if (isModification.value && tournage.value) {
-        // Remplir avec les données existantes
+       
         formData.value = {
-          sceneId: props.scene.idScene,
+           sceneId: props.scene.idScene,
           dateTournage: tournage.value.dateTournage,
           heureDebut: tournage.value.heureDebut,
           heureFin: tournage.value.heureFin,
           lieuId: tournage.value.lieuId,
           plateauId: tournage.value.plateauId,
-          statutTournage: tournage.value.statutTournage, // NOUVEAU : inclure le statut
+          statutTournage: tournage.value.statutTournage,
           notes: tournage.value.notes || ''
         };
         
@@ -501,17 +530,22 @@ export default {
           chargerPlateaux();
         }
       } else {
-        // Nouveau tournage
+       
         formData.value = {
-          sceneId: props.scene.idScene,
-          dateTournage: '',
-          heureDebut: '09:00',
-          heureFin: '12:00',
-          lieuId: null,
-          plateauId: null,
-          statutTournage: 'planifie', // NOUVEAU : statut par défaut
-          notes: ''
+            sceneId: props.scene.idScene,
+            dateTournage: '',
+            heureDebut: '09:00',
+            heureFin: '12:00',
+            lieuId: hasSceneLieu.value ? sceneLieuData.value.lieuId : null,
+            plateauId: hasSceneLieu.value ? sceneLieuData.value.plateauId : null,
+            statutTournage: 'planifie',
+            notes: ''
         };
+
+        // Charger les plateaux si un lieu est pré-sélectionné
+        if (hasSceneLieu.value && sceneLieuData.value.lieuId) {
+          chargerPlateaux();
+        }
       }
     };
 
@@ -541,6 +575,34 @@ export default {
       plateauxDisponibles.value = [];
     };
 
+
+const chargerSceneLieus = async () => {
+  try {
+    const response = await axios.get(`/api/scene-tournage/scene-lieux/scene/${props.scene.idScene}`);
+    sceneLieus.value = response.data;
+    
+    // Vérifier si la scène a des lieux associés
+    if (sceneLieus.value.length > 0) {
+      hasSceneLieu.value = true;
+      // Prendre le premier lieu associé
+      const premierLieu = sceneLieus.value[0];
+      sceneLieuData.value = {
+        lieuId: premierLieu.lieuId,
+        plateauId: premierLieu.plateauId
+      };
+    } else {
+      hasSceneLieu.value = false;
+      sceneLieuData.value = {
+        lieuId: null,
+        plateauId: null
+      };
+    }
+  } catch (error) {
+    console.error('Erreur chargement lieux scène:', error);
+    sceneLieus.value = [];
+    hasSceneLieu.value = false;
+  }
+};
 
 const verifierConflits = async () => {
   if (!formData.value.dateTournage || !formData.value.heureDebut || !formData.value.heureFin) {
@@ -696,7 +758,7 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       return true;
     };
 
-    // NOUVELLE MÉTHODE : Modification rapide du statut
+    
     const modifierStatutRapide = async (nouveauStatut) => {
       if (!props.userPermissions.canCreateScene) {
         alert('Vous n\'êtes pas autorisé à modifier le statut des tournages.');
@@ -799,6 +861,8 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       plateauxDisponibles,
       formData,
       afficherHistorique, 
+      sceneLieus, 
+      hasSceneLieu,
       ouvrirModalPlanification,
       ouvrirModalModification,
       supprimerTournage,
@@ -812,7 +876,8 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       getStatutLibelle,
       historiqueReplanifications,
       chargerHistoriqueReplanifications,
-      onReplanificationAppliquee
+      onReplanificationAppliquee,
+      chargerSceneLieus
     };
   }
 };

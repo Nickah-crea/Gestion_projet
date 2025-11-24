@@ -537,15 +537,15 @@
               <p class="scene-info-ecran-travail"><strong>Synopsis:</strong> {{ scene.synopsis || 'Aucun synopsis' }}</p>
               <p class="scene-info-ecran-travail"><strong>Statut:</strong> {{ scene.statutNom || 'Non défini' }}</p>
 
-              <div class="section-header-ecran-travail">
+              <!-- <div class="section-header-ecran-travail">
                 <h4><i class="fas fa-map-pin" style="color: #dc3545;"></i>Lieux et Plateaux:</h4>
                 <button v-if="userPermissions.canCreateLieu" class="add-lieu-btn-ecran-travail" @click="openAddLieuModal(scene)">
                   <i class="fas fa-plus-circle" style="color: #21294F;"></i>Lieu/Plateau
                 </button>
-              </div>
+              </div> -->
 
               <!-- Lieux et Plateaux -->
-              <div class="lieux-plateaux-ecran-travail" v-if="scene.sceneLieus?.length">
+              <!-- <div class="lieux-plateaux-ecran-travail" v-if="scene.sceneLieus?.length">
                 <ul class="lieux-list-ecran-travail">
                   <li v-for="sceneLieu in scene.sceneLieus" :key="sceneLieu.id" class="lieu-item-ecran-travail">
                     <strong>{{ sceneLieu.lieuNom || 'Lieu inconnu' }}</strong>
@@ -557,7 +557,7 @@
                   </li>
                 </ul>
               </div>
-              <p v-else class="no-lieux-ecran-travail">Aucun lieu ou plateau associé.</p>
+              <p v-else class="no-lieux-ecran-travail">Aucun lieu ou plateau associé.</p> -->
 
               <div class="section-header-ecran-travail">
                     <h4><i class="fas fa-comments" ></i>Dialogues:</h4> 

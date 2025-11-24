@@ -211,6 +211,8 @@
                 </small>
               </div>
           </div>
+
+
           <div class="form-row">
             <div class="form-group">
               <label for="lieuId">Lieu</label>
@@ -219,28 +221,47 @@
                 v-model="formPlanning.lieuId" 
                 @change="chargerPlateauxParLieu"
                 class="form-select"
+                :disabled="hasSceneLieu && !isModificationPlanning"
               >
                 <option value="">Sélectionner un lieu</option>
-                <option v-for="lieu in lieuxDisponibles" :key="lieu.id" :value="lieu.id">
+                <option 
+                  v-for="lieu in lieuxDisponibles" 
+                  :key="lieu.id" 
+                  :value="lieu.id"
+                >
                   {{ lieu.nomLieu }} ({{ lieu.typeLieu }})
                 </option>
               </select>
+              <small v-if="hasSceneLieu && !isModificationPlanning" class="field-info">
+                <i class="fas fa-info-circle"></i>
+                Lieu pré-défini pour cette scène
+              </small>
             </div>
+            
             <div class="form-group">
               <label for="plateauId">Plateau</label>
               <select 
                 id="plateauId"
                 v-model="formPlanning.plateauId" 
-                :disabled="!formPlanning.lieuId"
+                :disabled="(!formPlanning.lieuId) || (hasSceneLieu && !isModificationPlanning)"
                 class="form-select"
               >
                 <option value="">Sélectionner un plateau</option>
-                <option v-for="plateau in plateauxParLieu" :key="plateau.id" :value="plateau.id">
+                <option 
+                  v-for="plateau in plateauxParLieu" 
+                  :key="plateau.id" 
+                  :value="plateau.id"
+                >
                   {{ plateau.nom }} ({{ plateau.typePlateau }})
                 </option>
               </select>
+              <small v-if="hasSceneLieu && !isModificationPlanning" class="field-info">
+                <i class="fas fa-info-circle"></i>
+                Plateau pré-défini pour cette scène
+              </small>
             </div>
           </div>
+
           <div class="form-row">
             <div class="form-group">
               <label for="heureDebut">Heure de début *</label>
@@ -435,7 +456,7 @@ export default {
       conflitTimeout: null,
        selectedSceneId: null,
        alertesRaccordsCritiques: [],
-    showAlertesRaccords: true,
+      showAlertesRaccords: true,
       formPlanning: {
         id: null,
         projetId: '',
@@ -448,10 +469,29 @@ export default {
         lieuId: null,
         plateauId: null,
         statutTournage: 'planifie',
-        notes: ''
+        notes: '',
+        sceneLieus: [],
+        hasSceneLieu: false,
+        sceneLieuData: {
+          lieuId: null,
+          plateauId: null
+        }
       }
     };
   },
+
+  watch: {
+    'formPlanning.sceneId': {
+      handler(newSceneId) {
+        if (newSceneId && !this.isModificationPlanning) {
+          // Charger les lieux associés à cette scène
+          this.chargerSceneLieus(newSceneId);
+        }
+      },
+      immediate: false
+    }
+  },
+  
   computed: {
     moisCourant() {
       return this.dateCourante.toLocaleDateString('fr-FR', { 
@@ -566,6 +606,43 @@ export default {
         console.error('Erreur chargement projets:', error);
       }
     },
+
+     async chargerSceneLieus(sceneId) {
+      try {
+        const response = await axios.get(`/api/scene-tournage/scene-lieux/scene/${sceneId}`);
+        this.sceneLieus = response.data;
+        
+        // Vérifier si la scène a des lieux associés
+        if (this.sceneLieus.length > 0) {
+          this.hasSceneLieu = true;
+          // Prendre le premier lieu associé
+          const premierLieu = this.sceneLieus[0];
+          this.sceneLieuData = {
+            lieuId: premierLieu.lieuId,
+            plateauId: premierLieu.plateauId
+          };
+          
+          // Pré-remplir les champs du formulaire
+          this.formPlanning.lieuId = premierLieu.lieuId;
+          this.formPlanning.plateauId = premierLieu.plateauId;
+          
+          // Charger les plateaux pour ce lieu
+          if (premierLieu.lieuId) {
+            await this.chargerPlateauxParLieu();
+          }
+        } else {
+          this.hasSceneLieu = false;
+          this.sceneLieuData = {
+            lieuId: null,
+            plateauId: null
+          };
+        }
+      } catch (error) {
+        console.error('Erreur chargement lieux scène:', error);
+        this.sceneLieus = [];
+        this.hasSceneLieu = false;
+      }
+    },
     moisPrecedent() {
       this.dateCourante = new Date(this.dateCourante.getFullYear(), this.dateCourante.getMonth() - 1, 1);
       this.chargerTournages();
@@ -611,6 +688,8 @@ export default {
       this.selectedDate = date;
       this.isModificationPlanning = false;
       this.erreurPlanning = '';
+      this.hasSceneLieu = false;
+      this.sceneLieus = []; 
       this.formPlanning = {
         id: null,
         projetId: '',
@@ -639,6 +718,8 @@ export default {
       this.sequencesParEpisode = [];
       this.scenesParSequence = [];
       this.plateauxParLieu = [];
+      this.hasSceneLieu = false;
+      this.sceneLieus = []; 
     },
     async chargerEpisodesParProjet() {
       if (!this.formPlanning.projetId) {
@@ -671,47 +752,49 @@ export default {
         this.sequencesParEpisode = [];
       }
     },
+
     async chargerScenesParSequence() {
-    if (!this.formPlanning.sequenceId) {
-      this.scenesParSequence = [];
-      return;
-    }
-    
-    try {
-      const response = await axios.get(`/api/scenes/sequences/${this.formPlanning.sequenceId}`);
-      let scenes = response.data;
-      
-      // Si c'est une création, vérifier chaque scène individuellement
-      if (!this.isModificationPlanning) {
-        const scenesAvecStatut = await Promise.all(
-          scenes.map(async (scene) => {
-            try {
-              // Vérifier si cette scène a déjà un tournage
-              const tournageResponse = await axios.get(`/api/scene-tournage/scene/${scene.idScene}`);
-              // Si on arrive ici, c'est que la scène a un tournage (statut 200)
-              return { ...scene, estPlanifiee: true };
-            } catch (error) {
-              // Si erreur 404, la scène n'est pas planifiée
-              if (error.response?.status === 404) {
-                return { ...scene, estPlanifiee: false };
-              }
-              // Pour les autres erreurs, on considère que la scène n'est pas planifiée
-              return { ...scene, estPlanifiee: false };
-            }
-          })
-        );
-        
-        // Filtrer pour garder seulement les scènes non planifiées
-        scenes = scenesAvecStatut.filter(scene => !scene.estPlanifiee);
+      if (!this.formPlanning.sequenceId) {
+        this.scenesParSequence = [];
+        return;
       }
       
-      this.scenesParSequence = scenes;
-      
-    } catch (error) {
-      console.error('Erreur chargement scènes:', error);
-      this.scenesParSequence = [];
-    }
-  },
+      try {
+        const response = await axios.get(`/api/scenes/sequences/${this.formPlanning.sequenceId}`);
+        let scenes = response.data;
+        
+        // Si c'est une création, vérifier chaque scène individuellement
+        if (!this.isModificationPlanning) {
+          const scenesAvecStatut = await Promise.all(
+            scenes.map(async (scene) => {
+              try {
+                // Vérifier si cette scène a déjà un tournage
+                const tournageResponse = await axios.get(`/api/scene-tournage/scene/${scene.idScene}`);
+                // Si on arrive ici, c'est que la scène a un tournage (statut 200)
+                return { ...scene, estPlanifiee: true };
+              } catch (error) {
+                // Si erreur 404, la scène n'est pas planifiée - C'EST NORMAL
+                if (error.response?.status === 404) {
+                  return { ...scene, estPlanifiee: false };
+                }
+                // Pour les autres erreurs, on considère que la scène n'est pas planifiée
+                console.warn(`Erreur vérification scène ${scene.idScene}:`, error.message);
+                return { ...scene, estPlanifiee: false };
+              }
+            })
+          );
+          
+          // Filtrer pour garder seulement les scènes non planifiées
+          scenes = scenesAvecStatut.filter(scene => !scene.estPlanifiee);
+        }
+        
+        this.scenesParSequence = scenes;
+        
+      } catch (error) {
+        console.error('Erreur chargement scènes:', error);
+        this.scenesParSequence = [];
+      }
+    },
     async chargerLieuxDisponibles() {
       try {
         const response = await axios.get('/api/lieux');

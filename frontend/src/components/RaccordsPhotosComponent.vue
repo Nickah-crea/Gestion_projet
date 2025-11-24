@@ -166,11 +166,10 @@
                   <span class="raccord-date">
                     Créé le {{ formatDate(raccord.creeLe) }}
                   </span>
-                  <!-- Indicateur d'images partagées (information seulement) -->
+                  <!-- Indicateur d'images partagées -->
                   <span 
                     v-if="raccord.sharedImages && raccord.sharedImages.length > 0" 
-                    class="shared-badge info-only"
-                    title="Ce raccord utilise des images partagées depuis d'autres scènes"
+                    class="shared-badge"
                   >
                     <i class="fas fa-share-alt"></i>
                     {{ raccord.sharedImages.length }} image(s) partagée(s)
@@ -479,8 +478,14 @@ const deleteRaccord = async (raccordId) => {
   }
 }
 
+// const getAllImagesForRaccord = (raccord) => {
+//   return raccord.images || []
+// }
+
 const getAllImagesForRaccord = (raccord) => {
-  return raccord.images || []
+  const ownImages = raccord.images || []
+  const sharedImages = raccord.sharedImages || []
+  return [...ownImages, ...sharedImages]
 }
 
 const viewImage = (image) => {
