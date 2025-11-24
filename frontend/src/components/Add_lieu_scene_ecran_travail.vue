@@ -225,26 +225,36 @@ export default {
       });
     }
   },
-  async created() {
-    axios.defaults.baseURL = API_BASE_URL;
-    
-    axios.interceptors.request.use(
-      (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
+  
+async created() {
+  axios.defaults.baseURL = API_BASE_URL;
+  
+  axios.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
-    );
-    
-    await this.loadProjets();
-    await this.loadLieux();
-    document.addEventListener('click', this.handleClickOutside);
-  },
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  
+  // Vérifier que l'utilisateur est connecté
+  this.user = JSON.parse(localStorage.getItem('user'));
+  if (!this.user || !this.user.id) {
+    alert('Utilisateur non connecté');
+    this.$router.push('/login');
+    return;
+  }
+  
+  await this.loadProjets();
+  await this.loadLieux();
+  document.addEventListener('click', this.handleClickOutside);
+},
+
   beforeDestroy() {
     document.removeEventListener('click', this.handleClickOutside);
   },
@@ -272,88 +282,105 @@ export default {
   this.loadLieux();
 },
   methods: {
-    async fetchProjetDetails(projetId) {
-    try {
-      const response = await axios.get(`/api/projets/${projetId}`);
-      const projet = response.data;
-      this.projetSearch = `${projet.titre} (${projet.genreNom || 'Inconnu'})`;  // Pré-remplit l'input
-      // Optionnel : Stocke le projet complet si besoin pour getProjetName
-      this.selectedProjet = projet;  // Ajoute une data 'selectedProjet: null' si nécessaire
-    } catch (error) {
-      console.error('Erreur lors du chargement du projet:', error);
-      // Gère l'erreur, ex. this.errorMessage = 'Erreur de chargement du projet.';
-    }
-  },
+ async fetchProjetDetails(projetId) {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+    
+    const response = await axios.get(`/api/projets/${projetId}`, { headers });
+    const projet = response.data;
+    this.projetSearch = `${projet.titre} (${projet.genreNom || 'Inconnu'})`;
+    this.selectedProjet = projet;
+  } catch (error) {
+    console.error('Erreur lors du chargement du projet:', error);
+  }
+},
 
-  // Modifie selectProjet pour ne pas overrider si pré-rempli
+  
   selectProjet(projet) {
-    if (!this.formData.projetId) {  // Seulement si non pré-rempli
+    if (!this.formData.projetId) {  
       this.formData.projetId = projet.id;
       this.projetSearch = `${projet.titre} (${projet.genreNom})`;
       this.showProjetSuggestions = false;
     }
   },
-    async loadProjets() {
+
+async loadProjets() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+    
+    const response = await axios.get('/api/projets', { headers });
+    this.projets = response.data;
+    this.filteredProjets = [...this.projets];
+  } catch (error) {
+    console.error('Erreur lors du chargement des projets:', error);
+    alert('Erreur lors du chargement des projets');
+  }
+},
+
+async loadLieux() {
+  this.loading = true;
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+    
+    const response = await axios.get('/api/lieux', { headers });
+    this.lieux = response.data;
+    
+    // Charger le nombre de scènes pour chaque lieu
+    for (let lieu of this.lieux) {
       try {
-        const response = await axios.get('/api/projets');
-        this.projets = response.data;
-        this.filteredProjets = [...this.projets];
-      } catch (error) {
-        console.error('Erreur lors du chargement des projets:', error);
-        alert('Erreur lors du chargement des projets');
-      }
-    },
-    async loadLieux() {
-      this.loading = true;
-      try {
-        const response = await axios.get('/api/lieux');
-        this.lieux = response.data;
+        const scenesResponse = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`, { headers });
+        lieu.sceneCount = scenesResponse.data.length;
         
-        // Charger le nombre de scènes pour chaque lieu
-        for (let lieu of this.lieux) {
-          try {
-            const scenesResponse = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`);
-            lieu.sceneCount = scenesResponse.data.length;
-            
-            // Charger les premières scènes pour l'affichage
-            if (scenesResponse.data.length > 0) {
-              lieu.scenes = scenesResponse.data.slice(0, 3); // Afficher seulement 3 scènes
-            }
-          } catch (error) {
-            console.error('Erreur lors du chargement des scènes du lieu:', error);
-            lieu.sceneCount = 0;
-            lieu.scenes = [];
-          }
+        // Charger les premières scènes pour l'affichage
+        if (scenesResponse.data.length > 0) {
+          lieu.scenes = scenesResponse.data.slice(0, 3); // Afficher seulement 3 scènes
         }
       } catch (error) {
-        console.error('Erreur lors du chargement des lieux:', error);
-        alert('Erreur lors du chargement des lieux: ' + (error.response?.data?.message || error.message));
-      } finally {
-        this.loading = false;
+        console.error('Erreur lors du chargement des scènes du lieu:', error);
+        lieu.sceneCount = 0;
+        lieu.scenes = [];
       }
-    },
-    async submitForm() {
-      try {
-        const payload = {
-          ...this.formData,
-          projetId: parseInt(this.formData.projetId)
-        };
-        
-        if (this.isEditing) {
-          await axios.put(`/api/lieux/${this.editingId}`, payload);
-          alert('Lieu modifié avec succès!');
-        } else {
-          await axios.post('/api/lieux', payload);
-          alert('Lieu créé avec succès!');
-        }
-        
-        this.resetForm();
-        await this.loadLieux();
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde du lieu:', error);
-        alert('Erreur: ' + (error.response?.data?.message || error.message));
-      }
-    },
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des lieux:', error);
+    alert('Erreur lors du chargement des lieux: ' + (error.response?.data?.message || error.message));
+  } finally {
+    this.loading = false;
+  }
+},
+
+async submitForm() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      throw new Error('Utilisateur non connecté');
+    }
+
+    const payload = {
+      ...this.formData,
+      projetId: parseInt(this.formData.projetId)
+    };
+    
+    const headers = { 'X-User-Id': user.id };
+    
+    if (this.isEditing) {
+      await axios.put(`/api/lieux/${this.editingId}`, payload, { headers });
+      alert('Lieu modifié avec succès!');
+    } else {
+      await axios.post('/api/lieux', payload, { headers });
+      alert('Lieu créé avec succès!');
+    }
+    
+    this.resetForm();
+    await this.loadLieux();
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde du lieu:', error);
+    alert('Erreur: ' + (error.response?.data?.message || error.message));
+  }
+},
     editLieu(lieu) {
       this.formData = {
         projetId: lieu.projetId.toString(),
@@ -367,20 +394,27 @@ export default {
       
       document.querySelector('.creation-form').scrollIntoView({ behavior: 'smooth' });
     },
-    async deleteLieu(lieuId) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?')) {
-        return;
-      }
-      
-      try {
-        await axios.delete(`/api/lieux/${lieuId}`);
-        await this.loadLieux();
-        alert('Lieu supprimé avec succès!');
-      } catch (error) {
-        console.error('Erreur lors de la suppression du lieu:', error);
-        alert('Erreur: ' + (error.response?.data?.message || error.message));
-      }
-    },
+
+async deleteLieu(lieuId) {
+  if (!confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?')) {
+    return;
+  }
+  
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      throw new Error('Utilisateur non connecté');
+    }
+
+    const headers = { 'X-User-Id': user.id };
+    await axios.delete(`/api/lieux/${lieuId}`, { headers });
+    await this.loadLieux();
+    alert('Lieu supprimé avec succès!');
+  } catch (error) {
+    console.error('Erreur lors de la suppression du lieu:', error);
+    alert('Erreur: ' + (error.response?.data?.message || error.message));
+  }
+},
     resetForm() {
       this.formData = {
         projetId: '',
@@ -403,17 +437,20 @@ export default {
         minute: '2-digit'
       });
     },
-    async viewLieuScenes(lieu) {
-      this.selectedLieu = lieu;
-      try {
-        const response = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`);
-        this.selectedLieuScenes = response.data;
-        this.showScenesModal = true;
-      } catch (error) {
-        console.error('Erreur lors du chargement des scènes du lieu:', error);
-        alert('Erreur lors du chargement des scènes');
-      }
-    },
+async viewLieuScenes(lieu) {
+  this.selectedLieu = lieu;
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+    
+    const response = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`, { headers });
+    this.selectedLieuScenes = response.data;
+    this.showScenesModal = true;
+  } catch (error) {
+    console.error('Erreur lors du chargement des scènes du lieu:', error);
+    alert('Erreur lors du chargement des scènes');
+  }
+},
     goBack() {
       this.$router.go(-1);    
     },
