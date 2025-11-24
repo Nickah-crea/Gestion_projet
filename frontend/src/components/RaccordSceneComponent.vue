@@ -139,67 +139,91 @@
           </div>
 
 
+          <!-- Section Personnages et Comédiens -->
           <div class="form-section">
-            <h4><i class="fas fa-user"></i> Personnage et Comédien</h4>
+            <h4><i class="fas fa-users"></i> Personnages et Comédiens</h4>
             <p class="section-description">
-              Optionnel - Liez ce raccord à un personnage spécifique
+              Optionnel - Liez ce raccord à un ou plusieurs personnages 
             </p>
             
-            <div class="form-row">
-              <div class="form-group">
-                <label for="personnage">Personnage</label>
-                <select 
-                  id="personnage"
-                  v-model="raccordData.personnageId"
-                  @change="onPersonnageChange"
-                  class="form-select"
+            <div class="form-group">
+              <label for="personnages">Personnages</label>
+              <select 
+                id="personnages"
+                v-model="raccordData.personnagesIds"
+                @change="onPersonnagesChange"
+                class="form-select"
+                multiple
+                size="4"
+              >
+                <option value="">Aucun personnage</option>
+                <option 
+                  v-for="personnage in personnages" 
+                  :key="personnage.id" 
+                  :value="personnage.id"
                 >
-                  <option value="">Aucun personnage</option>
-                  <option 
-                    v-for="personnage in personnages" 
-                    :key="personnage.id" 
-                    :value="personnage.id"
-                  >
-                    {{ personnage.nom }}
-                    <span v-if="personnage.comedienNom"> - {{ personnage.comedienNom }}</span>
-                  </option>
-                </select>
-                <small class="field-description">
-                  Sélectionnez un personnage pour lier automatiquement le comédien
-                </small>
-              </div>
+                  {{ personnage.nom }}
+                  <span v-if="personnage.comedienNom"> - {{ personnage.comedienNom }}</span>
+                </option>
+              </select>
+              <small class="field-description">
+                Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs personnages
+              </small>
+            </div>
 
-              <div class="form-group">
-                <label for="comedien">Comédien (automatique)</label>
-                <input 
-                  id="comedien"
-                  type="text" 
-                  :value="getComedienNameFromPersonnage(raccordData.personnageId)" 
-                  disabled 
-                  class="form-select disabled-input"
-                  placeholder="Sélectionnez un personnage d'abord"
+            <!-- Affichage des comédiens sélectionnés -->
+            <div v-if="selectedComediens.length > 0" class="selected-comediens">
+              <h5>Comédiens sélectionnés ({{ selectedComediens.length }})</h5>
+              <div class="comediens-list">
+                <div 
+                  v-for="comedien in selectedComediens" 
+                  :key="comedien.id"
+                  class="comedien-item"
                 >
-                <small class="field-description">
-                  Le comédien est automatiquement déterminé par le personnage sélectionné
-                </small>
+                  <i class="fas fa-user"></i>
+                  <span>{{ comedien.nom }}</span>
+                  <span class="personnage-associe" v-if="comedien.personnageNom">
+                    ({{ comedien.personnageNom }})
+                  </span>
+                  <button 
+                    class="remove-comedien-btn"
+                    @click="removeComedien(comedien.id)"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Affichage des informations du personnage sélectionné -->
-            <div v-if="selectedPersonnageInfo" class="personnage-info">
-              <h5>Informations du personnage sélectionné</h5>
-              <div class="info-grid">
-                <div class="info-item">
-                  <strong>Personnage:</strong> {{ selectedPersonnageInfo.nom }}
-                </div>
-                <div v-if="selectedPersonnageInfo.description" class="info-item">
-                  <strong>Description:</strong> {{ selectedPersonnageInfo.description }}
-                </div>
-                <div v-if="selectedPersonnageInfo.comedienNom" class="info-item">
-                  <strong>Comédien:</strong> {{ selectedPersonnageInfo.comedienNom }}
-                </div>
-                <div v-if="selectedPersonnageInfo.projetTitre" class="info-item">
-                  <strong>Projet:</strong> {{ selectedPersonnageInfo.projetTitre }}
+            <!-- Informations des personnages sélectionnés -->
+            <div v-if="selectedPersonnagesInfo.length > 0" class="personnages-info">
+              <h5>Personnages sélectionnés ({{ selectedPersonnagesInfo.length }})</h5>
+              <div class="personnages-grid">
+                <div 
+                  v-for="personnage in selectedPersonnagesInfo" 
+                  :key="personnage.id"
+                  class="personnage-info-card"
+                >
+                  <div class="personnage-header">
+                    <strong>{{ personnage.nom }}</strong>
+                    <button 
+                      class="remove-personnage-btn"
+                      @click="removePersonnage(personnage.id)"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  <div class="personnage-details">
+                    <div v-if="personnage.description" class="detail">
+                      <strong>Description:</strong> {{ personnage.description }}
+                    </div>
+                    <div v-if="personnage.comedienNom" class="detail">
+                      <strong>Comédien:</strong> {{ personnage.comedienNom }}
+                    </div>
+                    <div v-if="personnage.projetTitre" class="detail">
+                      <strong>Projet:</strong> {{ personnage.projetTitre }}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -441,12 +465,15 @@ const raccordData = ref({
   description: '',
   estCritique: false,
   statutRaccordId: 1,
-  personnageId: null,   
-  comedienId: null
+ personnagesIds: [],   
+  comediensIds: []  
 })
 
 const selectedPhotos = ref([])
 const filteredScenesCible = ref([])
+
+const selectedPersonnagesInfo = ref([])
+const selectedComediens = ref([])
 
 
 const sceneSourceTournageInfo = ref(null)
@@ -462,6 +489,11 @@ const canCreateRaccord = computed(() => {
   return raccordData.value.sceneSourceId && 
          raccordData.value.sceneCibleId && 
          raccordData.value.selectedTypes.length > 0
+})
+
+const selectedPersonnagesDisplay = computed(() => {
+  if (raccordData.value.personnagesIds.length === 0) return 'Aucun personnage sélectionné'
+  return raccordData.value.personnagesIds.length + ' personnage(s) sélectionné(s)'
 })
 
 const showChronologyAlert = computed(() => {
@@ -689,31 +721,73 @@ const loadPersonnages = async () => {
   }
 }
 
-const onPersonnageChange = () => {
-  if (raccordData.value.personnageId) {
-    // Trouver les informations du personnage sélectionné
-    const personnage = personnages.value.find(p => p.id === raccordData.value.personnageId)
-    selectedPersonnageInfo.value = personnage || null
-    
-    // Mettre à jour automatiquement l'ID du comédien
-    if (personnage && personnage.comedienId) {
-      raccordData.value.comedienId = personnage.comedienId
-    } else {
-      raccordData.value.comedienId = null
+const onPersonnagesChange = () => {
+  selectedPersonnagesInfo.value = []
+  selectedComediens.value = []
+  
+  // Récupérer les informations des personnages sélectionnés
+  raccordData.value.personnagesIds.forEach(personnageId => {
+    const personnage = personnages.value.find(p => p.id === personnageId)
+    if (personnage) {
+      selectedPersonnagesInfo.value.push(personnage)
+      
+      // Ajouter le comédien associé s'il existe
+      if (personnage.comedienId && personnage.comedienNom) {
+        const comedienExists = selectedComediens.value.some(c => c.id === personnage.comedienId)
+        if (!comedienExists) {
+          selectedComediens.value.push({
+            id: personnage.comedienId,
+            nom: personnage.comedienNom,
+            personnageNom: personnage.nom
+          })
+        }
+      }
     }
-  } else {
-    selectedPersonnageInfo.value = null
-    raccordData.value.comedienId = null
+  })
+  
+  // Mettre à jour les IDs des comédiens
+  raccordData.value.comediensIds = selectedComediens.value.map(comedien => comedien.id)
+}
+
+
+const removePersonnage = (personnageId) => {
+  const index = raccordData.value.personnagesIds.indexOf(personnageId)
+  if (index !== -1) {
+    raccordData.value.personnagesIds.splice(index, 1)
+    onPersonnagesChange() // Recalculer les comédiens
   }
 }
 
-const getComedienNameFromPersonnage = (personnageId) => {
-  if (!personnageId) return 'Aucun comédien'
-  const personnage = personnages.value.find(p => p.id === personnageId)
-  return personnage && personnage.comedienNom 
-    ? personnage.comedienNom 
-    : 'Aucun comédien assigné'
+const removeComedien = (comedienId) => {
+  const index = raccordData.value.comediensIds.indexOf(comedienId)
+  if (index !== -1) {
+    raccordData.value.comediensIds.splice(index, 1)
+    
+    // Retirer le comédien de l'affichage
+    const comedienIndex = selectedComediens.value.findIndex(c => c.id === comedienId)
+    if (comedienIndex !== -1) {
+      selectedComediens.value.splice(comedienIndex, 1)
+    }
+    
+    // Retirer les personnages associés à ce comédien
+    const personnagesToRemove = selectedPersonnagesInfo.value
+      .filter(p => p.comedienId === comedienId)
+      .map(p => p.id)
+    
+    personnagesToRemove.forEach(personnageId => {
+      removePersonnage(personnageId)
+    })
+  }
 }
+
+
+// const getComedienNameFromPersonnage = (personnageId) => {
+//   if (!personnageId) return 'Aucun comédien'
+//   const personnage = personnages.value.find(p => p.id === personnageId)
+//   return personnage && personnage.comedienNom 
+//     ? personnage.comedienNom 
+//     : 'Aucun comédien assigné'
+// }
 
 
 const loadTypesRaccord = async () => {
@@ -925,8 +999,8 @@ const createRaccord = async () => {
       statutRaccordId: raccordData.value.statutRaccordId,
       typesRaccord: raccordData.value.selectedTypes,
       photosIds: selectedPhotos.value.map(photo => photo.id),
-      personnageId: raccordData.value.personnageId,  
-      comedienId: raccordData.value.comedienId 
+      personnagesIds: raccordData.value.personnagesIds, 
+      comediensIds: raccordData.value.comediensIds    
     }
 
     // Utiliser le nouvel endpoint pour la création avec partage
@@ -951,15 +1025,17 @@ const resetForm = () => {
     description: '',
     estCritique: false,
     statutRaccordId: 1,
-    personnageId: null,  
-    comedienId: null   
+    personnagesIds: [],    
+    comediensIds: []  
   }
-selectedPhotos.value = []
+  selectedPhotos.value = []
   sceneCibleInfo.value = null
   sceneCibleTournageInfo.value = null
   sceneSourceTournageInfo.value = null
   selectedPersonnageInfo.value = null
   chronologyAlertMessage.value = ''
+  selectedPersonnagesInfo.value = []   
+  selectedComediens.value = []       
   
   // Mettre à jour le filtre avec la bonne structure d'ID
   if (availableScenes.value.length > 0 && props.sceneSourceId) {
@@ -1738,5 +1814,145 @@ input[type="checkbox"] {
 .miniature.shared {
   border: 2px solid #17a2b8;
 }
+/* Styles pour la sélection multiple */
+.form-select[multiple] {
+  min-height: 120px;
+  resize: vertical;
+}
 
+/* Styles pour les personnages sélectionnés */
+.selected-comediens {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #17a2b8;
+}
+
+.selected-comediens h5 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.comediens-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comedien-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.comedien-item i {
+  color: #17a2b8;
+}
+
+.personnage-associe {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.remove-comedien-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+/* Styles pour les cartes de personnages */
+.personnages-info {
+  margin-top: 15px;
+}
+
+.personnages-info h5 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.personnages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.personnage-info-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.personnage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.personnage-header strong {
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.remove-personnage-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.personnage-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail {
+  font-size: 12px;
+  color: #495057;
+  line-height: 1.3;
+}
+
+.detail strong {
+  color: #2c3e50;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .personnages-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .comedien-item {
+    flex-wrap: wrap;
+  }
+}
 </style>
