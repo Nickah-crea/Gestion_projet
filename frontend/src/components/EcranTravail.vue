@@ -550,7 +550,7 @@
                   <li v-for="sceneLieu in scene.sceneLieus" :key="sceneLieu.id" class="lieu-item-ecran-travail">
                     <strong>{{ sceneLieu.lieuNom || 'Lieu inconnu' }}</strong>
                     <span v-if="sceneLieu.plateauNom"> - <strong>Plateau:</strong> {{ sceneLieu.plateauNom }}</span>
-                    <span v-if="userPermissions.canCreateLieu" class="icon-delete-ecran-travail" @click="deleteSceneLieu(sceneLieu.id)">
+                    <span v-if="userPermissi ons.canCreateLieu" class="icon-delete-ecran-travail" @click="deleteSceneLieu(sceneLieu.id)">
                       <i class="fas fa-trash" style="color: #dc3545;"></i>
                     </span>
                     <p v-if="sceneLieu.descriptionUtilisation" class="lieu-description-ecran-travail">Description: {{ sceneLieu.descriptionUtilisation }}</p>

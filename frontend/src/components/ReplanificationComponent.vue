@@ -82,6 +82,7 @@
               :min="minDate"
               class="form-input"
               required
+              @change="verifierConflitsTempsReel"
             >
           </div>
 
@@ -95,6 +96,7 @@
                 v-model="replanificationData.nouvelleHeureDebut"
                 class="form-input"
                 step="300"
+                @change="verifierConflitsTempsReel"
               >
               <small class="field-note">Laissez vide pour conserver l'heure actuelle</small>
             </div>
@@ -107,8 +109,22 @@
                 v-model="replanificationData.nouvelleHeureFin"
                 class="form-input"
                 step="300" 
+                @change="verifierConflitsTempsReel"
               >
               <small class="field-note">Laissez vide pour conserver l'heure actuelle</small>
+            </div>
+          </div>
+
+          <!-- Affichage des conflits détectés -->
+          <div v-if="conflitsDetected.length > 0" class="conflits-section">
+            <div class="conflits-alert">
+              <i class="fas fa-exclamation-triangle"></i>
+              <strong>Conflits détectés :</strong>
+              <ul class="conflits-list">
+                <li v-for="(conflit, index) in conflitsDetected" :key="index">
+                  {{ conflit }}
+                </li>
+              </ul>
             </div>
           </div>
 
@@ -137,7 +153,7 @@
             <button 
               class="btn-confirm"
               @click="confirmReplanification"
-              :disabled="!canConfirmReplanification || loading"
+              :disabled="!canConfirmReplanification || loading || conflitsDetected.length > 0"
               type="button"
             >
               <i class="fas fa-calendar-check" v-if="!loading"></i>
@@ -216,6 +232,7 @@ export default {
     const currentTournage = ref(null)
     const activeReplanifications = ref([])
     const isMounted = ref(false)
+    const conflitsDetected = ref([])
 
     // Données de replanification
     const replanificationData = ref({
@@ -256,6 +273,7 @@ export default {
       console.log('🔄 Fermeture du modal')
       showModal.value = false
       resetReplanificationData()
+      conflitsDetected.value = []
     }
 
     const loadData = async () => {
@@ -333,6 +351,98 @@ export default {
       }
     }
 
+    // NOUVEAU: Vérification des conflits en temps réel
+    const verifierConflitsTempsReel = async () => {
+      if (!replanificationData.value.nouvelleDate) {
+        conflitsDetected.value = []
+        return
+      }
+
+      try {
+        // Vérifier d'abord les disponibilités
+        const disponibilitesResponse = await axios.get('/api/conflicts/check-disponibilites', {
+          params: {
+            sceneId: props.sceneId,
+            dateTournage: replanificationData.value.nouvelleDate
+          }
+        })
+
+        let conflicts = [...(disponibilitesResponse.data.conflicts || [])]
+
+        // Si les heures sont définies, vérifier aussi les conflits horaires
+        if (replanificationData.value.nouvelleHeureDebut && replanificationData.value.nouvelleHeureFin) {
+          const conflitsResponse = await axios.get('/api/conflicts/check', {
+            params: {
+              sceneId: props.sceneId,
+              dateTournage: replanificationData.value.nouvelleDate,
+              heureDebut: replanificationData.value.nouvelleHeureDebut,
+              heureFin: replanificationData.value.nouvelleHeureFin
+            }
+          })
+
+          conflicts = [...conflicts, ...(conflitsResponse.data.conflicts || [])]
+        }
+
+        conflitsDetected.value = conflicts
+
+      } catch (error) {
+        console.error('❌ Erreur lors de la vérification des conflits:', error)
+        // Ne pas bloquer l'utilisateur en cas d'erreur de vérification
+      }
+    }
+
+    // NOUVEAU: Vérification finale des conflits avant confirmation
+    const verifierConflitsFinaux = async () => {
+      if (!replanificationData.value.nouvelleDate) {
+        return true
+      }
+
+      try {
+        let peutContinuer = true
+
+        // Vérifier les disponibilités
+        const disponibilitesResponse = await axios.get('/api/conflicts/check-disponibilites', {
+          params: {
+            sceneId: props.sceneId,
+            dateTournage: replanificationData.value.nouvelleDate
+          }
+        })
+
+        if (disponibilitesResponse.data.hasConflicts) {
+          const messages = disponibilitesResponse.data.conflicts.join('\n')
+          if (!confirm(`Problèmes de disponibilité détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
+            peutContinuer = false
+          }
+        }
+
+        // Vérifier les conflits horaires si les heures sont définies
+        if (peutContinuer && replanificationData.value.nouvelleHeureDebut && replanificationData.value.nouvelleHeureFin) {
+          const conflitsResponse = await axios.get('/api/conflicts/check', {
+            params: {
+              sceneId: props.sceneId,
+              dateTournage: replanificationData.value.nouvelleDate,
+              heureDebut: replanificationData.value.nouvelleHeureDebut,
+              heureFin: replanificationData.value.nouvelleHeureFin
+            }
+          })
+
+          if (conflitsResponse.data.hasConflicts) {
+            const messages = conflitsResponse.data.conflicts.join('\n')
+            if (!confirm(`Conflits de planning détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
+              peutContinuer = false
+            }
+          }
+        }
+
+        return peutContinuer
+
+      } catch (error) {
+        console.error('❌ Erreur vérification conflits finaux:', error)
+        // En cas d'erreur, permettre à l'utilisateur de continuer
+        return true
+      }
+    }
+
     const confirmReplanification = async () => {
       if (!canConfirmReplanification.value) return
 
@@ -343,6 +453,10 @@ export default {
           return
         }
       }
+
+      // Vérifier les conflits avant soumission
+      const peutContinuer = await verifierConflitsFinaux()
+      if (!peutContinuer) return
 
       console.log('🚀 Début de la replanification')
       loading.value = true
@@ -489,6 +603,11 @@ export default {
       }
     })
 
+    // Watchers pour la vérification en temps réel des conflits
+    watch(() => replanificationData.value.nouvelleDate, verifierConflitsTempsReel)
+    watch(() => replanificationData.value.nouvelleHeureDebut, verifierConflitsTempsReel)
+    watch(() => replanificationData.value.nouvelleHeureFin, verifierConflitsTempsReel)
+
     return {
       showModal,
       loading,
@@ -496,6 +615,7 @@ export default {
       currentTournage,
       activeReplanifications,
       replanificationData,
+      conflitsDetected,
       canConfirmReplanification,
       hasActiveReplanification,
       minDate,
@@ -503,6 +623,7 @@ export default {
       closeModal,
       confirmReplanification,
       appliquerReplanification,
+      verifierConflitsTempsReel,
       formatDate,
       formatHeure
     }
@@ -647,6 +768,35 @@ export default {
   color: #666;
   font-size: 12px;
   font-style: italic;
+}
+
+/* Section Conflits */
+.conflits-section {
+  margin: 15px 0;
+  padding: 15px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  border-left: 4px solid #ffc107;
+}
+
+.conflits-alert {
+  color: #856404;
+}
+
+.conflits-alert strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.conflits-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.conflits-list li {
+  margin-bottom: 5px;
+  font-size: 14px;
 }
 
 /* Raccords */
