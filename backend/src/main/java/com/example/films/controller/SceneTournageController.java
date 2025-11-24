@@ -1,8 +1,10 @@
 package com.example.films.controller;
 
 import com.example.films.dto.CreateSceneTournageDTO;
+import com.example.films.dto.SceneLieuDTO;
 import com.example.films.dto.SceneTournageDTO;
 import com.example.films.service.SceneTournageService;
+import com.example.films.service.SceneLieuService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/scene-tournage")
 public class SceneTournageController {
     private final SceneTournageService sceneTournageService;
+    private final SceneLieuService sceneLieuService;
 
-    public SceneTournageController(SceneTournageService sceneTournageService) {
+     public SceneTournageController(SceneTournageService sceneTournageService, SceneLieuService sceneLieuService) {
         this.sceneTournageService = sceneTournageService;
+        this.sceneLieuService = sceneLieuService;
     }
+    
+
 
     @GetMapping("/date/{date}")
     public List<SceneTournageDTO> getTournagesByDate(
@@ -146,5 +152,15 @@ public class SceneTournageController {
     @GetMapping("/a-confirmer")
     public List<SceneTournageDTO> getTournagesAConfirmer() {
         return sceneTournageService.getTournagesAConfirmer();
+    }
+
+    @GetMapping("/scene-lieux/scene/{sceneId}")
+    public ResponseEntity<List<SceneLieuDTO>> getSceneLieusBySceneId(@PathVariable Long sceneId) {
+        try {
+            List<SceneLieuDTO> sceneLieus = sceneLieuService.getSceneLieusBySceneId(sceneId);
+            return ResponseEntity.ok(sceneLieus);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
