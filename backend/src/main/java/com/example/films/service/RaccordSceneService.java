@@ -73,7 +73,7 @@ public class RaccordSceneService {
             }
         }
     
-   @Transactional
+    @Transactional
     public RaccordDTO createRaccordAvecPhotosExistantes(CreateRaccordSceneDTO createRaccordSceneDTO) {
         // Vérifier que les scènes existent
         Scene sceneSource = sceneRepository.findById(createRaccordSceneDTO.getSceneSourceId())
@@ -81,18 +81,22 @@ public class RaccordSceneService {
         Scene sceneCible = sceneRepository.findById(createRaccordSceneDTO.getSceneCibleId())
                 .orElseThrow(() -> new RuntimeException("Scène cible non trouvée"));
         
-        // Récupérer le personnage (peut être null)
-        Personnage personnage = null;
-        if (createRaccordSceneDTO.getPersonnageId() != null) {
-            personnage = personnageRepository.findById(createRaccordSceneDTO.getPersonnageId())
-                    .orElseThrow(() -> new RuntimeException("Personnage non trouvé"));
+        // Récupérer les personnages (peut être vide)
+        List<Personnage> personnages = new ArrayList<>();
+        if (createRaccordSceneDTO.getPersonnagesIds() != null && !createRaccordSceneDTO.getPersonnagesIds().isEmpty()) {
+            personnages = personnageRepository.findAllById(createRaccordSceneDTO.getPersonnagesIds());
+            if (personnages.size() != createRaccordSceneDTO.getPersonnagesIds().size()) {
+                throw new RuntimeException("Certains personnages n'ont pas été trouvés");
+            }
         }
         
-        // Récupérer le comédien (peut être null)
-        Comedien comedien = null;
-        if (createRaccordSceneDTO.getComedienId() != null) {
-            comedien = comedienRepository.findById(createRaccordSceneDTO.getComedienId())
-                    .orElseThrow(() -> new RuntimeException("Comédien non trouvé"));
+        // Récupérer les comédiens (peut être vide)
+        List<Comedien> comediens = new ArrayList<>();
+        if (createRaccordSceneDTO.getComediensIds() != null && !createRaccordSceneDTO.getComediensIds().isEmpty()) {
+            comediens = comedienRepository.findAllById(createRaccordSceneDTO.getComediensIds());
+            if (comediens.size() != createRaccordSceneDTO.getComediensIds().size()) {
+                throw new RuntimeException("Certains comédiens n'ont pas été trouvés");
+            }
         }
 
         Raccord dernierRaccordCree = null;
@@ -121,14 +125,21 @@ public class RaccordSceneService {
             raccord.setDescription(createRaccordSceneDTO.getDescription());
             raccord.setEstCritique(createRaccordSceneDTO.getEstCritique());
             raccord.setStatutRaccord(statutRaccord);
-            raccord.setPersonnage(personnage);  
-            raccord.setComedien(comedien);     
+            
+            // Pour la compatibilité avec l'ancienne structure, on prend le premier personnage/comédien
+            // Vous devrez peut-être adapter votre entité Raccord pour supporter plusieurs personnages/comédiens
+            if (!personnages.isEmpty()) {
+                raccord.setPersonnage(personnages.get(0)); // Premier personnage
+            }
+            if (!comediens.isEmpty()) {
+                raccord.setComedien(comediens.get(0)); // Premier comédien
+            }
             
             Raccord savedRaccord = raccordRepository.save(raccord);
             dernierRaccordCree = savedRaccord;
             
             // Associer les photos existantes à ce raccord
-             if (createRaccordSceneDTO.getPhotosIds() != null && !createRaccordSceneDTO.getPhotosIds().isEmpty()) {
+            if (createRaccordSceneDTO.getPhotosIds() != null && !createRaccordSceneDTO.getPhotosIds().isEmpty()) {
                 for (Long photoId : createRaccordSceneDTO.getPhotosIds()) {
                     RaccordImage image = raccordImageRepository.findById(photoId)
                             .orElseThrow(() -> new RuntimeException("Photo non trouvée"));
@@ -156,7 +167,7 @@ public class RaccordSceneService {
         } else {
             throw new RuntimeException("Aucun raccord n'a été créé");
         }
-}
+    }
     
     @Transactional(readOnly = true)
     public List<RaccordImageDTO> getPhotosByScene(Long sceneId) {
