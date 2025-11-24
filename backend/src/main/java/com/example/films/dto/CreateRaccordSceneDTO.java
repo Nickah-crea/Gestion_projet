@@ -13,6 +13,6 @@ public class CreateRaccordSceneDTO {
     private Boolean estCritique = false;
     private Long statutRaccordId = 1L;
     private List<Long> photosIds;
-    private Long personnageId;    
-    private Long comedienId;
+    private List<Long> personnagesIds;    
+    private List<Long> comediensIds; 
 }
