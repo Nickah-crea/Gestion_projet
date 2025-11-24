@@ -192,29 +192,35 @@ export default {
       return this.lieux.filter(lieu => lieu.projetId === parseInt(this.formData.projetId));
     }
   },
-  async created() {
-    axios.defaults.baseURL = API_BASE_URL;
+async created() {
+  axios.defaults.baseURL = API_BASE_URL;
 
-    axios.interceptors.request.use(
-      (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
+  axios.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
-    );
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
 
-    await this.loadLieux();
-    await this.loadPlateaux();
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
-  },
+  // Vérifier que l'utilisateur est connecté
+  this.user = JSON.parse(localStorage.getItem('user'));
+  if (!this.user || !this.user.id) {
+    alert('Utilisateur non connecté');
+    this.$router.push('/login');
+    return;
+  }
+
+  await this.loadLieux();
+  await this.loadPlateaux();
+  document.addEventListener('click', this.handleClickOutside);
+},
+
   watch: {
     lieux: {
       handler(newVal) {
@@ -240,64 +246,81 @@ export default {
     }
   },
   methods: {
-    async fetchProjetDetails(projetId) {
-      try {
-        const response = await axios.get(`/api/projets/${projetId}`);
-        const projet = response.data;
-        this.lieuSearch = ''; // Reset lieu search
-        this.formData.lieuId = ''; // Reset lieu selection
-        this.filteredLieux = this.lieux.filter(lieu => lieu.projetId === parseInt(projetId));
-      } catch (error) {
-        console.error('Erreur lors du chargement du projet:', error);
-      }
-    },
-    async loadLieux() {
-      try {
-        const response = await axios.get('/api/lieux');
-        this.lieux = response.data;
-        this.filteredLieux = this.formData.projetId
-          ? this.lieux.filter(lieu => lieu.projetId === parseInt(this.formData.projetId))
-          : [...this.lieux];
-      } catch (error) {
-        console.error('Erreur lors du chargement des lieux:', error);
-        alert('Erreur lors du chargement des lieux');
-      }
-    },
-    async loadPlateaux() {
-      this.loading = true;
-      try {
-        const response = await axios.get('/api/plateaux');
-        this.plateaux = response.data;
-      } catch (error) {
-        console.error('Erreur lors du chargement des plateaux:', error);
-        alert('Erreur lors du chargement des plateaux: ' + (error.response?.data?.message || error.message));
-      } finally {
-        this.loading = false;
-      }
-    },
-    async submitForm() {
-      try {
-        const payload = {
-          ...this.formData,
-          lieuId: parseInt(this.formData.lieuId),
-          projetId: parseInt(this.formData.projetId)
-        };
+async fetchProjetDetails(projetId) {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+    
+    const response = await axios.get(`/api/projets/${projetId}`, { headers });
+    const projet = response.data;
+    this.lieuSearch = ''; // Reset lieu search
+    this.formData.lieuId = ''; // Reset lieu selection
+    this.filteredLieux = this.lieux.filter(lieu => lieu.projetId === parseInt(projetId));
+  } catch (error) {
+    console.error('Erreur lors du chargement du projet:', error);
+  }
+},
+async loadLieux() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+    
+    const response = await axios.get('/api/lieux', { headers });
+    this.lieux = response.data;
+    this.filteredLieux = this.formData.projetId
+      ? this.lieux.filter(lieu => lieu.projetId === parseInt(this.formData.projetId))
+      : [...this.lieux];
+  } catch (error) {
+    console.error('Erreur lors du chargement des lieux:', error);
+    alert('Erreur lors du chargement des lieux');
+  }
+},
 
-        if (this.isEditing) {
-          await axios.put(`/api/plateaux/${this.editingId}`, payload);
-          alert('Plateau modifié avec succès!');
-        } else {
-          await axios.post('/api/plateaux', payload);
-          alert('Plateau créé avec succès!');
-        }
+async loadPlateaux() {
+  this.loading = true;
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+    
+    const response = await axios.get('/api/plateaux', { headers });
+    this.plateaux = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des plateaux:', error);
+    alert('Erreur lors du chargement des plateaux: ' + (error.response?.data?.message || error.message));
+  } finally {
+    this.loading = false;
+  }
+},
+async submitForm() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      throw new Error('Utilisateur non connecté');
+    }
 
-        this.resetForm();
-        await this.loadPlateaux();
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde du plateau:', error);
-        alert('Erreur: ' + (error.response?.data?.message || error.message));
-      }
-    },
+    const payload = {
+      ...this.formData,
+      lieuId: parseInt(this.formData.lieuId),
+      projetId: parseInt(this.formData.projetId)
+    };
+
+    const headers = { 'X-User-Id': user.id };
+
+    if (this.isEditing) {
+      await axios.put(`/api/plateaux/${this.editingId}`, payload, { headers });
+      alert('Plateau modifié avec succès!');
+    } else {
+      await axios.post('/api/plateaux', payload, { headers });
+      alert('Plateau créé avec succès!');
+    }
+
+    this.resetForm();
+    await this.loadPlateaux();
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde du plateau:', error);
+    alert('Erreur: ' + (error.response?.data?.message || error.message));
+  }
+},
     editPlateau(plateau) {
       this.formData = {
         projetId: plateau.projetId ? plateau.projetId.toString() : '',
@@ -313,34 +336,40 @@ export default {
       document.querySelector('.creation-form').scrollIntoView({ behavior: 'smooth' });
     },
     async deletePlateau(plateauId) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer ce plateau ?')) {
-        return;
-      }
+  if (!confirm('Êtes-vous sûr de vouloir supprimer ce plateau ?')) {
+    return;
+  }
 
-      try {
-        await axios.delete(`/api/plateaux/${plateauId}`);
-        await this.loadPlateaux();
-        alert('Plateau supprimé avec succès!');
-      } catch (error) {
-        console.error('Erreur lors de la suppression du plateau:', error);
-        alert('Erreur: ' + (error.response?.data?.message || error.message));
-      }
-    },
-    resetForm() {
-      this.formData = {
-        projetId: this.$route.params.projetId || this.$route.params.id || this.$route.query.projetId || '',
-        lieuId: '',
-        nom: '',
-        typePlateau: '',
-        description: ''
-      };
-      this.lieuSearch = '';
-      this.isEditing = false;
-      this.editingId = null;
-      this.filteredLieux = this.formData.projetId
-        ? this.lieux.filter(lieu => lieu.projetId === parseInt(this.formData.projetId))
-        : [...this.lieux];
-    },
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      throw new Error('Utilisateur non connecté');
+    }
+
+    const headers = { 'X-User-Id': user.id };
+    await axios.delete(`/api/plateaux/${plateauId}`, { headers });
+    await this.loadPlateaux();
+    alert('Plateau supprimé avec succès!');
+  } catch (error) {
+    console.error('Erreur lors de la suppression du plateau:', error);
+    alert('Erreur: ' + (error.response?.data?.message || error.message));
+  }
+},
+resetForm() {
+  this.formData = {
+    projetId: this.$route.params.projetId || this.$route.params.id || this.$route.query.projetId || '',
+    lieuId: '',
+    nom: '',
+    typePlateau: '',
+    description: ''
+  };
+  this.lieuSearch = '';
+  this.isEditing = false;
+  this.editingId = null;
+  this.filteredLieux = this.formData.projetId
+    ? this.lieux.filter(lieu => lieu.projetId === parseInt(this.formData.projetId))
+    : [...this.lieux];
+},
     formatDate(dateString) {
       if (!dateString) return '';
       return new Date(dateString).toLocaleDateString('fr-FR', {
