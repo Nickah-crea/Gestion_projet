@@ -560,9 +560,17 @@
               <p v-else class="no-lieux-ecran-travail">Aucun lieu ou plateau associé.</p> -->
 
               <div class="section-header-ecran-travail">
-                    <h4><i class="fas fa-comments" ></i>Dialogues:</h4> 
-                </div>
-              <!-- Dialogues -->
+                <h4><i class="fas fa-comments"></i>Dialogues:</h4> 
+                <button 
+                  v-if="userPermissions.canCreateDialogue" 
+                  class="add-dialogue-btn-ecran-travail" 
+                  @click="startAddDialogue(scene)"
+                >
+                  <i class="fas fa-plus-circle" style="color: #21294F;"></i> Dialogue
+                </button>
+              </div>
+
+              <!-- dialogues -->
             
 
               <!-- Modifier la section des dialogues dans le template -->
@@ -614,12 +622,77 @@
                 </ul>
               </div>
 
-              <div class="section-header-ecran-travail">
+
+              <div class="add-dialogue-direct-ecran-travail" v-if="showAddDialogueSection && selectedSceneForDialogue?.idScene === scene.idScene">
+                <div class="dialogue-creation-form-ecran-travail">
+                  <h4><i class="fas fa-plus-circle"></i> Ajouter un dialogue</h4>
+                  
+                  <div class="form-group-creation-ecran-travail">
+                    <label>Personnage</label>
+                    <select v-model="newDialogueData.personnageId" class="form-select-ecran-travail">
+                      <option :value="null">Narration (sans personnage)</option>
+                      <option 
+                        v-for="personnage in personnages" 
+                        :key="personnage.id" 
+                        :value="personnage.id"
+                      >
+                        {{ personnage.nom }}
+                   
+                      </option>
+                    </select>
+                    <small class="text-muted" v-if="personnages.length === 0">
+                      Aucun personnage créé pour ce projet. 
+                      <a href="#" @click.prevent="goToAddPersonnage" style="color: #21294F;">
+                        Créer un premier personnage
+                      </a>
+                    </small>
+                  </div>
+                  
+                  <div class="form-group-creation-ecran-travail">
+                    <label>Texte du dialogue *</label>
+                    <textarea 
+                      v-model="newDialogueData.texte" 
+                      rows="3" 
+                      class="form-textarea-ecran-travail"
+                      placeholder="Entrez le texte du dialogue..."
+                      required
+                    ></textarea>
+                  </div>
+                  
+                  <div class="form-group-creation-ecran-travail">
+                    <label>Observation</label>
+                    <textarea 
+                      v-model="newDialogueData.observation" 
+                      rows="2" 
+                      class="form-textarea-ecran-travail"
+                      placeholder="Notes ou observations (optionnel)"
+                    ></textarea>
+                  </div>
+                  
+                  <div class="dialogue-creation-actions-ecran-travail">
+                    <button 
+                      @click="createDialogueDirect(scene.idScene)" 
+                      class="save-btn-ecran-travail"
+                      :disabled="!newDialogueData.texte.trim()"
+                    >
+                      <i class="fas fa-save"></i> Ajouter le dialogue
+                    </button>
+                    <button 
+                      @click="cancelAddDialogue" 
+                      class="cancel-btn-ecran-travail"
+                    >
+                      <i class="fas fa-times"></i> Annuler
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="section-header-ecran-travail">
                   <h4><i class="fas fa-comments" ></i></h4> 
                  <button v-if="userPermissions.canCreateDialogue" class="add-dialogue-btn-ecran-travail" @click="goToAddDialogue(scene.idScene)">
                     <i class="fas fa-plus-circle" style="color: #21294F;"></i> Dialogue
                   </button>
-              </div>                    
+              </div>                     -->
             
             </div>
           </div>
@@ -1311,6 +1384,17 @@ const newlyCreatedSequenceId = ref(null);
 const episodes = computed(() => store.episodes);
 const sequences = computed(() => store.sequences);
 
+
+// Pour les dialogues ( ajout )
+const showAddDialogueSection = ref(false);
+const selectedSceneForDialogue = ref(null);
+const newDialogueData = ref({
+  personnageId: null,
+  texte: '',
+  observation: '',
+  ordre: 1
+});
+
 // onMounted(async () => {
 //   const projetIdLocal = route.params.idProjet || '1';
 //   projetId.value = projetIdLocal;
@@ -1424,10 +1508,23 @@ watch(() => store.currentEpisode, async (newEpisode) => {
 
 const loadPersonnages = async () => {
   try {
-    const response = await axios.get('/api/personnages');
+    // Récupérer l'ID du projet actuel
+    const currentProjetId = projetId.value || store.projetId;
+    
+    if (!currentProjetId) {
+      console.error('ID du projet non trouvé');
+      personnages.value = [];
+      return;
+    }
+
+    // Charger uniquement les personnages du projet actuel
+    const response = await axios.get(`/api/personnages/projet/${currentProjetId}`);
     personnages.value = response.data;
+    
+    console.log(`Personnages chargés pour le projet ${currentProjetId}:`, personnages.value.length);
   } catch (error) {
     console.error('Erreur lors du chargement des personnages:', error);
+    personnages.value = [];
   }
 };
 
@@ -1609,6 +1706,16 @@ watch(
   { immediate: true }
 );
 
+// Watcher pour recharger les personnages quand le projet change
+watch(
+  () => projetId.value,
+  async (newProjetId) => {
+    if (newProjetId) {
+      await loadPersonnages();
+    }
+  },
+  { immediate: true }
+);
 
 // Charger les statuts
 const loadStatutsEpisode = async () => {
@@ -1752,6 +1859,96 @@ const openHighlightModal = async (dialogue, event) => {
   } else {
     alert('Veuillez sélectionner du texte à surligner.');
   }
+};
+
+
+const startAddDialogue = (scene) => {
+  if (!userPermissions.value.canCreateDialogue) {
+    alert('Vous n\'êtes pas autorisé à créer des dialogues pour cette scène.');
+    return;
+  }
+  
+  selectedSceneForDialogue.value = scene;
+  newDialogueData.value = {
+    personnageId: null,
+    texte: '',
+    observation: '',
+    ordre: 1
+  };
+  
+  // Calculer l'ordre automatique
+  calculateDialogueOrder(scene.idScene);
+  showAddDialogueSection.value = true;
+};
+
+const calculateDialogueOrder = async (sceneId) => {
+  try {
+    const response = await axios.get(`/api/dialogues/scene/${sceneId}`);
+    const dialogues = response.data;
+    
+    if (dialogues && dialogues.length > 0) {
+      const maxOrder = Math.max(...dialogues.map(d => d.ordre));
+      newDialogueData.value.ordre = maxOrder + 1;
+    } else {
+      newDialogueData.value.ordre = 1;
+    }
+  } catch (error) {
+    console.error('Erreur lors du calcul de l\'ordre:', error);
+    newDialogueData.value.ordre = 1;
+  }
+};
+
+const createDialogueDirect = async (sceneId) => {
+  if (!newDialogueData.value.texte.trim()) {
+    alert('Le texte du dialogue est requis.');
+    return;
+  }
+
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      alert('Utilisateur non connecté');
+      return;
+    }
+
+    const payload = {
+      sceneId: parseInt(sceneId),
+      personnageId: newDialogueData.value.personnageId ? parseInt(newDialogueData.value.personnageId) : null,
+      texte: newDialogueData.value.texte,
+      ordre: parseInt(newDialogueData.value.ordre),
+      observation: newDialogueData.value.observation || ''
+    };
+
+    const response = await axios.post('/api/dialogues', payload, {
+      headers: {
+        'X-User-Id': user.id
+      }
+    });
+
+    if (response.status === 201) {
+      // Recharger les données de la séquence
+      await store.fetchSequenceDetails(store.currentSequence.idSequence);
+      
+      // Réinitialiser le formulaire
+      cancelAddDialogue();
+      
+      alert('Dialogue ajouté avec succès!');
+    }
+  } catch (error) {
+    console.error('Erreur lors de la création du dialogue:', error);
+    alert('Erreur: ' + (error.response?.data?.message || error.message || 'Erreur inconnue'));
+  }
+};
+
+const cancelAddDialogue = () => {
+  showAddDialogueSection.value = false;
+  selectedSceneForDialogue.value = null;
+  newDialogueData.value = {
+    personnageId: null,
+    texte: '',
+    observation: '',
+    ordre: 1
+  };
 };
 
 // Charger les surlignages d'un dialogue
@@ -2632,31 +2829,44 @@ const deleteDialogue = async (dialogueId) => {
   
   if (confirm('Êtes-vous sûr de vouloir supprimer ce dialogue ?')) {
     try {
-      await axios.delete(`/api/dialogues/${dialogueId}`);
+      const user = JSON.parse(localStorage.getItem('user'));
+      
+      if (!user || !user.id) {
+        alert('Utilisateur non connecté');
+        return;
+      }
+
+      await axios.delete(`/api/dialogues/${dialogueId}`, {
+        headers: {
+          'X-User-Id': user.id
+        }
+      });
+      
       await store.fetchSequenceDetails(store.currentSequence.idSequence);
+      alert('Dialogue supprimé avec succès!');
     } catch (error) {
       console.error('Erreur lors de la suppression du dialogue:', error);
-      alert('Erreur lors de la suppression du dialogue');
+      alert('Erreur lors de la suppression du dialogue: ' + (error.response?.data?.message || error.message));
     }
   }
 };
 
-const deleteSceneLieu = async (sceneLieuId) => {
-  if (!userPermissions.value.canCreateLieu) {
-    alert('Vous n\'êtes pas autorisé à supprimer des lieux/plateaux pour cette scène.');
-    return;
-  }
+// const deleteSceneLieu = async (sceneLieuId) => {
+//   if (!userPermissions.value.canCreateLieu) {
+//     alert('Vous n\'êtes pas autorisé à supprimer des lieux/plateaux pour cette scène.');
+//     return;
+//   }
   
-  if (confirm('Êtes-vous sûr de vouloir supprimer ce lieu/plateau ?')) {
-    try {
-      await axios.delete(`/api/scene-lieux/${sceneLieuId}`);
-      await store.fetchSequenceDetails(store.currentSequence.idSequence);
-    } catch (error) {
-      console.error('Erreur lors de la suppression du lieu/plateau:', error);
-      alert('Erreur lors de la suppression du lieu/plateau');
-    }
-  }
-};
+//   if (confirm('Êtes-vous sûr de vouloir supprimer ce lieu/plateau ?')) {
+//     try {
+//       await axios.delete(`/api/scene-lieux/${sceneLieuId}`);
+//       await store.fetchSequenceDetails(store.currentSequence.idSequence);
+//     } catch (error) {
+//       console.error('Erreur lors de la suppression du lieu/plateau:', error);
+//       alert('Erreur lors de la suppression du lieu/plateau');
+//     }
+//   }
+// };
 
 const onReplanificationDansScene = (data) => {
   console.log('🔄 Replanification dans scène détectée:', data)
