@@ -40,11 +40,12 @@ body {
 }
 
 .app-wrapper-global {
-  margin-left: 190px; /* Largeur de la sidebar ouverte */
-  transition: margin-left var(--transition);
+  /* margin-left: 190px; Largeur de la sidebar ouverte */
+  /* transition: margin-left var(--transition); */
   min-height: 100vh;
-  width: calc(100% - 190px);
+  /* width: calc(100% - 190px); */
   background: #fff;
+  margin-top: 100px;
 }
 
 .sidebar.collapsed ~ .app-wrapper-global {
