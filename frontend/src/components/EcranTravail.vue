@@ -155,7 +155,7 @@
               </button>
 
               <!-- Sélecteur de comédien pour l'export -->
-              <div class="comedien-selector-ecran-travail" v-if="comediens.length">
+              <!-- <div class="comedien-selector-ecran-travail" v-if="comediens.length">
                 <label for="comedien-select">Exporter les raccords pour :</label>
                 <select id="comedien-select" v-model="selectedComedien" class="select-ecran-travail">
                   <option value="">Sélectionner un comédien</option>
@@ -171,7 +171,7 @@
                 >
                   <i class="fas fa-file-pdf"></i> Export Raccords Comédien
                 </button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -414,41 +414,7 @@
                 <i class="fas fa-comments" style="color: #21294F;"></i> {{ getSceneCommentCount(scene.idScene) }}
               </span>
 
-              <!-- Dans la section des boutons d'export existants -->
-            <div class="export-buttons-ecran-travail">
-              <!-- Bouton pour exporter tous les raccords du projet -->
-              <button @click="exportRaccordsByProjet(projetId)" class="export-btn-ecran-travail">
-                <i class="fas fa-file-pdf"></i> Export Tous Raccords
-              </button>
-
-              <button 
-                @click="exportRaccordsByComedien(selectedComedien)" 
-                :disabled="!selectedComedien"
-                class="export-btn-ecran-travail"
-              >
-                <i class="fas fa-file-pdf"></i> Export Raccords Comédien
-              </button>
-
-               <!-- Sélecteur de comédien pour l'export -->
-            <div class="comedien-selector-ecran-travail" v-if="comediens.length">
-              <label for="comedien-select">Exporter les raccords pour :</label>
-              <select id="comedien-select" v-model="selectedComedien" class="select-ecran-travail">
-                <option value="">Sélectionner un comédien</option>
-                <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
-                  {{ comedien.nom }}
-                </option>
-              </select>
               
-              <button 
-                @click="exportRaccordsByComedien(selectedComedien)" 
-                :disabled="!selectedComedien"
-                class="export-btn-ecran-travail"
-              >
-                <i class="fas fa-file-pdf"></i> Export Raccords Comédien
-              </button>
-            </div>
-
-            </div>
 
             <button 
               class="export-option" 
@@ -499,7 +465,8 @@
                       @replanification-updated="onReplanificationUpdated"
                     /> -->
                 </div>
-            </h3>
+            
+               </h3>
 
               <!-- Section Tournage -->
             <SceneTournageSection 
@@ -3790,155 +3757,155 @@ const exportRaccordsProjetPDF = async () => {
 };
 
 // Export par comédien - VERSION CORRIGÉE
-const exportRaccordsByComedien = async (comedienId) => {
-  if (!comedienId) {
-    alert('Veuillez sélectionner un comédien');
-    return;
-  }
+// const exportRaccordsByComedien = async (comedienId) => {
+//   if (!comedienId) {
+//     alert('Veuillez sélectionner un comédien');
+//     return;
+//   }
 
-  try {
-    console.log('Début export PDF pour comédien:', comedienId);
+//   try {
+//     console.log('Début export PDF pour comédien:', comedienId);
     
-    const response = await axios.get(`/api/raccords/export/comedien/${comedienId}`);
-    const raccords = response.data;
+//     const response = await axios.get(`/api/raccords/export/comedien/${comedienId}`);
+//     const raccords = response.data;
 
-    console.log('Raccords reçus pour comédien:', raccords);
+//     console.log('Raccords reçus pour comédien:', raccords);
 
-    if (!raccords || raccords.length === 0) {
-      alert('Aucun raccord trouvé pour ce comédien');
-      return;
-    }
+//     if (!raccords || raccords.length === 0) {
+//       alert('Aucun raccord trouvé pour ce comédien');
+//       return;
+//     }
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79];
-    const comedienNom = raccords[0]?.comedienNom || 'Comédien inconnu';
+//     const pdf = new jsPDF('p', 'mm', 'a4');
+//     const primaryColor = [33, 41, 79];
+//     const comedienNom = raccords[0]?.comedienNom || 'Comédien inconnu';
 
-    // Page de garde
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 297, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(24);
-    pdf.text(`RACCORDS POUR`, 105, 90, { align: 'center' });
-    pdf.text(`${comedienNom.toUpperCase()}`, 105, 105, { align: 'center' });
-    pdf.setFontSize(14);
-    pdf.text('Accessoires • Vêtements • Coiffure', 105, 120, { align: 'center' });
-    pdf.setFontSize(12);
-    pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
+//     // Page de garde
+//     pdf.setFillColor(...primaryColor);
+//     pdf.rect(0, 0, 210, 297, 'F');
+//     pdf.setTextColor(255, 255, 255);
+//     pdf.setFontSize(24);
+//     pdf.text(`RACCORDS POUR`, 105, 90, { align: 'center' });
+//     pdf.text(`${comedienNom.toUpperCase()}`, 105, 105, { align: 'center' });
+//     pdf.setFontSize(14);
+//     pdf.text('Accessoires • Vêtements • Coiffure', 105, 120, { align: 'center' });
+//     pdf.setFontSize(12);
+//     pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
 
-    pdf.addPage();
-    let y = 30;
+//     pdf.addPage();
+//     let y = 30;
 
-    // En-tête
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 25, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(16);
-    pdf.text(`RACCORDS - ${comedienNom.toUpperCase()}`, 105, 15, { align: 'center' });
+//     // En-tête
+//     pdf.setFillColor(...primaryColor);
+//     pdf.rect(0, 0, 210, 25, 'F');
+//     pdf.setTextColor(255, 255, 255);
+//     pdf.setFontSize(16);
+//     pdf.text(`RACCORDS - ${comedienNom.toUpperCase()}`, 105, 15, { align: 'center' });
 
-    for (const [index, r] of raccords.entries()) {
-      if (y > 250) {
-        pdf.addPage();
-        y = 30;
-      }
+//     for (const [index, r] of raccords.entries()) {
+//       if (y > 250) {
+//         pdf.addPage();
+//         y = 30;
+//       }
 
-      pdf.setTextColor(0, 0, 0);
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
-      pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'}`, 15, y);
-      y += 7;
+//       pdf.setTextColor(0, 0, 0);
+//       pdf.setFontSize(12);
+//       pdf.setFont("helvetica", "bold");
+//       pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'}`, 15, y);
+//       y += 7;
       
-      pdf.setFontSize(10);
-      pdf.text(`Scènes: ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 20, y);
-      y += 6;
+//       pdf.setFontSize(10);
+//       pdf.text(`Scènes: ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 20, y);
+//       y += 6;
 
-      pdf.setFont("helvetica", "normal");
+//       pdf.setFont("helvetica", "normal");
       
-      if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 5;
-      if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 5;
-      if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 5;
-      if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 5;
+//       if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 5;
+//       if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 5;
+//       if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 5;
+//       if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 5;
       
-      if (r.description) {
-        const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
-        pdf.text(lines, 20, y);
-        y += lines.length * 5 + 4;
-      }
+//       if (r.description) {
+//         const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
+//         pdf.text(lines, 20, y);
+//         y += lines.length * 5 + 4;
+//       }
 
-      pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
-      y += 6;
+//       pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
+//       y += 6;
 
-      if (r.dateTournageSource || r.dateTournageCible) {
-        pdf.text(`Dates tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
-        y += 6;
-      }
+//       if (r.dateTournageSource || r.dateTournageCible) {
+//         pdf.text(`Dates tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
+//         y += 6;
+//       }
 
-      // Images avec gestion d'erreur améliorée
-      if (r.images && r.images.length > 0) {
-        console.log(`Raccord ${index} a ${r.images.length} images:`, r.images);
+//       // Images avec gestion d'erreur améliorée
+//       if (r.images && r.images.length > 0) {
+//         console.log(`Raccord ${index} a ${r.images.length} images:`, r.images);
         
-        pdf.text('Images:', 20, y);
-        y += 8;
+//         pdf.text('Images:', 20, y);
+//         y += 8;
         
-        let x = 20;
-        let imagesAdded = 0;
+//         let x = 20;
+//         let imagesAdded = 0;
         
-        for (const img of r.images.slice(0, 2)) {
-          if (!img.nomFichier || img.nomFichier.includes('undefined')) {
-            console.warn('Nom de fichier invalide ignoré:', img.nomFichier);
-            continue;
-          }
+//         for (const img of r.images.slice(0, 2)) {
+//           if (!img.nomFichier || img.nomFichier.includes('undefined')) {
+//             console.warn('Nom de fichier invalide ignoré:', img.nomFichier);
+//             continue;
+//           }
           
-          try {
-            console.log('Tentative de chargement image:', img.nomFichier);
-            const base64 = await getBase64FromUrl(img.nomFichier);
+//           try {
+//             console.log('Tentative de chargement image:', img.nomFichier);
+//             const base64 = await getBase64FromUrl(img.nomFichier);
             
-            if (base64) {
-              pdf.addImage(base64, 'JPEG', x, y, 35, 35);
-              x += 40;
-              imagesAdded++;
+//             if (base64) {
+//               pdf.addImage(base64, 'JPEG', x, y, 35, 35);
+//               x += 40;
+//               imagesAdded++;
               
-              if (x > 150) {
-                x = 20;
-                y += 40;
-              }
-            }
-          } catch (imgError) {
-            console.warn('Erreur chargement image:', img.nomFichier);
-          }
-        }
+//               if (x > 150) {
+//                 x = 20;
+//                 y += 40;
+//               }
+//             }
+//           } catch (imgError) {
+//             console.warn('Erreur chargement image:', img.nomFichier);
+//           }
+//         }
         
-        if (imagesAdded > 0) {
-          y += 45;
-        }
-      }
+//         if (imagesAdded > 0) {
+//           y += 45;
+//         }
+//       }
 
-      y += 10;
-      pdf.setDrawColor(200, 200, 200);
-      pdf.line(15, y - 5, 195, y - 5);
-      y += 5;
-    }
+//       y += 10;
+//       pdf.setDrawColor(200, 200, 200);
+//       pdf.line(15, y - 5, 195, y - 5);
+//       y += 5;
+//     }
 
-    // Pied de page
-    const totalPages = pdf.internal.getNumberOfPages();
-    for (let i = 2; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(9);
-      pdf.setTextColor(150, 150, 150);
-      pdf.text(`Raccords pour ${comedienNom} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
-    }
+//     // Pied de page
+//     const totalPages = pdf.internal.getNumberOfPages();
+//     for (let i = 2; i <= totalPages; i++) {
+//       pdf.setPage(i);
+//       pdf.setFontSize(9);
+//       pdf.setTextColor(150, 150, 150);
+//       pdf.text(`Raccords pour ${comedienNom} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
+//     }
 
-    pdf.save(`raccords-${comedienNom.replace(/\s+/g, '-')}.pdf`);
-    console.log('Export PDF comédien terminé avec succès');
+//     pdf.save(`raccords-${comedienNom.replace(/\s+/g, '-')}.pdf`);
+//     console.log('Export PDF comédien terminé avec succès');
     
-  } catch (err) {
-    console.error('Erreur export comédien:', err);
-    if (err.response?.status === 404) {
-      alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
-    } else {
-      alert('Erreur lors de l\'export PDF: ' + (err.response?.data?.message || err.message));
-    }
-  }
-};
+//   } catch (err) {
+//     console.error('Erreur export comédien:', err);
+//     if (err.response?.status === 404) {
+//       alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
+//     } else {
+//       alert('Erreur lors de l\'export PDF: ' + (err.response?.data?.message || err.message));
+//     }
+//   }
+// };
 
 
 // Export par scène
