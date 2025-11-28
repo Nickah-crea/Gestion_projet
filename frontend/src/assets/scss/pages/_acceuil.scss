@@ -118,7 +118,7 @@ body, html {
   font-weight: $font-weight-semibold;
   margin: 0 0 $gap-xs 0;
   color: $color-text-primary;
-  @include typography-playfair-h3-italic;
+  // @include typography-playfair-h3;
 }
 
 // =============================================
