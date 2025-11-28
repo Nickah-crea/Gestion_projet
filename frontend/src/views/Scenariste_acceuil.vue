@@ -1,6 +1,6 @@
 <template>
   <div class="app-wrapper-global">
-    <div class="#">
+    <div class="main-content-container">
       <main class="main-content-scenariste-Scenariste">
         <!-- Header avec bienvenue à gauche et barre de recherche à droite -->
         <div class="header-section-Scenariste">
@@ -10,19 +10,23 @@
             <p>Vous êtes connecté en tant que {{ user?.role }}</p>
           </div>
 
-          <!-- Barre de recherche à droite -->
           <div class="search-container-right-Scenariste">
-            <div class="search-input-wrapper-Scenariste">
-              <i class="fas fa-search search-icon-Scenariste"></i>
+            <div class="search-input-wrapper-Scenariste" :class="{ expanded: isSearchExpanded }">
               <input 
                 type="text" 
                 v-model="globalSearchQuery" 
                 @input="performGlobalSearch" 
                 placeholder="Rechercher projets, épisodes, séquences, scènes..." 
                 class="search-input-Scenariste"
+                ref="searchInput"
               />
               <button v-if="globalSearchQuery" @click="clearGlobalSearch" class="clear-search-btn-Scenariste">
-                <!-- <i class="fas fa-times"></i> -->
+                <i class="fas fa-times"></i>
+              </button>
+              
+              <!-- Icône de recherche séparée -->
+              <button @click="toggleSearch" class="search-toggle-btn-Scenariste">
+                <i class="fas fa-search"></i>
               </button>
             </div>  
           </div>
@@ -57,7 +61,7 @@
               </div>
               <!-- Bouton centré -->
               <div class="add-project-center-Scenariste">
-                <button class="add-project-btn-main-Scenariste" @click="goToAddProject">
+                <button class="add-project-btn-scenariste" @click="goToAddProject">
                   <i class="fas fa-plus-circle icon-Scenariste"></i> 
                   Nouveau Projet
                 </button>
@@ -180,7 +184,7 @@
               </div>
               <div class="movie-actions-Scenariste">
                 <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEdit(project)" title="Modifier">
-                  <i class="fas fa-pen"></i>
+                  <i class="fas fa-marker"></i>
                 </button>
                 <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="deleteProject(project.id)" title="Supprimer">
                   <i class="fas fa-trash"></i>
@@ -191,9 +195,8 @@
             <!-- Contenu de la carte -->
             <div class="movie-info-Scenariste">
               <h3 class="movie-title-Scenariste">{{ project.titre }}</h3>
-
               
-              <div class="movie-synopsis-Scenariste" v-if="project.synopsis">
+              <div class="movie-synopsis" v-if="project.synopsis">
                 <p>{{ truncateText(project.synopsis, 120) }}</p>
               </div>
                             
@@ -207,11 +210,11 @@
               <!-- Actions en bas de carte -->
               <div class="movie-actions-bottom-Scenariste">
                 <div class="actions-top-Scenariste">
-                  <button class="action-btn-Scenariste accent-btn-Scenariste" @click="$router.push(`/projet/${project.id}`)" title="Détails">
-                    <i class="fas fa-info-circle"></i>
+                  <button class="action-btn-Scenariste accent-btn" @click="$router.push(`/projet/${project.id}`)" title="Détails">
+                    <i class="fas fa-info-circle icon"></i>
                     <span>Détails</span>
                   </button>
-                  <button class="action-btn-Scenariste primary-btn-Scenariste" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
+                  <button class="action-btn-Scenariste primary-btn" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
                       <i class="fas fa-laptop"></i>                    
                       <span>Écran</span>
                   </button>
@@ -249,39 +252,50 @@
                 {{ editError }}
               </div>
               
-              <div class="form-group-Scenariste">
-                <label>Titre:</label>
-                <input v-model="editForm.titre" type="text" class="form-input-Scenariste">
-              </div>
-              
-              <div class="form-group-Scenariste">
-                <label>Synopsis:</label>
-                <textarea v-model="editForm.synopsis" class="form-textarea-Scenariste" rows="4"></textarea>
-              </div>
-              
-              <div class="form-group-Scenariste">
-                <label>Genre:</label>
-                <select v-model="editForm.genreId" class="form-select-Scenariste">
-                  <option value="">Sélectionnez un genre</option>
-                  <option v-for="genre in genres" :key="genre.idGenre" :value="genre.idGenre">
-                    {{ genre.nomGenre }}
-                  </option>
-                </select>
-              </div>
-              
-              <div class="form-group-Scenariste">
-                <label>Statut:</label>
-                <select v-model="editForm.statutId" class="form-select-Scenariste">
-                  <option value="">Sélectionnez un statut</option>
-                  <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.idStatutProjet">
-                    {{ statut.nomStatutsProjet }}
-                  </option>
-                </select>
-              </div>
-              
-              <div class="form-group-Scenariste">
-                <label>Date de fin:</label>
-                <input v-model="editForm.dateFin" type="date" class="form-input-Scenariste">
+              <div class="form-rows-container-Scenariste">
+                <!-- Ligne 1 : Titre + Genre -->
+                <div class="form-row-Scenariste">
+                  <div class="form-group-Scenariste">
+                    <label>Titre:</label>
+                    <input v-model="editForm.titre" type="text" class="form-input-Scenariste">
+                  </div>
+                  
+                  <div class="form-group-Scenariste">
+                    <label>Genre:</label>
+                    <select v-model="editForm.genreId" class="form-select-Scenariste">
+                      <option value="">Sélectionnez un genre</option>
+                      <option v-for="genre in genres" :key="genre.idGenre" :value="genre.idGenre">
+                        {{ genre.nomGenre }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                
+                <!-- Ligne 2 : Statut + Date -->
+                <div class="form-row-Scenariste">
+                  <div class="form-group-Scenariste">
+                    <label>Statut:</label>
+                    <select v-model="editForm.statutId" class="form-select-Scenariste">
+                      <option value="">Sélectionnez un statut</option>
+                      <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.idStatutProjet">
+                        {{ statut.nomStatutsProjet }}
+                      </option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group-Scenariste">
+                    <label>Date de fin:</label>
+                    <input v-model="editForm.dateFin" type="date" class="form-input-Scenariste">
+                  </div>
+                </div>
+                
+                <!-- Ligne 3 : Synopsis (pleine largeur) -->
+                <div class="form-row-Scenariste">
+                  <div class="form-group-Scenariste form-full-width-Scenariste">
+                    <label>Synopsis:</label>
+                    <textarea v-model="editForm.synopsis" class="form-textarea-Scenariste" rows="4"></textarea>
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -335,7 +349,8 @@ export default {
       showGlobalSearchResults: false,
       globalSearchTimeout: null,
       allStatuts: [],
-      expandedProjects: new Set()
+      expandedProjects: new Set(),
+      isSearchExpanded: false
     };
   },
   computed: {
@@ -746,8 +761,24 @@ export default {
     },
     goToAddProject() {
       this.$router.push('/add-project');
-    }
-  }
+    },
+
+    toggleSearch() {
+      this.isSearchExpanded = !this.isSearchExpanded;
+      
+      if (this.isSearchExpanded) {
+        // Focus sur l'input quand il se déploie
+        this.$nextTick(() => {
+          this.$refs.searchInput.focus();
+        });
+      } else {
+        // Replie et efface la recherche si vide
+        if (!this.globalSearchQuery) {
+          this.clearGlobalSearch();
+        }
+      }
+    },
+   }
 };
 </script>
 
