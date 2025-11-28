@@ -1,440 +1,375 @@
 @import '../base/variables';
-@import '../components/buttons';
 
 // =============================================
-// VARIABLES SPÉCIFIQUES À LA CONNEXION
-// =============================================
-$conn-form-width: 400px;
-$conn-card-width: 380px;
-$conn-form-inner-width: 340px;
-
-// =============================================
-// ARRIÈRE-PLAN - SUPPRIMER L'IMAGE
+// STRUCTURE PRINCIPALE - STYLE CARNET DE TOURNAGE
 // =============================================
 .app-wrapper-co-conn {
-  padding: 0;
-  height: 100vh;
+  min-height: 100vh;
+  background: $color-background;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba($color-primary, 0.1) 0%, rgba($color-accent, 0.1) 100%);
-  
-  // SUPPRIMEZ COMPLÈTEMENT les ::before et ::after existants
-}
-
-.connexion-container-conn {
-  height: 100vh;
-  @include flex-center;
-  position: relative;
-  z-index: 1;
-}
-
-.background-animation-connexion {
-  display: none;
-}
-
-.connexion-form-section-conn {
-  height: 100vh;
-  width: $conn-form-width;
-  @include flex-center;
-  position: relative;
-  z-index: $z-index-modal;
+  font-family: $font-family-primary;
 }
 
 // =============================================
-// ANIMATION BOBINES DE FILM - EFFET VAGUES
+// ICÔNES FLOTTANTES - GRANDES ET COLORÉES (inchangées)
 // =============================================
-
-.film-strips-background {
-  position: fixed;
+.film-icons-background {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
   pointer-events: none;
-  overflow: hidden;
-}
-
-.film-strip {
-  position: absolute;
-  background-image: url("data:image/svg+xml,%3Csvg width='120' height='40' viewBox='0 0 120 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.15'%3E%3Crect width='120' height='40' fill='%231A237E'/%3E%3Ccircle cx='20' cy='20' r='8' fill='%23000051'/%3E%3Ccircle cx='40' cy='20' r='8' fill='%23000051'/%3E%3Ccircle cx='60' cy='20' r='8' fill='%23000051'/%3E%3Ccircle cx='80' cy='20' r='8' fill='%23000051'/%3E%3Ccircle cx='100' cy='20' r='8' fill='%23000051'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  height: 40px;
-  opacity: 0.4;
-  animation: film-wave 20s linear infinite;
+  z-index: 1;
   
-  // Différentes tailles et positions pour créer l'effet de profondeur
-  &.strip-1 {
-    top: 10%;
-    width: 150%;
-    animation-duration: 25s;
-    background-size: 120px 40px;
-    filter: hue-rotate(0deg);
-  }
-  
-  &.strip-2 {
-    top: 30%;
-    width: 180%;
-    animation-duration: 20s;
-    animation-delay: -5s;
-    background-size: 100px 35px;
-    filter: hue-rotate(30deg);
-    opacity: 0.3;
-  }
-  
-  &.strip-3 {
-    top: 50%;
-    width: 200%;
-    animation-duration: 15s;
-    animation-delay: -10s;
-    background-size: 80px 30px;
-    filter: hue-rotate(60deg);
+  .film-icon {
+    position: absolute;
+    font-size: 42px;
     opacity: 0.25;
+    animation: icon-float 25s ease-in-out infinite;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    filter: drop-shadow(0 4px 8px rgba(242, 217, 160, 0.4));
+    
+    &.icon-gold { color: $color-primary; }
+    &.icon-burgundy { color: $color-accent; }
+    &.icon-champagne { color: $color-primary-light; }
+    &.icon-wine { color: $color-text-primary; }
+    &.icon-success { color: $color-success; }
+    
+    &.size-lg { font-size: 48px; opacity: 0.3; }
+    &.size-md { font-size: 38px; }
+    &.size-sm { font-size: 32px; opacity: 0.2; }
   }
   
-  &.strip-4 {
-    top: 70%;
-    width: 170%;
-    animation-duration: 18s;
-    animation-delay: -7s;
-    background-size: 90px 32px;
-    filter: hue-rotate(90deg);
-    opacity: 0.35;
-  }
-  
-  &.strip-5 {
-    top: 85%;
-    width: 160%;
-    animation-duration: 22s;
-    animation-delay: -12s;
-    background-size: 110px 38px;
-    filter: hue-rotate(120deg);
-    opacity: 0.2;
-  }
+  .icon-1 { top: 12%; left: 8%; animation-delay: 0s; font-size: 46px; }
+  .icon-2 { top: 22%; right: 12%; animation-delay: 3s; font-size: 44px; }
+  .icon-3 { top: 65%; left: 6%; animation-delay: 6s; font-size: 42px; }
+  .icon-4 { top: 40%; right: 10%; animation-delay: 9s; font-size: 48px; }
+  .icon-5 { top: 78%; left: 18%; animation-delay: 12s; font-size: 38px; }
+  .icon-6 { top: 30%; left: 22%; animation-delay: 15s; font-size: 40px; }
+  .icon-7 { top: 58%; right: 22%; animation-delay: 18s; font-size: 44px; }
+  .icon-8 { top: 18%; left: 32%; animation-delay: 21s; font-size: 36px; }
+  .icon-9 { top: 70%; right: 6%; animation-delay: 24s; font-size: 46px; }
+  .icon-10 { top: 45%; left: 42%; animation-delay: 27s; font-size: 39px; }
+  .icon-11 { top: 82%; right: 18%; animation-delay: 30s; font-size: 35px; }
+  .icon-12 { top: 25%; right: 4%; animation-delay: 33s; font-size: 41px; }
 }
 
-// Animation d'onde pour les bobines
-@keyframes film-wave {
-  0% {
-    transform: translateX(-20%) translateY(0px) rotate(0deg);
-  }
-  25% {
-    transform: translateX(-15%) translateY(-8px) rotate(0.5deg);
-  }
-  50% {
-    transform: translateX(-10%) translateY(0px) rotate(0deg);
-  }
-  75% {
-    transform: translateX(-15%) translateY(8px) rotate(-0.5deg);
-  }
-  100% {
-    transform: translateX(-20%) translateY(0px) rotate(0deg);
-  }
-}
-
-// Version améliorée avec effet de vague plus prononcé
-@keyframes film-wave-enhanced {
-  0% {
-    transform: translateX(-25%) translateY(0px) rotate(0deg) scaleY(1);
-  }
-  20% {
-    transform: translateX(-20%) translateY(-12px) rotate(1deg) scaleY(1.1);
-  }
-  40% {
-    transform: translateX(-15%) translateY(-5px) rotate(0.5deg) scaleY(1.05);
-  }
-  60% {
-    transform: translateX(-10%) translateY(8px) rotate(-0.5deg) scaleY(0.95);
-  }
-  80% {
-    transform: translateX(-15%) translateY(12px) rotate(-1deg) scaleY(0.9);
-  }
-  100% {
-    transform: translateX(-25%) translateY(0px) rotate(0deg) scaleY(1);
-  }
-}
-
-// Effet de lumière de projecteur qui balaye
-@keyframes spotlight-sweep {
-  0% {
-    background-position: -100% 0%;
-  }
-  100% {
-    background-position: 200% 0%;
-  }
+@keyframes icon-float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  20% { transform: translate(20px, -25px) rotate(8deg) scale(1.15); }
+  40% { transform: translate(-15px, 20px) rotate(-5deg) scale(0.95); }
+  60% { transform: translate(25px, 15px) rotate(4deg) scale(1.1); }
+  80% { transform: translate(-10px, -15px) rotate(-3deg) scale(0.98); }
 }
 
 // =============================================
-// ADAPTATION DU CONTENEUR PRINCIPAL
+// CONTENEUR ET CARTE - STYLE CARNET DE TOURNAGE (VARIABLE)
 // =============================================
-
-.app-wrapper-co-conn {
-  position: relative;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0A0A0A 0%, #1A237E 50%, #0A0A0A 100%);
-  overflow: hidden;
-}
-
 .connexion-container-conn {
-  position: relative;
-  z-index: 10; // Au-dessus des bobines
+  width: 100%;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
-// Amélioration de la carte de connexion pour qu'elle ressorte
+.connexion-form-section-conn {
+  width: 100%;
+  max-width: 410px; // Largeur par défaut pour connexion
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: $z-index-modal;
+  padding: 20px;
+  
+  // Largeur augmentée pour inscription
+  &.inscription-mode {
+    max-width: 610px; // RÉDUIT À 610px (était 800px)
+  }
+}
+
 .connexion-card-conn {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 80px rgba(26, 35, 126, 0.2);
-  
-  .dark-theme & {
-    background: rgba(10, 10, 10, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(183, 28, 28, 0.2);
-  }
-}
-
-// =============================================
-// ANIMATIONS SPÉCIALES CINÉMA
-// =============================================
-
-// Effet de scintillement comme des lumières de projecteur
-@keyframes film-twinkle {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.7; }
-}
-
-// Animation de défilement de pellicule
-@keyframes film-scroll {
-  0% { background-position: 0 0; }
-  100% { background-position: 120px 0; }
-}
-
-// Appliquer l'animation améliorée
-.film-strip {
-  animation: film-wave-enhanced 20s ease-in-out infinite;
-  
-  // Ajouter un effet de scintillement aléatoire
-  &:nth-child(odd) {
-    animation: film-wave-enhanced 25s ease-in-out infinite, film-twinkle 4s ease-in-out infinite;
-  }
-  
-  &:nth-child(even) {
-    animation: film-wave-enhanced 18s ease-in-out infinite, film-twinkle 6s ease-in-out infinite;
-    animation-delay: -2s, -1s;
-  }
-}
-
-// =============================================
-// CARTE DE CONNEXION - CORRIGÉE
-// =============================================
-.connexion-card-conn {
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-radius: $border-radius-xs;
-  border: 1px solid rgba($color-white, 0.8);
+  background: rgba(255, 255, 255, 0.96);
+  width: 100%;
+  width: 390px; // Largeur par défaut pour connexion
+  padding: 36px 28px;
+  border-radius: 20px;
+  border: 1.5px solid $color-border;
   box-shadow: 
-    0 8px 32px 0 rgba(31, 38, 135, 0.15),
-    inset 0 1px 0 rgba($color-white, 0.9);
-  padding: 0;
-  width: $conn-card-width; // CORRECTION: 380px au lieu de 8000px
+    $shadow-primary,
+    0 20px 60px rgba(59, 1, 11, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
   position: relative;
   overflow: hidden;
-  animation: slideInUp-conn $duration-normal cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: $z-index-modal;
-  background: rgba($color-white, 0.95);
-
+  backdrop-filter: blur(12px);
+  
+  background-image: 
+    linear-gradient(rgba(242, 229, 198, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 229, 198, 0.08) 1px, transparent 1px);
+  background-size: 100% 24px, 24px 100%;
+  
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba($color-white, 0.8), transparent);
-    pointer-events: none;
-    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 30%, $color-pastel-gold 0%, transparent 50%);
+    opacity: 0.5;
+    z-index: -1;
   }
   
   &::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: -50%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($color-white, 0.3), transparent);
-    pointer-events: none;
-    z-index: 0;
-    animation: shimmer 3s infinite;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 80%;
+    background: 
+      radial-gradient(circle at 7px 20px, $color-primary 45%, transparent 46%),
+      radial-gradient(circle at 7px 40px, $color-primary 45%, transparent 46%),
+      radial-gradient(circle at 7px 60px, $color-primary 45%, transparent 46%),
+      radial-gradient(circle at 7px 80px, $color-primary 45%, transparent 46%);
+    opacity: 0.4;
+  }
+  
+  // Largeur augmentée pour inscription
+  &.inscription-mode {
+    width: 590px; // RÉDUIT À 590px (était 800px)
   }
 }
 
-@keyframes shimmer {
-  0%, 100% { left: -50%; opacity: 0; }
-  50% { left: 150%; opacity: 1; }
-}
-
-// ... (le reste de votre CSS existant reste le même)
-.connex-header-conn {
-  margin-top: $margin-lg;
-  padding: $padding-md;
+// =============================================
+// LOGO - STYLE CARNET DE TOURNAGE AMÉLIORÉ (RÉDUIT)
+// =============================================
+.cinema-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
   text-align: center;
   position: relative;
-}
-
-.user-avatar-conn {
-  background: rgba($color-white, 0.9);
-  color: $color-primary;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  @include flex-center;
-  font-size: 1.2rem;
-  border: 2px solid rgba($color-primary, 0.3);
-  margin: 0 auto $margin-sm auto;
-  box-shadow: 0 4px 12px rgba($color-text-primary, 0.1);
-}
-
-.connex-header-conn h1 {
-  font-size: 20px;
-  font-weight: $font-weight-bold;
-  line-height: $line-height-tight;
-  color: $color-text-primary;
-  margin-bottom: $gap-sm;
-}
-
-.connex-header-conn p {
-  font-size: 12px;
-  font-weight: $font-weight-regular;
-  line-height: $line-height-base;
-  color: $color-text-secondary;
-}
-
-.connexion-form-conn {
-  padding: $padding-lg;
-  background: transparent !important;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-// Adaptation pour le mode sombre
-body.dark-theme {
-  .app-wrapper-co-conn {
-    background: linear-gradient(135deg, rgba($color-primary, 0.15) 0%, rgba($color-accent, 0.15) 100%);
-    
-    // Supprimez aussi les anciens ::before et ::after du mode sombre
+  
+  .logo-icon {
+    font-size: 42px;
+    color: $color-primary;
+    margin-bottom: 10px;
+    opacity: 0.9;
+    text-shadow: 0 4px 12px rgba(242, 217, 160, 0.4);
+    filter: drop-shadow(0 4px 8px rgba(242, 217, 160, 0.3));
+    animation: logo-pulse 4s ease-in-out infinite;
   }
-
-  .film-strip {
-    background: 
-      repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        transparent 18px,
-        rgba(0, 0, 0, 0.9) 18px,
-        rgba(0, 0, 0, 0.9) 22px,
-        transparent 22px,
-        transparent 40px
-      ),
-      linear-gradient(
-        rgba(60, 45, 30, 0.6) 0%,
-        rgba(80, 60, 40, 0.5) 50%,
-        rgba(60, 45, 30, 0.6) 100%
-      );
-    border-top: 2px solid rgba(240, 200, 140, 0.3);
-    border-bottom: 2px solid rgba(240, 200, 140, 0.3);
+  
+  .logo-text {
+    font-family: $font-family-cinzel;
+    font-size: 36px;
+    font-weight: 500;
+    color: $color-text-primary;
+    margin: 0 0 4px 0;
+    letter-spacing: 1.5px;
+    line-height: 1.1;
+    text-shadow: 0 2px 6px rgba(59, 1, 11, 0.15);
   }
-
-  // ... (le reste du mode sombre)
-}
-
-// =============================================
-// INPUTS - PLUS PETITS
-// =============================================
-.form-group-connexion-conn {
-  margin-bottom: $margin-md; // Réduit
-  position: relative;
-}
-
-.input-container-connexion-conn {
-  position: relative;
-}
-
-.form-input-connexion-conn {
-  width: 100%;
-  padding: 12px 16px; // Réduit
-  border: 1px solid #e2e8f0;
-  border-radius: $border-radius-pill;
-  background: rgba($color-white, 0.9);
-  font-size: 13px; // Réduit
-  color: $color-text-primary;
-  transition: $transition;
-  font-weight: $font-weight-medium;
-  backdrop-filter: blur(15px) saturate(150%);
-  box-shadow: 0 2px 8px rgba($color-text-primary, 0.05);
-
-  &:focus {
-    background: rgba($color-white, 1);
-    box-shadow: 
-      0 0 0 3px rgba($color-primary, 0.15),
-      0 4px 12px rgba($color-primary, 0.1);
-    transform: translateY(-1px);
-    border-color: $color-primary;
-    outline: none;
-  }
-
-  &::placeholder {
+  
+  .logo-subtitle {
+    font-size: 14px;
     color: $color-text-muted;
-    font-size: 12px; // Réduit
-    transition: $transition;
-  }
-
-  &:focus::placeholder {
-    color: transparent;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.6px;
+    font-style: italic;
   }
 }
 
-// =============================================
-// OPTIONS DU FORMULAIRE
-// =============================================
-.form-options-connexion-conn {
-  @include flex-between;
-  margin-bottom: $margin-md; // Réduit
-  font-size: 12px; // Réduit
+@keyframes logo-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 // =============================================
-// BOUTON DE CONNEXION - PLUS PETIT
+// FORMULAIRES - STYLE CARNET CRÉATIF (RÉDUIT + CÔTE À CÔTE)
 // =============================================
-.connexion-btn-conn {
-  background: $color-primary;
-  color: $color-white;
-  border: none;
-  padding: 12px 20px; // Réduit
-  border-radius: $border-radius-pill;
-  font-size: 13px; // Réduit
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  @include flex-center;
-  gap: $gap-sm;
+.container-inscription {
   width: 100%;
-  box-shadow: $shadow;
+}
+
+.form-group-cinema {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+// CONTENEUR POUR CHAMPS CÔTE À CÔTE - CORRECTION
+// CONTENEUR POUR CHAMPS CÔTE À CÔTE - CORRECTION
+.form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  
+  .form-group-cinema {
+    flex: 1;
+    margin-bottom: 0;
+    min-width: 0; // IMPORTANT: Permet aux champs de se rétrécir correctement
+    
+    .input-wrapper {
+      width: 250px;
+    }
+    
+    .cinema-input {
+      width: 100%;
+      box-sizing: border-box; // IMPORTANT: Inclut le padding dans la largeur
+    }
+  }
+}
+
+@include respond-to($breakpoint-md) {
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  color: $color-text-muted;
+  font-size: 16px;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.cinema-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 1.5px solid $color-border;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  color: $color-text-primary;
+  transition: all 0.3s ease;
+  font-family: $font-family-primary;
+  box-shadow: 0 2px 6px rgba(59, 1, 11, 0.06);
+  box-sizing: border-box; // AJOUT: Inclut le padding dans la largeur
+  
+  &::placeholder {
+    color: lighten($color-text-muted, 15%);
+    font-style: italic;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    background: white;
+    box-shadow: 0 0 0 4px $color-pastel-gold, 0 6px 12px rgba(242, 217, 160, 0.25);
+    
+    + .input-icon {
+      color: $color-primary;
+      transform: scale(1.15);
+    }
+  }
+  
+  &.error {
+    border-color: $color-error;
+    box-shadow: 0 0 0 4px $color-pastel-red;
+  }
+}
+
+.cinema-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2375162D'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+  padding-right: 44px;
+}
+
+.textarea-cinema {
+  border-radius: 12px;
+  resize: vertical;
+  min-height: 80px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  line-height: 1.5;
+  font-family: $font-family-primary;
+  box-sizing: border-box; // AJOUT
+}
+
+// =============================================
+// BOUTONS - STYLE CALL TO ACTION FILM AMÉLIORÉ (RÉDUIT)
+// =============================================
+.premier-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-text-primary;
+  border: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: $shadow-primary;
+  cursor: pointer;
   position: relative;
   overflow: hidden;
-
-  &:hover:not(:disabled) {
-    background: darken($color-primary, 10%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba($color-primary, 0.4);
+  font-family: $font-family-primary;
+  letter-spacing: 0.4px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
   }
-
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+    transform: translateY(-3px);
+    box-shadow: $shadow-accent;
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -443,352 +378,232 @@ body.dark-theme {
 }
 
 // =============================================
-// LIEN D'INSCRIPTION - PLUS PETIT
+// OPTIONS ET LIENS - STYLE CARNET (RÉDUIT)
 // =============================================
-.signup-link-connexion-conn {
+.form-options-cinema {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.forgot-link-cinema {
+  color: $color-accent;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-style: italic;
+  
+  &:hover {
+    color: $color-accent-dark;
+    text-decoration: underline;
+  }
+}
+
+// =============================================
+// LIEN D'INSCRIPTION/CONNEXION (RÉDUIT)
+// =============================================
+.signup-link-cinema-center {
+  margin-top: 24px;
   text-align: center;
-  font-size: 12px; // Réduit
+  font-size: 13px;
   color: $color-text-secondary;
-  margin-top: $margin-md; // Réduit
-  padding-top: $margin-md; // Réduit
-  border-top: $border-width solid #e2e8f0;
-
-  a {
-    color: $color-primary;
+  
+  .link-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .switch-link {
+    color: $color-accent;
     text-decoration: none;
-    font-weight: $font-weight-semibold;
-
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-style: italic;
+    
     &:hover {
-      color: $color-accent;
+      color: $color-accent-dark;
       text-decoration: underline;
     }
   }
 }
 
 // =============================================
-// TOGGLE FORMULAIRE
+// ERREURS ET HINTS - STYLE NOTES AMÉLIORÉ (RÉDUIT)
 // =============================================
-.form-toggle-conn {
+.error-message-cinema {
+  color: $color-error;
+  font-size: 13px;
+  margin-bottom: 12px;
   display: flex;
-  background: rgba($color-white, 0.8);
-  border-radius: $border-radius-pill;
-  padding: 4px;
-  margin: 0 $padding-lg $margin-md $padding-lg;
-  gap: 4px;
-  box-shadow: 0 2px 8px rgba($color-text-primary, 0.1);
-  border: 1px solid rgba($color-primary, 0.1);
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: $color-pastel-red;
+  border-radius: 12px;
+  border-left: 5px solid $color-error;
+  font-weight: 500;
+  box-shadow: 0 3px 8px rgba(117, 22, 45, 0.15);
 }
 
-.toggle-btn-conn {
-  flex: 1;
-  padding: 8px 16px;
-  border: none;
-  border-radius: $border-radius-pill;
-  background: transparent;
-  color: $color-text-secondary;
-  font-size: 12px;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: $transition;
-
-  &.active {
-    background: $color-primary;
-    color: $color-white;
-    box-shadow: 0 2px 6px rgba($color-primary, 0.3);
-  }
-
-  &:hover:not(.active) {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-  }
-}
-
-// =============================================
-// ÉTATS EMAIL ET MOT DE PASSE
-// =============================================
-.email-status-conn {
+.email-status-cinema {
   position: absolute;
-  right: 12px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 12px;
   display: flex;
   align-items: center;
   gap: 4px;
+  font-size: 11px;
   
   .fa-check {
     color: $color-success;
+    font-size: 12px;
   }
   
   .fa-times {
     color: $color-error;
+    font-size: 12px;
   }
 }
 
-.email-error-conn {
+.email-error-cinema {
   color: $color-error;
-  font-size: 10px;
-  font-weight: $font-weight-medium;
+  font-size: 11px;
+  font-weight: 500;
 }
 
-.password-hint-conn {
-  font-size: 10px;
+.password-hint-cinema {
+  font-size: 11px;
   color: $color-error;
   margin-top: 4px;
   padding-left: 16px;
-}
-
-.form-input-connexion-conn.error {
-  border-color: $color-error;
-  background: rgba($color-error, 0.05);
-}
-
-.textarea-conn {
-  resize: vertical;
-  min-height: 60px;
-  font-family: $font-family-primary;
+  font-weight: 500;
+  font-style: italic;
 }
 
 // =============================================
-// ANIMATIONS D'ENTRÉE POUR ÉLÉMENTS
-// =============================================
-.form-group-connexion-conn,
-.form-options-connexion-conn,
-.connexion-btn-conn,
-.signup-link-connexion-conn {
-  opacity: 0;
-  animation: slideInUp-conn $duration-normal ease-out forwards;
-}
-
-.form-group-connexion-conn:nth-child(1) { animation-delay: 0.2s; }
-.form-group-connexion-conn:nth-child(2) { animation-delay: 0.4s; }
-.form-options-connexion-conn { animation-delay: 0.6s; }
-.connexion-btn-conn { animation-delay: 0.8s; }
-.signup-link-connexion-conn { animation-delay: 1s; }
-
-// =============================================
-// ANIMATIONS
-// =============================================
-@keyframes slideInUp-conn {
-  from {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes slideInDown-conn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// =============================================
-// BOUTONS DE THÈME
-// =============================================
-.theme-toggle {
-  position: fixed;
-  top: $padding-md;
-  right: $padding-md;
-  display: flex;
-  background: rgba($color-primary, 0.15);
-  border-radius: $border-radius-pill;
-  padding: $gap-xs;
-  gap: $gap-xs;
-  box-shadow: 
-    inset 0 2px 4px rgba($color-text-primary, 0.1),
-    0 4px 12px rgba($color-text-primary, 0.15);
-  width: 60px;
-  border: 1px solid rgba($color-white, 0.4);
-  backdrop-filter: blur(10px) saturate(150%);
-  z-index: $z-index-modal;
-  transition: $transition;
-  
-  &:hover {
-    background: rgba($color-primary, 0.2);
-    box-shadow: 
-      inset 0 2px 4px rgba($color-text-primary, 0.1),
-      0 6px 16px rgba($color-text-primary, 0.2);
-  }
-}
-
-.theme-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  @include flex-center;
-  cursor: pointer;
-  transition: $transition;
-  color: $color-primary;
-  font-size: $font-size-p3;
-  
-  &:hover {
-    background: rgba($color-primary, 0.2);
-    transform: scale(1.1);
-  }
-  
-  &.active {
-    background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
-    color: $color-white;
-    box-shadow: 0 2px 6px rgba($color-primary, 0.4);
-  }
-  
-  i {
-    font-size: $font-size-p3;
-  }
-}
-
-// =============================================
-// RESPONSIVE
+// RESPONSIVE (AJUSTÉ)
 // =============================================
 @include respond-to($breakpoint-md) {
-  .connexion-container-conn {
-    flex-direction: column;
-  }
-
   .connexion-form-section-conn {
-    height: auto;
-    min-height: 100vh;
-    padding: $padding-md;
-  }
-
-  .connexion-card-conn {
-    max-width: 100%;
-  }
-
-  .connexion-form-conn {
-    padding: $padding-lg;
-    width: 100%;
-  }
-
-  .form-options-connexion-conn {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $gap-md;
-  }
-
-  .theme-toggle {
-    top: $padding-sm;
-    right: $padding-sm;
-    width: 50px;
-    padding: 3px;
+    padding: 40px 20px;
+    
+    &.inscription-mode {
+      max-width: 610px;
+    }
   }
   
-  .theme-btn {
-    width: 20px;
-    height: 20px;
-    font-size: $font-size-p3;
+  .connexion-card-conn {
+    padding: 32px 24px;
+    
+    &.inscription-mode {
+      width: 590px;
+    }
+  }
+  
+  // Sur tablette, passer les champs côte à côte en vertical
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
   }
 }
 
-// =============================================
-// MODE SOMBRE
-// =============================================
-body.dark-theme {
-  .app-wrapper-co-conn {
-    // Supprime le dégradé pour le mode sombre
-    background: none;
-    
-    &::before {
-      filter: blur(8px) brightness(0.4); // Plus sombre en mode nuit
+@media (max-width: 768px) {
+  .connexion-form-section-conn {
+    &.inscription-mode {
+      max-width: 410px !important;
     }
+  }
+  
+  .connexion-card-conn {
+    &.inscription-mode {
+      width: 390px !important;
+    }
+  }
+  
+  // Sur tablette moyenne, forcer les champs en colonne
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .connexion-card-conn {
+    padding: 28px 20px;
+    margin: 10px;
     
     &::after {
-      background: linear-gradient(135deg, rgba($color-primary, 0.2) 0%, rgba($color-accent, 0.2) 100%);
+      display: none;
     }
-  }
-
-  .connexion-card-conn {
-    background: rgba($color-background-dark, 0.15);
-    border: 1px solid rgba($color-white, 0.15);
     
-    &::before {
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba($color-accent, 0.2),
-        transparent
-      );
+    &.inscription-mode {
+      width: 390px !important;
     }
   }
   
-  .form-input-connexion-conn {
-    background: rgba($color-background-dark, 0.2);
-    border: 1px solid rgba($color-white, 0.2);
-    color: $color-text-light;
-    
-    &::placeholder {
-      color: rgba($color-text-light, 0.5);
-    }
-    
-    &:focus {
-      background: rgba($color-background-dark, 0.3);
-      border-color: rgba($color-primary, 0.5);
-    }
+  .cinema-logo .logo-text {
+    font-size: 32px;
   }
   
-  .connex-header-conn {
-    h1 {
-      color: $color-text-light;
-    }
-    
-    p {
-      color: rgba($color-text-light, 0.7);
-    }
+  .cinema-logo .logo-icon {
+    font-size: 38px;
   }
   
-  .forgot-link-connexion-conn {
-    color: rgba($color-text-light, 0.7);
+  .film-icons-background .film-icon {
+    font-size: 28px !important;
     
-    &:hover {
-      color: $color-accent;
-    }
+    &.size-lg { font-size: 32px !important; }
+    &.size-md { font-size: 26px !important; }
+    &.size-sm { font-size: 22px !important; }
   }
   
-  .signup-link-connexion-conn {
-    color: rgba($color-text-light, 0.7);
-    border-top: $border-width solid rgba($color-text-light, 0.15);
-    
-    a {
-      color: $color-primary;
-      
-      &:hover {
-        color: $color-accent;
-      }
-    }
+  .cinema-input {
+    padding: 10px 12px 10px 40px;
+    font-size: 13px;
   }
   
-  .theme-toggle {
-    background: rgba($color-background-dark, 0.3);
-    border: 1px solid rgba($color-text-light, 0.2);
-    
-    &:hover {
-      background: rgba($color-background-dark, 0.4);
-    }
+  .input-icon {
+    left: 12px;
+    font-size: 14px;
   }
   
-  .theme-btn {
-    color: $color-text-light;
-    
-    &:hover {
-      background: rgba($color-primary, 0.3);
-    }
-    
-    &.active {
-      background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
-      color: $color-text-light;
-    }
+  .premier-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  // Sur mobile, toujours en colonne
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .film-icons-background .film-icon:nth-child(n+9) {
+    display: none;
   }
 }
+
+// =============================================
+// SUPPRESSION DES ANCIENS STYLES
+// =============================================
+.organic-bg,
+.doodles,
+.ravinala,
+.organic-background-overlay,
+.doodle-lines,
+.organic-elements,
+.plant-element {
+  display: none !important;
+}
+
+// Supprimer l'ancienne règle fixe pour inscription-formulaire
+.inscription-formulaire {
+  width: 100%;
+}
+
 

@@ -1,24 +1,47 @@
 // =============================================
 // POLICES
 // =============================================
-$font-family-primary: 'Hauora Sans', sans-serif;
-$font-family-cinzel: 'Cinzel', serif;
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
-// Poids de police
+$font-family-primary: 'Hauora Sans', sans-serif;
+$font-family-cinzel: 'Playfair Display', serif;
+
+
+// Poids de police - Playfair Display
 $font-weight-light: 300;
 $font-weight-regular: 400;
 $font-weight-medium: 500;
-$font-weight-bold: 700;
 $font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+$font-weight-black: 900;
+
+// Styles italiques
+$font-style-italic: italic;
+$font-style-normal: normal;
+
+// // Tailles de police
+// $font-size-h1: 60px;
+// $font-size-h2: 48px;
+// $font-size-h3: 36px;
+// $font-size-h4: 24px;
+// $font-size-p1: 18px;
+// $font-size-p2: 14px;
+// $font-size-p3: 12px;
+// $font-size-p4: 11px;
+// $font-size-p5: 8px;
+
 
 // Tailles de police
-$font-size-h1: 32px;
-$font-size-h2: 24px;
-$font-size-h3: 18px;
-$font-size-h4: 15px;
-$font-size-p1: 13px;
-$font-size-p2: 12px;
-$font-size-p3: 11px;
+$font-size-h1: 48px;
+$font-size-h2: 36px;
+$font-size-h3: 24px;
+$font-size-h4: 18px;
+$font-size-p1: 16px;
+$font-size-p2: 14px;
+$font-size-p3: 12px;
+$font-size-p4: 11px;
+$font-size-p5: 8px;
 
 // Line heights
 $line-height-base: 1.5;
@@ -26,58 +49,62 @@ $line-height-tight: 1.3;
 $line-height-loose: 1.7;
 
 // =============================================
-// COULEURS - SELON CHARTE GRAPHIQUE CINÉMA
+// COULEURS – PALETTE CHAMPAGNE BEIGE & VIN CHAUD (LUXE DOUX)
 // =============================================
 
-// Couleurs principales (d'après le PDF)
-$color-primary: #E5C687;       // Bleu nuit profond
-$color-primary-light: #F4E4B3; // Bleu nuit plus clair
-$color-primary-dark: #B8943C;  // Bleu nuit très foncé
+// Couleurs principales
+$color-primary: #F2D9A0;       // Sand Gold – doré très doux et élégant
+$color-primary-light: #F2E5C6; // Champagne Beige – la teinte la plus claire et lumineuse
+$color-primary-dark: #D9B589;  // Version légèrement plus intense du Sand Gold pour les hovers
 
-// Couleurs secondaires (d'après le PDF)
-$color-accent: #B71C1C;        // Rouge bordeaux
-$color-accent-light: #F05545;  // Rouge plus clair
-$color-accent-dark: #7F0000;   // Rouge plus foncé
+// Couleurs secondaires → maintenant dans les tons vin chaud / bordeaux profond
+$color-accent: #75162D;        // Burgundy – rouge vin classique et chic
+$color-accent-light: #983750;  // Burgundy un peu plus clair (pour dégradés ou états actifs)
+$color-accent-dark: #560B18;   // Dark Maroon – version très profonde
 
-// Couleurs tertiaires (inspirées des tendances cinéma)
-$color-tertiary: #1A237E;      // Or/doré cinéma
-$color-tertiary-light: #534BAE; // Or clair
-$color-tertiary-dark: #000051;  // Or foncé
+// Couleurs tertiaires → on garde la profondeur vin très sombre pour les fonds nuit ou accents forts
+$color-tertiary: #3B010B;      // Deep Wine – presque noir bordeaux, ultra luxueux
+$color-tertiary-light: #75162D; // Burgundy en version « light » pour cette famille
+$color-tertiary-dark: #2C0008;  // Quasi noir vin pour les ombres très profondes
 
-// Couleurs neutres
+// Couleurs neutres (inchangées)
 $color-white: #FFFFFF;
 $color-black: #000000;
 
 // Couleurs de fond
-$color-background: #FFFFFF;     // Fond blanc lumineux (projecteur)
-$color-background-alt: #F8F9FA; // Gris très clair
-$color-background-dark: #0A0A0A; // Noir cinéma
+$color-background: #F2E5C6;     // Champagne Beige → nouveau fond principal ultra doux
+$color-background-alt: #FAF7F2; // Très proche du champagne, presque blanc cassé
+$color-background-dark: #3B010B; // Deep Wine en fond nuit (très sombre et velouté)
 
 // Couleurs de texte
-$color-text-primary: #000000;   // Texte principal noir
-$color-text-secondary: #424242; // Texte secondaire gris foncé
-$color-text-muted: #757575;     // Texte atténué gris moyen
-$color-text-light: #FFFFFF;     // Texte clair sur fond sombre
+$color-text-primary: #3B010B;   // Deep Wine en texte principal → très chic et lisible
+$color-text-secondary: #560B18; // Dark Maroon pour texte secondaire
+$color-text-muted: #75162D;     // Burgundy atténué
+$color-text-light: #FFFFFF;     // Texte blanc sur fonds sombres
 
 // Couleurs d'interface
-$color-border: rgba(0, 0, 0, 0.12);
-$color-border-dark: rgba(0, 0, 0, 0.24);
-$color-surface: rgba(0, 0, 0, 0.04);
-$color-surface-hover: rgba(0, 0, 0, 0.08);
+$color-border: rgba(117, 22, 45, 0.18);       // Burgundy très léger
+$color-border-dark: rgba(86, 11, 24, 0.35);
+$color-surface: rgba(242, 217, 160, 0.12);    // Légère teinte Sand Gold
+$color-surface-hover: rgba(242, 217, 160, 0.22);
 
-// Couleurs d'état
-$color-success: #2E7D32;       // Vert
-$color-warning: #F57C00;       // Orange
-$color-error: #D32F2F;         // Rouge d'erreur
-$color-info: #1976D2;          // Bleu info
+// Couleurs d'état – on reste dans la même famille vin/champagne
+$color-success: #6B8A6E;        // Vert bouteille très désaturé pour rester élégant
+$color-warning: #F2D9A0;        // Sand Gold comme alerte douce
+$color-error: #75162D;          // Burgundy pour les erreurs
+$color-info: #983750;
 
-// Couleurs pastel pour les cartes (inspirées cinéma)
-$color-pastel-blue: rgba(26, 35, 126, 0.08);
-$color-pastel-red: rgba(183, 28, 28, 0.08);
-$color-pastel-gold: rgba(229, 198, 135, 0.12);
-$color-pastel-purple: rgba(83, 75, 174, 0.08);
-$color-pastel-dark: rgba(10, 10, 10, 0.05);
+// Couleurs pastel pour cartes et surfaces douces
+$color-pastel-blue: rgba(242, 229, 198, 0.15);  // Champagne très dilué
+$color-pastel-red: rgba(117, 22, 45, 0.09);      // Burgundy très dilué
+$color-pastel-gold: rgba(242, 217, 160, 0.18);   // Sand Gold dilué
+$color-pastel-purple: rgba(139, 47, 67, 0.1);         // Entre Burgundy et Maroon
+$color-pastel-dark: rgba(59, 1, 11, 0.07);
 
+// Ombres colorées adaptées à cette palette luxueuse
+$shadow-primary: 0 4px 20px rgba(242, 217, 160, 0.3);   // Ombre dorée champagne très douce
+$shadow-accent: 0 6px 24px rgba(117, 22, 45, 0.22);      // Ombre bordeaux élégante
+$shadow-gold: 0 6px 20px rgba(59, 1, 11, 0.18);          // Ombre Deep Wine très subtile
 // =============================================
 // ESPACEMENTS - CORRIGÉ
 // =============================================
@@ -124,7 +151,7 @@ $border-radius-pill: 50px;
 $border-radius-xl: 24px;
 
 // Ombres cinéma
-$shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow: 0px 0px 2px rgba(0, 0, 0, 0.08);
 $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
 $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
 $shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.2);
@@ -261,6 +288,33 @@ $z-index-toast: 1070;
   margin-bottom: $margin-sm;
 }
 
+@mixin typography-cinzel-h3 {
+  font-family: $font-family-cinzel;
+  font-size: $font-size-h3;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+@mixin typography-cinzel-h4 {
+  font-family: $font-family-cinzel;
+  font-size: $font-size-h4;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+@mixin typography-cinzel-p1 {
+  font-family: $font-family-cinzel;
+  font-size: $font-size-p1;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
 // =============================================
 // MIXINS UTILITAIRES - CINÉMA
 // =============================================
@@ -388,5 +442,298 @@ $z-index-toast: 1070;
     transform: translateY(-2px);
     box-shadow: $shadow-lg;
   }
+}
+
+
+// =============================================
+// MIXINS TYPOGRAPHIE PLAYFAIR DISPLAY COMPLETS
+// =============================================
+
+// === STYLES NORMAUX ===
+
+// Regular (400)
+@mixin playfair-regular {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-regular;
+  font-style: normal;
+}
+
+@mixin playfair-regular-italic {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-regular;
+  font-style: italic;
+}
+
+// Medium (500)
+@mixin playfair-medium {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-medium;
+  font-style: normal;
+}
+
+@mixin playfair-medium-italic {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-medium;
+  font-style: italic;
+}
+
+// Semibold (600)
+@mixin playfair-semibold {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-semibold;
+  font-style: normal;
+}
+
+@mixin playfair-semibold-italic {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-semibold;
+  font-style: italic;
+}
+
+// Bold (700)
+@mixin playfair-bold {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-bold;
+  font-style: normal;
+}
+
+@mixin playfair-bold-italic {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-bold;
+  font-style: italic;
+}
+
+// Extrabold (800)
+@mixin playfair-extrabold {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-extrabold;
+  font-style: normal;
+}
+
+@mixin playfair-extrabold-italic {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-extrabold;
+  font-style: italic;
+}
+
+// Black (900)
+@mixin playfair-black {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-black;
+  font-style: normal;
+}
+
+@mixin playfair-black-italic {
+  font-family: $font-family-cinzel;
+  font-weight: $font-weight-black;
+  font-style: italic;
+}
+
+// =============================================
+// TYPOGRAPHIE MIXINS - AVEC PLAYFAIR DISPLAY
+// =============================================
+
+// === TITRES PLAYFAIR DISPLAY ===
+
+// H1 - Black pour les titres principaux
+@mixin typography-playfair-h1 {
+  @include playfair-black;
+  font-size: $font-size-h1;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-md;
+}
+
+@mixin typography-playfair-h1-italic {
+  @include playfair-black-italic;
+  font-size: $font-size-h1;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-md;
+}
+
+// H2 - Extrabold pour les sous-titres importants
+@mixin typography-playfair-h2 {
+  @include playfair-extrabold;
+  font-size: $font-size-h2;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+@mixin typography-playfair-h2-italic {
+  @include playfair-extrabold-italic;
+  font-size: $font-size-h2;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+// H3 - Bold pour les sections
+@mixin typography-playfair-h3 {
+  @include playfair-bold;
+  font-size: $font-size-h3;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+@mixin typography-playfair-h3-italic {
+  @include playfair-bold-italic;
+  font-size: $font-size-h3;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+// H4 - Semibold pour les sous-sections
+@mixin typography-playfair-h4 {
+  @include playfair-semibold;
+  font-size: $font-size-h4;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+@mixin typography-playfair-h4-italic {
+  @include playfair-semibold-italic;
+  font-size: $font-size-h4;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+// === TEXTES COURANTS PLAYFAIR DISPLAY ===
+
+// P1 - Medium pour les paragraphes importants
+@mixin typography-playfair-p1 {
+  @include playfair-medium;
+  font-size: $font-size-p1;
+  line-height: $line-height-base;
+  color: $color-text-secondary;
+  margin-bottom: $margin-sm;
+}
+
+@mixin typography-playfair-p1-italic {
+  @include playfair-medium-italic;
+  font-size: $font-size-p1;
+  line-height: $line-height-base;
+  color: $color-text-secondary;
+  margin-bottom: $margin-sm;
+}
+
+// P2 - Regular pour le texte standard
+@mixin typography-playfair-p2 {
+  @include playfair-regular;
+  font-size: $font-size-p2;
+  line-height: $line-height-base;
+  color: $color-text-secondary;
+  margin-bottom: $margin-xs;
+}
+
+@mixin typography-playfair-p2-italic {
+  @include playfair-regular-italic;
+  font-size: $font-size-p2;
+  line-height: $line-height-base;
+  color: $color-text-secondary;
+  margin-bottom: $margin-xs;
+}
+
+// P3 - Regular pour le texte petit
+@mixin typography-playfair-p3 {
+  @include playfair-regular;
+  font-size: $font-size-p3;
+  line-height: $line-height-base;
+  color: $color-text-muted;
+  margin-bottom: $margin-xs;
+}
+
+@mixin typography-playfair-p3-italic {
+  @include playfair-regular-italic;
+  font-size: $font-size-p3;
+  line-height: $line-height-base;
+  color: $color-text-muted;
+  margin-bottom: $margin-xs;
+}
+
+// === MIXINS SPÉCIAUX POUR ÉLÉMENTS DE DESIGN ===
+
+// Citations et extraits - Italique Medium
+@mixin playfair-quote {
+  @include playfair-medium-italic;
+  font-size: $font-size-p1;
+  line-height: $line-height-loose;
+  color: $color-text-muted;
+  border-left: 3px solid $color-primary;
+  padding-left: $padding-md;
+  margin: $margin-md 0;
+}
+
+// Chiffres et statistiques - Black
+@mixin playfair-numbers {
+  @include playfair-black;
+  font-size: $font-size-h2;
+  line-height: 1;
+  color: $color-primary;
+}
+
+// Accents et highlights - Semibold Italic
+@mixin playfair-accent {
+  @include playfair-semibold-italic;
+  color: $color-accent;
+  font-size: inherit;
+}
+
+// Labels et badges - Medium
+@mixin playfair-label {
+  @include playfair-medium;
+  font-size: $font-size-p3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $color-text-muted;
+}
+
+// =============================================
+// CLASSES UTILITAIRES POUR PLAYFAIR DISPLAY
+// =============================================
+
+// Classes de poids simples
+.playfair-regular { @include playfair-regular; }
+.playfair-medium { @include playfair-medium; }
+.playfair-semibold { @include playfair-semibold; }
+.playfair-bold { @include playfair-bold; }
+.playfair-extrabold { @include playfair-extrabold; }
+.playfair-black { @include playfair-black; }
+
+// Classes italiques
+.playfair-italic-regular { @include playfair-regular-italic; }
+.playfair-italic-medium { @include playfair-medium-italic; }
+.playfair-italic-semibold { @include playfair-semibold-italic; }
+.playfair-italic-bold { @include playfair-bold-italic; }
+.playfair-italic-extrabold { @include playfair-extrabold-italic; }
+.playfair-italic-black { @include playfair-black-italic; }
+
+// =============================================
+// ANCIENS MIXINS CINZEL (MAINTENUS POUR COMPATIBILITÉ)
+// =============================================
+
+@mixin typography-cinzel-h1 {
+  @include typography-playfair-h1;
+}
+
+@mixin typography-cinzel-h2 {
+  @include typography-playfair-h2;
+}
+
+@mixin typography-cinzel-h3 {
+  @include typography-playfair-h3;
+}
+
+@mixin typography-cinzel-h4 {
+  @include typography-playfair-h4;
+}
+
+@mixin typography-cinzel-p1 {
+  @include typography-playfair-p1;
 }
 

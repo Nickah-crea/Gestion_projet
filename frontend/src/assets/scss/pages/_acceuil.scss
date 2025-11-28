@@ -1,77 +1,154 @@
-// Import des variables pour utiliser les variables globales
+// =============================================
+// ACCUEIL SCÉNARISTE – VERSION CORRECTE & ÉQUILIBRÉE
+// Police Cinzel partout ≥ h3 | Tailles harmonisées
+// =============================================
+
 @import '../base/variables';
-@import '../components/buttons'; // Import des boutons
+@import '../components/buttons';
 
 // =============================================
-// ACCUEIL SCÉNARISTE
+// RESET GLOBAL – EMPÊCHE TOUT DÉCALAGE
 // =============================================
-.app-wrapper-global {
-  background: none;
-  width: 100%;
+body, html {
+  margin: 0 !important;
+  padding: 0 !important;
   overflow-x: hidden;
-}
-
-body {
-  background: linear-gradient(90deg, 
-    rgba($color-text-primary, 0.05) 0%, 
-    rgba($color-text-primary, 0.15) 100%);  width: 100%;
-  overflow-x: hidden;
-}
-
-.main-content-scenariste-Scenariste {
-  margin: 0 auto;
-  max-width: 1250px;
   width: 100%;
   box-sizing: border-box;
-  min-height: 100vh;
-  padding: 0 20px;
-  
-  // CHANGEMENT : Supprimer le margin: 0 auto et utiliser margin-left à la place
-  margin-left: 30px; // ou la valeur que vous préférez
-  margin-right: auto;
-  
-  @media (max-width: $breakpoint-md) {
-    padding: 0 15px;
-    margin-left: 15px;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    padding: 0 10px;
-    margin-left: 10px;
+  background: $color-background;
+}
+
+.app-wrapper-global {
+  padding: 0 !important;
+  width: 100%;
+  background: $color-background;
+  width: calc(100% - 220px); // Ajustement de la largeur
+  transition: margin-left $duration-slow cubic-bezier(0.4, 0, 0.2, 1),
+              width $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Quand la sidebar est réduite
+  .sidebar.collapsed ~ & {
+    margin-left: 51px; // Largeur de la sidebar réduite
+    width: calc(100% - 51px);
   }
 }
 
-// Header - Bienvenue à gauche, recherche à droite
+// =============================================
+// CONTENU PRINCIPAL – STRUCTURE OPTIMISÉE
+// =============================================
+.main-content-scenariste-Scenariste {
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1250px;
+  // AUGMENTER le padding-bottom pour compenser la navbar
+  padding-bottom: 120px; // ← Augmenté de 80px à 120px
+
+  @media (max-width: $breakpoint-md) {
+    padding: 0 15px;
+    padding-bottom: 120px; // ← Même correction
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: 0 12px;
+    padding-bottom: 110px; // ← Légèrement réduit sur mobile si nécessaire
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR LA SIDEBAR
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .app-wrapper-global {
+    margin-left: 0 !important;
+    width: 100% !important;
+    
+    .sidebar.collapsed ~ & {
+      margin-left: 0 !important;
+      width: 100% !important;
+    }
+  }
+  
+  .main-content-scenariste-Scenariste {
+    margin-left: 0;
+    padding: 0 15px;
+  }
+}
+
+// Le reste de votre code CSS existant reste inchangé...
+.welcome-section-Scenariste h2,
+.projects-label-Scenariste,
+.movie-title-Scenariste,
+.modal-header-Scenariste h3,
+.search-results-header-Scenariste h3,
+.global-search-results-Scenariste h4 {
+  font-family: $font-family-cinzel !important;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.3px;
+}
+
+// Tailles équilibrées
+.welcome-section-Scenariste h2 {
+  // font-size: $font-size-h2; // 24px avec vos nouvelles variables
+  margin-bottom: $gap-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-black;
+  @include typography-playfair-h2-italic;
+
+}
+
+.welcome-section-Scenariste p {
+  font-size: $font-size-p4; // 24px avec vos nouvelles variables
+  color: $color-text-primary;
+  font-weight: $font-weight-regular;
+}
+
+.projects-label-Scenariste {
+  // font-size: $font-size-h3; // 18px avec vos nouvelles variables
+  margin: 0;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  @include typography-playfair-h3;
+}
+
+.movie-title-Scenariste {
+  font-size: $font-size-h3; // 16px avec vos nouvelles variables
+  font-weight: $font-weight-semibold;
+  margin: 0 0 $gap-xs 0;
+  color: $color-text-primary;
+  @include typography-playfair-h3-italic;
+}
+
+// =============================================
+// HEADER – Bienvenue + Recherche
+// =============================================
 .header-section-Scenariste {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: $padding-sm 0;
-  margin-bottom: $margin-md;
-  border-bottom: 1px solid rgba($color-text-primary, 0.1);
-  gap: $gap-md;
+  padding: $padding-md 0;
+  margin-bottom: $margin-lg;
+  border-bottom: 1px solid $color-border;
+  gap: $gap-lg;
 }
 
 .welcome-section-Scenariste {
-  flex: 1;
-  
-  h2 {
-    font-size: $font-size-h2;
-    margin-bottom: $gap-sm;
-    color: $color-text-primary;
-  }
-  
   p {
-    font-size: $font-size-p1;
-    color: $color-text-muted;
+    font-size: $font-size-p2;
+    color: $color-text-secondary;
+    margin: 0;
   }
 }
 
-// Recherche à droite
+// =============================================
+// BARRE DE RECHERCHE DÉPLIANTE
+// =============================================
+
 .search-container-right-Scenariste {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
   flex: 1;
 }
 
@@ -79,284 +156,286 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
-  max-width: 350px;
+  justify-content: flex-end;
+  transition: all $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // État replié (par défaut)
+  width: 44px;
+  overflow: hidden;
+  
+  // État déplié
+  &.expanded {
+    width: 350px;
+    
+    .search-input-Scenariste {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .search-toggle-btn-Scenariste {
+      background: $color-background-alt;
+      color: $color-text-primary;
+    }
+  }
 }
 
 .search-input-Scenariste {
   width: 100%;
-  padding: $padding-sm $padding-lg;
-  padding-left: 40px; // Plus d'espace pour l'icône
-  border: 2px solid rgba($color-text-primary, 0.1);
+  padding: $padding-sm $padding-md $padding-sm $padding-md;
   border-radius: $border-radius-sm;
-  background: $color-white;
-  font-size: $font-size-p1;
-  color: $color-text-primary;
-  transition: $transition;
+  border: 1px solid $color-border;
+  background: $color-background-alt; // Fond changé comme demandé
+  font-size: $font-size-p2;
   box-shadow: $shadow;
+  transition: all $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // État initial caché
+  opacity: 0;
+  transform: translateX(10px);
   
   &:focus {
     outline: none;
     border-color: $color-primary;
-    box-shadow: 0 2px 15px rgba($color-primary, 0.2);
-  }
-  
-  &::placeholder {
-    color: $color-text-muted;
-    opacity: 0.8;
+    box-shadow: 0 2px 12px rgba($color-primary, 0.2);
   }
 }
 
-.search-icon-Scenariste {
+// Bouton toggle (icône de recherche)
+.search-toggle-btn-Scenariste {
   position: absolute;
-  left: 15px; // Position ajustée
-  color: $color-text-muted;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: $border-radius-sm;
+  background: $color-background-alt;
+  color: $color-accent-dark;
   font-size: $font-size-p1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition;
   z-index: 2;
-  pointer-events: none; // Empêche l'icône d'interférer avec les clics
+  
+  &:hover {
+    background: darken($color-background-alt, 5%);
+    transform: translateY(-50%) scale(1.05);
+  }
+  
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
 }
 
 .clear-search-btn-Scenariste {
   position: absolute;
-  right: 10px; // Position du bouton clear
+  right: 45px; // Positionné à gauche du bouton toggle
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
+  font-size: $font-size-p1;
   color: $color-text-muted;
   cursor: pointer;
   padding: 4px;
   border-radius: 50%;
-  transition: $transition;
-  font-size: $font-size-p1;
-  
+  transition: $transition-fast;
+  z-index: 2;
+
   &:hover {
+    background: $color-surface-hover;
     color: $color-text-primary;
-    background: rgba($color-text-primary, 0.1);
-    transform: scale(1.1);
   }
 }
 
-// Filtres
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .search-input-wrapper-Scenariste {
+    &.expanded {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .search-input-wrapper-Scenariste {
+    &.expanded {
+      width: 100%;
+    }
+  }
+  
+  .search-toggle-btn-Scenariste {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+// =============================================
+// FILTRES + BOUTON NOUVEAU PROJET
+// =============================================
 .filters-section-Scenariste {
-  padding: $padding-sm 0;
+  padding: $padding-md 0;
 }
 
 .filters-row-Scenariste {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $gap-md;
-}
-
-.projects-label-Scenariste {
-  margin: 0;
-  font-size: $font-size-h3;
-  font-weight: $font-weight-bold;
-  white-space: nowrap;
-  color: $color-text-primary;
+  gap: $gap-lg;
+  flex-wrap: wrap;
 }
 
 .filters-right-Scenariste {
   display: flex;
-  gap: $gap-sm;
+  gap: $gap-md;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .filter-group-scenariste {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-xs;
-  box-shadow: $shadow;
-  border-radius: $border-radius-pill;
+  select {
+    padding: $padding-sm;
+    border-radius: 6px;
+    border: 1px solid $color-border;
+    background: $color-background-alt;
+    font-size: $font-size-p3;
+    min-width: 140px;
+    height: 42px;
+    transition: $transition-fast;
     
-  label {
-    font-weight: $font-weight-semibold;
-    color: $color-text-secondary;
-    font-size: $font-size-p2;
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
   }
 }
 
-.filter-select-Scenariste,
-.date-input-Scenariste {
-  width: 100%;
-  box-sizing: border-box;
-  padding: $padding-sm;
-  border: 1px solid rgba($color-text-primary, 0.1);
-  border-radius: $border-radius-sm;
-  background: $color-white;
-  color: $color-text-primary;
-  font-size: $font-size-p2;
-  transition: $transition;
-  box-shadow: none;
-  height: 42px;
-
-  &:focus {
-    outline: none;
-    border-color: $color-primary;
-  }
-}
-
-// Boutons centrés
 .add-project-center-Scenariste {
-  display: flex;
-  justify-content: center;
-  margin: $gap-md 0;
+  margin-left: $margin-md;
 }
 
-// Grille des projets
+.add-project-btn-scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-sm $padding-lg;
+  background: $color-background-dark;
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-family: $font-family-cinzel;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  white-space: nowrap;
+
+  &:hover {
+    background: lighten($color-background-dark, 5%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+}
+
+// =============================================
+// GRILLE PROJETS & CARTES
+// =============================================
 .projects-library-Scenariste {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: $gap-md;
-  padding: $padding-sm 0;
-  width: 100%;
-  box-sizing: border-box;
+  gap: $gap-lg;
+  padding: $padding-lg 0;
 }
 
-// Cartes de projet avec ombres réduites
 .movie-card-Scenariste {
-  background: $color-white;
-  border-radius: $border-radius-lg;
-  // border: 1px solid rgba($color-text-primary, 0.08);
-  box-shadow: 
-    0 1px 5px rgba($color-text-primary, 0.08),
-    0 1px 13px rgba($color-text-primary, 0.04);
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow-md;
   overflow: hidden;
   transition: $transition;
   position: relative;
-  padding: $padding-lg;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 100%;
-  min-height: 280px;
+  height: 300px;
+  padding: $padding-lg;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 
-      0 8px 20px rgba($color-text-primary, 0.12),
-      0 3px 8px rgba($color-text-primary, 0.08);
+    box-shadow: $shadow-lg;
   }
 }
 
-// Couleurs pastel avec les nouvelles variables
-.movie-card-Scenariste.pastel-blue { 
-  background: rgba($color-primary, 0.1); 
-}
-.movie-card-Scenariste.pastel-purple { 
-  background: rgba($color-accent, 0.1); 
-}
-.movie-card-Scenariste.pastel-green { 
-  background: rgba($color-success, 0.1); 
-}
-.movie-card-Scenariste.pastel-yellow { 
-  background: rgba($color-warning, 0.1); 
-}
-.movie-card-Scenariste.pastel-pink { 
-  background: rgba(255, 228, 228, 0.3); 
-}
-
-// Header des cartes
 .movie-card-header-Scenariste {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 0 0 $padding-md 0;
+  padding-bottom: $padding-sm;
   margin-bottom: $padding-sm;
-}
-
-.movie-statut-Scenariste {
-  flex: 1;
 }
 
 .statut-badge-Scenariste {
   padding: $gap-xs $padding-sm;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-semibold;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-bold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: rgba($color-primary, 0.1);
-  color: $color-text-primary;
 }
 
-// Classes de statut avec les nouvelles couleurs
-.statut-en-cours { background: rgba($color-primary, 0.2); color: $color-primary; }
+// Classes de statut avec les couleurs du thème
+.statut-en-cours { background: rgba($color-primary, 0.2); color: $color-primary-dark; }
 .statut-termine { background: rgba($color-success, 0.2); color: $color-success; }
 .statut-attente { background: rgba($color-warning, 0.2); color: $color-warning; }
 .statut-annule { background: rgba($color-error, 0.2); color: $color-error; }
 .statut-planifie { background: rgba($color-accent, 0.2); color: $color-accent; }
-.statut-preparation { background: rgba($color-warning, 0.2); color: $color-warning; }
-.statut-tournage { background: rgba($color-primary, 0.2); color: $color-primary; }
-.statut-tourne { background: rgba($color-success, 0.2); color: $color-success; }
-.statut-monte { background: rgba($color-accent, 0.2); color: $color-accent; }
-.statut-valide { background: rgba($color-success, 0.2); color: $color-success; }
 
-// Actions des cartes
-.movie-actions-Scenariste {
-  display: flex;
-  gap: $gap-xs;
-}
-
-// Contenu des cartes
 .movie-info-Scenariste {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.movie-title-Scenariste {
-  font-size: $font-size-h4;
-  font-weight: $font-weight-bold;
-  color: $color-text-primary;
-  margin: 0 0 $gap-xs 0;
-  line-height: $line-height-tight;
-}
-
 .movie-genre-Scenariste {
   color: $color-text-muted;
   font-weight: $font-weight-medium;
-  font-size: $font-size-p2;
-  margin: 0 0 $padding-md 0;
+  font-size: $font-size-p3;
+  margin: 0 0 $padding-sm 0;
 }
 
 .movie-meta-Scenariste {
   display: flex;
   align-items: center;
   gap: $gap-sm;
-  margin-bottom: $padding-md;
   color: $color-text-secondary;
-  font-size: $font-size-p2;
+  font-size: $font-size-p3;
   font-weight: $font-weight-medium;
+  margin-bottom: $padding-md;
 }
 
 .meta-separator-Scenariste {
   color: $color-text-muted;
   font-weight: $font-weight-regular;
-  margin: 0 $gap-xs;
 }
 
-.meta-item-Scenariste {
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  color: $color-text-muted;
-  font-size: $font-size-p3;
-}
-
-.movie-synopsis-Scenariste {
+.movie-synopsis p {
+  font-size: $font-size-p3;  
   color: $color-text-secondary;
   line-height: $line-height-base;
   margin-bottom: $padding-md;
-  font-size: $font-size-p2;
   flex-grow: 1;
 }
 
-// Actions en bas des cartes
 .movie-actions-bottom-Scenariste {
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: $gap-sm;
-  margin-top: auto;
 }
 
 .actions-top-Scenariste {
@@ -364,30 +443,93 @@ body {
   gap: $gap-sm;
 }
 
-// Aucun projet
+// Boutons cartes
+.accent-btn-Scenariste,
+.primary-btn-Scenariste {
+  flex: 1;
+  padding: $padding-sm;
+  border-radius: $border-radius-xs;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-p3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  transition: $transition-fast;
+  cursor: pointer;
+}
+
+.accent-btn {
+  width: 100px;
+  background: $color-background-dark;
+  border: 1px solid $color-text-primary;
+  color: $color-text-primary;
+
+  &:hover {
+    background: $color-surface;
+  }
+}
+
+.primary-btn {
+  background: $color-primary;
+  color: $color-background-dark;
+  border: none;
+
+  &:hover {
+    background: darken($color-primary, 10%);
+  }
+}
+
+// Actions des cartes (modifier/supprimer)
+.movie-actions-Scenariste {
+  display: flex;
+  gap: $gap-xs;
+}
+
+.action-btn-Scenariste {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: $transition-fast;
+  color: $color-text-muted;
+
+  &:hover {
+    background: $color-surface-hover;
+    color: $color-text-primary;
+  }
+}
+
+// =============================================
+// AUCUN PROJET
+// =============================================
 .no-projects-Scenariste {
   text-align: center;
-  padding: $padding-xl $padding-md;
+  padding: $padding-xl $padding-lg;
   color: $color-text-muted;
+
+  h3 { 
+    font-size: $font-size-h4;
+    margin: $margin-md 0;
+    color: $color-text-secondary;
+  }
+  
+  p { 
+    font-size: $font-size-p1;
+    margin-bottom: $margin-lg;
+  }
 }
 
 .no-projects-icon-Scenariste {
-  font-size: 2.5rem;
-  color: rgba($color-text-primary, 0.3);
+  font-size: 3rem;
+  color: rgba($color-text-primary, 0.2);
   margin-bottom: $margin-md;
 }
 
-.no-projects-Scenariste h3 {
-  color: $color-text-secondary;
-  margin-bottom: $padding-md;
-  font-size: $font-size-h3;
-}
-
-.no-projects-Scenariste p {
-  font-size: $font-size-p1;
-}
-
-// Modal
+// =============================================
+// MODAL
+// =============================================
 .edit-project-modal-Scenariste {
   position: fixed;
   top: 0;
@@ -403,68 +545,52 @@ body {
 
 .modal-content-Scenariste {
   background: $color-white;
-  padding: $padding-lg;
-  border-radius: $border-radius;
-  box-shadow: $shadow-lg;
+  padding: $padding-xl;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
   width: 90%;
-  max-width: 400px;
+  max-width: 800px;
+  height: 520px;
 }
+
 
 .modal-header-Scenariste {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $margin-md;
-  
+  margin-bottom: $margin-lg;
+  @include typography-playfair-h2-italic;
+  border-bottom: 1px solid $color-tertiary-light;
+  margin-bottom: 20px;
   h3 {
-    font-size: $font-size-h3;
+    font-size: $font-size-h4;
     color: $color-text-primary;
+    margin: 0;
   }
 }
 
-.form-group-Scenariste {
-  margin-bottom: $margin-md;
-  
-  label {
-    font-size: $font-size-p1;
-    font-weight: $font-weight-semibold;
-    margin-bottom: $gap-xs;
-    display: block;
-    color: $color-text-primary;
-  }
-}
-
-.form-input-Scenariste,
-.form-textarea-Scenariste,
-.form-select-Scenariste {
-  width: 100%;
-  padding: $padding-sm;
-  border: 1px solid rgba($color-text-primary, 0.1);
-  border-radius: $border-radius-sm;
-  background: $color-white;
-  font-size: $font-size-p1;
-  color: $color-text-primary;
-  
-  &:focus {
-    outline: none;
-    border-color: $color-primary;
-  }
-}
-
-.form-textarea-Scenariste {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.modal-footer-Scenariste {
+.modal-header-Scenariste h3{
   display: flex;
-  justify-content: flex-end;
-  gap: $gap-sm;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  @include typography-playfair-h3-italic;
+  font-weight: $font-weight-semibold;
+
+  h3 {
+    font-size: $font-size-h4;
+    color: $color-text-primary;
+    margin: 0;
+  }
 }
 
-// Recherche globale
+// =============================================
+// RECHERCHE GLOBALE
+// =============================================
 .global-search-results-Scenariste {
-  margin: $margin-md 0;
+  margin: $margin-lg 0;
+  background: $color-primary-light;
+  border-radius: 8px;
 }
 
 .search-results-header-Scenariste {
@@ -474,152 +600,445 @@ body {
   margin-bottom: $margin-md;
   
   h3 {
-    font-size: $font-size-h3;
+    font-size: $font-size-h4;
     color: $color-text-primary;
+    margin: 0;
   }
 }
 
-.search-result-item-Scenariste {
-  background: $color-white;
-  border-radius: $border-radius-sm;
-  padding: $padding-md;
-  margin-bottom: $gap-sm;
-  box-shadow: $shadow;
-  cursor: pointer;
-  transition: $transition;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-hover;
-  }
-}
-
-.result-main-info-Scenariste {
-  display: flex;
-  align-items: center;
-  gap: $padding-sm;
-}
-
-.result-title-Scenariste {
-  font-size: $font-size-p1;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-}
-
-.result-statut-Scenariste {
-  font-size: $font-size-p3;
-  padding: $gap-xs $gap-sm;
-  border-radius: $border-radius-sm;
-}
-
-.result-type-Scenariste {
-  font-size: $font-size-p3;
-  color: $color-text-muted;
-}
-
-.no-results-Scenariste {
-  text-align: center;
-  padding: $padding-xl;
-  color: $color-text-muted;
-  font-size: $font-size-p1;
-}
-
-// Animations
-@keyframes fadeInUp-Scenariste {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.movie-card-Scenariste,
-.search-result-item-Scenariste {
-  animation: fadeInUp-Scenariste 0.4s ease-out forwards;
-  animation-delay: calc(var(--index) * 0.05s);
-  opacity: 0;
-}
-
-// Responsive
-@media (max-width: $breakpoint-md) {
-  .main-content-scenariste-Scenariste {
-    padding: 0 15px;
-  }
-  
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
   .header-section-Scenariste {
     flex-direction: column;
     align-items: stretch;
-    gap: $gap-md;
+    gap: $padding-md;
   }
-  
-  .search-container-right-Scenariste {
-    justify-content: stretch;
-  }
-  
+
   .search-input-wrapper-Scenariste {
     max-width: 100%;
   }
-  
+}
+
+@media (max-width: $breakpoint-md) {
   .filters-row-Scenariste {
     flex-direction: column;
     align-items: stretch;
-    gap: $gap-md;
+    gap: $padding-md;
   }
-  
+
   .filters-right-Scenariste {
-    flex-wrap: wrap;
     justify-content: space-between;
-  }
-  
-  .projects-library-Scenariste {
-    grid-template-columns: 1fr;
-  }
-  
-  .actions-top-Scenariste {
-    flex-direction: column;
-  }
-  
-  .welcome-section-Scenariste h2 {
-    font-size: $font-size-h3;
-  }
-  
-  .projects-label-Scenariste {
-    font-size: $font-size-h4;
-  }
-  
-  .search-input-Scenariste {
-    width: 100%;
-    font-size: $font-size-p1;
-  }
-  
-  .filter-group-scenariste {
     width: 100%;
   }
-  
+
   .add-project-center-Scenariste {
+    margin-left: 0;
     width: 100%;
-    
-    button {
-      width: 100%;
-    }
+  }
+
+  .add-project-btn-scenariste {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .projects-library-Scenariste {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: $padding-md;
   }
 }
 
 @media (max-width: $breakpoint-sm) {
   .main-content-scenariste-Scenariste {
-    padding: 0 10px;
+    padding: 0 $padding-sm;
+  }
+
+  .filters-right-Scenariste {
+    flex-direction: column;
+    gap: $padding-sm;
+  }
+
+  .filter-group-scenariste {
+    width: 100%;
+    
+    select {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+
+  .projects-library-Scenariste {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-section-Scenariste h2 {
+    font-size: $font-size-h4;
+  }
+
+  .projects-label-Scenariste {
+    font-size: $font-size-p1;
+  }
+
+  .actions-top-Scenariste {
+    flex-direction: column;
+  }
+}
+
+// =============================================
+// NAVBAR FIXE – STYLES DE SÉCURITÉ
+// =============================================
+.bottom-nav,
+footer,
+nav.fixed-bottom,
+[class*="bottom-nav"],
+[class*="footer-nav"] {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100vw !important;
+  margin: 0 !important;
+  z-index: $z-index-fixed !important;
+  transform: none !important;
+  box-sizing: border-box;
+}
+
+// Version avec palette vin/champagne
+.action-btn-Scenariste.accent-btn {
+  background: rgba($color-accent, 0.1);
+  border: 1.5px solid $color-accent;
+  color: $color-accent;
+  
+  &:hover {
+    background: $color-accent;
+    color: $color-white;
+    border-color: $color-accent;
+    box-shadow: 0 4px 12px rgba($color-accent, 0.3);
+  }
+}
+
+.action-btn-Scenariste.primary-btn {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border: 1.5px solid $color-primary;
+  color: $color-text-primary;
+  
+  &:hover {
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+    border-color: $color-primary-dark;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+    color: $color-white;
+  }
+}
+
+
+// =============================================
+// BOUTONS CARTES PROJETS - STYLE ÉLÉGANT
+// =============================================
+
+.actions-top-Scenariste {
+  display: flex;
+  gap: $gap-sm;
+  width: 100%;
+}
+
+// Style de base pour les deux boutons
+.action-btn-Scenariste {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-sm;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-p3;
+  cursor: pointer;
+  transition: $transition;
+  text-decoration: none;
+  border: none;
+  flex: 1;
+  min-height: 40px;
+  
+  // Icônes
+  .icon, i {
+    font-size: $font-size-p2;
+    transition: $transition-fast;
   }
   
-  .filters-right-Scenariste {
+  span {
+    white-space: nowrap;
+    font-weight: $font-weight-medium;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+    
+    .icon, i {
+      transform: scale(1.1);
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Bouton Détails - Style Accent
+.action-btn-Scenariste.accent-btn {
+  background: none;
+  border: 1.5px solid $color-background-dark;
+  color: $color-background-dark;
+  
+  &:hover {
+    background: rgba($color-accent-light, 0.2);
+    color: $color-background-dark;
+    border-color: $color-tertiary-dark;
+    box-shadow: 0 2px 6px rgba($color-background-dark, 0.3);
+  }
+}
+
+// Bouton Écran - Style Primary
+.action-btn-Scenariste.primary-btn {
+  background: $color-primary-dark;
+  border: 1.5px solid $color-primary;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  
+  &:hover {
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+    border-color: $color-primary-dark;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+    color: $color-white;
+  }
+}
+
+// =============================================
+// RESPONSIVE BOUTONS
+// =============================================
+@media (max-width: $breakpoint-sm) {
+  .actions-top-Scenariste {
+    flex-direction: column;
+  }
+  
+  .action-btn-Scenariste {
+    min-height: 44px;
+    font-size: $font-size-p2;
+    
+    .icon, i {
+      font-size: $font-size-p1;
+    }
+  }
+}
+
+// =============================================
+// ANIMATIONS SPÉCIALES
+// =============================================
+@keyframes button-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.action-btn-Scenariste:focus {
+  outline: none;
+  animation: button-pulse 0.3s ease;
+  
+  &.accent-btn {
+    box-shadow: 0 0 0 3px rgba($color-background-dark, 0.2);
+  }
+  
+  &.primary-btn {
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+  }
+}
+
+// =============================================
+// MODAL ÉDITION PROJET - STRUCTURE 2 COLONNES CORRIGÉE
+// =============================================
+
+.modal-body-Scenariste {
+  margin-bottom: $margin-lg;
+}
+
+.error-message-Scenariste {
+  background: rgba($color-error, 0.1);
+  color: $color-error;
+  padding: $padding-sm;
+  border-radius: $border-radius-sm;
+  margin-bottom: $margin-md;
+  font-size: $font-size-p3;
+  border-left: 3px solid $color-error;
+}
+
+// =============================================
+// GRID POUR LES CHAMPS DU FORMULAIRE - CORRIGÉ
+// =============================================
+.form-group-Scenariste {
+  margin-bottom: $margin-md;
+  
+  label {
+    display: block;
+    margin-bottom: $gap-xs;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    font-size: $font-size-p2;
+  }
+}
+
+// Container pour les champs en ligne - CORRIGÉ
+.form-rows-container-Scenariste {
+  display: flex;
+  flex-direction: column;
+  gap: $margin-md;
+}
+
+.form-row-Scenariste {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $gap-lg;
+  align-items: start;
+  
+  .form-group-Scenariste {
+    margin-bottom: 0;
+  }
+}
+
+// Le synopsis prend toute la largeur
+.form-full-width-Scenariste {
+  grid-column: 1 / -1;
+}
+
+// =============================================
+// CHAMPS DE FORMULAIRE - STYLE UNIFORME
+// =============================================
+.form-input-Scenariste,
+.form-textarea-Scenariste,
+.form-select-Scenariste {
+  width: 100%;
+  padding: $padding-sm $padding-md;
+  border: 1.5px solid $color-border;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  font-size: $font-size-p2;
+  font-family: $font-family-primary;
+  transition: $transition;
+  box-sizing: border-box;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+  
+  &:hover {
+    border-color: rgba($color-primary, 0.5);
+  }
+}
+
+.form-textarea-Scenariste {
+  resize: vertical;
+  min-height: 100px;
+  line-height: $line-height-base;
+}
+
+.form-select-Scenariste {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 40px;
+}
+
+// =============================================
+// RESPONSIVE POUR LA STRUCTURE 2 COLONNES
+// =============================================
+@media (max-width: $breakpoint-sm) {
+  .form-row-Scenariste {
+    grid-template-columns: 1fr;
+    gap: $margin-md;
+  }
+  
+  .form-full-width-Scenariste {
+    grid-column: 1;
+  }
+}
+
+// =============================================
+// PIED DU MODAL - BOUTONS (RÉTABLIS)
+// =============================================
+.modal-footer-Scenariste {
+  display: flex;
+  gap: $gap-md;
+  justify-content: flex-end;
+  padding-top: $padding-md;
+  border-top: 1px solid $color-border;
+  margin-top: $margin-lg;
+}
+
+.cancel-btn-Scenariste,
+.save-btn-Scenariste {
+  padding: $padding-sm $padding-lg;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-p2;
+  cursor: pointer;
+  transition: $transition;
+  min-width: 120px;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+.cancel-btn-Scenariste {
+  background: rgba($color-text-muted, 0.1);
+  color: $color-text-muted;
+  border: 1.5px solid transparent;
+  
+  &:hover:not(:disabled) {
+    background: rgba($color-text-muted, 0.2);
+    color: $color-text-primary;
+    transform: translateY(-1px);
+    border-color: rgba($color-text-muted, 0.3);
+  }
+}
+
+.save-btn-Scenariste {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-primary;
+  border: 1.5px solid $color-primary;
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+    color: $color-white;
+    border-color: $color-primary-dark;
+  }
+}
+
+// =============================================
+// RESPONSIVE BOUTONS
+// =============================================
+@media (max-width: $breakpoint-sm) {
+  .modal-footer-Scenariste {
     flex-direction: column;
     gap: $gap-sm;
   }
   
-  .filter-group-scenariste {
+  .cancel-btn-Scenariste,
+  .save-btn-Scenariste {
     width: 100%;
+    min-width: auto;
   }
 }
-
