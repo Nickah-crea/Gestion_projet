@@ -56,5 +56,12 @@ public interface SceneTournageRepository extends JpaRepository<SceneTournage, Lo
      
      // SceneTournageRepository.java                  
         List<SceneTournage> findByPlateauId(Long plateauId);
+
+    // Dans SceneTournageRepository
+    @Query("SELECT st FROM SceneTournage st " +
+        "WHERE st.scene.sequence.episode.projet IS NULL " +
+        "OR st.scene.sequence IS NULL " +
+        "OR st.scene.sequence.episode IS NULL")
+    List<SceneTournage> findScenesSansProjet();
 }
 
