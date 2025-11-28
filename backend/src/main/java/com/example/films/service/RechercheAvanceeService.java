@@ -622,20 +622,58 @@ public class RechercheAvanceeService {
         List<SceneTournage> tournages;
         
         if (criteres.getProjetId() != null) {
-            // CORRECTION : Filtrer par projet
+            // Filtrer par projet spécifique ET par dates
             tournages = sceneTournageRepository.findAll().stream()
                 .filter(tournage -> tournage.getScene() != null &&
                                 tournage.getScene().getSequence() != null &&
                                 tournage.getScene().getSequence().getEpisode() != null &&
                                 tournage.getScene().getSequence().getEpisode().getProjet() != null &&
                                 tournage.getScene().getSequence().getEpisode().getProjet().getId().equals(criteres.getProjetId()))
+                // Filtrer par dates
+                .filter(tournage -> {
+                    if (criteres.getDateDebut() != null || criteres.getDateFin() != null) {
+                        if (tournage.getDateTournage() == null) {
+                            return false;
+                        }
+                        
+                        LocalDate dateTournage = tournage.getDateTournage();
+                        boolean afterDebut = criteres.getDateDebut() == null || 
+                                        !dateTournage.isBefore(criteres.getDateDebut());
+                        boolean beforeFin = criteres.getDateFin() == null || 
+                                        !dateTournage.isAfter(criteres.getDateFin());
+                        
+                        return afterDebut && beforeFin;
+                    }
+                    return true;
+                })
                 .collect(Collectors.toList());
         } else {
-            // Recherche sans filtre projet
-            tournages = sceneTournageRepository.findByDateTournageBetween(
-                criteres.getDateDebut() != null ? criteres.getDateDebut() : LocalDate.of(1900, 1, 1),
-                criteres.getDateFin() != null ? criteres.getDateFin() : LocalDate.now().plusYears(10)
-            );
+            // CORRECTION : Quand AUCUN projet n'est sélectionné, 
+            // ne chercher que les scènes SANS PROJET
+            tournages = sceneTournageRepository.findAll().stream()
+                .filter(tournage -> tournage.getScene() != null &&
+                                // Scènes sans projet (hiérarchie incomplète)
+                                (tournage.getScene().getSequence() == null ||
+                                tournage.getScene().getSequence().getEpisode() == null ||
+                                tournage.getScene().getSequence().getEpisode().getProjet() == null))
+                // Filtrer par dates
+                .filter(tournage -> {
+                    if (criteres.getDateDebut() != null || criteres.getDateFin() != null) {
+                        if (tournage.getDateTournage() == null) {
+                            return false;
+                        }
+                        
+                        LocalDate dateTournage = tournage.getDateTournage();
+                        boolean afterDebut = criteres.getDateDebut() == null || 
+                                        !dateTournage.isBefore(criteres.getDateDebut());
+                        boolean beforeFin = criteres.getDateFin() == null || 
+                                        !dateTournage.isAfter(criteres.getDateFin());
+                        
+                        return afterDebut && beforeFin;
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
         }
         
         return tournages.stream()
@@ -643,7 +681,7 @@ public class RechercheAvanceeService {
             .map(this::convertirSceneTournageEnDTO)
             .collect(Collectors.toList());
     }
-    
+
     private List<RechercheAvanceeDTO> rechercherPersonnages(CritereRechercheDTO criteres) {
         List<Personnage> personnages;
         
