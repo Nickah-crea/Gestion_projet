@@ -1,7 +1,7 @@
 // _recherche.scss – Version avec sidebar 220px et tailles réduites
 @import '../base/variables';
 
-.app-wrapper-global {
+.app-wrapper-global-recherche {
   display: flex;
   min-height: 100vh;
   background: $color-background-alt;
@@ -10,7 +10,7 @@
 // =============================================
 // SIDEBAR LATÉRALE FIXE À GAUCHE - 220px
 // =============================================
-.search-sidebar {
+.search-sidebar-recherche {
   position: fixed;
   left: 0;
   top: 80px; // AJOUT: Décalage pour laisser la place à la navbar
@@ -24,31 +24,31 @@
   border-right: 1px solid $color-border;
   box-shadow: $shadow-md;
 
-  .sidebar-header {
+  .sidebar-header-recherche {
     margin-bottom: $spacing-sm;
 
-    .sidebar-title {
+    .sidebar-title-recherche {
       @include typography-playfair-h4;
       color: $color-text-primary;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
-    .sidebar-subtitle {
+    .sidebar-subtitle-recherche {
       @include typography-p4;
       color: $color-text-muted;
       margin: 0;
     }
   }
 
-  .filter-section {
+  .filter-section-recherche {
     margin-bottom: $spacing-sm;
     background: $color-background-alt;
     border-radius: $border-radius-xs;
     padding: $padding-xs;
     box-shadow: $shadow-hover;
 
-    .section-title {
+    .section-title-recherche {
       @include typography-p4; // CORRECTION: typography correcte
       color: $color-text-primary;
       margin-bottom: $gap-xs;
@@ -60,17 +60,17 @@
   }
 
   // Filtres dans la sidebar
-  .filter-group {
+  .filter-group-recherche {
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
   }
 
-  .filter-dropdown {
+  .filter-dropdown-recherche {
     position: relative;
     width: 100%;
 
-    .dropdown-trigger {
+    .dropdown-trigger-recherche {
       width: 100%;
       height: 34px;
       padding: 0 $padding-xs;
@@ -94,7 +94,7 @@
         outline-offset: 1px;
       }
 
-      .dropdown-text {
+      .dropdown-text-recherche {
         font-size: $font-size-p4;
         white-space: nowrap;
         overflow: hidden;
@@ -103,7 +103,7 @@
         text-align: left;
       }
 
-      .dropdown-icon {
+      .dropdown-icon-recherche {
         color: $color-text-muted;
         font-size: $font-size-p4;
         transition: $transition-fast;
@@ -111,12 +111,12 @@
         margin-left: $gap-xs;
       }
 
-      &.open .dropdown-icon {
+      &.open .dropdown-icon-recherche {
         transform: rotate(180deg);
       }
     }
 
-    .dropdown-menu {
+    .dropdown-menu-recherche {
       position: absolute;
       top: 100%;
       left: 0;
@@ -132,14 +132,14 @@
       overflow-y: auto;
       box-sizing: border-box; // AJOUT: pour inclure les bordures dans le width
 
-      .dropdown-options {
+      .dropdown-options-recherche {
         padding: $padding-xs;
         display: flex;
         flex-direction: column;
         gap: $gap-xs;
         box-sizing: border-box;
 
-        .dropdown-option {
+        .dropdown-option-recherche {
           padding: $gap-xs $padding-xs $gap-xs 32px;
           font-size: $font-size-p4;
           color: $color-text-primary;
@@ -207,7 +207,7 @@
           }
 
           // Style pour les icônes FontAwesome
-          i:not(.dropdown-icon) {
+          i:not(.dropdown-icon-recherche) {
             color: $color-primary;
             font-size: $font-size-p4;
             width: 14px;
@@ -216,7 +216,7 @@
           }
 
           // Style pour le texte
-          span:not(.dropdown-text) {
+          span:not(.dropdown-text-recherche) {
             flex: 1;
             display: flex;
             align-items: center;
@@ -228,7 +228,7 @@
         }
 
         // Styles pour les inputs date
-        .date-input {
+        .date-input-recherche {
           width: 100%;
           padding: $gap-xs;
           border: 1px solid $color-border;
@@ -245,7 +245,7 @@
           }
         }
 
-        .clear-date-btn {
+        .clear-date-btn-recherche {
           width: 100%;
           padding: $gap-xs;
           background: transparent;
@@ -272,7 +272,7 @@
   }
 
   // Styles pour les selects et inputs
-  .filter-select {
+  .filter-select-recherche {
     width: 100%; // CORRECTION: s'assurer qu'il ne dépasse pas
     height: 34px;
     padding: 0 $padding-xs;
@@ -290,7 +290,7 @@
     }
   }
 
-  .date-input-group {
+  .date-input-group-recherche {
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
@@ -302,7 +302,7 @@
     }
   }
 
-  .date-input-sidebar {
+  .date-input-sidebar-recherche {
     width: 100%;
     padding: $gap-xs;
     border: 1px solid $color-border;
@@ -316,7 +316,7 @@
     }
   }
 
-  .reset-dates-btn {
+  .reset-dates-btn-recherche {
     width: 100%;
     padding: $gap-xs;
     background: transparent;
@@ -340,7 +340,7 @@
   }
 
   // Boutons dans la sidebar
-  .sidebar-actions {
+  .sidebar-actions-recherche {
     margin-top: $spacing-sm;
     padding-top: $gap-xs;
     border-top: 1px solid $color-border;
@@ -348,8 +348,8 @@
     flex-direction: column;
     gap: $gap-sm;
 
-    .search-btn-sidebar,
-    .reset-btn-sidebar {
+    .search-btn-sidebar-recherche,
+    .reset-btn-sidebar-recherche {
       height: 36px;
       border: none;
       border-radius: $border-radius-xs;
@@ -369,7 +369,7 @@
       }
     }
 
-    .search-btn-sidebar {
+    .search-btn-sidebar-recherche {
       background: $color-primary;
       color: $color-white;
 
@@ -385,7 +385,7 @@
       }
     }
 
-    .reset-btn-sidebar {
+    .reset-btn-sidebar-recherche {
       background: transparent;
       border: 1px solid $color-border;
       color: $color-text-secondary;
@@ -401,7 +401,7 @@
 // =============================================
 // CONTENU PRINCIPAL À DROITE - Ajusté pour sidebar 220px
 // =============================================
-.search-body {
+.search-body-recherche {
   flex: 1;
   margin-left: 220px;
   min-height: 100vh;
@@ -409,23 +409,23 @@
 }
 
 // Main content area
-.search-main-content {
+.search-main-content-recherche {
   padding: $spacing-md;
   max-width: 1000px;
   margin: 0 auto;
 
-  .main-header {
+  .main-header-recherche {
     text-align: center;
     margin-bottom: $spacing-md;
 
-    .page-title {
+    .page-title-recherche {
       @include typography-playfair-h3;
       color: $color-text-primary;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h3} - 2px);
     }
 
-    .page-subtitle {
+    .page-subtitle-recherche {
       @include typography-p3;
       color: $color-text-muted;
       max-width: 450px;
@@ -436,16 +436,16 @@
 
 
 // Barre de recherche principale - Taille réduite
-.search-bar-main {
+.search-bar-main-recherche {
   max-width: 550px; // Réduit
   margin: 0 auto $spacing-md; // Réduit
 
-  .search-input-container {
+  .search-input-container-recherche {
     position: relative;
     display: flex;
     align-items: center;
 
-    .search-input-large {
+    .search-input-large-recherche {
       width: 100%;
       height: 42px; // Réduit
       padding: 0 $padding-md 0 ($padding-md + $padding-xs); // Réduit
@@ -463,14 +463,14 @@
       }
     }
 
-    .search-icon-main {
+    .search-icon-main-recherche {
       position: absolute;
       left: $padding-sm; // Réduit
       color: $color-primary;
       font-size: $font-size-p3; // Plus petit
     }
 
-    .clear-search-btn-main {
+    .clear-search-btn-main-recherche {
       position: absolute;
       right: $padding-xs; // Réduit
       background: none;
@@ -490,33 +490,33 @@
 }
 
 // Indicateur de projet - Taille réduite
-.projet-filter-indicator {
+.projet-filter-indicator-recherche {
   background: rgba($color-primary, 0.1);
   border: 1px solid $color-primary;
   border-radius: $border-radius-xs; // Plus petit
   padding: $padding-xs; // Réduit
   margin-bottom: $spacing-sm; // Réduit
   
-  .projet-indicator-content {
+  .projet-indicator-content-recherche {
     display: flex;
     align-items: center;
     gap: $gap-sm; // Réduit
     flex-wrap: wrap;
     
-    .projet-label {
+    .projet-label-recherche {
       @include typography-p4; // Plus petit
       color: $color-text-primary;
       font-weight: $font-weight-semibold;
     }
     
-    .projet-nom {
+    .projet-nom-recherche {
       @include typography-p4; // Plus petit
       color: $color-primary;
       font-weight: $font-weight-bold;
       flex: 1;
     }
     
-    .clear-projet-btn {
+    .clear-projet-btn-recherche {
       padding: $gap-xs $padding-xs;
       background: transparent;
       border: 1px solid $color-border;
@@ -541,8 +541,8 @@
 // =============================================
 // RÉSULTATS – GRILLE CORRIGÉE - TAILLES RÉDUITES
 // =============================================
-.results-section {
-  .results-header {
+.results-section-recherche {
+  .results-header-recherche {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -561,13 +561,24 @@
       gap: $gap-sm; // Réduit
     }
 
-    .results-info {
+    .results-info-recherche {
       display: flex;
       align-items: center;
       gap: $gap-sm; // Réduit
       @include typography-p4; // Plus petit
 
-      .projet-info, .regroupement-info {
+      .projet-info-recherche {
+        display: flex;
+        align-items: center;
+        gap: $gap-xs; // Réduit
+        color: $color-text-secondary;
+
+        i {
+          color: $color-primary;
+        }
+      }
+
+      .regroupement-info-recherche {
         display: flex;
         align-items: center;
         gap: $gap-xs; // Réduit
@@ -579,7 +590,7 @@
       }
     }
 
-    .reset-all-btn {
+    .reset-all-btn-recherche {
       padding: $gap-xs $padding-xs;
       background: transparent;
       border: 1px solid $color-border;
@@ -601,17 +612,17 @@
 }
 
 // CORRECTION : Structure de grille refaite - Tailles réduites
-.modern-results {
+.modern-results-recherche {
   display: flex;
   flex-direction: column;
   gap: $spacing-sm; // Réduit
 
-  .result-group {
+  .result-group-recherche {
     display: flex;
     flex-direction: column;
     gap: $gap-xs; // Réduit
 
-    .group-header {
+    .group-header-recherche {
       padding: $padding-xs;
       border-radius: $border-radius-xs;
       background: $color-white;
@@ -622,38 +633,38 @@
       @include typography-playfair-p4;
       margin-bottom: 0;
 
-      .group-icon {
+      .group-icon-recherche {
         font-size: calc(#{$font-size-h4} - 1px); // Plus petit
       }
 
-      .group-title {
+      .group-title-recherche {
         color: $color-text-primary;
         flex: 1;
         font-size: calc(#{$font-size-h4} - 1px); // Plus petit
       }
 
-      .group-count {
+      .group-count-recherche {
         color: $color-text-muted;
         font-size: $font-size-p4; // Plus petit
         font-weight: $font-weight-regular;
       }
 
       // Styles spécifiques par type de groupe
-      &.group-header-plateau {
+      &.group-header-plateau-recherche {
         border-left: 2px solid $color-accent; // Réduit
       }
-      &.group-header-lieu {
+      &.group-header-lieu-recherche {
         border-left: 2px solid $color-info;
       }
-      &.group-header-personnage {
+      &.group-header-personnage-recherche {
         border-left: 2px solid $color-primary;
       }
-      &.group-header-statut {
+      &.group-header-statut-recherche {
         border-left: 2px solid $color-success;
       }
     }
 
-    .group-items {
+    .group-items-recherche {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: $gap-xs; // Réduit
@@ -670,7 +681,7 @@
   }
 
   // Style pour les résultats sans regroupement - Tailles réduites
-  .result-item {
+  .result-item-recherche {
     background: $color-white;
     border-radius: $border-radius-xs;
     box-shadow: $shadow-md;
@@ -688,7 +699,7 @@
       border-color: $color-primary;
     }
 
-    .result-link {
+    .result-link-recherche {
       text-decoration: none;
       color: inherit;
       display: flex;
@@ -703,20 +714,20 @@
       }
     }
 
-    .result-content {
+    .result-content-recherche {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-    .result-header {
+    .result-header-recherche {
       display: flex;
       flex-direction: column;
       gap: $gap-xs; // Réduit
       margin-bottom: $gap-xs; // Réduit
 
-      .result-type-badge {
+      .result-type-badge-recherche {
         padding: $gap-xs $padding-xs;
         border-radius: $border-radius-pill;
         font-size: $font-size-p5; // Plus petit
@@ -727,25 +738,25 @@
         align-items: center;
         gap: $gap-xs;
 
-        &.scene-badge { 
+        &.scene-badge-recherche { 
           background: rgba($color-primary, 0.2); 
           color: $color-primary-dark; 
         }
-        &.personnage-badge { 
+        &.personnage-badge-recherche { 
           background: rgba($color-accent, 0.2); 
           color: $color-accent; 
         }
-        &.lieu-badge { 
+        &.lieu-badge-recherche { 
           background: rgba($color-info, 0.2); 
           color: $color-info; 
         }
-        &.plateau-badge { 
+        &.plateau-badge-recherche { 
           background: rgba($color-accent-dark, 0.2); 
           color: $color-accent-dark; 
         }
       }
 
-      .result-title {
+      .result-title-recherche {
         @include typography-playfair-p4;
         color: $color-text-primary;
         margin: 0;
@@ -756,7 +767,7 @@
         font-size: calc(#{$font-size-h4} - 1px); // Plus petit
       }
 
-      .result-status {
+      .result-status-recherche {
         padding: $gap-xs $padding-xs;
         border-radius: $border-radius-pill;
         font-size: $font-size-p5; // Plus petit
@@ -771,7 +782,7 @@
       }
     }
 
-    .result-details {
+    .result-details-recherche {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -780,14 +791,14 @@
       overflow-y: auto;
       max-height: 110px; // Réduit
 
-      .detail-row {
+      .detail-row-recherche {
         display: flex;
         align-items: flex-start;
         gap: $gap-xs;
         @include typography-p4; // Plus petit
         color: $color-text-secondary;
 
-        .detail-label {
+        .detail-label-recherche {
           display: flex;
           align-items: center;
           gap: $gap-xs;
@@ -802,14 +813,19 @@
           }
         }
 
-        span:not(.detail-label) {
+        span:not(.detail-label-recherche) {
           word-break: break-word;
           flex: 1;
+        }
+
+        .comedien-recherche {
+          color: $color-text-muted;
+          font-style: italic;
         }
       }
     }
 
-    .dialogues-section {
+    .dialogues-section-recherche {
       margin: $gap-xs 0;
       padding: $padding-xs;
       background: rgba($color-primary, 0.05);
@@ -818,7 +834,7 @@
       max-height: 90px; // Réduit
       overflow-y: auto;
 
-      .dialogues-title {
+      .dialogues-title-recherche {
         @include typography-p4; // Plus petit
         color: $color-text-primary;
         font-weight: $font-weight-semibold;
@@ -832,12 +848,12 @@
         }
       }
 
-      .dialogues-list {
+      .dialogues-list-recherche {
         display: flex;
         flex-direction: column;
         gap: $gap-xs;
 
-        .dialogue-item {
+        .dialogue-item-recherche {
           @include typography-p4; // Plus petit
           color: $color-text-secondary;
           font-style: italic;
@@ -848,7 +864,7 @@
       }
     }
 
-    .hierarchy {
+    .hierarchy-recherche {
       display: flex;
       flex-wrap: wrap;
       gap: $gap-xs;
@@ -856,7 +872,7 @@
       padding: $gap-xs 0;
       border-top: 1px solid $color-border;
 
-      .hierarchy-item {
+      .hierarchy-item-recherche {
         font-size: $font-size-p5; // Plus petit
         color: $color-text-muted;
         display: flex;
@@ -867,15 +883,19 @@
           color: $color-primary;
           font-size: $font-size-p5; // Plus petit
         }
+
+        &.sans-projet-recherche {
+          color: $color-error;
+        }
       }
     }
 
-    .view-details {
+    .view-details-recherche {
       margin-top: auto;
       padding-top: $gap-xs;
       border-top: 1px solid $color-border;
       
-      .view-details-text {
+      .view-details-text-recherche {
         @include typography-p4; // Plus petit
         color: $color-primary;
         font-weight: $font-weight-semibold;
@@ -889,13 +909,46 @@
         }
       }
     }
+
+    // Styles spécifiques pour chaque type de résultat
+    &.type-scene {
+      .scene-result-recherche {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    &.type-personnage {
+      .personnage-result-recherche {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    &.type-lieu {
+      .lieu-result-recherche {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    &.type-plateau {
+      .plateau-result-recherche {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+    }
   }
 }
 
 // =============================================
 // ÉTATS SPÉCIAUX - TAILLES RÉDUITES
 // =============================================
-.empty-state, .loading-state {
+.empty-state-recherche, .loading-state-recherche {
   text-align: center;
   padding: $spacing-md; // Réduit
   background: $color-white;
@@ -903,7 +956,7 @@
   box-shadow: $shadow;
   margin: $spacing-md 0; // Réduit
 
-  .empty-icon, .spinner {
+  .empty-icon-recherche, .spinner-recherche {
     font-size: 32px; // Réduit
     color: $color-primary;
     margin-bottom: $gap-xs; // Réduit
@@ -923,15 +976,15 @@
   }
 }
 
-.loading-state {
-  .spinner i {
+.loading-state-recherche {
+  .spinner-recherche i {
     animation: spin 1s linear infinite;
   }
 }
 
 // Squelettes de chargement
-.skeleton-loading {
-  .result-item {
+.skeleton-loading-recherche {
+  .result-item-recherche {
     position: relative;
     overflow: hidden;
     
@@ -962,32 +1015,32 @@
 // RESPONSIVE
 // =============================================
 @media (max-width: $breakpoint-xl) {
-  .modern-results .result-group .group-items {
+  .modern-results-recherche .result-group-recherche .group-items-recherche {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: $breakpoint-lg) {
-  .search-sidebar {
+  .search-sidebar-recherche {
     position: relative;
     width: 100%;
     height: auto;
   }
   
-  .search-body {
+  .search-body-recherche {
     margin-left: 0;
   }
   
-  .modern-results .result-group .group-items {
+  .modern-results-recherche .result-group-recherche .group-items-recherche {
     grid-template-columns: 1fr;
   }
   
-  .results-header {
+  .results-header-recherche {
     flex-direction: column;
     gap: $gap-xs;
     text-align: center;
     
-    .results-info {
+    .results-info-recherche {
       flex-direction: column;
       gap: $gap-xs;
     }
@@ -995,25 +1048,25 @@
 }
 
 @media (max-width: $breakpoint-md) {
-  .search-main-content {
+  .search-main-content-recherche {
     padding: $spacing-sm; // Réduit
   }
   
-  .main-header .page-title {
+  .main-header-recherche .page-title-recherche {
     font-size: calc(#{$font-size-h3} - 4px); // Plus petit sur mobile
   }
   
-  .modern-results .result-item {
+  .modern-results-recherche .result-item-recherche {
     padding: $padding-xs; // Réduit
   }
 }
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-  .result-item,
-  .dropdown-trigger,
-  .search-btn-sidebar,
-  .reset-btn-sidebar {
+  .result-item-recherche,
+  .dropdown-trigger-recherche,
+  .search-btn-sidebar-recherche,
+  .reset-btn-sidebar-recherche {
     transition: none;
     
     &:hover {
@@ -1021,8 +1074,7 @@
     }
   }
   
-  .spinner i {
+  .spinner-recherche i {
     animation: none;
   }
 }
-
