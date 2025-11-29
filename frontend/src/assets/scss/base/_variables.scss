@@ -68,7 +68,7 @@ $color-tertiary-light: #75162D; // Burgundy en version « light » pour cette fa
 $color-tertiary-dark: #2C0008;  // Quasi noir vin pour les ombres très profondes
 
 // Couleurs neutres (inchangées)
-$color-white: #FFFFFF;
+$color-white: #fefefe;
 $color-black: #000000;
 
 // Couleurs de fond
@@ -268,6 +268,14 @@ $z-index-toast: 1070;
   color: $color-text-muted;
   margin-bottom: $margin-xs;
 }
+
+@mixin typography-p4 {
+  font-size: $font-size-p4;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
+  color: $color-text-muted;
+  margin-bottom: $margin-xs;
+} 
 
 // Typographie Cinzel pour titres spéciaux
 @mixin typography-cinzel-h1 {
@@ -573,6 +581,14 @@ $z-index-toast: 1070;
 @mixin typography-playfair-h3 {
   @include playfair-bold;
   font-size: $font-size-h3;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $margin-sm;
+}
+
+@mixin typography-playfair-p4 {
+  @include playfair-bold;
+  font-size: $font-size-p4;
   line-height: $line-height-tight;
   color: $color-text-primary;
   margin-bottom: $margin-sm;
