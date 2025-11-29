@@ -1,17 +1,17 @@
 <template>
-  <div class="app-wrapper-global">
+  <div class="app-wrapper-global-recherche">
     <!-- Sidebar latérale -->
-    <div class="search-sidebar">
-      <div class="sidebar-header">
-        <h2 class="sidebar-title">Filtres</h2>
-        <p class="sidebar-subtitle">Affinez votre recherche</p>
+    <div class="search-sidebar-recherche">
+      <div class="sidebar-header-recherche">
+        <h2 class="sidebar-title-recherche">Filtres</h2>
+        <p class="sidebar-subtitle-recherche">Affinez votre recherche</p>
       </div>
 
       <!-- Section Projet -->
-      <div class="filter-section">
-        <h3 class="section-title"><i class="fas fa-folder"></i> Projet</h3>
-        <div class="filter-group">
-          <select v-model="criteres.projetId" class="filter-select" @change="onProjetChange">
+      <div class="filter-section-recherche">
+        <h3 class="section-title-recherche"><i class="fas fa-folder"></i> Projet</h3>
+        <div class="filter-group-recherche">
+          <select v-model="criteres.projetId" class="filter-select-recherche" @change="onProjetChange">
             <option value="">Tous les projets</option>
             <option 
               v-for="projet in projets" 
@@ -25,29 +25,29 @@
       </div>
 
       <!-- Section Types -->
-      <div class="filter-section">
-        <h3 class="section-title"><i class="fas fa-bullseye"></i> Types</h3>
-        <div class="filter-group">
-          <div class="filter-dropdown">
-            <button @click="toggleTypesDropdown" class="dropdown-trigger" :class="{ open: showTypesDropdown }">
-              <span class="dropdown-text">{{ getTypesDisplayText() }}</span>
-              <i class="fas fa-chevron-down dropdown-icon"></i>
+      <div class="filter-section-recherche">
+        <h3 class="section-title-recherche"><i class="fas fa-bullseye"></i> Types</h3>
+        <div class="filter-group-recherche">
+          <div class="filter-dropdown-recherche">
+            <button @click="toggleTypesDropdown" class="dropdown-trigger-recherche" :class="{ open: showTypesDropdown }">
+              <span class="dropdown-text-recherche">{{ getTypesDisplayText() }}</span>
+              <i class="fas fa-chevron-down dropdown-icon-recherche"></i>
             </button>
-            <div v-if="showTypesDropdown" class="dropdown-menu">
-              <div class="dropdown-options">
-                <label class="dropdown-option">
+            <div v-if="showTypesDropdown" class="dropdown-menu-recherche">
+              <div class="dropdown-options-recherche">
+                <label class="dropdown-option-recherche">
                   <input type="checkbox" value="scenes" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
                   <i class="fas fa-film"></i> Scènes
                 </label>
-                <label class="dropdown-option">
+                <label class="dropdown-option-recherche">
                   <input type="checkbox" value="personnages" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
                   <i class="fas fa-users"></i> Personnages
                 </label>
-                <label class="dropdown-option">
+                <label class="dropdown-option-recherche">
                   <input type="checkbox" value="lieux" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
                   <i class="fas fa-landmark"></i> Lieux
                 </label>
-                <label class="dropdown-option">
+                <label class="dropdown-option-recherche">
                   <input type="checkbox" value="plateaux" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
                   <i class="fas fa-theater-masks"></i> Plateaux
                 </label>
@@ -58,17 +58,17 @@
       </div>
 
       <!-- Section Statuts -->
-      <div class="filter-section">
-        <h3 class="section-title"><i class="fas fa-chart-bar"></i> Statuts</h3>
-        <div class="filter-group">
-          <div class="filter-dropdown">
-            <button @click="toggleStatutsDropdown" class="dropdown-trigger" :class="{ open: showStatutsDropdown }">
-              <span class="dropdown-text">{{ getStatutsDisplayText() }}</span>
-              <i class="fas fa-chevron-down dropdown-icon"></i>
+      <div class="filter-section-recherche">
+        <h3 class="section-title-recherche"><i class="fas fa-chart-bar"></i> Statuts</h3>
+        <div class="filter-group-recherche">
+          <div class="filter-dropdown-recherche">
+            <button @click="toggleStatutsDropdown" class="dropdown-trigger-recherche" :class="{ open: showStatutsDropdown }">
+              <span class="dropdown-text-recherche">{{ getStatutsDisplayText() }}</span>
+              <i class="fas fa-chevron-down dropdown-icon-recherche"></i>
             </button>
-            <div v-if="showStatutsDropdown" class="dropdown-menu">
-              <div class="dropdown-options">
-                <label v-for="statut in statutsDisponibles" :key="statut" class="dropdown-option">
+            <div v-if="showStatutsDropdown" class="dropdown-menu-recherche">
+              <div class="dropdown-options-recherche">
+                <label v-for="statut in statutsDisponibles" :key="statut" class="dropdown-option-recherche">
                   <input type="checkbox" :value="statut" v-model="criteres.statuts" @change="updateStatutsSelection" />
                   {{ formatStatut(statut) }}
                 </label>
@@ -79,24 +79,24 @@
       </div>
 
       <!-- Section Dates -->
-      <div class="filter-section">
-        <h3 class="section-title"><i class="fas fa-calendar-alt"></i> Dates</h3>
-        <div class="filter-group">
+      <div class="filter-section-recherche">
+        <h3 class="section-title-recherche"><i class="fas fa-calendar-alt"></i> Dates</h3>
+        <div class="filter-group-recherche">
           <!-- Date début -->
-          <div class="filter-dropdown">
-            <button @click="toggleDateDebutDropdown" class="dropdown-trigger" :class="{ open: showDateDebutDropdown }">
-              <span class="dropdown-text">{{ getDateDebutDisplayText() }}</span>
-              <i class="fas fa-chevron-down dropdown-icon"></i>
+          <div class="filter-dropdown-recherche">
+            <button @click="toggleDateDebutDropdown" class="dropdown-trigger-recherche" :class="{ open: showDateDebutDropdown }">
+              <span class="dropdown-text-recherche">{{ getDateDebutDisplayText() }}</span>
+              <i class="fas fa-chevron-down dropdown-icon-recherche"></i>
             </button>
-            <div v-if="showDateDebutDropdown" class="dropdown-menu">
-              <div class="dropdown-options">
+            <div v-if="showDateDebutDropdown" class="dropdown-menu-recherche">
+              <div class="dropdown-options-recherche">
                 <input 
                   type="date" 
                   v-model="criteres.dateDebut" 
                   @change="updateDateDebut"
-                  class="date-input" 
+                  class="date-input-recherche" 
                 />
-                <button @click="clearDateDebut" class="clear-date-btn">
+                <button @click="clearDateDebut" class="clear-date-btn-recherche">
                   <i class="fas fa-times"></i> Effacer
                 </button>
               </div>
@@ -104,20 +104,20 @@
           </div>
 
           <!-- Date fin -->
-          <div class="filter-dropdown">
-            <button @click="toggleDateFinDropdown" class="dropdown-trigger" :class="{ open: showDateFinDropdown }">
-              <span class="dropdown-text">{{ getDateFinDisplayText() }}</span>
-              <i class="fas fa-chevron-down dropdown-icon"></i>
+          <div class="filter-dropdown-recherche">
+            <button @click="toggleDateFinDropdown" class="dropdown-trigger-recherche" :class="{ open: showDateFinDropdown }">
+              <span class="dropdown-text-recherche">{{ getDateFinDisplayText() }}</span>
+              <i class="fas fa-chevron-down dropdown-icon-recherche"></i>
             </button>
-            <div v-if="showDateFinDropdown" class="dropdown-menu">
-              <div class="dropdown-options">
+            <div v-if="showDateFinDropdown" class="dropdown-menu-recherche">
+              <div class="dropdown-options-recherche">
                 <input 
                   type="date" 
                   v-model="criteres.dateFin" 
                   @change="updateDateFin"
-                  class="date-input" 
+                  class="date-input-recherche" 
                 />
-                <button @click="clearDateFin" class="clear-date-btn">
+                <button @click="clearDateFin" class="clear-date-btn-recherche">
                   <i class="fas fa-times"></i> Effacer
                 </button>
               </div>
@@ -127,10 +127,10 @@
       </div>
 
       <!-- Section Regroupement -->
-      <div class="filter-section">
-        <h3 class="section-title"><i class="fas fa-layer-group"></i> Regroupement</h3>
-        <div class="filter-group">
-          <select v-model="criteres.regroupement" class="filter-select">
+      <div class="filter-section-recherche">
+        <h3 class="section-title-recherche"><i class="fas fa-layer-group"></i> Regroupement</h3>
+        <div class="filter-group-recherche">
+          <select v-model="criteres.regroupement" class="filter-select-recherche">
             <option value="">Aucun regroupement</option>
             <option value="plateau">Plateau</option>
             <option value="lieu">Lieu</option>
@@ -141,12 +141,12 @@
       </div>
 
       <!-- Boutons d'action -->
-      <div class="sidebar-actions">
-        <button @click="rechercher" class="search-btn-sidebar" :disabled="chargement">
+      <div class="sidebar-actions-recherche">
+        <button @click="rechercher" class="search-btn-sidebar-recherche" :disabled="chargement">
           <i :class="chargement ? 'fas fa-spinner fa-spin' : 'fas fa-search'"></i>
           {{ chargement ? 'Recherche...' : 'Lancer la recherche' }}
         </button>
-        <button @click="reinitialiser" class="reset-btn-sidebar">
+        <button @click="reinitialiser" class="reset-btn-sidebar-recherche">
           <i class="fas fa-undo"></i>
           Tout réinitialiser
         </button>
@@ -154,39 +154,39 @@
     </div>
 
     <!-- Contenu principal à droite -->
-    <div class="search-body">
-      <div class="search-main-content">
+    <div class="search-body-recherche">
+      <div class="search-main-content-recherche">
         <!-- En-tête principal -->
-        <div class="main-header">
-          <h1 class="page-title"><i class="fas fa-search"></i> Recherche Multiple</h1>
-          <p class="page-subtitle">Trouvez des scènes, personnages, lieux et plateaux selon vos critères</p>
+        <div class="main-header-recherche">
+          <h1 class="page-title-recherche"><i class="fas fa-search"></i> Recherche Multiple</h1>
+          <p class="page-subtitle-recherche">Trouvez des scènes, personnages, lieux et plateaux selon vos critères</p>
         </div>
 
         <!-- Barre de recherche principale -->
-        <div class="search-bar-main">
-          <div class="search-input-container">
-            <i class="fas fa-search search-icon-main"></i>
+        <div class="search-bar-main-recherche">
+          <div class="search-input-container-recherche">
+            <i class="fas fa-search search-icon-main-recherche"></i>
             <input
               v-model="criteres.termeRecherche"
               type="text"
               placeholder="Rechercher des personnages, lieux, dialogues, titres..."
-              class="search-input-large"
+              class="search-input-large-recherche"
               @keyup.enter="rechercher"
             />
-            <button v-if="criteres.termeRecherche" @click="criteres.termeRecherche = ''" class="clear-search-btn-main">
+            <button v-if="criteres.termeRecherche" @click="criteres.termeRecherche = ''" class="clear-search-btn-main-recherche">
               <i class="fas fa-times"></i>
             </button>
           </div>
         </div>
 
         <!-- Indicateur de filtre projet actif -->
-        <div v-if="criteres.projetId" class="projet-filter-indicator">
-          <div class="projet-indicator-content">
-            <span class="projet-label">
+        <div v-if="criteres.projetId" class="projet-filter-indicator-recherche">
+          <div class="projet-indicator-content-recherche">
+            <span class="projet-label-recherche">
               <i class="fas fa-folder"></i> Projet sélectionné :
             </span>
-            <span class="projet-nom">{{ getProjetNom() }}</span>
-            <button @click="reinitialiserProjet" class="clear-projet-btn">
+            <span class="projet-nom-recherche">{{ getProjetNom() }}</span>
+            <button @click="reinitialiserProjet" class="clear-projet-btn-recherche">
               <i class="fas fa-times"></i>
               Changer de projet
             </button>
@@ -194,9 +194,9 @@
         </div>
 
         <!-- Résultats -->
-        <div class="results-section">
-          <div v-if="resultats.length === 0 && !chargement" class="empty-state">
-            <div class="empty-icon">
+        <div class="results-section-recherche">
+          <div v-if="resultats.length === 0 && !chargement" class="empty-state-recherche">
+            <div class="empty-icon-recherche">
               <i class="fas fa-search"></i>
             </div>
             <h3>Aucun résultat</h3>
@@ -208,121 +208,121 @@
             </p>
           </div>
 
-          <div v-else-if="chargement" class="loading-state">
-            <div class="spinner">
+          <div v-else-if="chargement" class="loading-state-recherche">
+            <div class="spinner-recherche">
               <i class="fas fa-spinner fa-spin"></i>
             </div>
             <p>Recherche en cours...</p>
           </div>
 
-          <div v-else class="results-container modern-results">
-            <div class="results-header">
+          <div v-else class="results-container-recherche modern-results-recherche">
+            <div class="results-header-recherche">
               <h2>
                 <i class="fas fa-list-alt"></i> Résultats ({{ resultats.length }})
               </h2>
-              <div class="results-info">
-                <span v-if="criteres.projetId" class="projet-info">
+              <div class="results-info-recherche">
+                <span v-if="criteres.projetId" class="projet-info-recherche">
                   <i class="fas fa-folder"></i> Projet : <strong>{{ getProjetNom() }}</strong> 
                 </span>
-                <span v-if="criteres.regroupement" class="regroupement-info">
+                <span v-if="criteres.regroupement" class="regroupement-info-recherche">
                   • <i class="fas fa-layer-group"></i> Groupés par : <strong>{{ getRegroupementLabel() }}</strong>
                 </span>
               </div>
-              <button @click="reinitialiser" class="reset-all-btn">
+              <button @click="reinitialiser" class="reset-all-btn-recherche">
                 <i class="fas fa-undo"></i>
                 Tout réinitialiser
               </button>
             </div>
             
             <!-- Liste des résultats groupés -->
-            <div class="results-list">
+            <div class="results-list-recherche">
               <div
                 v-for="(groupe, index) in resultatsGroupes"
                 :key="index"
-                class="result-group"
+                class="result-group-recherche"
               >
                 <!-- En-tête de groupe -->
                 <div
                   v-if="groupe.estGroupe"
-                  class="group-header"
+                  class="group-header-recherche"
                   :class="getGroupHeaderClass(groupe.type)"
                 >
-                  <span class="group-icon">{{ getGroupIcon(groupe.type) }}</span>
-                  <span class="group-title">{{ groupe.titre }}</span>
-                  <span class="group-count">({{ groupe.elements.length }} éléments)</span>
+                  <span class="group-icon-recherche">{{ getGroupIcon(groupe.type) }}</span>
+                  <span class="group-title-recherche">{{ groupe.titre }}</span>
+                  <span class="group-count-recherche">({{ groupe.elements.length }} éléments)</span>
                 </div>
 
                 <!-- Éléments du groupe -->
                 <div
                   v-for="(resultat, resultIndex) in groupe.elements"
                   :key="resultat.id + '-' + resultIndex"
-                  class="result-item"
+                  class="result-item-recherche"
                   :class="'type-' + resultat.type"
                 >
                   <router-link 
                     :to="getDetailLink(resultat)"
-                    class="result-link"
+                    class="result-link-recherche"
                   >
-                    <div class="result-content">
+                    <div class="result-content-recherche">
                       
                       <!-- Scène -->
-                      <div v-if="resultat.type === 'scene'" class="scene-result">
-                        <div class="result-header">
-                          <span class="result-type-badge scene-badge">
+                      <div v-if="resultat.type === 'scene'" class="scene-result-recherche">
+                        <div class="result-header-recherche">
+                          <span class="result-type-badge-recherche scene-badge-recherche">
                             <i class="fas fa-film"></i> Scène
                           </span>
-                          <h3 class="result-title">{{ resultat.titre }}</h3>
-                          <span class="result-status" :class="'status-' + resultat.statut">
+                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
+                          <span class="result-status-recherche" :class="'status-' + resultat.statut">
                             {{ formatStatut(resultat.statut) }}
                           </span>
                         </div>
                         
-                        <div class="result-details">
-                          <div class="detail-row">
-                            <span class="detail-label">
+                        <div class="result-details-recherche">
+                          <div class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-calendar-alt"></i> Date :
                             </span>
                             <span>{{ formatDate(resultat.dateTournage) }}</span>
                           </div>
-                          <div class="detail-row">
-                            <span class="detail-label">
+                          <div class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-clock"></i> Heure :
                             </span>
                             <span>{{ resultat.heureDebut }} - {{ resultat.heureFin }}</span>
                           </div>
-                          <div v-if="resultat.lieuNom" class="detail-row">
-                            <span class="detail-label">
+                          <div v-if="resultat.lieuNom" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-landmark"></i> Lieu :
                             </span>
                             <span>{{ resultat.lieuNom }}</span>
                           </div>
-                          <div v-if="resultat.plateauNom" class="detail-row">
-                            <span class="detail-label">
+                          <div v-if="resultat.plateauNom" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-theater-masks"></i> Plateau :
                             </span>
                             <span>{{ resultat.plateauNom }}</span>
                           </div>
-                          <div v-if="resultat.personnageNom" class="detail-row">
-                            <span class="detail-label">
+                          <div v-if="resultat.personnageNom" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-users"></i> Personnage :
                             </span>
                             <span>{{ resultat.personnageNom }}</span>
-                            <span v-if="resultat.comedienNom" class="comedien">
+                            <span v-if="resultat.comedienNom" class="comedien-recherche">
                               ({{ resultat.comedienNom }})
                             </span>
                           </div>
                         </div>
 
                         <!-- Dialogues -->
-                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section">
-                          <div class="dialogues-title">
+                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
+                          <div class="dialogues-title-recherche">
                             <i class="fas fa-comments"></i> Dialogues :
                           </div>
-                          <div class="dialogues-list">
+                          <div class="dialogues-list-recherche">
                             <div
                               v-for="(dialogue, dialogueIndex) in resultat.dialogues"
                               :key="dialogueIndex"
-                              class="dialogue-item"
+                              class="dialogue-item-recherche"
                             >
                               "{{ dialogue }}"
                             </div>
@@ -330,141 +330,141 @@
                         </div>
 
                         <!-- Hiérarchie -->
-                        <div class="hierarchy">
-                          <span v-if="resultat.projetTitre" class="hierarchy-item">
+                        <div class="hierarchy-recherche">
+                          <span v-if="resultat.projetTitre" class="hierarchy-item-recherche">
                             <i class="fas fa-folder"></i> {{ resultat.projetTitre }}
                           </span>
-                          <span v-else class="hierarchy-item sans-projet">
+                          <span v-else class="hierarchy-item-recherche sans-projet-recherche">
                             <i class="fas fa-info-circle"></i> Sans projet
                           </span>
-                          <span v-if="resultat.episodeTitre" class="hierarchy-item">
+                          <span v-if="resultat.episodeTitre" class="hierarchy-item-recherche">
                             <i class="fas fa-film"></i> {{ resultat.episodeTitre }}
                           </span>
-                          <span v-if="resultat.sequenceTitre" class="hierarchy-item">
+                          <span v-if="resultat.sequenceTitre" class="hierarchy-item-recherche">
                             <i class="fas fa-list-ol"></i> {{ resultat.sequenceTitre }}
                           </span>
                         </div>
 
                         <!-- Indicateur de clic -->
-                        <div class="view-details">
-                          <span class="view-details-text">
+                        <div class="view-details-recherche">
+                          <span class="view-details-text-recherche">
                             <i class="fas fa-book-open"></i> Voir tous les détails →
                           </span>
                         </div>
                       </div>
 
                       <!-- Personnage -->
-                      <div v-else-if="resultat.type === 'personnage'" class="personnage-result">
-                        <div class="result-header">
-                          <span class="result-type-badge personnage-badge">
+                      <div v-else-if="resultat.type === 'personnage'" class="personnage-result-recherche">
+                        <div class="result-header-recherche">
+                          <span class="result-type-badge-recherche personnage-badge-recherche">
                             <i class="fas fa-users"></i> Personnage
                           </span>
-                          <h3 class="result-title">{{ resultat.titre }}</h3>
+                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
                         </div>
-                        <div class="result-details">
-                          <div v-if="resultat.description" class="detail-row">
-                            <span class="detail-label">
+                        <div class="result-details-recherche">
+                          <div v-if="resultat.description" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-file-alt"></i> Description :
                             </span>
                             <span>{{ resultat.description }}</span>
                           </div>
-                          <div v-if="resultat.comedienNom" class="detail-row">
-                            <span class="detail-label">
+                          <div v-if="resultat.comedienNom" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-user-tie"></i> Comédien :
                             </span>
                             <span>{{ resultat.comedienNom }}</span>
                           </div>
-                          <div v-if="resultat.projetTitre" class="detail-row">
-                            <span class="detail-label">
+                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-folder"></i> Projet :
                             </span>
                             <span>{{ resultat.projetTitre }}</span>
                           </div>
-                          <div v-else class="detail-row">
-                            <span class="detail-label">
+                          <div v-else class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-info-circle"></i> Projet :
                             </span>
-                            <span class="sans-projet">Sans projet</span>
+                            <span class="sans-projet-recherche">Sans projet</span>
                           </div>
                         </div>
-                        <div class="view-details">
-                          <span class="view-details-text">
+                        <div class="view-details-recherche">
+                          <span class="view-details-text-recherche">
                             <i class="fas fa-user-circle"></i> Voir fiche personnage →
                           </span>
                         </div>
                       </div>
 
                       <!-- Lieu -->
-                      <div v-else-if="resultat.type === 'lieu'" class="lieu-result">
-                        <div class="result-header">
-                          <span class="result-type-badge lieu-badge">
+                      <div v-else-if="resultat.type === 'lieu'" class="lieu-result-recherche">
+                        <div class="result-header-recherche">
+                          <span class="result-type-badge-recherche lieu-badge-recherche">
                             <i class="fas fa-landmark"></i> Lieu
                           </span>
-                          <h3 class="result-title">{{ resultat.titre }}</h3>
+                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
                         </div>
-                        <div class="result-details">
-                          <div v-if="resultat.description" class="detail-row">
-                            <span class="detail-label">
+                        <div class="result-details-recherche">
+                          <div v-if="resultat.description" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-file-alt"></i> Description :
                             </span>
                             <span>{{ resultat.description }}</span>
                           </div>
-                          <div v-if="resultat.projetTitre" class="detail-row">
-                            <span class="detail-label">
+                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-folder"></i> Projet :
                             </span>
                             <span>{{ resultat.projetTitre }}</span>
                           </div>
-                          <div v-else class="detail-row">
-                            <span class="detail-label">
+                          <div v-else class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-info-circle"></i> Projet :
                             </span>
-                            <span class="sans-projet">Sans projet</span>
+                            <span class="sans-projet-recherche">Sans projet</span>
                           </div>
                         </div>
-                        <div class="view-details">
-                          <span class="view-details-text">
+                        <div class="view-details-recherche">
+                          <span class="view-details-text-recherche">
                             <i class="fas fa-landmark"></i> Voir fiche lieu →
                           </span>
                         </div>
                       </div>
 
                       <!-- Plateau -->
-                      <div v-else-if="resultat.type === 'plateau'" class="plateau-result">
-                        <div class="result-header">
-                          <span class="result-type-badge plateau-badge">
+                      <div v-else-if="resultat.type === 'plateau'" class="plateau-result-recherche">
+                        <div class="result-header-recherche">
+                          <span class="result-type-badge-recherche plateau-badge-recherche">
                             <i class="fas fa-theater-masks"></i> Plateau
                           </span>
-                          <h3 class="result-title">{{ resultat.titre }}</h3>
+                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
                         </div>
-                        <div class="result-details">
-                          <div v-if="resultat.description" class="detail-row">
-                            <span class="detail-label">
+                        <div class="result-details-recherche">
+                          <div v-if="resultat.description" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-file-alt"></i> Description :
                             </span>
                             <span>{{ resultat.description }}</span>
                           </div>
-                          <div v-if="resultat.lieuNom" class="detail-row">
-                            <span class="detail-label">
+                          <div v-if="resultat.lieuNom" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-landmark"></i> Lieu :
                             </span>
                             <span>{{ resultat.lieuNom }}</span>
                           </div>
-                          <div v-if="resultat.projetTitre" class="detail-row">
-                            <span class="detail-label">
+                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-folder"></i> Projet :
                             </span>
                             <span>{{ resultat.projetTitre }}</span>
                           </div>
-                          <div v-else class="detail-row">
-                            <span class="detail-label">
+                          <div v-else class="detail-row-recherche">
+                            <span class="detail-label-recherche">
                               <i class="fas fa-info-circle"></i> Projet :
                             </span>
-                            <span class="sans-projet">Sans projet</span>
+                            <span class="sans-projet-recherche">Sans projet</span>
                           </div>
                         </div>
-                        <div class="view-details">
-                          <span class="view-details-text">
+                        <div class="view-details-recherche">
+                          <span class="view-details-text-recherche">
                             <i class="fas fa-theater-masks"></i> Voir fiche plateau →
                           </span>
                         </div>
@@ -591,7 +591,7 @@ export default {
     },
     
     handleClickOutside(event) {
-      if (!event.target.closest('.filter-dropdown')) {
+      if (!event.target.closest('.filter-dropdown-recherche')) {
         this.showTypesDropdown = false
         this.showStatutsDropdown = false
         this.showDateDebutDropdown = false
@@ -750,7 +750,7 @@ export default {
     },
     
     getGroupHeaderClass(type) {
-      return `group-header-${type}`
+      return `group-header-${type}-recherche`
     },
     
     getDetailLink(resultat) {
@@ -827,3 +827,4 @@ export default {
   }
 }
 </script>
+
