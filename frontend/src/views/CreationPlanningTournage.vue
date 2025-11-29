@@ -513,6 +513,7 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .creation-planning-container {
   min-height: 100vh;

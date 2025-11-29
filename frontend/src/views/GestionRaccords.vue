@@ -1,289 +1,543 @@
 <template>
-  <div class="gestion-raccords">
-    <div class="header">
-      <h1>Gestion des Raccords</h1>
-      <button @click="showForm = !showForm" class="btn btn-primary">
-        {{ showForm ? 'Annuler' : 'Nouveau Raccord' }}
-      </button>
-    </div>
+  <div class="app-wrapper-global-crea-raccord">
+    <!-- Sidebar latérale -->
+    <div class="creation-sidebar-crea-raccord">
+      <div class="sidebar-header-crea-raccord">
+        <h2 class="sidebar-title-crea-raccord">Gestion Raccords</h2>
+        <p class="sidebar-subtitle-crea-raccord">Gérez les raccords entre scènes</p>
+      </div>
 
-    <!-- Formulaire de création/modification -->
-    <div v-if="showForm" class="form-container">
-      <h2>{{ editingRaccord ? 'Modifier le Raccord' : 'Nouveau Raccord' }}</h2>
-      <form @submit.prevent="submitForm" class="raccord-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Projet *</label>
-            <select v-model="formData.projetId" @change="chargerEpisodesParProjet" required>
-              <option value="">Sélectionner un projet</option>
-              <option v-for="projet in projets" :key="projet.id" :value="projet.id">
-                {{ projet.titre }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Épisode *</label>
-            <select v-model="formData.episodeId" @change="chargerSequencesParEpisode" :disabled="!formData.projetId" required>
-              <option value="">Sélectionner un épisode</option>
-              <option v-for="episode in episodesParProjet" :key="episode.idEpisode" :value="episode.idEpisode">
-                Épisode {{ episode.ordre }}: {{ episode.titre }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Séquence *</label>
-            <select v-model="formData.sequenceId" @change="chargerScenesParSequence" :disabled="!formData.episodeId" required>
-              <option value="">Sélectionner une séquence</option>
-              <option v-for="sequence in sequencesParEpisode" :key="sequence.idSequence" :value="sequence.idSequence">
-                Séquence {{ sequence.ordre }}: {{ sequence.titre }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Scène Source *</label>
-            <select v-model="formData.sceneSourceId" :disabled="!formData.sequenceId" required>
-              <option value="">Sélectionner une scène source</option>
-              <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
-                Scène {{ scene.ordre }}: {{ scene.titre }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Scène Cible *</label>
-            <select v-model="formData.sceneCibleId" :disabled="!formData.sequenceId" required>
-              <option value="">Sélectionner une scène cible</option>
-              <option v-if="formData.sceneSourceId" :value="formData.sceneSourceId">
-                🔄 Même scène (continuité de tournage)
-              </option>
-              <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
-                Scène {{ scene.ordre }}: {{ scene.titre }}
-              </option>
-            </select>
-            <small v-if="formData.sceneSourceId && formData.sceneCibleId === formData.sceneSourceId" class="same-scene-note">
-              ⚠️ Raccord pour continuité dans la même scène (ex: tournage sur plusieurs jours)
-            </small>
-          </div>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label>Personnage</label>
-            <select v-model="formData.personnageId" @change="updateComedienFromPersonnage">
-              <option value="">Aucun personnage</option>
-              <option v-for="personnage in personnages" :key="personnage.id" :value="personnage.id">
-                {{ personnage.nom }} 
-                <span v-if="personnage.comedienNom">- {{ personnage.comedienNom }}</span>
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Comédien (automatique)</label>
-            <input 
-              type="text" 
-              :value="getComedienNameFromPersonnage(formData.personnageId)" 
-              disabled 
-              class="disabled-input"
-              placeholder="Sélectionnez un personnage"
-            >
-            <small class="field-note">Le comédien est automatiquement lié au personnage sélectionné</small>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Type de Raccord *</label>
-            <select v-model="formData.typeRaccordId" required>
-              <option value="">Sélectionner un type</option>
-              <option v-for="type in typesRaccord" :key="type.id" :value="type.id">
-                {{ type.nomType }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Statut</label>
-            <select v-model="formData.statutRaccordId">
-              <option v-for="statut in statutsRaccord" :key="statut.id" :value="statut.id">
-                {{ statut.nomStatut }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Description</label>
-          <textarea v-model="formData.description" rows="3" placeholder="Description du raccord..."></textarea>
-        </div>
-
-        <div class="form-group checkbox-group">
-          <label>
-            <input type="checkbox" v-model="formData.estCritique">
-            Raccord critique
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label>Images de référence</label>
-          <input 
-            type="file" 
-            multiple 
-            accept="image/*" 
-            @change="handleImageUpload"
-            class="file-input"
+      <!-- Section Actions Rapides -->
+      <div class="sidebar-section-crea-raccord">
+        <h3 class="section-title-crea-raccord"><i class="fas fa-bolt"></i> Actions Rapides</h3>
+        <div class="sidebar-actions-crea-raccord">
+          <button 
+            @click="goToForm" 
+            class="sidebar-btn-crea-raccord" 
+            :class="{ active: activeTab === 'form' && !editingRaccord }"
           >
-          <div v-if="previewImages.length" class="image-previews">
-            <div v-for="(preview, index) in previewImages" :key="index" class="image-preview">
-              <img :src="preview" alt="Preview">
-              <button @click="removePreview(index)" class="remove-btn">×</button>
-            </div>
+            <i class="fas fa-plus"></i>
+            Nouveau raccord
+          </button>
+          <button 
+            @click="goToList" 
+            class="sidebar-btn-crea-raccord"
+            :class="{ active: activeTab === 'list' }"
+          >
+            <i class="fas fa-list"></i>
+            Voir la liste
+          </button>
+        </div>
+      </div>
+
+      <!-- Section Filtres -->
+      <div class="sidebar-section-crea-raccord">
+        <h3 class="section-title-crea-raccord"><i class="fas fa-filter"></i> Filtres</h3>
+        <div class="filter-group-crea-raccord">
+          <div class="filter-item-crea-raccord">
+            <label>Scène</label>
+            <select v-model="selectedScene" class="filter-select-crea-raccord">
+              <option value="">Toutes les scènes</option>
+              <option v-for="scene in scenes" :key="scene.id" :value="scene.id">
+                {{ scene.titre }} (Scène {{ scene.numero }})
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-item-crea-raccord">
+            <label>Personnage</label>
+            <select v-model="selectedPersonnage" class="filter-select-crea-raccord">
+              <option value="">Tous les personnages</option>
+              <option v-for="personnage in personnages" :key="personnage.id" :value="personnage.id">
+                {{ personnage.nom }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="filter-item-crea-raccord">
+            <label>Comédien</label>
+            <select v-model="selectedComedien" class="filter-select-crea-raccord">
+              <option value="">Tous les comédiens</option>
+              <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
+                {{ comedien.nom }}
+              </option>
+            </select>
           </div>
         </div>
+      </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" :disabled="loading">
-            {{ loading ? 'Enregistrement...' : (editingRaccord ? 'Modifier' : 'Créer') }}
-          </button>
-          <button type="button" @click="cancelForm" class="btn btn-secondary">
-            Annuler
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Filtres -->
-    <div class="filters-section">
-      <h3>Filtrer les raccords</h3>
-      <div class="filters">
-        <div class="filter-group">
-          <label>Scène</label>
-          <select v-model="selectedScene" @change="loadRaccords">
-            <option value="">Toutes les scènes</option>
-            <option v-for="scene in scenes" :key="scene.id" :value="scene.id">
-              {{ scene.titre }} (Scène {{ scene.numero }})
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label>Personnage</label>
-          <select v-model="selectedPersonnage" @change="loadRaccords">
-            <option value="">Tous les personnages</option>
-            <option v-for="personnage in personnages" :key="personnage.id" :value="personnage.id">
-              {{ personnage.nom }}
-            </option>
-          </select>
-        </div>
-        
-        <div class="filter-group">
-          <label>Comédien</label>
-          <select v-model="selectedComedien" @change="loadRaccords">
-            <option value="">Tous les comédiens</option>
-            <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
-              {{ comedien.nom }}
-            </option>
-          </select>
+      <!-- Section Statistiques -->
+      <div class="sidebar-section-crea-raccord">
+        <h3 class="section-title-crea-raccord"><i class="fas fa-chart-bar"></i> Statistiques</h3>
+        <div class="stats-crea-raccord">
+          <div class="stat-item-crea-raccord">
+            <span class="stat-number-crea-raccord">{{ raccords.length }}</span>
+            <span class="stat-label-crea-raccord">Total raccords</span>
+          </div>
+          <div class="stat-item-crea-raccord">
+            <span class="stat-number-crea-raccord">{{ getRaccordsCritiques }}</span>
+            <span class="stat-label-crea-raccord">Critiques</span>
+          </div>
+          <div class="stat-item-crea-raccord">
+            <span class="stat-number-crea-raccord">{{ getTypesRaccordsCount }}</span>
+            <span class="stat-label-crea-raccord">Types</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Liste des raccords groupés -->
-    <div class="raccords-section">
-      <h3>Liste des raccords</h3>
-      
-      <div v-if="loadingRaccords" class="loading">Chargement...</div>
-      
-      <div v-else class="scene-groups">
-        <div v-for="groupe in groupesRaccords" :key="groupe.sceneSourceId + '-' + groupe.sceneCibleId" class="scene-group">
-          
-          <!-- En-tête du groupe -->
-          <div class="scene-group-header">
-            <h4 class="group-title">
-              <i class="fas fa-arrow-right"></i>
-              {{ groupe.titreGroupe }}
-            </h4>
-            <span class="badge-count">{{ groupe.raccords.length }} raccord(s)</span>
+    <!-- Contenu principal à droite -->
+    <div class="creation-body-crea-raccord">
+      <div class="creation-main-content-crea-raccord">
+        
+        <!-- En-tête principal -->
+        <div class="main-header-crea-raccord">
+          <h1 class="page-title-crea-raccord"><i class="fas fa-link"></i> Gestion des Raccords</h1>
+          <p class="page-subtitle-crea-raccord">Créez et gérez les raccords de continuité entre vos scènes</p>
+        </div>
+
+        <!-- Système d'onglets -->
+        <div class="tabs-container-crea-raccord">
+          <div class="tabs-header-crea-raccord">
+            <button 
+              @click="activeTab = 'form'"
+              :class="['tab-btn-crea-raccord', { active: activeTab === 'form' }]"
+            >
+              <i :class="editingRaccord ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              {{ editingRaccord ? 'Modifier raccord' : 'Créer raccord' }}
+            </button>
+            <button 
+              @click="activeTab = 'list'"
+              :class="['tab-btn-crea-raccord', { active: activeTab === 'list' }]"
+            >
+              <i class="fas fa-list"></i>
+              Liste raccords
+            </button>
           </div>
+          
+          <div class="tabs-content-crea-raccord">
+            <!-- Indicateur visuel de l'onglet actif -->
+            <div class="tab-indicator-crea-raccord" :style="getTabIndicatorStyle"></div>
+            
+            <!-- Contenu de l'onglet Formulaire -->
+            <div v-show="activeTab === 'form'" class="tab-pane-crea-raccord">
+              <!-- Formulaire de création/modification -->
+              <div class="form-container-crea-raccord">
+                <div class="form-header-crea-raccord">
+                  <h3>
+                    <i :class="editingRaccord ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    {{ editingRaccord ? 'Modifier le raccord' : 'Créer un nouveau raccord' }}
+                  </h3>
+                  <button 
+                    v-if="editingRaccord"
+                    @click="goToForm"
+                    class="back-btn-crea-raccord"
+                  >
+                    <i class="fas fa-plus"></i> Nouveau raccord
+                  </button>
+                </div>
 
-          <!-- Liste des raccords dans ce groupe -->
-          <div class="raccords-list">
-            <div v-for="raccord in groupe.raccords" :key="raccord.id" class="raccord-item">
-              
-              <div class="raccord-header">
-                <h5>{{ raccord.typeRaccordNom }}</h5>
-                <span :class="`status-badge status-${raccord.statutRaccordNom.toLowerCase()}`">
-                  {{ raccord.statutRaccordNom }}
-                </span>
-              </div>
+                <form @submit.prevent="submitForm" class="raccord-form-crea-raccord">
+                  <!-- Hiérarchie Projet -> Épisode -> Séquence -->
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord">
+                      <label for="projetId">Projet *</label>
+                      <select 
+                        id="projetId"
+                        v-model="formData.projetId" 
+                        @change="chargerEpisodesParProjet" 
+                        required
+                        class="search-input-crea-raccord"
+                      >
+                        <option value="">Sélectionner un projet</option>
+                        <option v-for="projet in projets" :key="projet.id" :value="projet.id">
+                          {{ projet.titre }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
 
-              <div class="raccord-info">
-                <p v-if="raccord.personnageNom"><strong>Personnage:</strong> {{ raccord.personnageNom }}</p>
-                <p v-if="raccord.comedienNom"><strong>Comédien:</strong> {{ raccord.comedienNom }}</p>
-                <p class="description">{{ raccord.description }}</p>
-                <p v-if="raccord.estCritique" class="critique">⚠️ Raccord critique</p>
-              </div>
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord">
+                      <label for="episodeId">Épisode *</label>
+                      <select 
+                        id="episodeId"
+                        v-model="formData.episodeId" 
+                        @change="chargerSequencesParEpisode" 
+                        :disabled="!formData.projetId" 
+                        required
+                        class="search-input-crea-raccord"
+                      >
+                        <option value="">Sélectionner un épisode</option>
+                        <option v-for="episode in episodesParProjet" :key="episode.idEpisode" :value="episode.idEpisode">
+                          Épisode {{ episode.ordre }}: {{ episode.titre }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
 
-              <!-- Images du raccord -->
-              <div v-if="raccord.images && raccord.images.length" class="raccord-images">
-                <h6>Images de référence</h6>
-                <div class="images-grid">
-                  <div v-for="image in raccord.images" :key="image.id" class="image-item">
-                    <img 
-                      :src="`/api/raccords/image/${image.cheminFichier}`" 
-                      :alt="image.descriptionImage"
-                      @click="showImageModal(image)"
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord">
+                      <label for="sequenceId">Séquence *</label>
+                      <select 
+                        id="sequenceId"
+                        v-model="formData.sequenceId" 
+                        @change="chargerScenesParSequence" 
+                        :disabled="!formData.episodeId" 
+                        required
+                        class="search-input-crea-raccord"
+                      >
+                        <option value="">Sélectionner une séquence</option>
+                        <option v-for="sequence in sequencesParEpisode" :key="sequence.idSequence" :value="sequence.idSequence">
+                          Séquence {{ sequence.ordre }}: {{ sequence.titre }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Scènes Source et Cible -->
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord">
+                      <label for="sceneSourceId">Scène Source *</label>
+                      <select 
+                        id="sceneSourceId"
+                        v-model="formData.sceneSourceId" 
+                        :disabled="!formData.sequenceId" 
+                        required
+                        class="search-input-crea-raccord"
+                      >
+                        <option value="">Sélectionner une scène source</option>
+                        <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
+                          Scène {{ scene.ordre }}: {{ scene.titre }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="form-group-crea-raccord">
+                      <label for="sceneCibleId">Scène Cible *</label>
+                      <select 
+                        id="sceneCibleId"
+                        v-model="formData.sceneCibleId" 
+                        :disabled="!formData.sequenceId" 
+                        required
+                        class="search-input-crea-raccord"
+                      >
+                        <option value="">Sélectionner une scène cible</option>
+                        <option v-if="formData.sceneSourceId" :value="formData.sceneSourceId">
+                          🔄 Même scène (continuité de tournage)
+                        </option>
+                        <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
+                          Scène {{ scene.ordre }}: {{ scene.titre }}
+                        </option>
+                      </select>
+                      <small v-if="formData.sceneSourceId && formData.sceneCibleId === formData.sceneSourceId" class="same-scene-note-crea-raccord">
+                        ⚠️ Raccord pour continuité dans la même scène (ex: tournage sur plusieurs jours)
+                      </small>
+                    </div>
+                  </div>
+                  
+                  <!-- Personnage et Comédien -->
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord">
+                      <label for="personnageId">Personnage</label>
+                      <select 
+                        id="personnageId"
+                        v-model="formData.personnageId" 
+                        @change="updateComedienFromPersonnage"
+                        class="search-input-crea-raccord"
+                      >
+                        <option value="">Aucun personnage</option>
+                        <option v-for="personnage in personnages" :key="personnage.id" :value="personnage.id">
+                          {{ personnage.nom }} 
+                          <span v-if="personnage.comedienNom">- {{ personnage.comedienNom }}</span>
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="form-group-crea-raccord">
+                      <label for="comedienAuto">Comédien (automatique)</label>
+                      <input 
+                        id="comedienAuto"
+                        type="text" 
+                        :value="getComedienNameFromPersonnage(formData.personnageId)" 
+                        disabled 
+                        class="search-input-crea-raccord disabled-input"
+                        placeholder="Sélectionnez un personnage"
+                      >
+                      <small class="field-note-crea-raccord">Le comédien est automatiquement lié au personnage sélectionné</small>
+                    </div>
+                  </div>
+
+                  <!-- Type et Statut -->
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord">
+                      <label for="typeRaccordId">Type de Raccord *</label>
+                      <select 
+                        id="typeRaccordId"
+                        v-model="formData.typeRaccordId" 
+                        required
+                        class="search-input-crea-raccord"
+                      >
+                        <option value="">Sélectionner un type</option>
+                        <option v-for="type in typesRaccord" :key="type.id" :value="type.id">
+                          {{ type.nomType }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="form-group-crea-raccord">
+                      <label for="statutRaccordId">Statut</label>
+                      <select 
+                        id="statutRaccordId"
+                        v-model="formData.statutRaccordId" 
+                        class="search-input-crea-raccord"
+                      >
+                        <option v-for="statut in statutsRaccord" :key="statut.id" :value="statut.id">
+                          {{ statut.nomStatut }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord full-width">
+                      <label for="description">Description</label>
+                      <textarea 
+                        id="description"
+                        v-model="formData.description" 
+                        rows="3" 
+                        placeholder="Description du raccord..."
+                        class="form-textarea-crea-raccord"
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Checkbox critique -->
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord checkbox-group-crea-raccord">
+                      <label>
+                        <input type="checkbox" v-model="formData.estCritique">
+                        Raccord critique
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Images de référence -->
+                  <div class="form-row-crea-raccord">
+                    <div class="form-group-crea-raccord full-width">
+                      <label for="images">Images de référence</label>
+                      <input 
+                        id="images"
+                        type="file" 
+                        multiple 
+                        accept="image/*" 
+                        @change="handleImageUpload"
+                        class="file-input-crea-raccord"
+                      >
+                      <div v-if="previewImages.length" class="image-previews-crea-raccord">
+                        <div v-for="(preview, index) in previewImages" :key="index" class="image-preview-crea-raccord">
+                          <img :src="preview" alt="Preview">
+                          <button @click="removePreview(index)" class="remove-btn-crea-raccord">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div v-if="error" class="error-message-crea-raccord">
+                    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                  </div>
+
+                  <div class="form-actions-crea-raccord">
+                    <button
+                      v-if="editingRaccord"
+                      type="button"
+                      @click="goToForm"
+                      class="cancel-btn-crea-raccord"
                     >
+                      <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      :disabled="loading"
+                      class="submit-btn-crea-raccord"
+                    >
+                      <i v-if="loading" class="fas fa-spinner fa-spin"></i>
+                      <i v-else :class="editingRaccord ? 'fas fa-save' : 'fas fa-plus'"></i>
+                      {{ loading ? 'Enregistrement...' : (editingRaccord ? 'Enregistrer' : 'Créer le raccord') }}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Contenu de l'onglet Liste -->
+            <div v-show="activeTab === 'list'" class="tab-pane-crea-raccord">
+              <!-- Liste des raccords -->
+              <div class="raccords-list-crea-raccord">
+                <div class="list-header-crea-raccord">
+                  <h3><i class="fas fa-link"></i> Liste des raccords ({{ raccords.length }})</h3>
+                  
+                  <div class="search-section-crea-raccord">
+                    <div class="search-group-crea-raccord">
+                      <label for="raccordSearch">Rechercher un raccord</label>
+                      <div class="search-input-container-crea-raccord">
+                        <i class="fas fa-search search-icon-crea-raccord"></i>
+                        <input
+                          type="text"
+                          id="raccordSearch"
+                          v-model="searchTerm"
+                          placeholder="Rechercher par description..."
+                          class="search-input-large-crea-raccord"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div v-if="loadingRaccords" class="loading-state-crea-raccord">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <h3>Chargement des raccords...</h3>
+                </div>
+                
+                <div v-else-if="raccords.length === 0" class="empty-state-crea-raccord">
+                  <i class="fas fa-link"></i>
+                  <h3>Aucun raccord trouvé</h3>
+                  <div v-if="selectedScene || selectedPersonnage || selectedComedien">
+                    <p>Aucun raccord ne correspond à vos critères de recherche.</p>
+                  </div>
+                  <div v-else>
+                    <p>Aucun raccord créé pour le moment.</p>
+                  </div>
+                </div>
+
+                <div v-else class="raccords-container-crea-raccord">
+                  <div class="scene-groups-crea-raccord">
+                    <div v-for="groupe in groupesRaccords" :key="groupe.sceneSourceId + '-' + groupe.sceneCibleId" class="scene-group-crea-raccord">
+                      
+                      <!-- En-tête du groupe -->
+                      <div class="scene-group-header-crea-raccord">
+                        <h4 class="group-title-crea-raccord">
+                          <i class="fas fa-arrow-right"></i>
+                          {{ groupe.titreGroupe }}
+                        </h4>
+                        <span class="badge-count-crea-raccord">{{ groupe.raccords.length }} raccord(s)</span>
+                      </div>
+
+                      <!-- Liste des raccords dans ce groupe -->
+                      <div class="raccords-grid-crea-raccord">
+                        <div v-for="raccord in groupe.raccords" :key="raccord.id" class="raccord-card-crea-raccord">
+                          
+                          <div class="raccord-header-crea-raccord">
+                            <h5 class="raccord-title-crea-raccord">
+                              <i class="fas fa-link"></i>
+                              {{ raccord.typeRaccordNom }}
+                            </h5>
+                            <span :class="`status-badge-crea-raccord status-${raccord.statutRaccordNom.toLowerCase()}`">
+                              {{ raccord.statutRaccordNom }}
+                            </span>
+                          </div>
+
+                          <div class="raccord-content-crea-raccord">
+                            <div class="raccord-info-crea-raccord">
+                              <div v-if="raccord.personnageNom" class="detail-item-crea-raccord">
+                                <i class="fas fa-user"></i>
+                                <span><strong>Personnage:</strong> {{ raccord.personnageNom }}</span>
+                              </div>
+                              <div v-if="raccord.comedienNom" class="detail-item-crea-raccord">
+                                <i class="fas fa-theater-masks"></i>
+                                <span><strong>Comédien:</strong> {{ raccord.comedienNom }}</span>
+                              </div>
+                              <div v-if="raccord.description" class="detail-item-crea-raccord">
+                                <i class="fas fa-align-left"></i>
+                                <span class="description-text-crea-raccord">{{ raccord.description }}</span>
+                              </div>
+                              <div v-if="raccord.estCritique" class="detail-item-crea-raccord critique-item-crea-raccord">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>⚠️ Raccord critique</span>
+                              </div>
+                            </div>
+
+                            <!-- Images du raccord -->
+                            <div v-if="raccord.images && raccord.images.length" class="raccord-images-crea-raccord">
+                              <h6 class="images-title-crea-raccord">
+                                <i class="fas fa-images"></i>
+                                Images de référence
+                              </h6>
+                              <div class="images-grid-crea-raccord">
+                                <div v-for="image in raccord.images" :key="image.id" class="image-item-crea-raccord">
+                                  <img 
+                                    :src="`/api/raccords/image/${image.cheminFichier}`" 
+                                    :alt="image.descriptionImage"
+                                    @click="showImageModal(image)"
+                                  >
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="raccord-actions-crea-raccord">
+                              <button @click="editRaccord(raccord)" class="btn-edit-crea-raccord" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                              </button>
+                            
+                              <button 
+                                @click="ouvrirCalendrierScene(raccord.sceneSourceId)" 
+                                class="btn-calendar-crea-raccord"
+                                title="Planning Source"
+                              >
+                                <i class="fas fa-calendar"></i>
+                              </button>
+                              
+                              <button 
+                                @click="ouvrirCalendrierScene(raccord.sceneCibleId)" 
+                                class="btn-calendar-secondary-crea-raccord"
+                                title="Planning Cible"
+                              >
+                                <i class="fas fa-calendar-alt"></i>
+                              </button>
+                      
+                              <button @click="deleteRaccord(raccord.id)" class="btn-delete-crea-raccord" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </div>
+                          </div>
+                          
+                        </div>
+                      </div>
+                      
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <div class="raccord-actions">
-                <button @click="editRaccord(raccord)" class="btn btn-secondary btn-sm">
-                  Modifier
-                </button>
-              
-               
-                <button 
-                  @click="ouvrirCalendrierScene(raccord.sceneSourceId)" 
-                  class="btn btn-outline-primary btn-sm"
-                >
-                  <i class="fas fa-calendar"></i> Planning Source
-                </button>
-                
-                <button 
-                  @click="ouvrirCalendrierScene(raccord.sceneCibleId)" 
-                  class="btn btn-outline-secondary btn-sm"
-                >
-                  <i class="fas fa-calendar"></i> Planning Cible
-                </button>
-        
-                <button @click="deleteRaccord(raccord.id)" class="btn btn-danger btn-sm">
-                  Supprimer
-                </button>
-              </div>
-              
             </div>
           </div>
-          
         </div>
       </div>
     </div>
 
     <!-- Modal d'affichage d'image -->
-    <div v-if="selectedImage" class="image-modal-overlay" @click="selectedImage = null">
-      <div class="image-modal">
-        <img :src="`/api/raccords/image/${selectedImage.cheminFichier}`" :alt="selectedImage.descriptionImage">
-        <p>{{ selectedImage.descriptionImage }}</p>
+    <div v-if="selectedImage" class="modal-overlay-crea-raccord" @click="selectedImage = null">
+      <div class="modal-content-crea-raccord" @click.stop>
+        <div class="modal-header-crea-raccord">
+          <h3>
+            <i class="fas fa-image"></i>
+            Image de référence
+          </h3>
+          <button @click="selectedImage = null" class="modal-close-btn-crea-raccord">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body-crea-raccord">
+          <img :src="`/api/raccords/image/${selectedImage.cheminFichier}`" :alt="selectedImage.descriptionImage">
+          <p class="image-description-crea-raccord">{{ selectedImage.descriptionImage }}</p>
+        </div>
+        
+        <div class="modal-footer-crea-raccord">
+          <button type="button" @click="selectedImage = null" class="btn-close-modal-crea-raccord">
+            <i class="fas fa-times"></i> Fermer
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -296,29 +550,30 @@ export default {
   name: 'GestionRaccords',
   data() {
     return {
-      showForm: false,
+      activeTab: 'list',
       loading: false,
       loadingRaccords: false,
       scenes: [],
       raccords: [],
       typesRaccord: [],
       statutsRaccord: [],
-      statutsVerification: [],
       selectedScene: '',
       editingRaccord: null,
       selectedImage: null,
-       currentUserId: 1,
-      additionalImagesDescription: '',
+      currentUserId: 1,
       personnages: [],
       comediens: [],
       selectedPersonnage: '',
       selectedComedien: '',
-      filteredScenesCible: [],
+      searchTerm: '',
       projets: [],
       episodesParProjet: [],
       sequencesParEpisode: [],
       scenesParSequence: [],
       formData: {
+        projetId: '',
+        episodeId: '',
+        sequenceId: '',
         sceneSourceId: '',
         sceneCibleId: '',
         typeRaccordId: '',
@@ -329,21 +584,54 @@ export default {
         personnageId: '',
         comedienId: ''
       },
-      previewImages: [],
-      additionalImages: []
+      previewImages: []
     };
+  },
+  computed: {
+    getTabIndicatorStyle() {
+      const tabWidth = 100 / 2;
+      const translateX = this.activeTab === 'form' ? 0 : 100;
+      return {
+        transform: `translateX(${translateX}%)`,
+        width: `${tabWidth}%`
+      };
+    },
+    getRaccordsCritiques() {
+      return this.raccords.filter(r => r.estCritique).length;
+    },
+    getTypesRaccordsCount() {
+      return new Set(this.raccords.map(r => r.typeRaccordNom)).size;
+    },
+    groupesRaccords() {
+      return this.grouperRaccordsParScene(this.raccords);
+    }
+  },
+  watch: {
+    selectedScene() {
+      this.loadRaccords();
+    },
+    selectedPersonnage() {
+      this.loadRaccords();
+    },
+    selectedComedien() {
+      this.loadRaccords();
+    }
   },
   async mounted() {
     await this.loadInitialData();
     await this.loadRaccords();
-    this.filteredScenesCible = [...this.scenes];
   },
-computed: {
-  groupesRaccords() {
-    return this.grouperRaccordsParScene(this.raccords);
-  }
-},
   methods: {
+    // Navigation entre onglets
+    goToForm() {
+      this.activeTab = 'form';
+      this.resetForm();
+    },
+    goToList() {
+      this.activeTab = 'list';
+      this.loadRaccords();
+    },
+
     async loadInitialData() {
       try {
         const [projetsRes, scenesRes, typesRes, statutsRes, personnagesRes, comediensRes] = await Promise.all([
@@ -367,140 +655,136 @@ computed: {
     },
 
     async chargerEpisodesParProjet() {
-  if (!this.formData.projetId) {
-    this.episodesParProjet = [];
-    this.formData.episodeId = '';
-    this.formData.sequenceId = '';
-    this.formData.sceneSourceId = '';
-    this.formData.sceneCibleId = '';
-    return;
-  }
-  try {
-    const response = await axios.get(`/api/episodes/projet/${this.formData.projetId}`, {
-      headers: { 'X-User-Id': this.currentUserId }
-    });
-    this.episodesParProjet = response.data;
-  } catch (error) {
-    console.error('Erreur chargement épisodes:', error);
-    this.episodesParProjet = [];
-  }
-},
+      if (!this.formData.projetId) {
+        this.episodesParProjet = [];
+        this.formData.episodeId = '';
+        this.formData.sequenceId = '';
+        this.formData.sceneSourceId = '';
+        this.formData.sceneCibleId = '';
+        return;
+      }
+      try {
+        const response = await axios.get(`/api/episodes/projet/${this.formData.projetId}`, {
+          headers: { 'X-User-Id': this.currentUserId }
+        });
+        this.episodesParProjet = response.data;
+      } catch (error) {
+        console.error('Erreur chargement épisodes:', error);
+        this.episodesParProjet = [];
+      }
+    },
 
-async chargerSequencesParEpisode() {
-  if (!this.formData.episodeId) {
-    this.sequencesParEpisode = [];
-    this.formData.sequenceId = '';
-    this.formData.sceneSourceId = '';
-    this.formData.sceneCibleId = '';
-    return;
-  }
-  try {
-    const response = await axios.get(`/api/sequences/episodes/${this.formData.episodeId}`, {
-      headers: { 'X-User-Id': this.currentUserId }
-    });
-    this.sequencesParEpisode = response.data;
-  } catch (error) {
-    console.error('Erreur chargement séquences:', error);
-    this.sequencesParEpisode = [];
-  }
-},
+    async chargerSequencesParEpisode() {
+      if (!this.formData.episodeId) {
+        this.sequencesParEpisode = [];
+        this.formData.sequenceId = '';
+        this.formData.sceneSourceId = '';
+        this.formData.sceneCibleId = '';
+        return;
+      }
+      try {
+        const response = await axios.get(`/api/sequences/episodes/${this.formData.episodeId}`, {
+          headers: { 'X-User-Id': this.currentUserId }
+        });
+        this.sequencesParEpisode = response.data;
+      } catch (error) {
+        console.error('Erreur chargement séquences:', error);
+        this.sequencesParEpisode = [];
+      }
+    },
 
-async chargerScenesParSequence() {
-  if (!this.formData.sequenceId) {
-    this.scenesParSequence = [];
-    this.formData.sceneSourceId = '';
-    this.formData.sceneCibleId = '';
-    return;
-  }
-  try {
-    const response = await axios.get(`/api/scenes/sequences/${this.formData.sequenceId}`);
-    this.scenesParSequence = response.data;
-  } catch (error) {
-    console.error('Erreur chargement scènes:', error);
-    this.scenesParSequence = [];
-  }
-},
+    async chargerScenesParSequence() {
+      if (!this.formData.sequenceId) {
+        this.scenesParSequence = [];
+        this.formData.sceneSourceId = '';
+        this.formData.sceneCibleId = '';
+        return;
+      }
+      try {
+        const response = await axios.get(`/api/scenes/sequences/${this.formData.sequenceId}`);
+        this.scenesParSequence = response.data;
+      } catch (error) {
+        console.error('Erreur chargement scènes:', error);
+        this.scenesParSequence = [];
+      }
+    },
 
     async loadRaccords() {
-  this.loadingRaccords = true;
-  try {
-    let url = '/api/raccords';
-    const params = new URLSearchParams();
-    
-    if (this.selectedScene) {
-      params.append('sceneId', this.selectedScene);
-    }
-    if (this.selectedPersonnage) {
-      params.append('personnageId', this.selectedPersonnage);
-    }
-    if (this.selectedComedien) {
-      params.append('comedienId', this.selectedComedien);
-    }
+      this.loadingRaccords = true;
+      try {
+        let url = '/api/raccords';
+        const params = new URLSearchParams();
+        
+        if (this.selectedScene) {
+          params.append('sceneId', this.selectedScene);
+        }
+        if (this.selectedPersonnage) {
+          params.append('personnageId', this.selectedPersonnage);
+        }
+        if (this.selectedComedien) {
+          params.append('comedienId', this.selectedComedien);
+        }
 
-    if (params.toString()) {
-      url += '?' + params.toString();
-    }
-    
-    const response = await axios.get(url);
-    this.raccords = response.data;
-    
-    // Charger les données de planning pour chaque raccord
-    await this.chargerDonneesPlanningPourRaccords();
-    
-  } catch (error) {
-    console.error('Erreur lors du chargement des raccords:', error);
-  } finally {
-    this.loadingRaccords = false;
-  }
-},
-
-async chargerDonneesPlanningPourRaccords() {
-  try {
-    // Charger tous les tournages pour la période concernée
-    const today = new Date();
-    const startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const endDate = new Date(today.getFullYear(), today.getMonth() + 3, 0);
-    
-    const response = await axios.get('/api/scene-tournage/periode', {
-      params: {
-        startDate: this.formatDateForAPI(startDate),
-        endDate: this.formatDateForAPI(endDate)
+        if (params.toString()) {
+          url += '?' + params.toString();
+        }
+        
+        const response = await axios.get(url);
+        this.raccords = response.data;
+        
+        await this.chargerDonneesPlanningPourRaccords();
+        
+      } catch (error) {
+        console.error('Erreur lors du chargement des raccords:', error);
+      } finally {
+        this.loadingRaccords = false;
       }
-    });
-    
-    const tournages = response.data;
-    
-    // Associer les dates de tournage aux raccords
-    this.raccords = this.raccords.map(raccord => {
-      const tournageSource = tournages.find(t => t.sceneId === raccord.sceneSourceId);
-      const tournageCible = tournages.find(t => t.sceneId === raccord.sceneCibleId);
-      
-      return {
-        ...raccord,
-        dateTournageSource: tournageSource?.dateTournage || null,
-        dateTournageCible: tournageCible?.dateTournage || null,
-        statutTournageSource: tournageSource?.statutTournage || null,
-        statutTournageCible: tournageCible?.statutTournage || null
-      };
-    });
-    
-  } catch (error) {
-    console.error('Erreur chargement données planning:', error);
-  }
-},
+    },
 
-formatDateForAPI(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-},
+    async chargerDonneesPlanningPourRaccords() {
+      try {
+        const today = new Date();
+        const startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        const endDate = new Date(today.getFullYear(), today.getMonth() + 3, 0);
+        
+        const response = await axios.get('/api/scene-tournage/periode', {
+          params: {
+            startDate: this.formatDateForAPI(startDate),
+            endDate: this.formatDateForAPI(endDate)
+          }
+        });
+        
+        const tournages = response.data;
+        
+        this.raccords = this.raccords.map(raccord => {
+          const tournageSource = tournages.find(t => t.sceneId === raccord.sceneSourceId);
+          const tournageCible = tournages.find(t => t.sceneId === raccord.sceneCibleId);
+          
+          return {
+            ...raccord,
+            dateTournageSource: tournageSource?.dateTournage || null,
+            dateTournageCible: tournageCible?.dateTournage || null,
+            statutTournageSource: tournageSource?.statutTournage || null,
+            statutTournageCible: tournageCible?.statutTournage || null
+          };
+        });
+        
+      } catch (error) {
+        console.error('Erreur chargement données planning:', error);
+      }
+    },
+
+    formatDateForAPI(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
 
     handleImageUpload(event) {
       const files = event.target.files;
       this.formData.images = Array.from(files);
       
-      // Créer les previews
       this.previewImages = [];
       Array.from(files).forEach(file => {
         const reader = new FileReader();
@@ -511,33 +795,20 @@ formatDateForAPI(date) {
       });
     },
 
-
     removePreview(index) {
       this.previewImages.splice(index, 1);
       this.formData.images.splice(index, 1);
     },
 
-    updateSceneCibleOptions() {
-      if (this.formData.sceneSourceId) {
-        this.filteredScenesCible = this.scenes.filter(scene => 
-          scene.idScene !== this.formData.sceneSourceId
-        );
-      } else {
-        this.filteredScenesCible = [...this.scenes];
-      }
-    },
-
     async submitForm() {
       this.loading = true;
       try {
-        // Validation améliorée
         if (!this.formData.sceneSourceId || !this.formData.sceneCibleId || !this.formData.typeRaccordId) {
           alert('Veuillez remplir tous les champs obligatoires');
           this.loading = false;
           return;
         }
         
-        // Validation spécifique pour les raccords sur la même scène
         if (this.formData.sceneSourceId === this.formData.sceneCibleId) {
           if (!confirm('Vous créez un raccord pour la même scène. Ceci est utile pour la continuité de tournage sur plusieurs jours. Confirmer ?')) {
             return;
@@ -546,7 +817,6 @@ formatDateForAPI(date) {
 
         const formData = new FormData();
         
-        // Pour la modification, inclure tous les champs
         if (this.editingRaccord) {
           formData.append('sceneSourceId', this.formData.sceneSourceId.toString());
           formData.append('sceneCibleId', this.formData.sceneCibleId.toString());
@@ -564,16 +834,15 @@ formatDateForAPI(date) {
         if (this.formData.personnageId) {
           formData.append('personnageId', this.formData.personnageId.toString());
         } else {
-          formData.append('personnageId', ''); // Important pour effacer le personnage
+          formData.append('personnageId', '');
         }
         
         if (this.formData.comedienId) {
           formData.append('comedienId', this.formData.comedienId.toString());
         } else {
-          formData.append('comedienId', ''); // Important pour effacer le comédien
+          formData.append('comedienId', '');
         }
         
-        // Ajouter les images
         if (this.formData.images && this.formData.images.length > 0) {
           this.formData.images.forEach(image => {
             formData.append('images', image);
@@ -593,15 +862,14 @@ formatDateForAPI(date) {
 
         this.resetForm();
         await this.loadRaccords();
-        this.showForm = false;
+        this.activeTab = 'list';
         
-        // Message de confirmation
         alert(this.editingRaccord ? 'Raccord modifié avec succès!' : 'Raccord créé avec succès!');
         
       } catch (error) {
         console.error('Erreur détaillée lors de la sauvegarde:', error);
         console.error('Response error:', error.response?.data);
-        alert('Erreur lors de la sauvegarde du raccord: ' + (error.response?.data?.message || error.message));
+        this.error = 'Erreur lors de la sauvegarde du raccord: ' + (error.response?.data?.message || error.message);
       } finally {
         this.loading = false;
       }
@@ -626,143 +894,132 @@ formatDateForAPI(date) {
       return personnage && personnage.comedienNom ? personnage.comedienNom : 'Aucun comédien assigné';
     },
 
- async editRaccord(raccord) {
-  this.editingRaccord = raccord;
-  
-  try {
-    // Remplir directement le formulaire avec les données du raccord
-    this.formData = {
-      projetId: '',
-      episodeId: '',
-      sequenceId: '',
-      sceneSourceId: raccord.sceneSourceId,
-      sceneCibleId: raccord.sceneCibleId,
-      typeRaccordId: raccord.typeRaccordId,
-      description: raccord.description,
-      estCritique: raccord.estCritique,
-      statutRaccordId: raccord.statutRaccordId,
-      personnageId: raccord.personnageId || '',
-      comedienId: raccord.comedienId || '',
-      images: []
-    };
-    
-    // Charger la hiérarchie de manière plus robuste
-    await this.chargerHierarchiePourRaccord(raccord);
-    
-    this.showForm = true;
-    
-  } catch (error) {
-    console.error('Erreur lors du chargement des données pour édition:', error);
-    
-    // Fallback: Remplir uniquement les données de base sans hiérarchie
-    this.formData = {
-      projetId: '',
-      episodeId: '',
-      sequenceId: '',
-      sceneSourceId: raccord.sceneSourceId,
-      sceneCibleId: raccord.sceneCibleId,
-      typeRaccordId: raccord.typeRaccordId,
-      description: raccord.description,
-      estCritique: raccord.estCritique,
-      statutRaccordId: raccord.statutRaccordId,
-      personnageId: raccord.personnageId || '',
-      comedienId: raccord.comedienId || '',
-      images: []
-    };
-    
-    this.showForm = true;
-  }
-},
-
-// Nouvelle méthode pour charger la hiérarchie
-async chargerHierarchiePourRaccord(raccord) {
-  try {
-    // Commencer par la scène source
-    const sceneResponse = await axios.get(`/api/scenes/${raccord.sceneSourceId}`);
-    const scene = sceneResponse.data;
-    
-    if (scene && scene.sequenceId) {
-      // Charger la séquence SANS le header X-User-Id d'abord
+    async editRaccord(raccord) {
+      this.editingRaccord = raccord;
+      
       try {
-        const sequenceResponse = await axios.get(`/api/sequences/${scene.sequenceId}`);
-        const sequence = sequenceResponse.data;
+        this.formData = {
+          projetId: '',
+          episodeId: '',
+          sequenceId: '',
+          sceneSourceId: raccord.sceneSourceId,
+          sceneCibleId: raccord.sceneCibleId,
+          typeRaccordId: raccord.typeRaccordId,
+          description: raccord.description,
+          estCritique: raccord.estCritique,
+          statutRaccordId: raccord.statutRaccordId,
+          personnageId: raccord.personnageId || '',
+          comedienId: raccord.comedienId || '',
+          images: []
+        };
         
-        if (sequence && sequence.episodeId) {
-          // Charger l'épisode SANS le header X-User-Id d'abord
+        await this.chargerHierarchiePourRaccord(raccord);
+        
+        this.activeTab = 'form';
+        
+      } catch (error) {
+        console.error('Erreur lors du chargement des données pour édition:', error);
+        
+        this.formData = {
+          projetId: '',
+          episodeId: '',
+          sequenceId: '',
+          sceneSourceId: raccord.sceneSourceId,
+          sceneCibleId: raccord.sceneCibleId,
+          typeRaccordId: raccord.typeRaccordId,
+          description: raccord.description,
+          estCritique: raccord.estCritique,
+          statutRaccordId: raccord.statutRaccordId,
+          personnageId: raccord.personnageId || '',
+          comedienId: raccord.comedienId || '',
+          images: []
+        };
+        
+        this.activeTab = 'form';
+      }
+    },
+
+    async chargerHierarchiePourRaccord(raccord) {
+      try {
+        const sceneResponse = await axios.get(`/api/scenes/${raccord.sceneSourceId}`);
+        const scene = sceneResponse.data;
+        
+        if (scene && scene.sequenceId) {
           try {
-            const episodeResponse = await axios.get(`/api/episodes/${sequence.episodeId}`);
-            const episode = episodeResponse.data;
+            const sequenceResponse = await axios.get(`/api/sequences/${scene.sequenceId}`);
+            const sequence = sequenceResponse.data;
             
-            if (episode && episode.projetId) {
-              this.formData.projetId = episode.projetId;
-              this.formData.episodeId = sequence.episodeId;
-              this.formData.sequenceId = scene.sequenceId;
-              
-              // Maintenant charger les listes déroulantes AVEC les headers si nécessaires
-              await this.chargerEpisodesParProjet();
-              await this.chargerSequencesParEpisode();
-              await this.chargerScenesParSequence();
+            if (sequence && sequence.episodeId) {
+              try {
+                const episodeResponse = await axios.get(`/api/episodes/${sequence.episodeId}`);
+                const episode = episodeResponse.data;
+                
+                if (episode && episode.projetId) {
+                  this.formData.projetId = episode.projetId;
+                  this.formData.episodeId = sequence.episodeId;
+                  this.formData.sequenceId = scene.sequenceId;
+                  
+                  await this.chargerEpisodesParProjet();
+                  await this.chargerSequencesParEpisode();
+                  await this.chargerScenesParSequence();
+                }
+              } catch (episodeError) {
+                console.warn('Impossible de charger l\'épisode:', episodeError);
+                try {
+                  const episodeResponse = await axios.get(`/api/episodes/${sequence.episodeId}`, {
+                    headers: { 'X-User-Id': this.currentUserId }
+                  });
+                  const episode = episodeResponse.data;
+                  
+                  if (episode && episode.projetId) {
+                    this.formData.projetId = episode.projetId;
+                    this.formData.episodeId = sequence.episodeId;
+                    this.formData.sequenceId = scene.sequenceId;
+                    
+                    await this.chargerEpisodesParProjet();
+                    await this.chargerSequencesParEpisode();
+                    await this.chargerScenesParSequence();
+                  }
+                } catch (episodeError2) {
+                  console.warn('Impossible de charger l\'épisode même avec header:', episodeError2);
+                }
+              }
             }
-          } catch (episodeError) {
-            console.warn('Impossible de charger l\'épisode:', episodeError);
-            // Essayer sans header si ça échoue
+          } catch (sequenceError) {
+            console.warn('Impossible de charger la séquence:', sequenceError);
             try {
-              const episodeResponse = await axios.get(`/api/episodes/${sequence.episodeId}`, {
+              const sequenceResponse = await axios.get(`/api/sequences/${scene.sequenceId}`, {
                 headers: { 'X-User-Id': this.currentUserId }
               });
-              const episode = episodeResponse.data;
+              const sequence = sequenceResponse.data;
               
-              if (episode && episode.projetId) {
-                this.formData.projetId = episode.projetId;
-                this.formData.episodeId = sequence.episodeId;
-                this.formData.sequenceId = scene.sequenceId;
+              if (sequence && sequence.episodeId) {
+                const episodeResponse = await axios.get(`/api/episodes/${sequence.episodeId}`, {
+                  headers: { 'X-User-Id': this.currentUserId }
+                });
+                const episode = episodeResponse.data;
                 
-                await this.chargerEpisodesParProjet();
-                await this.chargerSequencesParEpisode();
-                await this.chargerScenesParSequence();
+                if (episode && episode.projetId) {
+                  this.formData.projetId = episode.projetId;
+                  this.formData.episodeId = sequence.episodeId;
+                  this.formData.sequenceId = scene.sequenceId;
+                  
+                  await this.chargerEpisodesParProjet();
+                  await this.chargerSequencesParEpisode();
+                  await this.chargerScenesParSequence();
+                }
               }
-            } catch (episodeError2) {
-              console.warn('Impossible de charger l\'épisode même avec header:', episodeError2);
+            } catch (sequenceError2) {
+              console.warn('Impossible de charger la séquence même avec header:', sequenceError2);
             }
           }
         }
-      } catch (sequenceError) {
-        console.warn('Impossible de charger la séquence:', sequenceError);
-        // Essayer sans header si ça échoue
-        try {
-          const sequenceResponse = await axios.get(`/api/sequences/${scene.sequenceId}`, {
-            headers: { 'X-User-Id': this.currentUserId }
-          });
-          const sequence = sequenceResponse.data;
-          
-          if (sequence && sequence.episodeId) {
-            // Continuer avec l'épisode...
-            const episodeResponse = await axios.get(`/api/episodes/${sequence.episodeId}`, {
-              headers: { 'X-User-Id': this.currentUserId }
-            });
-            const episode = episodeResponse.data;
-            
-            if (episode && episode.projetId) {
-              this.formData.projetId = episode.projetId;
-              this.formData.episodeId = sequence.episodeId;
-              this.formData.sequenceId = scene.sequenceId;
-              
-              await this.chargerEpisodesParProjet();
-              await this.chargerSequencesParEpisode();
-              await this.chargerScenesParSequence();
-            }
-          }
-        } catch (sequenceError2) {
-          console.warn('Impossible de charger la séquence même avec header:', sequenceError2);
-        }
+      } catch (sceneError) {
+        console.warn('Impossible de charger la scène:', sceneError);
       }
-    }
-  } catch (sceneError) {
-    console.warn('Impossible de charger la scène:', sceneError);
-  }
-},
+    },
 
-async deleteRaccord(id) {
+    async deleteRaccord(id) {
       if (confirm('Êtes-vous sûr de vouloir supprimer ce raccord ?')) {
         try {
           await axios.delete(`/api/raccords/${id}`);
@@ -772,48 +1029,33 @@ async deleteRaccord(id) {
           alert('Erreur lors de la suppression du raccord');
         }
       }
-},
-
-    async deleteImage(raccordId, imageId) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
-        try {
-          await axios.delete(`/api/raccords/images/${imageId}`);
-          await this.loadRaccords();
-        } catch (error) {
-          console.error('Erreur lors de la suppression de l\'image:', error);
-          alert('Erreur lors de la suppression de l\'image');
-        }
-      }
     },
 
-
-  grouperRaccordsParScene(raccords) {
-    const groupes = {};
-    
-    raccords.forEach(raccord => {
-      // Créer une clé unique pour chaque paire de scènes
-      const sceneKey = `${raccord.sceneSourceId}-${raccord.sceneCibleId}`;
-      const sceneTitre = `${raccord.sceneSourceTitre} → ${raccord.sceneCibleTitre}`;
+    grouperRaccordsParScene(raccords) {
+      const groupes = {};
       
-      if (!groupes[sceneKey]) {
-        groupes[sceneKey] = {
-          sceneSourceId: raccord.sceneSourceId,
-          sceneCibleId: raccord.sceneCibleId,
-          sceneSourceTitre: raccord.sceneSourceTitre,
-          sceneCibleTitre: raccord.sceneCibleTitre,
-          titreGroupe: sceneTitre,
-          raccords: []
-        };
-      }
+      raccords.forEach(raccord => {
+        const sceneKey = `${raccord.sceneSourceId}-${raccord.sceneCibleId}`;
+        const sceneTitre = `${raccord.sceneSourceTitre} → ${raccord.sceneCibleTitre}`;
+        
+        if (!groupes[sceneKey]) {
+          groupes[sceneKey] = {
+            sceneSourceId: raccord.sceneSourceId,
+            sceneCibleId: raccord.sceneCibleId,
+            sceneSourceTitre: raccord.sceneSourceTitre,
+            sceneCibleTitre: raccord.sceneCibleTitre,
+            titreGroupe: sceneTitre,
+            raccords: []
+          };
+        }
+        
+        groupes[sceneKey].raccords.push(raccord);
+      });
       
-      groupes[sceneKey].raccords.push(raccord);
-    });
-    
-    return Object.values(groupes);
-  },
+      return Object.values(groupes);
+    },
     
     ouvrirCalendrierScene(sceneId) {
-      // Navigation vers le calendrier avec filtre sur la scène
       this.$router.push({
         path: '/calendrier-tournage',
         query: { sceneId: sceneId }
@@ -850,787 +1092,9 @@ async deleteRaccord(id) {
       };
       this.previewImages = [];
       this.editingRaccord = null;
-    },
-
-    cancelForm() {
-      this.resetForm();
-      this.showForm = false;
+      this.error = '';
     }
   }
 };
 </script>
 
-<style scoped>
-.gestion-raccords {
-  max-width: 1200px; 
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #e9ecef;
-}
-
-.header h1 {
-  color: #2c3e50;
-  margin: 0;
-}
-
-.form-container {
-  background: #f8f9fa;
-  padding: 30px;
-  border-radius: 10px;
-  margin-bottom: 30px;
-  border: 1px solid #dee2e6;
-}
-
-.form-container h2 {
-  margin-top: 0;
-  color: #495057;
-  margin-bottom: 25px;
-}
-
-.raccord-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #495057;
-}
-
-.form-group select,
-.form-group input,
-.form-group textarea {
-  padding: 10px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-group select:focus,
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.form-group select:disabled,
-.form-group input:disabled {
-  background-color: #e9ecef;
-  opacity: 0.7;
-}
-
-.disabled-input {
-  background-color: #f8f9fa !important;
-  color: #6c757d !important;
-}
-
-.file-input {
-  padding: 8px !important;
-}
-
-.checkbox-group label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.checkbox-group input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-}
-
-.image-previews {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.image-preview {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.image-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.remove-btn {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.15s ease-in-out;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background-color: #545b62;
-}
-
-.btn-success {
-  background-color: #28a745;
-  color: white;
-}
-
-.btn-success:hover:not(:disabled) {
-  background-color: #1e7e34;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover:not(:disabled) {
-  background-color: #c82333;
-}
-
-.btn-warning {
-  background-color: #ffc107;
-  color: #212529;
-}
-
-.btn-warning:hover:not(:disabled) {
-  background-color: #e0a800;
-}
-
-.btn-info {
-  background-color: #17a2b8;
-  color: white;
-}
-
-.btn-info:hover:not(:disabled) {
-  background-color: #138496;
-}
-
-.btn-outline-primary {
-  background-color: transparent;
-  color: #007bff;
-  border: 1px solid #007bff;
-}
-
-.btn-outline-primary:hover:not(:disabled) {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-outline-secondary {
-  background-color: transparent;
-  color: #6c757d;
-  border: 1px solid #6c757d;
-}
-
-.btn-outline-secondary:hover:not(:disabled) {
-  background-color: #6c757d;
-  color: white;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.planning-integration-section {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-  border: 1px solid #dee2e6;
-}
-
-.filters-section {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-  border: 1px solid #dee2e6;
-}
-
-.filters-section h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: #495057;
-}
-
-.filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.filter-group label {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: #495057;
-  font-size: 14px;
-}
-
-.raccords-section {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
-}
-
-.raccords-section h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #495057;
-}
-
-.loading {
-  text-align: center;
-  padding: 40px;
-  color: #6c757d;
-  font-style: italic;
-}
-
-.raccords-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
-}
-
-.raccord-card {
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 20px;
-  background: #fff;
-  transition: box-shadow 0.15s ease-in-out;
-}
-
-.raccord-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.raccord-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 15px;
-}
-
-.raccord-header h3 {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 16px;
-}
-
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.status-en-attente {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.status-valide {
-  background-color: #d1ecf1;
-  color: #0c5460;
-}
-
-.status-rejete {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.status-en-cours {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.raccord-info {
-  margin-bottom: 15px;
-}
-
-.raccord-info p {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #495057;
-}
-
-.raccord-info .description {
-  font-style: italic;
-  color: #6c757d;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #e9ecef;
-}
-
-.critique {
-  color: #dc3545 !important;
-  font-weight: 600;
-  margin-top: 10px !important;
-}
-
-.raccord-images {
-  margin-bottom: 15px;
-}
-
-.raccord-images h4 {
-  margin: 0 0 10px 0;
-  font-size: 14px;
-  color: #495057;
-}
-
-.images-grid {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.image-item {
-  width: 80px;
-  height: 80px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-}
-
-.image-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 5px;
-  font-size: 10px;
-  opacity: 0;
-  transition: opacity 0.15s ease-in-out;
-}
-
-.image-item:hover .image-info {
-  opacity: 1;
-}
-
-.raccord-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-start;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #2c3e50;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.image-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1001;
-}
-
-.image-modal {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 90%;
-  max-height: 90%;
-}
-
-.image-modal img {
-  max-width: 100%;
-  max-height: 70vh;
-  object-fit: contain;
-}
-
-.image-modal p {
-  margin-top: 10px;
-  text-align: center;
-  color: #495057;
-}
-
-.field-note {
-  font-size: 12px;
-  color: #6c757d;
-  margin-top: 4px;
-  font-style: italic;
-}
-
-.same-scene-note {
-  font-size: 12px;
-  color: #856404;
-  background-color: #fff3cd;
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-top: 5px;
-  border: 1px solid #ffeaa7;
-}
-
-/* Styles pour le modal d'ajustement de planning */
-.modal-content {
-  background: white;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.modal-header h4 {
-  margin: 0;
-  color: #2c3e50;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: #6c757d;
-}
-
-.close-btn:hover {
-  color: #495057;
-}
-
-.modal-body {
-  padding: 20px;
-}
-
-.suggestions-section {
-  margin-bottom: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  border-left: 4px solid #007bff;
-}
-
-.suggestions-section h5 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #495057;
-}
-
-.suggestions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.suggestion-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  background: white;
-  border-radius: 4px;
-  border: 1px solid #dee2e6;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .gestion-raccords {
-    padding: 10px;
-  }
-  
-  .header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-  
-  .filters {
-    grid-template-columns: 1fr;
-  }
-  
-  .raccords-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .raccord-actions {
-    justify-content: center;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-  }
-  
-  .modal {
-    width: 95%;
-    padding: 20px;
-  }
-}
-/* Styles pour le groupement par scène */
-.scene-groups {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-
-.scene-group {
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #fff;
-}
-
-.scene-group-header {
-  background: #f8f9fa;
-  padding: 15px 20px;
-  border-bottom: 1px solid #e9ecef;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.group-title {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.badge-count {
-  background: #007bff;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.raccords-list {
-  padding: 0;
-}
-
-.raccord-item {
-  padding: 20px;
-  border-bottom: 1px solid #f1f1f1;
-  transition: background-color 0.15s ease-in-out;
-}
-
-.raccord-item:hover {
-  background-color: #fafafa;
-}
-
-.raccord-item:last-child {
-  border-bottom: none;
-}
-
-.raccord-item .raccord-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.raccord-item .raccord-header h5 {
-  margin: 0;
-  color: #495057;
-  font-size: 14px;
-}
-
-.raccord-item .raccord-info {
-  margin-bottom: 15px;
-}
-
-.raccord-item .raccord-info p {
-  margin: 3px 0;
-  font-size: 13px;
-  color: #6c757d;
-}
-
-.raccord-item .raccord-images h6 {
-  margin: 0 0 8px 0;
-  font-size: 13px;
-  color: #495057;
-}
-
-.raccord-item .images-grid {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.raccord-item .image-item {
-  width: 60px;
-  height: 60px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.raccord-item .image-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.raccord-item .raccord-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: flex-start;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .scene-group-header {
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
-  }
-  
-  .raccord-item .raccord-actions {
-    justify-content: center;
-  }
-  
-  .raccord-item .raccord-header {
-    flex-direction: column;
-    gap: 8px;
-  }
-}
-</style>

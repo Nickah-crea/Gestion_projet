@@ -1,54 +1,55 @@
 <template>
-  <div class="calendrier-container">
-    <div class="calendrier-header">
+  <div class="app-wrapper-global">
+  <div class="calendar-container">
+    <div class="calendar-header">
       <h2>Calendrier de Tournage</h2>
-      <div class="controls">
+      <div class="calendar-controls">
         <select v-model="selectedProjet" @change="loadPlanning">
           <option value="">Tous les projets</option>
           <option v-for="projet in projets" :key="projet.id" :value="projet.id">
             {{ projet.titre }}
           </option>
         </select>
-        <button @click="previousMonth" class="btn-nav">←</button>
-        <span class="month-display">{{ currentMonth }}</span>
-        <button @click="nextMonth" class="btn-nav">→</button>
-        <button @click="showAddModal = true" class="btn-primary">Nouveau Planning</button>
+        <button @click="previousMonth" class="calendar-btn-nav">←</button>
+        <span class="calendar-month-display">{{ currentMonth }}</span>
+        <button @click="nextMonth" class="calendar-btn-nav">→</button>
+        <button @click="showAddModal = true" class="calendar-btn-primary">Nouveau Planning</button>
       </div>
     </div>
 
-    <div class="calendrier">
-      <div class="calendrier-grid">
-        <div class="calendrier-header-row">
-          <div v-for="day in days" :key="day" class="calendrier-header-cell">
+    <div class="calendar-main">
+      <div class="calendar-grid">
+        <div class="calendar-header-row">
+          <div v-for="day in days" :key="day" class="calendar-header-cell">
             {{ day }}
           </div>
         </div>
-        <div class="calendrier-body">
-          <div v-for="week in weeks" :key="week[0]" class="calendrier-week">
+        <div class="calendar-body">
+          <div v-for="week in weeks" :key="week[0]" class="calendar-week">
             <div
               v-for="day in week"
               :key="day.date"
-              class="calendrier-day"
+              class="calendar-day"
               :class="{
-                'other-month': !day.isCurrentMonth,
-                'today': day.isToday,
-                'has-tournage': day.tournages && day.tournages.length > 0
+                'calendar-other-month': !day.isCurrentMonth,
+                'calendar-today': day.isToday,
+                'calendar-has-tournage': day.tournages && day.tournages.length > 0
               }"
               @click="selectDay(day)"
             >
-              <div class="day-number">{{ day.date.getDate() }}</div>
-              <div class="tournage-events">
+              <div class="calendar-day-number">{{ day.date.getDate() }}</div>
+              <div class="calendar-tournage-events">
                 <div
                   v-for="tournage in day.tournages"
                   :key="tournage.id"
-                  class="tournage-event"
-                  :class="`statut-${tournage.statutCode}`"
+                  class="calendar-tournage-event"
+                  :class="`calendar-statut-${tournage.statutCode}`"
                   @click.stop="viewTournage(tournage)"
                 >
-                  <div class="tournage-time">{{ tournage.heureDebut }}</div>
-                  <div class="tournage-title">{{ tournage.sceneTitre }}</div>
-                  <div class="tournage-lieu">{{ getLieuDisplay(tournage) }}</div>
-                  <div class="tournage-statut">{{ tournage.statutNom }}</div>
+                  <div class="calendar-tournage-time">{{ tournage.heureDebut }}</div>
+                  <div class="calendar-tournage-title">{{ tournage.sceneTitre }}</div>
+                  <div class="calendar-tournage-lieu">{{ getLieuDisplay(tournage) }}</div>
+                  <div class="calendar-tournage-statut">{{ tournage.statutNom }}</div>
                 </div>
               </div>
             </div>
@@ -58,11 +59,11 @@
     </div>
 
     <!-- Modal d'ajout/modification -->
-    <div v-if="showAddModal || showEditModal" class="modal-overlay">
-      <div class="modal">
+    <div v-if="showAddModal || showEditModal" class="calendar-modal-overlay">
+      <div class="calendar-modal">
         <h3>{{ showEditModal ? 'Modifier' : 'Nouveau' }} Planning de Tournage</h3>
         <form @submit.prevent="savePlanning">
-          <div class="form-group">
+          <div class="calendar-form-group">
             <label>Scène *</label>
             <select v-model="form.sceneId" required>
               <option value="">Sélectionner une scène</option>
@@ -72,23 +73,23 @@
             </select>
           </div>
           
-          <div class="form-group">
+          <div class="calendar-form-group">
             <label>Date de tournage *</label>
             <input type="date" v-model="form.dateTournage" required>
           </div>
           
-          <div class="form-row">
-            <div class="form-group">
+          <div class="calendar-form-row">
+            <div class="calendar-form-group">
               <label>Heure début</label>
               <input type="time" v-model="form.heureDebut">
             </div>
-            <div class="form-group">
+            <div class="calendar-form-group">
               <label>Heure fin</label>
               <input type="time" v-model="form.heureFin">
             </div>
           </div>
           
-          <div class="form-group">
+          <div class="calendar-form-group">
             <label>Statut *</label>
             <select v-model="form.statutId" required>
               <option value="">Sélectionner un statut</option>
@@ -99,7 +100,7 @@
           </div>
           
           <!-- Nouveaux champs pour lieux et plateaux -->
-          <div class="form-group">
+          <div class="calendar-form-group">
             <label>Lieu de tournage</label>
             <select v-model="form.lieuId" @change="onLieuChange">
               <option value="">Sélectionner un lieu</option>
@@ -109,7 +110,7 @@
             </select>
           </div>
 
-          <div class="form-group" v-if="form.lieuId && plateauxDuLieu.length > 0">
+          <div class="calendar-form-group" v-if="form.lieuId && plateauxDuLieu.length > 0">
             <label>Plateau (optionnel)</label>
             <select v-model="form.plateauId">
               <option value="">Sélectionner un plateau</option>
@@ -119,14 +120,14 @@
             </select>
           </div>
           
-          <div class="form-group">
+          <div class="calendar-form-group">
             <label>Description</label>
             <textarea v-model="form.description" rows="3" placeholder="Description du tournage..."></textarea>
           </div>
           
-          <div class="modal-actions">
-            <button type="button" @click="closeModal" class="btn-secondary">Annuler</button>
-            <button type="submit" class="btn-primary">
+          <div class="calendar-modal-actions">
+            <button type="button" @click="closeModal" class="calendar-btn-secondary">Annuler</button>
+            <button type="submit" class="calendar-btn-primary">
               {{ showEditModal ? 'Modifier' : 'Créer' }}
             </button>
           </div>
@@ -135,10 +136,10 @@
     </div>
 
     <!-- Modal de détails -->
-    <div v-if="selectedTournage" class="modal-overlay">
-      <div class="modal">
+    <div v-if="selectedTournage" class="calendar-modal-overlay">
+      <div class="calendar-modal">
         <h3>Détails du Tournage</h3>
-        <div class="tournage-details">
+        <div class="calendar-tournage-details">
           <p><strong>Scène:</strong> {{ selectedTournage.sceneTitre }}</p>
           <p><strong>Séquence:</strong> {{ selectedTournage.sequenceTitre }}</p>
           <p><strong>Épisode:</strong> {{ selectedTournage.episodeTitre }}</p>
@@ -151,19 +152,19 @@
           <p v-if="selectedTournage.lieuTournage"><strong>Lieu de tournage:</strong> {{ selectedTournage.lieuTournage }}</p>
           <p><strong>Description:</strong> {{ selectedTournage.description }}</p>
         </div>
-        <div class="modal-actions">
-          <button @click="editTournage(selectedTournage)" class="btn-primary">Modifier</button>
-          <button @click="deleteTournage(selectedTournage)" class="btn-danger">Supprimer</button>
-          <button @click="selectedTournage = null" class="btn-secondary">Fermer</button>
+        <div class="calendar-modal-actions">
+          <button @click="editTournage(selectedTournage)" class="calendar-btn-primary">Modifier</button>
+          <button @click="deleteTournage(selectedTournage)" class="calendar-btn-danger">Supprimer</button>
+          <button @click="selectedTournage = null" class="calendar-btn-secondary">Fermer</button>
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import '../assets/css/calendrier.css';
 
 const API_BASE_URL = 'http://localhost:8080';
 
@@ -469,4 +470,3 @@ export default {
   }
 };
 </script>
-

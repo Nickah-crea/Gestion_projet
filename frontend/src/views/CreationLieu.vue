@@ -1,94 +1,70 @@
 <template>
-  <div class="creation-lieu-container">
-
-    <!-- Contenu principal -->
-    <main class="#">
-      <div class="page-header">
-        <button @click="goBack" class="back-btn">← Retour</button>
-        <h2>Gestion des Lieux</h2>
+  <div class="app-wrapper-global-crea-lieu">
+    <!-- Sidebar latérale -->
+    <div class="creation-sidebar-crea-lieu">
+      <div class="sidebar-header-crea-lieu">
+        <h2 class="sidebar-title-crea-lieu">Gestion Lieux</h2>
+        <p class="sidebar-subtitle-crea-lieu">Créez et gérez vos lieux</p>
       </div>
 
-      <!-- Formulaire de création -->
-      <div class="creation-form">
-        <h3>{{ isEditing ? 'Modifier' : 'Ajouter' }} un lieu</h3>
-        <form @submit.prevent="submitForm">
-          <div class="form-group">
-            <label>Projet *</label>
-            <div class="combobox-container">
+      <!-- Section Actions Rapides -->
+      <div class="sidebar-section-crea-lieu">
+        <h3 class="section-title-crea-lieu"><i class="fas fa-bolt"></i> Actions Rapides</h3>
+        <div class="sidebar-actions-crea-lieu">
+          <button 
+            @click="goToForm" 
+            class="sidebar-btn-crea-lieu" 
+            :class="{ active: activeTab === 'form' && !isEditing }"
+          >
+            <i class="fas fa-plus"></i>
+            Nouveau lieu
+          </button>
+          <button 
+            @click="goToList" 
+            class="sidebar-btn-crea-lieu"
+            :class="{ active: activeTab === 'list' }"
+          >
+            <i class="fas fa-list"></i>
+            Voir la liste
+          </button>
+        </div>
+      </div>
+
+      <!-- Section Filtres -->
+      <div class="sidebar-section-crea-lieu">
+        <h3 class="section-title-crea-lieu"><i class="fas fa-filter"></i> Filtres</h3>
+        <div class="filter-group-crea-lieu">
+          <div class="filter-item-crea-lieu">
+            <label>Projet</label>
+            <div class="search-container-crea-lieu">
               <input
                 type="text"
-                v-model="projetSearch"
-                @focus="showProjetSuggestions = true"
-                @blur="hideProjetSuggestions"
-                @input="filterProjets"
-                :placeholder="formData.projetId ? getProjetName(formData.projetId) : 'Rechercher un projet...'"
-                required
-                class="combobox-input"
+                v-model="filterProjetSearch"
+                @focus="showFilterProjetSuggestions = true"
+                @blur="hideFilterProjetSuggestions"
+                @input="filterFilterProjets"
+                :placeholder="filterProjetId ? getProjetName(filterProjetId) : 'Tous les projets'"
+                class="search-input-crea-lieu"
               />
-              <ul v-if="showProjetSuggestions && filteredProjets.length" class="suggestions-list">
-                <li
-                  v-for="projet in filteredProjets"
+              <div v-if="showFilterProjetSuggestions && filteredFilterProjets.length" class="suggestions-dropdown-crea-lieu">
+                <div
+                  v-for="projet in filteredFilterProjets"
                   :key="projet.id"
-                  @mousedown="selectProjet(projet)"
-                  class="suggestion-item"
+                  @mousedown="selectFilterProjet(projet)"
+                  class="suggestion-item-crea-lieu"
                 >
                   {{ projet.titre }} ({{ projet.genreNom }})
-                </li>
-              </ul>
-              <ul v-if="showProjetSuggestions && filteredProjets.length === 0" class="suggestions-list">
-                <li class="suggestion-item no-results">Aucun projet trouvé</li>
-              </ul>
+                </div>
+                <div @mousedown="clearFilterProjet" class="suggestion-item-crea-lieu clear-filter">
+                  ✕ Effacer le filtre
+                </div>
+              </div>
             </div>
           </div>
           
-          <div class="form-group">
-            <label>Nom du lieu *</label>
-            <input v-model="formData.nomLieu" type="text" required placeholder="Ex: Appartement principal, Rue de Paris...">
-          </div>
-          
-          <div class="form-group">
-            <label>Type de lieu *</label>
-            <select v-model="formData.typeLieu" required>
-              <option value="">Sélectionnez un type</option>
-              <option value="Intérieur">Intérieur</option>
-              <option value="Extérieur">Extérieur</option>
-              <option value="Intérieur/Extérieur">Intérieur/Extérieur</option>
-              <option value="Studio">Studio</option>
-              <option value="Naturel">Naturel</option>
-              <option value="Urbain">Urbain</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label>Adresse</label>
-            <textarea v-model="formData.adresse" rows="3" placeholder="Adresse complète du lieu..."></textarea>
-          </div>
-          
-          <button type="submit" class="submit-btn">{{ isEditing ? 'Modifier' : 'Ajouter' }} le lieu</button>
-          <button v-if="isEditing" type="button" @click="resetForm" class="cancel-btn">Annuler</button>
-        </form>
-      </div>
-
-      <!-- Liste des lieux -->
-      <div class="lieux-list">
-        <h3>Liste des lieux</h3>
-        
-        <div class="filters">
-          <div class="filter-group">
-            <input v-model="searchTerm" type="text" placeholder="Rechercher par nom..." />
-          </div>
-          
-          <div class="filter-group">
-            <select v-model="filterProjetId">
-              <option value="">Tous les projets</option>
-              <option v-for="projet in projets" :key="projet.id" :value="projet.id">
-                {{ projet.titre }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="filter-group">
-            <select v-model="filterTypeLieu">
+          <div class="filter-item-crea-lieu">
+            <label>Type de lieu</label>
+            <select v-model="filterTypeLieu" class="filter-select-crea-lieu">
               <option value="">Tous les types</option>
               <option value="Intérieur">Intérieur</option>
               <option value="Extérieur">Extérieur</option>
@@ -99,79 +75,345 @@
             </select>
           </div>
         </div>
+      </div>
 
-        <div v-if="loading" class="loading">Chargement des lieux...</div>
-        
-        <div v-else-if="filteredLieux.length === 0" class="no-data">
-          Aucun lieu trouvé.
+      <!-- Section Statistiques -->
+      <div class="sidebar-section-crea-lieu">
+        <h3 class="section-title-crea-lieu"><i class="fas fa-chart-bar"></i> Statistiques</h3>
+        <div class="stats-crea-lieu">
+          <div class="stat-item-crea-lieu">
+            <span class="stat-number-crea-lieu">{{ lieux.length }}</span>
+            <span class="stat-label-crea-lieu">Total lieux</span>
+          </div>
+          <div class="stat-item-crea-lieu">
+            <span class="stat-number-crea-lieu">{{ getLieuxInterieur }}</span>
+            <span class="stat-label-crea-lieu">Intérieurs</span>
+          </div>
+          <div class="stat-item-crea-lieu">
+            <span class="stat-number-crea-lieu">{{ getLieuxExterieur }}</span>
+            <span class="stat-label-crea-lieu">Extérieurs</span>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Contenu principal à droite -->
+    <div class="creation-body-crea-lieu">
+      <div class="creation-main-content-crea-lieu">
         
-        <div v-else class="lieux-grid">
-          <div v-for="lieu in filteredLieux" :key="lieu.id" class="lieu-card">
-            <div class="lieu-header">
-              <h4>{{ lieu.nomLieu }}</h4>
-              <div class="lieu-actions">
-                <span class="icon-edit" @click="editLieu(lieu)">✏️</span>
-                <span class="icon-delete" @click="deleteLieu(lieu.id)">🗑️</span>
-                <span 
-                  class="icon-scenes" 
-                  @click="viewLieuScenes(lieu)"
-                  title="Voir les scènes utilisant ce lieu"
-                >
-                  🎬
-                </span>
+        <!-- En-tête principal -->
+        <div class="main-header-crea-lieu">
+          <h1 class="page-title-crea-lieu"><i class="fas fa-map-marker-alt"></i> Gestion des Lieux</h1>
+          <p class="page-subtitle-crea-lieu">Créez, modifiez et gérez l'ensemble des lieux de vos projets</p>
+        </div>
+
+        <!-- Système d'onglets -->
+        <div class="tabs-container-crea-lieu">
+          <div class="tabs-header-crea-lieu">
+            <button 
+              @click="activeTab = 'form'"
+              :class="['tab-btn-crea-lieu', { active: activeTab === 'form' }]"
+            >
+              <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              {{ isEditing ? 'Modifier lieu' : 'Créer lieu' }}
+            </button>
+            <button 
+              @click="activeTab = 'list'"
+              :class="['tab-btn-crea-lieu', { active: activeTab === 'list' }]"
+            >
+              <i class="fas fa-list"></i>
+              Liste lieux
+            </button>
+          </div>
+          
+          <div class="tabs-content-crea-lieu">
+            <!-- Indicateur visuel de l'onglet actif -->
+            <div class="tab-indicator-crea-lieu" :style="getTabIndicatorStyle"></div>
+            
+            <!-- Contenu de l'onglet Formulaire -->
+            <div v-show="activeTab === 'form'" class="tab-pane-crea-lieu">
+              <!-- Formulaire de création/modification -->
+              <div class="form-container-crea-lieu">
+                <div class="form-header-crea-lieu">
+                  <h3>
+                    <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    {{ isEditing ? 'Modifier le lieu' : 'Créer un nouveau lieu' }}
+                  </h3>
+                  <button 
+                    v-if="isEditing"
+                    @click="goToForm"
+                    class="back-btn-crea-lieu"
+                  >
+                    <i class="fas fa-plus"></i> Nouveau lieu
+                  </button>
+                </div>
+
+                <form @submit.prevent="submitForm" class="lieu-form-crea-lieu">
+                  <!-- Ligne 1 : Projet + Nom du lieu -->
+                  <div class="form-row-crea-lieu">
+                    <div class="form-group-crea-lieu">
+                      <label for="projetSearch">Projet *</label>
+                      <div class="search-container-crea-lieu">
+                        <input
+                          type="text"
+                          id="projetSearch"
+                          v-model="projetSearch"
+                          @focus="showProjetSuggestions = true"
+                          @blur="hideProjetSuggestions"
+                          @input="filterProjets"
+                          :placeholder="formData.projetId ? getProjetName(formData.projetId) : 'Rechercher un projet...'"
+                          required
+                          class="search-input-crea-lieu"
+                        />
+                        <div v-if="showProjetSuggestions && filteredProjets.length" class="suggestions-dropdown-crea-lieu">
+                          <div
+                            v-for="projet in filteredProjets"
+                            :key="projet.id"
+                            @mousedown="selectProjet(projet)"
+                            class="suggestion-item-crea-lieu"
+                          >
+                            <div class="projet-option-info-crea-lieu">
+                              <div class="projet-title-crea-lieu">{{ projet.titre }}</div>
+                              <div class="projet-details-crea-lieu">{{ projet.genreNom }}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-if="showProjetSuggestions && filteredProjets.length === 0" class="no-results-crea-lieu">
+                          <i class="fas fa-search"></i> Aucun projet trouvé
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group-crea-lieu">
+                      <label for="nomLieu">Nom du lieu *</label>
+                      <input 
+                        id="nomLieu"
+                        v-model="formData.nomLieu" 
+                        type="text" 
+                        required 
+                        placeholder="Ex: Appartement principal, Rue de Paris..."
+                        class="search-input-crea-lieu"
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Ligne 2 : Type de lieu -->
+                  <div class="form-row-crea-lieu">
+                    <div class="form-group-crea-lieu">
+                      <label for="typeLieu">Type de lieu *</label>
+                      <select 
+                        id="typeLieu"
+                        v-model="formData.typeLieu" 
+                        required
+                        class="search-input-crea-lieu"
+                      >
+                        <option value="">Sélectionnez un type</option>
+                        <option value="Intérieur">Intérieur</option>
+                        <option value="Extérieur">Extérieur</option>
+                        <option value="Intérieur/Extérieur">Intérieur/Extérieur</option>
+                        <option value="Studio">Studio</option>
+                        <option value="Naturel">Naturel</option>
+                        <option value="Urbain">Urbain</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group-crea-lieu">
+                      <label for="adresse">Adresse</label>
+                      <input 
+                        id="adresse"
+                        v-model="formData.adresse" 
+                        type="text" 
+                        placeholder="Adresse complète du lieu..."
+                        class="search-input-crea-lieu"
+                      >
+                    </div>
+                  </div>
+
+                  <div v-if="error" class="error-message-crea-lieu">
+                    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                  </div>
+
+                  <div class="form-actions-crea-lieu">
+                    <button
+                      v-if="isEditing"
+                      type="button"
+                      @click="goToForm"
+                      class="cancel-btn-crea-lieu"
+                    >
+                      <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      :disabled="isSubmitting"
+                      class="submit-btn-crea-lieu"
+                    >
+                      <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
+                      <i v-else :class="isEditing ? 'fas fa-save' : 'fas fa-plus'"></i>
+                      {{ isSubmitting ? 'Enregistrement...' : (isEditing ? 'Enregistrer' : 'Créer le lieu') }}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-            
-            <div class="lieu-info">
-              <p><strong>Projet:</strong> {{ lieu.projetTitre }}</p>
-              <p><strong>Type:</strong> {{ lieu.typeLieu }}</p>
-              <p v-if="lieu.adresse"><strong>Adresse:</strong> {{ lieu.adresse }}</p>
-              <p><strong>Créé le:</strong> {{ formatDate(lieu.creeLe) }}</p>
-              <p><strong>Scènes associées:</strong> {{ lieu.sceneCount || 0 }}</p>
-            </div>
-            
-            <!-- Liste des scènes utilisant ce lieu -->
-            <div v-if="lieu.scenes && lieu.scenes.length" class="scenes-section">
-              <h5>Scènes utilisant ce lieu:</h5>
-              <div v-for="scene in lieu.scenes" :key="scene.id" class="scene-item">
-                <span>{{ scene.titre }} ({{ scene.descriptionUtilisation }})</span>
+
+            <!-- Contenu de l'onglet Liste -->
+            <div v-show="activeTab === 'list'" class="tab-pane-crea-lieu">
+              <!-- Liste des lieux -->
+              <div class="lieux-list-crea-lieu">
+                <div class="list-header-crea-lieu">
+                  <h3><i class="fas fa-map-marker-alt"></i> Liste des lieux ({{ filteredLieux.length }})</h3>
+                  
+                  <div class="search-section-crea-lieu">
+                    <div class="search-group-crea-lieu">
+                      <label for="lieuSearch">Rechercher un lieu</label>
+                      <div class="search-input-container-crea-lieu">
+                        <i class="fas fa-search search-icon-crea-lieu"></i>
+                        <input
+                          type="text"
+                          id="lieuSearch"
+                          v-model="searchTerm"
+                          placeholder="Rechercher par nom ou adresse..."
+                          class="search-input-large-crea-lieu"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div v-if="loading" class="loading-state-crea-lieu">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <h3>Chargement des lieux...</h3>
+                </div>
+                
+                <div v-else-if="filteredLieux.length === 0" class="empty-state-crea-lieu">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <h3>Aucun lieu trouvé</h3>
+                  <div v-if="searchTerm || filterProjetId || filterTypeLieu">
+                    <p>Aucun lieu ne correspond à vos critères de recherche.</p>
+                  </div>
+                  <div v-else>
+                    <p>Aucun lieu créé pour le moment.</p>
+                  </div>
+                </div>
+
+                <div v-else class="lieux-container-crea-lieu">
+                  <div class="lieux-grid-crea-lieu">
+                    <div v-for="lieu in filteredLieux" :key="lieu.id" class="lieu-card-crea-lieu">
+                      <div class="lieu-header-crea-lieu">
+                        <div class="lieu-info-crea-lieu">
+                          <h4 class="lieu-title-crea-lieu">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ lieu.nomLieu }}
+                          </h4>
+                          <span class="type-badge-crea-lieu" :class="getTypeClass(lieu.typeLieu)">
+                            {{ lieu.typeLieu }}
+                          </span>
+                        </div>
+                        <div class="lieu-actions-crea-lieu">
+                          <button @click="viewLieuScenes(lieu)" class="btn-scenes-crea-lieu" title="Voir les scènes">
+                            <i class="fas fa-film"></i>
+                            {{ lieu.sceneCount || 0 }}
+                          </button>
+                          <button @click="editLieu(lieu)" class="btn-edit-crea-lieu" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button @click="deleteLieu(lieu.id)" class="btn-delete-crea-lieu" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div class="lieu-content-crea-lieu">
+                        <div class="lieu-details-crea-lieu">
+                          <div class="detail-item-crea-lieu">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>{{ lieu.projetTitre }}</span>
+                          </div>
+                          <div v-if="lieu.adresse" class="detail-item-crea-lieu">
+                            <i class="fas fa-location-dot"></i>
+                            <span>{{ lieu.adresse }}</span>
+                          </div>
+                          <div class="detail-item-crea-lieu">
+                            <i class="fas fa-calendar"></i>
+                            <span>{{ formatDate(lieu.creeLe) }}</span>
+                          </div>
+                        </div>
+                        
+                        <!-- Liste des scènes utilisant ce lieu -->
+                        <div v-if="lieu.scenes && lieu.scenes.length" class="scenes-section-crea-lieu">
+                          <h5 class="scenes-title-crea-lieu">
+                            <i class="fas fa-film"></i>
+                            Scènes utilisant ce lieu:
+                          </h5>
+                          <div class="scenes-list-crea-lieu">
+                            <div v-for="scene in lieu.scenes" :key="scene.id" class="scene-item-crea-lieu">
+                              <span class="scene-name-crea-lieu">{{ scene.titre }}</span>
+                              <span class="scene-usage-crea-lieu">({{ scene.descriptionUtilisation }})</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Modale pour afficher les scènes d'un lieu -->
-      <div v-if="showScenesModal" class="modal-overlay" @click="showScenesModal = false">
-        <div class="modal-content" @click.stop>
-          <div class="modal-header">
-            <h3>Scènes utilisant "{{ selectedLieu.nomLieu }}"</h3>
-            <button class="modal-close" @click="showScenesModal = false">×</button>
+    <!-- Modale pour afficher les scènes d'un lieu -->
+    <div v-if="showScenesModal" class="modal-overlay-crea-lieu" @click="showScenesModal = false">
+      <div class="modal-content-crea-lieu" @click.stop>
+        <div class="modal-header-crea-lieu">
+          <h3>
+            <i class="fas fa-film"></i>
+            Scènes utilisant "{{ selectedLieu.nomLieu }}"
+          </h3>
+          <button @click="showScenesModal = false" class="modal-close-btn-crea-lieu">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body-crea-lieu">
+          <div v-if="selectedLieuScenes.length === 0" class="no-scenes-crea-lieu">
+            <i class="fas fa-info-circle"></i>
+            Aucune scène n'utilise ce lieu.
           </div>
           
-          <div class="scenes-list">
-            <div v-if="selectedLieuScenes.length === 0" class="no-scenes">
-              Aucune scène n'utilise ce lieu.
-            </div>
-            
-            <div v-else>
-              <div v-for="scene in selectedLieuScenes" :key="scene.id" class="scene-detail">
-                <h4>{{ scene.sceneTitre }}</h4>
-                <p><strong>Séquence:</strong> {{ scene.sequenceTitre }}</p>
-                <p><strong>Épisode:</strong> {{ scene.episodeTitre }}</p>
-                <p><strong>Projet:</strong> {{ scene.projetTitre }}</p>
-                <p><strong>Utilisation:</strong> {{ scene.descriptionUtilisation }}</p>
+          <div v-else class="scenes-details-crea-lieu">
+            <div v-for="scene in selectedLieuScenes" :key="scene.id" class="scene-detail-crea-lieu">
+              <h4 class="scene-title-crea-lieu">{{ scene.sceneTitre }}</h4>
+              <div class="scene-info-crea-lieu">
+                <div class="info-item-crea-lieu">
+                  <i class="fas fa-layer-group"></i>
+                  <span><strong>Séquence:</strong> {{ scene.sequenceTitre }}</span>
+                </div>
+                <div class="info-item-crea-lieu">
+                  <i class="fas fa-tv"></i>
+                  <span><strong>Épisode:</strong> {{ scene.episodeTitre }}</span>
+                </div>
+                <div class="info-item-crea-lieu">
+                  <i class="fas fa-project-diagram"></i>
+                  <span><strong>Projet:</strong> {{ scene.projetTitre }}</span>
+                </div>
+                <div class="info-item-crea-lieu">
+                  <i class="fas fa-info-circle"></i>
+                  <span><strong>Utilisation:</strong> {{ scene.descriptionUtilisation }}</span>
+                </div>
               </div>
             </div>
           </div>
-          
-          <div class="modal-actions">
-            <button type="button" @click="showScenesModal = false" class="cancel-btn">Fermer</button>
-          </div>
+        </div>
+        
+        <div class="modal-footer-crea-lieu">
+          <button type="button" @click="showScenesModal = false" class="btn-close-modal-crea-lieu">
+            <i class="fas fa-times"></i> Fermer
+          </button>
         </div>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
@@ -185,7 +427,7 @@ export default {
   data() {
     return {
       user: JSON.parse(localStorage.getItem('user')) || null,
-      showProfileMenu: false,
+      activeTab: 'form',
       formData: {
         projetId: '',
         nomLieu: '',
@@ -194,30 +436,57 @@ export default {
       },
       isEditing: false,
       editingId: null,
+      isSubmitting: false,
+      loading: true,
+      error: '',
+      
+      // Données pour les listes
       projets: [],
       lieux: [],
+      filteredLieux: [],
+      
+      // Filtres et recherche
       searchTerm: '',
       filterProjetId: '',
       filterTypeLieu: '',
-      loading: true,
+      
+      // Modale scènes
       showScenesModal: false,
       selectedLieu: {},
       selectedLieuScenes: [],
-      // Nouvelles données pour la zone de liste modifiable
+      
+      // Zones de liste modifiable
       projetSearch: '',
+      filterProjetSearch: '',
       showProjetSuggestions: false,
-      filteredProjets: []
+      showFilterProjetSuggestions: false,
+      filteredProjets: [],
+      filteredFilterProjets: []
     };
   },
   computed: {
-    userInitials() {
-      if (!this.user?.nom) return '';
-      const names = this.user.nom.split(' ');
-      return names.map(n => n[0]).join('').toUpperCase();
+    getTabIndicatorStyle() {
+      const tabWidth = 100 / 2;
+      const translateX = this.activeTab === 'form' ? 0 : 100;
+      return {
+        transform: `translateX(${translateX}%)`,
+        width: `${tabWidth}%`
+      };
+    },
+    getLieuxInterieur() {
+      return this.lieux.filter(l => 
+        l.typeLieu === 'Intérieur' || l.typeLieu === 'Intérieur/Extérieur' || l.typeLieu === 'Studio'
+      ).length;
+    },
+    getLieuxExterieur() {
+      return this.lieux.filter(l => 
+        l.typeLieu === 'Extérieur' || l.typeLieu === 'Intérieur/Extérieur' || l.typeLieu === 'Naturel' || l.typeLieu === 'Urbain'
+      ).length;
     },
     filteredLieux() {
       return this.lieux.filter(lieu => {
-        const matchesSearch = lieu.nomLieu.toLowerCase().includes(this.searchTerm.toLowerCase());
+        const matchesSearch = lieu.nomLieu.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                            (lieu.adresse && lieu.adresse.toLowerCase().includes(this.searchTerm.toLowerCase()));
         const matchesProjet = !this.filterProjetId || lieu.projetId === parseInt(this.filterProjetId);
         const matchesType = !this.filterTypeLieu || lieu.typeLieu === this.filterTypeLieu;
         return matchesSearch && matchesProjet && matchesType;
@@ -227,7 +496,6 @@ export default {
   async created() {
     axios.defaults.baseURL = API_BASE_URL;
     
-    // Configuration de l'intercepteur pour ajouter l'en-tête X-User-Id
     axios.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('token');
@@ -237,7 +505,6 @@ export default {
           config.headers.Authorization = `Bearer ${token}`;
         }
         
-        // Ajouter l'en-tête X-User-Id si l'utilisateur est connecté
         if (user && user.id) {
           config.headers['X-User-Id'] = user.id;
         }
@@ -257,20 +524,34 @@ export default {
     document.removeEventListener('click', this.handleClickOutside);
   },
   watch: {
-    // Mettre à jour la liste filtrée quand les projets changent
     projets: {
       handler(newVal) {
         this.filteredProjets = [...newVal];
+        this.filteredFilterProjets = [...newVal];
       },
       deep: true
     }
   },
   methods: {
+    // Navigation entre onglets
+    goToForm() {
+      this.activeTab = 'form';
+      this.resetForm();
+    },
+    goToList() {
+      this.activeTab = 'list';
+      this.loadLieux();
+    },
+    handleClickOutside(event) {
+      if (!event.target.closest('.search-container-crea-lieu')) {
+        this.showProjetSuggestions = false;
+        this.showFilterProjetSuggestions = false;
+      }
+    },
     async loadProjets() {
       try {
         const response = await axios.get('/api/projets');
         this.projets = response.data;
-        this.filteredProjets = [...this.projets];
       } catch (error) {
         console.error('Erreur lors du chargement des projets:', error);
         alert('Erreur lors du chargement des projets');
@@ -290,7 +571,7 @@ export default {
             
             // Charger les premières scènes pour l'affichage
             if (scenesResponse.data.length > 0) {
-              lieu.scenes = scenesResponse.data.slice(0, 3); // Afficher seulement 3 scènes
+              lieu.scenes = scenesResponse.data.slice(0, 3);
             }
           } catch (error) {
             console.error('Erreur lors du chargement des scènes du lieu:', error);
@@ -300,14 +581,13 @@ export default {
         }
       } catch (error) {
         console.error('Erreur lors du chargement des lieux:', error);
-        alert('Erreur lors du chargement des lieux: ' + (error.response?.data?.message || error.message));
+        this.error = 'Erreur lors du chargement des lieux: ' + (error.response?.data?.message || error.message);
       } finally {
         this.loading = false;
       }
     },
     async submitForm() {
       try {
-        // Vérifier que l'utilisateur est connecté
         if (!this.user || !this.user.id) {
           alert('Erreur: Utilisateur non connecté');
           return;
@@ -318,7 +598,6 @@ export default {
           projetId: parseInt(this.formData.projetId)
         };
         
-        // Configuration des en-têtes avec X-User-Id
         const config = {
           headers: {
             'X-User-Id': this.user.id
@@ -335,16 +614,17 @@ export default {
         
         this.resetForm();
         await this.loadLieux();
+        this.activeTab = 'list';
       } catch (error) {
         console.error('Erreur lors de la sauvegarde du lieu:', error);
         const errorMessage = error.response?.data?.message || error.message;
         
         if (error.response?.status === 403) {
-          alert('Erreur: Vous n\'avez pas les permissions nécessaires pour effectuer cette action');
+          this.error = 'Vous n\'avez pas les permissions nécessaires pour effectuer cette action';
         } else if (error.response?.status === 400) {
-          alert('Erreur: Données invalides - ' + errorMessage);
+          this.error = 'Données invalides - ' + errorMessage;
         } else {
-          alert('Erreur: ' + errorMessage);
+          this.error = errorMessage;
         }
       }
     },
@@ -358,8 +638,7 @@ export default {
       this.projetSearch = this.getProjetName(lieu.projetId);
       this.isEditing = true;
       this.editingId = lieu.id;
-      
-      document.querySelector('.creation-form').scrollIntoView({ behavior: 'smooth' });
+      this.activeTab = 'form';
     },
     async deleteLieu(lieuId) {
       if (!confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?')) {
@@ -367,13 +646,11 @@ export default {
       }
       
       try {
-        // Vérifier que l'utilisateur est connecté
         if (!this.user || !this.user.id) {
           alert('Erreur: Utilisateur non connecté');
           return;
         }
 
-        // Configuration des en-têtes avec X-User-Id
         const config = {
           headers: {
             'X-User-Id': this.user.id
@@ -404,6 +681,7 @@ export default {
       this.projetSearch = '';
       this.isEditing = false;
       this.editingId = null;
+      this.error = '';
       this.filteredProjets = [...this.projets];
     },
     formatDate(dateString) {
@@ -427,28 +705,19 @@ export default {
         alert('Erreur lors du chargement des scènes');
       }
     },
-    goBack() {
-      this.$router.push('/scenariste');
-    },
-    toggleProfileMenu() {
-      this.showProfileMenu = !this.showProfileMenu;
-    },
-    handleClickOutside(event) {
-      if (!event.target.closest('.profile-section')) {
-        this.showProfileMenu = false;
+    getTypeClass(type) {
+      switch (type) {
+        case 'Intérieur': return 'type-interieur';
+        case 'Extérieur': return 'type-exterieur';
+        case 'Intérieur/Extérieur': return 'type-mixte';
+        case 'Studio': return 'type-studio';
+        case 'Naturel': return 'type-naturel';
+        case 'Urbain': return 'type-urbain';
+        default: return '';
       }
     },
-    seDeconnecter() {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      this.$router.push('/');
-    },
-    async loadScenesForProject() {
-      // Cette méthode peut être utilisée pour charger les scènes d'un projet spécifique
-      // si nécessaire pour des fonctionnalités futures
-    },
     
-    // Méthodes pour la zone de liste modifiable
+    // Méthodes pour les zones de liste modifiable
     filterProjets() {
       const searchTerm = this.projetSearch.toLowerCase();
       if (!searchTerm) {
@@ -460,20 +729,41 @@ export default {
         (projet.genreNom && projet.genreNom.toLowerCase().includes(searchTerm))
       );
     },
-
+    filterFilterProjets() {
+      const searchTerm = this.filterProjetSearch.toLowerCase();
+      if (!searchTerm) {
+        this.filteredFilterProjets = [...this.projets];
+        return;
+      }
+      this.filteredFilterProjets = this.projets.filter(projet => 
+        projet.titre.toLowerCase().includes(searchTerm)
+      );
+    },
     selectProjet(projet) {
       this.formData.projetId = projet.id.toString();
       this.projetSearch = `${projet.titre} (${projet.genreNom})`;
       this.showProjetSuggestions = false;
     },
-
+    selectFilterProjet(projet) {
+      this.filterProjetId = projet.id;
+      this.filterProjetSearch = projet.titre;
+      this.showFilterProjetSuggestions = false;
+    },
+    clearFilterProjet() {
+      this.filterProjetId = '';
+      this.filterProjetSearch = '';
+      this.showFilterProjetSuggestions = false;
+    },
     hideProjetSuggestions() {
-      // Petit délai pour permettre la sélection avant de cacher
       setTimeout(() => {
         this.showProjetSuggestions = false;
       }, 200);
     },
-
+    hideFilterProjetSuggestions() {
+      setTimeout(() => {
+        this.showFilterProjetSuggestions = false;
+      }, 200);
+    },
     getProjetName(id) {
       const projet = this.projets.find(p => p.id === parseInt(id));
       return projet ? `${projet.titre} (${projet.genreNom})` : '';
@@ -481,329 +771,4 @@ export default {
   }
 };
 </script>
-
-
-<style scoped>
-/* Import des variables de couleurs du sidebar (adapté pour scoped) */
-.creation-lieu-container {
-  --primary-Scenariste: #7BBBFF;
-  --primary-light-Scenariste: #A3D1FF;
-  --primary-dark-Scenariste: #5AA9FF;
-  --accent-Scenariste: #B8A9FF;
-  --accent-light-Scenariste: #D0C7FF;
-  --background-Scenariste: #F2FDFF;
-  --surface-Scenariste: rgba(255, 255, 255, 0.15);
-  --surface-hover-Scenariste: rgba(255, 255, 255, 0.25);
-  --text-primary-Scenariste: #050F2A;
-  --text-secondary-Scenariste: #1A2A4D;
-  --text-muted-Scenariste: #4A5A7D;
-  --border-Scenariste: rgba(255, 255, 255, 0.2);
-  --border-dark-Scenariste: rgba(5, 15, 42, 0.3);
-  --shadow-Scenariste: 0 8px 32px rgba(5, 15, 42, 0.1);
-  --shadow-hover-Scenariste: 0 12px 40px rgba(5, 15, 42, 0.15);
-  --radius-large: 50px; /* Pour boutons pill-shaped */
-  --radius-sm: 25px; /* Pour inputs et cards */
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--accent-light-Scenariste) 0%, var(--primary-light-Scenariste) 100%);
-  color: var(--text-primary-Scenariste);
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.main-content {
-  max-width: 100%;
-  width: 100%;
-  display: flex;
-  gap: 2rem; /* Séparation entre formulaire et liste */
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  width: 100%;
-}
-
-.back-btn {
-  background: var(--primary-Scenariste);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-large);
-  cursor: pointer;
-  transition: var(--transition);
-  margin-right: 1rem;
-}
-
-.back-btn:hover {
-  background: var(--primary-dark-Scenariste);
-  transform: translateY(-2px);
-}
-
-.creation-form,
-.lieux-list {
-  flex: 1;
-  background: var(--surface-Scenariste);
-  border-radius: var(--radius-sm);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-Scenariste);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--border-Scenariste);
-}
-
-.creation-form h3,
-.lieux-list h3 {
-  margin: 0 0 1rem 0;
-  color: var(--text-primary-Scenariste);
-  font-size: 1.2rem;
-  border-bottom: 1px solid var(--border-dark-Scenariste);
-  padding-bottom: 0.5rem;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: var(--text-secondary-Scenariste);
-  font-size: 0.9rem;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-Scenariste);
-  border-radius: var(--radius-sm);
-  background: var(--surface-hover-Scenariste);
-  color: var(--text-primary-Scenariste);
-  transition: var(--transition);
-  box-sizing: border-box;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--primary-Scenariste);
-  box-shadow: 0 0 0 0.2rem rgba(123, 187, 255, 0.25);
-}
-
-.combobox-container {
-  position: relative;
-}
-
-.suggestions-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: var(--surface-Scenariste);
-  border: 1px solid var(--border-Scenariste);
-  border-radius: var(--radius-sm);
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  box-shadow: var(--shadow-Scenariste);
-}
-
-.suggestion-item {
-  padding: 0.75rem;
-  cursor: pointer;
-  transition: var(--transition);
-  color: var(--text-primary-Scenariste);
-}
-
-.suggestion-item:hover {
-  background: var(--surface-hover-Scenariste);
-}
-
-.submit-btn,
-.cancel-btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: var(--radius-large);
-  cursor: pointer;
-  transition: var(--transition);
-  font-weight: 600;
-  margin-right: 0.5rem;
-}
-
-.submit-btn {
-  background: var(--primary-Scenariste);
-  color: white;
-}
-
-.cancel-btn {
-  background: var(--border-dark-Scenariste);
-  color: var(--text-primary-Scenariste);
-}
-
-.submit-btn:hover,
-.cancel-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover-Scenariste);
-}
-
-.filters {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.filter-group {
-  flex: 1;
-  min-width: 150px;
-}
-
-.lieux-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-}
-
-.lieu-card {
-  background: var(--surface-Scenariste);
-  border-radius: var(--radius-sm);
-  padding: 1rem;
-  box-shadow: var(--shadow-Scenariste);
-  transition: var(--transition);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-Scenariste);
-}
-
-.lieu-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover-Scenariste);
-}
-
-.lieu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.lieu-header h4 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.lieu-actions span {
-  cursor: pointer;
-  margin-left: 0.5rem;
-  transition: var(--transition);
-}
-
-.lieu-actions span:hover {
-  transform: scale(1.1);
-}
-
-.lieu-info p {
-  margin: 0.25rem 0;
-  font-size: 0.85rem;
-  color: var(--text-muted-Scenariste);
-}
-
-.scenes-section {
-  margin-top: 0.75rem;
-  border-top: 1px solid var(--border-Scenariste);
-  padding-top: 0.75rem;
-}
-
-.scene-item {
-  font-size: 0.8rem;
-  padding: 0.5rem;
-  background: var(--surface-hover-Scenariste);
-  border-radius: var(--radius-sm);
-  margin-bottom: 0.5rem;
-}
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(5, 15, 42, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: var(--surface-Scenariste);
-  border-radius: var(--radius-sm);
-  padding: 1.5rem;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: var(--shadow-Scenariste);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-Scenariste);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-muted-Scenariste);
-  font-size: 1.5rem;
-}
-
-.scene-detail {
-  background: var(--surface-hover-Scenariste);
-  border-radius: var(--radius-sm);
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.modal-actions button {
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-large);
-  background: var(--primary-Scenariste);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.modal-actions button:hover {
-  background: var(--primary-dark-Scenariste);
-}
-
-@media (max-width: 768px) {
-  .main-content {
-    flex-direction: column;
-  }
-
-  .filters {
-    flex-direction: column;
-  }
-
-  .lieux-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
-
 

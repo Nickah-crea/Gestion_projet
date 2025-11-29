@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global">
+  <div class="app-wrapper-global accueil-scenariste">
     <div class="main-content-container">
       <main class="main-content-scenariste-Scenariste">
         <!-- Header avec bienvenue à gauche et barre de recherche à droite -->

@@ -1,345 +1,518 @@
 <template>
-  <div class="app-wrapper-global">
-  <div class="creation-comedien">
-    <h2>Création et Gestion des Comédiens</h2>
-    
-    <!-- Formulaire de création -->
-    <div class="form-container">
-      <h3>{{ isEditing ? 'Modifier' : 'Créer' }} un comédien</h3>
-      <form @submit.prevent="submitForm" class="comedien-form" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="nom">Nom du comédien *</label>
-          <input
-            type="text"
-            id="nom"
-            v-model="formData.nom"
-            required
-            placeholder="Entrez le nom du comédien"
-          />
-        </div>
+  <div class="app-wrapper-global-crea-comedien">
+    <!-- Sidebar latérale -->
+    <div class="creation-sidebar-crea-comedien">
+      <div class="sidebar-header-crea-comedien">
+        <h2 class="sidebar-title-crea-comedien">Gestion Comédiens</h2>
+        <p class="sidebar-subtitle-crea-comedien">Créez et gérez vos comédiens</p>
+      </div>
 
-        <div class="form-group">
-          <label for="age">Âge</label>
-          <input
-            type="number"
-            id="age"
-            v-model="formData.age"
-            placeholder="Âge du comédien"
-          />
+      <!-- Section Actions Rapides -->
+      <div class="sidebar-section-crea-comedien">
+        <h3 class="section-title-crea-comedien"><i class="fas fa-bolt"></i> Actions Rapides</h3>
+        <div class="sidebar-actions-crea-comedien">
+          <button 
+            @click="goToForm" 
+            class="sidebar-btn-crea-comedien" 
+            :class="{ active: activeTab === 'form' && !isEditing }"
+          >
+            <i class="fas fa-plus"></i>
+            Nouveau comédien
+          </button>
+          <button 
+            @click="goToList" 
+            class="sidebar-btn-crea-comedien"
+            :class="{ active: activeTab === 'list' }"
+          >
+            <i class="fas fa-list"></i>
+            Voir la liste
+          </button>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="email">Email *</label>
-          <input
-            type="email"
-            id="email"
-            v-model="formData.email"
-            required
-            placeholder="email@exemple.com"
-          />
-        </div>
-
-        <!-- Sélection du projet avec recherche -->
-        <div class="form-group">
-          <label for="projetSearch">Projet *</label>
-          <div class="search-container">
-            <input
-              type="text"
-              id="projetSearch"
-              v-model="projetSearch"
-              @input="filterProjets"
-              @focus="showProjetSuggestions = true"
-              placeholder="Rechercher un projet..."
-              class="search-input"
-            />
-            <div v-if="showProjetSuggestions && filteredProjets.length > 0" class="suggestions-dropdown">
-              <div
-                v-for="projet in filteredProjets"
-                :key="projet.id"
-                @click="selectProjet(projet)"
-                class="suggestion-item"
-              >
+      <!-- Section Filtres -->
+      <div class="sidebar-section-crea-comedien">
+        <h3 class="section-title-crea-comedien"><i class="fas fa-filter"></i> Filtres</h3>
+        <div class="filter-group-crea-comedien">
+          <div class="filter-item-crea-comedien">
+            <label for="projetFilterSidebar">Projet</label>
+            <select 
+              id="projetFilterSidebar" 
+              v-model="selectedProjetFilter" 
+              @change="filterComediens"
+              class="filter-select-crea-comedien"
+            >
+              <option value="">Tous les projets</option>
+              <option v-for="projet in projets" :key="projet.id" :value="projet.id">
                 {{ projet.titre }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="filter-item-crea-comedien">
+            <label for="statutFilterSidebar">Statut</label>
+            <select 
+              id="statutFilterSidebar" 
+              v-model="selectedStatutFilter" 
+              @change="filterComediens"
+              class="filter-select-crea-comedien"
+            >
+              <option value="">Tous les statuts</option>
+              <option value="DISPONIBLE">Disponible</option>
+              <option value="INDISPONIBLE">Indisponible</option>
+              <option value="OCCUPE">Occupé</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Statistiques -->
+      <div class="sidebar-section-crea-comedien">
+        <h3 class="section-title-crea-comedien"><i class="fas fa-chart-bar"></i> Statistiques</h3>
+        <div class="stats-crea-comedien">
+          <div class="stat-item-crea-comedien">
+            <span class="stat-number-crea-comedien">{{ comediens.length }}</span>
+            <span class="stat-label-crea-comedien">Total comédiens</span>
+          </div>
+          <div class="stat-item-crea-comedien">
+            <span class="stat-number-crea-comedien">{{ getComediensDisponibles }}</span>
+            <span class="stat-label-crea-comedien">Disponibles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenu principal à droite -->
+    <div class="creation-body-crea-comedien">
+      <div class="creation-main-content-crea-comedien">
+        
+        <!-- En-tête principal -->
+        <div class="main-header-crea-comedien">
+          <h1 class="page-title-crea-comedien"><i class="fas fa-user-plus"></i> Gestion des Comédiens</h1>
+          <p class="page-subtitle-crea-comedien">Créez, modifiez et gérez l'ensemble des comédiens de vos projets</p>
+        </div>
+
+        <!-- Système d'onglets -->
+        <div class="tabs-container-crea-comedien">
+          <div class="tabs-header-crea-comedien">
+            <button 
+              @click="activeTab = 'form'"
+              :class="['tab-btn-crea-comedien', { active: activeTab === 'form' }]"
+            >
+              <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              {{ isEditing ? 'Modifier comédien' : 'Créer comédien' }}
+            </button>
+            <button 
+              @click="activeTab = 'list'"
+              :class="['tab-btn-crea-comedien', { active: activeTab === 'list' }]"
+            >
+              <i class="fas fa-list"></i>
+              Liste comédiens
+            </button>
+          </div>
+          
+          <div class="tabs-content-crea-comedien">
+            <!-- Indicateur visuel de l'onglet actif -->
+            <div class="tab-indicator-crea-comedien" :style="getTabIndicatorStyle"></div>
+            
+            <!-- Contenu de l'onglet Formulaire -->
+            <div v-show="activeTab === 'form'" class="tab-pane-crea-comedien">
+              <!-- Formulaire de création/modification -->
+              <div class="form-container-crea-comedien">
+                <div class="form-header-crea-comedien">
+                  <h3>
+                    <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    {{ isEditing ? 'Modifier le comédien' : 'Créer un nouveau comédien' }}
+                  </h3>
+                  <button 
+                    v-if="isEditing"
+                    @click="goToForm"
+                    class="back-btn-crea-comedien"
+                  >
+                    <i class="fas fa-plus"></i> Nouveau comédien
+                  </button>
+                </div>
+
+                <form @submit.prevent="submitForm" class="comedien-form-crea-comedien" enctype="multipart/form-data">
+                  <!-- Ligne 1 : Nom + Âge -->
+                  <div class="form-row-crea-comedien">
+                    <div class="form-group-crea-comedien">
+                      <label for="nom">Nom du comédien *</label>
+                      <input
+                        type="text"
+                        id="nom"
+                        v-model="formData.nom"
+                        required
+                        placeholder="Entrez le nom du comédien"
+                        class="form-input-crea-comedien"
+                      />
+                    </div>
+
+                    <div class="form-group-crea-comedien">
+                      <label for="age">Âge</label>
+                      <input
+                        type="number"
+                        id="age"
+                        v-model="formData.age"
+                        placeholder="Âge du comédien"
+                        class="form-input-crea-comedien"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Ligne 2 : Email + Projet -->
+                  <div class="form-row-crea-comedien">
+                    <div class="form-group-crea-comedien">
+                      <label for="email">Email *</label>
+                      <input
+                        type="email"
+                        id="email"
+                        v-model="formData.email"
+                        required
+                        placeholder="email@exemple.com"
+                        class="form-input-crea-comedien"
+                      />
+                    </div>
+
+                    <!-- Sélection du projet avec recherche -->
+                    <div class="form-group-crea-comedien">
+                      <label for="projetSearch">Projet *</label>
+                      <div class="search-container-crea-comedien">
+                        <input
+                          type="text"
+                          id="projetSearch"
+                          v-model="projetSearch"
+                          @input="filterProjets"
+                          @focus="showProjetSuggestions = true"
+                          placeholder="Rechercher un projet..."
+                          class="search-input-crea-comedien"
+                        />
+                        <div v-if="showProjetSuggestions && filteredProjets.length > 0" class="suggestions-dropdown-crea-comedien">
+                          <div
+                            v-for="projet in filteredProjets"
+                            :key="projet.id"
+                            @click="selectProjet(projet)"
+                            class="suggestion-item-crea-comedien"
+                          >
+                            {{ projet.titre }}
+                          </div>
+                        </div>
+                      </div>
+                      <input type="hidden" v-model="formData.projetId" required />
+                    </div>
+                  </div>
+
+                  <!-- Ligne 3 : Disponibilités + Photo -->
+                  <div class="form-row-split-crea-comedien">
+                    <!-- Colonne 1 : Disponibilités -->
+                    <div class="form-group-crea-comedien disponibilites-section-crea-comedien">
+                      <label>Disponibilités</label>
+                      <div class="disponibilites-list-crea-comedien">
+                        <div v-for="(dispo, index) in formData.disponibilites" :key="index" class="disponibilite-item-crea-comedien">
+                          <div class="disponibilite-inputs-crea-comedien">
+                            <input
+                              type="date"
+                              v-model="dispo.date"
+                              class="date-input-crea-comedien"
+                              placeholder="Date"
+                            />
+                            <select v-model="dispo.statut" class="statut-select-crea-comedien">
+                              <option value="DISPONIBLE">Disponible</option>
+                              <option value="INDISPONIBLE">Indisponible</option>
+                              <option value="OCCUPE">Occupé</option>
+                            </select>
+                            <button
+                              type="button"
+                              @click="removeDisponibilite(index)"
+                              class="remove-dispo-btn-crea-comedien"
+                              title="Supprimer"
+                            >
+                              <i class="fas fa-times"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        @click="addDisponibilite"
+                        class="btn-add-dispo-crea-comedien"
+                      >
+                        <i class="fas fa-plus"></i> Ajouter une disponibilité
+                      </button>
+                    </div>
+
+                    <!-- Colonne 2 : Photo -->
+                    <div class="form-group-crea-comedien photo-section-crea-comedien">
+                      <label for="photo">Photo</label>
+                      <div class="photo-upload-crea-comedien">
+                        <input
+                          type="file"
+                          id="photo"
+                          ref="photoInput"
+                          @change="handlePhotoUpload"
+                          accept="image/*"
+                          class="photo-input-crea-comedien"
+                        />
+                        <label for="photo" class="photo-label-crea-comedien">
+                          <i class="fas fa-camera"></i>
+                          <span v-if="!previewPhoto">Choisir une photo</span>
+                          <span v-else>Changer la photo</span>
+                        </label>
+                        <div v-if="previewPhoto" class="photo-preview-crea-comedien">
+                          <img :src="previewPhoto" alt="Aperçu de la photo" class="preview-image-crea-comedien" />
+                          <button type="button" @click="removePhoto" class="remove-photo-btn-crea-comedien">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div v-if="error" class="error-message-crea-comedien">
+                    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                  </div>
+
+                  <div class="form-actions-crea-comedien">
+                    <button
+                      v-if="isEditing"
+                      type="button"
+                      @click="goToForm"
+                      class="cancel-btn-crea-comedien"
+                    >
+                      <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      :disabled="isSubmitting"
+                      class="submit-btn-crea-comedien"
+                    >
+                      <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
+                      <i v-else :class="isEditing ? 'fas fa-save' : 'fas fa-plus'"></i>
+                      {{ isSubmitting ? 'Enregistrement...' : (isEditing ? 'Enregistrer' : 'Créer le comédien') }}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-          </div>
-          <input type="hidden" v-model="formData.projetId" required />
-        </div>
 
-        <!-- === DISPONIBILITÉS + PHOTO CÔTE À CÔTE === -->
-        <div class="form-row-split">
-          <!-- COLONNE 1 : Disponibilités -->
-          <div class="form-group disponibilites-section">
-            <label>Disponibilités</label>
-            <div class="disponibilites-list">
-              <div v-for="(dispo, index) in formData.disponibilites" :key="index" class="disponibilite-item">
-                <div class="disponibilite-inputs">
-                  <input
-                    type="date"
-                    v-model="dispo.date"
-                    class="date-input"
-                    placeholder="Date"
-                  />
-                  <select v-model="dispo.statut" class="statut-select">
-                    <option value="DISPONIBLE">Disponible</option>
-                    <option value="INDISPONIBLE">Indisponible</option>
-                    <option value="OCCUPE">Occupé</option>
-                  </select>
-                  <button
-                    type="button"
-                    @click="removeDisponibilite(index)"
-                    class="remove-dispo-btn"
-                    title="Supprimer"
-                  >
-                    ×
-                  </button>
+            <!-- Contenu de l'onglet Liste -->
+            <div v-show="activeTab === 'list'" class="tab-pane-crea-comedien">
+              <!-- Liste des comédiens -->
+              <div class="comediens-list-crea-comedien">
+                <div class="list-header-crea-comedien">
+                  <h3><i class="fas fa-users"></i> Liste des comédiens ({{ filteredComediens.length }})</h3>
+                  
+                  <div class="search-section-crea-comedien">
+                    <div class="search-group-crea-comedien">
+                      <label for="comedienSearch">Rechercher un comédien</label>
+                      <div class="search-input-container-crea-comedien">
+                        <i class="fas fa-search search-icon-crea-comedien"></i>
+                        <input
+                          type="text"
+                          id="comedienSearch"
+                          v-model="comedienSearch"
+                          @input="filterComediens"
+                          placeholder="Rechercher par nom, email ou projet..."
+                          class="search-input-large-crea-comedien"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div v-if="loading" class="loading-state-crea-comedien">
+                  <i class="fas fa-spinner fa-spin"></i> Chargement...
+                </div>
+                
+                <div v-else-if="filteredComediens.length === 0" class="empty-state-crea-comedien">
+                  <i class="fas fa-users"></i>
+                  <div v-if="comedienSearch || selectedProjetFilter || selectedStatutFilter">
+                    Aucun comédien ne correspond à vos critères de recherche.
+                  </div>
+                  <div v-else>
+                    Aucun comédien créé pour le moment.
+                  </div>
+                </div>
+
+                <div v-else class="comediens-table-container-crea-comedien">
+                  <table class="comediens-table-crea-comedien">
+                    <thead>
+                      <tr>
+                        <th>Photo</th>
+                        <th>Nom</th>
+                        <th>Âge</th>
+                        <th>Email</th>
+                        <th>Projet</th>
+                        <th>Disponibilités</th>
+                        <th>Date création</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="comedien in filteredComediens" :key="comedien.id">
+                        <td>
+                          <img 
+                            v-if="comedien.photoPath" 
+                            :src="getPhotoUrl(comedien.photoPath)" 
+                            :alt="comedien.nom"
+                            class="table-photo-crea-comedien"
+                          />
+                          <div v-else class="photo-placeholder-crea-comedien">
+                            <i class="fas fa-user"></i>
+                          </div>
+                        </td>
+                        <td>{{ comedien.nom }}</td>
+                        <td>{{ comedien.age }} ans</td>
+                        <td>{{ comedien.email }}</td>
+                        <td>{{ comedien.projetTitre || 'Non assigné' }}</td>
+                        <td>
+                          <div class="table-disponibilites-crea-comedien">
+                            <div v-for="dispo in comedien.disponibilites" :key="dispo.id" class="table-dispo-item-crea-comedien">
+                              <span class="dispo-date-crea-comedien">{{ formatDateSimple(dispo.date) }}</span>
+                              <span class="status-badge-crea-comedien" :class="'status-' + dispo.statut.toLowerCase() + '-crea-comedien'">
+                                <i :class="getStatutIcon(dispo.statut)"></i>
+                                {{ getStatutText(dispo.statut) }}
+                              </span>
+                            </div>
+                            <div v-if="!comedien.disponibilites || comedien.disponibilites.length === 0" class="no-disponibilites-crea-comedien">
+                              Aucune
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{ formatDate(comedien.creeLe) }}</td>
+                        <td>
+                          <div class="table-actions-crea-comedien">
+                            <button @click="openDetailsModal(comedien)" class="btn-view-crea-comedien" title="Voir détails">
+                              <i class="fas fa-eye"></i>
+                            </button>
+                            <button @click="editComedien(comedien)" class="btn-edit-crea-comedien" title="Modifier">
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button @click="goToSceneComedien(comedien.id)" class="btn-link-crea-comedien" title="Lier à une scène">
+                              <i class="fas fa-link"></i>
+                            </button>
+                            <button @click="deleteComedien(comedien.id)" class="btn-delete-crea-comedien" title="Supprimer">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
-            <button
-              type="button"
-              @click="addDisponibilite"
-              class="btn-add-dispo"
-            >
-              + Ajouter une disponibilité
-            </button>
-          </div>
-
-          <!-- COLONNE 2 : Photo -->
-          <div class="form-group photo-section">
-            <label for="photo">Photo</label>
-            <div class="photo-upload">
-              <input
-                type="file"
-                id="photo"
-                ref="photoInput"
-                @change="handlePhotoUpload"
-                accept="image/*"
-                class="photo-input"
-              />
-              <label for="photo" class="photo-label">
-                <span v-if="!previewPhoto">Choisir une photo</span>
-                <span v-else>Changer la photo</span>
-              </label>
-              <div v-if="previewPhoto" class="photo-preview">
-                <img :src="previewPhoto" alt="Aperçu de la photo" class="preview-image" />
-                <button type="button" @click="removePhoto" class="remove-photo-btn">×</button>
-              </div>
-            </div>
           </div>
         </div>
-        <!-- === FIN DU BLOC CÔTE À CÔTE === -->
-
-        <div class="form-actions">
-          <button
-            type="submit"
-            :disabled="isSubmitting"
-            class="btn-primary"
-          >
-            {{ isEditing ? 'Modifier' : 'Créer' }} le comédien
-          </button>
-          <button
-            v-if="isEditing"
-            type="button"
-            @click="resetForm"
-            class="#"
-          >
-            Annuler
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
 
-    <!-- Liste des comédiens (inchangée) -->
-    <div class="comediens-list">
-      <div class="list-header">
-        <h3>Liste des comédiens</h3>
+    <!-- Modal de détails -->
+    <div v-if="showDetailsModal" class="modal-overlay-crea-comedien" @click="closeDetailsModal">
+      <div class="modal-content-crea-comedien" @click.stop>
+        <div class="modal-header-crea-comedien">
+          <h3>
+            <i class="fas fa-user"></i>
+            Détails du comédien
+          </h3>
+          <button @click="closeDetailsModal" class="modal-close-btn-crea-comedien">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
         
-        <div class="search-section">
-          <div class="search-group">
-            <label for="comedienSearch">Rechercher un comédien</label>
-            <input
-              type="text"
-              id="comedienSearch"
-              v-model="comedienSearch"
-              @input="filterComediens"
-              placeholder="Rechercher par nom, email ou projet..."
-              class="search-input"
-            />
-          </div>
-          
-          <div class="filters-group">
-            <div class="filter-item">
-              <label for="projetFilter">Filtrer par projet</label>
-              <select id="projetFilter" v-model="selectedProjetFilter" @change="filterComediens" class="filter-select">
-                <option value="">Tous les projets</option>
-                <option v-for="projet in projets" :key="projet.id" :value="projet.id">
-                  {{ projet.titre }}
-                </option>
-              </select>
-            </div>
-            
-            <div class="filter-item">
-              <label for="statutFilter">Filtrer par statut</label>
-              <select id="statutFilter" v-model="selectedStatutFilter" @change="filterComediens" class="filter-select">
-                <option value="">Tous les statuts</option>
-                <option value="DISPONIBLE">Disponible</option>
-                <option value="INDISPONIBLE">Indisponible</option>
-                <option value="OCCUPE">Occupé</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div v-if="loading" class="loading">Chargement...</div>
-      
-      <div v-else-if="filteredComediens.length === 0" class="empty-state">
-        <div v-if="comedienSearch || selectedProjetFilter || selectedStatutFilter">
-          Aucun comédien ne correspond à vos critères de recherche.
-        </div>
-        <div v-else>
-          Aucun comédien créé pour le moment.
-        </div>
-      </div>
-
-      <!-- <div v-else class="comediens-grid">
-        <div
-          v-for="comedien in filteredComediens"
-          :key="comedien.id"
-          class="comedien-card"
-        >
-          <div class="comedien-photo">
-            <img 
-              v-if="comedien.photoPath" 
-              :src="getPhotoUrl(comedien.photoPath)" 
-              :alt="comedien.nom"
-              class="photo"
-            />
-            <div v-else class="photo-placeholder">No photo</div>
-          </div>
-          
-          <div class="comedien-info">
-            <h4>{{ comedien.nom }}</h4>
-            <p><strong>Âge:</strong> {{ comedien.age }} ans</p>
-            <p><strong>Email:</strong> {{ comedien.email }}</p>
-            <p><strong>Projet:</strong> {{ comedien.projetTitre || 'Non assigné' }}</p>
-            
-            <div v-if="comedien.disponibilites && comedien.disponibilites.length > 0" class="disponibilites-display">
-              <strong>Disponibilités:</strong>
-              <div v-for="dispo in comedien.disponibilites" :key="dispo.id" class="dispo-item">
-                <span class="dispo-date">{{ formatDateSimple(dispo.date) }}</span>
-                <span class="dispo-statut" :class="getStatutClass(dispo.statut)">
-                  {{ getStatutText(dispo.statut) }}
-                </span>
+        <div class="modal-body-crea-comedien" v-if="selectedComedien">
+          <div class="comedien-details-crea-comedien">
+            <!-- Photo -->
+            <div class="detail-photo-section-crea-comedien">
+              <img 
+                v-if="selectedComedien.photoPath" 
+                :src="getPhotoUrl(selectedComedien.photoPath)" 
+                :alt="selectedComedien.nom"
+                class="detail-photo-crea-comedien"
+              />
+              <div v-else class="detail-photo-placeholder-crea-comedien">
+                <i class="fas fa-user"></i>
               </div>
             </div>
-            <p v-else class="no-disponibilites">Aucune disponibilité définie</p>
             
-            <p class="date-info">
-              Créé le: {{ formatDate(comedien.creeLe) }}
-            </p>
+            <!-- Informations principales -->
+            <div class="detail-info-crea-comedien">
+              <div class="detail-row-crea-comedien">
+                <span class="detail-label-crea-comedien">Nom :</span>
+                <span class="detail-value-crea-comedien">{{ selectedComedien.nom }}</span>
+              </div>
+              
+              <div class="detail-row-crea-comedien">
+                <span class="detail-label-crea-comedien">Âge :</span>
+                <span class="detail-value-crea-comedien">{{ selectedComedien.age }} ans</span>
+              </div>
+              
+              <div class="detail-row-crea-comedien">
+                <span class="detail-label-crea-comedien">Email :</span>
+                <span class="detail-value-crea-comedien">{{ selectedComedien.email }}</span>
+              </div>
+              
+              <div class="detail-row-crea-comedien">
+                <span class="detail-label-crea-comedien">Projet :</span>
+                <span class="detail-value-crea-comedien">{{ selectedComedien.projetTitre || 'Non assigné' }}</span>
+              </div>
+              
+              <div class="detail-row-crea-comedien">
+                <span class="detail-label-crea-comedien">Date de création :</span>
+                <span class="detail-value-crea-comedien">{{ formatDate(selectedComedien.creeLe) }}</span>
+              </div>
+            </div>
           </div>
-
-          <div class="comedien-actions">
-            <button
-              @click="editComedien(comedien)"
-              class="btn-edit"
-              title="Modifier"
-            >
-              Edit
-            </button>
-            <button
-              @click="goToSceneComedien(comedien.id)"
-              class="btn-link"
-              title="Lier à une scène"
-            >
-              Scene
-            </button>
-            <button
-              @click="deleteComedien(comedien.id)"
-              class="btn-delete"
-              title="Supprimer"
-            >
-              Delete
-            </button>
+          
+          <!-- Disponibilités -->
+          <div class="detail-disponibilites-crea-comedien">
+            <h4><i class="fas fa-calendar-alt"></i> Disponibilités</h4>
+            <div v-if="selectedComedien.disponibilites && selectedComedien.disponibilites.length > 0" 
+                 class="disponibilites-grid-crea-comedien">
+              <div v-for="dispo in selectedComedien.disponibilites" 
+                   :key="dispo.id" 
+                   class="dispo-card-crea-comedien"
+                   :class="getStatutClass(dispo.statut)">
+                <div class="dispo-date-crea-comedien">
+                  <i class="fas fa-calendar-day"></i>
+                  {{ formatDateSimple(dispo.date) }}
+                </div>
+                <div class="dispo-statut-crea-comedien">
+                  <span class="status-badge-crea-comedien" :class="'status-' + dispo.statut.toLowerCase() + '-crea-comedien'">
+                    <i :class="getStatutIcon(dispo.statut)"></i>
+                    {{ getStatutText(dispo.statut) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div v-else class="no-disponibilites-crea-comedien">
+              <i class="fas fa-info-circle"></i>
+              Aucune disponibilité définie
+            </div>
           </div>
         </div>
-      </div> -->
-    <div v-else class="comediens-table-container">
-  <table class="comediens-table">
-    <thead>
-      <tr>
-        <th>Photo</th>
-        <th>Nom</th>
-        <th>Âge</th>
-        <th>Email</th>
-        <th>Projet</th>
-        <th>Disponibilités</th>
-        <th>Date création</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="comedien in filteredComediens" :key="comedien.id">
-        <td>
-          <img 
-            v-if="comedien.photoPath" 
-            :src="getPhotoUrl(comedien.photoPath)" 
-            :alt="comedien.nom"
-            class="table-photo"
-          />
-          <div v-else class="photo-placeholder">No photo</div>
-        </td>
-        <td>{{ comedien.nom }}</td>
-        <td>{{ comedien.age }} ans</td>
-        <td>{{ comedien.email }}</td>
-        <td>{{ comedien.projetTitre || 'Non assigné' }}</td>
-        <td>
-          <div class="table-disponibilites">
-            <div v-for="dispo in comedien.disponibilites" :key="dispo.id" class="table-dispo-item">
-              <span class="dispo-date">{{ formatDateSimple(dispo.date) }}</span>
-              <span class="dispo-statut" :class="getStatutClass(dispo.statut)">
-                {{ getStatutText(dispo.statut) }}
-              </span>
-            </div>
-            <div v-if="!comedien.disponibilites || comedien.disponibilites.length === 0" class="no-disponibilites">
-              Aucune
-            </div>
-          </div>
-        </td>
-        <td>{{ formatDate(comedien.creeLe) }}</td>
-        <td>
-          <div class="table-actions">
-            <button @click="editComedien(comedien)" class="btn-edit" title="Modifier">
-              Edit
-            </button>
-            <button @click="goToSceneComedien(comedien.id)" class="btn-link" title="Lier à une scène">
-              Scene
-            </button>
-            <button @click="deleteComedien(comedien.id)" class="btn-delete" title="Supprimer">
-              Delete
-            </button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-</div>
-  </div>
+        
+        <div class="modal-footer-crea-comedien">
+          <button @click="editComedien(selectedComedien)" class="btn-edit-modal-crea-comedien">
+            <i class="fas fa-edit"></i> Modifier
+          </button>
+          <button @click="closeDetailsModal" class="btn-close-modal-crea-comedien">
+            <i class="fas fa-times"></i> Fermer
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import '../assets/css/crea_comedien.css';
 
 export default {
   name: 'CreationComedien',
   data() {
     return {
+      activeTab: 'form',
       formData: {
         nom: '',
         age: null,
@@ -358,20 +531,57 @@ export default {
       loading: false,
       previewPhoto: null,
       currentPhotoFile: null,
+      error: '',
       
       // Recherche et filtres
       projetSearch: '',
       showProjetSuggestions: false,
       comedienSearch: '',
       selectedProjetFilter: '',
-      selectedStatutFilter: ''
+      selectedStatutFilter: '',
+      
+      // Modal de détails
+      showDetailsModal: false,
+      selectedComedien: null
     };
+  },
+  computed: {
+    getComediensDisponibles() {
+      return this.comediens.filter(comedien => 
+        comedien.disponibilites && 
+        comedien.disponibilites.some(dispo => dispo.statut === 'DISPONIBLE')
+      ).length;
+    },
+    
+    getTabIndicatorStyle() {
+      const tabWidth = 100 / 2;
+      const translateX = this.activeTab === 'form' ? 0 : 100;
+      return {
+        transform: `translateX(${translateX}%)`,
+        width: `${tabWidth}%`
+      };
+    }
   },
   async mounted() {
     await this.loadProjets();
     await this.loadComediens();
+    document.addEventListener('click', this.closeProjetSuggestions);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.closeProjetSuggestions);
   },
   methods: {
+    // Navigation entre onglets
+    goToForm() {
+      this.activeTab = 'form';
+      this.resetForm();
+    },
+
+    goToList() {
+      this.activeTab = 'list';
+      this.loadComediens(); // Recharger les données
+    },
+
     async loadProjets() {
       try {
         const response = await axios.get('/api/projets');
@@ -390,7 +600,7 @@ export default {
         this.filteredComediens = this.comediens;
       } catch (error) {
         console.error('Erreur lors du chargement des comédiens:', error);
-        alert('Erreur lors du chargement des comédiens');
+        this.error = 'Erreur lors du chargement des comédiens';
       } finally {
         this.loading = false;
       }
@@ -413,10 +623,15 @@ export default {
       this.showProjetSuggestions = false;
     },
 
+    closeProjetSuggestions(event) {
+      if (!event.target.closest('.search-container-crea-comedien')) {
+        this.showProjetSuggestions = false;
+      }
+    },
+
     filterComediens() {
       let filtered = this.comediens;
 
-      // Filtre par recherche texte
       if (this.comedienSearch.trim() !== '') {
         const searchTerm = this.comedienSearch.toLowerCase();
         filtered = filtered.filter(comedien =>
@@ -426,14 +641,12 @@ export default {
         );
       }
 
-      // Filtre par projet
       if (this.selectedProjetFilter !== '') {
         filtered = filtered.filter(comedien => 
           comedien.projetId == this.selectedProjetFilter
         );
       }
 
-      // Filtre par statut de disponibilité
       if (this.selectedStatutFilter !== '') {
         filtered = filtered.filter(comedien =>
           comedien.disponibilites && 
@@ -453,7 +666,6 @@ export default {
       if (file) {
         this.currentPhotoFile = file;
         
-        // Créer un aperçu de l'image
         const reader = new FileReader();
         reader.onload = (e) => {
           this.previewPhoto = e.target.result;
@@ -465,10 +677,10 @@ export default {
     removePhoto() {
       this.previewPhoto = null;
       this.currentPhotoFile = null;
-      this.$refs.photoInput.value = '';
+      if (this.$refs.photoInput) {
+        this.$refs.photoInput.value = '';
+      }
     },
-
-    
 
     addDisponibilite() {
       this.formData.disponibilites.push({
@@ -483,10 +695,10 @@ export default {
 
     async submitForm() {
       this.isSubmitting = true;
+      this.error = '';
       try {
         const formData = new FormData();
         
-        // Ajouter seulement les champs qui ont été modifiés
         if (this.formData.nom) formData.append('nom', this.formData.nom);
         if (this.formData.age) formData.append('age', this.formData.age);
         if (this.formData.email) formData.append('email', this.formData.email);
@@ -496,7 +708,6 @@ export default {
           formData.append('photo', this.currentPhotoFile);
         }
 
-        // Pour l'édition : envoyer seulement la première disponibilité si elle existe
         if (this.isEditing && this.formData.disponibilites.length > 0) {
           const firstDispo = this.formData.disponibilites[0];
           if (firstDispo.date) {
@@ -524,16 +735,16 @@ export default {
         
         this.resetForm();
         await this.loadComediens();
+        this.activeTab = 'list'; // Aller vers la liste après création
       } catch (error) {
         console.error('Erreur lors de la sauvegarde:', error);
-        alert('Erreur lors de la sauvegarde: ' + (error.response?.data?.message || error.message));
+        this.error = error.response?.data?.message || 'Erreur lors de la sauvegarde';
       } finally {
         this.isSubmitting = false;
       }
     },
 
     editComedien(comedien) {
-      this.originalData = { ...comedien }; // Sauvegarder les données originales
       this.formData = {
         nom: comedien.nom,
         age: comedien.age,
@@ -542,7 +753,6 @@ export default {
         disponibilites: comedien.disponibilites ? [...comedien.disponibilites] : []
       };
       
-      // Mettre à jour la recherche de projet avec le projet actuel
       const projet = this.projets.find(p => p.id === comedien.projetId);
       this.projetSearch = projet ? projet.titre : '';
       
@@ -555,8 +765,9 @@ export default {
       this.currentPhotoFile = null;
       this.isEditing = true;
       this.editingId = comedien.id;
-      
-      document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+      this.error = '';
+      this.activeTab = 'form'; // Aller vers le formulaire en mode édition
+      this.closeDetailsModal(); // Fermer la modal si elle était ouverte
     },
 
     async deleteComedien(id) {
@@ -574,6 +785,27 @@ export default {
       }
     },
 
+    // Modal de détails
+    openDetailsModal(comedien) {
+      this.selectedComedien = comedien;
+      this.showDetailsModal = true;
+    },
+
+    closeDetailsModal() {
+      this.showDetailsModal = false;
+      this.selectedComedien = null;
+    },
+
+    // Obtenir l'icône du statut
+    getStatutIcon(statut) {
+      switch (statut) {
+        case 'DISPONIBLE': return 'fas fa-check-circle';
+        case 'INDISPONIBLE': return 'fas fa-times-circle';
+        case 'OCCUPE': return 'fas fa-clock';
+        default: return 'fas fa-question-circle';
+      }
+    },
+
     resetForm() {
       this.formData = {
         nom: '',
@@ -588,8 +820,11 @@ export default {
       this.currentPhotoFile = null;
       this.isEditing = false;
       this.editingId = null;
-      this.$refs.photoInput.value = '';
+      if (this.$refs.photoInput) {
+        this.$refs.photoInput.value = '';
+      }
       this.showProjetSuggestions = false;
+      this.error = '';
     },
 
     formatDate(dateString) {
@@ -608,9 +843,9 @@ export default {
 
     getStatutClass(statut) {
       switch (statut) {
-        case 'DISPONIBLE': return 'statut-disponible';
-        case 'INDISPONIBLE': return 'statut-indisponible';
-        case 'OCCUPE': return 'statut-occupe';
+        case 'DISPONIBLE': return 'statut-disponible-crea-comedien';
+        case 'INDISPONIBLE': return 'statut-indisponible-crea-comedien';
+        case 'OCCUPE': return 'statut-occupe-crea-comedien';
         default: return '';
       }
     },
@@ -623,84 +858,14 @@ export default {
         default: return statut;
       }
     },
+    
     goToSceneComedien(comedienId) {
       this.$router.push({
         path: '/scene-comedien',
         query: { comedienId: comedienId }
       });
     }
-    
-  },
-
- 
-  watch: {
-    // Fermer les suggestions quand on clique ailleurs
-    showProjetSuggestions(value) {
-      if (value) {
-        setTimeout(() => {
-          document.addEventListener('click', this.closeProjetSuggestions);
-        }, 100);
-      } else {
-        document.removeEventListener('click', this.closeProjetSuggestions);
-      }
-    }
-  },
-  beforeUnmount() {
-    document.removeEventListener('click', this.closeProjetSuggestions);
   }
 };
 </script>
-
-<style scoped>
-/* === GRILLE CÔTE À CÔTE : Disponibilités + Photo === */
-.form-row-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-@media (max-width: 768px) {
-  .form-row-split {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Ajustement hauteur photo */
-.photo-section {
-  display: flex;
-  flex-direction: column;
-}
-
-.photo-upload {
-  flex: 1;
-}
-
-.photo-preview {
-  position: relative;
-  margin-top: 10px;
-}
-
-.preview-image {
-  width: 100%;
-  max-height: 180px;
-  object-fit: cover;
-  border-radius: 12px;
-  border: 2px dashed #ccc;
-}
-
-.remove-photo-btn {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  font-size: 16px;
-  cursor: pointer;
-}
-</style>
 

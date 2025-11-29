@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-recherche">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="search-sidebar-recherche">
       <div class="sidebar-header-recherche">
