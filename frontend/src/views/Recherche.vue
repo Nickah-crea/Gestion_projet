@@ -1,19 +1,16 @@
 <template>
-  <div class="app-wrapper">
-    <!-- Header compact -->
-    <div class="search-header-compact">
-      <div class="header-content">
-        <h1 class="page-title">🔍 Recherche Avancée</h1>
-        <p class="page-subtitle">Trouvez des scènes, personnages, lieux et plateaux selon vos critères</p>
+  <div class="app-wrapper-global">
+    <!-- Sidebar latérale -->
+    <div class="search-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Filtres</h2>
+        <p class="sidebar-subtitle">Affinez votre recherche</p>
       </div>
-    </div>
 
-    <!-- Filtres principaux compacts -->
-    <div class="main-filters-compact">
-      <div class="filters-row">
-        <!-- Sélection du Projet - EN PREMIER -->
-        <div class="filter-group-compact">
-          <label class="filter-label">📁 Projet</label>
+      <!-- Section Projet -->
+      <div class="filter-section">
+        <h3 class="section-title"><i class="fas fa-folder"></i> Projet</h3>
+        <div class="filter-group">
           <select v-model="criteres.projetId" class="filter-select" @change="onProjetChange">
             <option value="">Tous les projets</option>
             <option 
@@ -25,373 +22,458 @@
             </option>
           </select>
         </div>
+      </div>
 
-        <!-- Types de recherche - Dropdown -->
-        <div class="filter-group-compact">
-          <label class="filter-label">🎯 Types</label>
-          <div class="dropdown-filter">
-            <button @click="toggleTypesDropdown" class="dropdown-trigger">
-              <span class="dropdown-text">
-                {{ getTypesDisplayText() }}
-              </span>
+      <!-- Section Types -->
+      <div class="filter-section">
+        <h3 class="section-title"><i class="fas fa-bullseye"></i> Types</h3>
+        <div class="filter-group">
+          <div class="filter-dropdown">
+            <button @click="toggleTypesDropdown" class="dropdown-trigger" :class="{ open: showTypesDropdown }">
+              <span class="dropdown-text">{{ getTypesDisplayText() }}</span>
               <i class="fas fa-chevron-down dropdown-icon"></i>
             </button>
             <div v-if="showTypesDropdown" class="dropdown-menu">
               <div class="dropdown-options">
                 <label class="dropdown-option">
-                  <input 
-                    type="checkbox" 
-                    v-model="criteres.typesRecherche" 
-                    value="scenes"
-                    @change="updateTypesSelection"
-                  />
-                  <span class="checkmark"></span>
-                  🎬 Scènes
+                  <input type="checkbox" value="scenes" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
+                  <i class="fas fa-film"></i> Scènes
                 </label>
                 <label class="dropdown-option">
-                  <input 
-                    type="checkbox" 
-                    v-model="criteres.typesRecherche" 
-                    value="personnages"
-                    @change="updateTypesSelection"
-                  />
-                  <span class="checkmark"></span>
-                  👥 Personnages
+                  <input type="checkbox" value="personnages" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
+                  <i class="fas fa-users"></i> Personnages
                 </label>
                 <label class="dropdown-option">
-                  <input 
-                    type="checkbox" 
-                    v-model="criteres.typesRecherche" 
-                    value="lieux"
-                    @change="updateTypesSelection"
-                  />
-                  <span class="checkmark"></span>
-                  🏛️ Lieux
+                  <input type="checkbox" value="lieux" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
+                  <i class="fas fa-landmark"></i> Lieux
                 </label>
                 <label class="dropdown-option">
-                  <input 
-                    type="checkbox" 
-                    v-model="criteres.typesRecherche" 
-                    value="plateaux"
-                    @change="updateTypesSelection"
-                  />
-                  <span class="checkmark"></span>
-                  🎭 Plateaux
+                  <input type="checkbox" value="plateaux" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
+                  <i class="fas fa-theater-masks"></i> Plateaux
                 </label>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Statuts - Dropdown -->
-        <div class="filter-group-compact">
-          <label class="filter-label">📊 Statuts</label>
-          <div class="dropdown-filter">
-            <button @click="toggleStatutsDropdown" class="dropdown-trigger">
-              <span class="dropdown-text">
-                {{ getStatutsDisplayText() }}
-              </span>
+      <!-- Section Statuts -->
+      <div class="filter-section">
+        <h3 class="section-title"><i class="fas fa-chart-bar"></i> Statuts</h3>
+        <div class="filter-group">
+          <div class="filter-dropdown">
+            <button @click="toggleStatutsDropdown" class="dropdown-trigger" :class="{ open: showStatutsDropdown }">
+              <span class="dropdown-text">{{ getStatutsDisplayText() }}</span>
               <i class="fas fa-chevron-down dropdown-icon"></i>
             </button>
             <div v-if="showStatutsDropdown" class="dropdown-menu">
               <div class="dropdown-options">
-                <label 
-                  v-for="statut in statutsDisponibles" 
-                  :key="statut"
-                  class="dropdown-option"
-                >
-                  <input 
-                    type="checkbox" 
-                    v-model="criteres.statuts" 
-                    :value="statut"
-                    @change="updateStatutsSelection"
-                  />
-                  <span class="checkmark"></span>
+                <label v-for="statut in statutsDisponibles" :key="statut" class="dropdown-option">
+                  <input type="checkbox" :value="statut" v-model="criteres.statuts" @change="updateStatutsSelection" />
                   {{ formatStatut(statut) }}
                 </label>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Regroupement - Select normal -->
-        <div class="filter-group-compact">
-          <label class="filter-label">🔀 Regrouper par</label>
+      <!-- Section Dates -->
+      <div class="filter-section">
+        <h3 class="section-title"><i class="fas fa-calendar-alt"></i> Dates</h3>
+        <div class="filter-group">
+          <!-- Date début -->
+          <div class="filter-dropdown">
+            <button @click="toggleDateDebutDropdown" class="dropdown-trigger" :class="{ open: showDateDebutDropdown }">
+              <span class="dropdown-text">{{ getDateDebutDisplayText() }}</span>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </button>
+            <div v-if="showDateDebutDropdown" class="dropdown-menu">
+              <div class="dropdown-options">
+                <input 
+                  type="date" 
+                  v-model="criteres.dateDebut" 
+                  @change="updateDateDebut"
+                  class="date-input" 
+                />
+                <button @click="clearDateDebut" class="clear-date-btn">
+                  <i class="fas fa-times"></i> Effacer
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date fin -->
+          <div class="filter-dropdown">
+            <button @click="toggleDateFinDropdown" class="dropdown-trigger" :class="{ open: showDateFinDropdown }">
+              <span class="dropdown-text">{{ getDateFinDisplayText() }}</span>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </button>
+            <div v-if="showDateFinDropdown" class="dropdown-menu">
+              <div class="dropdown-options">
+                <input 
+                  type="date" 
+                  v-model="criteres.dateFin" 
+                  @change="updateDateFin"
+                  class="date-input" 
+                />
+                <button @click="clearDateFin" class="clear-date-btn">
+                  <i class="fas fa-times"></i> Effacer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Regroupement -->
+      <div class="filter-section">
+        <h3 class="section-title"><i class="fas fa-layer-group"></i> Regroupement</h3>
+        <div class="filter-group">
           <select v-model="criteres.regroupement" class="filter-select">
-            <option value="">Aucun</option>
-            <option value="plateau">🎭 Plateau</option>
-            <option value="lieu">🏛️ Lieu</option>
-            <option value="personnage">👥 Personnage</option>
-            <option value="statut">📊 Statut</option>
+            <option value="">Aucun regroupement</option>
+            <option value="plateau">Plateau</option>
+            <option value="lieu">Lieu</option>
+            <option value="personnage">Personnage</option>
+            <option value="statut">Statut</option>
           </select>
         </div>
-
-        <!-- Bouton recherche -->
-        <div class="filter-group-compact">
-          <button @click="rechercher" class="search-btn-compact" :disabled="chargement">
-            {{ chargement ? '⏳' : '🔍' }}
-            {{ chargement ? 'Recherche...' : 'Rechercher' }}
-          </button>
-        </div>
       </div>
-    </div>
 
-    <!-- Indicateur de filtre projet actif -->
-    <div v-if="criteres.projetId" class="projet-filter-indicator">
-      <div class="projet-indicator-content">
-        <span class="projet-label">📁 Projet sélectionné :</span>
-        <span class="projet-nom">{{ getProjetNom() }}</span>
-        <button @click="reinitialiserProjet" class="clear-projet-btn">
-          <i class="fas fa-times"></i>
-          Changer de projet
+      <!-- Boutons d'action -->
+      <div class="sidebar-actions">
+        <button @click="rechercher" class="search-btn-sidebar" :disabled="chargement">
+          <i :class="chargement ? 'fas fa-spinner fa-spin' : 'fas fa-search'"></i>
+          {{ chargement ? 'Recherche...' : 'Lancer la recherche' }}
+        </button>
+        <button @click="reinitialiser" class="reset-btn-sidebar">
+          <i class="fas fa-undo"></i>
+          Tout réinitialiser
         </button>
       </div>
     </div>
 
-    <!-- Barre de recherche principale -->
-    <div class="search-bar-main">
-      <div class="search-input-container">
-        <i class="fas fa-search search-icon-main"></i>
-        <input
-          v-model="criteres.termeRecherche"
-          type="text"
-          placeholder="Rechercher des personnages, lieux, dialogues, titres..."
-          class="search-input-large"
-          @keyup.enter="rechercher"
-        />
-        <button v-if="criteres.termeRecherche" @click="criteres.termeRecherche = ''" class="clear-search-btn-main">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Filtres avancés (dates) avec toggle -->
-    <div class="advanced-filters-minimal">
-      <button @click="toggleDateFilters" class="toggle-date-btn">
-        <i class="fas" :class="showDateFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-        Filtres dates
-      </button>
-
-      <div v-if="showDateFilters" class="date-filters-panel">
-        <div class="date-filters-row">
-          <div class="date-filter-group">
-            <label>Date de début</label>
-            <input v-model="criteres.dateDebut" type="date" class="date-input-compact" />
-          </div>
-          <div class="date-filter-group">
-            <label>Date de fin</label>
-            <input v-model="criteres.dateFin" type="date" class="date-input-compact" />
-          </div>
-          <button @click="reinitialiserDates" class="reset-dates-btn">
-            <i class="fas fa-undo"></i>
-            Réinitialiser dates
-          </button>
+    <!-- Contenu principal à droite -->
+    <div class="search-body">
+      <div class="search-main-content">
+        <!-- En-tête principal -->
+        <div class="main-header">
+          <h1 class="page-title"><i class="fas fa-search"></i> Recherche Multiple</h1>
+          <p class="page-subtitle">Trouvez des scènes, personnages, lieux et plateaux selon vos critères</p>
         </div>
-      </div>
-    </div>
 
-    <!-- Résultats -->
-    <div class="results-section">
-      <div v-if="resultats.length === 0 && !chargement" class="empty-state">
-        <div class="empty-icon">🔍</div>
-        <h3>Aucun résultat</h3>
-        <p v-if="criteres.projetId">
-          Aucun résultat trouvé pour le projet "{{ getProjetNom() }}" avec les critères actuels
-        </p>
-        <p v-else>
-          Utilisez les filtres ci-dessus pour lancer une recherche
-        </p>
-      </div>
+        <!-- Barre de recherche principale -->
+        <div class="search-bar-main">
+          <div class="search-input-container">
+            <i class="fas fa-search search-icon-main"></i>
+            <input
+              v-model="criteres.termeRecherche"
+              type="text"
+              placeholder="Rechercher des personnages, lieux, dialogues, titres..."
+              class="search-input-large"
+              @keyup.enter="rechercher"
+            />
+            <button v-if="criteres.termeRecherche" @click="criteres.termeRecherche = ''" class="clear-search-btn-main">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
 
-      <div v-else-if="chargement" class="loading-state">
-        <div class="spinner"></div>
-        <p>Recherche en cours...</p>
-      </div>
-
-      <div v-else class="results-container modern-results">
-        <div class="results-header flex-header">
-          <h2>📋 Résultats ({{ resultats.length }})</h2>
-          <div class="results-info">
-            <span v-if="criteres.projetId" class="projet-info">
-              Projet : <strong>{{ getProjetNom() }}</strong> •
+        <!-- Indicateur de filtre projet actif -->
+        <div v-if="criteres.projetId" class="projet-filter-indicator">
+          <div class="projet-indicator-content">
+            <span class="projet-label">
+              <i class="fas fa-folder"></i> Projet sélectionné :
             </span>
-            Groupés par : <strong>{{ getRegroupementLabel() }}</strong>
+            <span class="projet-nom">{{ getProjetNom() }}</span>
+            <button @click="reinitialiserProjet" class="clear-projet-btn">
+              <i class="fas fa-times"></i>
+              Changer de projet
+            </button>
           </div>
-          <button @click="reinitialiser" class="reset-all-btn">
-            <i class="fas fa-undo"></i>
-            Tout réinitialiser
-          </button>
         </div>
 
-        <!-- Liste des résultats groupés -->
-        <div class="results-list">
-          <div
-            v-for="(groupe, index) in resultatsGroupes"
-            :key="index"
-            class="result-group compact-group"
-          >
-            <!-- En-tête de groupe -->
-            <div
-              v-if="groupe.estGroupe"
-              class="group-header"
-              :class="getGroupHeaderClass(groupe.type)"
-            >
-              <span class="group-icon">{{ getGroupIcon(groupe.type) }}</span>
-              <span class="group-title">{{ groupe.titre }}</span>
-              <span class="group-count">({{ groupe.elements.length }} éléments)</span>
+        <!-- Résultats -->
+        <div class="results-section">
+          <div v-if="resultats.length === 0 && !chargement" class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-search"></i>
             </div>
+            <h3>Aucun résultat</h3>
+            <p v-if="criteres.projetId">
+              Aucun résultat trouvé pour le projet "{{ getProjetNom() }}" avec les critères actuels
+            </p>
+            <p v-else>
+              Aucun résultat trouvé avec les critères de recherche actuels
+            </p>
+          </div>
 
-            <!-- Éléments du groupe -->
-            <div
-              v-for="(resultat, resultIndex) in groupe.elements"
-              :key="resultat.id + '-' + resultIndex"
-              class="result-item slim-item"
-              :class="'type-' + resultat.type"
-            >
-              <router-link 
-                :to="getDetailLink(resultat)"
-                class="result-link"
+          <div v-else-if="chargement" class="loading-state">
+            <div class="spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <p>Recherche en cours...</p>
+          </div>
+
+          <div v-else class="results-container modern-results">
+            <div class="results-header">
+              <h2>
+                <i class="fas fa-list-alt"></i> Résultats ({{ resultats.length }})
+              </h2>
+              <div class="results-info">
+                <span v-if="criteres.projetId" class="projet-info">
+                  <i class="fas fa-folder"></i> Projet : <strong>{{ getProjetNom() }}</strong> 
+                </span>
+                <span v-if="criteres.regroupement" class="regroupement-info">
+                  • <i class="fas fa-layer-group"></i> Groupés par : <strong>{{ getRegroupementLabel() }}</strong>
+                </span>
+              </div>
+              <button @click="reinitialiser" class="reset-all-btn">
+                <i class="fas fa-undo"></i>
+                Tout réinitialiser
+              </button>
+            </div>
+            
+            <!-- Liste des résultats groupés -->
+            <div class="results-list">
+              <div
+                v-for="(groupe, index) in resultatsGroupes"
+                :key="index"
+                class="result-group"
               >
-                <div class="result-content flex-content">
-                  
-                  <!-- Scène -->
-                  <div v-if="resultat.type === 'scene'" class="scene-result">
-                    <div class="result-header flex-header">
-                      <span class="result-type-badge scene-badge">🎬 Scène</span>
-                      <h3 class="result-title">{{ resultat.titre }}</h3>
-                      <span class="result-status" :class="'status-' + resultat.statut">
-                        {{ formatStatut(resultat.statut) }}
-                      </span>
-                    </div>
-                    
-                    <div class="result-details grid-details">
-                      <div class="detail-row">
-                        <span class="detail-label">📅 Date :</span>
-                        <span>{{ formatDate(resultat.dateTournage) }}</span>
-                      </div>
-                      <div class="detail-row">
-                        <span class="detail-label">🕒 Heure :</span>
-                        <span>{{ resultat.heureDebut }} - {{ resultat.heureFin }}</span>
-                      </div>
-                      <div v-if="resultat.lieuNom" class="detail-row">
-                        <span class="detail-label">🏛️ Lieu :</span>
-                        <span>{{ resultat.lieuNom }}</span>
-                      </div>
-                      <div v-if="resultat.plateauNom" class="detail-row">
-                        <span class="detail-label">🎭 Plateau :</span>
-                        <span>{{ resultat.plateauNom }}</span>
-                      </div>
-                      <div v-if="resultat.personnageNom" class="detail-row">
-                        <span class="detail-label">👥 Personnage :</span>
-                        <span>{{ resultat.personnageNom }}</span>
-                        <span v-if="resultat.comedienNom" class="comedien">
-                          ({{ resultat.comedienNom }})
-                        </span>
-                      </div>
-                    </div>
+                <!-- En-tête de groupe -->
+                <div
+                  v-if="groupe.estGroupe"
+                  class="group-header"
+                  :class="getGroupHeaderClass(groupe.type)"
+                >
+                  <span class="group-icon">{{ getGroupIcon(groupe.type) }}</span>
+                  <span class="group-title">{{ groupe.titre }}</span>
+                  <span class="group-count">({{ groupe.elements.length }} éléments)</span>
+                </div>
 
-                    <!-- Dialogues -->
-                    <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section compact-dialogues">
-                      <div class="dialogues-title">💬 Dialogues :</div>
-                      <div class="dialogues-list">
-                        <div
-                          v-for="(dialogue, dialogueIndex) in resultat.dialogues"
-                          :key="dialogueIndex"
-                          class="dialogue-item"
-                        >
-                          "{{ dialogue }}"
+                <!-- Éléments du groupe -->
+                <div
+                  v-for="(resultat, resultIndex) in groupe.elements"
+                  :key="resultat.id + '-' + resultIndex"
+                  class="result-item"
+                  :class="'type-' + resultat.type"
+                >
+                  <router-link 
+                    :to="getDetailLink(resultat)"
+                    class="result-link"
+                  >
+                    <div class="result-content">
+                      
+                      <!-- Scène -->
+                      <div v-if="resultat.type === 'scene'" class="scene-result">
+                        <div class="result-header">
+                          <span class="result-type-badge scene-badge">
+                            <i class="fas fa-film"></i> Scène
+                          </span>
+                          <h3 class="result-title">{{ resultat.titre }}</h3>
+                          <span class="result-status" :class="'status-' + resultat.statut">
+                            {{ formatStatut(resultat.statut) }}
+                          </span>
+                        </div>
+                        
+                        <div class="result-details">
+                          <div class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-calendar-alt"></i> Date :
+                            </span>
+                            <span>{{ formatDate(resultat.dateTournage) }}</span>
+                          </div>
+                          <div class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-clock"></i> Heure :
+                            </span>
+                            <span>{{ resultat.heureDebut }} - {{ resultat.heureFin }}</span>
+                          </div>
+                          <div v-if="resultat.lieuNom" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-landmark"></i> Lieu :
+                            </span>
+                            <span>{{ resultat.lieuNom }}</span>
+                          </div>
+                          <div v-if="resultat.plateauNom" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-theater-masks"></i> Plateau :
+                            </span>
+                            <span>{{ resultat.plateauNom }}</span>
+                          </div>
+                          <div v-if="resultat.personnageNom" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-users"></i> Personnage :
+                            </span>
+                            <span>{{ resultat.personnageNom }}</span>
+                            <span v-if="resultat.comedienNom" class="comedien">
+                              ({{ resultat.comedienNom }})
+                            </span>
+                          </div>
+                        </div>
+
+                        <!-- Dialogues -->
+                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section">
+                          <div class="dialogues-title">
+                            <i class="fas fa-comments"></i> Dialogues :
+                          </div>
+                          <div class="dialogues-list">
+                            <div
+                              v-for="(dialogue, dialogueIndex) in resultat.dialogues"
+                              :key="dialogueIndex"
+                              class="dialogue-item"
+                            >
+                              "{{ dialogue }}"
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Hiérarchie -->
+                        <div class="hierarchy">
+                          <span v-if="resultat.projetTitre" class="hierarchy-item">
+                            <i class="fas fa-folder"></i> {{ resultat.projetTitre }}
+                          </span>
+                          <span v-else class="hierarchy-item sans-projet">
+                            <i class="fas fa-info-circle"></i> Sans projet
+                          </span>
+                          <span v-if="resultat.episodeTitre" class="hierarchy-item">
+                            <i class="fas fa-film"></i> {{ resultat.episodeTitre }}
+                          </span>
+                          <span v-if="resultat.sequenceTitre" class="hierarchy-item">
+                            <i class="fas fa-list-ol"></i> {{ resultat.sequenceTitre }}
+                          </span>
+                        </div>
+
+                        <!-- Indicateur de clic -->
+                        <div class="view-details">
+                          <span class="view-details-text">
+                            <i class="fas fa-book-open"></i> Voir tous les détails →
+                          </span>
                         </div>
                       </div>
-                    </div>
 
-                    <!-- Hiérarchie -->
-                    <div class="hierarchy flex-hierarchy">
-                      <span v-if="resultat.projetTitre" class="hierarchy-item">
-                        📁 {{ resultat.projetTitre }}
-                      </span>
-                      <span v-if="resultat.episodeTitre" class="hierarchy-item">
-                        ▶️ {{ resultat.episodeTitre }}
-                      </span>
-                      <span v-if="resultat.sequenceTitre" class="hierarchy-item">
-                        🎞️ {{ resultat.sequenceTitre }}
-                      </span>
-                    </div>
+                      <!-- Personnage -->
+                      <div v-else-if="resultat.type === 'personnage'" class="personnage-result">
+                        <div class="result-header">
+                          <span class="result-type-badge personnage-badge">
+                            <i class="fas fa-users"></i> Personnage
+                          </span>
+                          <h3 class="result-title">{{ resultat.titre }}</h3>
+                        </div>
+                        <div class="result-details">
+                          <div v-if="resultat.description" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-file-alt"></i> Description :
+                            </span>
+                            <span>{{ resultat.description }}</span>
+                          </div>
+                          <div v-if="resultat.comedienNom" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-user-tie"></i> Comédien :
+                            </span>
+                            <span>{{ resultat.comedienNom }}</span>
+                          </div>
+                          <div v-if="resultat.projetTitre" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-folder"></i> Projet :
+                            </span>
+                            <span>{{ resultat.projetTitre }}</span>
+                          </div>
+                          <div v-else class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-info-circle"></i> Projet :
+                            </span>
+                            <span class="sans-projet">Sans projet</span>
+                          </div>
+                        </div>
+                        <div class="view-details">
+                          <span class="view-details-text">
+                            <i class="fas fa-user-circle"></i> Voir fiche personnage →
+                          </span>
+                        </div>
+                      </div>
 
-                    <!-- Indicateur de clic -->
-                    <div class="view-details">
-                      <span class="view-details-text">📖 Voir tous les détails →</span>
-                    </div>
-                  </div>
+                      <!-- Lieu -->
+                      <div v-else-if="resultat.type === 'lieu'" class="lieu-result">
+                        <div class="result-header">
+                          <span class="result-type-badge lieu-badge">
+                            <i class="fas fa-landmark"></i> Lieu
+                          </span>
+                          <h3 class="result-title">{{ resultat.titre }}</h3>
+                        </div>
+                        <div class="result-details">
+                          <div v-if="resultat.description" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-file-alt"></i> Description :
+                            </span>
+                            <span>{{ resultat.description }}</span>
+                          </div>
+                          <div v-if="resultat.projetTitre" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-folder"></i> Projet :
+                            </span>
+                            <span>{{ resultat.projetTitre }}</span>
+                          </div>
+                          <div v-else class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-info-circle"></i> Projet :
+                            </span>
+                            <span class="sans-projet">Sans projet</span>
+                          </div>
+                        </div>
+                        <div class="view-details">
+                          <span class="view-details-text">
+                            <i class="fas fa-landmark"></i> Voir fiche lieu →
+                          </span>
+                        </div>
+                      </div>
 
-                  <!-- Personnage -->
-                  <div v-else-if="resultat.type === 'personnage'" class="personnage-result">
-                    <div class="result-header flex-header">
-                      <span class="result-type-badge personnage-badge">👥 Personnage</span>
-                      <h3 class="result-title">{{ resultat.titre }}</h3>
-                    </div>
-                    <div class="result-details grid-details">
-                      <div v-if="resultat.description" class="detail-row">
-                        <span class="detail-label">📝 Description :</span>
-                        <span>{{ resultat.description }}</span>
+                      <!-- Plateau -->
+                      <div v-else-if="resultat.type === 'plateau'" class="plateau-result">
+                        <div class="result-header">
+                          <span class="result-type-badge plateau-badge">
+                            <i class="fas fa-theater-masks"></i> Plateau
+                          </span>
+                          <h3 class="result-title">{{ resultat.titre }}</h3>
+                        </div>
+                        <div class="result-details">
+                          <div v-if="resultat.description" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-file-alt"></i> Description :
+                            </span>
+                            <span>{{ resultat.description }}</span>
+                          </div>
+                          <div v-if="resultat.lieuNom" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-landmark"></i> Lieu :
+                            </span>
+                            <span>{{ resultat.lieuNom }}</span>
+                          </div>
+                          <div v-if="resultat.projetTitre" class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-folder"></i> Projet :
+                            </span>
+                            <span>{{ resultat.projetTitre }}</span>
+                          </div>
+                          <div v-else class="detail-row">
+                            <span class="detail-label">
+                              <i class="fas fa-info-circle"></i> Projet :
+                            </span>
+                            <span class="sans-projet">Sans projet</span>
+                          </div>
+                        </div>
+                        <div class="view-details">
+                          <span class="view-details-text">
+                            <i class="fas fa-theater-masks"></i> Voir fiche plateau →
+                          </span>
+                        </div>
                       </div>
-                      <div v-if="resultat.comedienNom" class="detail-row">
-                        <span class="detail-label">🎭 Comédien :</span>
-                        <span>{{ resultat.comedienNom }}</span>
-                      </div>
-                      <div v-if="resultat.projetTitre" class="detail-row">
-                        <span class="detail-label">📁 Projet :</span>
-                        <span>{{ resultat.projetTitre }}</span>
-                      </div>
-                    </div>
-                    <div class="view-details">
-                      <span class="view-details-text">👤 Voir fiche personnage →</span>
-                    </div>
-                  </div>
 
-                  <!-- Lieu -->
-                  <div v-else-if="resultat.type === 'lieu'" class="lieu-result">
-                    <div class="result-header flex-header">
-                      <span class="result-type-badge lieu-badge">🏛️ Lieu</span>
-                      <h3 class="result-title">{{ resultat.titre }}</h3>
                     </div>
-                    <div class="result-details grid-details">
-                      <div v-if="resultat.description" class="detail-row">
-                        <span class="detail-label">📝 Description :</span>
-                        <span>{{ resultat.description }}</span>
-                      </div>
-                      <div v-if="resultat.projetTitre" class="detail-row">
-                        <span class="detail-label">📁 Projet :</span>
-                        <span>{{ resultat.projetTitre }}</span>
-                      </div>
-                    </div>
-                    <div class="view-details">
-                      <span class="view-details-text">🏛️ Voir fiche lieu →</span>
-                    </div>
-                  </div>
-
-                  <!-- Plateau -->
-                  <div v-else-if="resultat.type === 'plateau'" class="plateau-result">
-                    <div class="result-header flex-header">
-                      <span class="result-type-badge plateau-badge">🎭 Plateau</span>
-                      <h3 class="result-title">{{ resultat.titre }}</h3>
-                    </div>
-                    <div class="result-details grid-details">
-                      <div v-if="resultat.description" class="detail-row">
-                        <span class="detail-label">📝 Description :</span>
-                        <span>{{ resultat.description }}</span>
-                      </div>
-                      <div v-if="resultat.lieuNom" class="detail-row">
-                        <span class="detail-label">🏛️ Lieu :</span>
-                        <span>{{ resultat.lieuNom }}</span>
-                      </div>
-                    </div>
-                    <div class="view-details">
-                      <span class="view-details-text">🎭 Voir fiche plateau →</span>
-                    </div>
-                  </div>
-
+                  </router-link>
                 </div>
-              </router-link>
+              </div>
             </div>
           </div>
         </div>
@@ -408,10 +490,15 @@ export default {
   name: 'RechercheAvancee',
   data() {
     return {
+      // États des dropdowns
       showTypesDropdown: false,
       showStatutsDropdown: false,
-      showDateFilters: false,
+      showDateDebutDropdown: false,
+      showDateFinDropdown: false,
+
+      // Données
       projets: [],
+      statutsDisponibles: [],
       criteres: {
         termeRecherche: '',
         typesRecherche: ['scenes', 'personnages', 'lieux', 'plateaux'],
@@ -424,7 +511,6 @@ export default {
         taille: 50
       },
       resultats: [],
-      statutsDisponibles: [],
       chargement: false
     }
   },
@@ -470,6 +556,7 @@ export default {
     document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
+    // Méthodes de chargement des données
     async chargerProjets() {
       try {
         this.projets = await getProjets()
@@ -480,20 +567,19 @@ export default {
     },
 
     async onProjetChange() {
-      // Quand le projet change, on peut recharger les statuts si nécessaire
-      console.log('Projet sélectionné:', this.criteres.projetId)
+      console.log('Mode recherche:', this.criteres.projetId ? `Projet ${this.criteres.projetId}` : 'Sans projet')
     },
 
-    getProjetNom() {
-      if (!this.criteres.projetId) return ''
-      const projet = this.projets.find(p => p.id === this.criteres.projetId)
-      return projet ? projet.titre : 'Projet inconnu'
+    async chargerStatuts() {
+      try {
+        this.statutsDisponibles = await getStatutsDisponibles()
+      } catch (error) {
+        console.error('Erreur chargement statuts:', error)
+        this.statutsDisponibles = ['planifie', 'confirme', 'en_cours', 'termine', 'reporte']
+      }
     },
 
-    reinitialiserProjet() {
-      this.criteres.projetId = null
-    },
-
+    // Méthodes de gestion des dropdowns
     toggleTypesDropdown() {
       this.showTypesDropdown = !this.showTypesDropdown
       this.showStatutsDropdown = false
@@ -504,17 +590,16 @@ export default {
       this.showTypesDropdown = false
     },
     
-    toggleDateFilters() {
-      this.showDateFilters = !this.showDateFilters
-    },
-    
     handleClickOutside(event) {
-      if (!event.target.closest('.dropdown-filter')) {
+      if (!event.target.closest('.filter-dropdown')) {
         this.showTypesDropdown = false
         this.showStatutsDropdown = false
+        this.showDateDebutDropdown = false
+        this.showDateFinDropdown = false
       }
     },
-    
+
+    // Méthodes d'affichage des textes
     getTypesDisplayText() {
       if (this.criteres.typesRecherche.length === 0) return 'Aucun type'
       if (this.criteres.typesRecherche.length === 4) return 'Tous les types'
@@ -536,7 +621,8 @@ export default {
       
       return `${this.criteres.statuts.length} statut(s)`
     },
-    
+
+    // Méthodes de mise à jour des sélections
     updateTypesSelection() {
       this.$forceUpdate()
     },
@@ -544,64 +630,61 @@ export default {
     updateStatutsSelection() {
       this.$forceUpdate()
     },
-    
+
+    // Méthodes utilitaires
+    getProjetNom() {
+      if (!this.criteres.projetId) return ''
+      const projet = this.projets.find(p => p.id === this.criteres.projetId)
+      return projet ? projet.titre : 'Projet inconnu'
+    },
+
+    reinitialiserProjet() {
+      this.criteres.projetId = null
+    },
+
     reinitialiserDates() {
       this.criteres.dateDebut = null
       this.criteres.dateFin = null
     },
     
-    async chargerStatuts() {
-      try {
-        this.statutsDisponibles = await getStatutsDisponibles()
-      } catch (error) {
-        console.error('Erreur chargement statuts:', error)
-        this.statutsDisponibles = ['planifie', 'confirme', 'en_cours', 'termine', 'reporte']
+    normaliserDates() {
+      // S'assurer que les dates sont au format YYYY-MM-DD
+      if (this.criteres.dateDebut) {
+        const date = new Date(this.criteres.dateDebut);
+        this.criteres.dateDebut = date.toISOString().split('T')[0];
+      }
+      if (this.criteres.dateFin) {
+        const date = new Date(this.criteres.dateFin);
+        this.criteres.dateFin = date.toISOString().split('T')[0];
       }
     },
-    
-    // async rechercher() {
-    //   this.chargement = true
-    //   try {
-    //     const criteresNettoyes = { ...this.criteres }
-    //     if (!criteresNettoyes.termeRecherche) delete criteresNettoyes.termeRecherche
-    //     if (criteresNettoyes.statuts.length === 0) delete criteresNettoyes.statuts
-    //     if (!criteresNettoyes.regroupement) delete criteresNettoyes.regroupement
-    //     if (!criteresNettoyes.projetId) delete criteresNettoyes.projetId
 
-    //     this.resultats = await rechercheAvancee(criteresNettoyes)
-    //   } catch (error) {
-    //     console.error('Erreur recherche:', error)
-    //     alert('Erreur lors de la recherche')
-    //   } finally {
-    //     this.chargement = false
-    //   }
-    // },
-    
+    // Méthodes de recherche
     async rechercher() {
-  this.chargement = true
-  try {
-    const criteresNettoyes = { ...this.criteres }
-    
-    // Convertir les types de recherche pour le backend
-    if (criteresNettoyes.typesRecherche && criteresNettoyes.typesRecherche.length > 0) {
-      criteresNettoyes.typesRecherche = criteresNettoyes.typesRecherche.map(type => 
-        type.replace('scenes', 'scenes')
-            .replace('personnages', 'personnages')
-            .replace('lieux', 'lieux')
-            .replace('plateaux', 'plateaux')
-      );
-    }
-    
-    console.log('Critères envoyés:', criteresNettoyes); // Pour debug
-    
-    this.resultats = await rechercheAvancee(criteresNettoyes)
-  } catch (error) {
-    console.error('Erreur recherche:', error)
-    alert('Erreur lors de la recherche')
-  } finally {
-    this.chargement = false
-  }
-},
+      this.chargement = true
+      try {
+        const criteresNettoyes = { ...this.criteres }
+        
+        // Convertir les types de recherche pour le backend
+        if (criteresNettoyes.typesRecherche && criteresNettoyes.typesRecherche.length > 0) {
+          criteresNettoyes.typesRecherche = criteresNettoyes.typesRecherche.map(type => 
+            type.replace('scenes', 'scenes')
+                .replace('personnages', 'personnages')
+                .replace('lieux', 'lieux')
+                .replace('plateaux', 'plateaux')
+          );
+        }
+        
+        console.log('Critères envoyés:', criteresNettoyes);
+        
+        this.resultats = await rechercheAvancee(criteresNettoyes)
+      } catch (error) {
+        console.error('Erreur recherche:', error)
+        alert('Erreur lors de la recherche')
+      } finally {
+        this.chargement = false
+      }
+    },
 
     reinitialiser() {
       this.criteres = {
@@ -616,7 +699,6 @@ export default {
         taille: 50
       }
       this.resultats = []
-      this.showDateFilters = false
       this.showTypesDropdown = false
       this.showStatutsDropdown = false
     },
@@ -682,8 +764,66 @@ export default {
           recherche: JSON.stringify(this.criteres)
         }
       }
-    }
+    },
+
+    toggleDateDebutDropdown() {
+    this.showDateDebutDropdown = !this.showDateDebutDropdown
+    this.showDateFinDropdown = false
+    this.closeOtherDropdowns('dateDebut')
+  },
+
+  toggleDateFinDropdown() {
+    this.showDateFinDropdown = !this.showDateFinDropdown
+    this.showDateDebutDropdown = false
+    this.closeOtherDropdowns('dateFin')
+  },
+
+  closeOtherDropdowns(current) {
+    const dropdowns = ['types', 'statuts', 'dateDebut', 'dateFin']
+    dropdowns.forEach(dropdown => {
+      if (dropdown !== current) {
+        if (dropdown === 'types') this.showTypesDropdown = false
+        if (dropdown === 'statuts') this.showStatutsDropdown = false
+        if (dropdown === 'dateDebut') this.showDateDebutDropdown = false
+        if (dropdown === 'dateFin') this.showDateFinDropdown = false
+      }
+    })
+  },
+
+  // Méthodes d'affichage des textes
+  getDateDebutDisplayText() {
+    return this.criteres.dateDebut ? this.formatDateDisplay(this.criteres.dateDebut) : 'Date début'
+  },
+
+  getDateFinDisplayText() {
+    return this.criteres.dateFin ? this.formatDateDisplay(this.criteres.dateFin) : 'Date fin'
+  },
+
+  formatDateDisplay(dateString) {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    return date.toLocaleDateString('fr-FR')
+  },
+  updateDateDebut() {
+    this.showDateDebutDropdown = false
+    this.normaliserDates()
+  },
+
+  updateDateFin() {
+    this.showDateFinDropdown = false
+    this.normaliserDates()
+  },
+
+  clearDateDebut() {
+    this.criteres.dateDebut = null
+    this.showDateDebutDropdown = false
+  },
+
+  clearDateFin() {
+    this.criteres.dateFin = null
+    this.showDateFinDropdown = false
+  }
+
   }
 }
 </script>
-

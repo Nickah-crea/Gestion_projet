@@ -1,4 +1,5 @@
 <template>
+  <div class="app-wrapper-global">
   <div class="resultat-recherche">
     <!-- En-tête avec navigation -->
     <div class="header">
@@ -656,6 +657,7 @@
       <h3>Aucun détail disponible</h3>
       <p>Impossible de charger les détails de ce résultat</p>
     </div>
+  </div>
   </div>
 </template>
 
