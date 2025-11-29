@@ -1,0 +1,947 @@
+// _creation-plateau.scss – Style identique aux autres composants
+@import '../base/variables';
+
+.app-wrapper-global-crea-plateau {
+  display: flex;
+  min-height: 100vh;
+
+}
+
+// =============================================
+// SIDEBAR LATÉRALE
+// =============================================
+.creation-sidebar-crea-plateau {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 280px;
+  height: calc(100vh - 80px);
+  background: $color-background;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
+
+  .sidebar-header-crea-plateau {
+    margin-bottom: $spacing-md;
+
+    .sidebar-title-crea-plateau {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-crea-plateau {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-crea-plateau {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-crea-plateau {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  .sidebar-actions-crea-plateau {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-crea-plateau {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .filter-group-crea-plateau {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-crea-plateau {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .filter-select-crea-plateau {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  .stats-crea-plateau {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-crea-plateau {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-white;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-crea-plateau {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-crea-plateau {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL
+// =============================================
+.creation-body-crea-plateau {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-crea-plateau {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-header-crea-plateau {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+
+    .page-title-crea-plateau {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+    }
+
+    .page-subtitle-crea-plateau {
+      @include typography-p3;
+      color: $color-text-muted;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// =============================================
+// SYSTÈME D'ONGlets
+// =============================================
+.tabs-container-crea-plateau {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-crea-plateau {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-crea-plateau {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-crea-plateau {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-crea-plateau {
+  position: relative;
+}
+
+.tab-pane-crea-plateau {
+  padding: $spacing-lg;
+  animation: fadeInUp-crea-plateau 0.3s ease-out;
+}
+
+@keyframes fadeInUp-crea-plateau {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION
+// =============================================
+.form-container-crea-plateau {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tab-pane-crea-plateau .form-header-crea-plateau {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+}
+
+.back-btn-crea-plateau {
+  padding: $gap-sm $spacing-md;
+  background: $color-success;
+  border: none;
+  border-radius: $border-radius-xs;
+  @include typography-p4;
+  color: $color-white;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  &:hover {
+    background: darken($color-success, 10%);
+    transform: translateY(-1px);
+  }
+}
+
+.plateau-form-crea-plateau {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-crea-plateau {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  &.full-width {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-crea-plateau {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+  }
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+// =============================================
+// RECHERCHE AVEC SUGGESTIONS
+// =============================================
+.search-container-crea-plateau {
+  position: relative;
+
+  .search-input-crea-plateau {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  .suggestions-dropdown-crea-plateau {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    box-shadow: $shadow-md;
+    z-index: $z-index-dropdown;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .suggestion-item-crea-plateau {
+    padding: $gap-sm $padding-sm;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: $transition-fast;
+    border-bottom: 1px solid $color-border;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+    }
+
+    &.clear-filter {
+      color: $color-primary;
+      font-weight: $font-weight-semibold;
+      border-top: 1px solid $color-border;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .lieu-option-info-crea-plateau {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .lieu-title-crea-plateau {
+      font-weight: $font-weight-medium;
+    }
+
+    .lieu-details-crea-plateau {
+      font-size: $font-size-p5;
+      color: $color-text-muted;
+    }
+  }
+
+  .no-results-crea-plateau {
+    padding: $gap-sm $padding-sm;
+    text-align: center;
+    color: $color-text-muted;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// TEXTAREA
+// =============================================
+.form-textarea-crea-plateau {
+  width: 100%;
+  padding: $padding-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  background: $color-white;
+  transition: $transition-fast;
+  resize: vertical;
+  min-height: 80px;
+  font-family: $font-family-primary;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+}
+
+// =============================================
+// MESSAGES D'ERREUR
+// =============================================
+.error-message-crea-plateau {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-crea-plateau {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  .submit-btn-crea-plateau {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 160px;
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .cancel-btn-crea-plateau {
+    padding: $gap-sm $spacing-md;
+    background: $color-error;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    color: $color-white;
+
+    &:hover {
+      background: darken($color-error, 10%);
+    }
+  }
+}
+
+// =============================================
+// LISTE DES PLATEAUX
+// =============================================
+.plateaux-list-crea-plateau {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.list-header-crea-plateau {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.search-section-crea-plateau {
+  .search-group-crea-plateau {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-input-container-crea-plateau {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .search-input-large-crea-plateau {
+      width: 300px;
+      height: 42px;
+      padding: 0 $padding-md 0 ($padding-md + $padding-xs);
+      border: 1px solid $color-border;
+      border-radius: $border-radius-pill;
+      background: $color-white;
+      font-size: $font-size-p3;
+      color: $color-text-primary;
+      transition: $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
+      }
+    }
+
+    .search-icon-crea-plateau {
+      position: absolute;
+      left: $padding-sm;
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// =============================================
+// GRILLE DES PLATEAUX
+// =============================================
+.plateaux-container-crea-plateau {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.plateaux-grid-crea-plateau {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plateau-card-crea-plateau {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  box-shadow: $shadow;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-hover;
+    transform: translateY(-2px);
+  }
+}
+
+.plateau-header-crea-plateau {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-sm;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  .plateau-info-crea-plateau {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    .plateau-title-crea-plateau {
+      @include typography-playfair-p4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+
+    .type-badge-crea-plateau {
+      @include typography-p4;
+      padding: 2px 8px;
+      border-radius: $border-radius-pill;
+      font-weight: $font-weight-medium;
+      width: fit-content;
+
+      &.type-interieur {
+        background: rgba($color-primary, 0.1);
+        color: $color-primary;
+      }
+      &.type-exterieur {
+        background: rgba($color-success, 0.1);
+        color: $color-success;
+      }
+      &.type-studio {
+        background: rgba($color-info, 0.1);
+        color: $color-info;
+      }
+      &.type-naturel {
+        background: rgba($color-tertiary, 0.1);
+        color: $color-tertiary;
+      }
+      &.type-decor {
+        background: rgba($color-warning, 0.1);
+        color: $color-warning;
+      }
+      &.type-virtuel {
+        background: rgba($color-accent-light, 0.1);
+        color: $color-accent;
+      }
+    }
+  }
+}
+
+.plateau-actions-crea-plateau {
+  display: flex;
+  gap: $gap-xs;
+
+  .btn-edit-crea-plateau,
+  .btn-delete-crea-plateau {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+    font-size: $font-size-p4;
+  }
+
+  .btn-edit-crea-plateau {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+
+    &:hover {
+      background: $color-warning;
+      color: $color-white;
+    }
+  }
+
+  .btn-delete-crea-plateau {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
+  }
+}
+
+.plateau-content-crea-plateau {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.plateau-details-crea-plateau {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.detail-item-crea-plateau {
+  @include typography-p4;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-xs;
+  line-height: 1.4;
+
+  i {
+    color: $color-primary;
+    width: 14px;
+    text-align: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  strong {
+    color: $color-text-primary;
+    margin-right: 4px;
+  }
+}
+
+// =============================================
+// ÉTATS SPÉCIAUX
+// =============================================
+.loading-state-crea-plateau,
+.empty-state-crea-plateau {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow;
+  margin: $spacing-md 0;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
+  }
+
+  h3 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-xs;
+  }
+
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-crea-plateau i {
+  animation: spin-crea-plateau 1s linear infinite;
+}
+
+@keyframes spin-crea-plateau {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-crea-plateau {
+    width: 250px;
+  }
+  
+  .creation-body-crea-plateau {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-crea-plateau {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .creation-body-crea-plateau {
+    margin-left: 0;
+  }
+  
+  .tabs-header-crea-plateau {
+    flex-direction: column;
+  }
+
+  .tab-btn-crea-plateau {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-crea-plateau {
+    display: none;
+  }
+
+  .tab-pane-crea-plateau {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-crea-plateau {
+    padding: $spacing-sm;
+  }
+  
+  .plateaux-grid-crea-plateau {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions-crea-plateau {
+    flex-direction: column;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-crea-plateau,
+  .search-input-crea-plateau,
+  .submit-btn-crea-plateau,
+  .tab-btn-crea-plateau,
+  .tab-indicator-crea-plateau,
+  .plateau-card-crea-plateau,
+  .btn-edit-crea-plateau,
+  .btn-delete-crea-plateau {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .loading-state-crea-plateau i {
+    animation: none;
+  }
+  
+  .tab-pane-crea-plateau {
+    animation: none;
+  }
+}
+

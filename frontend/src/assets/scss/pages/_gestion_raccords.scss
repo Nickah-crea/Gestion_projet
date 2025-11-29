@@ -1,0 +1,1217 @@
+// _crea-raccord.scss – Version avec sidebar et design cohérent
+@import '../base/variables';
+
+.app-wrapper-global-crea-raccord {
+  display: flex;
+  min-height: 100vh;
+  background: none;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE FIXE À GAUCHE
+// =============================================
+.creation-sidebar-crea-raccord {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 280px;
+  height: calc(100vh - 80px);
+  background: $color-background;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
+
+  .sidebar-header-crea-raccord {
+    margin-bottom: $spacing-md;
+
+    .sidebar-title-crea-raccord {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-crea-raccord {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-crea-raccord {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-crea-raccord {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  .sidebar-actions-crea-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-crea-raccord {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .filter-group-crea-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-crea-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .filter-select-crea-raccord {
+    width: 100%;
+    height: 34px;
+    padding: 0 $padding-xs;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    box-sizing: border-box;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+
+  .stats-crea-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-crea-raccord {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-white;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-crea-raccord {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-crea-raccord {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL À DROITE
+// =============================================
+.creation-body-crea-raccord {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-crea-raccord {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-header-crea-raccord {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+
+    .page-title-crea-raccord {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+    }
+
+    .page-subtitle-crea-raccord {
+      @include typography-p3;
+      color: $color-text-muted;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// =============================================
+// SYSTÈME D'ONGlets
+// =============================================
+.tabs-container-crea-raccord {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-crea-raccord {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-crea-raccord {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-crea-raccord {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-crea-raccord {
+  position: relative;
+}
+
+.tab-pane-crea-raccord {
+  padding: $spacing-lg;
+  animation: fadeInUp-crea-raccord 0.3s ease-out;
+}
+
+@keyframes fadeInUp-crea-raccord {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION
+// =============================================
+.form-container-crea-raccord {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tab-pane-crea-raccord .form-header-crea-raccord {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+
+  .back-btn-crea-raccord {
+    padding: $gap-xs $padding-sm;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}
+
+.raccord-form-crea-raccord {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-crea-raccord {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+
+  &.full-width {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group-crea-raccord {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
+  }
+
+  .search-input-crea-raccord,
+  .form-textarea-crea-raccord,
+  .file-input-crea-raccord {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+
+    &:hover {
+      border-color: darken($color-border, 10%);
+    }
+
+    &.disabled-input {
+      background: $color-background-alt;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  .form-textarea-crea-raccord {
+    height: auto;
+    min-height: 80px;
+    padding: $padding-sm;
+    resize: vertical;
+  }
+
+  .file-input-crea-raccord {
+    padding: $padding-xs;
+  }
+}
+
+// =============================================
+// NOTES ET INFORMATIONS
+// =============================================
+.same-scene-note-crea-raccord,
+.field-note-crea-raccord {
+  @include typography-p4;
+  color: $color-text-muted;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.checkbox-group-crea-raccord {
+  label {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    cursor: pointer;
+    
+    input[type="checkbox"] {
+      margin: 0;
+    }
+  }
+}
+
+// =============================================
+// PRÉVISUALISATION D'IMAGES
+// =============================================
+.image-previews-crea-raccord {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: $gap-sm;
+  margin-top: $gap-sm;
+}
+
+.image-preview-crea-raccord {
+  position: relative;
+  border-radius: $border-radius-xs;
+  overflow: hidden;
+  border: 2px solid $color-border;
+
+  img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+  }
+
+  .remove-btn-crea-raccord {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    background: $color-error;
+    color: $color-white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: $transition-fast;
+
+    &:hover {
+      background: darken($color-error, 10%);
+      transform: scale(1.1);
+    }
+  }
+}
+
+// =============================================
+// MESSAGE D'ERREUR
+// =============================================
+.error-message-crea-raccord {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-crea-raccord {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .cancel-btn-crea-raccord,
+  .submit-btn-crea-raccord {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .cancel-btn-crea-raccord {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn-crea-raccord {
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// =============================================
+// LISTE DES RACCORDS - VUE GROUPÉE
+// =============================================
+.raccords-list-crea-raccord {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.list-header-crea-raccord {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.search-section-crea-raccord {
+  .search-group-crea-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-input-container-crea-raccord {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .search-input-large-crea-raccord {
+      width: 300px;
+      height: 42px;
+      padding: 0 $padding-md 0 ($padding-md + $padding-xs);
+      border: 1px solid $color-border;
+      border-radius: $border-radius-pill;
+      background: $color-white;
+      font-size: $font-size-p3;
+      color: $color-text-primary;
+      transition: $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
+      }
+    }
+
+    .search-icon-crea-raccord {
+      position: absolute;
+      left: $padding-sm;
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// =============================================
+// GROUPES DE SCÈNES
+// =============================================
+.scene-groups-crea-raccord {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.scene-group-crea-raccord {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow;
+  overflow: hidden;
+}
+
+.scene-group-header-crea-raccord {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+
+  .group-title-crea-raccord {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+
+  .badge-count-crea-raccord {
+    @include typography-p4;
+    background: $color-primary;
+    color: $color-white;
+    padding: 4px 12px;
+    border-radius: $border-radius-pill;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// =============================================
+// CARTES DE RACCORDS
+// =============================================
+.raccords-grid-crea-raccord {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-md;
+  padding: $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    padding: $spacing-md;
+  }
+}
+
+.raccord-card-crea-raccord {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  box-shadow: $shadow-hover;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+.raccord-header-crea-raccord {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+
+  .raccord-title-crea-raccord {
+    @include typography-p3;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.raccord-content-crea-raccord {
+  .raccord-info-crea-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.detail-item-crea-raccord {
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-sm;
+  @include typography-p4;
+  color: $color-text-secondary;
+
+  i {
+    color: $color-primary;
+    margin-top: 2px;
+    min-width: 16px;
+  }
+
+  &.critique-item-crea-raccord {
+    color: $color-error;
+    font-weight: $font-weight-semibold;
+    
+    i {
+      color: $color-error;
+    }
+  }
+}
+
+.description-text-crea-raccord {
+  line-height: 1.4;
+}
+
+// =============================================
+// IMAGES DES RACCORDS
+// =============================================
+.raccord-images-crea-raccord {
+  margin: $spacing-md 0;
+
+  .images-title-crea-raccord {
+    @include typography-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-sm;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    font-weight: $font-weight-semibold;
+  }
+
+  .images-grid-crea-raccord {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: $gap-sm;
+  }
+
+  .image-item-crea-raccord {
+    position: relative;
+    border-radius: $border-radius-xs;
+    overflow: hidden;
+    border: 2px solid $color-border;
+    cursor: pointer;
+    transition: $transition-fast;
+
+    &:hover {
+      border-color: $color-primary;
+      transform: scale(1.05);
+    }
+
+    img {
+      width: 100%;
+      height: 60px;
+      object-fit: cover;
+    }
+  }
+}
+
+// =============================================
+// ACTIONS DES RACCORDS
+// =============================================
+.raccord-actions-crea-raccord {
+  display: flex;
+  gap: $gap-xs;
+  justify-content: flex-end;
+  margin-top: $spacing-md;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  .btn-edit-crea-raccord,
+  .btn-calendar-crea-raccord,
+  .btn-calendar-secondary-crea-raccord,
+  .btn-delete-crea-raccord {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .btn-edit-crea-raccord {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+
+    &:hover {
+      background: $color-warning;
+      color: $color-white;
+    }
+  }
+
+  .btn-calendar-crea-raccord {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+
+    &:hover {
+      background: $color-primary;
+      color: $color-white;
+    }
+  }
+
+  .btn-calendar-secondary-crea-raccord {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+
+    &:hover {
+      background: $color-info;
+      color: $color-white;
+    }
+  }
+
+  .btn-delete-crea-raccord {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
+  }
+}
+
+// =============================================
+// BADGES COLORÉS POUR LES STATUTS
+// =============================================
+.status-badge-crea-raccord {
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  
+  // Statut Actif
+  &.status-actif-crea-raccord {
+    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
+    color: $color-white;
+    box-shadow: 0 2px 4px rgba($color-success, 0.3);
+  }
+  
+  // Statut En attente
+  &.status-en-attente-crea-raccord {
+    background: linear-gradient(135deg, $color-warning, darken($color-warning, 10%));
+    color: $color-white;
+    box-shadow: 0 2px 4px rgba($color-warning, 0.3);
+  }
+  
+  // Statut Résolu
+  &.status-résolu-crea-raccord {
+    background: linear-gradient(135deg, $color-info, darken($color-info, 10%));
+    color: $color-white;
+    box-shadow: 0 2px 4px rgba($color-info, 0.3);
+  }
+  
+  // Icône dans le badge
+  i {
+    font-size: 10px;
+  }
+}
+
+// =============================================
+// ÉTATS SPÉCIAUX
+// =============================================
+.loading-state-crea-raccord,
+.empty-state-crea-raccord {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow;
+  margin: $spacing-md 0;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
+  }
+
+  h3 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-xs;
+  }
+
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-crea-raccord i {
+  animation: spin-crea-raccord 1s linear infinite;
+}
+
+@keyframes spin-crea-raccord {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// MODAL D'AFFICHAGE D'IMAGE
+// =============================================
+.modal-overlay-crea-raccord {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+}
+
+.modal-content-crea-raccord {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn-crea-raccord 0.3s ease-out;
+}
+
+@keyframes modalSlideIn-crea-raccord {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header-crea-raccord {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+}
+
+.modal-close-btn-crea-raccord {
+  background: transparent;
+  border: none;
+  font-size: $font-size-h4;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+}
+
+.modal-body-crea-raccord {
+  padding: $spacing-lg;
+  
+  img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: $border-radius-xs;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.image-description-crea-raccord {
+  @include typography-p4;
+  color: $color-text-secondary;
+  text-align: center;
+  font-style: italic;
+}
+
+.modal-footer-crea-raccord {
+  padding: $spacing-lg;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: $gap-sm;
+  justify-content: flex-end;
+  
+  .btn-close-modal-crea-raccord {
+    padding: $gap-sm $spacing-md;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-crea-raccord {
+    width: 250px;
+  }
+  
+  .creation-body-crea-raccord {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-crea-raccord {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .creation-body-crea-raccord {
+    margin-left: 0;
+  }
+  
+  .tabs-header-crea-raccord {
+    flex-direction: column;
+  }
+
+  .tab-btn-crea-raccord {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-crea-raccord {
+    display: none;
+  }
+
+  .tab-pane-crea-raccord {
+    padding: $spacing-md;
+  }
+  
+  .raccords-grid-crea-raccord {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-crea-raccord {
+    padding: $spacing-sm;
+  }
+  
+  .form-header-crea-raccord {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+  
+  .scene-group-header-crea-raccord {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .tab-btn-crea-raccord {
+    font-size: $font-size-p4;
+    
+    i {
+      font-size: $font-size-p3;
+    }
+  }
+  
+  .raccord-header-crea-raccord {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-crea-raccord,
+  .search-input-crea-raccord,
+  .submit-btn-crea-raccord,
+  .cancel-btn-crea-raccord,
+  .raccord-actions-crea-raccord button,
+  .tab-btn-crea-raccord,
+  .tab-indicator-crea-raccord,
+  .raccord-card-crea-raccord,
+  .image-item-crea-raccord {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .loading-state-crea-raccord i {
+    animation: none;
+  }
+  
+  .tab-pane-crea-raccord {
+    animation: none;
+  }
+  
+  .modal-content-crea-raccord {
+    animation: none;
+  }
+}

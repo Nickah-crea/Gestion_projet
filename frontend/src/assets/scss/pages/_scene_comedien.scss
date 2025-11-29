@@ -1,0 +1,878 @@
+// _scene-comedien.scss – Style cohérent avec CreationComedien
+@import '../base/variables';
+
+.app-wrapper-global-scene-comedien {
+  display: flex;
+  min-height: 100vh;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE
+// =============================================
+.creation-sidebar-scene-comedien {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 280px;
+  height: calc(100vh - 80px);
+  background: $color-background;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
+
+  .sidebar-header-scene-comedien {
+    margin-bottom: $spacing-md;
+
+    .sidebar-title-scene-comedien {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-scene-comedien {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-scene-comedien {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-scene-comedien {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  .sidebar-actions-scene-comedien {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-scene-comedien {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .stats-scene-comedien {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-scene-comedien {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-white;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-scene-comedien {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-scene-comedien {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL
+// =============================================
+.creation-body-scene-comedien {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-scene-comedien {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-header-scene-comedien {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+
+    .page-title-scene-comedien {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+    }
+
+    .page-subtitle-scene-comedien {
+      @include typography-p3;
+      color: $color-text-muted;
+      max-width: 600px;
+      margin: 0 auto;
+      
+      .selected-comedien-info-scene-comedien {
+        color: $color-primary;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+}
+
+// =============================================
+// SYSTÈME D'ONGlets
+// =============================================
+.tabs-container-scene-comedien {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-scene-comedien {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-scene-comedien {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-scene-comedien {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-scene-comedien {
+  position: relative;
+}
+
+.tab-pane-scene-comedien {
+  padding: $spacing-lg;
+  animation: fadeInUp-scene-comedien 0.3s ease-out;
+}
+
+@keyframes fadeInUp-scene-comedien {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE LIAISON
+// =============================================
+.form-container-scene-comedien {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tab-pane-scene-comedien .form-header-scene-comedien {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+}
+
+.liaison-form-scene-comedien {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-scene-comedien {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-scene-comedien {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+  }
+}
+
+.readonly-field-scene-comedien {
+  width: 100%;
+  height: 42px;
+  padding: 0 $padding-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-secondary;
+  background: $color-background-alt;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  box-sizing: border-box;
+}
+
+// =============================================
+// RECHERCHE DE SCÈNE AVEC SUGGESTIONS
+// =============================================
+.search-container-scene-comedien {
+  position: relative;
+
+  .search-input-scene-comedien {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  .suggestions-dropdown-scene-comedien {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    box-shadow: $shadow-md;
+    z-index: $z-index-dropdown;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .suggestion-item-scene-comedien {
+    padding: $gap-sm $padding-sm;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: $transition-fast;
+    border-bottom: 1px solid $color-border;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+    }
+
+    &.selected {
+      background: rgba($color-primary, 0.2);
+      border-left: 3px solid $color-primary;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .scene-option-info-scene-comedien {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .scene-details-scene-comedien {
+      font-size: $font-size-p5;
+      color: $color-text-muted;
+    }
+
+    .scene-statut-scene-comedien {
+      padding: 2px 6px;
+      border-radius: $border-radius-pill;
+      font-size: $font-size-p5;
+      font-weight: $font-weight-medium;
+
+      &.statut-planifie {
+        background: rgba($color-warning, 0.2);
+        color: darken($color-warning, 20%);
+      }
+      &.statut-confirme {
+        background: rgba($color-info, 0.2);
+        color: darken($color-info, 20%);
+      }
+      &.statut-en_cours {
+        background: rgba($color-primary, 0.2);
+        color: $color-primary-dark;
+      }
+      &.statut-termine {
+        background: rgba($color-success, 0.2);
+        color: darken($color-success, 20%);
+      }
+    }
+  }
+
+  .no-results-scene-comedien {
+    padding: $gap-sm $padding-sm;
+    text-align: center;
+    color: $color-text-muted;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// MESSAGE D'ERREUR
+// =============================================
+.error-message-scene-comedien {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-scene-comedien {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  .submit-btn-scene-comedien {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 160px;
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+}
+
+// =============================================
+// LISTE DES LIAISONS
+// =============================================
+.liaisons-list-scene-comedien {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.list-header-scene-comedien {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.search-section-scene-comedien {
+  .search-group-scene-comedien {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-input-container-scene-comedien {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .search-input-large-scene-comedien {
+      width: 300px;
+      height: 42px;
+      padding: 0 $padding-md 0 ($padding-md + $padding-xs);
+      border: 1px solid $color-border;
+      border-radius: $border-radius-pill;
+      background: $color-white;
+      font-size: $font-size-p3;
+      color: $color-text-primary;
+      transition: $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
+      }
+    }
+
+    .search-icon-scene-comedien {
+      position: absolute;
+      left: $padding-sm;
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// =============================================
+// GROUPEMENT PAR COMÉDIEN
+// =============================================
+.liaisons-container-scene-comedien {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.comedien-group-scene-comedien {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+.comedien-header-scene-comedien {
+  padding: $spacing-md;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+
+  .comedien-info-scene-comedien {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h4 {
+      @include typography-playfair-p4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+
+    .scene-count-scene-comedien {
+      @include typography-p4;
+      color: $color-text-muted;
+      background: $color-white;
+      padding: $gap-xs $padding-sm;
+      border-radius: $border-radius-pill;
+      border: 1px solid $color-border;
+    }
+  }
+}
+
+.scenes-grid-scene-comedien {
+  padding: $spacing-md;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-sm;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scene-card-scene-comedien {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $spacing-sm;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-hover;
+  }
+}
+
+.scene-info-scene-comedien {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.scene-main-info-scene-comedien {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $gap-sm;
+
+  .scene-title-scene-comedien {
+    @include typography-p4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    flex: 1;
+  }
+
+  .scene-statut-badge-scene-comedien {
+    @include typography-p4;
+    padding: 4px 8px;
+    border-radius: $border-radius-pill;
+    font-weight: $font-weight-semibold;
+    white-space: nowrap;
+
+    &.statut-planifie {
+      background: rgba($color-warning, 0.2);
+      color: darken($color-warning, 20%);
+    }
+    &.statut-confirme {
+      background: rgba($color-info, 0.2);
+      color: darken($color-info, 20%);
+    }
+    &.statut-en_cours {
+      background: rgba($color-primary, 0.2);
+      color: $color-primary-dark;
+    }
+    &.statut-termine {
+      background: rgba($color-success, 0.2);
+      color: darken($color-success, 20%);
+    }
+    &.statut-reporte {
+      background: rgba($color-error, 0.2);
+      color: $color-error;
+    }
+  }
+}
+
+.scene-details-grid-scene-comedien {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.scene-detail-item-scene-comedien {
+  @include typography-p4;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  i {
+    color: $color-primary;
+    width: 14px;
+    text-align: center;
+  }
+}
+
+.scene-actions-scene-comedien {
+  .btn-delete-scene-comedien {
+    width: 32px;
+    height: 32px;
+    background: rgba($color-error, 0.1);
+    border: 1px solid $color-error;
+    border-radius: $border-radius-xs;
+    color: $color-error;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+      transform: scale(1.1);
+    }
+  }
+}
+
+// =============================================
+// ÉTATS SPÉCIAUX
+// =============================================
+.loading-state-scene-comedien,
+.empty-state-scene-comedien {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow;
+  margin: $spacing-md 0;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
+  }
+
+  h3 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-xs;
+  }
+
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-scene-comedien i {
+  animation: spin-scene-comedien 1s linear infinite;
+}
+
+@keyframes spin-scene-comedien {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-scene-comedien {
+    width: 250px;
+  }
+  
+  .creation-body-scene-comedien {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-scene-comedien {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .creation-body-scene-comedien {
+    margin-left: 0;
+  }
+  
+  .tabs-header-scene-comedien {
+    flex-direction: column;
+  }
+
+  .tab-btn-scene-comedien {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-scene-comedien {
+    display: none;
+  }
+
+  .tab-pane-scene-comedien {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-scene-comedien {
+    padding: $spacing-sm;
+  }
+  
+  .scenes-grid-scene-comedien {
+    grid-template-columns: 1fr;
+  }
+  
+  .scene-card-scene-comedien {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .scene-actions-scene-comedien {
+    align-self: flex-end;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-scene-comedien,
+  .search-input-scene-comedien,
+  .submit-btn-scene-comedien,
+  .tab-btn-scene-comedien,
+  .tab-indicator-scene-comedien,
+  .scene-card-scene-comedien,
+  .btn-delete-scene-comedien {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .loading-state-scene-comedien i {
+    animation: none;
+  }
+  
+  .tab-pane-scene-comedien {
+    animation: none;
+  }
+}

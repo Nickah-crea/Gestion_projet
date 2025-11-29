@@ -1,0 +1,1164 @@
+// _creation-dialogue.scss – Style identique à _scene_comedien.scss
+@import '../base/variables';
+
+.app-wrapper-global-crea-dialogue {
+  display: flex;
+  min-height: 100vh;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE
+// =============================================
+.creation-sidebar-crea-dialogue {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 280px;
+  height: calc(100vh - 80px);
+  background: $color-background;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
+
+  .sidebar-header-crea-dialogue {
+    margin-bottom: $spacing-md;
+
+    .sidebar-title-crea-dialogue {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-crea-dialogue {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-crea-dialogue {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-crea-dialogue {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  .sidebar-actions-crea-dialogue {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-crea-dialogue {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .filter-group-crea-dialogue {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-crea-dialogue {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .stats-crea-dialogue {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-crea-dialogue {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-white;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-crea-dialogue {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-crea-dialogue {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL
+// =============================================
+.creation-body-crea-dialogue {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-crea-dialogue {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-header-crea-dialogue {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+
+    .page-title-crea-dialogue {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+    }
+
+    .page-subtitle-crea-dialogue {
+      @include typography-p3;
+      color: $color-text-muted;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// =============================================
+// SYSTÈME D'ONGlets
+// =============================================
+.tabs-container-crea-dialogue {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-crea-dialogue {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-crea-dialogue {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-crea-dialogue {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-crea-dialogue {
+  position: relative;
+}
+
+.tab-pane-crea-dialogue {
+  padding: $spacing-lg;
+  animation: fadeInUp-crea-dialogue 0.3s ease-out;
+}
+
+@keyframes fadeInUp-crea-dialogue {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION
+// =============================================
+.form-container-crea-dialogue {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tab-pane-crea-dialogue .form-header-crea-dialogue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+}
+
+.back-btn-crea-dialogue {
+  padding: $gap-sm $spacing-md;
+  background: $color-success;
+  border: none;
+  border-radius: $border-radius-xs;
+  @include typography-p4;
+  color: $color-white;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  &:hover {
+    background: darken($color-success, 10%);
+    transform: translateY(-1px);
+  }
+}
+
+.dialogue-form-crea-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-crea-dialogue {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  &.full-width {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-crea-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+  }
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+// =============================================
+// RECHERCHE AVEC SUGGESTIONS
+// =============================================
+.search-container-crea-dialogue {
+  position: relative;
+
+  .search-input-crea-dialogue {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+
+    &.error-input {
+      border-color: $color-error;
+    }
+  }
+
+  .suggestions-dropdown-crea-dialogue {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    box-shadow: $shadow-md;
+    z-index: $z-index-dropdown;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .suggestion-item-crea-dialogue {
+    padding: $gap-sm $padding-sm;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: $transition-fast;
+    border-bottom: 1px solid $color-border;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+    }
+
+    &.clear-filter {
+      color: $color-primary;
+      font-weight: $font-weight-semibold;
+      border-top: 1px solid $color-border;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .scene-option-info-crea-dialogue {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .scene-title-crea-dialogue {
+      font-weight: $font-weight-medium;
+    }
+
+    .scene-details-crea-dialogue {
+      font-size: $font-size-p5;
+      color: $color-text-muted;
+    }
+  }
+
+  .no-results-crea-dialogue {
+    padding: $gap-sm $padding-sm;
+    text-align: center;
+    color: $color-text-muted;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// TEXTAREA
+// =============================================
+.form-textarea-crea-dialogue {
+  width: 100%;
+  padding: $padding-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  background: $color-white;
+  transition: $transition-fast;
+  resize: vertical;
+  min-height: 80px;
+  font-family: $font-family-primary;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+}
+
+// =============================================
+// MESSAGES D'ERREUR ET SUGGESTIONS
+// =============================================
+.error-message-crea-dialogue {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.error-text-crea-dialogue {
+  color: $color-error;
+  font-size: $font-size-p5;
+  margin-top: $gap-xs;
+}
+
+.suggestion-text-crea-dialogue {
+  color: $color-success;
+  font-size: $font-size-p5;
+  margin-top: $gap-xs;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.suggestion-btn-crea-dialogue {
+  background: none;
+  border: none;
+  color: $color-primary;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: $font-size-p5;
+
+  &:hover {
+    color: darken($color-primary, 10%);
+  }
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-crea-dialogue {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  .submit-btn-crea-dialogue {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 160px;
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .cancel-btn-crea-dialogue {
+    padding: $gap-sm $spacing-md;
+    background: $color-error;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    color: $color-white;
+
+    &:hover {
+      background: darken($color-error, 10%);
+    }
+  }
+}
+
+// =============================================
+// LISTE DES DIALOGUES
+// =============================================
+.dialogues-list-crea-dialogue {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.list-header-crea-dialogue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.search-section-crea-dialogue {
+  .search-group-crea-dialogue {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-input-container-crea-dialogue {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .search-input-large-crea-dialogue {
+      width: 300px;
+      height: 42px;
+      padding: 0 $padding-md 0 ($padding-md + $padding-xs);
+      border: 1px solid $color-border;
+      border-radius: $border-radius-pill;
+      background: $color-white;
+      font-size: $font-size-p3;
+      color: $color-text-primary;
+      transition: $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
+      }
+    }
+
+    .search-icon-crea-dialogue {
+      position: absolute;
+      left: $padding-sm;
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// =============================================
+// GRILLE DES DIALOGUES
+// =============================================
+.dialogues-container-crea-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.dialogues-grid-crea-dialogue {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dialogue-card-crea-dialogue {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  box-shadow: $shadow;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-hover;
+    transform: translateY(-2px);
+  }
+}
+
+.dialogue-header-crea-dialogue {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-sm;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  .dialogue-info-crea-dialogue {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    .dialogue-title-crea-dialogue {
+      @include typography-playfair-p4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+
+    .scene-badge-crea-dialogue {
+      @include typography-p4;
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
+      padding: 2px 8px;
+      border-radius: $border-radius-pill;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.dialogue-actions-crea-dialogue {
+  display: flex;
+  gap: $gap-xs;
+
+  .btn-comment-crea-dialogue,
+  .btn-edit-crea-dialogue,
+  .btn-delete-crea-dialogue {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+    font-size: $font-size-p4;
+  }
+
+  .btn-comment-crea-dialogue {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+
+    &:hover {
+      background: $color-info;
+      color: $color-white;
+    }
+  }
+
+  .btn-edit-crea-dialogue {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+
+    &:hover {
+      background: $color-warning;
+      color: $color-white;
+    }
+  }
+
+  .btn-delete-crea-dialogue {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
+  }
+}
+
+.dialogue-content-crea-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  .dialogue-text-crea-dialogue {
+    @include typography-p3;
+    color: $color-text-primary;
+    line-height: 1.5;
+    max-height: 80px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .dialogue-meta-crea-dialogue {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .meta-item-crea-dialogue {
+    @include typography-p4;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    i {
+      color: $color-primary;
+      width: 14px;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// ÉTATS SPÉCIAUX
+// =============================================
+.loading-state-crea-dialogue,
+.empty-state-crea-dialogue {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow;
+  margin: $spacing-md 0;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
+  }
+
+  h3 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-xs;
+  }
+
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-crea-dialogue i {
+  animation: spin-crea-dialogue 1s linear infinite;
+}
+
+@keyframes spin-crea-dialogue {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// MODALE COMMENTAIRES
+// =============================================
+.modal-overlay-crea-dialogue {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+}
+
+.modal-content-crea-dialogue {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header-crea-dialogue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.modal-close-btn-crea-dialogue {
+  background: none;
+  border: none;
+  font-size: $font-size-p3;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+}
+
+.modal-body-crea-dialogue {
+  padding: $spacing-md;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.add-comment-crea-dialogue {
+  margin-bottom: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+
+  .comment-textarea-crea-dialogue {
+    width: 100%;
+    padding: $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    resize: vertical;
+    min-height: 80px;
+    font-family: $font-family-primary;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  .add-comment-btn-crea-dialogue {
+    align-self: flex-end;
+    padding: $gap-sm $spacing-md;
+    background: $color-primary;
+    border: none;
+    border-radius: $border-radius-xs;
+    @include typography-p4;
+    color: $color-white;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
+  }
+}
+
+.comments-list-crea-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.comment-item-crea-dialogue {
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  padding: $spacing-sm;
+  border: 1px solid $color-border;
+}
+
+.comment-header-crea-dialogue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-sm;
+
+  .comment-author-crea-dialogue {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  .comment-date-crea-dialogue {
+    @include typography-p4;
+    color: $color-text-muted;
+  }
+}
+
+.comment-content-crea-dialogue {
+  @include typography-p4;
+  color: $color-text-primary;
+  line-height: 1.5;
+  margin-bottom: $gap-sm;
+}
+
+.comment-actions-crea-dialogue {
+  .delete-comment-btn-crea-dialogue {
+    padding: $gap-xs $gap-sm;
+    background: rgba($color-error, 0.1);
+    border: 1px solid $color-error;
+    border-radius: $border-radius-xs;
+    @include typography-p4;
+    color: $color-error;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
+  }
+}
+
+.no-comments-crea-dialogue {
+  text-align: center;
+  padding: $spacing-lg;
+  color: $color-text-muted;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $gap-sm;
+
+  i {
+    font-size: 32px;
+  }
+}
+
+.modal-footer-crea-dialogue {
+  padding: $spacing-md;
+  background: $color-background-alt;
+  border-top: 1px solid $color-border;
+  text-align: right;
+}
+
+.btn-close-modal-crea-dialogue {
+  padding: $gap-sm $spacing-md;
+  background: $color-error;
+  border: none;
+  border-radius: $border-radius-xs;
+  @include typography-p4;
+  color: $color-white;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  &:hover {
+    background: darken($color-error, 10%);
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-crea-dialogue {
+    width: 250px;
+  }
+  
+  .creation-body-crea-dialogue {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-crea-dialogue {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .creation-body-crea-dialogue {
+    margin-left: 0;
+  }
+  
+  .tabs-header-crea-dialogue {
+    flex-direction: column;
+  }
+
+  .tab-btn-crea-dialogue {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-crea-dialogue {
+    display: none;
+  }
+
+  .tab-pane-crea-dialogue {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-crea-dialogue {
+    padding: $spacing-sm;
+  }
+  
+  .dialogues-grid-crea-dialogue {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions-crea-dialogue {
+    flex-direction: column;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-crea-dialogue,
+  .search-input-crea-dialogue,
+  .submit-btn-crea-dialogue,
+  .tab-btn-crea-dialogue,
+  .tab-indicator-crea-dialogue,
+  .dialogue-card-crea-dialogue,
+  .btn-comment-crea-dialogue,
+  .btn-edit-crea-dialogue,
+  .btn-delete-crea-dialogue {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .loading-state-crea-dialogue i {
+    animation: none;
+  }
+  
+  .tab-pane-crea-dialogue {
+    animation: none;
+  }
+}

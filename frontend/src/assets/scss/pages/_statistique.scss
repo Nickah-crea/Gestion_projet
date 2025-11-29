@@ -1,0 +1,1242 @@
+// =============================================
+// SIDEBAR STATISTIQUES - Style recherche
+// =============================================
+.statistiques-sidebar-statistiques {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 280px;
+  height: calc(100vh - 80px);
+  background: $color-background;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
+  margin-right: 50px;
+
+  .sidebar-header-statistiques {
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+
+    .sidebar-title-statistiques {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 1px);
+    }
+
+    .sidebar-subtitle-statistiques {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .filter-section-statistiques {
+    margin-bottom: $spacing-lg;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-statistiques {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-md;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+
+      i {
+        color: $color-primary;
+        font-size: $font-size-p3;
+      }
+    }
+
+    .filter-group-statistiques {
+      display: flex;
+      flex-direction: column;
+      gap: $gap-md;
+    }
+
+    .filter-select-group-statistiques {
+      display: flex;
+      flex-direction: column;
+      gap: $gap-xs;
+
+      label {
+        @include typography-p4;
+        color: $color-text-secondary;
+        font-weight: $font-weight-medium;
+      }
+
+      .filter-select-statistiques {
+        width: 100%;
+        height: 34px;
+        padding: 0 $padding-xs;
+        background: $color-white;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-xs;
+        font-size: $font-size-p4;
+        color: $color-text-primary;
+        cursor: pointer;
+        box-sizing: border-box;
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+        }
+
+        &:hover {
+          border-color: $color-primary-dark;
+        }
+      }
+    }
+  }
+
+  .kpi-sidebar-section-statistiques {
+    margin-bottom: $spacing-lg;
+
+    .section-title-statistiques {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-md;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+
+      i {
+        color: $color-primary;
+        font-size: $font-size-p3;
+      }
+    }
+
+    .kpi-sidebar-grid-statistiques {
+      display: flex;
+      flex-direction: column;
+      gap: $gap-md;
+    }
+
+    .kpi-sidebar-card-statistiques {
+      background: $color-white;
+      border-radius: $border-radius-xs;
+      padding: $padding-sm;
+      box-shadow: $shadow;
+      border: 1px solid $color-border;
+      transition: $transition-fast;
+      display: flex;
+      align-items: center;
+      gap: $gap-md;
+      min-height: 60px;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: $shadow-md;
+        border-color: $color-primary;
+      }
+
+      .kpi-sidebar-icon-statistiques {
+        @include flex-center;
+        width: 40px;
+        height: 40px;
+        border-radius: $border-radius-xs;
+        font-size: $font-size-p1;
+        color: $color-white;
+        flex-shrink: 0;
+
+        i {
+          filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+        }
+      }
+
+      .kpi-sidebar-content-statistiques {
+        flex: 1;
+
+        .kpi-sidebar-number-statistiques {
+          @include typography-playfair-h4;
+          color: $color-text-primary;
+          line-height: 1;
+          margin-bottom: $gap-xs;
+        }
+
+        .kpi-sidebar-label-statistiques {
+          @include typography-p4;
+          color: $color-text-secondary;
+          font-weight: $font-weight-medium;
+        }
+      }
+
+      // Couleurs spécifiques pour chaque carte KPI
+      &.total-projects-statistiques .kpi-sidebar-icon-statistiques {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+      }
+
+      &.total-episodes-statistiques .kpi-sidebar-icon-statistiques {
+        background: linear-gradient(135deg, $color-accent 0%, $color-accent-light 100%);
+      }
+
+      &.total-sequences-statistiques .kpi-sidebar-icon-statistiques {
+        background: linear-gradient(135deg, #6B8A6E 0%, #8BAE8E 100%);
+      }
+
+      &.total-scenes-statistiques .kpi-sidebar-icon-statistiques {
+        background: linear-gradient(135deg, #E5C687 0%, #F2D9A0 100%);
+      }
+
+      &.total-dialogues-statistiques .kpi-sidebar-icon-statistiques {
+        background: linear-gradient(135deg, #983750 0%, #B54A6B 100%);
+      }
+
+      &.team-members-statistiques .kpi-sidebar-icon-statistiques {
+        background: linear-gradient(135deg, #560B18 0%, #75162D 100%);
+      }
+    }
+  }
+
+  .sidebar-footer-statistiques {
+    margin-top: auto;
+    padding-top: $spacing-md;
+    border-top: 1px solid $color-border;
+
+    .last-update-sidebar-statistiques {
+      @include typography-p4;
+      color: $color-text-muted;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+      justify-content: center;
+
+      i {
+        color: $color-primary;
+        font-size: $font-size-p4;
+      }
+    }
+  }
+}
+
+// =============================================
+// STRUCTURE GLOBALE
+// =============================================
+.statistiques-globales {
+  min-height: 100vh;
+}
+
+.statistiques-body-statistiques {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+}
+
+.statistiques-container-statistiques {
+  flex: 1;
+  padding: $spacing-md;
+  max-width: 1250px;
+  margin: 0 auto;
+}
+
+.statistiques-main-content-statistiques {
+  padding: $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-header-statistiques {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+    padding: $spacing-lg;
+    background: $color-white;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-md;
+    border: 1px solid $color-border;
+
+    .page-title-statistiques {
+      @include typography-playfair-h2;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-md;
+
+      i {
+        color: $color-primary;
+      }
+    }
+
+    .page-subtitle-statistiques {
+      @include typography-p2;
+      color: $color-text-muted;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// =============================================
+// GRID DES GRAPHIQUES
+// =============================================
+.charts-section-statistiques {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-xl;
+}
+
+.chart-row-statistiques {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg;
+  align-items: stretch;
+}
+
+// =============================================
+// COMPOSANTS COMMUNS
+// =============================================
+.chart-container-statistiques {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  border: 1px solid $color-border;
+  margin-bottom: $spacing-lg;
+  overflow: hidden;
+  animation: fadeInUp-statistiques 0.6s $ease-out-cinema;
+
+  &.full-width-statistiques {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+
+    .chart-content-statistiques {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ranking-list-statistiques,
+    .timeline-chart-statistiques,
+    .team-distribution-statistiques {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pie-charts-grid-statistiques {
+      flex: 1;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: $spacing-md;
+    }
+  }
+
+  .chart-header-statistiques {
+    padding: $spacing-lg;
+    border-bottom: 1px solid $color-border;
+    background: rgba($color-primary, 0.02);
+
+    h3 {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-md;
+
+      i {
+        color: $color-primary;
+      }
+    }
+
+    .chart-legend-statistiques {
+      display: flex;
+      gap: $spacing-md;
+      margin-top: $spacing-sm;
+      flex-wrap: wrap;
+
+      .legend-item-statistiques {
+        @include typography-p3;
+        color: $color-text-secondary;
+        display: flex;
+        align-items: center;
+        gap: $gap-xs;
+
+        .legend-color-statistiques {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          display: inline-block;
+
+          &.completed-statistiques { background: $color-success; }
+          &.in-progress-statistiques { background: $color-primary; }
+          &.planned-statistiques { background: $color-error; }
+          &.to-do-statistiques { background: $color-border; }
+          &.episodes-statistiques { background: $color-accent; }
+          &.sequences-statistiques { background: $color-primary; }
+          &.scenes-statistiques { background: $color-success; }
+        }
+      }
+    }
+  }
+
+  .chart-content-statistiques {
+    padding: $spacing-lg;
+  }
+}
+
+// =============================================
+// TOTAUX DU PROJET
+// =============================================
+.totals-section-statistiques {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-md;
+  border: 1px solid $color-border;
+  margin-bottom: $spacing-xl;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: $gap-md;
+
+    i {
+      color: $color-primary;
+    }
+  }
+
+  .totals-grid-statistiques {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-md;
+
+    .total-card-statistiques {
+      @include flex-center;
+      flex-direction: column;
+      padding: $spacing-lg;
+      background: rgba($color-primary, 0.05);
+      border-radius: $border-radius;
+      border: 1px solid rgba($color-primary, 0.2);
+      transition: $transition-fast;
+
+      &:hover {
+        background: rgba($color-primary, 0.1);
+        transform: translateY(-1px);
+      }
+
+      i {
+        font-size: $font-size-h3;
+        color: $color-primary;
+        margin-bottom: $gap-md;
+      }
+
+      .total-number-statistiques {
+        @include typography-playfair-h2;
+        color: $color-text-primary;
+        margin-bottom: $gap-xs;
+        line-height: 1;
+      }
+
+      .total-label-statistiques {
+        @include typography-p2;
+        color: $color-text-secondary;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+}
+
+// =============================================
+// RÉPARTITION PAR TYPE
+// =============================================
+.type-distribution-statistiques {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .type-item-statistiques {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-sm;
+
+    .type-name-statistiques {
+      @include typography-p2;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+      min-width: 100px;
+    }
+
+    .type-bar-statistiques {
+      flex: 1;
+      height: 20px;
+      background: rgba($color-border, 0.3);
+      border-radius: $border-radius-pill;
+      overflow: hidden;
+      position: relative;
+
+      .type-fill-statistiques {
+        height: 100%;
+        background: linear-gradient(90deg, $color-primary 0%, $color-primary-dark 100%);
+        border-radius: $border-radius-pill;
+        transition: width 0.8s $ease-out-cinema;
+      }
+    }
+
+    .type-value-statistiques {
+      @include typography-p2;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+      min-width: 80px;
+      text-align: right;
+    }
+  }
+}
+
+// =============================================
+// ACTIVITÉ RÉCENTE
+// =============================================
+.activity-stats-statistiques {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .activity-item-statistiques {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-sm;
+    background: rgba($color-primary, 0.03);
+    border-radius: $border-radius-xs;
+    border-left: 3px solid $color-primary;
+
+    .activity-label-statistiques {
+      @include typography-p2;
+      color: $color-text-secondary;
+    }
+
+    .activity-value-statistiques {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      font-weight: $font-weight-bold;
+    }
+  }
+}
+
+// =============================================
+// CAMEMBERTS STATUTS
+// =============================================
+.pie-charts-grid-statistiques {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-xl;
+  justify-items: center;
+
+  .pie-chart-item-statistiques {
+    position: relative;
+
+    h4 {
+      @include typography-p2;
+      color: $color-text-secondary;
+      margin-bottom: $spacing-md;
+      font-weight: $font-weight-medium;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pie-chart-statistiques {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: $color-border;
+      margin: 0 auto;
+      z-index: 1;
+        
+      .pie-slice-statistiques {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
+        transform: rotate(calc(var(--percentage) * 3.6deg));
+        
+        &.completed-statistiques {
+          background: $color-success;
+          z-index: 4;
+        }
+        
+        &.in-progress-statistiques {
+          background: $color-primary;
+          z-index: 3;
+        }
+        
+        &.planned-statistiques {
+          background: $color-warning;
+          z-index: 2;
+        }
+        
+        &.to-do-statistiques {
+          background: $color-border;
+          z-index: 1;
+        }
+      }
+
+      .pie-center-statistiques {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        background: $color-white;
+        border-radius: 50%;
+        @include flex-center;
+        flex-direction: column;
+        box-shadow: $shadow-inset;
+        z-index: 5;
+
+        .pie-total-statistiques {
+          @include typography-playfair-h4;
+          color: $color-text-primary;
+          line-height: 1;
+        }
+
+        .pie-label-statistiques {
+          @include typography-p4;
+          color: $color-text-muted;
+          text-transform: uppercase;
+          letter-spacing: 0.5px; 
+          z-index: 6;
+        }
+      }
+    }
+  }
+}
+
+// =============================================
+// TIMELINE PROGRESSION
+// =============================================
+.timeline-chart-statistiques {
+  .timeline-bars-statistiques {
+    display: flex;
+    align-items: flex-end;
+    gap: $spacing-md;
+    height: 200px;
+    padding: $spacing-lg 0;
+    border-bottom: 1px solid $color-border;
+
+    .timeline-item-statistiques {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-sm;
+
+      .timeline-label-statistiques {
+        @include typography-p3;
+        color: $color-text-muted;
+        text-align: center;
+        font-weight: $font-weight-medium;
+      }
+
+      .timeline-bar-statistiques {
+        width: 100%;
+        height: 150px;
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        position: relative;
+
+        .bar-segment-statistiques {
+          flex: 1;
+          border-radius: $border-radius-xs $border-radius-xs 0 0;
+          transition: $transition;
+          position: relative;
+          min-height: 5px;
+
+          &.episodes-statistiques {
+            background: $color-accent;
+            &:hover { 
+              background: darken($color-accent, 10%); 
+              transform: scaleY(1.05);
+            }
+          }
+          
+          &.sequences-statistiques {
+            background: $color-primary;
+            &:hover { 
+              background: darken($color-primary, 10%); 
+              transform: scaleY(1.05);
+            }
+          }
+          
+          &.scenes-statistiques {
+            background: $color-success;
+            &:hover { 
+              background: darken($color-success, 10%); 
+              transform: scaleY(1.05);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .timeline-legend-statistiques {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-lg;
+    margin-top: $spacing-md;
+    flex-wrap: wrap;
+
+    .legend-item-statistiques {
+      @include typography-p3;
+      color: $color-text-secondary;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+
+      .legend-color-statistiques {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+
+        &.episodes-statistiques { background: $color-accent; }
+        &.sequences-statistiques { background: $color-primary; }
+        &.scenes-statistiques { background: $color-success; }
+      }
+    }
+  }
+}
+
+// =============================================
+// TOP PROJETS RANKING
+// =============================================
+.ranking-list-statistiques {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  .ranking-item-statistiques {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    background: rgba($color-primary, 0.03);
+    border-radius: $border-radius;
+    border: 1px solid $color-border;
+    transition: $transition-fast;
+
+    &:hover {
+      background: rgba($color-primary, 0.08);
+      transform: translateX(4px);
+    }
+
+    .rank-number-statistiques {
+      @include flex-center;
+      width: 32px;
+      height: 32px;
+      background: $color-primary;
+      color: $color-white;
+      border-radius: 50%;
+      @include typography-p2;
+      font-weight: $font-weight-bold;
+      flex-shrink: 0;
+    }
+
+    .project-info-statistiques {
+      flex: 1;
+
+      .project-name-statistiques {
+        @include typography-p1;
+        color: $color-text-primary;
+        font-weight: $font-weight-semibold;
+        margin-bottom: $gap-xs;
+      }
+
+      .project-stats-statistiques {
+        display: flex;
+        gap: $spacing-md;
+        flex-wrap: wrap;
+
+        .stat-statistiques {
+          @include typography-p3;
+          color: $color-text-muted;
+          background: rgba($color-border, 0.3);
+          padding: $gap-xs $gap-sm;
+          border-radius: $border-radius-xs;
+        }
+      }
+    }
+
+    .progress-circle-statistiques {
+      @include flex-center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: conic-gradient($color-primary 0% calc(var(--progress) * 1%), $color-border 0% 100%);
+      position: relative;
+      flex-shrink: 0;
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        background: $color-white;
+        border-radius: 50%;
+      }
+
+      span {
+        @include typography-p3;
+        color: $color-text-primary;
+        font-weight: $font-weight-bold;
+        z-index: 1;
+      }
+    }
+  }
+}
+
+// =============================================
+// DISTRIBUTION ÉQUIPE
+// =============================================
+.team-distribution-statistiques {
+  .distribution-chart-statistiques {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .distribution-item-statistiques {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      padding: $spacing-sm;
+
+      .role-info-statistiques {
+        display: flex;
+        flex-direction: column;
+        gap: $gap-xs;
+        min-width: 150px;
+
+        .role-name-statistiques {
+          @include typography-p2;
+          color: $color-text-primary;
+          font-weight: $font-weight-medium;
+        }
+
+        .role-count-statistiques {
+          @include typography-p3;
+          color: $color-text-muted;
+        }
+      }
+
+      .distribution-bar-statistiques {
+        flex: 1;
+        height: 16px;
+        background: rgba($color-border, 0.3);
+        border-radius: $border-radius-pill;
+        overflow: hidden;
+        position: relative;
+
+        .distribution-fill-statistiques {
+          height: 100%;
+          background: linear-gradient(90deg, $color-accent 0%, $color-accent-light 100%);
+          border-radius: $border-radius-pill;
+          transition: width 0.8s $ease-out-cinema;
+        }
+      }
+
+      .role-percentage-statistiques {
+        @include typography-p2;
+        color: $color-text-secondary;
+        font-weight: $font-weight-semibold;
+        min-width: 50px;
+        text-align: right;
+      }
+    }
+  }
+}
+
+// =============================================
+// TABLEAU DÉTAIL PROJETS
+// =============================================
+.projects-table-section-statistiques {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-md;
+  border: 1px solid $color-border;
+  margin-bottom: $spacing-xl;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin-bottom: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $gap-md;
+
+    i {
+      color: $color-primary;
+    }
+  }
+
+  .table-container-statistiques {
+    overflow-x: auto;
+    border-radius: $border-radius;
+    border: 1px solid $color-border;
+
+    .projects-table-statistiques {
+      width: 100%;
+      border-collapse: collapse;
+      background: $color-white;
+
+      thead {
+        background: rgba($color-primary, 0.05);
+        border-bottom: 2px solid $color-border;
+
+        tr th {
+          @include typography-p2;
+          color: $color-text-primary;
+          font-weight: $font-weight-semibold;
+          padding: $spacing-md;
+          text-align: left;
+          border-right: 1px solid $color-border;
+
+          &:last-child {
+            border-right: none;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid $color-border;
+          transition: $transition-fast;
+
+          &:hover {
+            background: rgba($color-primary, 0.03);
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          td {
+            padding: $spacing-md;
+            border-right: 1px solid rgba($color-border, 0.5);
+
+            &:last-child {
+              border-right: none;
+            }
+          }
+        }
+      }
+
+      .project-name-cell-statistiques {
+        strong {
+          @include typography-p1;
+          color: $color-text-primary;
+          font-weight: $font-weight-semibold;
+          display: block;
+          margin-bottom: $gap-xs;
+        }
+
+        .project-description-statistiques {
+          @include typography-p3;
+          color: $color-text-muted;
+          line-height: $line-height-tight;
+        }
+      }
+
+      .number-cell-statistiques {
+        .stat-number-statistiques {
+          @include typography-p1;
+          color: $color-text-primary;
+          font-weight: $font-weight-semibold;
+          display: block;
+        }
+
+        .stat-detail-statistiques {
+          margin-top: $gap-xs;
+
+          .stat-badge-statistiques {
+            @include typography-p4;
+            padding: $gap-xs $gap-sm;
+            border-radius: $border-radius-xs;
+            font-weight: $font-weight-medium;
+
+            &.completed-statistiques {
+              background: rgba($color-success, 0.1);
+              color: $color-success;
+            }
+          }
+        }
+      }
+
+      .progress-cell-statistiques {
+        .progress-bar-statistiques {
+          width: 100%;
+          height: 8px;
+          background: rgba($color-border, 0.3);
+          border-radius: $border-radius-pill;
+          overflow: hidden;
+          margin-bottom: $gap-xs;
+
+          .progress-fill-statistiques {
+            height: 100%;
+            background: linear-gradient(90deg, $color-primary 0%, $color-primary-dark 100%);
+            border-radius: $border-radius-pill;
+            transition: width 0.8s $ease-out-cinema;
+          }
+        }
+
+        .progress-text-statistiques {
+          @include typography-p3;
+          color: $color-text-secondary;
+          font-weight: $font-weight-semibold;
+          text-align: center;
+          display: block;
+        }
+      }
+
+      .team-cell-statistiques {
+        .team-avatars-statistiques {
+          display: flex;
+          gap: $gap-xs;
+          flex-wrap: wrap;
+
+          .avatar-statistiques {
+            @include flex-center;
+            width: 32px;
+            height: 32px;
+            background: $color-primary;
+            color: $color-white;
+            border-radius: 50%;
+            @include typography-p4;
+            font-weight: $font-weight-bold;
+            border: 2px solid $color-white;
+            box-shadow: $shadow;
+          }
+
+          .no-team-statistiques {
+            @include typography-p3;
+            color: $color-text-muted;
+            font-style: italic;
+          }
+        }
+      }
+
+      .date-cell-statistiques {
+        @include typography-p2;
+        color: $color-text-secondary;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+// =============================================
+// ÉTATS
+// =============================================
+.loading-statistiques {
+  @include flex-center;
+  gap: $gap-md;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  margin-bottom: $spacing-lg;
+
+  i {
+    color: $color-primary;
+    font-size: $font-size-h3;
+  }
+
+  @include typography-p1;
+  color: $color-text-secondary;
+}
+
+.error-message-statistiques {
+  padding: $spacing-md;
+  background: rgba($color-error, 0.1);
+  border: 1px solid rgba($color-error, 0.3);
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+  @include typography-p2;
+  font-weight: $font-weight-medium;
+}
+
+.no-data-statistiques {
+  @include flex-center;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  @include typography-p2;
+  color: $color-text-muted;
+  font-style: italic;
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+@keyframes fadeInUp-statistiques {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kpi-sidebar-card-statistiques {
+  animation: fadeInUp-statistiques 0.4s $ease-out-cinema;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .statistiques-sidebar-statistiques {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+  
+  .statistiques-body-statistiques {
+    margin-left: 0;
+  }
+  
+  .kpi-sidebar-grid-statistiques {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-sm;
+  }
+
+  .chart-row-statistiques {
+    grid-template-columns: 1fr;
+  }
+
+  .pie-charts-grid-statistiques {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-md;
+  }
+
+  .statistiques-container-statistiques {
+    padding: $spacing-sm;
+  }
+
+  .totals-grid-statistiques {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .timeline-bars-statistiques {
+    overflow-x: auto;
+    
+    .timeline-item-statistiques {
+      min-width: 80px;
+    }
+  }
+
+  .table-container-statistiques {
+    font-size: $font-size-p3;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .kpi-sidebar-grid-statistiques {
+    grid-template-columns: 1fr;
+  }
+  
+  .statistiques-main-content-statistiques {
+    padding: $spacing-sm;
+  }
+
+  .pie-charts-grid-statistiques {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+
+  .totals-grid-statistiques {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-item-statistiques {
+    flex-direction: column;
+    text-align: center;
+    gap: $spacing-sm;
+
+    .project-stats-statistiques {
+      justify-content: center;
+    }
+  }
+
+  .distribution-item-statistiques {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-sm;
+
+    .role-info-statistiques {
+      min-width: auto !important;
+    }
+  }
+
+  .projects-table-statistiques {
+    thead th,
+    tbody td {
+      padding: $spacing-sm !important;
+    }
+  }
+
+  .chart-container-statistiques.full-width-statistiques {
+    min-height: auto;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .kpi-sidebar-card-statistiques,
+  .total-card-statistiques,
+  .ranking-item-statistiques,
+  .distribution-item-statistiques,
+  .type-fill-statistiques,
+  .distribution-fill-statistiques,
+  .progress-fill-statistiques {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// =============================================
+// SUPPRIMER L'ANCIENNE GRILLE KPI
+// =============================================
+.kpi-grid-statistiques {
+  display: none;
+}

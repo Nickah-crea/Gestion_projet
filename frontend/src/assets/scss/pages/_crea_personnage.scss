@@ -1,0 +1,1116 @@
+// _crea-personnage.scss – Style cohérent avec CreationComedien
+@import '../base/variables';
+
+.app-wrapper-global-crea-personnage {
+  display: flex;
+  min-height: 100vh;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE FIXE À GAUCHE
+// =============================================
+.creation-sidebar-crea-personnage {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 280px;
+  height: calc(100vh - 80px);
+  background: $color-background;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
+
+  .sidebar-header-crea-personnage {
+    margin-bottom: $spacing-md;
+
+    .sidebar-title-crea-personnage {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-crea-personnage {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-crea-personnage {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-crea-personnage {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  .sidebar-actions-crea-personnage {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-crea-personnage {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .filter-group-crea-personnage {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-crea-personnage {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .filter-select-crea-personnage {
+    width: 100%;
+    height: 34px;
+    padding: 0 $padding-xs;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    box-sizing: border-box;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+
+  .stats-crea-personnage {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-crea-personnage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-white;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-crea-personnage {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-crea-personnage {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL À DROITE
+// =============================================
+.creation-body-crea-personnage {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-crea-personnage {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-header-crea-personnage {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+
+    .page-title-crea-personnage {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+    }
+
+    .page-subtitle-crea-personnage {
+      @include typography-p3;
+      color: $color-text-muted;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// =============================================
+// SYSTÈME D'ONGlets
+// =============================================
+.tabs-container-crea-personnage {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-crea-personnage {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-crea-personnage {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-crea-personnage {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-crea-personnage {
+  position: relative;
+}
+
+.tab-pane-crea-personnage {
+  padding: $spacing-lg;
+  animation: fadeInUp-crea-personnage 0.3s ease-out;
+}
+
+@keyframes fadeInUp-crea-personnage {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION
+// =============================================
+.form-container-crea-personnage {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tab-pane-crea-personnage .form-header-crea-personnage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+
+  .back-btn-crea-personnage {
+    padding: $gap-xs $padding-sm;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}
+
+.personnage-form-crea-personnage {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-crea-personnage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-crea-personnage {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
+  }
+
+  .form-input-crea-personnage,
+  .form-textarea-crea-personnage {
+    width: 100%;
+    padding: $gap-sm $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+
+    &:hover {
+      border-color: darken($color-border, 10%);
+    }
+  }
+
+  .form-input-crea-personnage {
+    height: 42px;
+  }
+
+  .form-textarea-crea-personnage {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    line-height: $line-height-base;
+  }
+}
+
+// =============================================
+// RECHERCHE DE PROJET ET COMÉDIEN AVEC SUGGESTIONS
+// =============================================
+.search-container-crea-personnage {
+  position: relative;
+
+  .search-input-crea-personnage {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+    padding-right: 40px;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  .clear-comedien-btn-crea-personnage {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: rgba($color-error, 0.1);
+    border: 1px solid $color-error;
+    border-radius: 50%;
+    color: $color-error;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: $transition-fast;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
+  }
+
+  .suggestions-dropdown-crea-personnage {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    box-shadow: $shadow-md;
+    z-index: $z-index-dropdown;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .suggestion-item-crea-personnage {
+    padding: $gap-sm $padding-sm;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: $transition-fast;
+    border-bottom: 1px solid $color-border;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .no-results-crea-personnage {
+    padding: $gap-sm $padding-sm;
+    text-align: center;
+    color: $color-text-muted;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// MESSAGE D'ERREUR
+// =============================================
+.error-message-crea-personnage {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-crea-personnage {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .cancel-btn-crea-personnage,
+  .submit-btn-crea-personnage {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .cancel-btn-crea-personnage {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn-crea-personnage {
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// =============================================
+// LISTE DES PERSONNAGES - TABLEAU
+// =============================================
+.personnages-list-crea-personnage {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.list-header-crea-personnage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.search-section-crea-personnage {
+  .search-group-crea-personnage {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-input-container-crea-personnage {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .search-input-large-crea-personnage {
+      width: 300px;
+      height: 42px;
+      padding: 0 $padding-md 0 ($padding-md + $padding-xs);
+      border: 1px solid $color-border;
+      border-radius: $border-radius-pill;
+      background: $color-white;
+      font-size: $font-size-p3;
+      color: $color-text-primary;
+      transition: $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
+      }
+    }
+
+    .search-icon-crea-personnage {
+      position: absolute;
+      left: $padding-sm;
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// =============================================
+// TABLEAU DES PERSONNAGES
+// =============================================
+.personnages-table-container-crea-personnage {
+  overflow-x: auto;
+}
+
+.personnages-table-crea-personnage {
+  width: 100%;
+  border-collapse: collapse;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  overflow: hidden;
+  box-shadow: $shadow;
+
+  th {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    text-align: left;
+    padding: $padding-sm;
+    border-bottom: 2px solid $color-border;
+    background: $color-background-alt;
+  }
+
+  td {
+    @include typography-p4;
+    color: $color-text-primary;
+    padding: $padding-sm;
+    border-bottom: 1px solid $color-border;
+    vertical-align: top;
+  }
+
+  tr {
+    transition: $transition-fast;
+
+    &:hover {
+      background: rgba($color-primary, 0.05);
+    }
+  }
+}
+
+.comedien-assigne-crea-personnage {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  color: $color-success;
+  font-weight: $font-weight-medium;
+}
+
+.no-comedien-crea-personnage {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  color: $color-text-muted;
+  font-style: italic;
+}
+
+.description-truncated-crea-personnage {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-actions-crea-personnage {
+  display: flex;
+  gap: $gap-xs;
+  justify-content: center;
+
+  .btn-view-crea-personnage,
+  .btn-edit-crea-personnage,
+  .btn-delete-crea-personnage {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .btn-view-crea-personnage {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+
+    &:hover {
+      background: $color-info;
+      color: $color-white;
+    }
+  }
+
+  .btn-edit-crea-personnage {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+
+    &:hover {
+      background: $color-warning;
+      color: $color-white;
+    }
+  }
+
+  .btn-delete-crea-personnage {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
+  }
+}
+
+// =============================================
+// MODAL DE DÉTAILS
+// =============================================
+.modal-overlay-crea-personnage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+}
+
+.modal-content-crea-personnage {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn-crea-personnage 0.3s ease-out;
+}
+
+@keyframes modalSlideIn-crea-personnage {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header-crea-personnage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+}
+
+.modal-close-btn-crea-personnage {
+  background: transparent;
+  border: none;
+  font-size: $font-size-h4;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+}
+
+.modal-body-crea-personnage {
+  padding: $spacing-lg;
+}
+
+.personnage-details-crea-personnage {
+  margin-bottom: $spacing-lg;
+}
+
+.detail-info-crea-personnage {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+}
+
+.detail-row-crea-personnage {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  
+  .detail-label-crea-personnage {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    min-width: 120px;
+  }
+  
+  .detail-value-crea-personnage {
+    @include typography-p4;
+    color: $color-text-secondary;
+    
+    &.no-comedien {
+      color: $color-text-muted;
+      font-style: italic;
+    }
+  }
+}
+
+.detail-description-crea-personnage {
+  h4 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-md;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.description-content-crea-personnage {
+  @include typography-p4;
+  color: $color-text-secondary;
+  line-height: $line-height-base;
+  padding: $padding-sm;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+}
+
+.modal-footer-crea-personnage {
+  padding: $spacing-lg;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: $gap-sm;
+  justify-content: flex-end;
+  
+  .btn-edit-modal-crea-personnage,
+  .btn-close-modal-crea-personnage {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+  
+  .btn-edit-modal-crea-personnage {
+    background: $color-primary;
+    color: $color-white;
+    
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
+  }
+  
+  .btn-close-modal-crea-personnage {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+    
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}
+
+// =============================================
+// ÉTATS SPÉCIAUX
+// =============================================
+.loading-state-crea-personnage,
+.empty-state-crea-personnage {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow;
+  margin: $spacing-md 0;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
+  }
+
+  h3 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-xs;
+  }
+
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-crea-personnage i {
+  animation: spin-crea-personnage 1s linear infinite;
+}
+
+@keyframes spin-crea-personnage {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-crea-personnage {
+    width: 250px;
+  }
+  
+  .creation-body-crea-personnage {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-crea-personnage {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .creation-body-crea-personnage {
+    margin-left: 0;
+  }
+  
+  .tabs-header-crea-personnage {
+    flex-direction: column;
+  }
+
+  .tab-btn-crea-personnage {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-crea-personnage {
+    display: none;
+  }
+
+  .tab-pane-crea-personnage {
+    padding: $spacing-md;
+  }
+  
+  .personnages-table-crea-personnage {
+    font-size: $font-size-p5;
+    
+    th, td {
+      padding: $padding-xs;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-crea-personnage {
+    padding: $spacing-sm;
+  }
+  
+  .form-header-crea-personnage {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .personnages-table-crea-personnage {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .tab-btn-crea-personnage {
+    font-size: $font-size-p4;
+    
+    i {
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-crea-personnage,
+  .form-input-crea-personnage,
+  .submit-btn-crea-personnage,
+  .cancel-btn-crea-personnage,
+  .table-actions-crea-personnage button,
+  .tab-btn-crea-personnage,
+  .tab-indicator-crea-personnage {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .loading-state-crea-personnage i {
+    animation: none;
+  }
+  
+  .tab-pane-crea-personnage {
+    animation: none;
+  }
+  
+  .modal-content-crea-personnage {
+    animation: none;
+  }
+}
