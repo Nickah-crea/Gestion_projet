@@ -45,15 +45,20 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         
         // OPTION 1: Utilisez allowedOriginPatterns au lieu de allowedOrigins
-        configuration.setAllowedOriginPatterns(List.of("*")); // ✅ Correct avec allowCredentials
+        configuration.setAllowedOriginPatterns(List.of("*")); 
         
         // OPTION 2: Ou spécifiez explicitement les origines
         // configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true); // ✅ Maintenant compatible
+        configuration.setAllowCredentials(true); 
         configuration.setMaxAge(3600L);
+
+        configuration.setExposedHeaders(Arrays.asList(
+            "Access-Control-Allow-Origin", 
+            "Access-Control-Allow-Credentials"
+        ));
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
