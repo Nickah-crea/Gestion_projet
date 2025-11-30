@@ -206,4 +206,3 @@ public class PDFExportService {
         return text.split("(?<=\\G.{" + maxLineLength + "})");
     }
 }
-
