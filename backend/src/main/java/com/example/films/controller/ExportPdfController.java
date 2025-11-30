@@ -11,6 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/export") 
+@CrossOrigin(origins = "http://localhost:5173")
 public class ExportPdfController {
 
     private final EmailService emailService;
@@ -26,8 +27,19 @@ public class ExportPdfController {
         System.out.println("=== REQUÊTE REÇUE DANS sendPdfByEmail ===");
         System.out.println("Email: " + emailRequest.getToEmail());
         System.out.println("Sujet: " + emailRequest.getSubject());
+        System.out.println("Attachment: " + emailRequest.getAttachmentName());
+        System.out.println("PDF Data length: " + (emailRequest.getPdfData() != null ? emailRequest.getPdfData().length() : "null"));
         
         try {
+            // Validation des données
+            if (emailRequest.getToEmail() == null || emailRequest.getToEmail().trim().isEmpty()) {
+                throw new IllegalArgumentException("L'adresse email du destinataire est requise");
+            }
+            
+            if (emailRequest.getPdfData() == null || emailRequest.getPdfData().trim().isEmpty()) {
+                throw new IllegalArgumentException("Les données PDF sont requises");
+            }
+            
             emailService.sendEmailWithAttachment(emailRequest);
             System.out.println("✅ Email envoyé avec succès");
             
