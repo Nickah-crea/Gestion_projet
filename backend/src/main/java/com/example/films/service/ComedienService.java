@@ -19,10 +19,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 public class ComedienService {
@@ -137,68 +140,123 @@ public class ComedienService {
         return convertToDTO(comedien);
     }
 
-        @Transactional
-        public ComedienDTO updateComedien(Long id, CreateComedienDTO updateComedienDTO) {
-            Comedien comedien = comedienRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Comédien non trouvé"));
+      @Transactional
+public ComedienDTO updateComedien(Long id, CreateComedienDTO updateComedienDTO) {
+    Comedien comedien = comedienRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Comédien non trouvé"));
 
-            // Vérifier si l'email est déjà utilisé par un autre comédien
-            if (updateComedienDTO.getEmail() != null && 
-                !comedien.getEmail().equals(updateComedienDTO.getEmail()) &&
-                comedienRepository.findByEmail(updateComedienDTO.getEmail()).isPresent()) {
-                throw new RuntimeException("Un autre comédien utilise déjà cet email");
-            }
+    // Vérifier si l'email est déjà utilisé par un autre comédien
+    if (updateComedienDTO.getEmail() != null && 
+        !comedien.getEmail().equals(updateComedienDTO.getEmail()) &&
+        comedienRepository.findByEmail(updateComedienDTO.getEmail()).isPresent()) {
+        throw new RuntimeException("Un autre comédien utilise déjà cet email");
+    }
 
-            // Mettre à jour seulement les champs non-nulls
-            if (updateComedienDTO.getNom() != null) {
-                comedien.setNom(updateComedienDTO.getNom());
+    // Mettre à jour seulement les champs non-nulls
+    if (updateComedienDTO.getNom() != null) {
+        comedien.setNom(updateComedienDTO.getNom());
+    }
+    if (updateComedienDTO.getAge() != null) {
+        comedien.setAge(updateComedienDTO.getAge());
+    }
+    if (updateComedienDTO.getEmail() != null) {
+        comedien.setEmail(updateComedienDTO.getEmail());
+    }
+    if (updateComedienDTO.getPhotoPath() != null) {
+        // Supprimer l'ancienne photo si elle existe
+        if (comedien.getPhotoPath() != null) {
+            try {
+                deletePhoto(comedien.getPhotoPath());
+            } catch (IOException e) {
+                System.err.println("Erreur lors de la suppression de l'ancienne photo: " + e.getMessage());
             }
-            if (updateComedienDTO.getAge() != null) {
-                comedien.setAge(updateComedienDTO.getAge());
-            }
-            if (updateComedienDTO.getEmail() != null) {
-                comedien.setEmail(updateComedienDTO.getEmail());
-            }
-            if (updateComedienDTO.getPhotoPath() != null) {
-                // Supprimer l'ancienne photo si elle existe
-                if (comedien.getPhotoPath() != null) {
-                    try {
-                        deletePhoto(comedien.getPhotoPath());
-                    } catch (IOException e) {
-                        System.err.println("Erreur lors de la suppression de l'ancienne photo: " + e.getMessage());
-                    }
-                }
-                comedien.setPhotoPath(updateComedienDTO.getPhotoPath());
-            }
-
-            Comedien updatedComedien = comedienRepository.save(comedien);
-            
-            // Gérer les disponibilités multiples si fournies
-            if (updateComedienDTO.getDatesDisponibilite() != null && 
-                updateComedienDTO.getStatutsDisponibilite() != null) {
-                updateOrCreateDisponibilites(comedien, 
-                    updateComedienDTO.getDatesDisponibilite(), 
-                    updateComedienDTO.getStatutsDisponibilite());
-            }
-
-            return convertToDTO(updatedComedien);
         }
+        comedien.setPhotoPath(updateComedienDTO.getPhotoPath());
+    }
+
+    // Sauvegarder le comédien d'abord
+    Comedien updatedComedien = comedienRepository.save(comedien);
+    
+    // Gérer les disponibilités
+    handleDisponibilitesUpdate(comedien, updateComedienDTO);
+
+    return convertToDTO(updatedComedien);
+}
+
+@Transactional
+private void handleDisponibilitesUpdate(Comedien comedien, CreateComedienDTO updateComedienDTO) {
+    // Supprimer TOUTES les disponibilités existantes de ce comédien
+    disponibiliteRepository.deleteByComedienId(comedien.getId());
+    
+    // Recréer les disponibilités seulement si des nouvelles sont fournies
+    if (updateComedienDTO.getDatesDisponibilite() != null && 
+        updateComedienDTO.getStatutsDisponibilite() != null &&
+        !updateComedienDTO.getDatesDisponibilite().isEmpty()) {
+        
+        for (int i = 0; i < updateComedienDTO.getDatesDisponibilite().size(); i++) {
+            if (i < updateComedienDTO.getStatutsDisponibilite().size()) {
+                LocalDate date = updateComedienDTO.getDatesDisponibilite().get(i);
+                String statut = updateComedienDTO.getStatutsDisponibilite().get(i);
+                
+                if (date != null && statut != null) {
+                    DisponibiliteComedien newDisponibilite = new DisponibiliteComedien();
+                    newDisponibilite.setComedien(comedien);
+                    newDisponibilite.setDate(date);
+                    newDisponibilite.setStatut(statut);
+                    disponibiliteRepository.save(newDisponibilite);
+                }
+            }
+        }
+    }
+}
+
         @Transactional
         private void updateOrCreateDisponibilites(Comedien comedien, List<LocalDate> dates, List<String> statuts) {
-            // Supprimer les anciennes disponibilités
+            // Récupérer toutes les disponibilités existantes pour ce comédien
             List<DisponibiliteComedien> existingDisponibilites = disponibiliteRepository.findByComedienId(comedien.getId());
-            disponibiliteRepository.deleteAll(existingDisponibilites);
             
-            // Créer les nouvelles disponibilités
-            if (dates != null && statuts != null && !dates.isEmpty()) {
+            // Créer une map pour vérifier quelles disponibilités existent encore
+            Map<LocalDate, DisponibiliteComedien> existingMap = new HashMap<>();
+            for (DisponibiliteComedien dispo : existingDisponibilites) {
+                existingMap.put(dispo.getDate(), dispo);
+            }
+            
+            // Préparer les nouvelles disponibilités
+            Map<LocalDate, String> newDisponibilites = new HashMap<>();
+            if (dates != null && statuts != null) {
                 for (int i = 0; i < dates.size(); i++) {
                     if (i < statuts.size() && dates.get(i) != null) {
-                        DisponibiliteComedien newDisponibilite = new DisponibiliteComedien();
-                        newDisponibilite.setComedien(comedien);
-                        newDisponibilite.setDate(dates.get(i));
-                        newDisponibilite.setStatut(statuts.get(i));
-                        disponibiliteRepository.save(newDisponibilite);
+                        newDisponibilites.put(dates.get(i), statuts.get(i));
                     }
+                }
+            }
+            
+            // Supprimer les disponibilités qui ne sont plus dans la liste
+            List<DisponibiliteComedien> toDelete = new ArrayList<>();
+            for (DisponibiliteComedien existing : existingDisponibilites) {
+                if (!newDisponibilites.containsKey(existing.getDate())) {
+                    toDelete.add(existing);
+                }
+            }
+            disponibiliteRepository.deleteAll(toDelete);
+            
+            // Mettre à jour ou créer les nouvelles disponibilités
+            for (Map.Entry<LocalDate, String> entry : newDisponibilites.entrySet()) {
+                LocalDate date = entry.getKey();
+                String statut = entry.getValue();
+                
+                if (existingMap.containsKey(date)) {
+                    // Mettre à jour la disponibilité existante
+                    DisponibiliteComedien existing = existingMap.get(date);
+                    existing.setStatut(statut);
+                    disponibiliteRepository.save(existing);
+                } else {
+                    // Créer une nouvelle disponibilité
+                    DisponibiliteComedien newDisponibilite = new DisponibiliteComedien();
+                    newDisponibilite.setComedien(comedien);
+                    newDisponibilite.setDate(date);
+                    newDisponibilite.setStatut(statut);
+                    disponibiliteRepository.save(newDisponibilite);
                 }
             }
         }
