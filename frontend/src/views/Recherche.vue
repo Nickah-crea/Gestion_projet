@@ -24,6 +24,40 @@
         </div>
       </div>
 
+      <!-- Section Épisode (visible seulement si projet sélectionné) -->
+      <div v-if="criteres.projetId" class="filter-section-recherche">
+        <h3 class="section-title-recherche"><i class="fas fa-play-circle"></i> Épisode</h3>
+        <div class="filter-group-recherche">
+          <select v-model="criteres.episodeId" class="filter-select-recherche" @change="onEpisodeChange">
+            <option value="">Tous les épisodes</option>
+            <option 
+              v-for="episode in episodes" 
+              :key="episode.id" 
+              :value="episode.id"
+            >
+              {{ episode.titre }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Section Séquence (visible seulement si épisode sélectionné) -->
+      <div v-if="criteres.episodeId" class="filter-section-recherche">
+        <h3 class="section-title-recherche"><i class="fas fa-layer-group"></i> Séquence</h3>
+        <div class="filter-group-recherche">
+          <select v-model="criteres.sequenceId" class="filter-select-recherche">
+            <option value="">Toutes les séquences</option>
+            <option 
+              v-for="sequence in sequences" 
+              :key="sequence.id" 
+              :value="sequence.id"
+            >
+              {{ sequence.titre }}
+            </option>
+          </select>
+        </div>
+      </div>
+
       <!-- Section Types -->
       <div class="filter-section-recherche">
         <h3 class="section-title-recherche"><i class="fas fa-bullseye"></i> Types</h3>
@@ -50,6 +84,14 @@
                 <label class="dropdown-option-recherche">
                   <input type="checkbox" value="plateaux" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
                   <i class="fas fa-theater-masks"></i> Plateaux
+                </label>
+                <label class="dropdown-option-recherche">
+                  <input type="checkbox" value="episodes" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
+                  <i class="fas fa-play-circle"></i> Épisodes
+                </label>
+                <label class="dropdown-option-recherche">
+                  <input type="checkbox" value="sequences" v-model="criteres.typesRecherche" @change="updateTypesSelection" />
+                  <i class="fas fa-layer-group"></i> Séquences
                 </label>
               </div>
             </div>
@@ -136,6 +178,8 @@
             <option value="lieu">Lieu</option>
             <option value="personnage">Personnage</option>
             <option value="statut">Statut</option>
+            <option value="episode">Épisode</option>
+            <option value="sequence">Séquence</option>
           </select>
         </div>
       </div>
@@ -159,7 +203,7 @@
         <!-- En-tête principal -->
         <div class="main-header-recherche">
           <h1 class="page-title-recherche"><i class="fas fa-search"></i> Recherche Multiple</h1>
-          <p class="page-subtitle-recherche">Trouvez des scènes, personnages, lieux et plateaux selon vos critères</p>
+          <p class="page-subtitle-recherche">Trouvez des scènes, personnages, lieux, plateaux, épisodes et séquences selon vos critères</p>
         </div>
 
         <!-- Barre de recherche principale -->
@@ -179,6 +223,24 @@
           </div>
         </div>
 
+        <!-- Dans le template, après la barre de recherche principale -->
+      <div v-if="!chargement && resultats.length > 0" class="sort-controls-recherche">
+        <div class="sort-options-recherche">
+          <label class="sort-label-recherche">
+            <i class="fas fa-sort-amount-down"></i> Trier par :
+          </label>
+          <select v-model="triSelectionne" class="sort-select-recherche" @change="trierResultats">
+            <option value="hierarchie">Hiérarchique (Épisode → Séquence → Scène)</option>
+            <option value="alphabetique">Alphabétique</option>
+            <option value="type">Type</option>
+            <option value="date">Date</option>
+          </select>
+          <button @click="toggleOrdreTri" class="sort-direction-recherche">
+            <i :class="ordreCroissant ? 'fas fa-sort-amount-up' : 'fas fa-sort-amount-down'"></i>
+          </button>
+        </div>
+      </div>
+
         <!-- Indicateur de filtre projet actif -->
         <div v-if="criteres.projetId" class="projet-filter-indicator-recherche">
           <div class="projet-indicator-content-recherche">
@@ -189,6 +251,34 @@
             <button @click="reinitialiserProjet" class="clear-projet-btn-recherche">
               <i class="fas fa-times"></i>
               Changer de projet
+            </button>
+          </div>
+        </div>
+
+        <!-- Indicateur de filtre épisode actif -->
+        <div v-if="criteres.episodeId" class="projet-filter-indicator-recherche">
+          <div class="projet-indicator-content-recherche">
+            <span class="projet-label-recherche">
+              <i class="fas fa-play-circle"></i> Épisode sélectionné :
+            </span>
+            <span class="projet-nom-recherche">{{ getEpisodeNom() }}</span>
+            <button @click="reinitialiserEpisode" class="clear-projet-btn-recherche">
+              <i class="fas fa-times"></i>
+              Changer d'épisode
+            </button>
+          </div>
+        </div>
+
+        <!-- Indicateur de filtre séquence actif -->
+        <div v-if="criteres.sequenceId" class="projet-filter-indicator-recherche">
+          <div class="projet-indicator-content-recherche">
+            <span class="projet-label-recherche">
+              <i class="fas fa-layer-group"></i> Séquence sélectionnée :
+            </span>
+            <span class="projet-nom-recherche">{{ getSequenceNom() }}</span>
+            <button @click="reinitialiserSequence" class="clear-projet-btn-recherche">
+              <i class="fas fa-times"></i>
+              Changer de séquence
             </button>
           </div>
         </div>
@@ -316,15 +406,18 @@
                         <!-- Dialogues -->
                         <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
                           <div class="dialogues-title-recherche">
-                            <i class="fas fa-comments"></i> Dialogues :
+                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
                           </div>
                           <div class="dialogues-list-recherche">
                             <div
-                              v-for="(dialogue, dialogueIndex) in resultat.dialogues"
+                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
                               :key="dialogueIndex"
                               class="dialogue-item-recherche"
                             >
                               "{{ dialogue }}"
+                            </div>
+                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
+                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
                             </div>
                           </div>
                         </div>
@@ -387,6 +480,26 @@
                             <span class="sans-projet-recherche">Sans projet</span>
                           </div>
                         </div>
+
+                        <!-- Dialogues -->
+                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
+                          <div class="dialogues-title-recherche">
+                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
+                          </div>
+                          <div class="dialogues-list-recherche">
+                            <div
+                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
+                              :key="dialogueIndex"
+                              class="dialogue-item-recherche"
+                            >
+                              "{{ dialogue }}"
+                            </div>
+                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
+                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
+                            </div>
+                          </div>
+                        </div>
+
                         <div class="view-details-recherche">
                           <span class="view-details-text-recherche">
                             <i class="fas fa-user-circle"></i> Voir fiche personnage →
@@ -422,6 +535,26 @@
                             <span class="sans-projet-recherche">Sans projet</span>
                           </div>
                         </div>
+
+                        <!-- Dialogues -->
+                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
+                          <div class="dialogues-title-recherche">
+                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
+                          </div>
+                          <div class="dialogues-list-recherche">
+                            <div
+                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
+                              :key="dialogueIndex"
+                              class="dialogue-item-recherche"
+                            >
+                              "{{ dialogue }}"
+                            </div>
+                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
+                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
+                            </div>
+                          </div>
+                        </div>
+
                         <div class="view-details-recherche">
                           <span class="view-details-text-recherche">
                             <i class="fas fa-landmark"></i> Voir fiche lieu →
@@ -463,9 +596,133 @@
                             <span class="sans-projet-recherche">Sans projet</span>
                           </div>
                         </div>
+
+                        <!-- Dialogues -->
+                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
+                          <div class="dialogues-title-recherche">
+                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
+                          </div>
+                          <div class="dialogues-list-recherche">
+                            <div
+                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
+                              :key="dialogueIndex"
+                              class="dialogue-item-recherche"
+                            >
+                              "{{ dialogue }}"
+                            </div>
+                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
+                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
+                            </div>
+                          </div>
+                        </div>
+
                         <div class="view-details-recherche">
                           <span class="view-details-text-recherche">
                             <i class="fas fa-theater-masks"></i> Voir fiche plateau →
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- Épisode -->
+                      <div v-else-if="resultat.type === 'episode'" class="episode-result-recherche">
+                        <div class="result-header-recherche">
+                          <span class="result-type-badge-recherche episode-badge-recherche">
+                            <i class="fas fa-play-circle"></i> Épisode
+                          </span>
+                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
+                        </div>
+                        <div class="result-details-recherche">
+                          <div v-if="resultat.description" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
+                              <i class="fas fa-file-alt"></i> Synopsis :
+                            </span>
+                            <span>{{ resultat.description }}</span>
+                          </div>
+                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
+                              <i class="fas fa-folder"></i> Projet :
+                            </span>
+                            <span>{{ resultat.projetTitre }}</span>
+                          </div>
+                        </div>
+
+                        <!-- Dialogues -->
+                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
+                          <div class="dialogues-title-recherche">
+                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
+                          </div>
+                          <div class="dialogues-list-recherche">
+                            <div
+                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
+                              :key="dialogueIndex"
+                              class="dialogue-item-recherche"
+                            >
+                              "{{ dialogue }}"
+                            </div>
+                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
+                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="view-details-recherche">
+                          <span class="view-details-text-recherche">
+                            <i class="fas fa-play-circle"></i> Voir fiche épisode →
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- Séquence -->
+                      <div v-else-if="resultat.type === 'sequence'" class="sequence-result-recherche">
+                        <div class="result-header-recherche">
+                          <span class="result-type-badge-recherche sequence-badge-recherche">
+                            <i class="fas fa-layer-group"></i> Séquence
+                          </span>
+                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
+                        </div>
+                        <div class="result-details-recherche">
+                          <div v-if="resultat.description" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
+                              <i class="fas fa-file-alt"></i> Synopsis :
+                            </span>
+                            <span>{{ resultat.description }}</span>
+                          </div>
+                          <div v-if="resultat.episodeTitre" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
+                              <i class="fas fa-film"></i> Épisode :
+                            </span>
+                            <span>{{ resultat.episodeTitre }}</span>
+                          </div>
+                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
+                            <span class="detail-label-recherche">
+                              <i class="fas fa-folder"></i> Projet :
+                            </span>
+                            <span>{{ resultat.projetTitre }}</span>
+                          </div>
+                        </div>
+
+                        <!-- Dialogues -->
+                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
+                          <div class="dialogues-title-recherche">
+                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
+                          </div>
+                          <div class="dialogues-list-recherche">
+                            <div
+                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
+                              :key="dialogueIndex"
+                              class="dialogue-item-recherche"
+                            >
+                              "{{ dialogue }}"
+                            </div>
+                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
+                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="view-details-recherche">
+                          <span class="view-details-text-recherche">
+                            <i class="fas fa-layer-group"></i> Voir fiche séquence →
                           </span>
                         </div>
                       </div>
@@ -483,8 +740,7 @@
 </template>
 
 <script>
-import { rechercheAvancee, getStatutsDisponibles, getProjets } from '../service/rechercheService'
-import '../assets/css/recherche.css';
+import { rechercheAvancee, getStatutsDisponibles, getProjets, getEpisodesByProjet, getSequencesByEpisode } from '../service/rechercheService'
 
 export default {
   name: 'RechercheAvancee',
@@ -495,18 +751,24 @@ export default {
       showStatutsDropdown: false,
       showDateDebutDropdown: false,
       showDateFinDropdown: false,
+      triSelectionne: 'hierarchie',
+      ordreCroissant: true,
 
       // Données
       projets: [],
+      episodes: [],
+      sequences: [],
       statutsDisponibles: [],
       criteres: {
         termeRecherche: '',
-        typesRecherche: ['scenes', 'personnages', 'lieux', 'plateaux'],
+        typesRecherche: ['scenes', 'personnages', 'lieux', 'plateaux', 'episodes', 'sequences'],
         dateDebut: null,
         dateFin: null,
         statuts: [],
         regroupement: '',
         projetId: null,
+        episodeId: null,
+        sequenceId: null,
         page: 0,
         taille: 50
       },
@@ -514,6 +776,7 @@ export default {
       chargement: false
     }
   },
+
   computed: {
     resultatsGroupes() {
       if (!this.criteres.regroupement) {
@@ -534,19 +797,27 @@ export default {
         groupes[cleGroupe].push(resultat)
       })
 
-      return Object.entries(groupes).map(([cle, elements]) => {
-        const groupeHeader = this.resultats.find(r => 
-          r.type === 'groupe' && r.groupeValeur === cle
-        )
-        return {
-          estGroupe: true,
-          type: this.criteres.regroupement,
-          titre: groupeHeader ? groupeHeader.titre : `Groupe: ${cle}`,
-          elements: elements
-        }
-      })
+      // Organiser les groupes et les éléments dans les groupes
+      return Object.entries(groupes)
+        .sort(([cleA], [cleB]) => cleA.localeCompare(cleB)) // Trier les groupes par nom
+        .map(([cle, elements]) => {
+          const groupeHeader = this.resultats.find(r => 
+            r.type === 'groupe' && r.groupeValeur === cle
+          )
+          
+          // Trier les éléments dans le groupe selon l'ordre hiérarchique
+          const elementsTries = this.organiserResultatsParHierarchie(elements)
+          
+          return {
+            estGroupe: true,
+            type: this.criteres.regroupement,
+            titre: groupeHeader ? groupeHeader.titre : `Groupe: ${cle}`,
+            elements: elementsTries
+          }
+        })
     }
   },
+
   async mounted() {
     await this.chargerProjets()
     await this.chargerStatuts()
@@ -554,6 +825,27 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
+  },
+  watch: {
+    'criteres.projetId': async function(newProjetId) {
+      if (newProjetId) {
+        await this.chargerEpisodes(newProjetId)
+        this.criteres.episodeId = null
+        this.criteres.sequenceId = null
+        this.sequences = []
+      } else {
+        this.episodes = []
+        this.sequences = []
+      }
+    },
+    'criteres.episodeId': async function(newEpisodeId) {
+      if (newEpisodeId) {
+        await this.chargerSequences(newEpisodeId)
+        this.criteres.sequenceId = null
+      } else {
+        this.sequences = []
+      }
+    }
   },
   methods: {
     // Méthodes de chargement des données
@@ -566,8 +858,22 @@ export default {
       }
     },
 
-    async onProjetChange() {
-      console.log('Mode recherche:', this.criteres.projetId ? `Projet ${this.criteres.projetId}` : 'Sans projet')
+    async chargerEpisodes(projetId) {
+      try {
+        this.episodes = await getEpisodesByProjet(projetId)
+      } catch (error) {
+        console.error('Erreur chargement episodes:', error)
+        this.episodes = []
+      }
+    },
+
+    async chargerSequences(episodeId) {
+      try {
+        this.sequences = await getSequencesByEpisode(episodeId)
+      } catch (error) {
+        console.error('Erreur chargement sequences:', error)
+        this.sequences = []
+      }
     },
 
     async chargerStatuts() {
@@ -579,15 +885,84 @@ export default {
       }
     },
 
+        
+    // Nouvelles méthodes
+    trierResultats() {
+      this.resultats = this.trierSelonCritere(this.resultats, this.triSelectionne, this.ordreCroissant)
+    },
+
+    toggleOrdreTri() {
+      this.ordreCroissant = !this.ordreCroissant
+      this.trierResultats()
+    },
+
+    trierSelonCritere(resultats, critere, croissant) {
+      const ordreHierarchique = ['episode', 'sequence', 'scene', 'personnage', 'lieu', 'plateau']
+      
+      const resultatsCopie = [...resultats]
+      
+      resultatsCopie.sort((a, b) => {
+        let comparaison = 0
+        
+        switch(critere) {
+          case 'hierarchie':
+            const indexA = ordreHierarchique.indexOf(a.type)
+            const indexB = ordreHierarchique.indexOf(b.type)
+            comparaison = indexA - indexB
+            if (comparaison === 0 && a.titre && b.titre) {
+              comparaison = a.titre.localeCompare(b.titre)
+            }
+            break
+            
+          case 'alphabetique':
+            if (a.titre && b.titre) {
+              comparaison = a.titre.localeCompare(b.titre)
+            }
+            break
+            
+          case 'type':
+            comparaison = a.type.localeCompare(b.type)
+            break
+            
+          case 'date':
+            const dateA = a.dateTournage || a.dateCreation || '0'
+            const dateB = b.dateTournage || b.dateCreation || '0'
+            comparaison = dateA.localeCompare(dateB)
+            break
+        }
+        
+        return croissant ? comparaison : -comparaison
+      })
+      
+      return resultatsCopie
+    },
     // Méthodes de gestion des dropdowns
     toggleTypesDropdown() {
       this.showTypesDropdown = !this.showTypesDropdown
       this.showStatutsDropdown = false
+      this.showDateDebutDropdown = false
+      this.showDateFinDropdown = false
     },
     
     toggleStatutsDropdown() {
       this.showStatutsDropdown = !this.showStatutsDropdown
       this.showTypesDropdown = false
+      this.showDateDebutDropdown = false
+      this.showDateFinDropdown = false
+    },
+
+    toggleDateDebutDropdown() {
+      this.showDateDebutDropdown = !this.showDateDebutDropdown
+      this.showTypesDropdown = false
+      this.showStatutsDropdown = false
+      this.showDateFinDropdown = false
+    },
+
+    toggleDateFinDropdown() {
+      this.showDateFinDropdown = !this.showDateFinDropdown
+      this.showTypesDropdown = false
+      this.showStatutsDropdown = false
+      this.showDateDebutDropdown = false
     },
     
     handleClickOutside(event) {
@@ -602,13 +977,15 @@ export default {
     // Méthodes d'affichage des textes
     getTypesDisplayText() {
       if (this.criteres.typesRecherche.length === 0) return 'Aucun type'
-      if (this.criteres.typesRecherche.length === 4) return 'Tous les types'
+      if (this.criteres.typesRecherche.length === 6) return 'Tous les types'
       
       const typesMap = {
         scenes: 'Scènes',
         personnages: 'Personnages',
         lieux: 'Lieux',
-        plateaux: 'Plateaux'
+        plateaux: 'Plateaux',
+        episodes: 'Épisodes',
+        sequences: 'Séquences'
       }
       
       const selectedTypes = this.criteres.typesRecherche.map(type => typesMap[type])
@@ -622,6 +999,20 @@ export default {
       return `${this.criteres.statuts.length} statut(s)`
     },
 
+    getDateDebutDisplayText() {
+      return this.criteres.dateDebut ? this.formatDateDisplay(this.criteres.dateDebut) : 'Date début'
+    },
+
+    getDateFinDisplayText() {
+      return this.criteres.dateFin ? this.formatDateDisplay(this.criteres.dateFin) : 'Date fin'
+    },
+
+    formatDateDisplay(dateString) {
+      if (!dateString) return ''
+      const date = new Date(dateString)
+      return date.toLocaleDateString('fr-FR')
+    },
+
     // Méthodes de mise à jour des sélections
     updateTypesSelection() {
       this.$forceUpdate()
@@ -631,6 +1022,24 @@ export default {
       this.$forceUpdate()
     },
 
+    updateDateDebut() {
+      this.showDateDebutDropdown = false
+    },
+
+    updateDateFin() {
+      this.showDateFinDropdown = false
+    },
+
+    clearDateDebut() {
+      this.criteres.dateDebut = null
+      this.showDateDebutDropdown = false
+    },
+
+    clearDateFin() {
+      this.criteres.dateFin = null
+      this.showDateFinDropdown = false
+    },
+
     // Méthodes utilitaires
     getProjetNom() {
       if (!this.criteres.projetId) return ''
@@ -638,78 +1047,108 @@ export default {
       return projet ? projet.titre : 'Projet inconnu'
     },
 
-    reinitialiserProjet() {
-      this.criteres.projetId = null
+    getEpisodeNom() {
+      if (!this.criteres.episodeId) return ''
+      const episode = this.episodes.find(e => e.id === this.criteres.episodeId)
+      return episode ? episode.titre : 'Épisode inconnu'
     },
 
-    reinitialiserDates() {
-      this.criteres.dateDebut = null
-      this.criteres.dateFin = null
+    getSequenceNom() {
+      if (!this.criteres.sequenceId) return ''
+      const sequence = this.sequences.find(s => s.id === this.criteres.sequenceId)
+      return sequence ? sequence.titre : 'Séquence inconnue'
     },
-    
-    normaliserDates() {
-      // S'assurer que les dates sont au format YYYY-MM-DD
-      if (this.criteres.dateDebut) {
-        const date = new Date(this.criteres.dateDebut);
-        this.criteres.dateDebut = date.toISOString().split('T')[0];
-      }
-      if (this.criteres.dateFin) {
-        const date = new Date(this.criteres.dateFin);
-        this.criteres.dateFin = date.toISOString().split('T')[0];
-      }
+
+    reinitialiserProjet() {
+      this.criteres.projetId = null
+      this.episodes = []
+      this.sequences = []
+    },
+
+    reinitialiserEpisode() {
+      this.criteres.episodeId = null
+      this.sequences = []
+    },
+
+    reinitialiserSequence() {
+      this.criteres.sequenceId = null
     },
 
     // Méthodes de recherche
     async rechercher() {
       this.chargement = true
       try {
-        const criteresNettoyes = { ...this.criteres }
+        console.log('Critères envoyés:', this.criteres)
+        const resultatsBruts = await rechercheAvancee(this.criteres)
+        console.log('Résultats bruts reçus:', resultatsBruts.length)
         
-        // Convertir les types de recherche pour le backend
-        if (criteresNettoyes.typesRecherche && criteresNettoyes.typesRecherche.length > 0) {
-          criteresNettoyes.typesRecherche = criteresNettoyes.typesRecherche.map(type => 
-            type.replace('scenes', 'scenes')
-                .replace('personnages', 'personnages')
-                .replace('lieux', 'lieux')
-                .replace('plateaux', 'plateaux')
-          );
-        }
+        // Organiser les résultats par ordre hiérarchique
+        this.resultats = this.organiserResultatsParHierarchie(resultatsBruts)
+        console.log('Résultats organisés:', this.resultats.length)
         
-        console.log('Critères envoyés:', criteresNettoyes);
-        
-        this.resultats = await rechercheAvancee(criteresNettoyes)
       } catch (error) {
         console.error('Erreur recherche:', error)
-        alert('Erreur lors de la recherche')
+        alert('Erreur lors de la recherche: ' + error.message)
       } finally {
         this.chargement = false
       }
     },
 
+    // Nouvelle méthode pour organiser les résultats
+    organiserResultatsParHierarchie(resultats) {
+      // Définir l'ordre hiérarchique souhaité
+      const ordreHierarchique = ['episode', 'sequence', 'scene', 'personnage', 'lieu', 'plateau']
+      
+      // Trier les résultats selon l'ordre hiérarchique
+      return [...resultats].sort((a, b) => {
+        const indexA = ordreHierarchique.indexOf(a.type)
+        const indexB = ordreHierarchique.indexOf(b.type)
+        
+        // Si les types sont différents, trier selon l'ordre hiérarchique
+        if (indexA !== indexB) {
+          return indexA - indexB
+        }
+        
+        // Si même type, trier par titre alphabétique
+        if (a.titre && b.titre) {
+          return a.titre.localeCompare(b.titre)
+        }
+        
+        return 0
+      })
+    },
+
     reinitialiser() {
       this.criteres = {
         termeRecherche: '',
-        typesRecherche: ['scenes', 'personnages', 'lieux', 'plateaux'],
+        typesRecherche: ['scenes', 'personnages', 'lieux', 'plateaux', 'episodes', 'sequences'],
         dateDebut: null,
         dateFin: null,
         statuts: [],
         regroupement: '',
         projetId: null,
+        episodeId: null,
+        sequenceId: null,
         page: 0,
         taille: 50
       }
       this.resultats = []
+      this.episodes = []
+      this.sequences = []
       this.showTypesDropdown = false
       this.showStatutsDropdown = false
+      this.showDateDebutDropdown = false
+      this.showDateFinDropdown = false
     },
     
     formatStatut(statut) {
       const statutsMap = {
-        planifie: '🟡 Planifié',
-        confirme: '🔵 Confirmé',
-        en_cours: '🟠 En cours',
-        termine: '🟢 Terminé',
-        reporte: '🔴 Reporté'
+        planifie: 'Planifié',
+        confirme: 'Confirmé',
+        en_cours: 'En cours',
+        termine: 'Terminé',
+        reporte: 'Reporté',
+        annule: 'Annulé'
       }
       return statutsMap[statut] || statut
     },
@@ -725,6 +1164,8 @@ export default {
         case 'lieu': return resultat.lieuNom || 'Non spécifié'
         case 'personnage': return resultat.personnageNom || 'Non spécifié'
         case 'statut': return resultat.statut || 'Non spécifié'
+        case 'episode': return resultat.episodeTitre || 'Non spécifié'
+        case 'sequence': return resultat.sequenceTitre || 'Non spécifié'
         default: return 'Autre'
       }
     },
@@ -734,7 +1175,9 @@ export default {
         plateau: 'Plateau',
         lieu: 'Lieu',
         personnage: 'Personnage',
-        statut: 'Statut'
+        statut: 'Statut',
+        episode: 'Épisode',
+        sequence: 'Séquence'
       }
       return labels[this.criteres.regroupement] || 'Aucun'
     },
@@ -744,7 +1187,9 @@ export default {
         plateau: '🎭',
         lieu: '🏛️',
         personnage: '👥',
-        statut: '📊'
+        statut: '📊',
+        episode: '📺',
+        sequence: '🎞️'
       }
       return icons[type] || '📁'
     },
@@ -766,64 +1211,13 @@ export default {
       }
     },
 
-    toggleDateDebutDropdown() {
-    this.showDateDebutDropdown = !this.showDateDebutDropdown
-    this.showDateFinDropdown = false
-    this.closeOtherDropdowns('dateDebut')
-  },
+    onProjetChange() {
+      console.log('Projet sélectionné:', this.criteres.projetId)
+    },
 
-  toggleDateFinDropdown() {
-    this.showDateFinDropdown = !this.showDateFinDropdown
-    this.showDateDebutDropdown = false
-    this.closeOtherDropdowns('dateFin')
-  },
-
-  closeOtherDropdowns(current) {
-    const dropdowns = ['types', 'statuts', 'dateDebut', 'dateFin']
-    dropdowns.forEach(dropdown => {
-      if (dropdown !== current) {
-        if (dropdown === 'types') this.showTypesDropdown = false
-        if (dropdown === 'statuts') this.showStatutsDropdown = false
-        if (dropdown === 'dateDebut') this.showDateDebutDropdown = false
-        if (dropdown === 'dateFin') this.showDateFinDropdown = false
-      }
-    })
-  },
-
-  // Méthodes d'affichage des textes
-  getDateDebutDisplayText() {
-    return this.criteres.dateDebut ? this.formatDateDisplay(this.criteres.dateDebut) : 'Date début'
-  },
-
-  getDateFinDisplayText() {
-    return this.criteres.dateFin ? this.formatDateDisplay(this.criteres.dateFin) : 'Date fin'
-  },
-
-  formatDateDisplay(dateString) {
-    if (!dateString) return ''
-    const date = new Date(dateString)
-    return date.toLocaleDateString('fr-FR')
-  },
-  updateDateDebut() {
-    this.showDateDebutDropdown = false
-    this.normaliserDates()
-  },
-
-  updateDateFin() {
-    this.showDateFinDropdown = false
-    this.normaliserDates()
-  },
-
-  clearDateDebut() {
-    this.criteres.dateDebut = null
-    this.showDateDebutDropdown = false
-  },
-
-  clearDateFin() {
-    this.criteres.dateFin = null
-    this.showDateFinDropdown = false
-  }
-
+    onEpisodeChange() {
+      console.log('Épisode sélectionné:', this.criteres.episodeId)
+    }
   }
 }
 </script>

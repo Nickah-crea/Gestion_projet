@@ -1,670 +1,788 @@
 <template>
   <div class="app-wrapper-global">
-  <div class="resultat-recherche">
-    <!-- En-tête avec navigation -->
-    <div class="header">
-      <router-link to="/recherche" class="back-link">
-        ← Retour aux résultats
-      </router-link>
-       <h1>📖 Détails du résultat</h1>
-      <div v-if="resultat" class="result-type-header" :class="'type-' + resultat.type">
-        <span class="type-icon">{{ getTypeIcon(resultat.type) }}</span>
-        <span class="type-label">{{ getTypeLabel(resultat.type) }}</span>
-        
-        <!-- Boutons d'export séparés -->
-       <div class="export-buttons">
-          <!-- NOUVEAU BOUTON : Navigation vers écran de travail -->
-          <button @click="naviguerVersEcranTravail" class="btn-ecran-travail">
-            {{ getEcranTravailButtonText() }}
+    <!-- Sidebar latérale à gauche -->
+    <div class="sidebar-right-resultat-recherche">
+      <div class="sidebar-header-resultat-recherche">
+        <h3 class="sidebar-title-resultat-recherche">
+          <i class="fas fa-info-circle"></i>
+          Informations
+        </h3>
+      </div>
+
+      <!-- Section Critères de recherche -->
+      <div class="sidebar-section-resultat-recherche">
+        <h4 class="section-title-resultat-recherche">
+          <i class="fas fa-search"></i>
+          Critères utilisés
+        </h4>
+        <div class="criteria-sidebar-list-resultat-recherche">
+          <div v-if="criteresRecherche?.termeRecherche" class="criterion-sidebar-resultat-recherche">
+            <span class="criterion-label-sidebar-resultat-recherche">Mot-clé :</span>
+            <span class="criterion-value-sidebar-resultat-recherche">{{ criteresRecherche.termeRecherche }}</span>
+          </div>
+          <div v-if="criteresRecherche?.typesRecherche && criteresRecherche.typesRecherche.length" class="criterion-sidebar-resultat-recherche">
+            <span class="criterion-label-sidebar-resultat-recherche">Types :</span>
+            <span class="criterion-value-sidebar-resultat-recherche">{{ formatTypes(criteresRecherche.typesRecherche) }}</span>
+          </div>
+          <div v-if="criteresRecherche?.dateDebut || criteresRecherche?.dateFin" class="criterion-sidebar-resultat-recherche">
+            <span class="criterion-label-sidebar-resultat-recherche">Période :</span>
+            <span class="criterion-value-sidebar-resultat-recherche">
+              {{ formatDate(criteresRecherche.dateDebut) || 'Début' }}
+              → 
+              {{ formatDate(criteresRecherche.dateFin) || 'Fin' }}
+            </span>
+          </div>
+          <div v-if="criteresRecherche?.statuts && criteresRecherche.statuts.length" class="criterion-sidebar-resultat-recherche">
+            <span class="criterion-label-sidebar-resultat-recherche">Statuts :</span>
+            <span class="criterion-value-sidebar-resultat-recherche">{{ criteresRecherche.statuts.join(', ') }}</span>
+          </div>
+          <div v-if="!criteresRecherche" class="no-criteria-resultat-recherche">
+            <i class="fas fa-info"></i>
+            <span>Aucun critère spécifique</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Actions rapides -->
+      <div class="sidebar-section-resultat-recherche">
+        <h4 class="section-title-resultat-recherche">
+          <i class="fas fa-bolt"></i>
+          Actions rapides
+        </h4>
+        <div class="quick-actions-resultat-recherche">
+          <button @click="exporterPDF" class="quick-action-btn-resultat-recherche" :disabled="exportEnCours">
+            <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
+            PDF
           </button>
-          
-          <button @click="exporterPDF" class="btn-export-pdf" :disabled="exportEnCours">
-            📄 {{ exportEnCours ? 'Génération...' : 'Télécharger PDF' }}
+          <button @click="ouvrirDialogueEmail" class="quick-action-btn-resultat-recherche" :disabled="exportEnCours">
+            <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-envelope'"></i>
+            Email
           </button>
-          <button @click="ouvrirDialogueEmail" class="btn-send-email" :disabled="exportEnCours">
-            📧 {{ exportEnCours ? 'Envoi...' : 'Envoyer par email' }}
+          <button @click="naviguerVersEcranTravail" class="quick-action-btn-resultat-recherche">
+            <i class="fas fa-external-link-alt"></i>
+            Projet
+          </button>
+          <button @click="copierLien" class="quick-action-btn-resultat-recherche">
+            <i class="fas fa-link"></i>
+            Lien
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- Dialogue d'envoi d'email -->
-    <div v-if="emailDialogVisible" class="email-dialog-overlay">
-      <div class="email-dialog">
-        <div class="email-dialog-header">
-          <h3>📧 Envoyer le PDF par email</h3>
-          <button @click="fermerDialogueEmail" class="close-btn">×</button>
-        </div>
-        
-        <div class="email-dialog-content">
-          <!-- Destinataires multiples -->
-          <div class="form-group">
-            <label for="toEmail">Destinataires *</label>
-            <div class="emails-input-container">
-              <div class="email-tags">
-                <span 
-                  v-for="(email, index) in emailForm.toEmails" 
-                  :key="index" 
-                  class="email-tag"
-                >
-                  {{ email }}
-                  <button 
-                    type="button" 
-                    @click="supprimerEmail(index)" 
-                    class="email-tag-remove"
-                  >
-                    ×
-                  </button>
-                </span>
-              </div>
-              <input
-                id="toEmail"
-                v-model="nouvelEmail"
-                type="email"
-                placeholder="Ajouter un email (exemple@email.com)"
-                class="email-input-multiple"
-                @keydown.enter="ajouterEmail"
-                @blur="ajouterEmail"
-              />
+      <!-- Section Structure du projet -->
+      <div v-if="resultat" class="sidebar-section-resultat-recherche">
+        <h4 class="section-title-resultat-recherche">
+          <i class="fas fa-sitemap"></i>
+          Structure du projet
+        </h4>
+        <div class="project-structure-resultat-recherche">
+          <div v-if="resultat.projetTitre" class="structure-item-resultat-recherche">
+            <i class="fas fa-folder structure-icon-resultat-recherche"></i>
+            <div class="structure-info-resultat-recherche">
+              <span class="structure-type-resultat-recherche">Projet</span>
+              <span class="structure-name-resultat-recherche">{{ resultat.projetTitre }}</span>
             </div>
-            <small class="help-text">
-              Appuyez sur Entrée, Tab ou cliquez en dehors pour ajouter un email
-            </small>
           </div>
-          
-          <div class="form-group">
-            <label for="subject">Sujet</label>
-            <input
-              id="subject"
-              v-model="emailForm.subject"
-              type="text"
-              class="email-input"
-            />
+          <div v-if="resultat.episodeTitre" class="structure-item-resultat-recherche">
+            <i class="fas fa-play-circle structure-icon-resultat-recherche"></i>
+            <div class="structure-info-resultat-recherche">
+              <span class="structure-type-resultat-recherche">Épisode</span>
+              <span class="structure-name-resultat-recherche">{{ resultat.episodeTitre }}</span>
+            </div>
           </div>
-          
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea
-              id="message"
-              v-model="emailForm.message"
-              rows="4"
-              class="email-textarea"
-            ></textarea>
+          <div v-if="resultat.sequenceTitre" class="structure-item-resultat-recherche">
+            <i class="fas fa-layer-group structure-icon-resultat-recherche"></i>
+            <div class="structure-info-resultat-recherche">
+              <span class="structure-type-resultat-recherche">Séquence</span>
+              <span class="structure-name-resultat-recherche">{{ resultat.sequenceTitre }}</span>
+            </div>
           </div>
-
-          <!-- Liste des destinataires -->
-          <div v-if="emailForm.toEmails.length > 0" class="destinataires-list">
-            <h4>Destinataires ({{ emailForm.toEmails.length }}) :</h4>
-            <ul class="emails-list">
-              <li v-for="(email, index) in emailForm.toEmails" :key="index" class="email-item">
-                <span class="email-address">{{ email }}</span>
-                <button 
-                  type="button" 
-                  @click="supprimerEmail(index)" 
-                  class="email-remove-btn"
-                >
-                  ❌
-                </button>
-              </li>
-            </ul>
+          <div v-if="!resultat.projetTitre && !resultat.episodeTitre && !resultat.sequenceTitre" class="no-structure-resultat-recherche">
+            <i class="fas fa-info"></i>
+            <span>Structure non disponible</span>
           </div>
-        </div>
-        
-        <div class="email-dialog-actions">
-          <button 
-            @click="fermerDialogueEmail" 
-            class="btn-secondary"
-            :disabled="exportEnCours"
-          >
-            Annuler
-          </button>
-          <button 
-            @click="envoyerEmailAvecPDF" 
-            class="btn-primary"
-            :disabled="exportEnCours || emailForm.toEmails.length === 0"
-          >
-            {{ exportEnCours ? 'Envoi en cours...' : `📧 Envoyer à ${emailForm.toEmails.length} personne(s)` }}
-          </button>
         </div>
       </div>
-    </div>
 
-
-    <!-- Chargement -->
-    <div v-if="chargement" class="loading-state">
-      <div class="spinner"></div>
-      <p>Chargement des détails...</p>
-    </div>
-
-    <!-- Erreur -->
-    <div v-else-if="erreur" class="error-state">
-      <div class="error-icon">❌</div>
-      <h3>Erreur de chargement</h3>
-      <p>{{ erreur }}</p>
-      <button @click="chargerDetails" class="btn-retry">Réessayer</button>
-    </div>
-
-    <!-- Affichage des détails -->
-    <div v-else-if="resultat" class="details-container">
-      
-      <!-- Carte principale -->
-      <div class="main-card">
-        <div class="card-header">
-          <h2 class="result-title">{{ resultat.titre }}</h2>
-          <div class="header-actions">
-            <span class="last-modified">
-              📅 Modifié le : {{ formatDateTime(resultat.modifieLe) }}
+      <!-- Section Métadonnées -->
+      <div v-if="resultat" class="sidebar-section-resultat-recherche">
+        <h4 class="section-title-resultat-recherche">
+          <i class="fas fa-database"></i>
+          Métadonnées
+        </h4>
+        <div class="metadata-list-resultat-recherche">
+          <div class="metadata-item-resultat-recherche">
+            <span class="metadata-label-resultat-recherche">Type :</span>
+            <span class="metadata-value-resultat-recherche">
+              <span class="type-badge-small-resultat-recherche" :class="'type-' + resultat.type">
+                {{ getTypeLabel(resultat.type) }}
+              </span>
+            </span>
+          </div>
+          <div class="metadata-item-resultat-recherche">
+            <span class="metadata-label-resultat-recherche">ID :</span>
+            <span class="metadata-value-resultat-recherche">{{ resultat.id }}</span>
+          </div>
+          <div class="metadata-item-resultat-recherche">
+            <span class="metadata-label-resultat-recherche">Modifié le :</span>
+            <span class="metadata-value-resultat-recherche">{{ formatDateTime(resultat.modifieLe) }}</span>
+          </div>
+          <div v-if="resultat.statut" class="metadata-item-resultat-recherche">
+            <span class="metadata-label-resultat-recherche">Statut :</span>
+            <span class="metadata-value-resultat-recherche">
+              <span class="status-badge-small-resultat-recherche" :class="'status-' + resultat.statut">
+                {{ formatStatut(resultat.statut) }}
+              </span>
             </span>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Détails selon le type -->
-        <div class="card-content">
-          
-          <!-- SCÈNE - DÉTAILS COMPLETS -->
-          <div v-if="resultat.type === 'scene'" class="scene-details">
+    <!-- Contenu principal à droite -->
+    <div class="main-content-resultat-recherche">
+      <div class="resultat-recherche-container">
+        <!-- En-tête avec navigation -->
+        <div class="header-resultat-recherche">
+          <router-link to="/recherche" class="back-link-resultat-recherche">
+            <i class="fas fa-arrow-left"></i> Retour aux résultats
+          </router-link>
+          <h1 class="page-title-resultat-recherche">
+            <i class="fas fa-file-alt"></i> Détails du résultat
+          </h1>
+          <div v-if="resultat" class="result-type-header-resultat-recherche" :class="'type-' + resultat.type">
+            <div class="type-badge-resultat-recherche">
+              <span class="type-icon-resultat-recherche">{{ getTypeIcon(resultat.type) }}</span>
+              <span class="type-label-resultat-recherche">{{ getTypeLabel(resultat.type) }}</span>
+            </div>
             
-            <!-- Informations de tournage -->
-            <div class="detail-section">
-              <h3>🎬 Informations de tournage</h3>
-              <div class="details-grid">
-                <div class="detail-item">
-                  <span class="detail-label">📅 Date :</span>
-                  <span class="detail-value">{{ formatDate(resultat.dateTournage) }}</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">🕒 Heure début :</span>
-                  <span class="detail-value">{{ resultat.heureDebut || 'Non spécifiée' }}</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">🕒 Heure fin :</span>
-                  <span class="detail-value">{{ resultat.heureFin || 'Non spécifiée' }}</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">📊 Statut :</span>
-                  <span class="detail-value status-badge" :class="'status-' + resultat.statut">
-                    {{ formatStatut(resultat.statut) }}
-                  </span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">⏱️ Durée estimée :</span>
-                  <span class="detail-value">{{ calculerDureeScene(resultat.heureDebut, resultat.heureFin) }}</span>
-                </div>
-              </div>
+            <!-- Boutons d'export séparés -->
+            <div class="export-buttons-resultat-recherche">
+              <button @click="naviguerVersEcranTravail" class="btn-ecran-travail-resultat-recherche">
+                <i class="fas fa-external-link-alt"></i>
+                {{ getEcranTravailButtonText() }}
+              </button>
+              
+              <button @click="exporterPDF" class="btn-export-pdf-resultat-recherche" :disabled="exportEnCours">
+                <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
+                {{ exportEnCours ? 'Génération...' : 'Télécharger PDF' }}
+              </button>
+              <button @click="ouvrirDialogueEmail" class="btn-send-email-resultat-recherche" :disabled="exportEnCours">
+                <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-envelope'"></i>
+                {{ exportEnCours ? 'Envoi...' : 'Envoyer par email' }}
+              </button>
             </div>
+          </div>
+        </div>
 
-            <!-- Synopsis -->
-            <div v-if="resultat.description" class="detail-section">
-              <h3>📝 Synopsis</h3>
-              <div class="description-content">
-                {{ resultat.description }}
-              </div>
+        <!-- Dialogue d'envoi d'email -->
+        <div v-if="emailDialogVisible" class="modal-overlay-resultat-recherche">
+          <div class="modal-content-resultat-recherche">
+            <div class="modal-header-resultat-recherche">
+              <h3>
+                <i class="fas fa-envelope"></i>
+                Envoyer le PDF par email
+              </h3>
+              <button @click="fermerDialogueEmail" class="modal-close-btn-resultat-recherche">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
-
-            <!-- Structure du projet -->
-            <div class="detail-section">
-              <h3>📁 Structure du projet</h3>
-              <div class="hierarchy-path">
-                <div v-if="resultat.projetTitre" class="hierarchy-level">
-                  <span class="level-icon">📁</span>
-                  <span class="level-label">Projet :</span>
-                  <span class="level-value">{{ resultat.projetTitre }}</span>
-                </div>
-                <div v-if="resultat.episodeTitre" class="hierarchy-level">
-                  <span class="level-icon">▶️</span>
-                  <span class="level-label">Épisode :</span>
-                  <span class="level-value">{{ resultat.episodeTitre }}</span>
-                </div>
-                <div v-if="resultat.sequenceTitre" class="hierarchy-level">
-                  <span class="level-icon">🎞️</span>
-                  <span class="level-label">Séquence :</span>
-                  <span class="level-value">{{ resultat.sequenceTitre }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Localisation -->
-            <div class="detail-section">
-              <h3>📍 Localisation</h3>
-              <div class="details-grid">
-                <div v-if="resultat.lieuNom" class="detail-item">
-                  <span class="detail-label">🏛️ Lieu :</span>
-                  <span class="detail-value">{{ resultat.lieuNom }}</span>
-                </div>
-                <div v-if="resultat.plateauNom" class="detail-item">
-                  <span class="detail-label">🎭 Plateau :</span>
-                  <span class="detail-value">{{ resultat.plateauNom }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Personnages impliqués avec DÉTAILS -->
-            <div v-if="resultatDetails.personnages && resultatDetails.personnages.length > 0" class="detail-section">
-              <h3>👥 Personnages impliqués ({{ resultatDetails.personnages.length }})</h3>
-              <div class="personnages-detailed-list">
-                <div
-                  v-for="personnage in resultatDetails.personnages"
-                  :key="personnage.id"
-                  class="personnage-detailed-item"
-                >
-                  <div class="personnage-main-info">
-                    <span class="personnage-nom">{{ personnage.nom }}</span>
-                    <span v-if="personnage.comedien" class="personnage-comedien">
-                      ({{ personnage.comedien }})
+            
+            <div class="modal-body-resultat-recherche">
+              <!-- Destinataires multiples -->
+              <div class="form-group-resultat-recherche">
+                <label for="toEmail">Destinataires *</label>
+                <div class="emails-input-container-resultat-recherche">
+                  <div class="email-tags-resultat-recherche">
+                    <span 
+                      v-for="(email, index) in emailForm.toEmails" 
+                      :key="index" 
+                      class="email-tag-resultat-recherche"
+                    >
+                      {{ email }}
+                      <button 
+                        type="button" 
+                        @click="supprimerEmail(index)" 
+                        class="email-tag-remove-resultat-recherche"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
                     </span>
                   </div>
-                  <div class="personnage-stats">
-                    <span class="personnage-dialogues">{{ personnage.nbDialogues }} dialogues</span>
+                  <input
+                    id="toEmail"
+                    v-model="nouvelEmail"
+                    type="email"
+                    placeholder="Ajouter un email (exemple@email.com)"
+                    class="email-input-multiple-resultat-recherche"
+                    @keydown.enter="ajouterEmail"
+                    @blur="ajouterEmail"
+                  />
+                </div>
+                <small class="help-text-resultat-recherche">
+                  Appuyez sur Entrée, Tab ou cliquez en dehors pour ajouter un email
+                </small>
+              </div>
+              
+              <div class="form-group-resultat-recherche">
+                <label for="subject">Sujet</label>
+                <input
+                  id="subject"
+                  v-model="emailForm.subject"
+                  type="text"
+                  class="form-input-resultat-recherche"
+                />
+              </div>
+              
+              <div class="form-group-resultat-recherche">
+                <label for="message">Message</label>
+                <textarea
+                  id="message"
+                  v-model="emailForm.message"
+                  rows="4"
+                  class="form-textarea-resultat-recherche"
+                ></textarea>
+              </div>
+
+              <!-- Liste des destinataires -->
+              <div v-if="emailForm.toEmails.length > 0" class="destinataires-list-resultat-recherche">
+                <h4>Destinataires ({{ emailForm.toEmails.length }}) :</h4>
+                <ul class="emails-list-resultat-recherche">
+                  <li v-for="(email, index) in emailForm.toEmails" :key="index" class="email-item-resultat-recherche">
+                    <span class="email-address-resultat-recherche">{{ email }}</span>
+                    <button 
+                      type="button" 
+                      @click="supprimerEmail(index)" 
+                      class="email-remove-btn-resultat-recherche"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="modal-footer-resultat-recherche">
+              <button 
+                @click="fermerDialogueEmail" 
+                class="cancel-btn-resultat-recherche"
+                :disabled="exportEnCours"
+              >
+                Annuler
+              </button>
+              <button 
+                @click="envoyerEmailAvecPDF" 
+                class="submit-btn-resultat-recherche"
+                :disabled="exportEnCours || emailForm.toEmails.length === 0"
+              >
+                <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+                {{ exportEnCours ? 'Envoi en cours...' : `Envoyer à ${emailForm.toEmails.length} personne(s)` }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chargement -->
+        <div v-if="chargement" class="loading-state-resultat-recherche">
+          <i class="fas fa-spinner fa-spin"></i>
+          <h3>Chargement des détails...</h3>
+          <p>Veuillez patienter</p>
+        </div>
+
+        <!-- Erreur -->
+        <div v-else-if="erreur" class="error-state-resultat-recherche">
+          <i class="fas fa-exclamation-triangle"></i>
+          <h3>Erreur de chargement</h3>
+          <p>{{ erreur }}</p>
+          <button @click="chargerDetails" class="btn-retry-resultat-recherche">
+            <i class="fas fa-redo"></i> Réessayer
+          </button>
+        </div>
+
+        <!-- Affichage des détails en cartes individuelles -->
+        <div v-else-if="resultat" class="details-container-resultat-recherche">
+          
+          <!-- Carte Informations principales -->
+          <div class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h2 class="result-title-resultat-recherche">{{ resultat.titre }}</h2>
+              <div class="header-actions-resultat-recherche">
+                <span class="last-modified-resultat-recherche">
+                  <i class="fas fa-calendar-alt"></i>
+                  Modifié le : {{ formatDateTime(resultat.modifieLe) }}
+                </span>
+              </div>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <!-- Contenu selon le type -->
+              <div v-if="resultat.type === 'scene'" class="scene-details-resultat-recherche">
+                <!-- Informations de base pour scène -->
+                <div class="detail-section-resultat-recherche">
+                  <div class="details-grid-resultat-recherche">
+                    <div class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-calendar"></i> Date :</span>
+                      <span class="detail-value-resultat-recherche">{{ formatDate(resultat.dateTournage) }}</span>
+                    </div>
+                    <div class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-clock"></i> Heure début :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultat.heureDebut || 'Non spécifiée' }}</span>
+                    </div>
+                    <div class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-clock"></i> Heure fin :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultat.heureFin || 'Non spécifiée' }}</span>
+                    </div>
+                    <div class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-chart-bar"></i> Statut :</span>
+                      <span class="detail-value-resultat-recherche status-badge-resultat-recherche" :class="'status-' + resultat.statut">
+                        {{ formatStatut(resultat.statut) }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- TOUS LES DIALOGUES COMPLETS DE LA SCÈNE -->
-            <div v-if="resultatDetails.dialoguesComplets && resultatDetails.dialoguesComplets.length > 0" class="detail-section">
-              <h3>💬 Dialogues complets ({{ resultatDetails.dialoguesComplets.length }})</h3>
-              <div class="dialogues-stats">
-                <span class="stat-item">📊 Total mots : {{ compterMotsDialoguesComplets(resultatDetails.dialoguesComplets) }}</span>
-                <span class="stat-item">⏱️ Durée estimée : {{ estimerDureeDialoguesComplets(resultatDetails.dialoguesComplets) }}</span>
-              </div>
-              <div class="dialogues-complets-list">
-                <div
-                  v-for="(dialogue, index) in resultatDetails.dialoguesComplets"
-                  :key="dialogue.id || index"
-                  class="dialogue-complet-item"
-                >
-                  <div class="dialogue-header">
-                    <span class="dialogue-personnage">
-                      <strong>{{ dialogue.personnageNom || 'Narrateur' }}:</strong>
-                    </span>
-                    <span class="dialogue-ordre">#{{ dialogue.ordre || index + 1 }}</span>
-                  </div>
-                  <div class="dialogue-text">"{{ dialogue.texte }}"</div>
-                  <div v-if="dialogue.observation" class="dialogue-observation">
-                    💡 {{ dialogue.observation }}
+              <div v-else-if="resultat.type === 'personnage'" class="personnage-details-resultat-recherche">
+                <!-- Informations de base pour personnage -->
+                <div class="detail-section-resultat-recherche">
+                  <div class="details-grid-resultat-recherche">
+                    <div class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-theater-masks"></i> Comédien :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultat.comedienNom || 'Non spécifié' }}</span>
+                    </div>
+                    <div v-if="resultatDetails.informationsComplementaires?.age" class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-birthday-cake"></i> Âge :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultatDetails.informationsComplementaires.age }}</span>
+                    </div>
+                    <div v-if="resultatDetails.informationsComplementaires?.typePersonnage" class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-tag"></i> Type :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultatDetails.informationsComplementaires.typePersonnage }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div v-else-if="resultat.dialogues && resultat.dialogues.length > 0" class="detail-section">
-              <h3>💬 Dialogues ({{ resultat.dialogues.length }})</h3>
-              <div class="dialogues-list-simple">
-                <div
-                  v-for="(dialogue, index) in resultat.dialogues"
-                  :key="index"
-                  class="dialogue-simple-item"
-                >
-                  <div class="dialogue-text">"{{ dialogue }}"</div>
+              <div v-else-if="resultat.type === 'lieu'" class="lieu-details-resultat-recherche">
+                <!-- Informations de base pour lieu -->
+                <div class="detail-section-resultat-recherche">
+                  <div class="details-grid-resultat-recherche">
+                    <div class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-tag"></i> Type :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultat.description ? getTypeFromDescription(resultat.description) : 'Non spécifié' }}</span>
+                    </div>
+                    <div v-if="resultatDetails.informationsComplementaires?.adresse" class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-map-marker-alt"></i> Adresse :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultatDetails.informationsComplementaires.adresse }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else-if="resultat.type === 'plateau'" class="plateau-details-resultat-recherche">
+                <!-- Informations de base pour plateau -->
+                <div class="detail-section-resultat-recherche">
+                  <div class="details-grid-resultat-recherche">
+                    <div class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-tag"></i> Type :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultat.description ? getTypeFromDescription(resultat.description) : 'Non spécifié' }}</span>
+                    </div>
+                    <div v-if="resultat.lieuNom" class="detail-item-resultat-recherche">
+                      <span class="detail-label-resultat-recherche"><i class="fas fa-landmark"></i> Lieu :</span>
+                      <span class="detail-value-resultat-recherche">{{ resultat.lieuNom }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- PERSONNAGE - DÉTAILS COMPLETS -->
-          <div v-else-if="resultat.type === 'personnage'" class="personnage-details">
-            
-            <!-- Informations de base -->
-            <div class="detail-section">
-              <h3>👤 Informations du personnage</h3>
-              <div class="details-grid">
-                <div class="detail-item">
-                  <span class="detail-label">🎭 Comédien :</span>
-                  <span class="detail-value">{{ resultat.comedienNom || 'Non spécifié' }}</span>
+          <!-- Carte Informations de tournage (pour les scènes) -->
+          <div v-if="resultat.type === 'scene'" class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-film"></i> Informations de tournage</h3>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <div class="details-grid-resultat-recherche">
+                <div class="detail-item-resultat-recherche">
+                  <span class="detail-label-resultat-recherche"><i class="fas fa-hourglass-half"></i> Durée estimée :</span>
+                  <span class="detail-value-resultat-recherche">{{ calculerDureeScene(resultat.heureDebut, resultat.heureFin) }}</span>
                 </div>
-                <div v-if="resultatDetails.informationsComplementaires?.age" class="detail-item">
-                  <span class="detail-label">🎂 Âge :</span>
-                  <span class="detail-value">{{ resultatDetails.informationsComplementaires.age }}</span>
+                <div v-if="resultat.lieuNom" class="detail-item-resultat-recherche">
+                  <span class="detail-label-resultat-recherche"><i class="fas fa-landmark"></i> Lieu :</span>
+                  <span class="detail-value-resultat-recherche">{{ resultat.lieuNom }}</span>
                 </div>
-                <div v-if="resultatDetails.informationsComplementaires?.typePersonnage" class="detail-item">
-                  <span class="detail-label">📝 Type :</span>
-                  <span class="detail-value">{{ resultatDetails.informationsComplementaires.typePersonnage }}</span>
+                <div v-if="resultat.plateauNom" class="detail-item-resultat-recherche">
+                  <span class="detail-label-resultat-recherche"><i class="fas fa-theater-masks"></i> Plateau :</span>
+                  <span class="detail-value-resultat-recherche">{{ resultat.plateauNom }}</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Statistiques -->
-            <div v-if="resultatDetails.statistiques" class="detail-section">
-              <h3>📊 Statistiques</h3>
-              <div class="details-grid">
-                <div v-if="resultatDetails.statistiques.nbScenes" class="detail-item">
-                  <span class="detail-label">🎬 Scènes :</span>
-                  <span class="detail-value">{{ resultatDetails.statistiques.nbScenes }}</span>
-                </div>
-                <div v-if="resultatDetails.statistiques.nbDialogues" class="detail-item">
-                  <span class="detail-label">💬 Dialogues :</span>
-                  <span class="detail-value">{{ resultatDetails.statistiques.nbDialogues }}</span>
-                </div>
-                <div v-if="resultatDetails.statistiques.totalMots" class="detail-item">
-                  <span class="detail-label">📝 Total mots :</span>
-                  <span class="detail-value">{{ resultatDetails.statistiques.totalMots }}</span>
-                </div>
-                <div v-if="resultatDetails.statistiques.pourcentageDialogues" class="detail-item">
-                  <span class="detail-label">📈 Part des dialogues :</span>
-                  <span class="detail-value">{{ Math.round(resultatDetails.statistiques.pourcentageDialogues * 100) / 100 }}%</span>
-                </div>
-                <div v-if="resultatDetails.statistiques.dureeTotale" class="detail-item">
-                  <span class="detail-label">⏱️ Durée totale :</span>
-                  <span class="detail-value">{{ resultatDetails.statistiques.dureeTotale }}</span>
-                </div>
-              </div>
+          <!-- Carte Synopsis/Description -->
+          <div v-if="resultat.description" class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3 v-if="resultat.type === 'scene'"><i class="fas fa-align-left"></i> Synopsis</h3>
+              <h3 v-else><i class="fas fa-align-left"></i> Description</h3>
             </div>
-
-            <!-- Description -->
-            <div v-if="resultat.description" class="detail-section">
-              <h3>📝 Description</h3>
-              <div class="description-content">
+            <div class="card-content-resultat-recherche">
+              <div class="description-content-resultat-recherche">
                 {{ resultat.description }}
               </div>
             </div>
+          </div>
 
-            <!-- Structure du projet -->
-            <div class="detail-section">
-              <h3>📁 Projet</h3>
-              <div class="hierarchy-path">
-                <div v-if="resultat.projetTitre" class="hierarchy-level">
-                  <span class="level-icon">📁</span>
-                  <span class="level-label">Projet :</span>
-                  <span class="level-value">{{ resultat.projetTitre }}</span>
+          <!-- Carte Dialogues (pour TOUS les types) -->
+          <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-comments"></i> Dialogues associés ({{ resultat.dialogues.length }})</h3>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <div class="dialogues-list-compact-resultat-recherche">
+                <div
+                  v-for="(dialogue, index) in resultat.dialogues.slice(0, 10)"
+                  :key="index"
+                  class="dialogue-compact-item-resultat-recherche"
+                >
+                  <span class="dialogue-text-compact-resultat-recherche">"{{ dialogue }}"</span>
+                </div>
+              </div>
+              
+              <div v-if="resultat.dialogues.length > 10" class="dialogues-more-resultat-recherche">
+                <p>... et {{ resultat.dialogues.length - 10 }} dialogues supplémentaires</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carte Structure du projet -->
+          <div class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-folder"></i> Structure du projet</h3>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <div class="hierarchy-path-resultat-recherche">
+                <div v-if="resultat.projetTitre" class="hierarchy-level-resultat-recherche">
+                  <span class="level-icon-resultat-recherche"><i class="fas fa-folder"></i></span>
+                  <span class="level-label-resultat-recherche">Projet :</span>
+                  <span class="level-value-resultat-recherche">{{ resultat.projetTitre }}</span>
+                </div>
+                <div v-if="resultat.episodeTitre" class="hierarchy-level-resultat-recherche">
+                  <span class="level-icon-resultat-recherche"><i class="fas fa-play-circle"></i></span>
+                  <span class="level-label-resultat-recherche">Épisode :</span>
+                  <span class="level-value-resultat-recherche">{{ resultat.episodeTitre }}</span>
+                </div>
+                <div v-if="resultat.sequenceTitre" class="hierarchy-level-resultat-recherche">
+                  <span class="level-icon-resultat-recherche"><i class="fas fa-layer-group"></i></span>
+                  <span class="level-label-resultat-recherche">Séquence :</span>
+                  <span class="level-value-resultat-recherche">{{ resultat.sequenceTitre }}</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- 🎬 PLANNING DE TOURNAGE RÉEL DES SCÈNES -->
-            <div v-if="resultatDetails.scenes && resultatDetails.scenes.length > 0" class="detail-section">
-              <h3>🎬 Planning de tournage des scènes</h3>
-              <div class="scenes-planning-list">
+          <!-- Carte Personnages impliqués -->
+          <div v-if="resultatDetails.personnages && resultatDetails.personnages.length > 0" class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-users"></i> Personnages impliqués ({{ resultatDetails.personnages.length }})</h3>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <div class="personnages-detailed-list-resultat-recherche">
+                <div
+                  v-for="personnage in resultatDetails.personnages"
+                  :key="personnage.id"
+                  class="personnage-detailed-item-resultat-recherche"
+                >
+                  <div class="personnage-main-info-resultat-recherche">
+                    <span class="personnage-nom-resultat-recherche">{{ personnage.nom }}</span>
+                    <span v-if="personnage.comedien" class="personnage-comedien-resultat-recherche">
+                      ({{ personnage.comedien }})
+                    </span>
+                  </div>
+                  <div class="personnage-stats-resultat-recherche">
+                    <span class="personnage-dialogues-resultat-recherche">{{ personnage.nbDialogues }} dialogues</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carte Dialogues complets (SCÈNES) - PLEINE LARGEUR -->
+          <div v-if="resultat.type === 'scene' && resultatDetails.dialoguesComplets && resultatDetails.dialoguesComplets.length > 0" 
+               class="section-card-resultat-recherche dialogue-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-comments"></i> Dialogues complets ({{ resultatDetails.dialoguesComplets.length }})</h3>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <div class="dialogues-stats-resultat-recherche">
+                <span class="stat-item-resultat-recherche"><i class="fas fa-chart-bar"></i> Total mots : {{ compterMotsDialoguesComplets(resultatDetails.dialoguesComplets) }}</span>
+                <span class="stat-item-resultat-recherche"><i class="fas fa-clock"></i> Durée estimée : {{ estimerDureeDialoguesComplets(resultatDetails.dialoguesComplets) }}</span>
+              </div>
+              <div class="dialogues-complets-list-resultat-recherche">
+                <div
+                  v-for="(dialogue, index) in resultatDetails.dialoguesComplets"
+                  :key="dialogue.id || index"
+                  class="dialogue-complet-item-resultat-recherche"
+                >
+                  <div class="dialogue-header-resultat-recherche">
+                    <span class="dialogue-personnage-resultat-recherche">
+                      <strong>{{ dialogue.personnageNom || 'Narrateur' }}:</strong>
+                    </span>
+                    <span class="dialogue-ordre-resultat-recherche">#{{ dialogue.ordre || index + 1 }}</span>
+                  </div>
+                  <div class="dialogue-text-resultat-recherche">"{{ dialogue.texte }}"</div>
+                  <div v-if="dialogue.observation" class="dialogue-observation-resultat-recherche">
+                    <i class="fas fa-lightbulb"></i> {{ dialogue.observation }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carte Statistiques (pour personnages) -->
+          <div v-if="resultat.type === 'personnage' && resultatDetails.statistiques" class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-chart-bar"></i> Statistiques</h3>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <div class="details-grid-resultat-recherche">
+                <div v-if="resultatDetails.statistiques.nbScenes" class="detail-item-resultat-recherche">
+                  <span class="detail-label-resultat-recherche"><i class="fas fa-film"></i> Scènes :</span>
+                  <span class="detail-value-resultat-recherche">{{ resultatDetails.statistiques.nbScenes }}</span>
+                </div>
+                <div v-if="resultatDetails.statistiques.nbDialogues" class="detail-item-resultat-recherche">
+                  <span class="detail-label-resultat-recherche"><i class="fas fa-comments"></i> Dialogues :</span>
+                  <span class="detail-value-resultat-recherche">{{ resultatDetails.statistiques.nbDialogues }}</span>
+                </div>
+                <div v-if="resultatDetails.statistiques.totalMots" class="detail-item-resultat-recherche">
+                  <span class="detail-label-resultat-recherche"><i class="fas fa-font"></i> Total mots :</span>
+                  <span class="detail-value-resultat-recherche">{{ resultatDetails.statistiques.totalMots }}</span>
+                </div>
+                <div v-if="resultatDetails.statistiques.pourcentageDialogues" class="detail-item-resultat-recherche">
+                  <span class="detail-label-resultat-recherche"><i class="fas fa-chart-line"></i> Part des dialogues :</span>
+                  <span class="detail-value-resultat-recherche">{{ Math.round(resultatDetails.statistiques.pourcentageDialogues * 100) / 100 }}%</span>
+                </div>
+                <div v-if="resultatDetails.statistiques.dureeTotale" class="detail-item-resultat-recherche">
+                  <span class="detail-label-resultat-recherche"><i class="fas fa-clock"></i> Durée totale :</span>
+                  <span class="detail-value-resultat-recherche">{{ resultatDetails.statistiques.dureeTotale }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carte Planning de tournage (PERSONNAGES) -->
+          <div v-if="resultat.type === 'personnage' && resultatDetails.scenes && resultatDetails.scenes.length > 0" class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-calendar-alt"></i> Planning de tournage des scènes</h3>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <div class="scenes-planning-list-resultat-recherche">
                 <div
                   v-for="scene in scenesAvecPlanning"
                   :key="scene.id"
-                  class="scene-planning-item"
+                  class="scene-planning-item-resultat-recherche"
                 >
-                  <div class="scene-planning-header">
-                    <span class="scene-titre">{{ scene.titre }}</span>
-                    <span class="scene-statut" :class="'status-' + (scene.statut || 'planifie')">
+                  <div class="scene-planning-header-resultat-recherche">
+                    <span class="scene-titre-resultat-recherche">{{ scene.titre }}</span>
+                    <span class="scene-statut-resultat-recherche" :class="'status-' + (scene.statut || 'planifie')">
                       {{ formatStatut(scene.statut || 'planifie') }}
                     </span>
                   </div>
                   
-                  <div class="scene-planning-details">
-                    <div class="planning-info-grid">
-                      <div class="planning-info-item">
-                        <span class="detail-label">📅 Date :</span>
-                        <span class="detail-value">{{ formatDate(scene.dateTournage) }}</span>
+                  <div class="scene-planning-details-resultat-recherche">
+                    <div class="planning-info-grid-resultat-recherche">
+                      <div class="planning-info-item-resultat-recherche">
+                        <span class="detail-label-resultat-recherche"><i class="fas fa-calendar"></i> Date :</span>
+                        <span class="detail-value-resultat-recherche">{{ formatDate(scene.dateTournage) }}</span>
                       </div>
-                      <div class="planning-info-item">
-                        <span class="detail-label">🕒 Heure début :</span>
-                        <span class="detail-value">{{ scene.heureDebut || 'Non spécifiée' }}</span>
+                      <div class="planning-info-item-resultat-recherche">
+                        <span class="detail-label-resultat-recherche"><i class="fas fa-clock"></i> Heure début :</span>
+                        <span class="detail-value-resultat-recherche">{{ scene.heureDebut || 'Non spécifiée' }}</span>
                       </div>
-                      <div class="planning-info-item">
-                        <span class="detail-label">🕒 Heure fin :</span>
-                        <span class="detail-value">{{ scene.heureFin || 'Non spécifiée' }}</span>
+                      <div class="planning-info-item-resultat-recherche">
+                        <span class="detail-label-resultat-recherche"><i class="fas fa-clock"></i> Heure fin :</span>
+                        <span class="detail-value-resultat-recherche">{{ scene.heureFin || 'Non spécifiée' }}</span>
                       </div>
-                      <div class="planning-info-item">
-                        <span class="detail-label">⏱️ Durée estimée :</span>
-                        <span class="detail-value">{{ calculerDureeScene(scene.heureDebut, scene.heureFin) }}</span>
+                      <div class="planning-info-item-resultat-recherche">
+                        <span class="detail-label-resultat-recherche"><i class="fas fa-hourglass-half"></i> Durée estimée :</span>
+                        <span class="detail-value-resultat-recherche">{{ calculerDureeScene(scene.heureDebut, scene.heureFin) }}</span>
                       </div>
                     </div>
                     
-                    <div class="scene-planning-location">
-                      <span v-if="scene.lieuNom" class="location-item">
-                        <span class="location-icon">🏛️</span>
+                    <div class="scene-planning-location-resultat-recherche">
+                      <span v-if="scene.lieuNom" class="location-item-resultat-recherche">
+                        <i class="fas fa-landmark"></i>
                         {{ scene.lieuNom }}
                       </span>
-                      <span v-if="scene.plateauNom" class="location-item">
-                        <span class="location-icon">🎭</span>
+                      <span v-if="scene.plateauNom" class="location-item-resultat-recherche">
+                        <i class="fas fa-theater-masks"></i>
                         {{ scene.plateauNom }}
                       </span>
                     </div>
                   </div>
                   
-                  <div v-if="scene.nbDialogues" class="scene-dialogues-info">
-                    <span class="dialogues-count">💬 {{ scene.nbDialogues }} dialogues dans cette scène</span>
+                  <div v-if="scene.nbDialogues" class="scene-dialogues-info-resultat-recherche">
+                    <span class="dialogues-count-resultat-recherche"><i class="fas fa-comments"></i> {{ scene.nbDialogues }} dialogues dans cette scène</span>
                   </div>
                 </div>
               </div>
               
-              <div v-if="scenesAvecPlanning.length === 0" class="no-planning">
-                <p>📅 Aucun planning de tournage disponible pour ce personnage</p>
+              <div v-if="scenesAvecPlanning.length === 0" class="no-planning-resultat-recherche">
+                <p><i class="fas fa-calendar"></i> Aucun planning de tournage disponible pour ce personnage</p>
               </div>
             </div>
+          </div>
 
-            <!-- TOUS LES DIALOGUES RÉELS DU PERSONNAGE -->
-            <div v-if="resultatDetails.dialogues && resultatDetails.dialogues.length > 0" class="detail-section">
-              <h3>💬 Tous les dialogues ({{ resultatDetails.dialogues.length }})</h3>
-              
-              <div class="dialogues-stats">
-                <span class="stat-item">📊 Total mots : {{ resultatDetails.statistiques?.totalMots || compterMotsDialoguesPersonnage(resultatDetails.dialogues) }}</span>
-                <span class="stat-item">⏱️ Durée estimée : {{ estimerDureeDialoguesPersonnage(resultatDetails.dialogues) }}</span>
+          <!-- Carte Tous les dialogues (PERSONNAGES) - PLEINE LARGEUR -->
+          <div v-if="resultat.type === 'personnage' && resultatDetails.dialogues && resultatDetails.dialogues.length > 0" 
+               class="section-card-resultat-recherche dialogue-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-comments"></i> Tous les dialogues ({{ resultatDetails.dialogues.length }})</h3>
+            </div>
+            <div class="card-content-resultat-recherche">
+              <div class="dialogues-stats-resultat-recherche">
+                <span class="stat-item-resultat-recherche"><i class="fas fa-chart-bar"></i> Total mots : {{ resultatDetails.statistiques?.totalMots || compterMotsDialoguesPersonnage(resultatDetails.dialogues) }}</span>
+                <span class="stat-item-resultat-recherche"><i class="fas fa-clock"></i> Durée estimée : {{ estimerDureeDialoguesPersonnage(resultatDetails.dialogues) }}</span>
               </div>
 
               <!-- Filtres et tri -->
-              <div class="dialogues-controls">
-                <div class="filter-group">
+              <div class="dialogues-controls-resultat-recherche">
+                <div class="filter-group-resultat-recherche">
                   <label>Trier par :</label>
-                  <select v-model="triDialogues" @change="trierDialogues" class="select-input">
+                  <select v-model="triDialogues" @change="trierDialogues" class="form-select-resultat-recherche">
                     <option value="ordre">Ordre chronologique</option>
                     <option value="scene">Scène</option>
                     <option value="longueur">Longueur</option>
                   </select>
                 </div>
-                <div class="search-group">
-                  <input 
-                    v-model="rechercheDialogue" 
-                    type="text" 
-                    placeholder="Rechercher dans les dialogues..." 
-                    class="search-input"
-                  />
+                <div class="search-group-resultat-recherche">
+                  <div class="search-input-container-resultat-recherche">
+                    <i class="fas fa-search search-icon-resultat-recherche"></i>
+                    <input 
+                      v-model="rechercheDialogue" 
+                      type="text" 
+                      placeholder="Rechercher dans les dialogues..." 
+                      class="search-input-resultat-recherche"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div class="dialogues-list">
+              <div class="dialogues-list-resultat-recherche">
                 <div
                   v-for="(dialogue, index) in dialoguesFiltres"
                   :key="dialogue.id || index"
-                  class="dialogue-item"
+                  class="dialogue-item-resultat-recherche"
                 >
-                  <div class="dialogue-header">
-                    <span class="dialogue-number">Dialogue #{{ index + 1 }}</span>
-                    <span class="dialogue-context">
+                  <div class="dialogue-header-resultat-recherche">
+                    <span class="dialogue-number-resultat-recherche">Dialogue #{{ index + 1 }}</span>
+                    <span class="dialogue-context-resultat-recherche">
                       <strong>Scène:</strong> {{ dialogue.sceneTitre || 'Non spécifiée' }}
                       <span v-if="dialogue.sequenceTitre"> • <strong>Séquence:</strong> {{ dialogue.sequenceTitre }}</span>
                       <span v-if="dialogue.episodeTitre"> • <strong>Épisode:</strong> {{ dialogue.episodeTitre }}</span>
                     </span>
                   </div>
                   
-                  <div class="dialogue-text">"{{ dialogue.texte }}"</div>
+                  <div class="dialogue-text-resultat-recherche">"{{ dialogue.texte }}"</div>
                   
-                  <div class="dialogue-footer">
-                    <span class="dialogue-info">
-                      📝 {{ compterMots(dialogue.texte) }} mots • ⏱️ {{ estimerDuree(dialogue.texte) }}
+                  <div class="dialogue-footer-resultat-recherche">
+                    <span class="dialogue-info-resultat-recherche">
+                      <i class="fas fa-font"></i> {{ compterMots(dialogue.texte) }} mots • <i class="fas fa-clock"></i> {{ estimerDuree(dialogue.texte) }}
                     </span>
-                    <span v-if="dialogue.observation" class="dialogue-observation">
-                      💡 {{ dialogue.observation }}
+                    <span v-if="dialogue.observation" class="dialogue-observation-resultat-recherche">
+                      <i class="fas fa-lightbulb"></i> {{ dialogue.observation }}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <!-- Pagination si beaucoup de dialogues -->
-              <div v-if="dialoguesFiltres.length > 10" class="pagination">
-                <button @click="pageDialogues--" :disabled="pageDialogues === 1" class="pagination-btn">← Précédent</button>
+              <!-- Pagination -->
+              <div v-if="dialoguesFiltres.length > 10" class="pagination-resultat-recherche">
+                <button @click="pageDialogues--" :disabled="pageDialogues === 1" class="pagination-btn-resultat-recherche">
+                  <i class="fas fa-chevron-left"></i> Précédent
+                </button>
                 <span>Page {{ pageDialogues }} sur {{ totalPagesDialogues }}</span>
-                <button @click="pageDialogues++" :disabled="pageDialogues === totalPagesDialogues" class="pagination-btn">Suivant →</button>
-              </div>
-            </div>
-
-            <div v-else class="no-dialogues">
-              <p>📝 Ce personnage n'a aucun dialogue.</p>
-            </div>
-
-            <!-- Scènes associées (version simplifiée) -->
-            <div v-if="resultatDetails.scenes && resultatDetails.scenes.length > 0" class="detail-section">
-              <h3>🎬 Toutes les scènes associées ({{ resultatDetails.scenes.length }})</h3>
-              <div class="scenes-overview">
-                <div
-                  v-for="scene in resultatDetails.scenes"
-                  :key="scene.id"
-                  class="scene-overview-item"
-                >
-                  <div class="scene-overview-header">
-                    <span class="scene-titre">{{ scene.titre }}</span>
-                    <span class="scene-statut" :class="'status-' + (scene.statut || 'planifie')">
-                      {{ formatStatut(scene.statut || 'planifie') }}
-                    </span>
-                  </div>
-                  <div class="scene-overview-details">
-                    <span v-if="scene.dateTournage" class="scene-date">📅 {{ formatDate(scene.dateTournage) }}</span>
-                    <span v-if="scene.lieuNom" class="scene-lieu">📍 {{ scene.lieuNom }}</span>
-                    <span class="scene-dialogues">💬 {{ scene.nbDialogues }} dialogues</span>
-                  </div>
-                </div>
+                <button @click="pageDialogues++" :disabled="pageDialogues === totalPagesDialogues" class="pagination-btn-resultat-recherche">
+                  Suivant <i class="fas fa-chevron-right"></i>
+                </button>
               </div>
             </div>
           </div>
 
-          <!-- LIEU - DÉTAILS COMPLETS -->
-          <div v-else-if="resultat.type === 'lieu'" class="lieu-details">
-            <div class="detail-section">
-              <h3>🏛️ Informations du lieu</h3>
-              <div class="details-grid">
-                <div class="detail-item">
-                  <span class="detail-label">📝 Type :</span>
-                  <span class="detail-value">{{ resultat.description ? getTypeFromDescription(resultat.description) : 'Non spécifié' }}</span>
-                </div>
-                <div v-if="resultatDetails.informationsComplementaires?.adresse" class="detail-item">
-                  <span class="detail-label">🏠 Adresse :</span>
-                  <span class="detail-value">{{ resultatDetails.informationsComplementaires.adresse }}</span>
-                </div>
-              </div>
+          <!-- Carte Scènes associées (LIEUX et PLATEAUX) -->
+          <div v-if="(resultat.type === 'lieu' || resultat.type === 'plateau') && resultatDetails.scenes && resultatDetails.scenes.length > 0" class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-film"></i> Scènes tournées ici ({{ resultatDetails.scenes.length }})</h3>
             </div>
-
-            <div v-if="resultat.description" class="detail-section">
-              <h3>📝 Description</h3>
-              <div class="description-content">
-                {{ resultat.description }}
-              </div>
-            </div>
-
-            <!-- Scènes tournées à ce lieu -->
-            <div v-if="resultatDetails.scenes && resultatDetails.scenes.length > 0" class="detail-section">
-              <h3>🎬 Scènes tournées ici ({{ resultatDetails.scenes.length }})</h3>
-              <div class="scenes-list">
+            <div class="card-content-resultat-recherche">
+              <div class="scenes-list-resultat-recherche">
                 <div
                   v-for="scene in resultatDetails.scenes"
                   :key="scene.id"
-                  class="scene-item"
+                  class="scene-item-resultat-recherche"
                 >
-                  <div class="scene-header">
-                    <span class="scene-titre">{{ scene.titre }}</span>
-                    <span class="scene-statut" :class="'status-' + scene.statut">
+                  <div class="scene-header-resultat-recherche">
+                    <span class="scene-titre-resultat-recherche">{{ scene.titre }}</span>
+                    <span class="scene-statut-resultat-recherche" :class="'status-' + scene.statut">
                       {{ formatStatut(scene.statut) }}
                     </span>
                   </div>
-                  <div class="scene-details">
-                    <span class="scene-date">{{ formatDate(scene.dateTournage) }}</span>
-                    <span class="scene-heure">{{ scene.heureDebut }} - {{ scene.heureFin }}</span>
-                    <span class="scene-personnages">👥 {{ scene.nbPersonnages }} pers.</span>
+                  <div class="scene-details-resultat-recherche">
+                    <span class="scene-date-resultat-recherche"><i class="fas fa-calendar"></i> {{ formatDate(scene.dateTournage) }}</span>
+                    <span class="scene-heure-resultat-recherche"><i class="fas fa-clock"></i> {{ scene.heureDebut }} - {{ scene.heureFin }}</span>
+                    <span v-if="resultat.type === 'lieu'" class="scene-personnages-resultat-recherche"><i class="fas fa-users"></i> {{ scene.nbPersonnages }} pers.</span>
+                    <span v-if="resultat.type === 'plateau'" class="scene-dialogues-resultat-recherche"><i class="fas fa-comments"></i> {{ scene.nbDialogues }} dialogues</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- PLATEAU - DÉTAILS COMPLETS -->
-          <div v-else-if="resultat.type === 'plateau'" class="plateau-details">
-            <div class="detail-section">
-              <h3>🎭 Informations du plateau</h3>
-              <div class="details-grid">
-                <div class="detail-item">
-                  <span class="detail-label">📝 Type :</span>
-                  <span class="detail-value">{{ resultat.description ? getTypeFromDescription(resultat.description) : 'Non spécifié' }}</span>
-                </div>
-                <div v-if="resultat.lieuNom" class="detail-item">
-                  <span class="detail-label">🏛️ Lieu :</span>
-                  <span class="detail-value">{{ resultat.lieuNom }}</span>
-                </div>
-              </div>
+          <!-- Carte Critères de recherche -->
+          <!-- <div v-if="criteresRecherche" class="section-card-resultat-recherche">
+            <div class="card-header-resultat-recherche">
+              <h3><i class="fas fa-search"></i> Critères de recherche utilisés</h3>
             </div>
-
-            <div v-if="resultat.description" class="detail-section">
-              <h3>📝 Description</h3>
-              <div class="description-content">
-                {{ resultat.description }}
-              </div>
-            </div>
-
-            <!-- Scènes tournées sur ce plateau -->
-            <div v-if="resultatDetails.scenes && resultatDetails.scenes.length > 0" class="detail-section">
-              <h3>🎬 Scènes tournées ici ({{ resultatDetails.scenes.length }})</h3>
-              <div class="scenes-list">
-                <div
-                  v-for="scene in resultatDetails.scenes"
-                  :key="scene.id"
-                  class="scene-item"
-                >
-                  <div class="scene-header">
-                    <span class="scene-titre">{{ scene.titre }}</span>
-                    <span class="scene-statut" :class="'status-' + scene.statut">
-                      {{ formatStatut(scene.statut) }}
-                    </span>
-                  </div>
-                  <div class="scene-details">
-                    <span class="scene-date">{{ formatDate(scene.dateTournage) }}</span>
-                    <span class="scene-heure">{{ scene.heureDebut }} - {{ scene.heureFin }}</span>
-                    <span class="scene-dialogues">💬 {{ scene.nbDialogues }} dialogues</span>
-                  </div>
+            <div class="card-content-resultat-recherche">
+              <div class="criteria-list-resultat-recherche">
+                <div v-if="criteresRecherche.termeRecherche" class="criterion-resultat-recherche">
+                  <span class="criterion-label-resultat-recherche">Mot-clé :</span>
+                  <span class="criterion-value-resultat-recherche">{{ criteresRecherche.termeRecherche }}</span>
+                </div>
+                <div v-if="criteresRecherche.typesRecherche && criteresRecherche.typesRecherche.length" class="criterion-resultat-recherche">
+                  <span class="criterion-label-resultat-recherche">Types recherchés :</span>
+                  <span class="criterion-value-resultat-recherche">{{ formatTypes(criteresRecherche.typesRecherche) }}</span>
+                </div>
+                <div v-if="criteresRecherche.dateDebut || criteresRecherche.dateFin" class="criterion-resultat-recherche">
+                  <span class="criterion-label-resultat-recherche">Période :</span>
+                  <span class="criterion-value-resultat-recherche">
+                    {{ formatDate(criteresRecherche.dateDebut) || 'Début non spécifié' }}
+                    → 
+                    {{ formatDate(criteresRecherche.dateFin) || 'Fin non spécifiée' }}
+                  </span>
+                </div>
+                <div v-if="criteresRecherche.statuts && criteresRecherche.statuts.length" class="criterion-resultat-recherche">
+                  <span class="criterion-label-resultat-recherche">Statuts :</span>
+                  <span class="criterion-value-resultat-recherche">{{ criteresRecherche.statuts.join(', ') }}</span>
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
         </div>
-      </div>
 
-      <!-- Critères de recherche utilisés -->
-      <div v-if="criteresRecherche" class="search-criteria-card">
-        <h3>🔍 Critères de recherche utilisés</h3>
-        <div class="criteria-list">
-          <div v-if="criteresRecherche.termeRecherche" class="criterion">
-            <span class="criterion-label">Mot-clé :</span>
-            <span class="criterion-value">{{ criteresRecherche.termeRecherche }}</span>
-          </div>
-          <div v-if="criteresRecherche.typesRecherche && criteresRecherche.typesRecherche.length" class="criterion">
-            <span class="criterion-label">Types recherchés :</span>
-            <span class="criterion-value">{{ formatTypes(criteresRecherche.typesRecherche) }}</span>
-          </div>
-          <div v-if="criteresRecherche.dateDebut || criteresRecherche.dateFin" class="criterion">
-            <span class="criterion-label">Période :</span>
-            <span class="criterion-value">
-              {{ formatDate(criteresRecherche.dateDebut) || 'Début non spécifié' }}
-              → 
-              {{ formatDate(criteresRecherche.dateFin) || 'Fin non spécifiée' }}
-            </span>
-          </div>
-          <div v-if="criteresRecherche.statuts && criteresRecherche.statuts.length" class="criterion">
-            <span class="criterion-label">Statuts :</span>
-            <span class="criterion-value">{{ criteresRecherche.statuts.join(', ') }}</span>
-          </div>
+        <!-- État vide si pas de résultat -->
+        <div v-else class="empty-state-resultat-recherche">
+          <i class="fas fa-question-circle"></i>
+          <h3>Aucun détail disponible</h3>
+          <p>Impossible de charger les détails de ce résultat</p>
         </div>
       </div>
-
     </div>
-
-    <!-- État vide si pas de résultat -->
-    <div v-else class="empty-state">
-      <div class="empty-icon">❓</div>
-      <h3>Aucun détail disponible</h3>
-      <p>Impossible de charger les détails de ce résultat</p>
-    </div>
-  </div>
   </div>
 </template>
 
 <script>
 // IMPORT DES VRAIS SERVICES
 import { getResultatDetails, getResultatDetailsComplets } from '../service/rechercheService'
-import '../assets/css/resultat_search.css';
 
 // Import pour l'export PDF
 import jsPDF from 'jspdf';
@@ -689,7 +807,8 @@ export default {
         subject: 'Export PDF - Détails du résultat',
         message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
       },
-      nouvelEmail: ''
+      nouvelEmail: '',
+      generatedPdfBlob: null
     }
   },
   computed: {
@@ -731,7 +850,6 @@ export default {
       return Math.ceil(total / this.dialoguesParPage);
     },
 
-    
     scenesAvecPlanning() {
       if (!this.resultatDetails.scenes) return [];
       return this.resultatDetails.scenes.filter(scene => scene.dateTournage);
@@ -741,6 +859,17 @@ export default {
     await this.chargerDetails()
   },
   methods: {
+    // NOUVELLE MÉTHODE : Copier le lien
+    copierLien() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Lien copié dans le presse-papier !');
+      }).catch(err => {
+        console.error('Erreur lors de la copie du lien:', err);
+        alert('Erreur lors de la copie du lien');
+      });
+    },
+
     // NOUVELLE MÉTHODE : Navigation vers écran de travail
     naviguerVersEcranTravail() {
       if (!this.resultat) return
@@ -750,7 +879,6 @@ export default {
       
       switch (this.resultat.type) {
         case 'scene':
-          // Pour une scène, on va vers l'écran de travail avec l'épisode et la séquence
           routePath = `/projet/${this.resultat.projetId}/ecran-travail`
           queryParams = {
             episodeId: this.resultat.episodeId,
@@ -759,16 +887,13 @@ export default {
           break
           
         case 'personnage':
-          // Pour un personnage, on va vers l'écran de travail du projet
           routePath = `/projet/${this.resultat.projetId}/ecran-travail`
-          // Optionnel : on pourrait filtrer pour montrer les scènes du personnage
           queryParams = {
             filterPersonnage: this.resultat.id
           }
           break
           
         case 'lieu':
-          // Pour un lieu, filtrer les scènes à ce lieu
           routePath = `/projet/${this.resultat.projetId}/ecran-travail`
           queryParams = {
             filterLieu: this.resultat.id
@@ -776,7 +901,6 @@ export default {
           break
           
         case 'plateau':
-          // Pour un plateau, filtrer les scènes sur ce plateau
           routePath = `/projet/${this.resultat.projetId}/ecran-travail`
           queryParams = {
             filterPlateau: this.resultat.id
@@ -784,7 +908,6 @@ export default {
           break
           
         default:
-          // Navigation simple vers le projet
           routePath = `/projet/${this.resultat.projetId}/ecran-travail`
       }
       
@@ -794,16 +917,15 @@ export default {
       })
     },
 
-    // Méthode utilitaire pour déterminer le texte du bouton
     getEcranTravailButtonText() {
       if (!this.resultat) return 'Voir dans le projet'
       
       switch (this.resultat.type) {
-        case 'scene': return '🎬 Voir la scène dans le projet'
-        case 'personnage': return '👤 Voir le personnage dans le projet'
-        case 'lieu': return '🏛️ Voir le lieu dans le projet'
-        case 'plateau': return '🎭 Voir le plateau dans le projet'
-        default: return '📁 Voir dans le projet'
+        case 'scene': return 'Voir la scène dans le projet'
+        case 'personnage': return 'Voir le personnage dans le projet'
+        case 'lieu': return 'Voir le lieu dans le projet'
+        case 'plateau': return 'Voir le plateau dans le projet'
+        default: return 'Voir dans le projet'
       }
     },
 
@@ -814,16 +936,16 @@ export default {
       try {
         const { type, id } = this.$route.params
         
-        // Récupérer les critères de recherche depuis l'URL
         if (this.$route.query.recherche) {
-          this.criteresRecherche = JSON.parse(this.$route.query.recherche)
+          try {
+            this.criteresRecherche = JSON.parse(this.$route.query.recherche)
+          } catch (e) {
+            console.warn('Erreur parsing critères recherche:', e)
+            this.criteresRecherche = null
+          }
         }
         
-        // APPELS API RÉELS
-        // 1. Détails de base
         this.resultat = await getResultatDetails(type, id)
-        
-        // 2. Détails complets selon le type
         this.resultatDetails = await getResultatDetailsComplets(type, id)
         
       } catch (error) {
@@ -836,7 +958,6 @@ export default {
 
     ajouterEmail() {
       if (this.nouvelEmail && this.estEmailValide(this.nouvelEmail)) {
-        // Vérifier si l'email n'existe pas déjà
         if (!this.emailForm.toEmails.includes(this.nouvelEmail.trim().toLowerCase())) {
           this.emailForm.toEmails.push(this.nouvelEmail.trim().toLowerCase());
           this.nouvelEmail = '';
@@ -848,42 +969,22 @@ export default {
       }
     },
 
-     // NOUVELLE MÉTHODE : Supprimer un email de la liste
     supprimerEmail(index) {
       this.emailForm.toEmails.splice(index, 1);
     },
     
-    // NOUVELLE MÉTHODE : Valider un email
     estEmailValide(email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     },
     
-    // NOUVELLE MÉTHODE : Ajouter plusieurs emails séparés par des virgules
-    ajouterEmailsMultiples(emailsText) {
-      const emails = emailsText.split(/[,;]/).map(email => email.trim()).filter(email => email);
-      
-      emails.forEach(email => {
-        if (this.estEmailValide(email) && !this.emailForm.toEmails.includes(email.toLowerCase())) {
-          this.emailForm.toEmails.push(email.toLowerCase());
-        }
-      });
-      
-      this.nouvelEmail = '';
-    },
-    
-     ouvrirDialogueEmail() {
-      // Générer d'abord le PDF
+    ouvrirDialogueEmail() {
       this.exportEnCours = true;
       
       try {
         const pdf = this.genererPDF();
         const pdfBlob = pdf.output('blob');
-        
-        // Stocker le PDF pour l'envoi
         this.generatedPdfBlob = pdfBlob;
-        
-        // Ouvrir le dialogue
         this.emailDialogVisible = true;
         
       } catch (error) {
@@ -894,13 +995,11 @@ export default {
       }
     },
     
-   
     fermerDialogueEmail() {
       this.emailDialogVisible = false;
       this.resetEmailForm();
     },
  
-      // MÉTHODE MODIFIÉE : Export PDF seulement (téléchargement)
     async exporterPDF() {
       this.exportEnCours = true;
       
@@ -915,7 +1014,6 @@ export default {
       }
     },
      
-    // NOUVELLE MÉTHODE : Génération du PDF (factorisée)
     genererPDF() {
       const pdf = new jsPDF('p', 'mm', 'a4');
       let yPosition = 20;
@@ -923,7 +1021,6 @@ export default {
       const margin = 20;
       const contentWidth = pageWidth - (2 * margin);
       
-      // En-tête du PDF
       pdf.setFontSize(20);
       pdf.setFont('helvetica', 'bold');
       pdf.text(`Détails du ${this.getTypeLabel(this.resultat.type)}`, margin, yPosition);
@@ -934,7 +1031,6 @@ export default {
       pdf.text(`Export généré le ${new Date().toLocaleDateString('fr-FR')}`, margin, yPosition);
       yPosition += 15;
       
-      // Informations principales
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
       pdf.text('Informations principales', margin, yPosition);
@@ -949,7 +1045,6 @@ export default {
       pdf.text(`Dernière modification : ${this.formatDateTime(this.resultat.modifieLe)}`, margin, yPosition);
       yPosition += 15;
       
-      // Contenu spécifique selon le type
       if (this.resultat.type === 'personnage') {
         this.exporterPDFPersonnage(pdf, margin, yPosition, contentWidth);
       } else if (this.resultat.type === 'scene') {
@@ -963,8 +1058,6 @@ export default {
       return pdf;
     },
 
-
-    // MÉTHODE MODIFIÉE : Envoyer l'email avec le PDF à plusieurs destinataires
     async envoyerEmailAvecPDF() {
       if (this.emailForm.toEmails.length === 0) {
         alert('Veuillez ajouter au moins un destinataire');
@@ -974,7 +1067,6 @@ export default {
       this.exportEnCours = true;
       
       try {
-        // Convertir le Blob en base64
         const reader = new FileReader();
         reader.readAsDataURL(this.generatedPdfBlob);
         
@@ -982,7 +1074,6 @@ export default {
           const base64Data = reader.result.split(',')[1];
           const pdfData = this.base64ToArrayBuffer(base64Data);
           
-          // Envoyer à chaque destinataire individuellement
           const promises = this.emailForm.toEmails.map(async (email) => {
             const emailRequest = {
               toEmail: email,
@@ -992,7 +1083,7 @@ export default {
               pdfData: Array.from(pdfData)
             };
 
-            const response = await fetch('http://localhost:8080/api/export/send-pdf-email', {
+            const response = await fetch('/api/export/send-pdf-email', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -1007,10 +1098,8 @@ export default {
             return response.json();
           });
 
-          // Attendre que tous les emails soient envoyés
           const results = await Promise.allSettled(promises);
           
-          // Analyser les résultats
           const succes = results.filter(result => result.status === 'fulfilled' && result.value.success);
           const echecs = results.filter(result => result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.success));
           
@@ -1035,7 +1124,6 @@ export default {
             
             alert(message);
             
-            // Si au moins un email a réussi, on ferme le dialogue
             if (succes.length > 0) {
               this.fermerDialogueEmail();
             }
@@ -1068,16 +1156,8 @@ export default {
       this.nouvelEmail = '';
     },
 
-  // downloadPdfOnly() {
-  //     // Méthode pour télécharger le PDF sans l'envoyer par email
-  //     const pdf = new jsPDF();
-  //    
-  //     pdf.save(`${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`);
-  //   },
-
-    
-    // Export PDF pour les personnages
-    async exporterPDFPersonnage(pdf, margin, yPosition, contentWidth) {
+    // Méthodes d'export PDF (restaurées depuis l'original)
+    exporterPDFPersonnage(pdf, margin, yPosition, contentWidth) {
       let currentY = yPosition;
       
       // Informations du personnage
@@ -1162,7 +1242,6 @@ export default {
         pdf.setFont('helvetica', 'normal');
         
         for (const scene of this.scenesAvecPlanning) {
-          // Vérifier si on doit ajouter une nouvelle page
           if (currentY > 250) {
             pdf.addPage();
             currentY = 20;
@@ -1207,8 +1286,7 @@ export default {
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'normal');
         
-        for (const dialogue of this.resultatDetails.dialogues.slice(0, 50)) { // Limiter à 50 dialogues
-          // Vérifier si on doit ajouter une nouvelle page
+        for (const dialogue of this.resultatDetails.dialogues.slice(0, 50)) {
           if (currentY > 250) {
             pdf.addPage();
             currentY = 20;
@@ -1217,7 +1295,6 @@ export default {
           const sceneInfo = dialogue.sceneTitre ? ` (Scène: ${dialogue.sceneTitre})` : '';
           const dialogueText = `"${dialogue.texte}"`;
           
-          // Diviser le texte long en plusieurs lignes
           const lines = pdf.splitTextToSize(`${dialogue.personnageNom || 'Narrateur'}: ${dialogueText}${sceneInfo}`, contentWidth);
           
           lines.forEach(line => {
@@ -1234,9 +1311,8 @@ export default {
         }
       }
     },
-    
-    // Export PDF pour les scènes
-    async exporterPDFScene(pdf, margin, yPosition, contentWidth) {
+
+    exporterPDFScene(pdf, margin, yPosition, contentWidth) {
       let currentY = yPosition;
       
       // Informations de tournage
@@ -1349,9 +1425,8 @@ export default {
         }
       }
     },
-    
-    // Export PDF pour les lieux (simplifié)
-    async exporterPDFLieu(pdf, margin, yPosition, contentWidth) {
+
+    exporterPDFLieu(pdf, margin, yPosition, contentWidth) {
       let currentY = yPosition;
       
       // Informations du lieu
@@ -1381,7 +1456,7 @@ export default {
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'normal');
         
-        for (const scene of this.resultatDetails.scenes.slice(0, 20)) { // Limiter à 20 scènes
+        for (const scene of this.resultatDetails.scenes.slice(0, 20)) {
           if (currentY > 250) {
             pdf.addPage();
             currentY = 20;
@@ -1396,9 +1471,8 @@ export default {
         }
       }
     },
-    
-    // Export PDF pour les plateaux (similaire aux lieux)
-    async exporterPDFPlateau(pdf, margin, yPosition, contentWidth) {
+
+    exporterPDFPlateau(pdf, margin, yPosition, contentWidth) {
       let currentY = yPosition;
       
       // Informations du plateau
@@ -1443,7 +1517,7 @@ export default {
         }
       }
     },
-    
+
     // Méthodes utilitaires
     getTypeIcon(type) {
       const icons = {
@@ -1596,33 +1670,5 @@ export default {
 </script>
 
 <style scoped>
-/* Styles pour le nouveau bouton */
-.btn-ecran-travail {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  margin-left: 10px;
-}
-
-.btn-ecran-travail:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-ecran-travail:active {
-  transform: translateY(0);
-}
-
-/* Ajustement des boutons d'export */
-.export-buttons {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
+/* Le CSS sera importé depuis le fichier externe */
 </style>
