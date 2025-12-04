@@ -24,32 +24,20 @@ public class ComedienController {
 
     @GetMapping("/projet/{projetId}")
     public ResponseEntity<List<ComedienDTO>> getComediensByProjet(@PathVariable Long projetId) {
-        try {
-            List<ComedienDTO> comediens = comedienService.getComediensByProjet(projetId);
-            return ResponseEntity.ok(comediens);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        List<ComedienDTO> comediens = comedienService.getComediensByProjet(projetId);
+        return ResponseEntity.ok(comediens);
     }
 
     @GetMapping
     public ResponseEntity<List<ComedienDTO>> getAllComediens() {
-        try {
-            List<ComedienDTO> comediens = comedienService.getAllComediens();
-            return ResponseEntity.ok(comediens);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        List<ComedienDTO> comediens = comedienService.getAllComediens();
+        return ResponseEntity.ok(comediens);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ComedienDTO> getComedienById(@PathVariable Long id) {
-        try {
-            ComedienDTO comedien = comedienService.getComedienById(id);
-            return ResponseEntity.ok(comedien);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        ComedienDTO comedien = comedienService.getComedienById(id);
+        return ResponseEntity.ok(comedien);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -62,29 +50,28 @@ public class ComedienController {
         @RequestParam(value = "datesDisponibilite", required = false) List<LocalDate> datesDisponibilite,
         @RequestParam(value = "statutsDisponibilite", required = false) List<String> statutsDisponibilite) {
         
-        try {
-            CreateComedienDTO createComedienDTO = new CreateComedienDTO();
-            createComedienDTO.setProjetId(projetId); 
-            createComedienDTO.setNom(nom);
-            createComedienDTO.setAge(age);
-            createComedienDTO.setEmail(email);
-            createComedienDTO.setDatesDisponibilite(datesDisponibilite);
-            createComedienDTO.setStatutsDisponibilite(statutsDisponibilite);
+        CreateComedienDTO createComedienDTO = new CreateComedienDTO();
+        createComedienDTO.setProjetId(projetId); 
+        createComedienDTO.setNom(nom);
+        createComedienDTO.setAge(age);
+        createComedienDTO.setEmail(email);
+        createComedienDTO.setDatesDisponibilite(datesDisponibilite);
+        createComedienDTO.setStatutsDisponibilite(statutsDisponibilite);
 
-            if (photo != null && !photo.isEmpty()) {
+        if (photo != null && !photo.isEmpty()) {
+            try {
                 String photoPath = comedienService.savePhoto(photo);
                 createComedienDTO.setPhotoPath(photoPath);
+            } catch (IOException e) {
+                // L'exception sera automatiquement gérée par GlobalExceptionHandler
+                // car FileStorageException est lancée dans savePhoto
+                throw new RuntimeException("Erreur lors de la sauvegarde de la photo", e);
             }
-
-            ComedienDTO createdComedien = comedienService.createComedien(createComedienDTO);
-            return new ResponseEntity<>(createdComedien, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-    }
 
+        ComedienDTO createdComedien = comedienService.createComedien(createComedienDTO);
+        return new ResponseEntity<>(createdComedien, HttpStatus.CREATED);
+    }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ComedienDTO> updateComedien(
@@ -97,97 +84,70 @@ public class ComedienController {
             @RequestParam(value = "datesDisponibilite", required = false) List<LocalDate> datesDisponibilite,
             @RequestParam(value = "statutsDisponibilite", required = false) List<String> statutsDisponibilite) {
         
-        try {
-            CreateComedienDTO updateComedienDTO = new CreateComedienDTO();
-            
-            // Seulement inclure les champs qui sont fournis
-            if (nom != null) updateComedienDTO.setNom(nom);
-            if (age != null) updateComedienDTO.setAge(age);
-            if (email != null) updateComedienDTO.setEmail(email);
-            if (projetId != null) updateComedienDTO.setProjetId(projetId);
-            
-            // Utiliser les nouvelles listes
-            if (datesDisponibilite != null) updateComedienDTO.setDatesDisponibilite(datesDisponibilite);
-            if (statutsDisponibilite != null) updateComedienDTO.setStatutsDisponibilite(statutsDisponibilite);
+        CreateComedienDTO updateComedienDTO = new CreateComedienDTO();
+        
+        if (nom != null) updateComedienDTO.setNom(nom);
+        if (age != null) updateComedienDTO.setAge(age);
+        if (email != null) updateComedienDTO.setEmail(email);
+        if (projetId != null) updateComedienDTO.setProjetId(projetId);
+        
+        if (datesDisponibilite != null) updateComedienDTO.setDatesDisponibilite(datesDisponibilite);
+        if (statutsDisponibilite != null) updateComedienDTO.setStatutsDisponibilite(statutsDisponibilite);
 
-            if (photo != null && !photo.isEmpty()) {
+        if (photo != null && !photo.isEmpty()) {
+            try {
                 String photoPath = comedienService.savePhoto(photo);
                 updateComedienDTO.setPhotoPath(photoPath);
+            } catch (IOException e) {
+                throw new RuntimeException("Erreur lors de la sauvegarde de la photo", e);
             }
-
-            ComedienDTO updatedComedien = comedienService.updateComedien(id, updateComedienDTO);
-            return ResponseEntity.ok(updatedComedien);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+
+        ComedienDTO updatedComedien = comedienService.updateComedien(id, updateComedienDTO);
+        return ResponseEntity.ok(updatedComedien);
     }
 
-     @GetMapping("/photo/{filename}")
-    public ResponseEntity<byte[]> getPhoto(@PathVariable String filename) {
-        try {
-            byte[] photo = comedienService.getPhoto(filename);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .body(photo);
-        } catch (IOException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/photo/{filename}")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable String filename) throws IOException {
+        byte[] photo = comedienService.getPhoto(filename);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(photo);
     }
 
-     @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComedien(@PathVariable Long id) {
-        try {
-            comedienService.deleteComedien(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        comedienService.deleteComedien(id);
+        return ResponseEntity.noContent().build();
     }
-    
     
     @PostMapping("/{id}/disponibilites")
     public ResponseEntity<Void> addDisponibilite(@PathVariable Long id,
                                                 @RequestParam LocalDate date,
                                                 @RequestParam String statut) {
-        try {
-            comedienService.addDisponibilite(id, date, statut);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        comedienService.addDisponibilite(id, date, statut);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}/disponibilites/{disponibiliteId}")
     public ResponseEntity<Void> updateDisponibilite(@PathVariable Long id,
                                                 @PathVariable Long disponibiliteId,
                                                 @RequestBody DisponibiliteUpdateRequest request) {
-        try {
-            comedienService.updateDisponibilite(id, disponibiliteId, request.getDate(), request.getStatut());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        comedienService.updateDisponibilite(id, disponibiliteId, request.getDate(), request.getStatut());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}/disponibilites/{disponibiliteId}")
     public ResponseEntity<Void> deleteDisponibilite(@PathVariable Long id,
                                                 @PathVariable Long disponibiliteId) {
-        try {
-            comedienService.deleteDisponibilite(id, disponibiliteId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        comedienService.deleteDisponibilite(id, disponibiliteId);
+        return ResponseEntity.ok().build();
     }
 
-    // Classe pour la requête de mise à jour
     public static class DisponibiliteUpdateRequest {
         private LocalDate date;
         private String statut;
         
-        // Getters et setters
         public LocalDate getDate() { return date; }
         public void setDate(LocalDate date) { this.date = date; }
         public String getStatut() { return statut; }
