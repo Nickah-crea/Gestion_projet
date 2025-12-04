@@ -13,7 +13,7 @@
 // Components
 @import 'components/buttons';
 @import 'components/forms';
-@import 'components/sidebar';
+@import 'components/navbar';
 @import 'components/cinema-icons'; // AJOUTE CETTE LIGNE
 @import 'components/lightDark'; // AJOUTE CETTE LIGNE
 
@@ -44,4 +44,5 @@
 @import 'pages/crea_lieu';
 @import 'pages/crea_plateau';
 @import 'pages/gestion_raccords';
+@import 'pages/resultat_recherche';
 
