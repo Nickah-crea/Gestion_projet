@@ -595,9 +595,11 @@ export default {
     async loadComediens() {
       this.loading = true;
       try {
-        const response = await axios.get('/api/comediens');
+        const timestamp = new Date().getTime();
+        const response = await axios.get(`/api/comediens?t=${timestamp}`);
         this.comediens = response.data;
         this.filteredComediens = this.comediens;
+        this.error = '';
       } catch (error) {
         console.error('Erreur lors du chargement des comédiens:', error);
         this.error = 'Erreur lors du chargement des comédiens';
@@ -693,10 +695,27 @@ export default {
       this.formData.disponibilites.splice(index, 1);
     },
 
- async submitForm() {
+async submitForm() {
   this.isSubmitting = true;
   this.error = '';
   try {
+    // Vérifier les dates dupliquées dans le formulaire
+    const dateSet = new Set();
+    const uniqueDisponibilites = [];
+    
+    this.formData.disponibilites.forEach(dispo => {
+      if (dispo.date && !dateSet.has(dispo.date)) {
+        dateSet.add(dispo.date);
+        uniqueDisponibilites.push(dispo);
+      }
+    });
+    
+    // Remplacer par les disponibilités uniques
+    this.formData.disponibilites = uniqueDisponibilites;
+    
+    // DEBUG: Afficher ce qui va être envoyé
+    console.log('Disponibilités à envoyer:', this.formData.disponibilites);
+    
     const formData = new FormData();
     
     if (this.formData.nom) formData.append('nom', this.formData.nom);
@@ -719,6 +738,10 @@ export default {
       }
     });
     
+    // DEBUG: Afficher les listes
+    console.log('Dates:', dates);
+    console.log('Statuts:', statuts);
+    
     // Ajouter chaque date individuellement
     dates.forEach(date => {
       formData.append('datesDisponibilite', date);
@@ -729,6 +752,11 @@ export default {
       formData.append('statutsDisponibilite', statut);
     });
 
+    // DEBUG: Afficher le FormData
+    for (let [key, value] of formData.entries()) {
+      console.log(key + ': ' + value);
+    }
+
     let response;
     if (this.isEditing) {
       response = await axios.put(`/api/comediens/${this.editingId}`, formData, {
@@ -736,7 +764,9 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       });
+      console.log('Réponse mise à jour:', response.data);
       alert('Comédien modifié avec succès');
+      await this.forceRefresh();
     } else {
       response = await axios.post('/api/comediens', formData, {
         headers: {
@@ -747,41 +777,71 @@ export default {
     }
     
     this.resetForm();
+    // Attendre un peu pour que la base de données soit mise à jour
+    await new Promise(resolve => setTimeout(resolve, 500));
+    // Recharger les comédiens
     await this.loadComediens();
     this.activeTab = 'list';
   } catch (error) {
-    console.error('Erreur lors de la sauvegarde:', error);
+    console.error('Erreur complète:', error);
+    console.error('Réponse d\'erreur:', error.response?.data);
     this.error = error.response?.data?.message || 'Erreur lors de la sauvegarde';
   } finally {
     this.isSubmitting = false;
   }
 },
-    editComedien(comedien) {
-      this.formData = {
-        nom: comedien.nom,
-        age: comedien.age,
-        email: comedien.email,
-        projetId: comedien.projetId,
-        disponibilites: comedien.disponibilites ? [...comedien.disponibilites] : []
-      };
-      
-      const projet = this.projets.find(p => p.id === comedien.projetId);
-      this.projetSearch = projet ? projet.titre : '';
-      
-      if (comedien.photoPath) {
-        this.previewPhoto = this.getPhotoUrl(comedien.photoPath);
-      } else {
-        this.previewPhoto = null;
-      }
-      
-      this.currentPhotoFile = null;
-      this.isEditing = true;
-      this.editingId = comedien.id;
-      this.error = '';
-      this.activeTab = 'form'; // Aller vers le formulaire en mode édition
-      this.closeDetailsModal(); // Fermer la modal si elle était ouverte
-    },
 
+async forceRefresh() {
+  // Réinitialiser les données
+  this.comediens = [];
+  this.filteredComediens = [];
+  
+  // Recharger avec un délai
+  await new Promise(resolve => setTimeout(resolve, 300));
+  await this.loadComediens();
+  
+  // Forcer le recalcul des filtres
+  this.filterComediens();
+},
+
+editComedien(comedien) {
+  // S'assurer qu'il n'y a pas de doublons de dates
+  const uniqueDisponibilites = [];
+  const dateSet = new Set();
+  
+  if (comedien.disponibilites) {
+    comedien.disponibilites.forEach(dispo => {
+      if (dispo.date && !dateSet.has(dispo.date)) {
+        dateSet.add(dispo.date);
+        uniqueDisponibilites.push({...dispo});
+      }
+    });
+  }
+  
+  this.formData = {
+    nom: comedien.nom,
+    age: comedien.age,
+    email: comedien.email,
+    projetId: comedien.projetId,
+    disponibilites: uniqueDisponibilites
+  };
+  
+  const projet = this.projets.find(p => p.id === comedien.projetId);
+  this.projetSearch = projet ? projet.titre : '';
+  
+  if (comedien.photoPath) {
+    this.previewPhoto = this.getPhotoUrl(comedien.photoPath);
+  } else {
+    this.previewPhoto = null;
+  }
+  
+  this.currentPhotoFile = null;
+  this.isEditing = true;
+  this.editingId = comedien.id;
+  this.error = '';
+  this.activeTab = 'form';
+  this.closeDetailsModal();
+},
     async deleteComedien(id) {
       if (!confirm('Êtes-vous sûr de vouloir supprimer ce comédien ?')) {
         return;
@@ -818,26 +878,31 @@ export default {
       }
     },
 
-    resetForm() {
-      this.formData = {
-        nom: '',
-        age: null,
-        email: '',
-        projetId: '',
-        photo: null,
-        disponibilites: []
-      };
-      this.projetSearch = '';
-      this.previewPhoto = null;
-      this.currentPhotoFile = null;
-      this.isEditing = false;
-      this.editingId = null;
-      if (this.$refs.photoInput) {
-        this.$refs.photoInput.value = '';
-      }
-      this.showProjetSuggestions = false;
-      this.error = '';
-    },
+resetForm() {
+  this.formData = {
+    nom: '',
+    age: null,
+    email: '',
+    projetId: '',
+    photo: null,
+    disponibilites: []
+  };
+  this.projetSearch = '';
+  this.previewPhoto = null;
+  this.currentPhotoFile = null;
+  this.isEditing = false;
+  this.editingId = null;
+  if (this.$refs.photoInput) {
+    this.$refs.photoInput.value = '';
+  }
+  this.showProjetSuggestions = false;
+  this.error = '';
+  
+  // Réinitialiser aussi les filtres de recherche
+  this.comedienSearch = '';
+  this.selectedProjetFilter = '';
+  this.selectedStatutFilter = '';
+},
 
     formatDate(dateString) {
       return new Date(dateString).toLocaleDateString('fr-FR', {
