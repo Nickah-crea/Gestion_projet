@@ -29,4 +29,7 @@ public interface PlateauRepository extends JpaRepository<Plateau, Long> {
     List<Plateau> findAllOrdered();
     
     boolean existsByNomAndLieuId(String nom, Long lieuId);
+
+    @Query("SELECT p FROM Plateau p WHERE p.lieu.projet.id = :projetId")
+    List<Plateau> findByLieuProjetId(@Param("projetId") Long projetId);
 }
