@@ -128,7 +128,7 @@
     color: $color-text-primary;
     cursor: pointer;
     box-sizing: border-box;
-    
+
     &:focus {
       outline: none;
       border-color: $color-primary;
@@ -277,6 +277,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -850,6 +851,22 @@
   display: flex;
   flex-direction: column;
   gap: $gap-xs;
+  max-height: 120px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
 }
 
 .table-dispo-item-crea-comedien {
@@ -987,8 +1004,13 @@
 }
 
 @keyframes spin-crea-comedien {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // =============================================
@@ -998,7 +1020,7 @@
   .creation-sidebar-crea-comedien {
     width: 250px;
   }
-  
+
   .creation-body-crea-comedien {
     margin-left: 250px;
   }
@@ -1010,11 +1032,11 @@
     width: 100%;
     height: auto;
   }
-  
+
   .creation-body-crea-comedien {
     margin-left: 0;
   }
-  
+
   .tabs-header-crea-comedien {
     flex-direction: column;
   }
@@ -1031,11 +1053,12 @@
   .tab-pane-crea-comedien {
     padding: $spacing-md;
   }
-  
+
   .comediens-table-crea-comedien {
     font-size: $font-size-p5;
-    
-    th, td {
+
+    th,
+    td {
       padding: $padding-xs;
     }
   }
@@ -1045,7 +1068,7 @@
   .creation-main-content-crea-comedien {
     padding: $spacing-sm;
   }
-  
+
   .form-header-crea-comedien {
     flex-direction: column;
     gap: $spacing-sm;
@@ -1062,7 +1085,7 @@
 
   .tab-btn-crea-comedien {
     font-size: $font-size-p4;
-    
+
     i {
       font-size: $font-size-p3;
     }
@@ -1071,6 +1094,7 @@
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
+
   .sidebar-btn-crea-comedien,
   .form-input-crea-comedien,
   .submit-btn-crea-comedien,
@@ -1079,16 +1103,16 @@
   .tab-btn-crea-comedien,
   .tab-indicator-crea-comedien {
     transition: none;
-    
+
     &:hover {
       transform: none;
     }
   }
-  
+
   .loading-state-crea-comedien i {
     animation: none;
   }
-  
+
   .tab-pane-crea-comedien {
     animation: none;
   }
@@ -1107,28 +1131,28 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  
+
   // Statut Disponible
   &.status-disponible-crea-comedien {
     background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
     color: $color-white;
     box-shadow: 0 2px 4px rgba($color-success, 0.3);
   }
-  
+
   // Statut Indisponible
   &.status-indisponible-crea-comedien {
     background: linear-gradient(135deg, $color-error, darken($color-error, 10%));
     color: $color-white;
     box-shadow: 0 2px 4px rgba($color-error, 0.3);
   }
-  
+
   // Statut Occupé
   &.status-occupe-crea-comedien {
     background: linear-gradient(135deg, $color-warning, darken($color-warning, 10%));
     color: $color-white;
     box-shadow: 0 2px 4px rgba($color-warning, 0.3);
   }
-  
+
   // Icône dans le badge
   i {
     font-size: 10px;
@@ -1168,6 +1192,7 @@
     opacity: 0;
     transform: translateY(-50px) scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1180,7 +1205,7 @@
   align-items: center;
   padding: $spacing-lg;
   border-bottom: 1px solid $color-border;
-  
+
   h3 {
     @include typography-playfair-h4;
     color: $color-text-primary;
@@ -1200,7 +1225,7 @@
   padding: $gap-xs;
   border-radius: $border-radius-xs;
   transition: $transition-fast;
-  
+
   &:hover {
     background: rgba($color-error, 0.1);
     color: $color-error;
@@ -1216,7 +1241,7 @@
   grid-template-columns: auto 1fr;
   gap: $spacing-lg;
   margin-bottom: $spacing-lg;
-  
+
   @media (max-width: $breakpoint-sm) {
     grid-template-columns: 1fr;
   }
@@ -1230,7 +1255,7 @@
     border-radius: $border-radius-sm;
     border: 3px solid $color-primary;
   }
-  
+
   .detail-photo-placeholder-crea-comedien {
     width: 120px;
     height: 120px;
@@ -1255,14 +1280,14 @@
   display: flex;
   align-items: center;
   gap: $gap-md;
-  
+
   .detail-label-crea-comedien {
     @include typography-p4;
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
     min-width: 120px;
   }
-  
+
   .detail-value-crea-comedien {
     @include typography-p4;
     color: $color-text-secondary;
@@ -1291,22 +1316,22 @@
   border-radius: $border-radius-xs;
   border: 1px solid $color-border;
   transition: $transition-fast;
-  
+
   &.statut-disponible-crea-comedien {
     border-left: 4px solid $color-success;
     background: rgba($color-success, 0.05);
   }
-  
+
   &.statut-indisponible-crea-comedien {
     border-left: 4px solid $color-error;
     background: rgba($color-error, 0.05);
   }
-  
+
   &.statut-occupe-crea-comedien {
     border-left: 4px solid $color-warning;
     background: rgba($color-warning, 0.05);
   }
-  
+
   .dispo-date-crea-comedien {
     @include typography-p4;
     color: $color-text-primary;
@@ -1324,7 +1349,7 @@
   display: flex;
   gap: $gap-sm;
   justify-content: flex-end;
-  
+
   .btn-edit-modal-crea-comedien,
   .btn-close-modal-crea-comedien {
     padding: $gap-sm $spacing-md;
@@ -1338,21 +1363,21 @@
     align-items: center;
     gap: $gap-xs;
   }
-  
+
   .btn-edit-modal-crea-comedien {
     background: $color-primary;
     color: $color-white;
-    
+
     &:hover {
       background: darken($color-primary, 10%);
     }
   }
-  
+
   .btn-close-modal-crea-comedien {
     background: transparent;
     border: 1px solid $color-border;
     color: $color-text-secondary;
-    
+
     &:hover {
       background: rgba($color-primary, 0.1);
       border-color: $color-primary;
@@ -1368,7 +1393,7 @@
   display: flex;
   gap: $gap-xs;
   justify-content: center;
-  
+
   .btn-view-crea-comedien,
   .btn-edit-crea-comedien,
   .btn-link-crea-comedien,
@@ -1382,46 +1407,46 @@
     align-items: center;
     justify-content: center;
     transition: $transition-fast;
-    
+
     &:hover {
       transform: scale(1.1);
     }
   }
-  
+
   .btn-view-crea-comedien {
     background: rgba($color-info, 0.1);
     color: $color-info;
-    
+
     &:hover {
       background: $color-info;
       color: $color-white;
     }
   }
-  
+
   .btn-edit-crea-comedien {
     background: rgba($color-warning, 0.1);
     color: $color-warning;
-    
+
     &:hover {
       background: $color-warning;
       color: $color-white;
     }
   }
-  
+
   .btn-link-crea-comedien {
     background: rgba($color-primary, 0.1);
     color: $color-primary;
-    
+
     &:hover {
       background: $color-primary;
       color: $color-white;
     }
   }
-  
+
   .btn-delete-crea-comedien {
     background: rgba($color-error, 0.1);
     color: $color-error;
-    
+
     &:hover {
       background: $color-error;
       color: $color-white;

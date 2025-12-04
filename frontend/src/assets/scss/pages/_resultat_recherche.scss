@@ -1,0 +1,1424 @@
+// _resultat-recherche.scss – Version avec chaque section dans sa propre carte
+@import '../base/variables';
+
+$header-height: 80px; // Hauteur du header à synchroniser avec le layout global
+
+.app-wrapper-global-resultat-recherche {
+  display: flex;
+  background: none;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE FIXE À GAUCHE
+// =============================================
+.sidebar-right-resultat-recherche {
+  position: fixed;
+  left: 0;
+  top: $header-height;
+  width: 300px;
+  height: calc(100vh - #{$header-height});
+  background: $color-background url('../../img/book-illustration.png') no-repeat bottom center;
+  background-size: contain;
+  background-blend-mode: multiply; // Pour mieux intégrer l'illustration au fond
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
+}
+
+.sidebar-header-resultat-recherche {
+  margin-bottom: $spacing-md;
+
+  .sidebar-title-resultat-recherche {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.sidebar-section-resultat-recherche {
+  margin-bottom: $spacing-md;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  padding: $padding-sm;
+  box-shadow: $shadow-hover;
+
+  .section-title-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-sm;
+    font-size: calc(#{$font-size-p4} + 1px);
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// CRITÈRES DE RECHERCHE DANS LA SIDEBAR
+// =============================================
+.criteria-sidebar-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.criterion-sidebar-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .criterion-label-sidebar-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+  }
+
+  .criterion-value-sidebar-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.no-criteria-resultat-recherche {
+  @include typography-p4;
+  color: $color-text-muted;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// STRUCTURE DU PROJET DANS LA SIDEBAR
+// =============================================
+.project-structure-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.structure-item-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $gap-xs;
+
+  .structure-icon-resultat-recherche {
+    color: $color-primary;
+    font-size: $font-size-p3;
+    width: 20px;
+    text-align: center;
+  }
+
+  .structure-info-resultat-recherche {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .structure-type-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-secondary;
+    }
+
+    .structure-name-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.no-structure-resultat-recherche {
+  @include typography-p4;
+  color: $color-text-muted;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// MÉTADONNÉES DANS LA SIDEBAR
+// =============================================
+.metadata-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.metadata-item-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $gap-xs 0;
+  border-bottom: 1px solid $color-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .metadata-label-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+  }
+
+  .metadata-value-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-primary;
+    text-align: right;
+  }
+}
+
+.type-badge-small-resultat-recherche,
+.status-badge-small-resultat-recherche {
+  padding: 2px 8px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.type-scene {
+    background: rgba($color-info, 0.2);
+    color: $color-info;
+  }
+
+  &.type-personnage {
+    background: rgba($color-success, 0.2);
+    color: $color-success;
+  }
+
+  &.type-lieu {
+    background: rgba($color-warning, 0.2);
+    color: $color-warning;
+  }
+
+  &.type-plateau {
+    background: rgba($color-primary, 0.2);
+    color: $color-primary;
+  }
+}
+
+// =============================================
+// ACTIONS RAPIDES DANS LA SIDEBAR
+// =============================================
+.quick-actions-resultat-recherche {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $gap-sm;
+}
+
+.quick-action-btn-resultat-recherche {
+  padding: $gap-sm;
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p5;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $gap-xs;
+
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+    color: $color-primary;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  i {
+    font-size: $font-size-p3;
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL À DROITE
+// =============================================
+.main-content-resultat-recherche {
+  flex: 1;
+  min-height: 100vh;
+  background: none;
+  margin-left: 300px;
+}
+
+.resultat-recherche-container {
+  padding: $spacing-lg;
+  max-width: none;
+  margin: 0 auto;
+}
+
+// =============================================
+// EN-TÊTE AVEC NAVIGATION
+// =============================================
+.header-resultat-recherche {
+  margin-bottom: $spacing-lg;
+
+  .back-link-resultat-recherche {
+    @include typography-p4;
+    color: $color-primary;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: $gap-xs;
+    margin-bottom: $spacing-md;
+    transition: $transition-fast;
+
+    &:hover {
+      color: darken($color-primary, 10%);
+      text-decoration: underline;
+    }
+  }
+
+  .page-title-resultat-recherche {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin: 0 0 $spacing-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+}
+
+.result-type-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  border-left: 4px solid $color-primary;
+  max-width: 100%;
+  margin-bottom: $spacing-lg;
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    gap: $spacing-md;
+    align-items: flex-start;
+  }
+}
+
+.type-badge-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $gap-xs $padding-sm;
+  background: rgba($color-primary, 0.1);
+  border-radius: $border-radius-pill;
+  border: 1px solid rgba($color-primary, 0.2);
+
+  .type-icon-resultat-recherche {
+    font-size: $font-size-p3;
+  }
+
+  .type-label-resultat-recherche {
+    @include typography-p4;
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.export-buttons-resultat-recherche {
+  display: flex;
+  gap: $gap-sm;
+  align-items: center;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-ecran-travail-resultat-recherche,
+  .btn-export-pdf-resultat-recherche,
+  .btn-send-email-resultat-recherche {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    min-width: 160px;
+    justify-content: center;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .btn-ecran-travail-resultat-recherche {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+    border: 1px solid rgba($color-info, 0.3);
+
+    &:hover:not(:disabled) {
+      background: $color-info;
+      color: $color-white;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
+
+  .btn-export-pdf-resultat-recherche {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    border: 1px solid rgba($color-error, 0.3);
+
+    &:hover:not(:disabled) {
+      background: $color-error;
+      color: $color-white;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
+
+  .btn-send-email-resultat-recherche {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.3);
+
+    &:hover:not(:disabled) {
+      background: $color-success;
+      color: $color-white;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
+}
+
+// =============================================
+// CONTENEUR DES CARTES ORGANISÉES
+// =============================================
+.details-container-resultat-recherche {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: $spacing-lg;
+  align-items: start;
+
+  @media (max-width: $breakpoint-xl) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =============================================
+// CARTES INDIVIDUELLES (500px) - EXCEPTION POUR LES DIALOGUES
+// =============================================
+.section-card-resultat-recherche {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  width: 100%;
+  max-width: 500px;
+  height: fit-content;
+
+  // EXCEPTION : Les cartes de dialogues occupent toute la largeur
+  &.dialogue-card-resultat-recherche {
+    grid-column: 1 / -1;
+    max-width: 100%;
+
+    .card-content-resultat-recherche {
+      max-height: 800px;
+      overflow-y: auto;
+    }
+  }
+
+  @media (max-width: $breakpoint-xl) {
+    max-width: 100%;
+
+    &.dialogue-card-resultat-recherche {
+      grid-column: 1;
+    }
+  }
+}
+
+.card-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+
+  .result-title-resultat-recherche {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin: 0;
+    font-size: calc(#{$font-size-h3} - 2px);
+  }
+
+  .header-actions-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  .last-modified-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.card-content-resultat-recherche {
+  padding: $spacing-lg;
+  max-height: 600px;
+  overflow-y: auto;
+
+  @media (max-width: $breakpoint-md) {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+// =============================================
+// STYLES POUR LES SECTIONS DE CONTENU
+// =============================================
+.detail-section-resultat-recherche {
+  margin-bottom: $spacing-xl;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $spacing-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding-bottom: $gap-sm;
+    border-bottom: 2px solid $color-border;
+    font-size: calc(#{$font-size-h4} - 2px);
+  }
+}
+
+.details-grid-resultat-recherche {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+}
+
+.detail-item-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  padding: $padding-sm;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+
+  .detail-label-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  .detail-value-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// =============================================
+// BADGES DE STATUT
+// =============================================
+.status-badge-resultat-recherche {
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  // Statuts disponibles
+  &.status-planifie {
+    background: linear-gradient(135deg, $color-info, darken($color-info, 10%));
+    color: $color-white;
+  }
+
+  &.status-confirme {
+    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
+    color: $color-white;
+  }
+
+  &.status-en_cours {
+    background: linear-gradient(135deg, $color-warning, darken($color-warning, 10%));
+    color: $color-white;
+  }
+
+  &.status-termine {
+    background: linear-gradient(135deg, $color-primary, darken($color-primary, 10%));
+    color: $color-white;
+  }
+
+  &.status-annule {
+    background: linear-gradient(135deg, $color-error, darken($color-error, 10%));
+    color: $color-white;
+  }
+}
+
+// =============================================
+// HIÉRARCHIE ET STRUCTURE
+// =============================================
+.hierarchy-path-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.hierarchy-level-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-sm;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+
+  .level-icon-resultat-recherche {
+    color: $color-primary;
+    font-size: $font-size-p3;
+  }
+
+  .level-label-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+    min-width: 80px;
+  }
+
+  .level-value-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// =============================================
+// LISTES SPÉCIALISÉES
+// =============================================
+.personnages-detailed-list-resultat-recherche {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-sm;
+}
+
+.personnage-detailed-item-resultat-recherche {
+  padding: $padding-sm;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+  transition: $transition-fast;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-1px);
+  }
+
+  .personnage-main-info-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin-bottom: $gap-xs;
+
+    .personnage-nom-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+    }
+
+    .personnage-comedien-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-muted;
+      font-style: italic;
+    }
+  }
+
+  .personnage-stats-resultat-recherche {
+    .personnage-dialogues-resultat-recherche {
+      @include typography-p4;
+      color: $color-primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+// =============================================
+// DIALOGUES - STYLES SPÉCIAUX POUR LA LARGEUR COMPLÈTE
+// =============================================
+.dialogues-stats-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+  margin-bottom: $spacing-md;
+  padding: $padding-sm;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+
+  .stat-item-resultat-recherche {
+    @include typography-p4;
+    color: $color-text-primary;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.dialogues-controls-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  padding: $padding-sm;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+}
+
+.filter-group-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.form-select-resultat-recherche {
+  padding: $gap-xs $padding-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  background: $color-white;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.search-group-resultat-recherche {
+  width: 100%;
+}
+
+.search-input-container-resultat-recherche {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .search-icon-resultat-recherche {
+    position: absolute;
+    left: $padding-sm;
+    color: $color-primary;
+  }
+
+  .search-input-resultat-recherche {
+    width: 100%;
+    padding: $gap-xs $padding-sm $gap-xs (
+      $padding-md + $padding-xs
+    );
+  border: 1px solid $color-border;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  background: $color-white;
+  transition: $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+}
+}
+
+// STYLES SPÉCIAUX POUR LES DIALOGUES EN LARGEUR COMPLÈTE
+.dialogues-list-resultat-recherche {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dialogue-item-resultat-recherche {
+  padding: $spacing-md;
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  border: 1px solid $color-border;
+  transition: $transition-fast;
+  box-shadow: $shadow;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    border-color: $color-primary;
+    transform: translateY(-2px);
+  }
+
+  .dialogue-header-resultat-recherche {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+    padding-bottom: $gap-sm;
+    border-bottom: 1px solid $color-border;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      gap: $gap-sm;
+    }
+
+    .dialogue-number-resultat-recherche {
+      @include typography-p3;
+      color: $color-primary;
+      font-weight: $font-weight-bold;
+      background: rgba($color-primary, 0.1);
+      padding: 4px 8px;
+      border-radius: $border-radius-xs;
+    }
+
+    .dialogue-context-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-muted;
+      flex: 1;
+
+      strong {
+        color: $color-text-secondary;
+      }
+    }
+  }
+
+  .dialogue-text-resultat-recherche {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: $spacing-md;
+    padding: $spacing-md;
+    background: linear-gradient(135deg, rgba($color-primary, 0.05), rgba($color-primary, 0.02));
+    border-radius: $border-radius-sm;
+    border-left: 4px solid $color-primary;
+    box-shadow: $shadow-inset;
+  }
+
+  .dialogue-footer-resultat-recherche {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-sm;
+    padding-top: $gap-sm;
+    border-top: 1px solid $color-border;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      gap: $gap-sm;
+      align-items: flex-start;
+    }
+
+    .dialogue-info-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-muted;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+
+    .dialogue-observation-resultat-recherche {
+      @include typography-p4;
+      color: $color-warning;
+      font-style: italic;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+      background: rgba($color-warning, 0.1);
+      padding: 4px 8px;
+      border-radius: $border-radius-xs;
+    }
+  }
+}
+
+// Styles pour les dialogues complets (scènes)
+.dialogues-complets-list-resultat-recherche {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dialogue-complet-item-resultat-recherche {
+  padding: $spacing-lg;
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  border: 1px solid $color-border;
+  transition: $transition-fast;
+  box-shadow: $shadow;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    border-color: $color-info;
+    transform: translateY(-2px);
+  }
+
+  .dialogue-header-resultat-recherche {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+    padding-bottom: $gap-sm;
+    border-bottom: 1px solid $color-border;
+
+    .dialogue-personnage-resultat-recherche {
+      @include typography-p3;
+      color: $color-info;
+      font-weight: $font-weight-bold;
+    }
+
+    .dialogue-ordre-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-muted;
+      background: rgba($color-info, 0.1);
+      padding: 2px 8px;
+      border-radius: $border-radius-xs;
+    }
+  }
+
+  .dialogue-text-resultat-recherche {
+    @include typography-p2;
+    color: $color-text-primary;
+    line-height: 1.6;
+    margin-bottom: $spacing-md;
+    padding: $spacing-md;
+    background: linear-gradient(135deg, rgba($color-info, 0.05), rgba($color-info, 0.02));
+    border-radius: $border-radius-sm;
+    border-left: 4px solid $color-info;
+    font-style: italic;
+  }
+
+  .dialogue-observation-resultat-recherche {
+    @include typography-p4;
+    color: $color-warning;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    background: rgba($color-warning, 0.1);
+    padding: $gap-sm;
+    border-radius: $border-radius-xs;
+    border-left: 3px solid $color-warning;
+  }
+}
+
+// =============================================
+// ÉTATS (CHARGEMENT, ERREUR, VIDE)
+// =============================================
+.loading-state-resultat-recherche,
+.error-state-resultat-recherche,
+.empty-state-resultat-recherche {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  margin: $spacing-md 0;
+  max-width: 500px;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
+  }
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin-bottom: $gap-xs;
+  }
+
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    margin: 0 auto $spacing-md auto;
+  }
+}
+
+.error-state-resultat-recherche {
+  i {
+    color: $color-error;
+  }
+}
+
+.empty-state-resultat-recherche {
+  i {
+    color: $color-warning;
+  }
+}
+
+.btn-retry-resultat-recherche {
+  padding: $gap-sm $spacing-md;
+  background: $color-primary;
+  border: none;
+  border-radius: $border-radius-xs;
+  color: $color-white;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  &:hover {
+    background: darken($color-primary, 10%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .sidebar-right-resultat-recherche {
+    width: 280px;
+  }
+
+  .main-content-resultat-recherche {
+    margin-left: 280px;
+  }
+
+  .details-container-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .sidebar-right-resultat-recherche {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+
+  .main-content-resultat-recherche {
+    margin-left: 0;
+  }
+
+  .app-wrapper-global-resultat-recherche {
+    flex-direction: column;
+  }
+
+  .details-container-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+
+  .section-card-resultat-recherche {
+    max-width: 100%;
+
+    &.dialogue-card-resultat-recherche {
+      grid-column: 1;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .resultat-recherche-container {
+    padding: $spacing-sm;
+  }
+
+  .quick-actions-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+
+  .card-content-resultat-recherche {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .dialogues-list-resultat-recherche,
+  .dialogues-complets-list-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .card-header-resultat-recherche {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+
+  .export-buttons-resultat-recherche {
+    width: 100%;
+  }
+
+  .details-grid-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+
+  .dialogue-item-resultat-recherche .dialogue-header-resultat-recherche,
+  .dialogue-item-resultat-recherche .dialogue-footer-resultat-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+
+  .quick-action-btn-resultat-recherche,
+  .export-buttons-resultat-recherche button,
+  .dialogue-item-resultat-recherche,
+  .dialogue-complet-item-resultat-recherche,
+  .scene-planning-item-resultat-recherche,
+  .personnage-detailed-item-resultat-recherche {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// =============================================
+// MODAL / DIALOGUE EMAIL
+// =============================================
+.modal-overlay-resultat-recherche {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: $z-index-modal;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content-resultat-recherche {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-xl;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header-resultat-recherche {
+  padding: $spacing-md;
+  border-bottom: 1px solid $color-border;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    @include typography-playfair-h4;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+}
+
+.modal-close-btn-resultat-recherche {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  font-size: $font-size-p2;
+  padding: $gap-xs;
+  transition: $transition-fast;
+
+  &:hover {
+    color: $color-error;
+    transform: scale(1.1);
+  }
+}
+
+.modal-body-resultat-recherche {
+  padding: $spacing-md;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.modal-footer-resultat-recherche {
+  padding: $spacing-md;
+  border-top: 1px solid $color-border;
+  display: flex;
+  justify-content: flex-end;
+  gap: $gap-md;
+  background: $color-background-alt;
+  border-radius: 0 0 $border-radius-sm $border-radius-sm;
+}
+
+.form-group-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+  }
+}
+
+.emails-input-container-resultat-recherche {
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $gap-xs;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-xs;
+  background: $color-white;
+
+  &:focus-within {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+}
+
+.email-tags-resultat-recherche {
+  display: contents;
+}
+
+.email-tag-resultat-recherche {
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  padding: 2px 8px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  border: 1px solid rgba($color-primary, 0.2);
+}
+
+.email-tag-remove-resultat-recherche {
+  background: none;
+  border: none;
+  color: $color-primary;
+  cursor: pointer;
+  padding: 0;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    color: darken($color-primary, 10%);
+  }
+}
+
+.email-input-multiple-resultat-recherche {
+  border: none;
+  outline: none;
+  flex: 1;
+  min-width: 150px;
+  font-size: $font-size-p4;
+  padding: 4px;
+  color: $color-text-primary;
+}
+
+.help-text-resultat-recherche {
+  font-size: $font-size-p5;
+  color: $color-text-muted;
+  font-style: italic;
+}
+
+.form-input-resultat-recherche,
+.form-textarea-resultat-recherche {
+  width: 100%;
+  padding: $padding-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  transition: $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+}
+
+.form-textarea-resultat-recherche {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.destinataires-list-resultat-recherche {
+  margin-top: $spacing-sm;
+
+  h4 {
+    @include typography-p4;
+    font-weight: $font-weight-medium;
+    margin-bottom: $gap-sm;
+  }
+}
+
+.emails-list-resultat-recherche {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 100px;
+  overflow-y: auto;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+}
+
+.email-item-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $gap-xs $padding-sm;
+  border-bottom: 1px solid $color-border;
+  font-size: $font-size-p4;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $color-background-alt;
+  }
+}
+
+.email-remove-btn-resultat-recherche {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover {
+    color: $color-error;
+  }
+}
+
+.cancel-btn-resultat-recherche {
+  padding: $gap-sm $spacing-md;
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  color: $color-text-secondary;
+  cursor: pointer;
+  font-weight: $font-weight-medium;
+  transition: $transition-fast;
+
+  &:hover:not(:disabled) {
+    background: $color-background-alt;
+    color: $color-text-primary;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.submit-btn-resultat-recherche {
+  padding: $gap-sm $spacing-md;
+  background: $color-primary;
+  border: none;
+  border-radius: $border-radius-xs;
+  color: $color-white;
+  cursor: pointer;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  transition: $transition-fast;
+
+  &:hover:not(:disabled) {
+    background: darken($color-primary, 10%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: $color-text-muted;
+  }
+}
