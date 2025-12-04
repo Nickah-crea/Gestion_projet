@@ -26,22 +26,32 @@
             <option value="raccords-projet">Raccords Projet PDF</option>
             <option value="raccords-comedien">Raccords Comédien PDF</option>
             <option value="raccords-scene">Raccords Scène PDF</option>
+            <option value="scene-dialogues">Dialogues d'une Scène PDF</option>
+            <option value="scene-complete">Scène Complète PDF</option>
           </select>
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <div v-if="loadingComediens" class="loading-indicator">
+          <i class="fas fa-spinner fa-spin"></i> Chargement des comédiens...
         </div>
 
         <!-- Sélection du comédien pour les raccords -->
         <div v-if="selectedExportType === 'raccords-comedien'" class="form-section-email">
           <label class="form-label-email">Sélectionner un comédien :</label>
-          <select v-model="selectedComedienId" class="form-select-email">
+          <select v-model="selectedComedienId" class="form-select-email" :disabled="loadingComediens">
             <option value="">Sélectionnez un comédien</option>
-            <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
-              {{ comedien.nom }}
+            <option v-for="comedien in comediensList" :key="comedien.id" :value="comedien.id">
+              {{ comedien.nom }} {{ comedien.email ? `(${comedien.email})` : '' }}
             </option>
           </select>
+          <p v-if="comediensList.length === 0 && !loadingComediens" class="empty-message">
+            Aucun comédien trouvé pour ce projet
+          </p>
         </div>
 
         <!-- Sélection de la scène pour les raccords -->
-        <div v-if="selectedExportType === 'raccords-scene'" class="form-section-email">
+        <div v-if="selectedExportType === 'raccords-scene' || selectedExportType === 'scene-dialogues' || selectedExportType === 'scene-complete'" class="form-section-email">
           <label class="form-label-email">Sélectionner une scène :</label>
           <select v-model="selectedSceneId" class="form-select-email">
             <option value="">Sélectionnez une scène</option>
@@ -84,9 +94,10 @@
             v-if="recipientType === 'comedien'" 
             v-model="selectedRecipientComedienId" 
             class="form-select-email"
+            :disabled="loadingComediens"
           >
             <option value="">Sélectionnez un comédien</option>
-            <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
+            <option v-for="comedien in comediensList" :key="comedien.id" :value="comedien.id">
               {{ comedien.nom }} - {{ comedien.email || 'Email non disponible' }}
             </option>
           </select>
@@ -131,7 +142,7 @@
             <p v-if="selectedComedienId && selectedExportType === 'raccords-comedien'">
               <strong>Comédien :</strong> {{ getComedienName(selectedComedienId) }}
             </p>
-            <p v-if="selectedSceneId && selectedExportType === 'raccords-scene'">
+            <p v-if="selectedSceneId && (selectedExportType === 'raccords-scene' || selectedExportType === 'scene-dialogues' || selectedExportType === 'scene-complete')">
               <strong>Scène :</strong> {{ getSceneName(selectedSceneId) }}
             </p>
             <p><strong>Destinataire :</strong> {{ getRecipientInfo() }}</p>
@@ -172,7 +183,6 @@ import { ref, computed, watch, onMounted, defineExpose } from 'vue'
 import axios from 'axios'
 import jsPDF from 'jspdf'
 
-// Props
 const props = defineProps({
   showModal: Boolean,
   currentEpisode: Object,
@@ -197,6 +207,9 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 
+const comediensList = ref([])
+const loadingComediens = ref(false)
+
 // Computed properties
 const canSendEmail = computed(() => {
   if (!selectedExportType.value) return false
@@ -206,7 +219,10 @@ const canSendEmail = computed(() => {
     return false
   }
   
-  if (selectedExportType.value === 'raccords-scene' && !selectedSceneId.value) {
+  if ((selectedExportType.value === 'raccords-scene' || 
+       selectedExportType.value === 'scene-dialogues' || 
+       selectedExportType.value === 'scene-complete') && 
+      !selectedSceneId.value) {
     return false
   }
   
@@ -249,13 +265,39 @@ const getExportTypeLabel = (type) => {
     'episode': 'Épisode PDF',
     'raccords-projet': 'Raccords Projet PDF',
     'raccords-comedien': 'Raccords Comédien PDF',
-    'raccords-scene': 'Raccords Scène PDF'
+    'raccords-scene': 'Raccords Scène PDF',
+    'scene-dialogues': 'Dialogues d\'une Scène PDF',
+    'scene-complete': 'Scène Complète PDF'
   }
   return labels[type] || type
 }
 
+const loadComediens = async () => {
+  loadingComediens.value = true
+  try {
+    // Si un projet est sélectionné, charger les comédiens de ce projet
+    if (props.projetInfos?.id) {
+      const response = await axios.get(`/api/comediens/projet/${props.projetInfos.id}`)
+      comediensList.value = response.data
+      console.log('Comédiens chargés:', comediensList.value.length)
+    } 
+    // Sinon, charger tous les comédiens
+    else {
+      const response = await axios.get('/api/comediens')
+      comediensList.value = response.data
+      console.log('Tous les comédiens chargés:', comediensList.value.length)
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des comédiens:', error)
+    errorMessage.value = 'Erreur lors du chargement des comédiens'
+    comediensList.value = []
+  } finally {
+    loadingComediens.value = false
+  }
+}
+
 const getComedienName = (comedienId) => {
-  const comedien = props.comediens.find(c => c.id === comedienId)
+  const comedien = comediensList.value.find(c => c.id === comedienId)
   return comedien ? comedien.nom : 'Inconnu'
 }
 
@@ -266,13 +308,28 @@ const getSceneName = (sceneId) => {
 
 const getRecipientInfo = () => {
   if (recipientType.value === 'comedien' && selectedRecipientComedienId.value) {
-    const comedien = props.comediens.find(c => c.id === selectedRecipientComedienId.value)
+    const comedien = comediensList.value.find(c => c.id === selectedRecipientComedienId.value)
     return comedien ? `${comedien.nom} (${comedien.email || 'Email non disponible'})` : 'Non sélectionné'
   } else if (recipientType.value === 'manual' && manualEmail.value) {
     return manualEmail.value
   }
   return 'Non spécifié'
 }
+
+// Watcher pour charger les comédiens quand la modale s'ouvre
+watch(() => props.showModal, (newValue) => {
+  if (newValue) {
+    loadComediens()
+    resetForm()
+  }
+})
+
+// Watcher pour charger les comédiens quand le projet change
+watch(() => props.projetInfos?.id, () => {
+  if (props.showModal) {
+    loadComediens()
+  }
+})
 
 const generateDefaultSubject = () => {
   let base = 'Export PDF - '
@@ -298,6 +355,12 @@ const generateDefaultSubject = () => {
       break
     case 'raccords-scene':
       base += `Raccords ${getSceneName(selectedSceneId.value)}`
+      break
+    case 'scene-dialogues':
+      base += `Dialogues ${getSceneName(selectedSceneId.value)}`
+      break
+    case 'scene-complete':
+      base += `Scène ${getSceneName(selectedSceneId.value)}`
       break
     default:
       base += 'Document'
@@ -331,6 +394,12 @@ const generateDefaultMessage = () => {
     case 'raccords-scene':
       base += `Ce document contient les raccords de la ${getSceneName(selectedSceneId.value)}.`
       break
+    case 'scene-dialogues':
+      base += `Ce document contient les dialogues de la ${getSceneName(selectedSceneId.value)}.`
+      break
+    case 'scene-complete':
+      base += `Ce document contient les informations complètes de la ${getSceneName(selectedSceneId.value)}.`
+      break
     default:
       base += 'Document PDF.'
   }
@@ -355,11 +424,14 @@ watch(selectedComedienId, (newComedienId) => {
 })
 
 watch(selectedSceneId, (newSceneId) => {
-  if (newSceneId && selectedExportType.value === 'raccords-scene') {
+  if (newSceneId && (selectedExportType.value === 'raccords-scene' || 
+                     selectedExportType.value === 'scene-dialogues' || 
+                     selectedExportType.value === 'scene-complete')) {
     emailSubject.value = generateDefaultSubject()
   }
 })
 
+// Méthode principale d'envoi d'email
 // Méthode principale d'envoi d'email
 const sendEmail = async () => {
   if (!canSendEmail.value) return
@@ -369,18 +441,39 @@ const sendEmail = async () => {
   successMessage.value = ''
   
   try {
+    // Debug: Afficher les données
+    console.log('Debug - comediensList:', comediensList.value)
+    console.log('Debug - selectedRecipientComedienId:', selectedRecipientComedienId.value)
+    console.log('Debug - recipientType:', recipientType.value)
+    
     // 1. Récupérer l'email du destinataire
     let recipientEmail = ''
     
     if (recipientType.value === 'comedien') {
-      const comedien = props.comediens.find(c => c.id === selectedRecipientComedienId.value)
-      if (!comedien || !comedien.email) {
-        throw new Error('Aucun email trouvé pour le comédien sélectionné')
+      // CORRECTION : Utiliser comediensList.value
+      const comedien = comediensList.value.find(c => c.id === selectedRecipientComedienId.value)
+      
+      // Debug supplémentaire
+      console.log('Debug - comedien trouvé:', comedien)
+      console.log('Debug - email du comédien:', comedien?.email)
+      
+      if (!comedien) {
+        throw new Error('Comédien non trouvé')
       }
-      recipientEmail = comedien.email
+      
+      if (!comedien.email || comedien.email.trim() === '') {
+        throw new Error(`Le comédien "${comedien.nom}" n'a pas d'email enregistré`)
+      }
+      
+      recipientEmail = comedien.email.trim()
     } else {
-      recipientEmail = manualEmail.value
+      if (!manualEmail.value || manualEmail.value.trim() === '') {
+        throw new Error('Veuillez saisir une adresse email valide')
+      }
+      recipientEmail = manualEmail.value.trim()
     }
+    
+    console.log('Debug - recipientEmail final:', recipientEmail)
     
     // 2. Générer le PDF selon le type sélectionné en utilisant les méthodes existantes
     let pdfData = null
@@ -406,10 +499,21 @@ const sendEmail = async () => {
         pdfData = await generateRaccordsProjetPDF();
         break;
       case 'raccords-comedien':
+        // Vérifier que le comédien pour les raccords a un email
+        const raccordComedien = comediensList.value.find(c => c.id === selectedComedienId.value)
+        if (raccordComedien && (!raccordComedien.email || raccordComedien.email.trim() === '')) {
+          console.warn(`Le comédien "${raccordComedien.nom}" pour les raccords n'a pas d'email`)
+        }
         pdfData = await generateRaccordsComedienPDF(selectedComedienId.value);
         break;
       case 'raccords-scene':
         pdfData = await generateRaccordsScenePDF(selectedSceneId.value);
+        break;
+      case 'scene-dialogues':
+        pdfData = await generateSceneDialoguesPDF(selectedSceneId.value);
+        break;
+      case 'scene-complete':
+        pdfData = await generateSceneCompletePDF(selectedSceneId.value);
         break;
       default:
         throw new Error('Type d\'export non supporté');
@@ -436,10 +540,11 @@ const sendEmail = async () => {
       subject: emailSubject.value,
       message: emailMessage.value,
       attachmentName: attachmentName,
-      pdfData: pdfBase64 // Maintenant en Base64 string
+      pdfData: pdfBase64
     };
     
     console.log('Envoi email à:', recipientEmail);
+    console.log('Sujet:', emailSubject.value);
     
     // 4. Envoyer l'email via l'API
     const response = await axios.post('/api/export/send-pdf-email', emailRequest, {
@@ -491,11 +596,11 @@ const generateAttachmentName = () => {
       baseName = `raccords-${comedienName}`;
       break;
     case 'raccords-scene':
-      const sceneName = getSceneName(selectedSceneId.value)
-        .replace(/\s+/g, '-')
-        .substring(0, 20)
-        .replace(/[^a-zA-Z0-9-]/g, '');
-      baseName = `raccords-${sceneName}`;
+    case 'scene-dialogues':
+    case 'scene-complete':
+      const scene = props.currentSequence?.scenes?.find(s => s.idScene === selectedSceneId.value);
+      const sceneName = scene ? `scene-${scene.ordre}-${scene.titre}`.substring(0, 30).replace(/[^a-zA-Z0-9-]/g, '') : 'scene';
+      baseName = `${selectedExportType.value}-${sceneName}`;
       break;
     default:
       baseName = 'document';
@@ -504,7 +609,7 @@ const generateAttachmentName = () => {
   return `${baseName}.pdf`;
 };
 
-// Méthodes de génération de PDF - Adaptation des méthodes existantes d'EcranTravail.vue
+// 1. PDF des scènes de la séquence
 const generateScenesPDF = async () => {
   return new Promise((resolve) => {
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -616,6 +721,7 @@ const generateScenesPDF = async () => {
   });
 };
 
+// 2. PDF des dialogues de la séquence
 const generateSequenceDialoguesPDF = async () => {
   return new Promise((resolve) => {
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -723,6 +829,7 @@ const generateSequenceDialoguesPDF = async () => {
   });
 };
 
+// 3. PDF complet de la séquence
 const generateSequenceCompletePDF = async () => {
   return new Promise((resolve) => {
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -879,6 +986,7 @@ const generateSequenceCompletePDF = async () => {
   });
 };
 
+// 4. PDF de l'épisode
 const generateEpisodePDF = async () => {
   return new Promise((resolve) => {
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -1035,46 +1143,1019 @@ const generateEpisodePDF = async () => {
   });
 };
 
-// Méthodes pour les raccords (simplifiées pour l'exemple)
+const loadRaccordImage = async (filename) => {
+  if (!filename || filename.includes('undefined') || filename === 'undefined') {
+    console.warn('Nom de fichier invalide:', filename);
+    return null;
+  }
+
+  try {
+    // Essayer différentes URLs pour charger l'image
+    const urls = [
+      `http://localhost:8080/api/images/raccords/${filename}`,
+      `http://localhost:8080/api/images/raccord/${filename}`,
+      `http://localhost:8080/api/static/images/raccords/${filename}`
+    ];
+
+    for (const url of urls) {
+      try {
+        console.log('Tentative de chargement depuis:', url);
+        const response = await axios.get(url, {
+          responseType: 'blob',
+          timeout: 10000
+        });
+        
+        if (response.status === 200) {
+          const base64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(response.data);
+          });
+          console.log('Image chargée avec succès:', filename);
+          return base64;
+        }
+      } catch (urlError) {
+        console.warn(`Échec avec URL ${url}:`, urlError.message);
+      }
+    }
+    
+    console.warn('Échec de tous les essais pour:', filename);
+    return null;
+  } catch (error) {
+    console.error('Erreur lors du chargement de l\'image:', filename, error);
+    return null;
+  }
+};
+
+
+// 5. PDF des raccords du projet
 const generateRaccordsProjetPDF = async () => {
-  // Implémentez la logique de génération du PDF des raccords projet
-  return new Promise((resolve) => {
-    const pdf = new jsPDF();
-    pdf.text(`RACCORDS PROJET - ${props.projetInfos?.titre}`, 20, 20);
-    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 20, 30);
-    pdf.text(`Projet ID: ${props.projetInfos?.id}`, 20, 40);
-    // Ajoutez ici la logique complète des raccords...
-    
-    const pdfOutput = pdf.output('arraybuffer');
-    resolve(new Uint8Array(pdfOutput));
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`/api/raccords/export/projet/${props.projetInfos?.id}`);
+      const raccords = response.data;
+
+      if (!raccords || raccords.length === 0) {
+        throw new Error('Aucun raccord trouvé pour ce projet');
+      }
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const primaryColor = [33, 41, 79];
+
+      // Page de garde
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, 210, 297, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.text("FICHE RACCORDS", 105, 100, { align: 'center' });
+      pdf.setFontSize(18);
+      pdf.text(props.projetInfos?.titre.toUpperCase(), 105, 115, { align: 'center' });
+      pdf.setFontSize(12);
+      pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
+
+      pdf.addPage();
+      let y = 30;
+
+      // En-tête
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, 210, 25, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(16);
+      pdf.text("TOUS LES RACCORDS DU PROJET", 105, 15, { align: 'center' });
+
+      // Parcourir tous les raccords
+      for (const [index, r] of raccords.entries()) {
+        if (y > 200) { // Réduire pour laisser de la place pour les images
+          pdf.addPage();
+          y = 30;
+        }
+
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'} – ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 15, y);
+        y += 8;
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        
+        // Informations détaillées
+        if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 6;
+        if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 6;
+        if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 6;
+        if (r.comedienNom) pdf.text(`Comédien: ${r.comedienNom}`, 20, y), y += 6;
+        if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 6;
+        
+        if (r.description) {
+          const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
+          pdf.text(lines, 20, y);
+          y += lines.length * 5 + 4;
+        }
+
+        pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
+        y += 6;
+
+        if (r.dateTournageSource || r.dateTournageCible) {
+          pdf.text(`Tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
+          y += 6;
+        }
+
+        // IMAGES - NOUVEAU : Charger et afficher les images
+        if (r.images && r.images.length > 0) {
+          console.log(`Raccord ${index} a ${r.images.length} images`);
+          
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(...primaryColor);
+          pdf.text("Images associées:", 20, y);
+          y += 8;
+          
+          let imageX = 25;
+          let imagesInRow = 0;
+          const maxImagesPerRow = 3;
+          
+          for (const [imgIndex, image] of r.images.entries()) {
+            if (!image.nomFichier || image.nomFichier.includes('undefined')) {
+              console.warn(`Image ${imgIndex} ignorée - nom invalide`);
+              continue;
+            }
+            
+            // Vérifier si on a besoin d'une nouvelle page
+            if (y > 230) {
+              pdf.addPage();
+              y = 30;
+              imageX = 25;
+              imagesInRow = 0;
+            }
+            
+            try {
+              console.log(`Chargement image ${imgIndex + 1}:`, image.nomFichier);
+              const base64 = await loadRaccordImage(image.nomFichier);
+              
+              if (base64) {
+                // Créer un cadre pour l'image
+                pdf.setFillColor(250, 250, 250);
+                pdf.roundedRect(imageX - 2, y - 2, 40, 40, 4, 4, 'F');
+                
+                pdf.setDrawColor(200, 200, 200);
+                pdf.setLineWidth(0.5);
+                pdf.roundedRect(imageX - 2, y - 2, 40, 40, 4, 4);
+                
+                // Ajouter l'image (redimensionnée pour s'adapter)
+                pdf.addImage(base64, 'JPEG', imageX, y, 36, 36);
+                
+                // Badge de référence si c'est une image de référence
+                if (image.estImageReference) {
+                  pdf.setFillColor(220, 53, 69);
+                  pdf.circle(imageX + 5, y + 5, 4, 'F');
+                  pdf.setTextColor(255, 255, 255);
+                  pdf.setFontSize(6);
+                  pdf.text('R', imageX + 4, y + 6.5);
+                }
+                
+                // Légende
+                pdf.setFontSize(7);
+                pdf.setTextColor(100, 100, 100);
+                const caption = image.descriptionImage || `Image ${imgIndex + 1}`;
+                const captionLines = pdf.splitTextToSize(caption, 36);
+                
+                captionLines.forEach((line, lineIndex) => {
+                  pdf.text(line, imageX, y + 40 + (lineIndex * 3));
+                });
+                
+                imagesInRow++;
+                imageX += 45;
+                
+                if (imagesInRow >= maxImagesPerRow) {
+                  imageX = 25;
+                  y += 55;
+                  imagesInRow = 0;
+                }
+                
+                console.log(`✅ Image ${imgIndex + 1} ajoutée`);
+              }
+            } catch (imageError) {
+              console.warn(`Erreur image ${imgIndex + 1}:`, imageError);
+              
+              // Placeholder pour image manquante
+              pdf.setFillColor(245, 245, 245);
+              pdf.roundedRect(imageX, y, 36, 36, 4, 4, 'F');
+              
+              pdf.setDrawColor(200, 200, 200);
+              pdf.setLineWidth(0.5);
+              pdf.line(imageX, y, imageX + 36, y + 36);
+              pdf.line(imageX + 36, y, imageX, y + 36);
+              
+              pdf.setTextColor(150, 150, 150);
+              pdf.setFontSize(8);
+              pdf.setFont("helvetica", "italic");
+              pdf.text('N/A', imageX + 15, y + 18);
+              
+              imagesInRow++;
+              imageX += 45;
+              
+              if (imagesInRow >= maxImagesPerRow) {
+                imageX = 25;
+                y += 55;
+                imagesInRow = 0;
+              }
+            }
+          }
+          
+          if (imagesInRow > 0) {
+            y += 55; // Espace après les images
+          }
+          
+          console.log(`${r.images.filter(img => img.nomFichier && !img.nomFichier.includes('undefined')).length} image(s) ajoutée(s) pour ce raccord`);
+        } else {
+          pdf.setFontSize(9);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text('Aucune image disponible', 20, y);
+          y += 15;
+        }
+
+        y += 10;
+        pdf.setDrawColor(200, 200, 200);
+        pdf.line(15, y - 5, 195, y - 5);
+        y += 5;
+      }
+
+      // Pied de page
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let i = 2; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(9);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(`Projet: ${props.projetInfos?.titre} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
+      }
+
+      const pdfOutput = pdf.output('arraybuffer');
+      resolve(new Uint8Array(pdfOutput));
+
+    } catch (err) {
+      console.error('Erreur génération PDF raccords projet:', err);
+      reject(err);
+    }
   });
 };
 
+// 6. PDF des raccords par comédien
 const generateRaccordsComedienPDF = async (comedienId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`/api/raccords/export/comedien/${comedienId}`);
+      const raccords = response.data;
+
+      if (!raccords || raccords.length === 0) {
+        throw new Error('Aucun raccord trouvé pour ce comédien');
+      }
+
+      const comedienNom = raccords[0]?.comedienNom || 'Comédien inconnu';
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const primaryColor = [33, 41, 79];
+
+      // Page de garde
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, 210, 297, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.text(`RACCORDS POUR`, 105, 90, { align: 'center' });
+      pdf.text(`${comedienNom.toUpperCase()}`, 105, 105, { align: 'center' });
+      pdf.setFontSize(14);
+      pdf.text('Accessoires • Vêtements • Coiffure', 105, 120, { align: 'center' });
+      pdf.setFontSize(12);
+      pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
+
+      pdf.addPage();
+      let y = 30;
+
+      // En-tête
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, 210, 25, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(16);
+      pdf.text(`RACCORDS - ${comedienNom.toUpperCase()}`, 105, 15, { align: 'center' });
+
+      for (const [index, r] of raccords.entries()) {
+        if (y > 200) { // Réduire pour laisser de la place pour les images
+          pdf.addPage();
+          y = 30;
+        }
+
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'} – ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 15, y);
+        y += 8;
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        
+        if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 6;
+        if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 6;
+        if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 6;
+        if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 6;
+        
+        if (r.description) {
+          const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
+          pdf.text(lines, 20, y);
+          y += lines.length * 5 + 4;
+        }
+
+        pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
+        y += 6;
+
+        if (r.dateTournageSource || r.dateTournageCible) {
+          pdf.text(`Tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
+          y += 6;
+        }
+
+        // IMAGES - NOUVEAU : Charger et afficher les images
+        if (r.images && r.images.length > 0) {
+          console.log(`Raccord ${index} a ${r.images.length} images`);
+          
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(...primaryColor);
+          pdf.text("Images associées:", 20, y);
+          y += 8;
+          
+          let imageX = 25;
+          let imagesInRow = 0;
+          const maxImagesPerRow = 3;
+          
+          for (const [imgIndex, image] of r.images.entries()) {
+            if (!image.nomFichier || image.nomFichier.includes('undefined')) {
+              console.warn(`Image ${imgIndex} ignorée - nom invalide`);
+              continue;
+            }
+            
+            // Vérifier si on a besoin d'une nouvelle page
+            if (y > 230) {
+              pdf.addPage();
+              y = 30;
+              imageX = 25;
+              imagesInRow = 0;
+            }
+            
+            try {
+              console.log(`Chargement image ${imgIndex + 1}:`, image.nomFichier);
+              const base64 = await loadRaccordImage(image.nomFichier);
+              
+              if (base64) {
+                // Créer un cadre pour l'image
+                pdf.setFillColor(250, 250, 250);
+                pdf.roundedRect(imageX - 2, y - 2, 40, 40, 4, 4, 'F');
+                
+                pdf.setDrawColor(200, 200, 200);
+                pdf.setLineWidth(0.5);
+                pdf.roundedRect(imageX - 2, y - 2, 40, 40, 4, 4);
+                
+                // Ajouter l'image
+                pdf.addImage(base64, 'JPEG', imageX, y, 36, 36);
+                
+                // Badge de référence
+                if (image.estImageReference) {
+                  pdf.setFillColor(220, 53, 69);
+                  pdf.circle(imageX + 5, y + 5, 4, 'F');
+                  pdf.setTextColor(255, 255, 255);
+                  pdf.setFontSize(6);
+                  pdf.text('R', imageX + 4, y + 6.5);
+                }
+                
+                // Légende
+                pdf.setFontSize(7);
+                pdf.setTextColor(100, 100, 100);
+                const caption = image.descriptionImage || `Image ${imgIndex + 1}`;
+                const captionLines = pdf.splitTextToSize(caption, 36);
+                
+                captionLines.forEach((line, lineIndex) => {
+                  pdf.text(line, imageX, y + 40 + (lineIndex * 3));
+                });
+                
+                imagesInRow++;
+                imageX += 45;
+                
+                if (imagesInRow >= maxImagesPerRow) {
+                  imageX = 25;
+                  y += 55;
+                  imagesInRow = 0;
+                }
+              }
+            } catch (imageError) {
+              console.warn(`Erreur image ${imgIndex + 1}:`, imageError);
+              
+              // Placeholder pour image manquante
+              pdf.setFillColor(245, 245, 245);
+              pdf.roundedRect(imageX, y, 36, 36, 4, 4, 'F');
+              
+              pdf.setDrawColor(200, 200, 200);
+              pdf.setLineWidth(0.5);
+              pdf.line(imageX, y, imageX + 36, y + 36);
+              pdf.line(imageX + 36, y, imageX, y + 36);
+              
+              pdf.setTextColor(150, 150, 150);
+              pdf.setFontSize(8);
+              pdf.setFont("helvetica", "italic");
+              pdf.text('N/A', imageX + 15, y + 18);
+              
+              imagesInRow++;
+              imageX += 45;
+              
+              if (imagesInRow >= maxImagesPerRow) {
+                imageX = 25;
+                y += 55;
+                imagesInRow = 0;
+              }
+            }
+          }
+          
+          if (imagesInRow > 0) {
+            y += 55;
+          }
+        } else {
+          pdf.setFontSize(9);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text('Aucune image disponible', 20, y);
+          y += 15;
+        }
+
+        y += 10;
+        pdf.setDrawColor(200, 200, 200);
+        pdf.line(15, y - 5, 195, y - 5);
+        y += 5;
+      }
+
+      // Pied de page
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let i = 2; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(9);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(`Raccords pour ${comedienNom} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
+      }
+
+      const pdfOutput = pdf.output('arraybuffer');
+      resolve(new Uint8Array(pdfOutput));
+      
+    } catch (err) {
+      console.error('Erreur génération PDF raccords comédien:', err);
+      reject(err);
+    }
+  });
+};
+
+
+// 7. PDF des raccords par scène
+const generateRaccordsScenePDF = async (sceneId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.get(`/api/raccords/scene/${sceneId}`);
+      const raccords = response.data;
+
+      if (!raccords || raccords.length === 0) {
+        throw new Error('Aucun raccord trouvé pour cette scène');
+      }
+
+      const scene = props.currentSequence?.scenes?.find(s => s.idScene === sceneId);
+      const sceneTitre = scene?.titre || `Scène ${sceneId}`;
+      const sceneOrdre = scene?.ordre || '';
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const primaryColor = [33, 41, 79];
+
+      // Page de garde
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, 210, 297, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.text("RAPPORT DES RACCORDS", 105, 100, { align: 'center' });
+      pdf.setFontSize(18);
+      pdf.text(`SCÈNE ${sceneOrdre}`, 105, 120, { align: 'center' });
+      
+      if (sceneTitre) {
+        const titleLines = pdf.splitTextToSize(sceneTitre, 160);
+        let titleY = 140;
+        titleLines.forEach(line => {
+          pdf.text(line, 105, titleY, { align: 'center' });
+          titleY += 10;
+        });
+      }
+      
+      pdf.setFontSize(12);
+      pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
+
+      pdf.addPage();
+      let y = 30;
+
+      // En-tête
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, 210, 25, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(16);
+      pdf.text(`RACCORDS - SCÈNE ${sceneOrdre}`, 105, 15, { align: 'center' });
+
+      for (const [index, r] of raccords.entries()) {
+        if (y > 200) { // Réduire pour laisser de la place pour les images
+          pdf.addPage();
+          y = 30;
+        }
+
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'}`, 15, y);
+        y += 8;
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        
+        pdf.text(`De: ${r.sceneSourceTitre || '?'} → À: ${r.sceneCibleTitre || '?'}`, 20, y);
+        y += 6;
+        
+        if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 6;
+        if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 6;
+        if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 6;
+        if (r.comedienNom) pdf.text(`Comédien: ${r.comedienNom}`, 20, y), y += 6;
+        if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 6;
+        
+        if (r.description) {
+          const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
+          pdf.text(lines, 20, y);
+          y += lines.length * 5 + 4;
+        }
+
+        pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
+        y += 6;
+
+        if (r.dateTournageSource || r.dateTournageCible) {
+          pdf.text(`Tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
+          y += 6;
+        }
+
+        // IMAGES - NOUVEAU : Charger et afficher les images
+        if (r.images && r.images.length > 0) {
+          console.log(`Raccord ${index} a ${r.images.length} images`);
+          
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(...primaryColor);
+          pdf.text("Images associées:", 20, y);
+          y += 8;
+          
+          let imageX = 25;
+          let imagesInRow = 0;
+          const maxImagesPerRow = 3;
+          
+          for (const [imgIndex, image] of r.images.entries()) {
+            if (!image.nomFichier || image.nomFichier.includes('undefined')) {
+              console.warn(`Image ${imgIndex} ignorée - nom invalide`);
+              continue;
+            }
+            
+            // Vérifier si on a besoin d'une nouvelle page
+            if (y > 230) {
+              pdf.addPage();
+              y = 30;
+              imageX = 25;
+              imagesInRow = 0;
+            }
+            
+            try {
+              console.log(`Chargement image ${imgIndex + 1}:`, image.nomFichier);
+              const base64 = await loadRaccordImage(image.nomFichier);
+              
+              if (base64) {
+                // Créer un cadre pour l'image
+                pdf.setFillColor(250, 250, 250);
+                pdf.roundedRect(imageX - 2, y - 2, 50, 50, 4, 4, 'F');
+                
+                pdf.setDrawColor(200, 200, 200);
+                pdf.setLineWidth(0.5);
+                pdf.roundedRect(imageX - 2, y - 2, 50, 50, 4, 4);
+                
+                // Ajouter l'image (un peu plus grande pour les raccords de scène)
+                pdf.addImage(base64, 'JPEG', imageX, y, 46, 46);
+                
+                // Badge de référence
+                if (image.estImageReference) {
+                  pdf.setFillColor(220, 53, 69);
+                  pdf.circle(imageX + 5, y + 5, 5, 'F');
+                  pdf.setTextColor(255, 255, 255);
+                  pdf.setFontSize(6);
+                  pdf.text('R', imageX + 4.5, y + 7);
+                }
+                
+                // Légende détaillée
+                pdf.setFontSize(7);
+                pdf.setTextColor(100, 100, 100);
+                let caption = image.descriptionImage || `Image ${imgIndex + 1}`;
+                if (image.dateCreation) {
+                  caption += ` (${formatDate(image.dateCreation)})`;
+                }
+                const captionLines = pdf.splitTextToSize(caption, 46);
+                
+                captionLines.forEach((line, lineIndex) => {
+                  pdf.text(line, imageX, y + 50 + (lineIndex * 3));
+                });
+                
+                imagesInRow++;
+                imageX += 55;
+                
+                if (imagesInRow >= maxImagesPerRow) {
+                  imageX = 25;
+                  y += 65;
+                  imagesInRow = 0;
+                }
+              }
+            } catch (imageError) {
+              console.warn(`Erreur image ${imgIndex + 1}:`, imageError);
+              
+              // Placeholder pour image manquante
+              pdf.setFillColor(245, 245, 245);
+              pdf.roundedRect(imageX, y, 46, 46, 4, 4, 'F');
+              
+              pdf.setDrawColor(200, 200, 200);
+              pdf.setLineWidth(0.5);
+              pdf.line(imageX, y, imageX + 46, y + 46);
+              pdf.line(imageX + 46, y, imageX, y + 46);
+              
+              pdf.setTextColor(150, 150, 150);
+              pdf.setFontSize(8);
+              pdf.setFont("helvetica", "italic");
+              pdf.text('N/A', imageX + 19, y + 23);
+              
+              imagesInRow++;
+              imageX += 55;
+              
+              if (imagesInRow >= maxImagesPerRow) {
+                imageX = 25;
+                y += 65;
+                imagesInRow = 0;
+              }
+            }
+          }
+          
+          if (imagesInRow > 0) {
+            y += 65;
+          }
+        } else {
+          pdf.setFontSize(9);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text('Aucune image disponible', 20, y);
+          y += 15;
+        }
+
+        y += 10;
+        pdf.setDrawColor(200, 200, 200);
+        pdf.line(15, y - 5, 195, y - 5);
+        y += 5;
+      }
+
+      // Pied de page
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let i = 2; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(9);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(`Raccords Scène ${sceneOrdre} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
+      }
+
+      const pdfOutput = pdf.output('arraybuffer');
+      resolve(new Uint8Array(pdfOutput));
+      
+    } catch (err) {
+      console.error('Erreur génération PDF raccords scène:', err);
+      reject(err);
+    }
+  });
+};
+
+
+// 8. PDF des dialogues d'une scène spécifique
+const generateSceneDialoguesPDF = async (sceneId) => {
   return new Promise((resolve) => {
-    const pdf = new jsPDF();
-    const comedienName = getComedienName(comedienId);
-    pdf.text(`RACCORDS COMÉDIEN - ${comedienName}`, 20, 20);
-    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 20, 30);
-    pdf.text(`Projet: ${props.projetInfos?.titre}`, 20, 40);
-    // Ajoutez ici la logique complète des raccords comédien...
+    const scene = props.currentSequence?.scenes?.find(s => s.idScene === sceneId);
+    if (!scene) {
+      resolve(new Uint8Array());
+      return;
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+    const secondaryColor = [220, 53, 69];
+    
+    // En-tête
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 40, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.text(`PROJET: ${props.currentEpisode?.projetTitre || 'Cinema'}`, 20, 15);
+    pdf.setFontSize(12);
+    pdf.text(`Épisode ${props.currentEpisode?.ordre} - Séquence ${props.currentSequence?.ordre}`, 20, 25);
+    
+    pdf.text(`Scène ${scene.ordre}`, 160, 15);
+    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
+    pdf.text(`Dialogues: ${scene.dialogues?.length || 0}`, 160, 29);
+    
+    pdf.setDrawColor(...secondaryColor);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, 45, 190, 45);
+    
+    let yPosition = 60;
+    
+    // Titre
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(18);
+    pdf.text(`DIALOGUES - SCÈNE ${scene.ordre}`, 20, yPosition);
+    
+    yPosition += 10;
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(`Scène: ${scene.titre}`, 20, yPosition);
+    
+    yPosition += 15;
+    
+    // Dialogues
+    if (scene.dialogues?.length) {
+      scene.dialogues.forEach((dialogue, index) => {
+        if (yPosition > 250) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        // Personnage avec fond
+        pdf.setFillColor(245, 245, 245);
+        pdf.rect(20, yPosition - 5, 170, 8, 'F');
+        
+        pdf.setFontSize(11);
+        pdf.setTextColor(...primaryColor);
+        pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 22, yPosition);
+        
+        yPosition += 10;
+        
+        // Texte du dialogue
+        pdf.setFontSize(10);
+        pdf.setTextColor(0, 0, 0);
+        const dialogueLines = pdf.splitTextToSize(dialogue.texte, 165);
+        pdf.text(dialogueLines, 25, yPosition);
+        yPosition += (dialogueLines.length * 4.5) + 5;
+        
+        // Observation
+        if (dialogue.observation) {
+          pdf.setFontSize(9);
+          pdf.setTextColor(100, 100, 100);
+          pdf.text(`Note: ${dialogue.observation}`, 25, yPosition);
+          yPosition += 8;
+        }
+        
+        yPosition += 8;
+        
+        // Ligne de séparation
+        if (index < scene.dialogues.length - 1) {
+          pdf.setDrawColor(200, 200, 200);
+          pdf.line(20, yPosition - 3, 190, yPosition - 3);
+          yPosition += 5;
+        }
+      });
+    } else {
+      pdf.setFontSize(10);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text('Aucun dialogue dans cette scène', 20, yPosition);
+    }
+    
+    // Pied de page
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFontSize(8);
+      pdf.text(`Page ${i} sur ${pageCount}`, 105, 290, { align: 'center' });
+    }
     
     const pdfOutput = pdf.output('arraybuffer');
     resolve(new Uint8Array(pdfOutput));
   });
 };
 
-const generateRaccordsScenePDF = async (sceneId) => {
+// 9. PDF complet d'une scène
+const generateSceneCompletePDF = async (sceneId) => {
   return new Promise((resolve) => {
-    const pdf = new jsPDF();
-    const sceneName = getSceneName(sceneId);
-    pdf.text(`RACCORDS SCÈNE - ${sceneName}`, 20, 20);
-    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 20, 30);
-    pdf.text(`Projet: ${props.projetInfos?.titre}`, 20, 40);
-    // Ajoutez ici la logique complète des raccords scène...
+    const scene = props.currentSequence?.scenes?.find(s => s.idScene === sceneId);
+    if (!scene) {
+      resolve(new Uint8Array());
+      return;
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const primaryColor = [33, 41, 79];
+    const secondaryColor = [220, 53, 69];
+    const accentColor = [23, 162, 184];
+    
+    let yPosition = 20;
+    
+    // ========== EN-TÊTE ==========
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, 0, 210, 40, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.text(`PROJET: ${props.currentEpisode?.projetTitre || 'Cinema'}`, 20, 15);
+    pdf.setFontSize(12);
+    pdf.text(`Épisode ${props.currentEpisode?.ordre}: ${props.currentEpisode?.titre}`, 20, 25);
+    
+    pdf.text(`Scène ${scene.ordre}`, 160, 15);
+    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
+    pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 160, 29);
+    
+    pdf.setDrawColor(...secondaryColor);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, 45, 190, 45);
+    
+    yPosition = 60;
+    
+    // ========== TITRE DE LA SCÈNE ==========
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(20);
+    pdf.setFont("helvetica", "bold");
+    pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 20, yPosition);
+    
+    yPosition += 15;
+    
+    // ========== INFORMATIONS GÉNÉRALES ==========
+    pdf.setFontSize(11);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(0, 0, 0);
+    
+    // Synopsis
+    if (scene.synopsis) {
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Synopsis:", 20, yPosition);
+      yPosition += 7;
+      
+      pdf.setFont("helvetica", "normal");
+      const synopsisLines = pdf.splitTextToSize(scene.synopsis, 170);
+      pdf.text(synopsisLines, 25, yPosition);
+      yPosition += (synopsisLines.length * 4.5) + 10;
+    }
+    
+    // Statut
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Statut:", 20, yPosition);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(scene.statutNom || 'Non défini', 45, yPosition);
+    yPosition += 10;
+    
+    // Lieux et plateaux
+    if (scene.sceneLieus?.length > 0) {
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Lieux et Plateaux:", 20, yPosition);
+      yPosition += 7;
+      
+      pdf.setFont("helvetica", "normal");
+      scene.sceneLieus.forEach((sceneLieu, index) => {
+        let lieuText = `• ${sceneLieu.lieuNom}`;
+        if (sceneLieu.plateauNom) {
+          lieuText += ` (Plateau: ${sceneLieu.plateauNom})`;
+        }
+        if (sceneLieu.descriptionUtilisation) {
+          lieuText += ` - ${sceneLieu.descriptionUtilisation}`;
+        }
+        
+        const lieuLines = pdf.splitTextToSize(lieuText, 165);
+        lieuLines.forEach(line => {
+          pdf.text(line, 25, yPosition);
+          yPosition += 4.5;
+        });
+        yPosition += 2;
+      });
+      yPosition += 5;
+    }
+    
+    // ========== DIALOGUES ==========
+    if (scene.dialogues?.length > 0) {
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(...primaryColor);
+      pdf.text("DIALOGUES:", 20, yPosition);
+      yPosition += 15;
+      
+      scene.dialogues.forEach((dialogue, index) => {
+        if (yPosition > 250) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        // En-tête dialogue
+        pdf.setFillColor(245, 245, 245);
+        pdf.rect(20, yPosition - 5, 170, 8, 'F');
+        
+        // Personnage
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...accentColor);
+        pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 22, yPosition);
+        
+        yPosition += 10;
+        
+        // Texte du dialogue
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(0, 0, 0);
+        const dialogueLines = pdf.splitTextToSize(dialogue.texte, 165);
+        pdf.text(dialogueLines, 25, yPosition);
+        yPosition += (dialogueLines.length * 4.5) + 8;
+        
+        // Observation
+        if (dialogue.observation) {
+          pdf.setFontSize(9);
+          pdf.setTextColor(100, 100, 100);
+          pdf.setFont("helvetica", "italic");
+          const observationLines = pdf.splitTextToSize(`Note: ${dialogue.observation}`, 160);
+          pdf.text(observationLines, 28, yPosition);
+          yPosition += (observationLines.length * 4) + 6;
+          pdf.setFont("helvetica", "normal");
+        }
+        
+        // Ordre
+        pdf.setFontSize(8);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(`Dialogue ${dialogue.ordre}`, 180, yPosition - 10, { align: 'right' });
+        
+        yPosition += 10;
+        
+        // Ligne de séparation
+        if (index < scene.dialogues.length - 1) {
+          pdf.setDrawColor(220, 220, 220);
+          pdf.line(20, yPosition - 3, 190, yPosition - 3);
+          yPosition += 5;
+        }
+      });
+    } else {
+      pdf.setFontSize(10);
+      pdf.setTextColor(150, 150, 150);
+      pdf.setFont("helvetica", "italic");
+      pdf.text("Aucun dialogue dans cette scène", 20, yPosition);
+      yPosition += 15;
+    }
+    
+    // ========== COMMENTAIRES ==========
+    // Note: On pourrait ajouter les commentaires ici si disponibles
+    yPosition += 10;
+    
+    if (yPosition > 230) {
+      pdf.addPage();
+      yPosition = 20;
+    }
+    
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(...primaryColor);
+    pdf.text("INFORMATIONS SUPPLÉMENTAIRES", 20, yPosition);
+    yPosition += 15;
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(0, 0, 0);
+    
+    // Informations de tournage si disponibles
+    if (scene.tournages && scene.tournages.length > 0) {
+      pdf.text("Informations de tournage:", 25, yPosition);
+      yPosition += 7;
+      
+      scene.tournages.forEach((tournage, idx) => {
+        const tournageText = `${tournage.dateTournage ? formatDate(tournage.dateTournage) : 'Date non définie'} - ${tournage.statutNom || 'Statut inconnu'}`;
+        pdf.text(`• ${tournageText}`, 30, yPosition);
+        yPosition += 6;
+      });
+      yPosition += 5;
+    }
+    
+    // ========== PIED DE PAGE ==========
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Scène ${scene.ordre} - ${scene.titre.substring(0, 30)}${scene.titre.length > 30 ? '...' : ''}`, 20, 290);
+      pdf.text(`Page ${i} sur ${totalPages}`, 105, 290, { align: 'center' });
+      pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 190, 290, { align: 'right' });
+    }
     
     const pdfOutput = pdf.output('arraybuffer');
     resolve(new Uint8Array(pdfOutput));
+  });
+};
+
+// Fonction utilitaire pour formater les dates
+const formatDate = (dateString) => {
+  if (!dateString) return 'Non planifié';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
   });
 };
 
@@ -1083,19 +2164,23 @@ defineExpose({
   generateScenesPDF,
   generateSequenceDialoguesPDF,
   generateSequenceCompletePDF,
-  generateEpisodePDF
+  generateEpisodePDF,
+  generateRaccordsProjetPDF,
+  generateRaccordsComedienPDF,
+  generateRaccordsScenePDF,
+  generateSceneDialoguesPDF,
+  generateSceneCompletePDF
 });
 </script>
 
 <style scoped>
-/* Les styles restent identiques à votre version précédente */
 .modal-overlay-email {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1104,21 +2189,21 @@ defineExpose({
 
 .modal-content-email {
   background: white;
-  border-radius: 12px;
+  border-radius: 8px;
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .modal-header-email {
-  background: linear-gradient(135deg, #21294F, #2c3e50);
+  background: #21294F;
   color: white;
   padding: 20px;
-  border-radius: 12px 12px 0 0;
+  border-radius: 8px 8px 0 0;
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -1137,20 +2222,10 @@ defineExpose({
   font-size: 1.2rem;
   cursor: pointer;
   padding: 5px;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.close-btn-email:hover {
-  background: rgba(255, 255, 255, 0.2);
 }
 
 .modal-body-email {
-  padding: 25px;
+  padding: 20px;
 }
 
 .form-section-email {
@@ -1161,36 +2236,31 @@ defineExpose({
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #21294F;
+  color: #333;
 }
 
-.form-select-email,
+.form-select-email, 
 .form-input-email,
 .form-textarea-email {
   width: 100%;
-  padding: 10px 12px;
-  border: 2px solid #e1e5e9;
-  border-radius: 6px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 14px;
-  transition: border-color 0.3s ease;
 }
 
-.form-select-email:focus,
+.form-select-email:focus, 
 .form-input-email:focus,
 .form-textarea-email:focus {
   outline: none;
   border-color: #21294F;
-}
-
-.form-textarea-email {
-  resize: vertical;
-  min-height: 80px;
+  box-shadow: 0 0 0 2px rgba(33, 41, 79, 0.2);
 }
 
 .recipient-options-email {
   display: flex;
   gap: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .radio-label-email {
@@ -1198,7 +2268,6 @@ defineExpose({
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  font-weight: normal;
 }
 
 .radio-input-email {
@@ -1207,46 +2276,45 @@ defineExpose({
 
 .preview-section-email {
   background: #f8f9fa;
-  padding: 15px;
   border-radius: 6px;
-  border-left: 4px solid #21294F;
+  padding: 15px;
   margin-top: 20px;
+  border-left: 4px solid #21294F;
 }
 
 .preview-section-email h4 {
-  margin: 0 0 10px 0;
+  margin-top: 0;
   color: #21294F;
 }
 
 .preview-info-email p {
   margin: 5px 0;
-  font-size: 14px;
 }
 
 .error-message-email {
   background: #f8d7da;
   color: #721c24;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 10px;
+  border-radius: 4px;
   margin: 15px 0;
   border: 1px solid #f5c6cb;
 }
 
 .success-message-email {
-  background: #d1edff;
-  color: #0c5460;
-  padding: 12px;
-  border-radius: 6px;
+  background: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 4px;
   margin: 15px 0;
-  border: 1px solid #bee5eb;
+  border: 1px solid #c3e6cb;
 }
 
 .modal-footer-email {
   padding: 20px;
-  border-top: 1px solid #e1e5e9;
+  border-top: 1px solid #eee;
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 10px;
 }
 
 .cancel-btn-email {
@@ -1254,10 +2322,9 @@ defineExpose({
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s ease;
 }
 
 .cancel-btn-email:hover {
@@ -1265,49 +2332,24 @@ defineExpose({
 }
 
 .send-btn-email {
-  background: linear-gradient(135deg, #21294F, #2c3e50);
+  background: #21294F;
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s ease;
 }
 
 .send-btn-email:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2c3e50, #34495e);
-  transform: translateY(-1px);
+  background: #1a2138;
 }
 
 .send-btn-email:disabled {
-  background: #6c757d;
+  opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .modal-content-email {
-    width: 95%;
-    margin: 20px;
-  }
-  
-  .recipient-options-email {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .modal-footer-email {
-    flex-direction: column;
-  }
-  
-  .cancel-btn-email,
-  .send-btn-email {
-    width: 100%;
-  }
-}
-</style>
+</style> 
