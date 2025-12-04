@@ -1,47 +1,37 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from 'node:url'   // ← CES DEUX LIGNES ÉTAIENT MANQUANTES
 
 export default defineConfig({
   plugins: [vue()],
   base: '/',
-server: {
-  proxy: {
-    '/ecran-travail': {
+  server: {
+    proxy: {
+      '/ecran-travail': {
         target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false
       },
-    '/api': {
-      target: 'http://localhost:8080',
-      changeOrigin: true,
-      rewrite: (path) => path 
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
+      }
     }
-  }
-},
+  },
   build: {
     outDir: '../backend/src/main/resources/static',
     emptyOutDir: true,
     assetsDir: 'assets',
     sourcemap: false,
-  },css: {
-     postcss: './postcss.config.js'
-    // plugins: [
-    //     postcssNesting(),
-    //     tailwindcss({
-    //       content: [
-    //         "./index.html",
-    //         "./src/**/*.{vue,js,ts,jsx,tsx,scss}",
-    //       ],
-    //       theme: {
-    //         extend: {},
-    //       },
-    //       plugins: [require("daisyui")],
-    //       daisyui: {
-    //         themes: ["light", "dark", "cupcake"],
-    //       },
-    //     }),
-    //     autoprefixer(),
-    //   ],
   },
+  css: {
+    postcss: './postcss.config.js'
+  },
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '~': fileURLToPath(new URL('./src', import.meta.url))   // indispensable pour les chemins dans SCSS
+    }
+  }
 })
 
