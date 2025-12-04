@@ -67,12 +67,35 @@ export const getProjets = async () => {
 };
 
 
+// NOUVELLES MÉTHODES POUR ÉPISODES ET SÉQUENCES
+export const getEpisodesByProjet = async (projetId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/projets/${projetId}/episodes`)
+    return response.data
+  } catch (error) {
+    console.error('Erreur chargement épisodes:', error)
+    return []
+  }
+}
+
+export const getSequencesByEpisode = async (episodeId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/episodes/${episodeId}/sequences`)
+    return response.data
+  } catch (error) {
+    console.error('Erreur chargement séquences:', error)
+    return []
+  }
+}
+
 export default {
   rechercheAvancee,
   getStatutsDisponibles,
   getResultatDetails,
   getResultatDetailsComplets,
   getStatistiques,
-  getProjets
+  getProjets,
+  getEpisodesByProjet,
+  getSequencesByEpisode
 }
 
