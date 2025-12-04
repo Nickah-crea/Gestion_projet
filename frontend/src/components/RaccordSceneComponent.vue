@@ -271,7 +271,7 @@
           <div class="form-section">
             <h4><i class="fas fa-images"></i> Photos de Référence</h4>
             <p class="section-description">
-              Sélectionnez les photos déjà sauvegardées pour chaque type de raccord
+              Sélectionnez les photos de la <strong>scène source</strong> à utiliser comme référence pour ce raccord
             </p>
 
             <div v-if="loadingPhotos" class="loading">
@@ -809,57 +809,44 @@ const loadStatutsRaccord = async () => {
 }
 
 const loadPhotosForScenes = async () => {
-  if (!raccordData.value.sceneSourceId && !raccordData.value.sceneCibleId) {
-    console.log('Aucune scène source ou cible définie')
+  const sceneId = raccordData.value.sceneSourceId
+  
+  if (!sceneId) {
+    console.log('Aucune scène source définie')
+    availablePhotos.value = []
+    filteredPhotos.value = []
     return
   }
   
   loadingPhotos.value = true
   try {
-    const sceneIds = [
-      raccordData.value.sceneSourceId,
-      raccordData.value.sceneCibleId
-    ].filter(id => id !== null && id !== undefined)
+    console.log('Chargement des photos pour la scène source:', sceneId)
     
-    console.log('Chargement des photos pour les scènes:', sceneIds)
+    // Charger les raccords seulement pour la scène source
+    const response = await axios.get(`/api/raccords/scene/${sceneId}`)
     
-    if (sceneIds.length === 0) {
-      availablePhotos.value = []
-      filteredPhotos.value = []
-      return
-    }
+    // Extraire les images de tous les raccords de la scène source
+    availablePhotos.value = response.data.flatMap(raccord => {
+      const ownImages = raccord.images?.map(image => ({
+        ...image,
+        typeRaccordId: raccord.typeRaccordId,
+        sceneId: sceneId,
+        raccordId: raccord.id,
+        isShared: false // Image propre au raccord
+      })) || []
+      
+      const sharedImages = raccord.sharedImages?.map(image => ({
+        ...image,
+        typeRaccordId: raccord.typeRaccordId,
+        sceneId: sceneId,
+        raccordId: raccord.id,
+        isShared: true // Image partagée
+      })) || []
+      
+      return [...ownImages, ...sharedImages]
+    })
     
-    // Charger les raccords pour chaque scène
-    const requests = sceneIds.map(sceneId => 
-      axios.get(`/api/raccords/scene/${sceneId}`)
-    )
-    
-    const responses = await Promise.all(requests)
-    
-    // Extraire les images de tous les raccords avec info de partage
-    availablePhotos.value = responses.flatMap((response, index) => 
-      response.data.flatMap(raccord => {
-        const ownImages = raccord.images?.map(image => ({
-          ...image,
-          typeRaccordId: raccord.typeRaccordId,
-          sceneId: sceneIds[index],
-          raccordId: raccord.id,
-          isShared: false // Image propre au raccord
-        })) || []
-        
-        const sharedImages = raccord.sharedImages?.map(image => ({
-          ...image,
-          typeRaccordId: raccord.typeRaccordId,
-          sceneId: sceneIds[index],
-          raccordId: raccord.id,
-          isShared: true // Image partagée
-        })) || []
-        
-        return [...ownImages, ...sharedImages]
-      })
-    )
-    
-    console.log('Photos disponibles:', availablePhotos.value)
+    console.log('Photos disponibles (scène source uniquement):', availablePhotos.value)
     filteredPhotos.value = [...availablePhotos.value]
     
   } catch (error) {
@@ -869,7 +856,6 @@ const loadPhotosForScenes = async () => {
     loadingPhotos.value = false
   }
 }
-
 const onSceneCibleChange = async () => {
   console.log('Scène cible changée:', raccordData.value.sceneCibleId)
   if (raccordData.value.sceneCibleId) {
