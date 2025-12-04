@@ -24,5 +24,6 @@ public interface DisponibiliteComedienRepository extends JpaRepository<Disponibi
     
    
     List<DisponibiliteComedien> findByComedienId(Long comedienId);
+    void deleteByComedienId(Long comedienId);
     
 }

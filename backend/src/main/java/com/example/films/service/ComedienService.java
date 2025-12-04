@@ -46,39 +46,45 @@ public class ComedienService {
         }
     }
 
-    @Transactional
-    public ComedienDTO createComedien(CreateComedienDTO createComedienDTO) {
-        // Vérifier si l'email existe déjà
-        if (comedienRepository.findByEmail(createComedienDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("Un comédien avec cet email existe déjà");
+        @Transactional
+        public ComedienDTO createComedien(CreateComedienDTO createComedienDTO) {
+            // Vérifier si l'email existe déjà
+            if (comedienRepository.findByEmail(createComedienDTO.getEmail()).isPresent()) {
+                throw new RuntimeException("Un comédien avec cet email existe déjà");
+            }
+
+            // Récupérer le projet
+            Projet projet = projetRepository.findById(createComedienDTO.getProjetId())
+                    .orElseThrow(() -> new RuntimeException("Projet non trouvé"));
+
+            // Créer le comédien
+            Comedien comedien = new Comedien();
+            comedien.setProjet(projet);
+            comedien.setNom(createComedienDTO.getNom());
+            comedien.setAge(createComedienDTO.getAge());
+            comedien.setEmail(createComedienDTO.getEmail());
+            comedien.setPhotoPath(createComedienDTO.getPhotoPath());
+
+            Comedien savedComedien = comedienRepository.save(comedien);
+
+            // Créer les disponibilités multiples si fournies
+            if (createComedienDTO.getDatesDisponibilite() != null && 
+                createComedienDTO.getStatutsDisponibilite() != null &&
+                !createComedienDTO.getDatesDisponibilite().isEmpty()) {
+                
+                for (int i = 0; i < createComedienDTO.getDatesDisponibilite().size(); i++) {
+                    if (i < createComedienDTO.getStatutsDisponibilite().size()) {
+                        DisponibiliteComedien disponibilite = new DisponibiliteComedien();
+                        disponibilite.setComedien(savedComedien);
+                        disponibilite.setDate(createComedienDTO.getDatesDisponibilite().get(i));
+                        disponibilite.setStatut(createComedienDTO.getStatutsDisponibilite().get(i));
+                        disponibiliteRepository.save(disponibilite);
+                    }
+                }
+            }
+
+            return convertToDTO(savedComedien);
         }
-
-        // Récupérer le projet
-        Projet projet = projetRepository.findById(createComedienDTO.getProjetId())
-                .orElseThrow(() -> new RuntimeException("Projet non trouvé"));
-
-        // Créer le comédien
-        Comedien comedien = new Comedien();
-        comedien.setProjet(projet);
-        comedien.setNom(createComedienDTO.getNom());
-        comedien.setAge(createComedienDTO.getAge());
-        comedien.setEmail(createComedienDTO.getEmail());
-        comedien.setPhotoPath(createComedienDTO.getPhotoPath());
-
-        Comedien savedComedien = comedienRepository.save(comedien);
-
-        // Créer la disponibilité si fournie
-        if (createComedienDTO.getDateDisponibilite() != null && 
-            createComedienDTO.getStatutDisponibilite() != null) {
-            DisponibiliteComedien disponibilite = new DisponibiliteComedien();
-            disponibilite.setComedien(savedComedien);
-            disponibilite.setDate(createComedienDTO.getDateDisponibilite());
-            disponibilite.setStatut(createComedienDTO.getStatutDisponibilite());
-            disponibiliteRepository.save(disponibilite);
-        }
-
-        return convertToDTO(savedComedien);
-    }
 
      public List<ComedienDTO> getComediensByProjet(Long projetId) {
         List<Comedien> comediens = comedienRepository.findByProjetIdWithDisponibilites(projetId);
@@ -167,37 +173,35 @@ public class ComedienService {
 
             Comedien updatedComedien = comedienRepository.save(comedien);
             
-            // Gérer la disponibilité si fournie
-            if (updateComedienDTO.getDateDisponibilite() != null && 
-                updateComedienDTO.getStatutDisponibilite() != null) {
-                updateOrCreateDisponibilite(comedien, updateComedienDTO.getDateDisponibilite(), updateComedienDTO.getStatutDisponibilite());
+            // Gérer les disponibilités multiples si fournies
+            if (updateComedienDTO.getDatesDisponibilite() != null && 
+                updateComedienDTO.getStatutsDisponibilite() != null) {
+                updateOrCreateDisponibilites(comedien, 
+                    updateComedienDTO.getDatesDisponibilite(), 
+                    updateComedienDTO.getStatutsDisponibilite());
             }
 
             return convertToDTO(updatedComedien);
         }
-
-      @Transactional
-private void updateOrCreateDisponibilite(Comedien comedien, LocalDate date, String statut) {
-    
-    List<DisponibiliteComedien> disponibilites = disponibiliteRepository.findByComedienId(comedien.getId());
-    
-    Optional<DisponibiliteComedien> existingDisponibilite = disponibilites.stream().findFirst();
-
-    if (existingDisponibilite.isPresent()) {
-        // Mettre à jour la disponibilité existante
-        DisponibiliteComedien disponibilite = existingDisponibilite.get();
-        disponibilite.setDate(date);
-        disponibilite.setStatut(statut);
-        disponibiliteRepository.save(disponibilite);
-    } else {
-        // Créer une nouvelle disponibilité
-        DisponibiliteComedien newDisponibilite = new DisponibiliteComedien();
-        newDisponibilite.setComedien(comedien);
-        newDisponibilite.setDate(date);
-        newDisponibilite.setStatut(statut);
-        disponibiliteRepository.save(newDisponibilite);
-    }
-}
+        @Transactional
+        private void updateOrCreateDisponibilites(Comedien comedien, List<LocalDate> dates, List<String> statuts) {
+            // Supprimer les anciennes disponibilités
+            List<DisponibiliteComedien> existingDisponibilites = disponibiliteRepository.findByComedienId(comedien.getId());
+            disponibiliteRepository.deleteAll(existingDisponibilites);
+            
+            // Créer les nouvelles disponibilités
+            if (dates != null && statuts != null && !dates.isEmpty()) {
+                for (int i = 0; i < dates.size(); i++) {
+                    if (i < statuts.size() && dates.get(i) != null) {
+                        DisponibiliteComedien newDisponibilite = new DisponibiliteComedien();
+                        newDisponibilite.setComedien(comedien);
+                        newDisponibilite.setDate(dates.get(i));
+                        newDisponibilite.setStatut(statuts.get(i));
+                        disponibiliteRepository.save(newDisponibilite);
+                    }
+                }
+            }
+        }
     @Transactional
    public void deleteComedien(Long id) {
         Comedien comedien = comedienRepository.findById(id)

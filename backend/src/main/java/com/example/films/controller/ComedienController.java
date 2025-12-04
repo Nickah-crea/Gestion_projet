@@ -53,49 +53,37 @@ public class ComedienController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public ResponseEntity<ComedienDTO> createComedien(
-    @RequestParam("projetId") Long projetId, 
-    @RequestParam("nom") String nom,
-    @RequestParam("age") Integer age,
-    @RequestParam("email") String email,
-    @RequestParam(value = "photo", required = false) MultipartFile photo,
-    @RequestParam(value = "dateDisponibilite", required = false) List<LocalDate> datesDisponibilite,
-    @RequestParam(value = "statutDisponibilite", required = false) List<String> statutsDisponibilite) {
-    
-    try {
-        CreateComedienDTO createComedienDTO = new CreateComedienDTO();
-        createComedienDTO.setProjetId(projetId); 
-        createComedienDTO.setNom(nom);
-        createComedienDTO.setAge(age);
-        createComedienDTO.setEmail(email);
-
-        if (photo != null && !photo.isEmpty()) {
-            String photoPath = comedienService.savePhoto(photo);
-            createComedienDTO.setPhotoPath(photoPath);
-        }
-
-        ComedienDTO createdComedien = comedienService.createComedien(createComedienDTO);
+    public ResponseEntity<ComedienDTO> createComedien(
+        @RequestParam("projetId") Long projetId, 
+        @RequestParam("nom") String nom,
+        @RequestParam("age") Integer age,
+        @RequestParam("email") String email,
+        @RequestParam(value = "photo", required = false) MultipartFile photo,
+        @RequestParam(value = "datesDisponibilite", required = false) List<LocalDate> datesDisponibilite,
+        @RequestParam(value = "statutsDisponibilite", required = false) List<String> statutsDisponibilite) {
         
-        // Gérer les disponibilités multiples
-        if (datesDisponibilite != null && statutsDisponibilite != null) {
-            for (int i = 0; i < datesDisponibilite.size(); i++) {
-                if (i < statutsDisponibilite.size()) {
-                    comedienService.addDisponibilite(
-                        createdComedien.getId(), 
-                        datesDisponibilite.get(i), 
-                        statutsDisponibilite.get(i)
-                    );
-                }
-            }
-        }
+        try {
+            CreateComedienDTO createComedienDTO = new CreateComedienDTO();
+            createComedienDTO.setProjetId(projetId); 
+            createComedienDTO.setNom(nom);
+            createComedienDTO.setAge(age);
+            createComedienDTO.setEmail(email);
+            createComedienDTO.setDatesDisponibilite(datesDisponibilite);
+            createComedienDTO.setStatutsDisponibilite(statutsDisponibilite);
 
-        return new ResponseEntity<>(createdComedien, HttpStatus.CREATED);
-    } catch (RuntimeException e) {
-        return ResponseEntity.badRequest().body(null);
-    } catch (IOException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            if (photo != null && !photo.isEmpty()) {
+                String photoPath = comedienService.savePhoto(photo);
+                createComedienDTO.setPhotoPath(photoPath);
+            }
+
+            ComedienDTO createdComedien = comedienService.createComedien(createComedienDTO);
+            return new ResponseEntity<>(createdComedien, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
-}
 
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -106,8 +94,8 @@ public ResponseEntity<ComedienDTO> createComedien(
             @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "projetId", required = false) Long projetId,
             @RequestParam(value = "photo", required = false) MultipartFile photo,
-            @RequestParam(value = "dateDisponibilite", required = false) LocalDate dateDisponibilite,
-            @RequestParam(value = "statutDisponibilite", required = false) String statutDisponibilite) {
+            @RequestParam(value = "datesDisponibilite", required = false) List<LocalDate> datesDisponibilite,
+            @RequestParam(value = "statutsDisponibilite", required = false) List<String> statutsDisponibilite) {
         
         try {
             CreateComedienDTO updateComedienDTO = new CreateComedienDTO();
@@ -117,8 +105,10 @@ public ResponseEntity<ComedienDTO> createComedien(
             if (age != null) updateComedienDTO.setAge(age);
             if (email != null) updateComedienDTO.setEmail(email);
             if (projetId != null) updateComedienDTO.setProjetId(projetId);
-            if (dateDisponibilite != null) updateComedienDTO.setDateDisponibilite(dateDisponibilite);
-            if (statutDisponibilite != null) updateComedienDTO.setStatutDisponibilite(statutDisponibilite);
+            
+            // Utiliser les nouvelles listes
+            if (datesDisponibilite != null) updateComedienDTO.setDatesDisponibilite(datesDisponibilite);
+            if (statutsDisponibilite != null) updateComedienDTO.setStatutsDisponibilite(statutsDisponibilite);
 
             if (photo != null && !photo.isEmpty()) {
                 String photoPath = comedienService.savePhoto(photo);
