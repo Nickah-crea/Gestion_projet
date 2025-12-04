@@ -693,57 +693,69 @@ export default {
       this.formData.disponibilites.splice(index, 1);
     },
 
-    async submitForm() {
-      this.isSubmitting = true;
-      this.error = '';
-      try {
-        const formData = new FormData();
-        
-        if (this.formData.nom) formData.append('nom', this.formData.nom);
-        if (this.formData.age) formData.append('age', this.formData.age);
-        if (this.formData.email) formData.append('email', this.formData.email);
-        if (this.formData.projetId) formData.append('projetId', this.formData.projetId);
-        
-        if (this.currentPhotoFile) {
-          formData.append('photo', this.currentPhotoFile);
-        }
+ async submitForm() {
+  this.isSubmitting = true;
+  this.error = '';
+  try {
+    const formData = new FormData();
+    
+    if (this.formData.nom) formData.append('nom', this.formData.nom);
+    if (this.formData.age) formData.append('age', this.formData.age);
+    if (this.formData.email) formData.append('email', this.formData.email);
+    if (this.formData.projetId) formData.append('projetId', this.formData.projetId);
+    
+    if (this.currentPhotoFile) {
+      formData.append('photo', this.currentPhotoFile);
+    }
 
-        if (this.isEditing && this.formData.disponibilites.length > 0) {
-          const firstDispo = this.formData.disponibilites[0];
-          if (firstDispo.date) {
-            formData.append('dateDisponibilite', firstDispo.date);
-            formData.append('statutDisponibilite', firstDispo.statut);
-          }
-        }
-
-        let response;
-        if (this.isEditing) {
-          response = await axios.put(`/api/comediens/${this.editingId}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          alert('Comédien modifié avec succès');
-        } else {
-          response = await axios.post('/api/comediens', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          alert('Comédien créé avec succès');
-        }
-        
-        this.resetForm();
-        await this.loadComediens();
-        this.activeTab = 'list'; // Aller vers la liste après création
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde:', error);
-        this.error = error.response?.data?.message || 'Erreur lors de la sauvegarde';
-      } finally {
-        this.isSubmitting = false;
+    // Préparer les listes de dates et statuts
+    const dates = [];
+    const statuts = [];
+    
+    this.formData.disponibilites.forEach(dispo => {
+      if (dispo.date) {
+        dates.push(dispo.date);
+        statuts.push(dispo.statut);
       }
-    },
+    });
+    
+    // Ajouter chaque date individuellement
+    dates.forEach(date => {
+      formData.append('datesDisponibilite', date);
+    });
+    
+    // Ajouter chaque statut individuellement
+    statuts.forEach(statut => {
+      formData.append('statutsDisponibilite', statut);
+    });
 
+    let response;
+    if (this.isEditing) {
+      response = await axios.put(`/api/comediens/${this.editingId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      alert('Comédien modifié avec succès');
+    } else {
+      response = await axios.post('/api/comediens', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      alert('Comédien créé avec succès');
+    }
+    
+    this.resetForm();
+    await this.loadComediens();
+    this.activeTab = 'list';
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde:', error);
+    this.error = error.response?.data?.message || 'Erreur lors de la sauvegarde';
+  } finally {
+    this.isSubmitting = false;
+  }
+},
     editComedien(comedien) {
       this.formData = {
         nom: comedien.nom,
