@@ -4082,13 +4082,50 @@ const exportRaccordsByScene = async (sceneId) => {
     const raccordsResponse = await axios.get(`/api/raccords/scene/${sceneId}`);
     const raccords = raccordsResponse.data;
 
-    // 2. Récupérer les images partagées pour chaque raccord
+    // 2. Récupérer les images partagées pour chaque raccord avec vérification
     const raccordsAvecImagesPartagees = await Promise.all(
       raccords.map(async (raccord) => {
         try {
           // Appel API pour obtenir les images partagées
           const sharedImagesResponse = await axios.get(`/api/raccords/${raccord.id}/shared-images`);
-          raccord.sharedImages = sharedImagesResponse.data || [];
+          const sharedImages = sharedImagesResponse.data || [];
+          
+          // Filtrer les images partagées pour éviter les doublons
+          // Logique : si la scène exportée est la source, on ne montre pas les images partagées
+          // car elles proviennent déjà de cette scène
+          let filteredSharedImages = [];
+          
+          if (sharedImages.length > 0) {
+            // Pour chaque image partagée, vérifier si elle appartient déjà à un raccord de cette scène
+            filteredSharedImages = sharedImages.filter(sharedImage => {
+              // Récupérer l'ID de la scène source de l'image partagée
+              // On suppose que l'API nous donne cette information
+              // Si non disponible, on peut faire un appel supplémentaire
+              try {
+                // Vérifier si cette image est déjà présente dans les images directes
+                const isAlreadyInDirectImages = raccord.images?.some(directImage => 
+                  directImage.id === sharedImage.id
+                );
+                
+                // Si c'est une image partagée ET qu'elle appartient à cette scène (sceneId),
+                // on ne l'affiche pas pour éviter le doublon
+                if (sharedImage.raccordId && sharedImage.sceneSourceId) {
+                  // Si l'image partagée provient de la même scène que celle qu'on exporte,
+                  // c'est un doublon, on ne l'inclut pas
+                  return sharedImage.sceneSourceId !== sceneId;
+                }
+                
+                return !isAlreadyInDirectImages;
+              } catch (e) {
+                console.warn('Erreur lors de la vérification de l\'image partagée:', e);
+                return true; // En cas d'erreur, on l'inclut pour sécurité
+              }
+            });
+            
+            console.log(`Raccord ${raccord.id}: ${sharedImages.length} images partagées, ${filteredSharedImages.length} filtrées`);
+          }
+          
+          raccord.sharedImages = filteredSharedImages;
           return raccord;
         } catch (error) {
           console.warn(`Erreur lors de la récupération des images partagées pour le raccord ${raccord.id}:`, error);
@@ -4342,8 +4379,12 @@ const exportRaccordsByScene = async (sceneId) => {
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(60, 60, 60);
       
-      // Scènes
-      pdf.text(`Scènes : ${raccord.sceneSourceTitre || 'Source'} → ${raccord.sceneCibleTitre || 'Cible'}`, 20, yPosition);
+      // Scènes avec indication du rôle de cette scène
+      const isSceneSource = raccord.sceneSourceId === sceneId;
+      const role = isSceneSource ? "Source" : "Cible";
+      const otherScene = isSceneSource ? raccord.sceneCibleTitre : raccord.sceneSourceTitre;
+      
+      pdf.text(`Scènes : ${role} (${sceneTitre}) → ${isSceneSource ? "Cible" : "Source"} (${otherScene})`, 20, yPosition);
       yPosition += 6;
       
       // Personnage/Comédien
@@ -4388,7 +4429,13 @@ const exportRaccordsByScene = async (sceneId) => {
       }
       
       // === IMAGES PARTAGÉES ===
-      if (raccord.sharedImages && raccord.sharedImages.length > 0) {
+      // Afficher les images partagées SEULEMENT si cette scène est la cible
+      // (pour éviter les doublons quand la scène est la source)
+      const shouldShowSharedImages = raccord.sceneCibleId === sceneId && 
+                                    raccord.sharedImages && 
+                                    raccord.sharedImages.length > 0;
+      
+      if (shouldShowSharedImages) {
         // Vérifier l'espace pour le titre des images partagées
         if (yPosition > 250) {
           pdf.addPage();
@@ -4399,7 +4446,7 @@ const exportRaccordsByScene = async (sceneId) => {
         pdf.setFontSize(11);
         pdf.setFont("helvetica", "bold");
         pdf.setTextColor(...colorShared);
-        pdf.text("Images partagées :", 20, yPosition);
+        pdf.text("Images partagées (provenant de la scène source) :", 20, yPosition);
         yPosition += 8;
         
         await processImages(pdf, raccord.sharedImages, true);
@@ -4407,7 +4454,7 @@ const exportRaccordsByScene = async (sceneId) => {
       
       // Si aucune image
       if ((!raccord.images || raccord.images.length === 0) && 
-          (!raccord.sharedImages || raccord.sharedImages.length === 0)) {
+          (!shouldShowSharedImages)) {
         pdf.setFontSize(10);
         pdf.setFont("helvetica", "italic");
         pdf.setTextColor(150, 150, 150);
@@ -4630,10 +4677,10 @@ const exportRaccordsByScene = async (sceneId) => {
     
     // Cadre de synthèse
     pdf.setFillColor(...colorLight);
-    pdf.roundedRect(20, yPosition - 5, 170, 120, 8, 8, 'F');
+    pdf.roundedRect(20, yPosition - 5, 170, 140, 8, 8, 'F');
     pdf.setDrawColor(...colorAccent);
     pdf.setLineWidth(0.5);
-    pdf.roundedRect(20, yPosition - 5, 170, 120, 8, 8);
+    pdf.roundedRect(20, yPosition - 5, 170, 140, 8, 8);
     
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
@@ -4665,17 +4712,22 @@ const exportRaccordsByScene = async (sceneId) => {
       summaryItems.push(`Types de raccords : ${typesUniques.join(', ')}`);
     }
     
+    // Note sur les images partagées
+    summaryItems.push('');
+    summaryItems.push('NOTE : Les images partagées ne sont affichées que lorsque cette scène est');
+    summaryItems.push('la scène CIBLE, pour éviter les doublons avec les images directes.');
+    
     // Légende
     summaryItems.push('');
     summaryItems.push('Légende :');
     summaryItems.push('  • [C] Raccord critique');
     summaryItems.push('  • [R] Image de référence');
-    summaryItems.push('  • [S] Image partagée');
+    summaryItems.push('  • [S] Image partagée (provenant de la scène source)');
     
     summaryItems.forEach(item => {
       if (item === '') {
         lineY += 3;
-      } else if (item.startsWith('Légende') || item.includes('•')) {
+      } else if (item.startsWith('NOTE') || item.startsWith('Légende') || item.includes('•')) {
         pdf.setFontSize(9);
         pdf.text(item, 25, lineY);
         lineY += 6;
