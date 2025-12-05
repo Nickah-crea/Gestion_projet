@@ -4078,12 +4078,29 @@ const exportRaccordsByScene = async (sceneId) => {
   try {
     console.log('Début export PDF pour scène:', sceneId);
     
-    const response = await axios.get(`/api/raccords/scene/${sceneId}`);
-    const raccords = response.data;
+    // 1. Récupérer les raccords de la scène
+    const raccordsResponse = await axios.get(`/api/raccords/scene/${sceneId}`);
+    const raccords = raccordsResponse.data;
 
-    console.log(`Raccords reçus pour scène ${sceneId}:`, raccords.length);
+    // 2. Récupérer les images partagées pour chaque raccord
+    const raccordsAvecImagesPartagees = await Promise.all(
+      raccords.map(async (raccord) => {
+        try {
+          // Appel API pour obtenir les images partagées
+          const sharedImagesResponse = await axios.get(`/api/raccords/${raccord.id}/shared-images`);
+          raccord.sharedImages = sharedImagesResponse.data || [];
+          return raccord;
+        } catch (error) {
+          console.warn(`Erreur lors de la récupération des images partagées pour le raccord ${raccord.id}:`, error);
+          raccord.sharedImages = [];
+          return raccord;
+        }
+      })
+    );
 
-    if (!raccords || raccords.length === 0) {
+    console.log(`Raccords reçus pour scène ${sceneId}:`, raccordsAvecImagesPartagees.length);
+
+    if (!raccordsAvecImagesPartagees || raccordsAvecImagesPartagees.length === 0) {
       alert('Aucun raccord trouvé pour cette scène');
       return;
     }
@@ -4101,6 +4118,8 @@ const exportRaccordsByScene = async (sceneId) => {
     const colorAccent = [242, 217, 160];      // #F2D9A0 - Sand Gold
     const colorLight = [250, 247, 242];       // #FAF7F2 - Fond clair
     const colorBackground = [255, 255, 255];  // Blanc pur
+    const colorShared = [72, 61, 139];        // #483D8B - DarkSlateBlue pour images partagées
+    const colorSharedLight = [230, 230, 250]; // Lavender pour fond images partagées
     
     // ========== PAGE DE GARDE ==========
     pdf.setFillColor(...colorBackground);
@@ -4144,32 +4163,39 @@ const exportRaccordsByScene = async (sceneId) => {
       pdf.text(`Séquence ${currentSequence.value.ordre} : ${currentSequence.value.titre}`, 105, titleY + 5, { align: 'center' });
     }
     if (currentEpisode.value) {
-      pdf.text(`Épisode ${currentEpisode.value.ordre} : ${currentEpisode.value.titre}`, 105, titleY + 15, { align: 'center' });
+      pdf.text(`Épisode ${currentSequence.value.ordre} : ${currentEpisode.value.titre}`, 105, titleY + 15, { align: 'center' });
     }
     
     // Statistiques
-    const totalRaccords = raccords.length;
-    const totalImages = raccords.reduce((sum, r) => sum + (r.images?.length || 0), 0);
-    const raccordsCritiques = raccords.filter(r => r.estCritique).length;
+    const totalRaccords = raccordsAvecImagesPartagees.length;
+    const totalImagesDirectes = raccordsAvecImagesPartagees.reduce((sum, r) => sum + (r.images?.length || 0), 0);
+    const totalImagesPartagees = raccordsAvecImagesPartagees.reduce((sum, r) => sum + (r.sharedImages?.length || 0), 0);
+    const totalImages = totalImagesDirectes + totalImagesPartagees;
+    const raccordsCritiques = raccordsAvecImagesPartagees.filter(r => r.estCritique).length;
+    const raccordsAvecPartage = raccordsAvecImagesPartagees.filter(r => r.sharedImages?.length > 0).length;
     
     // Cadre statistiques
     const statsY = titleY + 35;
     pdf.setFillColor(...colorLight);
-    pdf.roundedRect(50, statsY, 110, 40, 8, 8, 'F');
+    pdf.roundedRect(40, statsY, 130, 50, 8, 8, 'F');
     pdf.setDrawColor(...colorAccent);
     pdf.setLineWidth(0.5);
-    pdf.roundedRect(50, statsY, 110, 40, 8, 8);
+    pdf.roundedRect(40, statsY, 130, 50, 8, 8);
     
     pdf.setFontSize(12);
     pdf.setFont("helvetica", "bold");
     pdf.setTextColor(...colorPrimary);
-    pdf.text("RÉSUMÉ", 105, statsY + 10, { align: 'center' });
+    pdf.text("RÉSUMÉ STATISTIQUES", 105, statsY + 10, { align: 'center' });
     
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
-    pdf.text(`${totalRaccords} raccords`, 60, statsY + 22);
-    pdf.text(`${totalImages} images`, 105, statsY + 22, { align: 'center' });
-    pdf.text(`${raccordsCritiques} critiques`, 150, statsY + 22, { align: 'right' });
+    pdf.text(`${totalRaccords} raccords`, 50, statsY + 22);
+    pdf.text(`${raccordsCritiques} critiques`, 105, statsY + 22, { align: 'center' });
+    pdf.text(`${raccordsAvecPartage} avec partage`, 160, statsY + 22, { align: 'right' });
+    
+    pdf.text(`${totalImagesDirectes} images directes`, 50, statsY + 32);
+    pdf.text(`${totalImagesPartagees} partagées`, 105, statsY + 32, { align: 'center' });
+    pdf.text(`${totalImages} total`, 160, statsY + 32, { align: 'right' });
     
     // Date
     pdf.setFontSize(9);
@@ -4205,16 +4231,79 @@ const exportRaccordsByScene = async (sceneId) => {
     pdf.addPage();
     addPageHeader();
 
+    // Fonction pour charger et ajouter une image
+    const addImageToPDF = async (image, isShared = false) => {
+      if (!image.nomFichier || image.nomFichier.includes('undefined')) {
+        console.warn('Image ignorée - nom invalide');
+        return null;
+      }
+      
+      try {
+        const imageUrl = `http://localhost:8080/api/images/raccords/${image.nomFichier}`;
+        const imageResponse = await axios.get(imageUrl, {
+          responseType: 'blob',
+          timeout: 15000
+        });
+        
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(imageResponse.data);
+        });
+        
+        return base64;
+      } catch (imageError) {
+        console.warn(`Erreur image:`, imageError);
+        return null;
+      }
+    };
+
+    // Fonction pour calculer les dimensions d'affichage
+    const calculateImageDimensions = (img) => {
+      const originalWidth = img.naturalWidth;
+      const originalHeight = img.naturalHeight;
+      const aspectRatio = originalWidth / originalHeight;
+      
+      // Limites maximales
+      const MAX_WIDTH = 80;  // mm
+      const MAX_HEIGHT = 80; // mm
+      const MIN_SIZE = 30;   // mm (taille minimale)
+      
+      let displayWidth, displayHeight;
+      
+      if (aspectRatio > 1) {
+        // Image paysage
+        displayWidth = Math.min(MAX_WIDTH, originalWidth / 10);
+        displayHeight = displayWidth / aspectRatio;
+        
+        if (displayHeight < MIN_SIZE) {
+          displayHeight = MIN_SIZE;
+          displayWidth = displayHeight * aspectRatio;
+        }
+      } else {
+        // Image portrait
+        displayHeight = Math.min(MAX_HEIGHT, originalHeight / 10);
+        displayWidth = displayHeight * aspectRatio;
+        
+        if (displayWidth < MIN_SIZE) {
+          displayWidth = MIN_SIZE;
+          displayHeight = displayWidth / aspectRatio;
+        }
+      }
+      
+      return { displayWidth, displayHeight, originalWidth, originalHeight, aspectRatio };
+    };
+
     // ========== PARCOURIR LES RACCORDS ==========
-    for (const [index, raccord] of raccords.entries()) {
+    for (const [index, raccord] of raccordsAvecImagesPartagees.entries()) {
       const raccordIndex = index + 1;
       
-      // === VÉRIFIER L'ESPACE AVANT D'ÉCRIRE ===
-      // Hauteur estimée pour la section texte
-      const sectionHeightWithoutImages = 40 + (raccord.description ? 20 : 0);
+      // Vérifier l'espace pour la section texte
+      const sectionHeightWithoutImages = 45 + (raccord.description ? 20 : 0);
+      const totalImagesRaccord = (raccord.images?.length || 0) + (raccord.sharedImages?.length || 0);
       
-      // Si pas assez de place pour la section texte, nouvelle page
-      if (yPosition + sectionHeightWithoutImages > 270) {
+      // Si pas assez de place, nouvelle page
+      if (yPosition + sectionHeightWithoutImages > 250) {
         pdf.addPage();
         currentPage++;
         addPageHeader();
@@ -4222,12 +4311,19 @@ const exportRaccordsByScene = async (sceneId) => {
       
       // === EN-TÊTE DU RACCORD ===
       pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(15, yPosition - 5, 180, 10, 4, 4, 'F');
+      pdf.roundedRect(15, yPosition - 5, 180, 12, 4, 4, 'F');
       
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(...colorPrimary);
-      pdf.text(`Raccord ${raccordIndex} : ${raccord.typeRaccordNom || 'Type non spécifié'}`, 20, yPosition);
+      
+      // Indicateur images partagées
+      let raccordTitle = `Raccord ${raccordIndex} : ${raccord.typeRaccordNom || 'Type non spécifié'}`;
+      if (raccord.sharedImages?.length > 0) {
+        raccordTitle += ` (${raccord.sharedImages.length} image(s) partagée(s))`;
+      }
+      
+      pdf.text(raccordTitle, 20, yPosition);
       
       // Indicateur critique
       if (raccord.estCritique) {
@@ -4239,9 +4335,9 @@ const exportRaccordsByScene = async (sceneId) => {
         pdf.setTextColor(...colorPrimary);
       }
       
-      yPosition += 8;
+      yPosition += 10;
       
-      // === INFORMATIONS ===
+      // === INFORMATIONS DU RACCORD ===
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(60, 60, 60);
@@ -4278,219 +4374,40 @@ const exportRaccordsByScene = async (sceneId) => {
       }
       
       pdf.text(`Statut : ${raccord.statutRaccordNom || 'Non défini'}`, 20, yPosition);
-      yPosition += 8;
+      yPosition += 10;
       
-      // === IMAGES - CHAQUE IMAGE AVEC SA PROPRE TAILLE ===
+      // === IMAGES DIRECTES ===
       if (raccord.images && raccord.images.length > 0) {
-        console.log(`Raccord ${raccordIndex} - ${raccord.images.length} image(s)`);
-        
         pdf.setFontSize(11);
         pdf.setFont("helvetica", "bold");
         pdf.setTextColor(...colorPrimary);
-        pdf.text("Images associées :", 20, yPosition);
+        pdf.text("Images directes :", 20, yPosition);
         yPosition += 8;
         
-        let imageX = 25;
-        let imageY = yPosition;
-        let imagesInCurrentRow = 0;
-        
-        // Parcourir toutes les images
-        for (const [imgIndex, image] of raccord.images.entries()) {
-          if (!image.nomFichier || image.nomFichier.includes('undefined')) {
-            console.warn(`Image ${imgIndex} ignorée - nom invalide`);
-            continue;
-          }
-          
-          try {
-            console.log(`Chargement image ${imgIndex + 1}:`, image.nomFichier);
-            
-            const imageUrl = `http://localhost:8080/api/images/raccords/${image.nomFichier}`;
-            const imageResponse = await axios.get(imageUrl, {
-              responseType: 'blob',
-              timeout: 15000
-            });
-            
-            const base64 = await new Promise((resolve) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
-              reader.readAsDataURL(imageResponse.data);
-            });
-            
-            if (base64) {
-              // === OBTENIR LES DIMENSIONS RÉELLES DE L'IMAGE ===
-              const img = new Image();
-              await new Promise((resolve, reject) => {
-                img.onload = () => resolve();
-                img.onerror = reject;
-                img.src = base64;
-              });
-              
-              const originalWidth = img.naturalWidth;
-              const originalHeight = img.naturalHeight;
-              const aspectRatio = originalWidth / originalHeight;
-              
-              // === DÉFINIR LES DIMENSIONS D'AFFICHAGE ===
-              let displayWidth, displayHeight;
-              
-              // Limites maximales
-              const MAX_WIDTH = 80;  // mm
-              const MAX_HEIGHT = 80; // mm
-              const MIN_SIZE = 30;   // mm (taille minimale)
-              
-              // Calculer les dimensions en gardant le ratio
-              if (aspectRatio > 1) {
-                // Image paysage (largeur > hauteur)
-                displayWidth = Math.min(MAX_WIDTH, originalWidth / 10); // Diviser par 10 pour convertir px en mm approximatif
-                displayHeight = displayWidth / aspectRatio;
-                
-                // Assurer une taille minimale
-                if (displayHeight < MIN_SIZE) {
-                  displayHeight = MIN_SIZE;
-                  displayWidth = displayHeight * aspectRatio;
-                }
-              } else {
-                // Image portrait (hauteur >= largeur)
-                displayHeight = Math.min(MAX_HEIGHT, originalHeight / 10);
-                displayWidth = displayHeight * aspectRatio;
-                
-                // Assurer une taille minimale
-                if (displayWidth < MIN_SIZE) {
-                  displayWidth = MIN_SIZE;
-                  displayHeight = displayWidth / aspectRatio;
-                }
-              }
-              
-              // Ajouter de l'espace pour la légende
-              const captionHeight = 10;
-              const totalImageHeight = displayHeight + captionHeight + 5;
-              
-              // === VÉRIFIER SI L'IMAGE RENTRE SUR LA PAGE ===
-              // 1. Vérifier la hauteur
-              if (imageY + totalImageHeight > 270) {
-                // Ça ne rentre pas en hauteur, nouvelle page
-                pdf.addPage();
-                currentPage++;
-                addPageHeader();
-                imageX = 25;
-                imageY = yPosition;
-                imagesInCurrentRow = 0;
-              }
-              
-              // 2. Vérifier si l'image dépasse à droite
-              if (imageX + displayWidth > 185 && imagesInCurrentRow > 0) {
-                // Aller à la ligne suivante
-                imageX = 25;
-                imageY += totalImageHeight;
-                imagesInCurrentRow = 0;
-                
-                // Vérifier à nouveau si on a assez de place après être allé à la ligne
-                if (imageY + totalImageHeight > 270) {
-                  pdf.addPage();
-                  currentPage++;
-                  addPageHeader();
-                  imageX = 25;
-                  imageY = yPosition;
-                  imagesInCurrentRow = 0;
-                }
-              }
-              
-              // === AJOUTER L'IMAGE AVEC SES DIMENSIONS ===
-              // Cadre pour l'image
-              pdf.setFillColor(250, 250, 250);
-              pdf.roundedRect(imageX - 2, imageY - 2, displayWidth + 4, displayHeight + 4, 4, 4, 'F');
-              
-              pdf.setDrawColor(...colorAccent);
-              pdf.setLineWidth(0.5);
-              pdf.roundedRect(imageX - 2, imageY - 2, displayWidth + 4, displayHeight + 4, 4, 4);
-              
-              // Ajouter l'image avec ses dimensions calculées
-              pdf.addImage(base64, 'JPEG', imageX, imageY, displayWidth, displayHeight);
-              
-              // Badge référence
-              if (image.estImageReference) {
-                pdf.setFillColor(...colorSecondary);
-                pdf.circle(imageX + 5, imageY + 5, 4, 'F');
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(6);
-                pdf.text('R', imageX + 4, imageY + 6.5);
-              }
-              
-              // Légende avec taille de l'image
-              pdf.setFontSize(7);
-              pdf.setFont("helvetica", "normal");
-              pdf.setTextColor(80, 80, 80);
-              
-              let caption = image.descriptionImage || `Image ${imgIndex + 1}`;
-              caption += ` (${originalWidth}×${originalHeight})`;
-              
-              const captionLines = pdf.splitTextToSize(caption, displayWidth - 10);
-              
-              captionLines.forEach((line, lineIndex) => {
-                pdf.text(line, imageX, imageY + displayHeight + 5 + (lineIndex * 3));
-              });
-              
-              imagesInCurrentRow++;
-              imageX += displayWidth + 15;
-              
-              // Si on dépasse la largeur de la page, aller à la ligne suivante
-              if (imageX + 50 > 185) { // 50 = largeur estimée pour la prochaine image
-                imageX = 25;
-                imageY += totalImageHeight;
-                imagesInCurrentRow = 0;
-              }
-              
-              console.log(`✅ Image ${imgIndex + 1} ajoutée (${displayWidth.toFixed(0)}×${displayHeight.toFixed(0)}mm, ratio: ${aspectRatio.toFixed(2)})`);
-            }
-          } catch (imageError) {
-            console.warn(`Erreur image ${imgIndex + 1}:`, imageError);
-            
-            // Placeholder pour image manquante
-            const placeholderSize = 50;
-            const placeholderTotalHeight = placeholderSize + 15;
-            
-            // Vérifier l'espace pour le placeholder
-            if (imageY + placeholderTotalHeight > 270) {
-              pdf.addPage();
-              currentPage++;
-              addPageHeader();
-              imageX = 25;
-              imageY = yPosition;
-              imagesInCurrentRow = 0;
-            }
-            
-            pdf.setFillColor(245, 245, 245);
-            pdf.roundedRect(imageX, imageY, placeholderSize, placeholderSize, 4, 4, 'F');
-            
-            pdf.setDrawColor(200, 200, 200);
-            pdf.setLineWidth(0.5);
-            pdf.line(imageX, imageY, imageX + placeholderSize, imageY + placeholderSize);
-            pdf.line(imageX + placeholderSize, imageY, imageX, imageY + placeholderSize);
-            
-            pdf.setTextColor(150, 150, 150);
-            pdf.setFontSize(8);
-            pdf.setFont("helvetica", "italic");
-            pdf.text('Non disponible', imageX + placeholderSize/2 - 15, imageY + placeholderSize/2);
-            
-            imagesInCurrentRow++;
-            imageX += placeholderSize + 15;
-            
-            if (imageX + 50 > 185) {
-              imageX = 25;
-              imageY += placeholderTotalHeight;
-              imagesInCurrentRow = 0;
-            }
-          }
+        await processImages(pdf, raccord.images, false);
+      }
+      
+      // === IMAGES PARTAGÉES ===
+      if (raccord.sharedImages && raccord.sharedImages.length > 0) {
+        // Vérifier l'espace pour le titre des images partagées
+        if (yPosition > 250) {
+          pdf.addPage();
+          currentPage++;
+          addPageHeader();
         }
         
-        // Ajuster la position Y après les images
-        if (imagesInCurrentRow > 0) {
-          // S'il reste des images sur la ligne actuelle, aller à la ligne suivante
-          imageY += 80; // Hauteur estimée pour la prochaine ligne
-        }
-        yPosition = imageY;
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...colorShared);
+        pdf.text("Images partagées :", 20, yPosition);
+        yPosition += 8;
         
-        console.log(`${raccord.images.filter(img => img.nomFichier && !img.nomFichier.includes('undefined')).length} image(s) ajoutée(s) pour ce raccord`);
-      } else {
+        await processImages(pdf, raccord.sharedImages, true);
+      }
+      
+      // Si aucune image
+      if ((!raccord.images || raccord.images.length === 0) && 
+          (!raccord.sharedImages || raccord.sharedImages.length === 0)) {
         pdf.setFontSize(10);
         pdf.setFont("helvetica", "italic");
         pdf.setTextColor(150, 150, 150);
@@ -4499,8 +4416,7 @@ const exportRaccordsByScene = async (sceneId) => {
       }
       
       // === SÉPARATION ENTRE RACCORDS ===
-      if (index < raccords.length - 1) {
-        // Vérifier qu'il reste de la place pour la ligne de séparation
+      if (index < raccordsAvecImagesPartagees.length - 1) {
         if (yPosition < 270) {
           pdf.setDrawColor(230, 230, 230);
           pdf.setLineWidth(0.3);
@@ -4510,8 +4426,178 @@ const exportRaccordsByScene = async (sceneId) => {
       }
     }
     
+    // Fonction pour traiter les images (directes et partagées)
+    async function processImages(pdf, images, isShared = false) {
+      let imageX = 25;
+      let imageY = yPosition;
+      let imagesInCurrentRow = 0;
+      
+      for (const [imgIndex, image] of images.entries()) {
+        try {
+          const base64 = await addImageToPDF(image, isShared);
+          
+          if (base64) {
+            const img = new Image();
+            await new Promise((resolve, reject) => {
+              img.onload = () => resolve();
+              img.onerror = reject;
+              img.src = base64;
+            });
+            
+            const { displayWidth, displayHeight, originalWidth, originalHeight } = calculateImageDimensions(img);
+            const captionHeight = 10;
+            const totalImageHeight = displayHeight + captionHeight + 5;
+            
+            // Vérifier si l'image rentre sur la page
+            if (imageY + totalImageHeight > 270) {
+              pdf.addPage();
+              currentPage++;
+              addPageHeader();
+              imageX = 25;
+              imageY = yPosition;
+              imagesInCurrentRow = 0;
+            }
+            
+            // Vérifier si l'image dépasse à droite
+            if (imageX + displayWidth > 185 && imagesInCurrentRow > 0) {
+              imageX = 25;
+              imageY += totalImageHeight;
+              imagesInCurrentRow = 0;
+              
+              if (imageY + totalImageHeight > 270) {
+                pdf.addPage();
+                currentPage++;
+                addPageHeader();
+                imageX = 25;
+                imageY = yPosition;
+                imagesInCurrentRow = 0;
+              }
+            }
+            
+            // Cadre avec couleur différente pour les images partagées
+            if (isShared) {
+              pdf.setFillColor(...colorSharedLight);
+            } else {
+              pdf.setFillColor(250, 250, 250);
+            }
+            
+            pdf.roundedRect(imageX - 2, imageY - 2, displayWidth + 4, displayHeight + 4, 4, 4, 'F');
+            
+            if (isShared) {
+              pdf.setDrawColor(...colorShared);
+            } else {
+              pdf.setDrawColor(...colorAccent);
+            }
+            
+            pdf.setLineWidth(0.5);
+            pdf.roundedRect(imageX - 2, imageY - 2, displayWidth + 4, displayHeight + 4, 4, 4);
+            
+            // Ajouter l'image
+            pdf.addImage(base64, 'JPEG', imageX, imageY, displayWidth, displayHeight);
+            
+            // Badge selon le type d'image
+            if (isShared) {
+              // Badge pour image partagée (S = Shared)
+              pdf.setFillColor(...colorShared);
+              pdf.circle(imageX + 5, imageY + 5, 4, 'F');
+              pdf.setTextColor(255, 255, 255);
+              pdf.setFontSize(6);
+              pdf.text('S', imageX + 4.2, imageY + 6.5);
+            } else if (image.estImageReference) {
+              // Badge pour image de référence (R = Reference)
+              pdf.setFillColor(...colorSecondary);
+              pdf.circle(imageX + 5, imageY + 5, 4, 'F');
+              pdf.setTextColor(255, 255, 255);
+              pdf.setFontSize(6);
+              pdf.text('R', imageX + 4, imageY + 6.5);
+            }
+            
+            // Légende
+            pdf.setFontSize(7);
+            pdf.setFont("helvetica", "normal");
+            
+            if (isShared) {
+              pdf.setTextColor(...colorShared);
+            } else {
+              pdf.setTextColor(80, 80, 80);
+            }
+            
+            let caption = image.descriptionImage || `Image ${imgIndex + 1}`;
+            if (isShared) {
+              caption = `[Partagé] ${caption}`;
+            }
+            caption += ` (${originalWidth}×${originalHeight})`;
+            
+            const captionLines = pdf.splitTextToSize(caption, displayWidth - 10);
+            
+            captionLines.forEach((line, lineIndex) => {
+              pdf.text(line, imageX, imageY + displayHeight + 5 + (lineIndex * 3));
+            });
+            
+            imagesInCurrentRow++;
+            imageX += displayWidth + 15;
+            
+            if (imageX + 50 > 185) {
+              imageX = 25;
+              imageY += totalImageHeight;
+              imagesInCurrentRow = 0;
+            }
+            
+            console.log(`✅ Image ${imgIndex + 1} ajoutée${isShared ? ' (partagée)' : ''}`);
+          }
+        } catch (imageError) {
+          console.warn(`Erreur image ${imgIndex + 1}:`, imageError);
+          addImagePlaceholder(pdf, imageX, imageY, isShared);
+          
+          imagesInCurrentRow++;
+          imageX += 65;
+          
+          if (imageX + 50 > 185) {
+            imageX = 25;
+            imageY += 65;
+            imagesInCurrentRow = 0;
+          }
+        }
+      }
+      
+      // Mettre à jour la position Y après les images
+      if (imagesInCurrentRow > 0) {
+        imageY += 80;
+      }
+      yPosition = imageY + 10;
+    }
+    
+    // Fonction pour ajouter un placeholder d'image
+    function addImagePlaceholder(pdf, x, y, isShared = false) {
+      const placeholderSize = 50;
+      
+      if (isShared) {
+        pdf.setFillColor(...colorSharedLight);
+      } else {
+        pdf.setFillColor(245, 245, 245);
+      }
+      
+      pdf.roundedRect(x, y, placeholderSize, placeholderSize, 4, 4, 'F');
+      
+      if (isShared) {
+        pdf.setDrawColor(...colorShared);
+      } else {
+        pdf.setDrawColor(200, 200, 200);
+      }
+      
+      pdf.setLineWidth(0.5);
+      pdf.line(x, y, x + placeholderSize, y + placeholderSize);
+      pdf.line(x + placeholderSize, y, x, y + placeholderSize);
+      
+      pdf.setTextColor(150, 150, 150);
+      pdf.setFontSize(8);
+      pdf.setFont("helvetica", "italic");
+      
+      const text = isShared ? 'Partagé non disp.' : 'Non disponible';
+      pdf.text(text, x + placeholderSize/2 - (isShared ? 15 : 10), y + placeholderSize/2);
+    }
+    
     // ========== PAGE DE SYNTHÈSE ==========
-    // Toujours ajouter une page de synthèse
     pdf.addPage();
     currentPage++;
     
@@ -4539,15 +4625,15 @@ const exportRaccordsByScene = async (sceneId) => {
     pdf.setFontSize(18);
     pdf.setFont("helvetica", "bold");
     pdf.setTextColor(...colorPrimary);
-    pdf.text("RÉCAPITULATIF", 20, yPosition);
+    pdf.text("RÉCAPITULATIF COMPLET", 20, yPosition);
     yPosition += 15;
     
     // Cadre de synthèse
     pdf.setFillColor(...colorLight);
-    pdf.roundedRect(20, yPosition - 5, 170, 100, 8, 8, 'F');
+    pdf.roundedRect(20, yPosition - 5, 170, 120, 8, 8, 'F');
     pdf.setDrawColor(...colorAccent);
     pdf.setLineWidth(0.5);
-    pdf.roundedRect(20, yPosition - 5, 170, 100, 8, 8);
+    pdf.roundedRect(20, yPosition - 5, 170, 120, 8, 8);
     
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
@@ -4560,7 +4646,10 @@ const exportRaccordsByScene = async (sceneId) => {
       `Scène documentée : ${sceneOrdre} - ${sceneTitre}`,
       `Total des raccords : ${totalRaccords}`,
       `Raccords critiques : ${raccordsCritiques}`,
-      `Images documentées : ${totalImages}`,
+      `Raccords avec images partagées : ${raccordsAvecPartage}`,
+      `Images directes : ${totalImagesDirectes}`,
+      `Images partagées : ${totalImagesPartagees}`,
+      `Total images : ${totalImages}`,
       `Date de génération : ${new Date().toLocaleDateString('fr-FR', { 
         day: '2-digit', 
         month: 'long', 
@@ -4571,14 +4660,30 @@ const exportRaccordsByScene = async (sceneId) => {
     ];
     
     // Types de raccords
-    const typesUniques = [...new Set(raccords.map(r => r.typeRaccordNom).filter(Boolean))];
+    const typesUniques = [...new Set(raccordsAvecImagesPartagees.map(r => r.typeRaccordNom).filter(Boolean))];
     if (typesUniques.length > 0) {
       summaryItems.push(`Types de raccords : ${typesUniques.join(', ')}`);
     }
     
+    // Légende
+    summaryItems.push('');
+    summaryItems.push('Légende :');
+    summaryItems.push('  • [C] Raccord critique');
+    summaryItems.push('  • [R] Image de référence');
+    summaryItems.push('  • [S] Image partagée');
+    
     summaryItems.forEach(item => {
-      pdf.text(`• ${item}`, 25, lineY);
-      lineY += 7;
+      if (item === '') {
+        lineY += 3;
+      } else if (item.startsWith('Légende') || item.includes('•')) {
+        pdf.setFontSize(9);
+        pdf.text(item, 25, lineY);
+        lineY += 6;
+      } else {
+        pdf.setFontSize(10);
+        pdf.text(`• ${item}`, 25, lineY);
+        lineY += 7;
+      }
     });
     
     // Note
@@ -4604,10 +4709,11 @@ const exportRaccordsByScene = async (sceneId) => {
       
       if (pageNum === 1) {
         pdf.text(`${store.projetTitle || 'Production'}`, 20, 285);
-        pdf.text(`Document des raccords`, 105, 285, { align: 'center' });
+        pdf.text(`Document des raccords avec images partagées`, 105, 285, { align: 'center' });
         pdf.text(`Scène ${sceneOrdre}`, 190, 285, { align: 'right' });
       } else {
-        pdf.text(`${sceneTitre.substring(0, 25)}${sceneTitre.length > 25 ? '...' : ''}`, 20, 285);
+        const pageTitle = sceneTitre.substring(0, 25) + (sceneTitre.length > 25 ? '...' : '');
+        pdf.text(pageTitle, 20, 285);
         pdf.text(`Page ${pageNum - 1}/${totalPages - 1}`, 105, 285, { align: 'center' });
         const now = new Date();
         pdf.text(`${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`, 190, 285, { align: 'right' });
@@ -4626,9 +4732,9 @@ const exportRaccordsByScene = async (sceneId) => {
     
     console.log(`Export PDF terminé avec succès !`);
     console.log(`Fichier : raccords-${safeFileName}.pdf`);
-    console.log(`${totalRaccords} raccord(s), ${totalImages} image(s)`);
+    console.log(`${totalRaccords} raccord(s), ${totalImagesDirectes} image(s) directes, ${totalImagesPartagees} image(s) partagée(s)`);
     
-    alert(`PDF généré avec succès !\n\n${totalRaccords} raccord(s)\n${totalImages} image(s)\n\nFichier : raccords-${safeFileName}.pdf`);
+    alert(`PDF généré avec succès !\n\n${totalRaccords} raccord(s)\n${totalImagesDirectes} image(s) directes\n${totalImagesPartagees} image(s) partagée(s)\n\nFichier : raccords-${safeFileName}.pdf`);
     
   } catch (err) {
     console.error('Erreur lors de l\'export PDF:', err);
