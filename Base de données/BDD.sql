@@ -855,21 +855,21 @@ INSERT INTO statuts_raccord (code, nom_statut, description) VALUES
 ('NON_CONFORME', 'Non conforme', 'Raccord non conforme'),
 ('CORRIGE', 'Corrigé', 'Raccord corrigé');
 
--- Table pour les statuts de vérification (doit être créée avant verification_raccords)
-CREATE TABLE statuts_verification (
-    id_statut_verification BIGSERIAL PRIMARY KEY,
-    code VARCHAR(50) UNIQUE NOT NULL,
-    nom_statut VARCHAR(100) NOT NULL,
-    description TEXT,
-    ordre_affichage INTEGER DEFAULT 1,
-    est_actif BOOLEAN DEFAULT TRUE,
-    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- -- Table pour les statuts de vérification (doit être créée avant verification_raccords)
+-- CREATE TABLE statuts_verification (
+--     id_statut_verification BIGSERIAL PRIMARY KEY,
+--     code VARCHAR(50) UNIQUE NOT NULL,
+--     nom_statut VARCHAR(100) NOT NULL,
+--     description TEXT,
+--     ordre_affichage INTEGER DEFAULT 1,
+--     est_actif BOOLEAN DEFAULT TRUE,
+--     cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
 
-INSERT INTO statuts_verification (code, nom_statut, description, ordre_affichage) VALUES
-('CONFORME', 'Conforme', 'Le raccord est conforme', 1),
-('NON_CONFORME', 'Non conforme', 'Le raccord présente des incohérences', 2),
-('A_CORRIGER', 'À corriger', 'Le raccord nécessite des corrections', 3);
+-- INSERT INTO statuts_verification (code, nom_statut, description, ordre_affichage) VALUES
+-- ('CONFORME', 'Conforme', 'Le raccord est conforme', 1),
+-- ('NON_CONFORME', 'Non conforme', 'Le raccord présente des incohérences', 2),
+-- ('A_CORRIGER', 'À corriger', 'Le raccord nécessite des corrections', 3);
 
 CREATE TABLE types_raccord (
     id_type_raccord BIGSERIAL PRIMARY KEY,
@@ -948,9 +948,9 @@ CREATE INDEX idx_raccord_planning_planning ON raccord_planning(id_planning_tourn
 
 
 
--- Contrainte pour empêcher les doublons scène-source = scène-cible
-ALTER TABLE raccords ADD CONSTRAINT unique_raccord_different_scenes 
-CHECK (scene_source_id != scene_cible_id OR id_type_raccord IS NULL);
+-- -- Contrainte pour empêcher les doublons scène-source = scène-cible
+-- ALTER TABLE raccords ADD CONSTRAINT unique_raccord_different_scenes 
+-- CHECK (scene_source_id != scene_cible_id OR id_type_raccord IS NULL);
 
 -- Table pour stocker les images de référence des raccords
 CREATE TABLE raccord_images (
@@ -963,16 +963,25 @@ CREATE TABLE raccord_images (
     cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table pour suivre la vérification des raccords pendant le tournage
-CREATE TABLE verification_raccords (
-    id_verification BIGSERIAL PRIMARY KEY,
+
+CREATE TABLE raccord_images_partages (
+    id_raccord_image_partage BIGSERIAL PRIMARY KEY,
     id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
-    id_utilisateur BIGINT REFERENCES utilisateurs(id_utilisateur),
-    date_verification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    id_statut_verification BIGINT REFERENCES statuts_verification(id_statut_verification),
-    notes_verification TEXT,
-    preuve_image VARCHAR(500)
+    id_raccord_image BIGINT REFERENCES raccord_images(id_raccord_image) ON DELETE CASCADE,
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(id_raccord, id_raccord_image)
 );
+
+-- -- Table pour suivre la vérification des raccords pendant le tournage
+-- CREATE TABLE verification_raccords (
+--     id_verification BIGSERIAL PRIMARY KEY,
+--     id_raccord BIGINT REFERENCES raccords(id_raccord) ON DELETE CASCADE,
+--     id_utilisateur BIGINT REFERENCES utilisateurs(id_utilisateur),
+--     date_verification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     id_statut_verification BIGINT REFERENCES statuts_verification(id_statut_verification),
+--     notes_verification TEXT,
+--     preuve_image VARCHAR(500)
+-- );
 
 -- Index pour optimiser les performances
 CREATE INDEX idx_raccords_scene_source ON raccords(scene_source_id);

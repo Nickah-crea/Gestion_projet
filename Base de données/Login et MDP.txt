@@ -404,3 +404,10 @@ ALTER TABLE replanification ADD COLUMN raccord_ids TEXT;
 ALTER TABLE replanification 
     DROP COLUMN IF EXISTS scene_source_id,
     DROP COLUMN IF EXISTS scene_cible_id;
+
+
+
+DROP TABLE IF EXISTS verification_raccords;
+DROP TABLE IF EXISTS statuts_verification;
+DROP TABLE IF EXISTS raccord_planning;
+DROP TABLE IF EXISTS replanification;
