@@ -13,11 +13,11 @@ CREATE TABLE utilisateurs (
 );
 
 INSERT INTO utilisateurs (nom, email, mot_de_passe, role, cree_le, modifie_le) VALUES
-('Admin Principal', 'admin@gmail.com', 'MotdepasseAdmin123', 'ADMIN', '2025-01-01 09:00:00', '2025-01-01 09:00:00'),
-('Jean Dupont', 'jean.dupont@gmail.com', 'mdpRealisateur1', 'REALISATEUR', '2025-01-02 10:15:00', '2025-01-02 10:15:00'),
-('Sophie Martin', 'sophie.martin@gmail.com', 'mdpRealisateur2', 'REALISATEUR', '2025-01-03 14:30:00', '2025-01-03 14:30:00'),
-('Marc Leroy', 'marc.leroy@gmail.com', 'mdpScenariste1', 'SCENARISTE', '2025-01-04 11:45:00', '2025-01-04 11:45:00'),
-('Alice Dubois', 'alice.dubois@gmail.com', 'mdpScenariste2', 'SCENARISTE', '2025-01-05 16:20:00', '2025-01-05 16:20:00');
+('Admin Principal', 'admin@gmail.com', '$2b$10$5uPtvRMSmI0joRW8eGIh7uIei5gBZGyYA6DujMnqrE7xkXV1jH6dm', 'ADMIN', '2025-01-01 09:00:00', '2025-01-01 09:00:00'),
+('Jean Dupont', 'jean.dupont@gmail.com', '$2b$10$izG.kO9u6U8vn5GplBMbT.0xGB5nvz2UaXxqUhjfpmJlFeM0EJDe.', 'REALISATEUR', '2025-01-02 10:15:00', '2025-01-02 10:15:00'),
+('Sophie Martin', 'sophie.martin@gmail.com', '$2b$10$vZ7e1Q8FTPGK2fE0vc9nROGwspASGCWXqtB7sbFA9GAUuB/bgKQQG', 'REALISATEUR', '2025-01-03 14:30:00', '2025-01-03 14:30:00'),
+('Marc Leroy', 'marc.leroy@gmail.com', '$2b$10$anTjad98OwaB86wuBZ9l9u4PHjagRFN8mNjMqxlAWKGZhcfDrD151', 'SCENARISTE', '2025-01-04 11:45:00', '2025-01-04 11:45:00'),
+('Alice Dubois', 'alice.dubois@gmail.com', '$2b$10$gFJWNt6oW8d7xZ79VaOxQew4M.H3ojVdhtqRZJ5RNotsgAG7oXn6e', 'SCENARISTE', '2025-01-05 16:20:00', '2025-01-05 16:20:00');
 
 
 CREATE TABLE scenaristes (
@@ -855,6 +855,11 @@ INSERT INTO statuts_raccord (code, nom_statut, description) VALUES
 ('NON_CONFORME', 'Non conforme', 'Raccord non conforme'),
 ('CORRIGE', 'Corrigé', 'Raccord corrigé');
 
+
+UPDATE tatuts_raccord SET 
+    nom_statut REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_statut, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
+    description = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(description, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A');
+
 -- -- Table pour les statuts de vérification (doit être créée avant verification_raccords)
 -- CREATE TABLE statuts_verification (
 --     id_statut_verification BIGSERIAL PRIMARY KEY,
@@ -887,6 +892,12 @@ INSERT INTO types_raccord (code, nom_type, description) VALUES
 ('coiffure', 'Coiffure', 'Raccord de coiffure et maquillage'),
 ('lumière', 'Lumière', 'Raccord d''éclairage et ambiance lumineuse'),
 ('position', 'Position', 'Raccord de position des acteurs et objets');
+
+UPDATE types_raccord SET 
+    nom_type REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_type, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
+    description = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(description, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A');
+
+
 
 -- Table principale des raccords
 CREATE TABLE raccords (
