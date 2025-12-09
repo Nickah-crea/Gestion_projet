@@ -4082,51 +4082,54 @@ const exportRaccordsByScene = async (sceneId) => {
     const raccordsResponse = await axios.get(`/api/raccords/scene/${sceneId}`);
     const raccords = raccordsResponse.data;
 
-    // 2. Récupérer les images partagées pour chaque raccord avec vérification
+    // 2. Récupérer et filtrer les raccords pour exclure ceux où la scène est source avec images partagées
     const raccordsAvecImagesPartagees = await Promise.all(
       raccords.map(async (raccord) => {
         try {
-          // Appel API pour obtenir les images partagées
-          const sharedImagesResponse = await axios.get(`/api/raccords/${raccord.id}/shared-images`);
-          const sharedImages = sharedImagesResponse.data || [];
+          // Vérifier si ce raccord doit être exclu
+          // Règle: Exclure les raccords où la scène exportée est la source
+          // et où il y a des images partagées avec d'autres scènes
+          const estSceneSource = raccord.sceneSourceId === sceneId;
           
-          // Filtrer les images partagées pour éviter les doublons
-          // Logique : si la scène exportée est la source, on ne montre pas les images partagées
-          // car elles proviennent déjà de cette scène
-          let filteredSharedImages = [];
-          
-          if (sharedImages.length > 0) {
-            // Pour chaque image partagée, vérifier si elle appartient déjà à un raccord de cette scène
-            filteredSharedImages = sharedImages.filter(sharedImage => {
-              // Récupérer l'ID de la scène source de l'image partagée
-              // On suppose que l'API nous donne cette information
-              // Si non disponible, on peut faire un appel supplémentaire
-              try {
-                // Vérifier si cette image est déjà présente dans les images directes
-                const isAlreadyInDirectImages = raccord.images?.some(directImage => 
-                  directImage.id === sharedImage.id
-                );
-                
-                // Si c'est une image partagée ET qu'elle appartient à cette scène (sceneId),
-                // on ne l'affiche pas pour éviter le doublon
-                if (sharedImage.raccordId && sharedImage.sceneSourceId) {
-                  // Si l'image partagée provient de la même scène que celle qu'on exporte,
-                  // c'est un doublon, on ne l'inclut pas
-                  return sharedImage.sceneSourceId !== sceneId;
-                }
-                
-                return !isAlreadyInDirectImages;
-              } catch (e) {
-                console.warn('Erreur lors de la vérification de l\'image partagée:', e);
-                return true; // En cas d'erreur, on l'inclut pour sécurité
-              }
-            });
+          // Si la scène est la source, vérifier s'il y a des images partagées
+          if (estSceneSource) {
+            // Appel API pour obtenir les images partagées
+            const sharedImagesResponse = await axios.get(`/api/raccords/${raccord.id}/shared-images`);
+            const sharedImages = sharedImagesResponse.data || [];
             
-            console.log(`Raccord ${raccord.id}: ${sharedImages.length} images partagées, ${filteredSharedImages.length} filtrées`);
+            // Si la scène est source ET il y a des images partagées, exclure ce raccord
+            if (sharedImages.length > 0) {
+              console.log(`Raccord ${raccord.id} exclu: scène source avec ${sharedImages.length} image(s) partagée(s)`);
+              return null; // Exclure ce raccord
+            }
+            
+            // Si pas d'images partagées, inclure le raccord sans images partagées
+            raccord.sharedImages = [];
+            return raccord;
           }
           
-          raccord.sharedImages = filteredSharedImages;
+          // Si la scène est la cible, inclure le raccord avec toutes les images partagées
+          if (raccord.sceneCibleId === sceneId) {
+            const sharedImagesResponse = await axios.get(`/api/raccords/${raccord.id}/shared-images`);
+            const sharedImages = sharedImagesResponse.data || [];
+            
+            // Filtrer les images partagées pour éviter les doublons avec les images directes
+            const filteredSharedImages = sharedImages.filter(sharedImage => {
+              const isAlreadyInDirectImages = raccord.images?.some(directImage => 
+                directImage.id === sharedImage.id
+              );
+              return !isAlreadyInDirectImages;
+            });
+            
+            raccord.sharedImages = filteredSharedImages;
+            console.log(`Raccord ${raccord.id} inclus (scène cible): ${filteredSharedImages.length} image(s) partagée(s)`);
+            return raccord;
+          }
+          
+          // Cas par défaut (normalement ne devrait pas arriver)
+          raccord.sharedImages = [];
           return raccord;
+          
         } catch (error) {
           console.warn(`Erreur lors de la récupération des images partagées pour le raccord ${raccord.id}:`, error);
           raccord.sharedImages = [];
@@ -4135,10 +4138,16 @@ const exportRaccordsByScene = async (sceneId) => {
       })
     );
 
-    console.log(`Raccords reçus pour scène ${sceneId}:`, raccordsAvecImagesPartagees.length);
+    // Filtrer les nulls (raccords exclus)
+    const raccordsFiltres = raccordsAvecImagesPartagees.filter(r => r !== null);
+    
+    console.log(`Raccords pour scène ${sceneId}:`);
+    console.log(`- Total originaux: ${raccords.length}`);
+    console.log(`- Après filtrage: ${raccordsFiltres.length}`);
+    console.log(`- Exclus: ${raccords.length - raccordsFiltres.length}`);
 
-    if (!raccordsAvecImagesPartagees || raccordsAvecImagesPartagees.length === 0) {
-      alert('Aucun raccord trouvé pour cette scène');
+    if (!raccordsFiltres || raccordsFiltres.length === 0) {
+      alert('Aucun raccord trouvé pour cette scène après filtrage. Les raccords où cette scène est la source avec des images partagées ont été exclus.');
       return;
     }
 
@@ -4196,28 +4205,30 @@ const exportRaccordsByScene = async (sceneId) => {
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(80, 80, 80);
     
-    if (currentSequence.value) {
-      pdf.text(`Séquence ${currentSequence.value.ordre} : ${currentSequence.value.titre}`, 105, titleY + 5, { align: 'center' });
+    if (store.currentSequence) {
+      pdf.text(`Séquence ${store.currentSequence.ordre} : ${store.currentSequence.titre}`, 105, titleY + 5, { align: 'center' });
     }
-    if (currentEpisode.value) {
-      pdf.text(`Épisode ${currentSequence.value.ordre} : ${currentEpisode.value.titre}`, 105, titleY + 15, { align: 'center' });
+    if (store.currentEpisode) {
+      pdf.text(`Épisode ${store.currentEpisode.ordre} : ${store.currentEpisode.titre}`, 105, titleY + 15, { align: 'center' });
     }
     
-    // Statistiques
-    const totalRaccords = raccordsAvecImagesPartagees.length;
-    const totalImagesDirectes = raccordsAvecImagesPartagees.reduce((sum, r) => sum + (r.images?.length || 0), 0);
-    const totalImagesPartagees = raccordsAvecImagesPartagees.reduce((sum, r) => sum + (r.sharedImages?.length || 0), 0);
+    // Statistiques (après filtrage)
+    const totalRaccordsOrigine = raccords.length;
+    const totalRaccords = raccordsFiltres.length;
+    const raccordsExclus = totalRaccordsOrigine - totalRaccords;
+    const totalImagesDirectes = raccordsFiltres.reduce((sum, r) => sum + (r.images?.length || 0), 0);
+    const totalImagesPartagees = raccordsFiltres.reduce((sum, r) => sum + (r.sharedImages?.length || 0), 0);
     const totalImages = totalImagesDirectes + totalImagesPartagees;
-    const raccordsCritiques = raccordsAvecImagesPartagees.filter(r => r.estCritique).length;
-    const raccordsAvecPartage = raccordsAvecImagesPartagees.filter(r => r.sharedImages?.length > 0).length;
+    const raccordsCritiques = raccordsFiltres.filter(r => r.estCritique).length;
+    const raccordsAvecPartage = raccordsFiltres.filter(r => r.sharedImages?.length > 0).length;
     
     // Cadre statistiques
     const statsY = titleY + 35;
     pdf.setFillColor(...colorLight);
-    pdf.roundedRect(40, statsY, 130, 50, 8, 8, 'F');
+    pdf.roundedRect(40, statsY, 130, 65, 8, 8, 'F');
     pdf.setDrawColor(...colorAccent);
     pdf.setLineWidth(0.5);
-    pdf.roundedRect(40, statsY, 130, 50, 8, 8);
+    pdf.roundedRect(40, statsY, 130, 65, 8, 8);
     
     pdf.setFontSize(12);
     pdf.setFont("helvetica", "bold");
@@ -4226,19 +4237,22 @@ const exportRaccordsByScene = async (sceneId) => {
     
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
-    pdf.text(`${totalRaccords} raccords`, 50, statsY + 22);
+    pdf.text(`${totalRaccordsOrigine} raccords originaux`, 50, statsY + 22);
     pdf.text(`${raccordsCritiques} critiques`, 105, statsY + 22, { align: 'center' });
     pdf.text(`${raccordsAvecPartage} avec partage`, 160, statsY + 22, { align: 'right' });
     
-    pdf.text(`${totalImagesDirectes} images directes`, 50, statsY + 32);
-    pdf.text(`${totalImagesPartagees} partagées`, 105, statsY + 32, { align: 'center' });
-    pdf.text(`${totalImages} total`, 160, statsY + 32, { align: 'right' });
+    pdf.text(`${totalRaccords} raccords inclus`, 50, statsY + 32);
+    pdf.text(`${raccordsExclus} exclus (source)`, 105, statsY + 32, { align: 'center' });
+    pdf.text(`${totalImagesDirectes} images directes`, 50, statsY + 42);
+    
+    pdf.text(`${totalImagesPartagees} partagées`, 105, statsY + 42, { align: 'center' });
+    pdf.text(`${totalImages} total images`, 160, statsY + 42, { align: 'right' });
     
     // Date
     pdf.setFontSize(9);
     pdf.setFont("helvetica", "italic");
     pdf.setTextColor(120, 120, 120);
-    pdf.text(`Document généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 270, { align: 'center' });
+    pdf.text(`Document généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 275, { align: 'center' });
 
     // ========== PAGES SUIVANTES ==========
     let currentPage = 2;
@@ -4332,7 +4346,7 @@ const exportRaccordsByScene = async (sceneId) => {
     };
 
     // ========== PARCOURIR LES RACCORDS ==========
-    for (const [index, raccord] of raccordsAvecImagesPartagees.entries()) {
+    for (const [index, raccord] of raccordsFiltres.entries()) {
       const raccordIndex = index + 1;
       
       // Vérifier l'espace pour la section texte
@@ -4430,7 +4444,7 @@ const exportRaccordsByScene = async (sceneId) => {
       
       // === IMAGES PARTAGÉES ===
       // Afficher les images partagées SEULEMENT si cette scène est la cible
-      // (pour éviter les doublons quand la scène est la source)
+      // (les raccords où la scène est source avec images partagées ont déjà été exclus)
       const shouldShowSharedImages = raccord.sceneCibleId === sceneId && 
                                     raccord.sharedImages && 
                                     raccord.sharedImages.length > 0;
@@ -4463,7 +4477,7 @@ const exportRaccordsByScene = async (sceneId) => {
       }
       
       // === SÉPARATION ENTRE RACCORDS ===
-      if (index < raccordsAvecImagesPartagees.length - 1) {
+      if (index < raccordsFiltres.length - 1) {
         if (yPosition < 270) {
           pdf.setDrawColor(230, 230, 230);
           pdf.setLineWidth(0.3);
@@ -4677,10 +4691,10 @@ const exportRaccordsByScene = async (sceneId) => {
     
     // Cadre de synthèse
     pdf.setFillColor(...colorLight);
-    pdf.roundedRect(20, yPosition - 5, 170, 140, 8, 8, 'F');
+    pdf.roundedRect(20, yPosition - 5, 170, 150, 8, 8, 'F');
     pdf.setDrawColor(...colorAccent);
     pdf.setLineWidth(0.5);
-    pdf.roundedRect(20, yPosition - 5, 170, 140, 8, 8);
+    pdf.roundedRect(20, yPosition - 5, 170, 150, 8, 8);
     
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
@@ -4691,12 +4705,14 @@ const exportRaccordsByScene = async (sceneId) => {
     
     const summaryItems = [
       `Scène documentée : ${sceneOrdre} - ${sceneTitre}`,
-      `Total des raccords : ${totalRaccords}`,
+      `Total des raccords originaux : ${totalRaccordsOrigine}`,
+      `Raccords inclus dans le rapport : ${totalRaccords}`,
+      `Raccords exclus (source avec partage) : ${raccordsExclus}`,
       `Raccords critiques : ${raccordsCritiques}`,
       `Raccords avec images partagées : ${raccordsAvecPartage}`,
       `Images directes : ${totalImagesDirectes}`,
       `Images partagées : ${totalImagesPartagees}`,
-      `Total images : ${totalImages}`,
+      `Total images affichées : ${totalImages}`,
       `Date de génération : ${new Date().toLocaleDateString('fr-FR', { 
         day: '2-digit', 
         month: 'long', 
@@ -4707,30 +4723,35 @@ const exportRaccordsByScene = async (sceneId) => {
     ];
     
     // Types de raccords
-    const typesUniques = [...new Set(raccordsAvecImagesPartagees.map(r => r.typeRaccordNom).filter(Boolean))];
+    const typesUniques = [...new Set(raccordsFiltres.map(r => r.typeRaccordNom).filter(Boolean))];
     if (typesUniques.length > 0) {
       summaryItems.push(`Types de raccords : ${typesUniques.join(', ')}`);
     }
     
-    // Note sur les images partagées
+    // Note sur le filtrage
     summaryItems.push('');
-    summaryItems.push('NOTE : Les images partagées ne sont affichées que lorsque cette scène est');
-    summaryItems.push('la scène CIBLE, pour éviter les doublons avec les images directes.');
+    summaryItems.push('POLITIQUE DE FILTRAGE :');
+    summaryItems.push('  • Les raccords où cette scène est la SOURCE et qui ont');
+    summaryItems.push('    des images partagées avec d\'autres scènes sont EXCLUS.');
+    summaryItems.push('  • Cette exclusion évite les doublons d\'images, car les');
+    summaryItems.push('    images proviennent déjà de cette scène.');
+    summaryItems.push('  • Les images partagées sont uniquement affichées quand');
+    summaryItems.push('    cette scène est la CIBLE.');
     
     // Légende
     summaryItems.push('');
     summaryItems.push('Légende :');
     summaryItems.push('  • [C] Raccord critique');
-    summaryItems.push('  • [R] Image de référence');
+    summaryItems.push('  • [R] Image de référence (directe)');
     summaryItems.push('  • [S] Image partagée (provenant de la scène source)');
     
     summaryItems.forEach(item => {
       if (item === '') {
         lineY += 3;
-      } else if (item.startsWith('NOTE') || item.startsWith('Légende') || item.includes('•')) {
+      } else if (item.startsWith('POLITIQUE') || item.startsWith('Légende') || item.includes('•')) {
         pdf.setFontSize(9);
         pdf.text(item, 25, lineY);
-        lineY += 6;
+        lineY += 5;
       } else {
         pdf.setFontSize(10);
         pdf.text(`• ${item}`, 25, lineY);
@@ -4784,9 +4805,16 @@ const exportRaccordsByScene = async (sceneId) => {
     
     console.log(`Export PDF terminé avec succès !`);
     console.log(`Fichier : raccords-${safeFileName}.pdf`);
-    console.log(`${totalRaccords} raccord(s), ${totalImagesDirectes} image(s) directes, ${totalImagesPartagees} image(s) partagée(s)`);
+    console.log(`${totalRaccords} raccord(s) inclus, ${raccordsExclus} exclu(s)`);
+    console.log(`${totalImagesDirectes} image(s) directes, ${totalImagesPartagees} image(s) partagée(s)`);
     
-    alert(`PDF généré avec succès !\n\n${totalRaccords} raccord(s)\n${totalImagesDirectes} image(s) directes\n${totalImagesPartagees} image(s) partagée(s)\n\nFichier : raccords-${safeFileName}.pdf`);
+    alert(`PDF généré avec succès !\n\n` +
+          `${totalRaccordsOrigine} raccord(s) originaux\n` +
+          `${totalRaccords} raccord(s) inclus dans le rapport\n` +
+          `${raccordsExclus} raccord(s) exclus (source avec partage)\n` +
+          `${totalImagesDirectes} image(s) directes\n` +
+          `${totalImagesPartagees} image(s) partagée(s)\n\n` +
+          `Fichier : raccords-${safeFileName}.pdf`);
     
   } catch (err) {
     console.error('Erreur lors de l\'export PDF:', err);
@@ -4805,169 +4833,168 @@ const exportRaccordsByScene = async (sceneId) => {
 };
 
 
-// Pour exportRaccordsByComedien : je l'aligne aussi (il était déjà proche, mais je standardise la taille et les logs)
-const exportRaccordsByComedien = async (comedienId) => {
-  if (!comedienId) {
-    alert('Veuillez sélectionner un comédien');
-    return;
-  }
+// const exportRaccordsByComedien = async (comedienId) => {
+//   if (!comedienId) {
+//     alert('Veuillez sélectionner un comédien');
+//     return;
+//   }
 
-  try {
-    console.log('Début export PDF pour comédien:', comedienId);
+//   try {
+//     console.log('Début export PDF pour comédien:', comedienId);
     
-    const response = await axios.get(`/api/raccords/export/comedien/${comedienId}`);
-    const raccords = response.data;
+//     const response = await axios.get(`/api/raccords/export/comedien/${comedienId}`);
+//     const raccords = response.data;
 
-    console.log('Raccords reçus pour comédien:', raccords);
+//     console.log('Raccords reçus pour comédien:', raccords);
 
-    if (!raccords || raccords.length === 0) {
-      alert('Aucun raccord trouvé pour ce comédien');
-      return;
-    }
+//     if (!raccords || raccords.length === 0) {
+//       alert('Aucun raccord trouvé pour ce comédien');
+//       return;
+//     }
 
-    const comedienNom = raccords[0]?.comedienNom || 'Comédien inconnu';
+//     const comedienNom = raccords[0]?.comedienNom || 'Comédien inconnu';
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79];
+//     const pdf = new jsPDF('p', 'mm', 'a4');
+//     const primaryColor = [33, 41, 79];
 
-    // Page de garde (identique)
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 297, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(24);
-    pdf.text(`RACCORDS POUR`, 105, 90, { align: 'center' });
-    pdf.text(`${comedienNom.toUpperCase()}`, 105, 105, { align: 'center' });
-    pdf.setFontSize(14);
-    pdf.text('Accessoires • Vêtements • Coiffure', 105, 120, { align: 'center' });
-    pdf.setFontSize(12);
-    pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
+//     // Page de garde (identique)
+//     pdf.setFillColor(...primaryColor);
+//     pdf.rect(0, 0, 210, 297, 'F');
+//     pdf.setTextColor(255, 255, 255);
+//     pdf.setFontSize(24);
+//     pdf.text(`RACCORDS POUR`, 105, 90, { align: 'center' });
+//     pdf.text(`${comedienNom.toUpperCase()}`, 105, 105, { align: 'center' });
+//     pdf.setFontSize(14);
+//     pdf.text('Accessoires • Vêtements • Coiffure', 105, 120, { align: 'center' });
+//     pdf.setFontSize(12);
+//     pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
 
-    pdf.addPage();
-    let y = 30;
+//     pdf.addPage();
+//     let y = 30;
 
-    // En-tête (identique)
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 25, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(16);
-    pdf.text(`RACCORDS - ${comedienNom.toUpperCase()}`, 105, 15, { align: 'center' });
+//     // En-tête (identique)
+//     pdf.setFillColor(...primaryColor);
+//     pdf.rect(0, 0, 210, 25, 'F');
+//     pdf.setTextColor(255, 255, 255);
+//     pdf.setFontSize(16);
+//     pdf.text(`RACCORDS - ${comedienNom.toUpperCase()}`, 105, 15, { align: 'center' });
 
-    for (const [index, r] of raccords.entries()) {
-      if (y > 250) {
-        pdf.addPage();
-        y = 30;
-      }
+//     for (const [index, r] of raccords.entries()) {
+//       if (y > 250) {
+//         pdf.addPage();
+//         y = 30;
+//       }
 
-      pdf.setTextColor(0, 0, 0);
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
-      pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'} – ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 15, y);
-      y += 8;
+//       pdf.setTextColor(0, 0, 0);
+//       pdf.setFontSize(12);
+//       pdf.setFont("helvetica", "bold");
+//       pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'} – ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 15, y);
+//       y += 8;
 
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
+//       pdf.setFont("helvetica", "normal");
+//       pdf.setFontSize(10);
       
-      if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 6;
-      if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 6;
-      if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 6;
-      if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 6;
+//       if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 6;
+//       if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 6;
+//       if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 6;
+//       if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 6;
       
-      if (r.description) {
-        const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
-        pdf.text(lines, 20, y);
-        y += lines.length * 5 + 4;
-      }
+//       if (r.description) {
+//         const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
+//         pdf.text(lines, 20, y);
+//         y += lines.length * 5 + 4;
+//       }
 
-      pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
-      y += 6;
+//       pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
+//       y += 6;
 
-      if (r.dateTournageSource || r.dateTournageCible) {
-        pdf.text(`Tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
-        y += 6;
-      }
+//       if (r.dateTournageSource || r.dateTournageCible) {
+//         pdf.text(`Tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
+//         y += 6;
+//       }
 
-      // Images (exactement comme projet)
-      if (r.images && r.images.length > 0) {
-        console.log(`Raccord ${index} a ${r.images.length} images:`, r.images);
+//       // Images (exactement comme projet)
+//       if (r.images && r.images.length > 0) {
+//         console.log(`Raccord ${index} a ${r.images.length} images:`, r.images);
         
-        pdf.text('Images associées:', 20, y);
-        y += 8;
+//         pdf.text('Images associées:', 20, y);
+//         y += 8;
         
-        let x = 20;
-        let imagesAdded = 0;
+//         let x = 20;
+//         let imagesAdded = 0;
         
-        for (const img of r.images) {
-          if (imagesAdded >= 2) break;
+//         for (const img of r.images) {
+//           if (imagesAdded >= 2) break;
           
-          if (!img.nomFichier || img.nomFichier.includes('undefined')) {
-            console.warn('Nom de fichier invalide ignoré:', img.nomFichier);
-            continue;
-          }
+//           if (!img.nomFichier || img.nomFichier.includes('undefined')) {
+//             console.warn('Nom de fichier invalide ignoré:', img.nomFichier);
+//             continue;
+//           }
           
-          try {
-            console.log('Tentative de chargement image:', img.nomFichier);
-            const base64 = await getBase64FromUrl(img.nomFichier);
+//           try {
+//             console.log('Tentative de chargement image:', img.nomFichier);
+//             const base64 = await getBase64FromUrl(img.nomFichier);
             
-            if (base64) {
-              pdf.addImage(base64, 'JPEG', x, y, 35, 35);
-              x += 40;
-              imagesAdded++;
+//             if (base64) {
+//               pdf.addImage(base64, 'JPEG', x, y, 35, 35);
+//               x += 40;
+//               imagesAdded++;
               
-              if (x > 150) {
-                x = 20;
-                y += 40;
-              }
+//               if (x > 150) {
+//                 x = 20;
+//                 y += 40;
+//               }
               
-              console.log('Image chargée avec succès:', img.nomFichier);
-            } else {
-              console.warn('Échec chargement image:', img.nomFichier);
-            }
-          } catch (imgError) {
-            console.warn('Erreur lors du chargement image:', img.nomFichier, imgError);
-          }
-        }
+//               console.log('Image chargée avec succès:', img.nomFichier);
+//             } else {
+//               console.warn('Échec chargement image:', img.nomFichier);
+//             }
+//           } catch (imgError) {
+//             console.warn('Erreur lors du chargement image:', img.nomFichier, imgError);
+//           }
+//         }
         
-        if (imagesAdded > 0) {
-          y += 40;
-          console.log(`${imagesAdded} images ajoutées pour le raccord ${index}`);
-        } else {
-          pdf.setFontSize(9);
-          pdf.setTextColor(150, 150, 150);
-          pdf.text('Aucune image disponible', 20, y);
-          y += 15;
-          console.log('Aucune image disponible pour le raccord', index);
-        }
-      } else {
-        console.log('Aucune image pour le raccord', index);
-      }
+//         if (imagesAdded > 0) {
+//           y += 40;
+//           console.log(`${imagesAdded} images ajoutées pour le raccord ${index}`);
+//         } else {
+//           pdf.setFontSize(9);
+//           pdf.setTextColor(150, 150, 150);
+//           pdf.text('Aucune image disponible', 20, y);
+//           y += 15;
+//           console.log('Aucune image disponible pour le raccord', index);
+//         }
+//       } else {
+//         console.log('Aucune image pour le raccord', index);
+//       }
 
-      y += 10;
-      pdf.setDrawColor(200, 200, 200);
-      pdf.line(15, y - 5, 195, y - 5);
-      y += 5;
-    }
+//       y += 10;
+//       pdf.setDrawColor(200, 200, 200);
+//       pdf.line(15, y - 5, 195, y - 5);
+//       y += 5;
+//     }
 
-    // Pied de page (aligné)
-    const totalPages = pdf.internal.getNumberOfPages();
-    for (let i = 2; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(9);
-      pdf.setTextColor(150, 150, 150);
-      pdf.text(`Raccords pour ${comedienNom} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
-    }
+//     // Pied de page (aligné)
+//     const totalPages = pdf.internal.getNumberOfPages();
+//     for (let i = 2; i <= totalPages; i++) {
+//       pdf.setPage(i);
+//       pdf.setFontSize(9);
+//       pdf.setTextColor(150, 150, 150);
+//       pdf.text(`Raccords pour ${comedienNom} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
+//     }
 
-    pdf.save(`raccords-${comedienNom.replace(/\s+/g, '-')}.pdf`);
-    console.log('Export PDF comédien terminé avec succès');
+//     pdf.save(`raccords-${comedienNom.replace(/\s+/g, '-')}.pdf`);
+//     console.log('Export PDF comédien terminé avec succès');
     
-  } catch (err) {
-    console.error('Erreur export comédien:', err);
-    if (err.response?.status === 404) {
-      alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
-    } else {
-      alert('Erreur lors de l\'export PDF: ' + (err.response?.data?.message || err.message));
-    }
-  }
-};
+//   } catch (err) {
+//     console.error('Erreur export comédien:', err);
+//     if (err.response?.status === 404) {
+//       alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
+//     } else {
+//       alert('Erreur lors de l\'export PDF: ' + (err.response?.data?.message || err.message));
+//     }
+//   }
+// };
 </script>
 
 

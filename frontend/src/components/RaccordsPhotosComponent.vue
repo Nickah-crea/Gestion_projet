@@ -352,13 +352,55 @@ const loadStatutsRaccord = async () => {
 const loadExistingRaccords = async () => {
   try {
     const response = await axios.get(`/api/raccords/scene/${props.sceneId}`)
-    existingRaccords.value = response.data
     
-    for (const raccord of existingRaccords.value) {
-      await loadSharedImages(raccord.id)
-    }
+    // Filtrer les raccords : exclure ceux où cette scène est la source avec des images partagées
+    const filteredRaccords = await Promise.all(
+      response.data.map(async (raccord) => {
+        try {
+          // Récupérer les images partagées pour ce raccord
+          const sharedImagesResponse = await axios.get(`/api/raccords/${raccord.id}/shared-images`)
+          const sharedImages = sharedImagesResponse.data || []
+          
+          // Vérifier si ce raccord doit être exclu
+          // Règle: Exclure les raccords où cette scène est la source ET il y a des images partagées
+          const isThisSceneSource = raccord.sceneSourceId === props.sceneId
+          const hasSharedImages = sharedImages.length > 0
+          
+          if (isThisSceneSource && hasSharedImages) {
+            console.log(`Raccord ${raccord.id} exclu: scène source avec ${sharedImages.length} image(s) partagée(s)`)
+            return null // Exclure ce raccord
+          }
+          
+          // Si la scène est cible, inclure le raccord avec les images partagées
+          if (raccord.sceneCibleId === props.sceneId) {
+            raccord.sharedImages = sharedImages
+            console.log(`Raccord ${raccord.id} inclus (scène cible): ${sharedImages.length} image(s) partagée(s)`)
+          } else {
+            // Si la scène est source sans images partagées, ou autre cas
+            raccord.sharedImages = []
+          }
+          
+          return raccord
+          
+        } catch (error) {
+          console.warn(`Erreur lors de la récupération des images partagées pour le raccord ${raccord.id}:`, error)
+          raccord.sharedImages = []
+          return raccord
+        }
+      })
+    )
+    
+    // Filtrer les nulls (raccords exclus)
+    existingRaccords.value = filteredRaccords.filter(r => r !== null)
+    
+    console.log(`Raccords pour scène ${props.sceneId}:`)
+    console.log(`- Total originaux: ${response.data.length}`)
+    console.log(`- Après filtrage: ${existingRaccords.value.length}`)
+    console.log(`- Exclus: ${response.data.length - existingRaccords.value.length}`)
+    
   } catch (error) {
     console.error('Erreur lors du chargement des raccords existants:', error)
+    existingRaccords.value = []
   }
 }
 
@@ -483,9 +525,28 @@ const deleteRaccord = async (raccordId) => {
 // }
 
 const getAllImagesForRaccord = (raccord) => {
+  // Récupérer les images propres au raccord
   const ownImages = raccord.images || []
-  const sharedImages = raccord.sharedImages || []
-  return [...ownImages, ...sharedImages]
+  
+  // Récupérer les images partagées
+  // IMPORTANT: Ne montrer les images partagées QUE si cette scène est la cible
+  const sharedImages = (raccord.sceneCibleId === props.sceneId) 
+    ? (raccord.sharedImages || [])
+    : []
+  
+  // Combiner les images (propres + partagées si applicables)
+  const allImages = [...ownImages, ...sharedImages]
+  
+  // Ajouter un flag pour identifier les images partagées
+  allImages.forEach((image, index) => {
+    if (index >= ownImages.length) {
+      image.isShared = true
+    } else {
+      image.isShared = false
+    }
+  })
+  
+  return allImages
 }
 
 const viewImage = (image) => {
