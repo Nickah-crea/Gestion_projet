@@ -2,6 +2,7 @@ package com.example.films.dto;
 
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class CreateComedienDTO {
@@ -10,6 +11,6 @@ public class CreateComedienDTO {
     private Integer age;
     private String email;
     private String photoPath;
-    private LocalDate dateDisponibilite;
-    private String statutDisponibilite;
+    private List<LocalDate> datesDisponibilite; 
+    private List<String> statutsDisponibilite;  
 }

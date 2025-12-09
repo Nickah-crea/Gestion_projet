@@ -12,7 +12,7 @@ import com.example.films.service.EpisodeService;
 import com.example.films.service.SceneLieuService;
 import com.example.films.service.SceneService;
 import com.example.films.service.SequenceService;
-import com.example.films.service.ProjetService; // Ajouter cette importation
+import com.example.films.service.ProjetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class EcranTravailController {
     private final SceneLieuService sceneLieuService;
     private final DialogueService dialogueService;
     private final AuthorizationService authorizationService;
-    private final ProjetService projetService; // Ajouter cette déclaration
+    private final ProjetService projetService; 
 
     public EcranTravailController(EpisodeService episodeService, SequenceService sequenceService,
                                   SceneService sceneService, SceneLieuService sceneLieuService,

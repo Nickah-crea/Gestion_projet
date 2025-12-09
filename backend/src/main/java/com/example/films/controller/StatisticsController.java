@@ -11,7 +11,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/statistics")
-@CrossOrigin(origins = "http://localhost:5173") // Autoriser le frontend Vue.js
+@CrossOrigin(origins = "http://localhost:5173") 
 public class StatisticsController {
     
     private final StatisticsService statisticsService;
