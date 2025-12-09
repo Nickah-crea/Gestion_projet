@@ -91,9 +91,6 @@ CREATE TABLE statuts_projet (
 );
 
 
-UPDATE statuts_projet SET 
-    nom_statuts_projet = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_statuts_projet, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
-    description = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(description, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A');
 
 
 INSERT INTO statuts_projet (code, nom_statuts_projet, description, ordre_affichage) VALUES
@@ -101,6 +98,10 @@ INSERT INTO statuts_projet (code, nom_statuts_projet, description, ordre_afficha
 ('fini', 'Fini', 'Projet terminé', 2),
 ('annule', 'Annulé', 'Projet abandonné', 3),
 ('en_pause', 'En pause', 'Projet en pause', 4);
+
+UPDATE statuts_projet SET 
+    nom_statuts_projet = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_statuts_projet, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
+    description = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(description, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A');
 
 
 CREATE TABLE projets (
@@ -856,8 +857,8 @@ INSERT INTO statuts_raccord (code, nom_statut, description) VALUES
 ('CORRIGE', 'Corrigé', 'Raccord corrigé');
 
 
-UPDATE tatuts_raccord SET 
-    nom_statut REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_statut, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
+UPDATE statuts_raccord SET 
+    nom_statut = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_statut, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
     description = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(description, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A');
 
 -- -- Table pour les statuts de vérification (doit être créée avant verification_raccords)
@@ -894,7 +895,7 @@ INSERT INTO types_raccord (code, nom_type, description) VALUES
 ('position', 'Position', 'Raccord de position des acteurs et objets');
 
 UPDATE types_raccord SET 
-    nom_type REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_type, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
+    nom_type = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_type, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
     description = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(description, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A');
 
 
@@ -1002,6 +1003,7 @@ CREATE INDEX idx_raccord_images_raccord ON raccord_images(id_raccord);
 CREATE INDEX idx_verification_raccord ON verification_raccords(id_raccord);
 
 ALTER TABLE raccords DROP CONSTRAINT IF EXISTS unique_raccord_different_scenes;
+
 
 
 -- Vue pour les alertes de raccords
