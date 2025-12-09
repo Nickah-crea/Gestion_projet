@@ -246,6 +246,11 @@ const routes = [
     name: 'inscription',
     component: () => import('../views/Inscription.vue')
   },
+  {
+    path: '/export-pdf',
+    name: 'export-pdf',
+    component: () => import('../components/ExportPDFManager.vue')
+  },
 ]
 
 const router = createRouter({
