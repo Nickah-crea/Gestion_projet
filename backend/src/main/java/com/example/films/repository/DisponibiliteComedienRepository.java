@@ -3,7 +3,6 @@ package com.example.films.repository;
 import com.example.films.entity.Comedien;
 import com.example.films.entity.DisponibiliteComedien;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -25,8 +24,5 @@ public interface DisponibiliteComedienRepository extends JpaRepository<Disponibi
     
    
     List<DisponibiliteComedien> findByComedienId(Long comedienId);
-    @Modifying
-    @Query("DELETE FROM DisponibiliteComedien d WHERE d.comedien.id = :comedienId")
-    void deleteByComedienId(@Param("comedienId") Long comedienId);
     
 }
