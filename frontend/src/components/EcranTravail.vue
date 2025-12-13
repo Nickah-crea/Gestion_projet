@@ -62,8 +62,6 @@
         </div>
 
         <div class="liens-ecran-travail">
-
-
           <button 
             v-if="episodes.length === 0 || userPermissions.canEditEpisode" 
             class="add-scene-btn-ecran-travail" 
@@ -111,70 +109,70 @@
             </button>
 
             <!-- Section Export dans la sidebar -->
-        <div class="export-container">
-          <div class="export-dropdown">
-            <button class="export-main-btn">
-              <i class="fas fa-file-export"></i> Exporter en PDF
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="export-dropdown-content">
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportScenesOnlyPDF"
-                title="Exporter les scènes en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Scènes PDF
+          <div class="export-container">
+            <div class="export-dropdown">
+              <button class="export-main-btn">
+                <i class="fas fa-file-export"></i> Exporter en PDF
+                <i class="fas fa-chevron-down"></i>
               </button>
-
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportSequenceDialoguesPDF"
-                title="Exporter tous les dialogues de la séquence en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Dialogues PDF
-              </button>
-
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportSequenceCompletePDF"
-                title="Exporter la séquence complète en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Séquence PDF
-              </button>
-
-              <button 
-                v-if="currentEpisode" 
-                class="export-option" 
-                @click="exportEpisodeWithSequencePDF"
-                title="Exporter l'épisode avec séquence en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Épisode PDF
-              </button>
-
-              <!-- Sélecteur de comédien pour l'export -->
-              <div class="comedien-selector-ecran-travail" v-if="comediens.length">
-                <label for="comedien-select">Exporter les raccords pour :</label>
-                <select id="comedien-select" v-model="selectedComedien" class="select-ecran-travail">
-                  <option value="">Sélectionner un comédien</option>
-                  <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
-                    {{ comedien.nom }}
-                  </option>
-                </select>
-                
+              <div class="export-dropdown-content">
                 <button 
-                  @click="exportRaccordsByComedien(selectedComedien)" 
-                  :disabled="!selectedComedien"
-                  class="export-btn-ecran-travail"
+                  v-if="currentSequence" 
+                  class="export-option" 
+                  @click="exportScenesOnlyPDF"
+                  title="Exporter les scènes en PDF"
                 >
-                  <i class="fas fa-file-pdf"></i> Export Raccords Comédien
+                  <i class="fas fa-file-pdf"></i> Scènes PDF
                 </button>
+
+                <button 
+                  v-if="currentSequence" 
+                  class="export-option" 
+                  @click="exportSequenceDialoguesPDF"
+                  title="Exporter tous les dialogues de la séquence en PDF"
+                >
+                  <i class="fas fa-file-pdf"></i> Dialogues PDF
+                </button>
+
+                <button 
+                  v-if="currentSequence" 
+                  class="export-option" 
+                  @click="exportSequenceCompletePDF"
+                  title="Exporter la séquence complète en PDF"
+                >
+                  <i class="fas fa-file-pdf"></i> Séquence PDF
+                </button>
+
+                <button 
+                  v-if="currentEpisode" 
+                  class="export-option" 
+                  @click="exportEpisodeWithSequencePDF"
+                  title="Exporter l'épisode avec séquence en PDF"
+                >
+                  <i class="fas fa-file-pdf"></i> Épisode PDF
+                </button>
+
+                <!-- Sélecteur de comédien pour l'export -->
+                <div class="comedien-selector-ecran-travail" v-if="comediens.length">
+                  <label for="comedien-select">Exporter les raccords pour :</label>
+                  <select id="comedien-select" v-model="selectedComedien" class="select-ecran-travail">
+                    <option value="">Sélectionner un comédien</option>
+                    <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
+                      {{ comedien.nom }}
+                    </option>
+                  </select>
+                  
+                  <button 
+                    @click="exportRaccordsByComedien(selectedComedien)" 
+                    :disabled="!selectedComedien"
+                    class="export-btn-ecran-travail"
+                  >
+                    <i class="fas fa-file-pdf"></i> Export Raccords Comédien
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
           </div>
 
           <!-- Groupe de DROITE : Précédent/Suivant + Calendrier -->
@@ -567,19 +565,7 @@
               </div>
               <p v-else class="no-lieux-ecran-travail">Aucun lieu ou plateau associé.</p> -->
 
-              <div class="section-header-ecran-travail">
-                <h4><i class="fas fa-comments"></i>Dialogues:</h4> 
-                <button 
-                  v-if="userPermissions.canCreateDialogue" 
-                  class="add-dialogue-btn-ecran-travail" 
-                  @click="startAddDialogue(scene)"
-                >
-                  <i class="fas fa-plus-circle" style="color: #21294F;"></i> Dialogue
-                </button>
-              </div>
-
-              <!-- dialogues -->
-            
+                          
 
               <!-- Modifier la section des dialogues dans le template -->
               <div class="dialogues-ecran-travail" v-if="scene.dialogues?.length">
@@ -783,276 +769,51 @@
       </div>
 
       <!-- Modale pour éditer l'épisode -->
-      <div v-if="showEditEpisodeModal" class="modal-overlay-ecran-travail">
-        <div class="modal-content-ecran-travail">
-          <div class="modal-header-ecran-travail">
-            <h3>
-              <i class="fas fa-edit"></i>
-              Modifier l'épisode
-            </h3>
-            <button @click="closeEditEpisodeModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
-          </div>
-          <form @submit.prevent="saveEditedEpisode" class="edit-form-ecran-travail">
-            <div class="form-group-ecran-travail">
-              <label for="edit-episode-titre">Titre</label>
-              <input
-                type="text"
-                id="edit-episode-titre"
-                v-model="editingEpisode.titre"
-                required
-                class="form-input-ecran-travail"
-              />
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-episode-synopsis">Synopsis</label>
-              <textarea
-                id="edit-episode-synopsis"
-                v-model="editingEpisode.synopsis"
-                rows="4"
-                class="form-textarea-ecran-travail"
-              ></textarea>
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-episode-ordre">Ordre</label>
-              <input
-                type="number"
-                id="edit-episode-ordre"
-                v-model="editingEpisode.ordre"
-                required
-                class="form-input-ecran-travail"
-              />
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-episode-statut">Statut</label>
-              <select
-                id="edit-episode-statut"
-                v-model="editingEpisode.statutId"
-                required
-                class="form-select-ecran-travail"
-              >
-                <option value="">Sélectionnez un statut</option>
-                <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
-                  {{ statut.nomStatutsEpisode }}
-                </option>
-              </select>
-            </div>
-            <div v-if="editEpisodeError" class="error-message-ecran-travail">
-              {{ editEpisodeError }}
-            </div>
-            <div class="modal-actions-ecran-travail">
-              <button type="button" @click="closeEditEpisodeModal" class="cancel-btn-ecran-travail">Annuler</button>
-              <button type="submit" class="save-btn-ecran-travail" :disabled="editEpisodeLoading">
-                {{ editEpisodeLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+        <ModalEditEpisode
+          :show="showEditEpisodeModal"
+          :editing-episode="editingEpisode"
+          :statuts="statutsEpisode"
+          :error="editEpisodeError"
+          :loading="editEpisodeLoading"
+          @close="closeEditEpisodeModal"
+          @save="saveEditedEpisode"
+        />
 
-      <!-- Modale pour éditer la séquence -->
-      <div v-if="showEditSequenceModal" class="modal-overlay-ecran-travail">
-        <div class="modal-content-ecran-travail">
-          <div class="modal-header-ecran-travail">
-            <h3>
-              <i class="fas fa-edit"></i>
-              Modifier la séquence
-            </h3>
-            <button @click="closeEditSequenceModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
-          </div>
-          <form @submit.prevent="saveEditedSequence" class="edit-form-ecran-travail">
-            <div class="form-group-ecran-travail">
-              <label for="edit-sequence-titre">Titre</label>
-              <input
-                type="text"
-                id="edit-sequence-titre"
-                v-model="editingSequence.titre"
-                required
-                class="form-input-ecran-travail"
-              />
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-sequence-synopsis">Synopsis</label>
-              <textarea
-                id="edit-sequence-synopsis"
-                v-model="editingSequence.synopsis"
-                rows="4"
-                class="form-textarea-ecran-travail"
-              ></textarea>
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-sequence-ordre">Ordre</label>
-              <input
-                type="number"
-                id="edit-sequence-ordre"
-                v-model="editingSequence.ordre"
-                required
-                class="form-input-ecran-travail"
-              />
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-sequence-statut">Statut</label>
-              <select
-                id="edit-sequence-statut"
-                v-model="editingSequence.statutId"
-                required
-                class="form-select-ecran-travail"
-              >
-                <option value="">Sélectionnez un statut</option>
-                <option v-for="statut in statutsSequence" :key="statut.id" :value="statut.id">
-                  {{ statut.nomStatutsSequence }}
-                </option>
-              </select>
-            </div>
-            <div v-if="editSequenceError" class="error-message-ecran-travail">
-              {{ editSequenceError }}
-            </div>
-            <div class="modal-actions-ecran-travail">
-              <button type="button" @click="closeEditSequenceModal" class="cancel-btn-ecran-travail">Annuler</button>
-              <button type="submit" class="save-btn-ecran-travail" :disabled="editSequenceLoading">
-                {{ editSequenceLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+        <!-- Modale pour éditer la séquence -->
+        <ModalEditSequence
+          :show="showEditSequenceModal"
+          :editing-sequence="editingSequence"
+          :statuts="statutsSequence"
+          :error="editSequenceError"
+          :loading="editSequenceLoading"
+          @close="closeEditSequenceModal"
+          @save="saveEditedSequence"
+        />
 
-      <!-- Modale pour éditer la scène -->
-      <div v-if="showEditSceneModal" class="modal-overlay-ecran-travail">
-        <div class="modal-content-ecran-travail">
-          <div class="modal-header-ecran-travail">
-            <h3>
-              <i class="fas fa-edit"></i>
-              Modifier la scène
-            </h3>
-            <button @click="closeEditSceneModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
-          </div>
-          <form @submit.prevent="saveEditedScene" class="edit-form-ecran-travail">
-            <div class="form-group-ecran-travail">
-              <label for="edit-scene-titre">Titre</label>
-              <input
-                type="text"
-                id="edit-scene-titre"
-                v-model="editingScene.titre"
-                required
-                class="form-input-ecran-travail"
-              />
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-scene-synopsis">Synopsis</label>
-              <textarea
-                id="edit-scene-synopsis"
-                v-model="editingScene.synopsis"
-                rows="4"
-                class="form-textarea-ecran-travail"
-              ></textarea>
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-scene-ordre">Ordre</label>
-              <input
-                type="number"
-                id="edit-scene-ordre"
-                v-model="editingScene.ordre"
-                required
-                class="form-input-ecran-travail"
-              />
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-scene-statut">Statut</label>
-              <select
-                id="edit-scene-statut"
-                v-model="editingScene.statutId"
-                required
-                class="form-select-ecran-travail"
-              >
-                <option value="">Sélectionnez un statut</option>
-                <option v-for="statut in statutsScene" :key="statut.id" :value="statut.id">
-                  {{ statut.nomStatutsScene }}
-                </option>
-              </select>
-            </div>
-            <div v-if="editSceneError" class="error-message-ecran-travail">
-              {{ editSceneError }}
-            </div>
-            <div class="modal-actions-ecran-travail">
-              <button type="button" @click="closeEditSceneModal" class="cancel-btn-ecran-travail">Annuler</button>
-              <button type="submit" class="save-btn-ecran-travail" :disabled="editSceneLoading">
-                {{ editSceneLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+        <!-- Modale pour éditer la scène -->
+        <ModalEditScene
+          :show="showEditSceneModal"
+          :editing-scene="editingScene"
+          :statuts="statutsScene"
+          :error="editSceneError"
+          :loading="editSceneLoading"
+          @close="closeEditSceneModal"
+          @save="saveEditedScene"
+        />
 
-      <!-- Modale pour éditer le dialogue -->
-      <div v-if="showEditDialogueModal" class="modal-overlay-ecran-travail">
-        <div class="modal-content-ecran-travail">
-          <div class="modal-header-ecran-travail">
-            <h3>
-              <i class="fas fa-edit"></i>
-              Modifier le dialogue
-            </h3>
-            <button @click="closeEditDialogueModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
-          </div>
-          <form @submit.prevent="saveEditedDialogue" class="edit-form-ecran-travail">
-            <div class="form-group-ecran-travail">
-              <label for="edit-dialogue-personnage">Personnage</label>
-              <select
-                id="edit-dialogue-personnage"
-                v-model="editingDialogue.personnageId"
-                required
-                class="form-select-ecran-travail"
-              >
-                <option :value="null">Narration (sans personnage)</option>
-                <option v-for="personnage in personnages" :key="personnage.id" :value="personnage.id">
-                  {{ personnage.nom }} ({{ personnage.projetTitre }})
-                </option>
-              </select>
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-dialogue-texte">Texte</label>
-              <textarea
-                id="edit-dialogue-texte"
-                v-model="editingDialogue.texte"
-                rows="4"
-                class="form-textarea-ecran-travail"
-                required
-              ></textarea>
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-dialogue-ordre">Ordre</label>
-              <input
-                type="number"
-                id="edit-dialogue-ordre"
-                v-model="editingDialogue.ordre"
-                required
-                class="form-input-ecran-travail"
-                @blur="validateOrder"
-              />
-              <div v-if="suggestedOrder" class="suggestion-ecran-travail">Suggestion: {{ suggestedOrder }}</div>
-              <div v-if="orderError" class="error-message-ecran-travail">{{ orderError }}</div>
-            </div>
-            <div class="form-group-ecran-travail">
-              <label for="edit-dialogue-observation">Observation</label>
-              <textarea
-                id="edit-dialogue-observation"
-                v-model="editingDialogue.observation"
-                rows="3"
-                class="form-textarea-ecran-travail"
-                placeholder="Observation optionnelle"
-              ></textarea>
-            </div>
-            <div v-if="editDialogueError" class="error-message-ecran-travail">
-              {{ editDialogueError }}
-            </div>
-            <div class="modal-actions-ecran-travail">
-              <button type="button" @click="closeEditDialogueModal" class="cancel-btn-ecran-travail">Annuler</button>
-              <button type="submit" class="save-btn-ecran-travail" :disabled="editDialogueLoading">
-                {{ editDialogueLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+        <!-- Modale pour éditer le dialogue -->
+        <ModalEditDialogue
+          :show="showEditDialogueModal"
+          :editing-dialogue="editingDialogue"
+          :personnages="personnages"
+          :error="editDialogueError"
+          :loading="editDialogueLoading"
+          :order-error="orderError"
+          :suggested-order="suggestedOrder"
+          @close="closeEditDialogueModal"
+          @save="saveEditedDialogue"
+          @validate-order="validateOrder"
+        />
 
       <!-- Modale pour commentaires de dialogue -->
       <div v-if="showDialogueCommentModal" class="modal-overlay-ecran-travail">
@@ -1082,136 +843,26 @@
         </div>
       </div>
 
-      <!-- Modale pour ajouter un lieu/plateau -->
-      <div v-if="showAddLieuModal" class="modal-overlay-ecran-travail" @click="closeAddLieuModal">
-        <div class="modal-content-ecran-travail" @click.stop>
-          <div class="modal-header-ecran-travail">
-            <h3>Ajouter un Lieu/Plateau à la scène: {{ selectedSceneForLieu?.titre }}</h3>
-            <button @click="closeAddLieuModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
-          </div>
-          
-          <form @submit.prevent="addSceneLieu" class="edit-form-ecran-travail">
-            <div class="form-group-ecran-travail">
-              <label for="lieu-select">Sélectionner un lieu existant</label>
-              <select id="lieu-select" v-model="selectedLieuId" @change="loadAvailablePlateaux" class="form-select-ecran-travail" required>
-                <option value="">Choisir un lieu</option>
-                <option v-if="availableLieux.length === 0" disabled>Aucun lieu disponible pour ce projet</option>
-                <option v-for="lieu in availableLieux" :key="lieu.id" :value="lieu.id">
-                  {{ lieu.nomLieu }} ({{ lieu.typeLieu }})
-                </option>
-              </select>
-            </div>
-            
-            <div class="form-group-ecran-travail" v-if="availablePlateaux.length > 0">
-              <label for="plateau-select">Sélectionner un plateau existant (optionnel)</label>
-              <select id="plateau-select" v-model="selectedPlateauId" class="form-select-ecran-travail">
-                <option value="">Aucun plateau</option>
-                <option v-for="plateau in availablePlateaux" :key="plateau.id" :value="plateau.id">
-                  {{ plateau.nom }} ({{ plateau.typePlateau }})
-                </option>
-              </select>
-            </div>
-            
-            <div class="form-group-ecran-travail">
-              <label for="description-utilisation">Description d'utilisation</label>
-              <textarea 
-                id="description-utilisation" 
-                v-model="descriptionUtilisation" 
-                rows="3" 
-                class="form-textarea-ecran-travail" 
-                placeholder="Description de l'utilisation de ce lieu/plateau dans la scène..."
-              ></textarea>
-            </div>
-            
-            <div v-if="addLieuError" class="error-message-ecran-travail">
-              {{ addLieuError }}
-            </div>
-            
-            <div class="modal-actions-ecran-travail">
-              <button type="button" @click="closeAddLieuModal" class="cancel-btn-ecran-travail">Annuler</button>
-              <button type="submit" class="save-btn-ecran-travail" :disabled="addLieuLoading">
-                {{ addLieuLoading ? 'Ajout en cours...' : 'Ajouter' }}
-              </button>
-            </div>
-          </form>
-          
-          <!-- Liste des lieux déjà associés à cette scène -->
-          <div class="associated-lieux-ecran-travail" v-if="sceneLieus.length > 0">
-            <h4>Lieux déjà associés:</h4>
-            <div v-for="sceneLieu in sceneLieus" :key="sceneLieu.id" class="scene-lieu-item-ecran-travail">
-              <div class="scene-lieu-info-ecran-travail">
-                <strong>{{ sceneLieu.lieuNom }}</strong>
-                <span v-if="sceneLieu.plateauNom"> - Plateau: {{ sceneLieu.plateauNom }}</span>
-                - {{ sceneLieu.descriptionUtilisation || 'Aucune description' }}
-              </div>
-              <button @click="removeLieuFromScene(sceneLieu.id)" class="delete-btn-ecran-travail" title="Supprimer">
-                🗑️
-              </button>
-            </div>
-          </div>
-        </div>
-        
-         <!-- Modal d'édition du projet -->
-    <div v-if="editingProject" class="edit-project-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Modifier le projet</h3>
-          <button @click="cancelEdit" class="close-modal-btn">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        
-        <div class="modal-body">
-          <div v-if="editError" class="error-message">
-            {{ editError }}
-          </div>
-          
-          <div class="form-group">
-            <label>Titre:</label>
-            <input v-model="editForm.titre" type="text" class="form-input">
-          </div>
-          
-          <div class="form-group">
-            <label>Synopsis:</label>
-            <textarea v-model="editForm.synopsis" class="form-textarea" rows="4"></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label>Genre:</label>
-            <select v-model="editForm.genreId" class="form-select">
-              <option value="">Sélectionnez un genre</option>
-              <option v-for="genre in genres" :key="genre.id" :value="genre.id">
-                {{ genre.nomGenre }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label>Statut:</label>
-            <select v-model="editForm.statutId" class="form-select">
-              <option value="">Sélectionnez un statut</option>
-              <option v-for="statut in statuts" :key="statut.id" :value="statut.id">
-                {{ statut.nomStatutsProjet }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label>Date de fin:</label>
-            <input v-model="editForm.dateFin" type="date" class="form-input">
-          </div>
-        </div>
-        
-        <div class="modal-footer">
-          <button @click="cancelEdit" class="cancel-btn">Annuler</button>
-          <button @click="submitEdit" :disabled="editLoading" class="save-btn">
-            {{ editLoading ? 'Enregistrement...' : 'Enregistrer' }}
-          </button>
-        </div>
-      </div>
-    </div>
+      <!-- Modale pour éditer le lieu et plateau -->
+        <ModalAddLieu
+        :show="showAddLieuModal"
+        :scene="selectedSceneForLieu"
+        :lieu-data="{
+          selectedLieuId: selectedLieuId,
+          selectedPlateauId: selectedPlateauId,
+          descriptionUtilisation: descriptionUtilisation
+        }"
+        :available-lieux="availableLieux"
+        :available-plateaux="availablePlateaux"
+        :scene-lieus="sceneLieus"
+        :error="addLieuError"
+        :loading="addLieuLoading"
+        @close="closeAddLieuModal"
+        @add="addSceneLieu"
+        @load-plateaux="loadAvailablePlateaux"
+        @remove-lieu="removeLieuFromScene"
+      />
 
-      </div>
     </div>
       <EnvoieParEmail 
     :show-modal="showEmailModal"
@@ -1233,18 +884,44 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import SceneTournageSection from './SceneTournageSection.vue';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import RaccordSceneComponent from './RaccordSceneComponent.vue';
 import RaccordsPhotosComponent from './RaccordsPhotosComponent.vue';
 import EnvoieParEmail from './EnvoieParEmail.vue'
+import ModalEditEpisode from './ModalEditEpisode.vue'
+import ModalEditSequence from './ModalEditSequence.vue'
+import ModalEditScene from './ModalEditScene.vue'
+import ModalEditDialogue from './ModalEditDialogue.vue'
+import ModalAddLieu from './ModalAddLieu.vue'
 
+// Importez les fonctions d'export depuis vos nouveaux fichiers
+import { 
+  formatDate,
+  getBase64FromUrl 
+} from '../utils/exportUtils';
+
+import { 
+  exportScenesOnlyPDF as exportScenesOnlyPDFFunc,
+  exportSceneDialoguesPDF as exportSceneDialoguesPDFFunc,
+  exportSequenceDialoguesPDF as exportSequenceDialoguesPDFFunc,
+  exportSequenceCompletePDF as exportSequenceCompletePDFFunc,
+  exportEpisodeWithSequencePDF as exportEpisodeWithSequencePDFFunc,
+  exportScenePDF as exportScenePDFFunc,
+  exportRaccordsProjetPDF as exportRaccordsProjetPDFFunc,
+  exportRaccordsByScene as exportRaccordsBySceneFunc,
+  exportRaccordsByComedien as exportRaccordsByComedienFunc
+} from '../utils';
 
 defineOptions({
   components: {
     SceneTournageSection,
     RaccordsPhotosComponent,
     RaccordSceneComponent,
-    EnvoieParEmail
+    EnvoieParEmail,
+    ModalEditEpisode,
+    ModalEditSequence,
+    ModalEditScene,
+    ModalEditDialogue,
+    ModalAddLieu,
   }
 })
 
@@ -1429,36 +1106,6 @@ const newDialogueData = ref({
   ordre: 1
 });
 
-// onMounted(async () => {
-//   const projetIdLocal = route.params.idProjet || '1';
-//   projetId.value = projetIdLocal;
-//   await store.fetchEpisodes(projetIdLocal);
-//   if (store.currentSequence) {
-//     await loadSequenceCommentCount();
-//     await loadSceneCommentCounts();
-//     await loadDialogueCommentCounts();
-//     await loadAvailableLieux();
-//   }
-//   await Promise.all([
-//     loadStatutsEpisode(),
-//     loadStatutsSequence(),
-//     loadStatutsScene()
-//   ]);
-//   await loadPersonnages();
-
-//   const episodeId = route.query.episodeId;
-//   const sequenceId = route.query.sequenceId;
-
-//   if (episodeId) {
-//     await store.selectEpisodeById(episodeId);
-//   }
-
-//   if (sequenceId) {
-//     await store.selectSequenceById(sequenceId);
-//   }
-// });
-
-// Dans la section onMounted, charger les couleurs AVANT d'essayer de les utiliser
 onMounted(async () => {
   const projetIdLocal = route.params.idProjet || '1';
   projetId.value = projetIdLocal;
@@ -2915,24 +2562,6 @@ const goToCalendrierTournage = () => {
   router.push('/calendrier-tournage');
 };
 
-// Méthode utilitaire pour formater les dates
-// const formatDate = (date) => {
-//   return new Date(date).toLocaleString();
-// };
-
-const formatDate = (date) => {
-  if (!date) return 'Non planifié';
-  
-  if (typeof date === 'string') {
-    date = new Date(date);
-  }
-  
-  return date.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-};
 
 // Propriétés calculées
 const currentEpisode = computed(() => store.currentEpisode);
@@ -2942,2059 +2571,137 @@ const isLoading = computed(() => store.isLoading);
 const hasNext = computed(() => store.hasNext);
 const hasPrev = computed(() => store.hasPrev);
 
-
 // Méthodes d'export PDF avec design de facture
-const exportScenesOnlyPDF = async (returnData = false) => {
-  if (!currentSequence.value) return
+const exportScenesOnlyPDF = async () => {
+  if (!currentSequence.value || !currentEpisode.value) {
+    alert('Aucune séquence ou épisode sélectionné');
+    return;
+  }
   
   try {
-    const pdf = new jsPDF('p', 'mm', 'a4')
-    
-    // Couleurs de l'application
-    const primaryColor = [33, 41, 79]; // #21294F
-    const secondaryColor = [220, 53, 69]; // #dc3545
-    const accentColor = [23, 162, 184]; // #17a2b8
-    
-    let yPosition = 20;
-    
-    // En-tête avec design de facture
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 40, 'F');
-    
-    // Logo/Titre à gauche
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(16);
-    pdf.text(`PROJET: ${currentEpisode.value?.projetTitre || 'Cinema'}`, 20, 15);
-    pdf.setFontSize(12);
-    pdf.text(`Épisode ${currentEpisode.value?.ordre}: ${currentEpisode.value?.titre}`, 20, 25);
-    
-    // Informations à droite
-    pdf.text(`Séquence ${currentSequence.value.ordre}`, 160, 15);
-    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
-    pdf.text(`Scènes: ${currentSequence.value.scenes?.length || 0}`, 160, 29);
-    
-    // Ligne de séparation
-    pdf.setDrawColor(...secondaryColor);
-    pdf.setLineWidth(0.5);
-    pdf.line(20, 45, 190, 45);
-    
-    yPosition = 60;
-    
-    // Titre principal
-    pdf.setTextColor(...primaryColor);
-    pdf.setFontSize(18);
-    pdf.text(`LISTE DES SCÈNES - SÉQUENCE ${currentSequence.value.ordre}`, 20, yPosition);
-    
-    yPosition += 12;
-    pdf.setFontSize(12);
-    pdf.setTextColor(100, 100, 100);
-    pdf.text(`Séquence: ${currentSequence.value.titre}`, 20, yPosition);
-    
-    yPosition += 20;
-    
-    // Tableau des scènes
-    currentSequence.value.scenes.forEach((scene, index) => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 20;
-        
-        // En-tête sur les nouvelles pages
-        pdf.setFillColor(...primaryColor);
-        pdf.rect(0, 0, 210, 40, 'F');
-        pdf.setTextColor(255, 255, 255);
-        pdf.setFontSize(12);
-        pdf.text(`Suite - Scènes Séquence ${currentSequence.value.ordre}`, 20, 20);
-        yPosition = 40;
-      }
-      
-      // En-tête de scène
-      pdf.setFillColor(240, 240, 240);
-      pdf.rect(20, yPosition - 8, 170, 10, 'F');
-      
-      pdf.setTextColor(...primaryColor);
-      pdf.setFontSize(11);
-      pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 22, yPosition);
-      
-      yPosition += 12;
-      
-      // Informations scène
-      pdf.setFontSize(9);
-      pdf.setTextColor(80, 80, 80);
-      
-      // Synopsis
-      const synopsisLines = pdf.splitTextToSize(scene.synopsis || 'Aucun synopsis', 160);
-      pdf.text('Synopsis:', 22, yPosition);
-      pdf.text(synopsisLines, 25, yPosition + 4);
-      
-      // Statut et lieux à droite
-      pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 130, yPosition);
-      
-      const lieuxText = scene.sceneLieus?.length 
-        ? scene.sceneLieus.map(sl => sl.lieuNom).join(', ')
-        : 'Aucun lieu';
-      const lieuxLines = pdf.splitTextToSize(`Lieux: ${lieuxText}`, 55);
-      pdf.text(lieuxLines, 130, yPosition + 5);
-      
-      yPosition += Math.max(synopsisLines.length * 3.5, lieuxLines.length * 3.5, 15) + 15;
-      
-      // Ligne de séparation
-      if (index < currentSequence.value.scenes.length - 1) {
-        pdf.setDrawColor(200, 200, 200);
-        pdf.line(20, yPosition - 5, 190, yPosition - 5);
-        yPosition += 5;
-      }
-    });
-    
-    // Pied de page
-    const pageCount = pdf.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      pdf.setPage(i);
-      pdf.setTextColor(100, 100, 100);
-      pdf.setFontSize(8);
-      pdf.text(`Page ${i} sur ${pageCount}`, 105, 290, { align: 'center' });
-      pdf.text(`Exporté le ${new Date().toLocaleDateString()}`, 105, 293, { align: 'center' });
-    }
-    
-    pdf.save(`scenes-sequence-${currentSequence.value.ordre}.pdf`);
-    
+    await exportScenesOnlyPDFFunc(currentSequence.value, currentEpisode.value);
+    alert('PDF des scènes exporté avec succès !');
   } catch (error) {
     console.error('Erreur lors de l\'export PDF des scènes:', error);
-    alert('Erreur lors de l\'export PDF');
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
   }
 };
 
 const exportSceneDialoguesPDF = async (scene) => {
   try {
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79];
-    const secondaryColor = [220, 53, 69];
-    
-    // En-tête
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 40, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(16);
-    pdf.text(`PROJET: ${currentEpisode.value?.projetTitre || 'Cinema'}`, 20, 15);
-    pdf.setFontSize(12);
-    pdf.text(`Épisode ${currentEpisode.value?.ordre} - Séquence ${currentSequence.value?.ordre}`, 20, 25);
-    
-    pdf.text(`Scène ${scene.ordre}`, 160, 15);
-    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
-    pdf.text(`Dialogues: ${scene.dialogues?.length || 0}`, 160, 29);
-    
-    pdf.setDrawColor(...secondaryColor);
-    pdf.setLineWidth(0.5);
-    pdf.line(20, 45, 190, 45);
-    
-    let yPosition = 60;
-    
-    // Titre
-    pdf.setTextColor(...primaryColor);
-    pdf.setFontSize(18);
-    pdf.text(`DIALOGUES - SCÈNE ${scene.ordre}`, 20, yPosition);
-    
-    yPosition += 10;
-    pdf.setFontSize(12);
-    pdf.setTextColor(100, 100, 100);
-    pdf.text(`Scène: ${scene.titre}`, 20, yPosition);
-    
-    yPosition += 15;
-    
-    // Dialogues
-    if (scene.dialogues?.length) {
-      scene.dialogues.forEach((dialogue, index) => {
-        if (yPosition > 250) {
-          pdf.addPage();
-          yPosition = 20;
-        }
-        
-        // Personnage avec fond
-        pdf.setFillColor(245, 245, 245);
-        pdf.rect(20, yPosition - 5, 170, 8, 'F');
-        
-        pdf.setFontSize(11);
-        pdf.setTextColor(...primaryColor);
-        pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 22, yPosition);
-        
-        yPosition += 10;
-        
-        // Texte du dialogue
-        pdf.setFontSize(10);
-        pdf.setTextColor(0, 0, 0);
-        const dialogueLines = pdf.splitTextToSize(dialogue.texte, 165);
-        pdf.text(dialogueLines, 25, yPosition);
-        yPosition += (dialogueLines.length * 4.5) + 5;
-        
-        // Observation
-        if (dialogue.observation) {
-          pdf.setFontSize(9);
-          pdf.setTextColor(100, 100, 100);
-          pdf.text(`Note: ${dialogue.observation}`, 25, yPosition);
-          yPosition += 8;
-        }
-        
-        yPosition += 8;
-        
-        // Ligne de séparation
-        if (index < scene.dialogues.length - 1) {
-          pdf.setDrawColor(200, 200, 200);
-          pdf.line(20, yPosition - 3, 190, yPosition - 3);
-          yPosition += 5;
-        }
-      });
-    } else {
-      pdf.setFontSize(10);
-      pdf.setTextColor(150, 150, 150);
-      pdf.text('Aucun dialogue dans cette scène', 20, yPosition);
-    }
-    
-    // Pied de page
-    const pageCount = pdf.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      pdf.setPage(i);
-      pdf.setTextColor(100, 100, 100);
-      pdf.setFontSize(8);
-      pdf.text(`Page ${i} sur ${pageCount}`, 105, 290, { align: 'center' });
-    }
-    
-    pdf.save(`dialogues-scene-${scene.ordre}.pdf`);
-    
+    await exportSceneDialoguesPDFFunc(scene, currentEpisode.value, currentSequence.value);
   } catch (error) {
     console.error('Erreur lors de l\'export PDF des dialogues:', error);
-    alert('Erreur lors de l\'export PDF');
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
   }
 };
 
 const exportSequenceDialoguesPDF = async () => {
-  if (!currentSequence.value) return;
+  if (!currentSequence.value || !currentEpisode.value) {
+    alert('Aucune séquence ou épisode sélectionné');
+    return;
+  }
   
   try {
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79];
-    const secondaryColor = [220, 53, 69];
-    
-    // En-tête
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 40, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(16);
-    pdf.text(`PROJET: ${currentEpisode.value?.projetTitre || 'Cinema'}`, 20, 15);
-    pdf.setFontSize(12);
-    pdf.text(`Épisode ${currentEpisode.value?.ordre}: ${currentEpisode.value?.titre}`, 20, 25);
-    
-    pdf.text(`Séquence ${currentSequence.value.ordre}`, 160, 15);
-    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
-    pdf.text(`Scènes: ${currentSequence.value.scenes?.length || 0}`, 160, 29);
-    
-    pdf.setDrawColor(...secondaryColor);
-    pdf.setLineWidth(0.5);
-    pdf.line(20, 45, 190, 45);
-    
-    let yPosition = 60;
-    
-    // Titre
-    pdf.setTextColor(...primaryColor);
-    pdf.setFontSize(18);
-    pdf.text(`DIALOGUES COMPLETS - SÉQUENCE ${currentSequence.value.ordre}`, 20, yPosition);
-    
-    yPosition += 12;
-    pdf.setFontSize(12);
-    pdf.setTextColor(100, 100, 100);
-    pdf.text(`Séquence: ${currentSequence.value.titre}`, 20, yPosition);
-    
-    yPosition += 20;
-    
-    // Parcourir toutes les scènes
-    currentSequence.value.scenes.forEach(scene => {
-      if (scene.dialogues?.length) {
-        // Titre de la scène
-        if (yPosition > 230) {
-          pdf.addPage();
-          yPosition = 20;
-        }
-        
-        pdf.setFillColor(240, 240, 240);
-        pdf.rect(20, yPosition - 5, 170, 8, 'F');
-        
-        pdf.setFontSize(14);
-        pdf.setTextColor(...primaryColor);
-        pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 22, yPosition);
-        yPosition += 15;
-        
-        // Dialogues de la scène
-        scene.dialogues.forEach((dialogue, index) => {
-          if (yPosition > 250) {
-            pdf.addPage();
-            yPosition = 20;
-          }
-          
-          // Personnage
-          pdf.setFontSize(11);
-          pdf.setTextColor(23, 162, 184);
-          pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 25, yPosition);
-          
-          yPosition += 7;
-          
-          // Texte
-          pdf.setFontSize(10);
-          pdf.setTextColor(0, 0, 0);
-          const dialogueLines = pdf.splitTextToSize(dialogue.texte, 160);
-          pdf.text(dialogueLines, 30, yPosition);
-          yPosition += (dialogueLines.length * 4.5) + 8;
-          
-          // Ligne de séparation entre dialogues
-          if (index < scene.dialogues.length - 1) {
-            pdf.setDrawColor(220, 220, 220);
-            pdf.line(25, yPosition - 3, 185, yPosition - 3);
-            yPosition += 5;
-          }
-        });
-        
-        yPosition += 15;
-        
-        // Ligne de séparation entre scènes
-        pdf.setDrawColor(180, 180, 180);
-        pdf.line(20, yPosition - 5, 190, yPosition - 5);
-        yPosition += 10;
-      }
-    });
-    
-    // Pied de page
-    const pageCount = pdf.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      pdf.setPage(i);
-      pdf.setTextColor(100, 100, 100);
-      pdf.setFontSize(8);
-      pdf.text(`Page ${i} sur ${pageCount}`, 105, 290, { align: 'center' });
-    }
-    
-    pdf.save(`dialogues-sequence-${currentSequence.value.ordre}.pdf`);
-    
+    await exportSequenceDialoguesPDFFunc(currentSequence.value, currentEpisode.value);
   } catch (error) {
     console.error('Erreur lors de l\'export PDF des dialogues de séquence:', error);
-    alert('Erreur lors de l\'export PDF');
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
   }
 };
 
 const exportSequenceCompletePDF = async () => {
-  if (!currentSequence.value) return;
+  if (!currentSequence.value || !currentEpisode.value) {
+    alert('Aucune séquence ou épisode sélectionné');
+    return;
+  }
   
   try {
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79];
-    const secondaryColor = [220, 53, 69];
-    
-    // Page de garde
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 297, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(24);
-    pdf.text(`SÉQUENCE ${currentSequence.value.ordre}`, 105, 120, { align: 'center' });
-    
-    pdf.setFontSize(18);
-    pdf.text(currentSequence.value.titre.toUpperCase(), 105, 140, { align: 'center' });
-    
-    pdf.setFontSize(14);
-    pdf.text(`Statut: ${currentSequence.value.statutNom}`, 105, 160, { align: 'center' });
-    
-    pdf.setFontSize(12);
-    pdf.text(`Épisode ${currentEpisode.value?.ordre}: ${currentEpisode.value?.titre}`, 105, 180, { align: 'center' });
-    pdf.text(`Projet: ${currentEpisode.value?.projetTitre || 'Série TV'}`, 105, 190, { align: 'center' });
-    
-    pdf.text(`Exporté le ${new Date().toLocaleDateString()}`, 105, 210, { align: 'center' });
-    
-    pdf.addPage();
-    
-    // En-tête pages suivantes
-    const addHeader = (pageNum) => {
-      pdf.setFillColor(...primaryColor);
-      pdf.rect(0, 0, 210, 30, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(12);
-      pdf.text(`SÉQUENCE ${currentSequence.value.ordre} - ${currentSequence.value.titre}`, 20, 15);
-      pdf.text(`Page ${pageNum}`, 190, 15, { align: 'right' });
-      
-      pdf.setDrawColor(...secondaryColor);
-      pdf.setLineWidth(0.5);
-      pdf.line(20, 35, 190, 35);
-    };
-    
-    let yPosition = 45;
-    let pageNum = 2;
-    
-    addHeader(pageNum);
-    
-    // Synopsis séquence
-    pdf.setTextColor(...primaryColor);
-    pdf.setFontSize(16);
-    pdf.text('SYNOPSIS DE LA SÉQUENCE', 20, yPosition);
-    
-    yPosition += 12;
-    pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 0);
-    const synopsisLines = pdf.splitTextToSize(currentSequence.value.synopsis || 'Aucun synopsis', 170);
-    pdf.text(synopsisLines, 20, yPosition);
-    yPosition += (synopsisLines.length * 4) + 25;
-    
-    // Scènes
-    pdf.setFontSize(16);
-    pdf.setTextColor(...primaryColor);
-    pdf.text('DÉTAIL DES SCÈNES', 20, yPosition);
-    yPosition += 20;
-    
-    currentSequence.value.scenes.forEach((scene, sceneIndex) => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        pageNum++;
-        addHeader(pageNum);
-        yPosition = 45;
-      }
-      
-      // En-tête scène
-      pdf.setFillColor(240, 240, 240);
-      pdf.rect(20, yPosition - 5, 170, 8, 'F');
-      
-      pdf.setFontSize(14);
-      pdf.setTextColor(...primaryColor);
-      pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 22, yPosition);
-      yPosition += 15;
-      
-      // Informations scène
-      pdf.setFontSize(10);
-      pdf.setTextColor(80, 80, 80);
-      pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 22, yPosition);
-      yPosition += 8;
-      
-      // Synopsis scène
-      pdf.text('Synopsis:', 22, yPosition);
-      const sceneSynopsisLines = pdf.splitTextToSize(scene.synopsis || 'Aucun synopsis', 160);
-      pdf.text(sceneSynopsisLines, 25, yPosition + 4);
-      yPosition += (sceneSynopsisLines.length * 3.5) + 10;
-      
-      // Lieux
-      if (scene.sceneLieus?.length) {
-        pdf.text('Lieux:', 22, yPosition);
-        scene.sceneLieus.forEach((sceneLieu, lieuIndex) => {
-          const lieuText = `• ${sceneLieu.lieuNom}${sceneLieu.plateauNom ? ` (Plateau: ${sceneLieu.plateauNom})` : ''}`;
-          pdf.text(lieuText, 25, yPosition + 4 + (lieuIndex * 4));
-        });
-        yPosition += (scene.sceneLieus.length * 4) + 8;
-      }
-      
-      // Dialogues (premiers seulement)
-      if (scene.dialogues?.length) {
-        pdf.text('Dialogues:', 22, yPosition);
-        yPosition += 6;
-        
-        // Afficher seulement les 3 premiers dialogues pour l'aperçu
-        scene.dialogues.slice(0, 3).forEach((dialogue, dialogueIndex) => {
-          pdf.setFontSize(9);
-          pdf.setTextColor(23, 162, 184);
-          pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 25, yPosition);
-          yPosition += 4;
-          
-          pdf.setFontSize(8);
-          pdf.setTextColor(0, 0, 0);
-          const previewText = dialogue.texte.length > 100 ? dialogue.texte.substring(0, 100) + '...' : dialogue.texte;
-          const previewLines = pdf.splitTextToSize(previewText, 155);
-          pdf.text(previewLines, 30, yPosition);
-          yPosition += (previewLines.length * 3) + 6;
-        });
-        
-        if (scene.dialogues.length > 3) {
-          pdf.setFontSize(8);
-          pdf.setTextColor(150, 150, 150);
-          pdf.text(`... et ${scene.dialogues.length - 3} dialogue(s) supplémentaire(s)`, 25, yPosition);
-          yPosition += 8;
-        }
-      }
-      
-      yPosition += 15;
-      
-      // Ligne de séparation entre scènes
-      if (sceneIndex < currentSequence.value.scenes.length - 1) {
-        pdf.setDrawColor(200, 200, 200);
-        pdf.line(20, yPosition - 5, 190, yPosition - 5);
-        yPosition += 10;
-      }
-    });
-    
-    // Pied de page final
-    const totalPages = pdf.internal.getNumberOfPages();
-    for (let i = 2; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setTextColor(100, 100, 100);
-      pdf.setFontSize(8);
-      pdf.text(`Document complet - ${totalPages - 1} pages`, 105, 290, { align: 'center' });
-    }
-    
-    pdf.save(`sequence-${currentSequence.value.ordre}-complete.pdf`);
-    
+    await exportSequenceCompletePDFFunc(currentSequence.value, currentEpisode.value);
   } catch (error) {
     console.error('Erreur lors de l\'export PDF complet de la séquence:', error);
-    alert('Erreur lors de l\'export PDF');
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
   }
 };
 
 const exportEpisodeWithSequencePDF = async () => {
-  if (!currentEpisode.value || !currentSequence.value) return;
-  
-  try {
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79];
-    const secondaryColor = [220, 53, 69];
-    
-    // Page de garde
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 297, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(22);
-    pdf.text(`ÉPISODE ${currentEpisode.value.ordre}`, 105, 100, { align: 'center' });
-    
-    pdf.setFontSize(18);
-    pdf.text(currentEpisode.value.titre.toUpperCase(), 105, 120, { align: 'center' });
-    
-    pdf.setFontSize(16);
-    pdf.text(`Séquence ${currentSequence.value.ordre}`, 105, 140, { align: 'center' });
-    pdf.text(currentSequence.value.titre, 105, 155, { align: 'center' });
-    
-    pdf.setFontSize(12);
-    pdf.text(`Statut: ${currentEpisode.value.statutNom}`, 105, 175, { align: 'center' });
-    
-    // Équipe
-    if (currentEpisode.value.realisateur || currentEpisode.value.scenariste) {
-      pdf.text('ÉQUIPE:', 105, 195, { align: 'center' });
-      let teamY = 205;
-      
-      if (currentEpisode.value.realisateur) {
-        pdf.text(`Réalisateur: ${currentEpisode.value.realisateur.nom}`, 105, teamY, { align: 'center' });
-        teamY += 8;
-      }
-      
-      if (currentEpisode.value.scenariste) {
-        pdf.text(`Scénariste: ${currentEpisode.value.scenariste.nom}`, 105, teamY, { align: 'center' });
-        teamY += 8;
-      }
-    }
-    
-    pdf.text(`Exporté le ${new Date().toLocaleDateString()}`, 105, 230, { align: 'center' });
-    
-    pdf.addPage();
-    
-    let yPosition = 20;
-    let pageNum = 2;
-    
-    // En-tête pages suivantes
-    const addHeader = (pageNum) => {
-      pdf.setFillColor(...primaryColor);
-      pdf.rect(0, 0, 210, 30, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(12);
-      pdf.text(`ÉPISODE ${currentEpisode.value.ordre} - ${currentEpisode.value.titre}`, 20, 15);
-      pdf.text(`Page ${pageNum}`, 190, 15, { align: 'right' });
-      
-      pdf.setDrawColor(...secondaryColor);
-      pdf.setLineWidth(0.5);
-      pdf.line(20, 35, 190, 35);
-    };
-    
-    addHeader(pageNum);
-    yPosition = 45;
-    
-    // Synopsis épisode
-    pdf.setTextColor(...primaryColor);
-    pdf.setFontSize(16);
-    pdf.text('SYNOPSIS DE L\'ÉPISODE', 20, yPosition);
-    
-    yPosition += 12;
-    pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 0);
-    const episodeSynopsisLines = pdf.splitTextToSize(currentEpisode.value.synopsis || 'Aucun synopsis', 170);
-    pdf.text(episodeSynopsisLines, 20, yPosition);
-    yPosition += (episodeSynopsisLines.length * 4) + 25;
-    
-    // Informations séquence
-    pdf.setFontSize(16);
-    pdf.setTextColor(...primaryColor);
-    pdf.text('INFORMATIONS DE LA SÉQUENCE', 20, yPosition);
-    
-    yPosition += 15;
-    pdf.setFontSize(12);
-    pdf.setTextColor(0, 0, 0);
-    pdf.text(`Séquence ${currentSequence.value.ordre}: ${currentSequence.value.titre}`, 20, yPosition);
-    yPosition += 8;
-    pdf.text(`Statut: ${currentSequence.value.statutNom}`, 20, yPosition);
-    yPosition += 8;
-    
-    const sequenceSynopsisLines = pdf.splitTextToSize(`Synopsis: ${currentSequence.value.synopsis || 'Aucun synopsis'}`, 170);
-    pdf.text(sequenceSynopsisLines, 20, yPosition);
-    yPosition += (sequenceSynopsisLines.length * 4) + 20;
-    
-    // Résumé des scènes
-    pdf.setFontSize(14);
-    pdf.setTextColor(...primaryColor);
-    pdf.text('RÉSUMÉ DES SCÈNES', 20, yPosition);
-    yPosition += 15;
-    
-    currentSequence.value.scenes.forEach((scene, index) => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        pageNum++;
-        addHeader(pageNum);
-        yPosition = 45;
-      }
-      
-      pdf.setFontSize(11);
-      pdf.setTextColor(...primaryColor);
-      pdf.text(`• Scène ${scene.ordre}: ${scene.titre}`, 25, yPosition);
-      yPosition += 6;
-      
-      pdf.setFontSize(9);
-      pdf.setTextColor(100, 100, 100);
-      
-      // Synopsis court
-      const shortSynopsis = scene.synopsis 
-        ? (scene.synopsis.length > 120 ? scene.synopsis.substring(0, 120) + '...' : scene.synopsis)
-        : 'Aucun synopsis';
-      pdf.text(`  ${shortSynopsis}`, 28, yPosition);
-      yPosition += 5;
-      
-      // Statut et lieux
-      pdf.text(`  Statut: ${scene.statutNom || 'Non défini'}`, 28, yPosition);
-      yPosition += 4;
-      
-      const lieuxCount = scene.sceneLieus?.length || 0;
-      pdf.text(`  Lieux: ${lieuxCount}`, 28, yPosition);
-      yPosition += 4;
-      
-      const dialoguesCount = scene.dialogues?.length || 0;
-      pdf.text(`  Dialogues: ${dialoguesCount}`, 28, yPosition);
-      yPosition += 8;
-      
-      // Ligne de séparation
-      if (index < currentSequence.value.scenes.length - 1) {
-        pdf.setDrawColor(220, 220, 220);
-        pdf.line(25, yPosition - 2, 185, yPosition - 2);
-        yPosition += 5;
-      }
-    });
-    
-    // Pied de page final
-    const totalPages = pdf.internal.getNumberOfPages();
-    for (let i = 2; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setTextColor(100, 100, 100);
-      pdf.setFontSize(8);
-      pdf.text(`Rapport Épisode ${currentEpisode.value.ordre} - Séquence ${currentSequence.value.ordre}`, 105, 290, { align: 'center' });
-    }
-    
-    pdf.save(`episode-${currentEpisode.value.ordre}-sequence-${currentSequence.value.ordre}.pdf`);
-    
-  } catch (error) {
-    console.error('Erreur lors de l\'export PDF épisode + séquence:', error);
-    alert('Erreur lors de l\'export PDF');
-  }
-};
-
-
-//exportation de chaque scène
-const exportScenePDF = async (scene) => {
-  if (!scene) return;
-  
-  try {
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79]; // #21294F
-    const secondaryColor = [220, 53, 69]; // #dc3545
-    const accentColor = [23, 162, 184]; // #17a2b8
-    
-    let yPosition = 20;
-    
-    // ========== EN-TÊTE ==========
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 40, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(16);
-    pdf.text(`PROJET: ${currentEpisode.value?.projetTitre || 'Cinema'}`, 20, 15);
-    pdf.setFontSize(12);
-    pdf.text(`Épisode ${currentEpisode.value?.ordre}: ${currentEpisode.value?.titre}`, 20, 25);
-    
-    pdf.text(`Scène ${scene.ordre}`, 160, 15);
-    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 160, 22);
-    pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 160, 29);
-    
-    pdf.setDrawColor(...secondaryColor);
-    pdf.setLineWidth(0.5);
-    pdf.line(20, 45, 190, 45);
-    
-    yPosition = 60;
-    
-    // ========== TITRE DE LA SCÈNE ==========
-    pdf.setTextColor(...primaryColor);
-    pdf.setFontSize(20);
-    pdf.setFont("helvetica", "bold");
-    pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 20, yPosition);
-    
-    yPosition += 15;
-    
-    // ========== INFORMATIONS GÉNÉRALES ==========
-    pdf.setFontSize(11);
-    pdf.setFont("helvetica", "normal");
-    pdf.setTextColor(0, 0, 0);
-    
-    // Synopsis
-    if (scene.synopsis) {
-      pdf.setFont("helvetica", "bold");
-      pdf.text("Synopsis:", 20, yPosition);
-      yPosition += 7;
-      
-      pdf.setFont("helvetica", "normal");
-      const synopsisLines = pdf.splitTextToSize(scene.synopsis, 170);
-      pdf.text(synopsisLines, 25, yPosition);
-      yPosition += (synopsisLines.length * 4.5) + 10;
-    }
-    
-    // Statut
-    pdf.setFont("helvetica", "bold");
-    pdf.text("Statut:", 20, yPosition);
-    pdf.setFont("helvetica", "normal");
-    pdf.text(scene.statutNom || 'Non défini', 45, yPosition);
-    yPosition += 10;
-    
-    // Lieux et plateaux
-    if (scene.sceneLieus?.length > 0) {
-      pdf.setFont("helvetica", "bold");
-      pdf.text("Lieux et Plateaux:", 20, yPosition);
-      yPosition += 7;
-      
-      pdf.setFont("helvetica", "normal");
-      scene.sceneLieus.forEach((sceneLieu, index) => {
-        let lieuText = `• ${sceneLieu.lieuNom}`;
-        if (sceneLieu.plateauNom) {
-          lieuText += ` (Plateau: ${sceneLieu.plateauNom})`;
-        }
-        if (sceneLieu.descriptionUtilisation) {
-          lieuText += ` - ${sceneLieu.descriptionUtilisation}`;
-        }
-        
-        const lieuLines = pdf.splitTextToSize(lieuText, 165);
-        lieuLines.forEach(line => {
-          pdf.text(line, 25, yPosition);
-          yPosition += 4.5;
-        });
-        yPosition += 2;
-      });
-      yPosition += 5;
-    }
-    
-    // ========== DIALOGUES ==========
-    if (scene.dialogues?.length > 0) {
-      pdf.setFontSize(14);
-      pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...primaryColor);
-      pdf.text("DIALOGUES:", 20, yPosition);
-      yPosition += 15;
-      
-      scene.dialogues.forEach((dialogue, index) => {
-        if (yPosition > 250) {
-          pdf.addPage();
-          yPosition = 20;
-        }
-        
-        // En-tête dialogue
-        pdf.setFillColor(245, 245, 245);
-        pdf.rect(20, yPosition - 5, 170, 8, 'F');
-        
-        // Personnage
-        pdf.setFontSize(12);
-        pdf.setFont("helvetica", "bold");
-        pdf.setTextColor(...accentColor);
-        pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 22, yPosition);
-        
-        yPosition += 10;
-        
-        // Texte du dialogue
-        pdf.setFontSize(10);
-        pdf.setFont("helvetica", "normal");
-        pdf.setTextColor(0, 0, 0);
-        const dialogueLines = pdf.splitTextToSize(dialogue.texte, 165);
-        pdf.text(dialogueLines, 25, yPosition);
-        yPosition += (dialogueLines.length * 4.5) + 8;
-        
-        // Observation
-        if (dialogue.observation) {
-          pdf.setFontSize(9);
-          pdf.setTextColor(100, 100, 100);
-          pdf.setFont("helvetica", "italic");
-          const observationLines = pdf.splitTextToSize(`Note: ${dialogue.observation}`, 160);
-          pdf.text(observationLines, 28, yPosition);
-          yPosition += (observationLines.length * 4) + 6;
-          pdf.setFont("helvetica", "normal");
-        }
-        
-        // Ordre
-        pdf.setFontSize(8);
-        pdf.setTextColor(150, 150, 150);
-        pdf.text(`Dialogue ${dialogue.ordre}`, 180, yPosition - 10, { align: 'right' });
-        
-        yPosition += 10;
-        
-        // Ligne de séparation
-        if (index < scene.dialogues.length - 1) {
-          pdf.setDrawColor(220, 220, 220);
-          pdf.line(20, yPosition - 3, 190, yPosition - 3);
-          yPosition += 5;
-        }
-      });
-    } else {
-      pdf.setFontSize(10);
-      pdf.setTextColor(150, 150, 150);
-      pdf.setFont("helvetica", "italic");
-      pdf.text("Aucun dialogue dans cette scène", 20, yPosition);
-      yPosition += 15;
-    }
-    
-    // ========== COMMENTAIRES ==========
-    // (Optionnel) Vous pouvez aussi ajouter les commentaires de la scène
-    if (getSceneCommentCount(scene.idScene) > 0) {
-      yPosition += 10;
-      
-      if (yPosition > 230) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-      
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...primaryColor);
-      pdf.text(`COMMENTAIRES (${getSceneCommentCount(scene.idScene)})`, 20, yPosition);
-      yPosition += 10;
-      
-      // Vous pourriez charger et afficher les commentaires ici
-      // Pour l'instant, on indique juste qu'il y en a
-      pdf.setFontSize(10);
-      pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(100, 100, 100);
-      pdf.text(`${getSceneCommentCount(scene.idScene)} commentaire(s) disponible(s)`, 25, yPosition);
-      yPosition += 15;
-    }
-    
-    // ========== INFORMATIONS DE TOURNAGE ==========
-    // (Optionnel) Si vous avez des informations de tournage
-    if (scene.tournages && scene.tournages.length > 0) {
-      yPosition += 5;
-      
-      if (yPosition > 230) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-      
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...primaryColor);
-      pdf.text("INFORMATIONS DE TOURNAGE:", 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFontSize(10);
-      pdf.setFont("helvetica", "normal");
-      
-      scene.tournages.forEach((tournage, index) => {
-        const tournageText = `${tournage.dateTournage ? formatDate(tournage.dateTournage) : 'Date non définie'} - ${tournage.statutNom || 'Statut inconnu'}`;
-        pdf.text(`• ${tournageText}`, 25, yPosition);
-        yPosition += 6;
-      });
-    }
-    
-    // ========== PIED DE PAGE ==========
-    const totalPages = pdf.internal.getNumberOfPages();
-    for (let i = 1; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(8);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text(`Scène ${scene.ordre} - ${scene.titre.substring(0, 30)}${scene.titre.length > 30 ? '...' : ''}`, 20, 290);
-      pdf.text(`Page ${i} sur ${totalPages}`, 105, 290, { align: 'center' });
-      pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 190, 290, { align: 'right' });
-    }
-    
-    // ========== SAUVEGARDE ==========
-    const safeFileName = `scene-${scene.ordre}-${scene.titre}`
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Supprimer les accents
-      .replace(/[^a-z0-9\s-]/g, '') // Garder seulement alphanumérique et tirets
-      .replace(/\s+/g, '-') // Remplacer espaces par tirets
-      .substring(0, 30); // Limiter la longueur
-    
-    pdf.save(`${safeFileName}.pdf`);
-    
-    console.log(`PDF de la scène ${scene.ordre} exporté avec succès`);
-    
-  } catch (error) {
-    console.error('Erreur lors de l\'export PDF de la scène:', error);
-    alert('Erreur lors de l\'export PDF: ' + error.message);
-  }
-};
-
-const loadImageBase64 = async (filename) => {
-  if (!filename) return null;
-  try {
-    const response = await axios.get(`/api/images/raccord/${filename}`, {
-      responseType: 'blob'
-    });
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(response.data);
-    });
-  } catch (err) {
-    console.warn('Impossible de charger l\'image:', filename);
-    return null;
-  }
-};
-
-// Fonction utilitaire améliorée pour charger les images
-const getBase64FromUrl = async (filename, raccordId) => {
-  if (!filename || filename.includes('undefined') || filename === 'undefined') {
-    console.warn('Nom de fichier invalide:', filename);
-    return null;
-  }
-
-  // Ajouter des logs de débogage
-  console.log('Tentative de chargement image:', filename);
-
-  try {
-    // Essayer d'abord le serveur statique (avec le context path /api)
-    const staticUrl = `http://localhost:8080/api/images/raccords/${filename}`;
-    console.log('URL statique:', staticUrl);
-    
-    const staticResponse = await axios.get(staticUrl, {
-      responseType: 'blob',
-      timeout: 5000
-    });
-    
-    console.log('Image chargée via serveur statique:', filename);
-    
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(staticResponse.data);
-    });
-  } catch (staticError) {
-    console.warn('Erreur avec serveur statique:', staticError.message);
-    
-    // Fallback vers l'API
-    try {
-      const apiUrl = `http://localhost:8080/api/api/images/raccord/${filename}`;
-      console.log('URL API:', apiUrl);
-      
-      const apiResponse = await axios.get(apiUrl, {
-        responseType: 'blob',
-        timeout: 5000
-      });
-      
-      console.log('Image chargée via API:', filename);
-      
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(apiResponse.data);
-      });
-    } catch (apiError) {
-      console.warn('Échec des deux méthodes pour:', filename, apiError.message);
-      return null;
-    }
-  }
-};
-
-// Export tous les raccords du projet - VERSION CORRIGÉE
-const exportRaccordsProjetPDF = async () => {
-  if (!store.projetInfos?.id) {
-    alert("Aucun projet sélectionné");
+  if (!currentEpisode.value || !currentSequence.value) {
+    alert('Aucun épisode ou séquence sélectionné');
     return;
   }
-
+  
   try {
-    console.log('Début export PDF pour projet:', store.projetInfos.id);
-    
-    const response = await axios.get(`/api/raccords/export/projet/${store.projetInfos.id}`);
-    const raccords = response.data;
+    await exportEpisodeWithSequencePDFFunc(currentEpisode.value, currentSequence.value);
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF épisode + séquence:', error);
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
+  }
+};
 
-    console.log('Raccords reçus:', raccords);
+const exportScenePDF = async (scene) => {
+  if (!scene) {
+    alert('Aucune scène sélectionnée');
+    return;
+  }
+  
+  try {
+    // Passez la fonction getSceneCommentCount si nécessaire
+    await exportScenePDFFunc(scene, currentEpisode.value, getSceneCommentCount);
+    alert('PDF de la scène exporté avec succès !');
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF de la scène:', error);
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
+  }
+};
 
-    if (!raccords || raccords.length === 0) {
-      alert("Aucun raccord trouvé pour ce projet");
-      return;
-    }
-
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79];
-
-    // Page de garde
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 297, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(24);
-    pdf.text("FICHE RACCORDS", 105, 100, { align: 'center' });
-    pdf.setFontSize(18);
-    pdf.text(store.projetTitle.toUpperCase(), 105, 115, { align: 'center' });
-    pdf.setFontSize(12);
-    pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
-
-    pdf.addPage();
-    let y = 30;
-
-    // En-tête
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 25, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(16);
-    pdf.text("TOUS LES RACCORDS DU PROJET", 105, 15, { align: 'center' });
-
-    // Parcourir tous les raccords
-    for (const [index, r] of raccords.entries()) {
-      if (y > 250) {
-        pdf.addPage();
-        y = 30;
-      }
-
-      pdf.setTextColor(0, 0, 0);
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
-      pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'} – ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 15, y);
-      y += 8;
-
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
-      
-      // Informations détaillées
-      if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 6;
-      if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 6;
-      if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 6;
-      if (r.comedienNom) pdf.text(`Comédien: ${r.comedienNom}`, 20, y), y += 6;
-      if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 6;
-      
-      if (r.description) {
-        const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
-        pdf.text(lines, 20, y);
-        y += lines.length * 5 + 4;
-      }
-
-      pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
-      y += 6;
-
-      if (r.dateTournageSource || r.dateTournageCible) {
-        pdf.text(`Tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
-        y += 6;
-      }
-
-      // IMAGES - VERSION CORRIGÉE AVEC DÉBOGAGE
-      if (r.images && r.images.length > 0) {
-        console.log(`Raccord ${index} a ${r.images.length} images:`, r.images);
-        
-        pdf.text('Images associées:', 20, y);
-        y += 8;
-        
-        let x = 20;
-        let imagesAdded = 0;
-        
-        for (const img of r.images) {
-          if (imagesAdded >= 2) break; // Limiter à 2 images maximum
-          
-          // Vérifier que le nom de fichier est valide
-          if (!img.nomFichier || img.nomFichier.includes('undefined')) {
-            console.warn('Nom de fichier invalide ignoré:', img.nomFichier);
-            continue;
-          }
-          
-          try {
-            console.log('Tentative de chargement image:', img.nomFichier);
-            const base64 = await getBase64FromUrl(img.nomFichier);
-            
-            if (base64) {
-              pdf.addImage(base64, 'JPEG', x, y, 35, 35);
-              x += 40;
-              imagesAdded++;
-              
-              if (x > 150) {
-                x = 20;
-                y += 40;
-              }
-              
-              console.log('Image chargée avec succès:', img.nomFichier);
-            } else {
-              console.warn('Échec chargement image:', img.nomFichier);
-            }
-          } catch (imgError) {
-            console.warn('Erreur lors du chargement image:', img.nomFichier, imgError);
-          }
-        }
-        
-        if (imagesAdded > 0) {
-          y += 40; // Espace après les images
-          console.log(`${imagesAdded} images ajoutées pour le raccord ${index}`);
-        } else {
-          pdf.setFontSize(9);
-          pdf.setTextColor(150, 150, 150);
-          pdf.text('Aucune image disponible', 20, y);
-          y += 15;
-          console.log('Aucune image disponible pour le raccord', index);
-        }
-      } else {
-        console.log('Aucune image pour le raccord', index);
-      }
-
-      y += 10;
-      pdf.setDrawColor(200, 200, 200);
-      pdf.line(15, y - 5, 195, y - 5);
-      y += 5;
-    }
-
-    // Pied de page
-    const totalPages = pdf.internal.getNumberOfPages();
-    for (let i = 2; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(9);
-      pdf.setTextColor(150, 150, 150);
-      pdf.text(`Projet: ${store.projetTitle} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
-    }
-
-    pdf.save(`raccords-projet-${store.projetInfos.id}.pdf`);
-    console.log('Export PDF terminé avec succès');
-
-  } catch (err) {
-    console.error('Erreur export raccords:', err);
-    if (err.response?.status === 404) {
-      alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
-    } else {
-      alert("Erreur lors de la génération du PDF: " + (err.response?.data?.message || err.message));
-    }
+const exportRaccordsProjetPDF = async () => {
+  if (!store.projetInfos || !store.projetTitle) {
+    alert('Aucun projet sélectionné');
+    return;
+  }
+  
+  try {
+    await exportRaccordsProjetPDFFunc(store.projetInfos, store.projetTitle);
+  } catch (error) {
+    console.error('Erreur export raccords:', error);
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
   }
 };
 
 const exportRaccordsByScene = async (sceneId) => {
+  if (!sceneId) {
+    alert('Aucune scène sélectionnée');
+    return;
+  }
+  
   try {
-    console.log('Début export PDF pour scène:', sceneId);
-    
-    // 1. Récupérer les raccords de la scène
-    const raccordsResponse = await axios.get(`/api/raccords/scene/${sceneId}`);
-    const raccords = raccordsResponse.data;
-
-    // 2. Récupérer et filtrer les raccords pour exclure ceux où la scène est source avec images partagées
-    const raccordsAvecImagesPartagees = await Promise.all(
-      raccords.map(async (raccord) => {
-        try {
-          // Vérifier si ce raccord doit être exclu
-          // Règle: Exclure les raccords où la scène exportée est la source
-          // et où il y a des images partagées avec d'autres scènes
-          const estSceneSource = raccord.sceneSourceId === sceneId;
-          
-          // Si la scène est la source, vérifier s'il y a des images partagées
-          if (estSceneSource) {
-            // Appel API pour obtenir les images partagées
-            const sharedImagesResponse = await axios.get(`/api/raccords/${raccord.id}/shared-images`);
-            const sharedImages = sharedImagesResponse.data || [];
-            
-            // Si la scène est source ET il y a des images partagées, exclure ce raccord
-            if (sharedImages.length > 0) {
-              console.log(`Raccord ${raccord.id} exclu: scène source avec ${sharedImages.length} image(s) partagée(s)`);
-              return null; // Exclure ce raccord
-            }
-            
-            // Si pas d'images partagées, inclure le raccord sans images partagées
-            raccord.sharedImages = [];
-            return raccord;
-          }
-          
-          // Si la scène est la cible, inclure le raccord avec toutes les images partagées
-          if (raccord.sceneCibleId === sceneId) {
-            const sharedImagesResponse = await axios.get(`/api/raccords/${raccord.id}/shared-images`);
-            const sharedImages = sharedImagesResponse.data || [];
-            
-            // Filtrer les images partagées pour éviter les doublons avec les images directes
-            const filteredSharedImages = sharedImages.filter(sharedImage => {
-              const isAlreadyInDirectImages = raccord.images?.some(directImage => 
-                directImage.id === sharedImage.id
-              );
-              return !isAlreadyInDirectImages;
-            });
-            
-            raccord.sharedImages = filteredSharedImages;
-            console.log(`Raccord ${raccord.id} inclus (scène cible): ${filteredSharedImages.length} image(s) partagée(s)`);
-            return raccord;
-          }
-          
-          // Cas par défaut (normalement ne devrait pas arriver)
-          raccord.sharedImages = [];
-          return raccord;
-          
-        } catch (error) {
-          console.warn(`Erreur lors de la récupération des images partagées pour le raccord ${raccord.id}:`, error);
-          raccord.sharedImages = [];
-          return raccord;
-        }
-      })
+    // Passez store, formatDate et getBase64FromUrl à la fonction
+    await exportRaccordsBySceneFunc(
+      sceneId, 
+      store, 
+      formatDate, 
+      getBase64FromUrl
     );
-
-    // Filtrer les nulls (raccords exclus)
-    const raccordsFiltres = raccordsAvecImagesPartagees.filter(r => r !== null);
-    
-    console.log(`Raccords pour scène ${sceneId}:`);
-    console.log(`- Total originaux: ${raccords.length}`);
-    console.log(`- Après filtrage: ${raccordsFiltres.length}`);
-    console.log(`- Exclus: ${raccords.length - raccordsFiltres.length}`);
-
-    if (!raccordsFiltres || raccordsFiltres.length === 0) {
-      alert('Aucun raccord trouvé pour cette scène après filtrage. Les raccords où cette scène est la source avec des images partagées ont été exclus.');
-      return;
-    }
-
-    const scene = store.currentSequence?.scenes?.find(s => s.idScene === sceneId);
-    const sceneTitre = scene?.titre || `Scène ${sceneId}`;
-    const sceneOrdre = scene?.ordre || '';
-
-    // Créer le PDF
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    
-    // Couleurs professionnelles
-    const colorPrimary = [59, 1, 11];         // #3B010B - Deep Wine
-    const colorSecondary = [117, 22, 45];     // #75162D - Burgundy
-    const colorAccent = [242, 217, 160];      // #F2D9A0 - Sand Gold
-    const colorLight = [250, 247, 242];       // #FAF7F2 - Fond clair
-    const colorBackground = [255, 255, 255];  // Blanc pur
-    const colorShared = [72, 61, 139];        // #483D8B - DarkSlateBlue pour images partagées
-    const colorSharedLight = [230, 230, 250]; // Lavender pour fond images partagées
-    
-    // ========== PAGE DE GARDE ==========
-    pdf.setFillColor(...colorBackground);
-    pdf.rect(0, 0, 210, 297, 'F');
-    
-    // Bordure décorative supérieure
-    pdf.setFillColor(...colorAccent);
-    pdf.rect(0, 0, 210, 5, 'F');
-    
-    // Titre principal
-    pdf.setFontSize(26);
-    pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(...colorPrimary);
-    pdf.text("RAPPORT DES RACCORDS", 105, 70, { align: 'center' });
-    
-    // Ligne décorative
-    pdf.setDrawColor(...colorSecondary);
-    pdf.setLineWidth(1);
-    pdf.line(60, 80, 150, 80);
-    
-    // Titre de la scène
-    pdf.setFontSize(32);
-    pdf.setTextColor(...colorSecondary);
-    pdf.text(`SCÈNE ${sceneOrdre}`, 105, 100, { align: 'center' });
-    
-    pdf.setFontSize(18);
-    pdf.setTextColor(...colorPrimary);
-    const sceneTitleLines = pdf.splitTextToSize(sceneTitre, 160);
-    let titleY = 115;
-    sceneTitleLines.forEach(line => {
-      pdf.text(line, 105, titleY, { align: 'center' });
-      titleY += 10;
-    });
-    
-    // Informations contextuelles
-    pdf.setFontSize(12);
-    pdf.setFont("helvetica", "normal");
-    pdf.setTextColor(80, 80, 80);
-    
-    if (store.currentSequence) {
-      pdf.text(`Séquence ${store.currentSequence.ordre} : ${store.currentSequence.titre}`, 105, titleY + 5, { align: 'center' });
-    }
-    if (store.currentEpisode) {
-      pdf.text(`Épisode ${store.currentEpisode.ordre} : ${store.currentEpisode.titre}`, 105, titleY + 15, { align: 'center' });
-    }
-    
-    // Statistiques (après filtrage)
-    const totalRaccordsOrigine = raccords.length;
-    const totalRaccords = raccordsFiltres.length;
-    const raccordsExclus = totalRaccordsOrigine - totalRaccords;
-    const totalImagesDirectes = raccordsFiltres.reduce((sum, r) => sum + (r.images?.length || 0), 0);
-    const totalImagesPartagees = raccordsFiltres.reduce((sum, r) => sum + (r.sharedImages?.length || 0), 0);
-    const totalImages = totalImagesDirectes + totalImagesPartagees;
-    const raccordsCritiques = raccordsFiltres.filter(r => r.estCritique).length;
-    const raccordsAvecPartage = raccordsFiltres.filter(r => r.sharedImages?.length > 0).length;
-    
-    // Cadre statistiques
-    const statsY = titleY + 35;
-    pdf.setFillColor(...colorLight);
-    pdf.roundedRect(40, statsY, 130, 65, 8, 8, 'F');
-    pdf.setDrawColor(...colorAccent);
-    pdf.setLineWidth(0.5);
-    pdf.roundedRect(40, statsY, 130, 65, 8, 8);
-    
-    pdf.setFontSize(12);
-    pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(...colorPrimary);
-    pdf.text("RÉSUMÉ STATISTIQUES", 105, statsY + 10, { align: 'center' });
-    
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", "normal");
-    pdf.text(`${totalRaccordsOrigine} raccords originaux`, 50, statsY + 22);
-    pdf.text(`${raccordsCritiques} critiques`, 105, statsY + 22, { align: 'center' });
-    pdf.text(`${raccordsAvecPartage} avec partage`, 160, statsY + 22, { align: 'right' });
-    
-    pdf.text(`${totalRaccords} raccords inclus`, 50, statsY + 32);
-    pdf.text(`${raccordsExclus} exclus (source)`, 105, statsY + 32, { align: 'center' });
-    pdf.text(`${totalImagesDirectes} images directes`, 50, statsY + 42);
-    
-    pdf.text(`${totalImagesPartagees} partagées`, 105, statsY + 42, { align: 'center' });
-    pdf.text(`${totalImages} total images`, 160, statsY + 42, { align: 'right' });
-    
-    // Date
-    pdf.setFontSize(9);
-    pdf.setFont("helvetica", "italic");
-    pdf.setTextColor(120, 120, 120);
-    pdf.text(`Document généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 275, { align: 'center' });
-
-    // ========== PAGES SUIVANTES ==========
-    let currentPage = 2;
-    let yPosition = 30;
-    
-    const addPageHeader = () => {
-      pdf.setFillColor(...colorLight);
-      pdf.rect(0, 0, 210, 25, 'F');
-      
-      pdf.setDrawColor(...colorAccent);
-      pdf.setLineWidth(0.3);
-      pdf.line(0, 25, 210, 25);
-      
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...colorPrimary);
-      pdf.text(`SCÈNE ${sceneOrdre} : ${sceneTitre}`, 20, 15);
-      
-      pdf.setFontSize(10);
-      pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...colorSecondary);
-      pdf.text(`Page ${currentPage - 1}`, 190, 15, { align: 'right' });
-      
-      yPosition = 35;
-    };
-
-    pdf.addPage();
-    addPageHeader();
-
-    // Fonction pour charger et ajouter une image
-    const addImageToPDF = async (image, isShared = false) => {
-      if (!image.nomFichier || image.nomFichier.includes('undefined')) {
-        console.warn('Image ignorée - nom invalide');
-        return null;
-      }
-      
-      try {
-        const imageUrl = `http://localhost:8080/api/images/raccords/${image.nomFichier}`;
-        const imageResponse = await axios.get(imageUrl, {
-          responseType: 'blob',
-          timeout: 15000
-        });
-        
-        const base64 = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(imageResponse.data);
-        });
-        
-        return base64;
-      } catch (imageError) {
-        console.warn(`Erreur image:`, imageError);
-        return null;
-      }
-    };
-
-    // Fonction pour calculer les dimensions d'affichage
-    const calculateImageDimensions = (img) => {
-      const originalWidth = img.naturalWidth;
-      const originalHeight = img.naturalHeight;
-      const aspectRatio = originalWidth / originalHeight;
-      
-      // Limites maximales
-      const MAX_WIDTH = 80;  // mm
-      const MAX_HEIGHT = 80; // mm
-      const MIN_SIZE = 30;   // mm (taille minimale)
-      
-      let displayWidth, displayHeight;
-      
-      if (aspectRatio > 1) {
-        // Image paysage
-        displayWidth = Math.min(MAX_WIDTH, originalWidth / 10);
-        displayHeight = displayWidth / aspectRatio;
-        
-        if (displayHeight < MIN_SIZE) {
-          displayHeight = MIN_SIZE;
-          displayWidth = displayHeight * aspectRatio;
-        }
-      } else {
-        // Image portrait
-        displayHeight = Math.min(MAX_HEIGHT, originalHeight / 10);
-        displayWidth = displayHeight * aspectRatio;
-        
-        if (displayWidth < MIN_SIZE) {
-          displayWidth = MIN_SIZE;
-          displayHeight = displayWidth / aspectRatio;
-        }
-      }
-      
-      return { displayWidth, displayHeight, originalWidth, originalHeight, aspectRatio };
-    };
-
-    // ========== PARCOURIR LES RACCORDS ==========
-    for (const [index, raccord] of raccordsFiltres.entries()) {
-      const raccordIndex = index + 1;
-      
-      // Vérifier l'espace pour la section texte
-      const sectionHeightWithoutImages = 45 + (raccord.description ? 20 : 0);
-      const totalImagesRaccord = (raccord.images?.length || 0) + (raccord.sharedImages?.length || 0);
-      
-      // Si pas assez de place, nouvelle page
-      if (yPosition + sectionHeightWithoutImages > 250) {
-        pdf.addPage();
-        currentPage++;
-        addPageHeader();
-      }
-      
-      // === EN-TÊTE DU RACCORD ===
-      pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(15, yPosition - 5, 180, 12, 4, 4, 'F');
-      
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...colorPrimary);
-      
-      // Indicateur images partagées
-      let raccordTitle = `Raccord ${raccordIndex} : ${raccord.typeRaccordNom || 'Type non spécifié'}`;
-      if (raccord.sharedImages?.length > 0) {
-        raccordTitle += ` (${raccord.sharedImages.length} image(s) partagée(s))`;
-      }
-      
-      pdf.text(raccordTitle, 20, yPosition);
-      
-      // Indicateur critique
-      if (raccord.estCritique) {
-        pdf.setFillColor(...colorSecondary);
-        pdf.circle(190, yPosition - 2, 3, 'F');
-        pdf.setTextColor(255, 255, 255);
-        pdf.setFontSize(6);
-        pdf.text('C', 189.5, yPosition);
-        pdf.setTextColor(...colorPrimary);
-      }
-      
-      yPosition += 10;
-      
-      // === INFORMATIONS DU RACCORD ===
-      pdf.setFontSize(10);
-      pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(60, 60, 60);
-      
-      // Scènes avec indication du rôle de cette scène
-      const isSceneSource = raccord.sceneSourceId === sceneId;
-      const role = isSceneSource ? "Source" : "Cible";
-      const otherScene = isSceneSource ? raccord.sceneCibleTitre : raccord.sceneSourceTitre;
-      
-      pdf.text(`Scènes : ${role} (${sceneTitre}) → ${isSceneSource ? "Cible" : "Source"} (${otherScene})`, 20, yPosition);
-      yPosition += 6;
-      
-      // Personnage/Comédien
-      if (raccord.personnageNom || raccord.comedienNom) {
-        const actorText = raccord.personnageNom ? 
-          `${raccord.personnageNom}${raccord.comedienNom ? ` (${raccord.comedienNom})` : ''}` : 
-          raccord.comedienNom || '';
-        pdf.text(`Interprète : ${actorText}`, 20, yPosition);
-        yPosition += 6;
-      }
-      
-      // Description
-      if (raccord.description) {
-        const descLines = pdf.splitTextToSize(`Description : ${raccord.description}`, 165);
-        descLines.forEach(line => {
-          pdf.text(line, 20, yPosition);
-          yPosition += 5;
-        });
-        yPosition += 2;
-      }
-      
-      // Dates et statut
-      if (raccord.dateTournageSource || raccord.dateTournageCible) {
-        const dateSource = raccord.dateTournageSource ? formatDate(raccord.dateTournageSource) : 'À planifier';
-        const dateCible = raccord.dateTournageCible ? formatDate(raccord.dateTournageCible) : 'À planifier';
-        pdf.text(`Dates tournage : ${dateSource} → ${dateCible}`, 20, yPosition);
-        yPosition += 6;
-      }
-      
-      pdf.text(`Statut : ${raccord.statutRaccordNom || 'Non défini'}`, 20, yPosition);
-      yPosition += 10;
-      
-      // === IMAGES DIRECTES ===
-      if (raccord.images && raccord.images.length > 0) {
-        pdf.setFontSize(11);
-        pdf.setFont("helvetica", "bold");
-        pdf.setTextColor(...colorPrimary);
-        pdf.text("Images directes :", 20, yPosition);
-        yPosition += 8;
-        
-        await processImages(pdf, raccord.images, false);
-      }
-      
-      // === IMAGES PARTAGÉES ===
-      // Afficher les images partagées SEULEMENT si cette scène est la cible
-      // (les raccords où la scène est source avec images partagées ont déjà été exclus)
-      const shouldShowSharedImages = raccord.sceneCibleId === sceneId && 
-                                    raccord.sharedImages && 
-                                    raccord.sharedImages.length > 0;
-      
-      if (shouldShowSharedImages) {
-        // Vérifier l'espace pour le titre des images partagées
-        if (yPosition > 250) {
-          pdf.addPage();
-          currentPage++;
-          addPageHeader();
-        }
-        
-        pdf.setFontSize(11);
-        pdf.setFont("helvetica", "bold");
-        pdf.setTextColor(...colorShared);
-        pdf.text("Images partagées (provenant de la scène source) :", 20, yPosition);
-        yPosition += 8;
-        
-        await processImages(pdf, raccord.sharedImages, true);
-      }
-      
-      // Si aucune image
-      if ((!raccord.images || raccord.images.length === 0) && 
-          (!shouldShowSharedImages)) {
-        pdf.setFontSize(10);
-        pdf.setFont("helvetica", "italic");
-        pdf.setTextColor(150, 150, 150);
-        pdf.text('Aucune image disponible', 20, yPosition);
-        yPosition += 15;
-      }
-      
-      // === SÉPARATION ENTRE RACCORDS ===
-      if (index < raccordsFiltres.length - 1) {
-        if (yPosition < 270) {
-          pdf.setDrawColor(230, 230, 230);
-          pdf.setLineWidth(0.3);
-          pdf.line(20, yPosition, 190, yPosition);
-          yPosition += 15;
-        }
-      }
-    }
-    
-    // Fonction pour traiter les images (directes et partagées)
-    async function processImages(pdf, images, isShared = false) {
-      let imageX = 25;
-      let imageY = yPosition;
-      let imagesInCurrentRow = 0;
-      
-      for (const [imgIndex, image] of images.entries()) {
-        try {
-          const base64 = await addImageToPDF(image, isShared);
-          
-          if (base64) {
-            const img = new Image();
-            await new Promise((resolve, reject) => {
-              img.onload = () => resolve();
-              img.onerror = reject;
-              img.src = base64;
-            });
-            
-            const { displayWidth, displayHeight, originalWidth, originalHeight } = calculateImageDimensions(img);
-            const captionHeight = 10;
-            const totalImageHeight = displayHeight + captionHeight + 5;
-            
-            // Vérifier si l'image rentre sur la page
-            if (imageY + totalImageHeight > 270) {
-              pdf.addPage();
-              currentPage++;
-              addPageHeader();
-              imageX = 25;
-              imageY = yPosition;
-              imagesInCurrentRow = 0;
-            }
-            
-            // Vérifier si l'image dépasse à droite
-            if (imageX + displayWidth > 185 && imagesInCurrentRow > 0) {
-              imageX = 25;
-              imageY += totalImageHeight;
-              imagesInCurrentRow = 0;
-              
-              if (imageY + totalImageHeight > 270) {
-                pdf.addPage();
-                currentPage++;
-                addPageHeader();
-                imageX = 25;
-                imageY = yPosition;
-                imagesInCurrentRow = 0;
-              }
-            }
-            
-            // Cadre avec couleur différente pour les images partagées
-            if (isShared) {
-              pdf.setFillColor(...colorSharedLight);
-            } else {
-              pdf.setFillColor(250, 250, 250);
-            }
-            
-            pdf.roundedRect(imageX - 2, imageY - 2, displayWidth + 4, displayHeight + 4, 4, 4, 'F');
-            
-            if (isShared) {
-              pdf.setDrawColor(...colorShared);
-            } else {
-              pdf.setDrawColor(...colorAccent);
-            }
-            
-            pdf.setLineWidth(0.5);
-            pdf.roundedRect(imageX - 2, imageY - 2, displayWidth + 4, displayHeight + 4, 4, 4);
-            
-            // Ajouter l'image
-            pdf.addImage(base64, 'JPEG', imageX, imageY, displayWidth, displayHeight);
-            
-            // Badge selon le type d'image
-            if (isShared) {
-              // Badge pour image partagée (S = Shared)
-              pdf.setFillColor(...colorShared);
-              pdf.circle(imageX + 5, imageY + 5, 4, 'F');
-              pdf.setTextColor(255, 255, 255);
-              pdf.setFontSize(6);
-              pdf.text('S', imageX + 4.2, imageY + 6.5);
-            } else if (image.estImageReference) {
-              // Badge pour image de référence (R = Reference)
-              pdf.setFillColor(...colorSecondary);
-              pdf.circle(imageX + 5, imageY + 5, 4, 'F');
-              pdf.setTextColor(255, 255, 255);
-              pdf.setFontSize(6);
-              pdf.text('R', imageX + 4, imageY + 6.5);
-            }
-            
-            // Légende
-            pdf.setFontSize(7);
-            pdf.setFont("helvetica", "normal");
-            
-            if (isShared) {
-              pdf.setTextColor(...colorShared);
-            } else {
-              pdf.setTextColor(80, 80, 80);
-            }
-            
-            let caption = image.descriptionImage || `Image ${imgIndex + 1}`;
-            if (isShared) {
-              caption = `[Partagé] ${caption}`;
-            }
-            caption += ` (${originalWidth}×${originalHeight})`;
-            
-            const captionLines = pdf.splitTextToSize(caption, displayWidth - 10);
-            
-            captionLines.forEach((line, lineIndex) => {
-              pdf.text(line, imageX, imageY + displayHeight + 5 + (lineIndex * 3));
-            });
-            
-            imagesInCurrentRow++;
-            imageX += displayWidth + 15;
-            
-            if (imageX + 50 > 185) {
-              imageX = 25;
-              imageY += totalImageHeight;
-              imagesInCurrentRow = 0;
-            }
-            
-            console.log(`✅ Image ${imgIndex + 1} ajoutée${isShared ? ' (partagée)' : ''}`);
-          }
-        } catch (imageError) {
-          console.warn(`Erreur image ${imgIndex + 1}:`, imageError);
-          addImagePlaceholder(pdf, imageX, imageY, isShared);
-          
-          imagesInCurrentRow++;
-          imageX += 65;
-          
-          if (imageX + 50 > 185) {
-            imageX = 25;
-            imageY += 65;
-            imagesInCurrentRow = 0;
-          }
-        }
-      }
-      
-      // Mettre à jour la position Y après les images
-      if (imagesInCurrentRow > 0) {
-        imageY += 80;
-      }
-      yPosition = imageY + 10;
-    }
-    
-    // Fonction pour ajouter un placeholder d'image
-    function addImagePlaceholder(pdf, x, y, isShared = false) {
-      const placeholderSize = 50;
-      
-      if (isShared) {
-        pdf.setFillColor(...colorSharedLight);
-      } else {
-        pdf.setFillColor(245, 245, 245);
-      }
-      
-      pdf.roundedRect(x, y, placeholderSize, placeholderSize, 4, 4, 'F');
-      
-      if (isShared) {
-        pdf.setDrawColor(...colorShared);
-      } else {
-        pdf.setDrawColor(200, 200, 200);
-      }
-      
-      pdf.setLineWidth(0.5);
-      pdf.line(x, y, x + placeholderSize, y + placeholderSize);
-      pdf.line(x + placeholderSize, y, x, y + placeholderSize);
-      
-      pdf.setTextColor(150, 150, 150);
-      pdf.setFontSize(8);
-      pdf.setFont("helvetica", "italic");
-      
-      const text = isShared ? 'Partagé non disp.' : 'Non disponible';
-      pdf.text(text, x + placeholderSize/2 - (isShared ? 15 : 10), y + placeholderSize/2);
-    }
-    
-    // ========== PAGE DE SYNTHÈSE ==========
-    pdf.addPage();
-    currentPage++;
-    
-    // Header pour la page de synthèse
-    pdf.setFillColor(...colorLight);
-    pdf.rect(0, 0, 210, 25, 'F');
-    
-    pdf.setDrawColor(...colorAccent);
-    pdf.setLineWidth(0.3);
-    pdf.line(0, 25, 210, 25);
-    
-    pdf.setFontSize(12);
-    pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(...colorPrimary);
-    pdf.text("SYNTHÈSE DU RAPPORT", 20, 15);
-    
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", "normal");
-    pdf.setTextColor(...colorSecondary);
-    pdf.text(`Page ${currentPage - 1}`, 190, 15, { align: 'right' });
-    
-    yPosition = 40;
-    
-    // Titre
-    pdf.setFontSize(18);
-    pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(...colorPrimary);
-    pdf.text("RÉCAPITULATIF COMPLET", 20, yPosition);
-    yPosition += 15;
-    
-    // Cadre de synthèse
-    pdf.setFillColor(...colorLight);
-    pdf.roundedRect(20, yPosition - 5, 170, 150, 8, 8, 'F');
-    pdf.setDrawColor(...colorAccent);
-    pdf.setLineWidth(0.5);
-    pdf.roundedRect(20, yPosition - 5, 170, 150, 8, 8);
-    
-    pdf.setFontSize(11);
-    pdf.setFont("helvetica", "normal");
-    pdf.setTextColor(...colorPrimary);
-    
-    const summaryY = yPosition + 5;
-    let lineY = summaryY;
-    
-    const summaryItems = [
-      `Scène documentée : ${sceneOrdre} - ${sceneTitre}`,
-      `Total des raccords originaux : ${totalRaccordsOrigine}`,
-      `Raccords inclus dans le rapport : ${totalRaccords}`,
-      `Raccords exclus (source avec partage) : ${raccordsExclus}`,
-      `Raccords critiques : ${raccordsCritiques}`,
-      `Raccords avec images partagées : ${raccordsAvecPartage}`,
-      `Images directes : ${totalImagesDirectes}`,
-      `Images partagées : ${totalImagesPartagees}`,
-      `Total images affichées : ${totalImages}`,
-      `Date de génération : ${new Date().toLocaleDateString('fr-FR', { 
-        day: '2-digit', 
-        month: 'long', 
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })}`
-    ];
-    
-    // Types de raccords
-    const typesUniques = [...new Set(raccordsFiltres.map(r => r.typeRaccordNom).filter(Boolean))];
-    if (typesUniques.length > 0) {
-      summaryItems.push(`Types de raccords : ${typesUniques.join(', ')}`);
-    }
-    
-    // Note sur le filtrage
-    summaryItems.push('');
-    summaryItems.push('POLITIQUE DE FILTRAGE :');
-    summaryItems.push('  • Les raccords où cette scène est la SOURCE et qui ont');
-    summaryItems.push('    des images partagées avec d\'autres scènes sont EXCLUS.');
-    summaryItems.push('  • Cette exclusion évite les doublons d\'images, car les');
-    summaryItems.push('    images proviennent déjà de cette scène.');
-    summaryItems.push('  • Les images partagées sont uniquement affichées quand');
-    summaryItems.push('    cette scène est la CIBLE.');
-    
-    // Légende
-    summaryItems.push('');
-    summaryItems.push('Légende :');
-    summaryItems.push('  • [C] Raccord critique');
-    summaryItems.push('  • [R] Image de référence (directe)');
-    summaryItems.push('  • [S] Image partagée (provenant de la scène source)');
-    
-    summaryItems.forEach(item => {
-      if (item === '') {
-        lineY += 3;
-      } else if (item.startsWith('POLITIQUE') || item.startsWith('Légende') || item.includes('•')) {
-        pdf.setFontSize(9);
-        pdf.text(item, 25, lineY);
-        lineY += 5;
-      } else {
-        pdf.setFontSize(10);
-        pdf.text(`• ${item}`, 25, lineY);
-        lineY += 7;
-      }
-    });
-    
-    // Note
-    pdf.setFontSize(9);
-    pdf.setFont("helvetica", "italic");
-    pdf.setTextColor(120, 120, 120);
-    pdf.text("Document technique à usage interne de la production", 105, lineY + 15, { align: 'center' });
-    
-    // ========== PIED DE PAGE SUR TOUTES LES PAGES ==========
-    const totalPages = pdf.internal.getNumberOfPages();
-    
-    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-      pdf.setPage(pageNum);
-      
-      // Ligne de séparation bas de page
-      pdf.setDrawColor(220, 220, 220);
-      pdf.setLineWidth(0.3);
-      pdf.line(20, 280, 190, 280);
-      
-      // Texte pied de page
-      pdf.setFontSize(8);
-      pdf.setTextColor(100, 100, 100);
-      
-      if (pageNum === 1) {
-        pdf.text(`${store.projetTitle || 'Production'}`, 20, 285);
-        pdf.text(`Document des raccords avec images partagées`, 105, 285, { align: 'center' });
-        pdf.text(`Scène ${sceneOrdre}`, 190, 285, { align: 'right' });
-      } else {
-        const pageTitle = sceneTitre.substring(0, 25) + (sceneTitre.length > 25 ? '...' : '');
-        pdf.text(pageTitle, 20, 285);
-        pdf.text(`Page ${pageNum - 1}/${totalPages - 1}`, 105, 285, { align: 'center' });
-        const now = new Date();
-        pdf.text(`${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`, 190, 285, { align: 'right' });
-      }
-    }
-    
-    // ========== SAUVEGARDE ==========
-    const safeFileName = `raccords-scene-${sceneOrdre}-${sceneTitre}`
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .substring(0, 30);
-    
-    pdf.save(`raccords-${safeFileName}.pdf`);
-    
-    console.log(`Export PDF terminé avec succès !`);
-    console.log(`Fichier : raccords-${safeFileName}.pdf`);
-    console.log(`${totalRaccords} raccord(s) inclus, ${raccordsExclus} exclu(s)`);
-    console.log(`${totalImagesDirectes} image(s) directes, ${totalImagesPartagees} image(s) partagée(s)`);
-    
-    alert(`PDF généré avec succès !\n\n` +
-          `${totalRaccordsOrigine} raccord(s) originaux\n` +
-          `${totalRaccords} raccord(s) inclus dans le rapport\n` +
-          `${raccordsExclus} raccord(s) exclus (source avec partage)\n` +
-          `${totalImagesDirectes} image(s) directes\n` +
-          `${totalImagesPartagees} image(s) partagée(s)\n\n` +
-          `Fichier : raccords-${safeFileName}.pdf`);
-    
-  } catch (err) {
-    console.error('Erreur lors de l\'export PDF:', err);
-    
-    let errorMessage = 'Erreur lors de la génération du document';
-    if (err.response?.status === 404) {
-      errorMessage = 'Scène non trouvée';
-    } else if (err.message.includes('timeout')) {
-      errorMessage = 'Temps de chargement dépassé';
-    } else if (err.message.includes('Network Error')) {
-      errorMessage = 'Problème de connexion';
-    }
-    
-    alert(`${errorMessage}\n\n${err.message || 'Veuillez réessayer'}`);
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF des raccords de scène:', error);
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
   }
 };
 
+const exportRaccordsByComedien = async (comedienId) => {
+  if (!comedienId) {
+    alert('Veuillez sélectionner un comédien');
+    return;
+  }
 
-// const exportRaccordsByComedien = async (comedienId) => {
-//   if (!comedienId) {
-//     alert('Veuillez sélectionner un comédien');
-//     return;
-//   }
+  try {
+    await exportRaccordsByComedienFunc(comedienId, store.projetInfos, store.projetTitle);
+  } catch (error) {
+    console.error('Erreur export comédien:', error);
+    alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
+  }
+};
 
-//   try {
-//     console.log('Début export PDF pour comédien:', comedienId);
-    
-//     const response = await axios.get(`/api/raccords/export/comedien/${comedienId}`);
-//     const raccords = response.data;
-
-//     console.log('Raccords reçus pour comédien:', raccords);
-
-//     if (!raccords || raccords.length === 0) {
-//       alert('Aucun raccord trouvé pour ce comédien');
-//       return;
-//     }
-
-//     const comedienNom = raccords[0]?.comedienNom || 'Comédien inconnu';
-
-//     const pdf = new jsPDF('p', 'mm', 'a4');
-//     const primaryColor = [33, 41, 79];
-
-//     // Page de garde (identique)
-//     pdf.setFillColor(...primaryColor);
-//     pdf.rect(0, 0, 210, 297, 'F');
-//     pdf.setTextColor(255, 255, 255);
-//     pdf.setFontSize(24);
-//     pdf.text(`RACCORDS POUR`, 105, 90, { align: 'center' });
-//     pdf.text(`${comedienNom.toUpperCase()}`, 105, 105, { align: 'center' });
-//     pdf.setFontSize(14);
-//     pdf.text('Accessoires • Vêtements • Coiffure', 105, 120, { align: 'center' });
-//     pdf.setFontSize(12);
-//     pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 105, 180, { align: 'center' });
-
-//     pdf.addPage();
-//     let y = 30;
-
-//     // En-tête (identique)
-//     pdf.setFillColor(...primaryColor);
-//     pdf.rect(0, 0, 210, 25, 'F');
-//     pdf.setTextColor(255, 255, 255);
-//     pdf.setFontSize(16);
-//     pdf.text(`RACCORDS - ${comedienNom.toUpperCase()}`, 105, 15, { align: 'center' });
-
-//     for (const [index, r] of raccords.entries()) {
-//       if (y > 250) {
-//         pdf.addPage();
-//         y = 30;
-//       }
-
-//       pdf.setTextColor(0, 0, 0);
-//       pdf.setFontSize(12);
-//       pdf.setFont("helvetica", "bold");
-//       pdf.text(`${index + 1}. ${r.typeRaccordNom || 'Type inconnu'} – ${r.sceneSourceTitre || '?'} → ${r.sceneCibleTitre || '?'}`, 15, y);
-//       y += 8;
-
-//       pdf.setFont("helvetica", "normal");
-//       pdf.setFontSize(10);
-      
-//       if (r.projetTitre) pdf.text(`Projet: ${r.projetTitre}`, 20, y), y += 6;
-//       if (r.episodeTitre) pdf.text(`Épisode: ${r.episodeTitre}`, 20, y), y += 6;
-//       if (r.sequenceTitre) pdf.text(`Séquence: ${r.sequenceTitre}`, 20, y), y += 6;
-//       if (r.personnageNom) pdf.text(`Personnage: ${r.personnageNom}`, 20, y), y += 6;
-      
-//       if (r.description) {
-//         const lines = pdf.splitTextToSize(`Description: ${r.description}`, 170);
-//         pdf.text(lines, 20, y);
-//         y += lines.length * 5 + 4;
-//       }
-
-//       pdf.text(`Statut: ${r.statutRaccordNom || '?'} | Critique: ${r.estCritique ? 'Oui' : 'Non'}`, 20, y);
-//       y += 6;
-
-//       if (r.dateTournageSource || r.dateTournageCible) {
-//         pdf.text(`Tournage: ${formatDate(r.dateTournageSource) || '?'} → ${formatDate(r.dateTournageCible) || '?'}`, 20, y);
-//         y += 6;
-//       }
-
-//       // Images (exactement comme projet)
-//       if (r.images && r.images.length > 0) {
-//         console.log(`Raccord ${index} a ${r.images.length} images:`, r.images);
-        
-//         pdf.text('Images associées:', 20, y);
-//         y += 8;
-        
-//         let x = 20;
-//         let imagesAdded = 0;
-        
-//         for (const img of r.images) {
-//           if (imagesAdded >= 2) break;
-          
-//           if (!img.nomFichier || img.nomFichier.includes('undefined')) {
-//             console.warn('Nom de fichier invalide ignoré:', img.nomFichier);
-//             continue;
-//           }
-          
-//           try {
-//             console.log('Tentative de chargement image:', img.nomFichier);
-//             const base64 = await getBase64FromUrl(img.nomFichier);
-            
-//             if (base64) {
-//               pdf.addImage(base64, 'JPEG', x, y, 35, 35);
-//               x += 40;
-//               imagesAdded++;
-              
-//               if (x > 150) {
-//                 x = 20;
-//                 y += 40;
-//               }
-              
-//               console.log('Image chargée avec succès:', img.nomFichier);
-//             } else {
-//               console.warn('Échec chargement image:', img.nomFichier);
-//             }
-//           } catch (imgError) {
-//             console.warn('Erreur lors du chargement image:', img.nomFichier, imgError);
-//           }
-//         }
-        
-//         if (imagesAdded > 0) {
-//           y += 40;
-//           console.log(`${imagesAdded} images ajoutées pour le raccord ${index}`);
-//         } else {
-//           pdf.setFontSize(9);
-//           pdf.setTextColor(150, 150, 150);
-//           pdf.text('Aucune image disponible', 20, y);
-//           y += 15;
-//           console.log('Aucune image disponible pour le raccord', index);
-//         }
-//       } else {
-//         console.log('Aucune image pour le raccord', index);
-//       }
-
-//       y += 10;
-//       pdf.setDrawColor(200, 200, 200);
-//       pdf.line(15, y - 5, 195, y - 5);
-//       y += 5;
-//     }
-
-//     // Pied de page (aligné)
-//     const totalPages = pdf.internal.getNumberOfPages();
-//     for (let i = 2; i <= totalPages; i++) {
-//       pdf.setPage(i);
-//       pdf.setFontSize(9);
-//       pdf.setTextColor(150, 150, 150);
-//       pdf.text(`Raccords pour ${comedienNom} – Page ${i - 1}/${totalPages - 1}`, 105, 290, { align: 'center' });
-//     }
-
-//     pdf.save(`raccords-${comedienNom.replace(/\s+/g, '-')}.pdf`);
-//     console.log('Export PDF comédien terminé avec succès');
-    
-//   } catch (err) {
-//     console.error('Erreur export comédien:', err);
-//     if (err.response?.status === 404) {
-//       alert("Endpoint non trouvé - vérifiez que le backend est correctement configuré");
-//     } else {
-//       alert('Erreur lors de l\'export PDF: ' + (err.response?.data?.message || err.message));
-//     }
-//   }
-// };
 </script>
 
 
