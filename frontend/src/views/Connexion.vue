@@ -17,21 +17,14 @@
       <i class="film-icon icon-12 fas fa-masks-theater icon-dark"></i>
     </div>
 
-    <!-- Éléments graphiques carnet -->
-    <div class="notebook-elements">
-      <div class="page-corner corner-1"></div>
-      <div class="page-corner corner-2"></div>
-      <div class="paper-line line-1"></div>
-      <div class="paper-line line-2"></div>
-      <div class="paper-line line-3"></div>
-    </div>
-
     <!-- Contenu principal -->
     <div class="connexion-container-conn">
-      <div class="connexion-form-section-conn" :class="{ 'inscription-mode': !isLoginForm }">
+      <!-- RETIRER la classe inscription-mode conditionnelle -->
+      <div class="connexion-form-section-conn">
         
         <!-- Carte style carnet de tournage -->
-        <div class="connexion-card-conn" :class="{ 'inscription-mode': !isLoginForm }">
+        <!-- RETIRER la classe inscription-mode conditionnelle -->
+        <div class="connexion-card-conn">
           
           <!-- Logo avec icône -->
           <div class="cinema-logo">
@@ -95,7 +88,7 @@
             </form>
           </div>
           
-          <!-- Formulaire d'inscription -->
+          <!-- Formulaire d'inscription avec champs côte à côte -->
           <div v-else class="inscription-formulaire">
             <form @submit.prevent="sInscrire" class="cinema-form container-inscription">
               <!-- Nom et Email côte à côte -->
@@ -150,9 +143,9 @@
                       class="cinema-input"
                       :class="{ 'error': registerPassword.length > 0 && registerPassword.length < 6 }"
                     />
-                    <div v-if="registerPassword.length > 0 && registerPassword.length < 6" class="password-hint-cinema">
-                      Min. 6 caractères
-                    </div>
+                  </div>
+                  <div v-if="registerPassword.length > 0 && registerPassword.length < 6" class="password-hint-cinema">
+                    Min. 6 caractères
                   </div>
                 </div>
 
@@ -168,9 +161,9 @@
                       class="cinema-input"
                       :class="{ 'error': registerConfirmPassword.length > 0 && registerPassword !== registerConfirmPassword }"
                     />
-                    <div v-if="registerConfirmPassword.length > 0 && registerPassword !== registerConfirmPassword" class="password-hint-cinema">
-                      Mots de passe différents
-                    </div>
+                  </div>
+                  <div v-if="registerConfirmPassword.length > 0 && registerPassword !== registerConfirmPassword" class="password-hint-cinema">
+                    Mots de passe différents
                   </div>
                 </div>
               </div>
@@ -203,14 +196,6 @@
                       placeholder="Spécialité"
                       class="cinema-input"
                     />
-                  </div>
-                </div>
-
-                <!-- Espace vide pour garder l'alignement quand spécialité n'est pas visible -->
-                <div v-else class="form-group-cinema" style="visibility: hidden;">
-                  <div class="input-wrapper">
-                    <i class="input-icon fas fa-star"></i>
-                    <input type="text" class="cinema-input"/>
                   </div>
                 </div>
               </div>
