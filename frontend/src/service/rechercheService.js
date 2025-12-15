@@ -1,7 +1,7 @@
 // src/services/rechercheService.js
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 export const rechercheAvancee = async (criteres) => {
   try {
