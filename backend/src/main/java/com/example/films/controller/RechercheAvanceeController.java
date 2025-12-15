@@ -1,4 +1,4 @@
-// RechercheAvanceeController.java - VERSION SIMPLIFIÉE
+// RechercheAvanceeController.java - MODIFICATIONS
 package com.example.films.controller;
 
 import com.example.films.dto.RechercheAvanceeDTO;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/recherche-avancee")
@@ -21,33 +22,29 @@ public class RechercheAvanceeController {
         this.rechercheAvanceeService = rechercheAvanceeService;
     }
     
+    // ENDPOINT EXISTANT - Recherche avancée
     @PostMapping
     public ResponseEntity<List<RechercheAvanceeDTO>> rechercherAvance(@RequestBody CritereRechercheDTO criteres) {
         try {
-            System.out.println("Requête reçue pour recherche avancée");
-            System.out.println("Terme recherche: " + criteres.getTermeRecherche());
-            System.out.println("Types recherche: " + criteres.getTypesRecherche());
-            System.out.println("Projet ID: " + criteres.getProjetId());
-            
             List<RechercheAvanceeDTO> resultats = rechercheAvanceeService.rechercherAvance(criteres);
             return ResponseEntity.ok(resultats);
         } catch (Exception e) {
-            System.err.println("Erreur dans le controller: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
     
+    // ENDPOINT EXISTANT - Statuts disponibles
     @GetMapping("/statuts")
     public ResponseEntity<List<String>> getStatutsDisponibles() {
         try {
-            List<String> statuts = List.of("planifie", "confirme", "en_cours", "termine", "reporte", "annule");
+            List<String> statuts = List.of("planifie", "confirme", "en_cours", "termine", "reporte");
             return ResponseEntity.ok(statuts);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
+    // ENDPOINT EXISTANT - Détails simples
     @GetMapping("/details/{type}/{id}")
     public ResponseEntity<RechercheAvanceeDTO> getDetailsResultat(
             @PathVariable String type, 
@@ -56,28 +53,47 @@ public class RechercheAvanceeController {
             RechercheAvanceeDTO details = rechercheAvanceeService.getDetailsParTypeEtId(type, id);
             return ResponseEntity.ok(details);
         } catch (Exception e) {
-            System.err.println("Erreur détails: " + e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
 
+    // NOUVEL ENDPOINT - Détails complets selon le type
     @GetMapping("/details/{type}/{id}/complets")
     public ResponseEntity<Map<String, Object>> getDetailsComplets(
             @PathVariable String type, 
             @PathVariable Long id) {
         try {
-            // Pour l'instant, retourner juste les détails de base
-            RechercheAvanceeDTO details = rechercheAvanceeService.getDetailsParTypeEtId(type, id);
-            Map<String, Object> response = Map.of(
-                "informations", details,
-                "statistiques", Map.of("nbElements", 1),
-                "informationsComplementaires", Map.of("type", type)
-            );
-            return ResponseEntity.ok(response);
+            Map<String, Object> detailsComplets = rechercheAvanceeService.getDetailsCompletsParTypeEtId(type, id);
+            return ResponseEntity.ok(detailsComplets);
         } catch (Exception e) {
-            System.err.println("Erreur détails complets: " + e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
+
+    // NOUVEL ENDPOINT - Statistiques par type
+    @GetMapping("/statistiques/{type}/{id}")
+    public ResponseEntity<Map<String, Object>> getStatistiques(
+            @PathVariable String type,
+            @PathVariable Long id) {
+        try {
+            Map<String, Object> statistiques = rechercheAvanceeService.getStatistiquesParTypeEtId(type, id);
+            return ResponseEntity.ok(statistiques);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+     // NOUVEL ENDPOINT - Statuts disponibles par projet
+    @GetMapping("/statuts/projet/{projetId}")
+    public ResponseEntity<List<String>> getStatutsParProjet(@PathVariable Long projetId) {
+        try {
+            List<String> statuts = rechercheAvanceeService.getStatutsDisponiblesParProjet(projetId);
+            return ResponseEntity.ok(statuts);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
+
+
 
