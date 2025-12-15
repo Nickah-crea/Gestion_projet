@@ -82,7 +82,7 @@
 
 .connexion-form-section-conn {
   width: 100%;
-  max-width: 410px; // Largeur par défaut pour connexion
+  max-width: 510px; // MÊME TAILLE POUR CONNEXION ET INSCRIPTION
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,16 +90,16 @@
   z-index: $z-index-modal;
   padding: 20px;
   
-  // Largeur augmentée pour inscription
-  &.inscription-mode {
-    max-width: 610px; // RÉDUIT À 610px (était 800px)
-  }
+  // // Largeur augmentée pour inscription
+  // &.inscription-mode {
+  //   max-width: 610px; // RÉDUIT À 610px (était 800px)
+  // }
 }
 
 .connexion-card-conn {
   background: rgba(255, 255, 255, 0.96);
   width: 100%;
-  width: 390px; // Largeur par défaut pour connexion
+  width: 490px; // MÊME TAILLE POUR CONNEXION ET INSCRIPTION
   padding: 36px 28px;
   border-radius: 20px;
   border: 1.5px solid $color-border;
@@ -144,10 +144,10 @@
     opacity: 0.4;
   }
   
-  // Largeur augmentée pour inscription
-  &.inscription-mode {
-    width: 590px; // RÉDUIT À 590px (était 800px)
-  }
+  // // Largeur augmentée pour inscription
+  // &.inscription-mode {
+  //   width: 590px; // RÉDUIT À 590px (était 800px)
+  // }
 }
 
 // =============================================
@@ -220,22 +220,20 @@
   .form-group-cinema {
     flex: 1;
     margin-bottom: 0;
-    min-width: 0; // IMPORTANT: Permet aux champs de se rétrécir correctement
+    min-width: 0;
     
     .input-wrapper {
-      width: 250px;
+      width: 100%;
     }
     
     .cinema-input {
       width: 100%;
-      box-sizing: border-box; // IMPORTANT: Inclut le padding dans la largeur
     }
   }
 }
 
 @include respond-to($breakpoint-md) {
   .form-row {
-    flex-direction: column;
     gap: 12px;
   }
 }
@@ -253,12 +251,14 @@
   }
 }
 
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
+// .input-wrapper {
+//   position: relative;
+//   display: flex;
+//   align-items: center;
+//   width: 100%;
+// }
+
+
 
 .input-icon {
   position: absolute;
@@ -334,7 +334,7 @@
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
   color: $color-text-primary;
   border: none;
-  border-radius: 50px;
+  border-radius: $border-radius-xs; // CHANGÉ ICI (était: 50px)
   font-size: 15px;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -481,10 +481,20 @@
   font-size: 11px;
   color: $color-error;
   margin-top: 4px;
-  padding-left: 16px;
+  padding-left: 0;
   font-weight: 500;
   font-style: italic;
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  width: 100%;
 }
+
+// Ajuster la marge pour les groupes avec message d'erreur
+.form-group-cinema:has(.password-hint-cinema) {
+  margin-bottom: 24px;
+}
+
 
 // =============================================
 // RESPONSIVE (AJUSTÉ)
@@ -514,22 +524,18 @@
 }
 
 @media (max-width: 768px) {
-  .connexion-form-section-conn {
-    &.inscription-mode {
-      max-width: 410px !important;
-    }
+   .connexion-form-section-conn {
+    max-width: 410px !important;
   }
   
-  .connexion-card-conn {
-    &.inscription-mode {
-      width: 390px !important;
-    }
+ .connexion-card-conn {
+    width: 390px !important;
   }
   
   // Sur tablette moyenne, forcer les champs en colonne
-  .form-row {
-    flex-direction: column;
-  }
+  // .form-row {
+  //   flex-direction: column;
+  // }
 }
 
 @media (max-width: 480px) {
@@ -604,6 +610,11 @@
 // Supprimer l'ancienne règle fixe pour inscription-formulaire
 .inscription-formulaire {
   width: 100%;
+}
+
+// Supprimer l'espaceur invisible qui causait des problèmes
+.form-group-cinema[style*="visibility: hidden"] {
+  display: none;
 }
 
 
