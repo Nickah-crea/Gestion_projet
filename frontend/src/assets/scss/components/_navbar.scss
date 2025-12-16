@@ -7,7 +7,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 30px;
   padding: 0 $padding-lg;
   display: flex;
   align-items: center;
@@ -55,6 +55,10 @@
   // line-height: 1.2;
   // white-space: nowrap;
   margin-top: 10px;
+}
+
+.logo {
+  width: 100px;
 }
 
 .user-role {

@@ -53,58 +53,58 @@ $line-height-loose: 1.7;
 // =============================================
 
 // Couleurs principales
-$color-primary: #F2D9A0;       // Sand Gold – doré très doux et élégant
-$color-primary-light: #F2E5C6; // Champagne Beige – la teinte la plus claire et lumineuse
-$color-primary-dark: #D9B589;  // Version légèrement plus intense du Sand Gold pour les hovers
+$color-primary: #F57C00;       // Orange vif – énergie créative explosive, cœur du logo
+$color-primary-light: #FFB74D; // Jaune-orangé doux – version lumineuse et transitionnelle
+$color-primary-dark: #E31C34;  // Rouge passion – plus intense pour hovers et dynamisme
 
-// Couleurs secondaires → maintenant dans les tons vin chaud / bordeaux profond
-$color-accent: #75162D;        // Burgundy – rouge vin classique et chic
-$color-accent-light: #983750;  // Burgundy un peu plus clair (pour dégradés ou états actifs)
-$color-accent-dark: #560B18;   // Dark Maroon – version très profonde
+// Couleurs secondaires → tons chauds progressifs vers le profond
+$color-accent: #E31C34;        // Rouge passion – accent principal, émotion cinématographique
+$color-accent-light: #BFE246;  // Lime/chartreuse – frais et punchy pour états actifs
+$color-accent-dark: #6D1A2A;   // Bordeaux profond – élégance mature
 
-// Couleurs tertiaires → on garde la profondeur vin très sombre pour les fonds nuit ou accents forts
-$color-tertiary: #3B010B;      // Deep Wine – presque noir bordeaux, ultra luxueux
-$color-tertiary-light: #75162D; // Burgundy en version « light » pour cette famille
-$color-tertiary-dark: #2C0008;  // Quasi noir vin pour les ombres très profondes
+// Couleurs tertiaires → fraîcheur et profondeur pour contrastes
+$color-tertiary: #BFE246;      // Lime/chartreuse – tertiaire vibrant et jeune
+$color-tertiary-light: #FFF8F0; // Beige crème clair – ultra doux pour surfaces
+$color-tertiary-dark: #2D1A1A;  // Presque noir chaud – pour ombres et profondeur
 
 // Couleurs neutres (inchangées)
-$color-white: #fefefe;
-$color-black: #000000;
+$color-white: #FFFFFF;
+$color-black: #2D1A1A;
 
 // Couleurs de fond
-$color-background: #F2E5C6;     // Champagne Beige → nouveau fond principal ultra doux
-$color-background-alt: #FAF7F2; // Très proche du champagne, presque blanc cassé
-$color-background-dark: #3B010B; // Deep Wine en fond nuit (très sombre et velouté)
+$color-background: #FFF8F0;     // Beige crème clair → fond principal chaud et accueillant
+$color-background-alt: #FFFFFF; // Blanc pur pour sections clean
+$color-background-dark: #E0D8D0; // Gris chaud clair – alternative légère (pas de vrai dark mode)
 
 // Couleurs de texte
-$color-text-primary: #3B010B;   // Deep Wine en texte principal → très chic et lisible
-$color-text-secondary: #560B18; // Dark Maroon pour texte secondaire
-$color-text-muted: #75162D;     // Burgundy atténué
-$color-text-light: #FFFFFF;     // Texte blanc sur fonds sombres
+$color-text-primary: #2D1A1A;   // Presque noir chaud → lisible et élégant
+$color-text-secondary: #6D1A2A; // Bordeaux pour texte secondaire
+$color-text-muted: #F57C00;     // Orange vif atténué visuellement
+$color-text-light: #FFFFFF;     // Blanc sur accents colorés
 
 // Couleurs d'interface
-$color-border: rgba(117, 22, 45, 0.18);       // Burgundy très léger
-$color-border-dark: rgba(86, 11, 24, 0.35);
-$color-surface: rgba(242, 217, 160, 0.12);    // Légère teinte Sand Gold
-$color-surface-hover: rgba(242, 217, 160, 0.22);
+$color-border: rgba(245, 124, 0, 0.18);       // Orange vif très léger
+$color-border-dark: rgba(109, 26, 42, 0.35);  // Bordeaux dilué
+$color-surface: rgba(191, 226, 70, 0.12);     // Lime dilué pour surfaces
+$color-surface-hover: rgba(191, 226, 70, 0.22);
 
-// Couleurs d'état – on reste dans la même famille vin/champagne
-$color-success: #6B8A6E;        // Vert bouteille très désaturé pour rester élégant
-$color-warning: #F2D9A0;        // Sand Gold comme alerte douce
-$color-error: #75162D;          // Burgundy pour les erreurs
-$color-info: #983750;
+// Couleurs d'état – dans la famille chaude/vibrante
+$color-success: #BFE246;        // Lime pour succès (frais et positif)
+$color-warning: #FFB74D;        // Jaune-orangé doux
+$color-error: #E31C34;          // Rouge passion pour erreurs
+$color-info: #F57C00;           // Orange vif
 
 // Couleurs pastel pour cartes et surfaces douces
-$color-pastel-blue: rgba(242, 229, 198, 0.15);  // Champagne très dilué
-$color-pastel-red: rgba(117, 22, 45, 0.09);      // Burgundy très dilué
-$color-pastel-gold: rgba(242, 217, 160, 0.18);   // Sand Gold dilué
-$color-pastel-purple: rgba(139, 47, 67, 0.1);         // Entre Burgundy et Maroon
-$color-pastel-dark: rgba(59, 1, 11, 0.07);
+$color-pastel-blue: rgba(255, 248, 240, 0.15);  // Beige crème dilué
+$color-pastel-red: rgba(227, 28, 52, 0.09);     // Rouge passion dilué
+$color-pastel-gold: rgba(255, 183, 77, 0.18);   // Jaune-orangé dilué
+$color-pastel-purple: rgba(109, 26, 42, 0.1);   // Bordeaux dilué
+$color-pastel-dark: rgba(45, 26, 26, 0.07);
 
-// Ombres colorées adaptées à cette palette luxueuse
-$shadow-primary: 0 4px 20px rgba(242, 217, 160, 0.3);   // Ombre dorée champagne très douce
-$shadow-accent: 0 6px 24px rgba(117, 22, 45, 0.22);      // Ombre bordeaux élégante
-$shadow-gold: 0 6px 20px rgba(59, 1, 11, 0.18);          // Ombre Deep Wine très subtile
+// Ombres colorées adaptées à cette palette vibrante
+$shadow-primary: 0 4px 20px rgba(191, 226, 70, 0.3);   // Ombre lime douce
+$shadow-accent: 0 6px 24px rgba(227, 28, 52, 0.22);    // Ombre rouge passion élégante
+$shadow-gold: 0 6px 20px rgba(245, 124, 0, 0.18);      // Ombre Deep Wine très subtile
 // =============================================
 // ESPACEMENTS - CORRIGÉ
 // =============================================

@@ -5,6 +5,7 @@
       <div class="navbar-content">
         <!-- [Prénom NOM + rôle] -->
         <div class="user-info">
+          <!-- <span class="logo"><img src="../assets/img/logo.png" alt="Logo"></span> -->
           <span class="user-name"><p>{{ user?.nom || 'Utilisateur' }}</p></span>
           <!-- <span class="user-role">{{ user?.role || 'Utilisateur' }}</span> -->
         </div>
@@ -47,6 +48,8 @@
               <option value="/raccords">Raccord</option>
               <option value="/gestion-equipe" v-if="user?.role === 'ADMIN'">Équipe</option>
               <option value="/utilisateurs" v-if="user?.role === 'ADMIN'">Utilisateurs</option>
+              <option value="/status-gestion" v-if="user?.role === 'ADMIN'">Tous Status</option>
+              <option value="/type-raccord" v-if="user?.role === 'ADMIN'">Type Raccord</option>
             </select>
           </div>
         </div>

@@ -276,51 +276,16 @@ const routes = [
     name: 'modal-add-lieu',
     component: () => import('../components/ModalAddLieu.vue')
   },
-  // {
-  //   path: '/export-scenes-pdf',
-  //   name: 'export-scenes-pdf',
-  //   component: () => import('../components/export-pdf/ExportScenesPDF.vue')
-  // },
-  // {
-  //   path: '/export-sequence-dialogues-pdf',
-  //   name: 'export-sequence-dialogues-pdf',
-  //   component: () => import('../components/export-pdf/ExportSequenceDialoguesPDF.vue')
-  // },
-  // {
-  //   path: '/export-sequence-complete-pdf',
-  //   name: 'export-sequence-complete-pdf',
-  //   component: () => import('../components/export-pdf/ExportSequenceCompletePDF.vue')
-  // },
-  // {
-  //   path: '/export-episode-with-sequence-pdf',
-  //   name: 'export-episode-with-sequence-pdf',
-  //   component: () => import('../components/export-pdf/ExportEpisodeWithSequencePDF.vue')
-  // },
-  // {
-  //   path: '/export-scene-dialogues-pdf',
-  //   name: 'export-scene-dialogues-pdf',
-  //   component: () => import('../components/export-pdf/ExportSceneDialoguesPDF.vue')
-  // },
-  // {
-  //   path: '/export-scene-pdf',
-  //   name: 'export-scene-pdf',
-  //   component: () => import('../components/export-pdf/ExportScenePDF.vue')
-  // },
-  // {
-  //   path: '/export-raccords-projet-pdf',
-  //   name: 'export-raccords-projet-pdf',
-  //   component: () => import('../components/export-pdf/ExportRaccordsProjetPDF.vue')
-  // },
-  // {
-  //   path: '/export-raccords-by-comedien-pdf',
-  //   name: 'export-raccords-by-comedien-pdf',
-  //   component: () => import('../components/export-pdf/ExportRaccordsByComedienPDF.vue')
-  // },
-  // {
-  //   path: '/export-raccords-by-scene-pdf',
-  //   name: 'export-raccords-by-scene-pdf',
-  //   component: () => import('../components/export-pdf/ExportRaccordsByScenePDF.vue')
-  // },
+  {
+    path: '/status-gestion',
+    name: 'status-gestion',
+    component: () => import('../views/StatusCRUD.vue')
+  },
+  {
+    path: '/type-raccord',
+    name: 'type-raccord',
+    component: () => import('../views/TypeRaccord.vue')
+  },
 ]
 
 const router = createRouter({

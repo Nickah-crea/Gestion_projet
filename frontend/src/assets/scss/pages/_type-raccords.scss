@@ -1,0 +1,1132 @@
+// _type-raccords.scss – Styles pour la gestion des types de raccord
+@import '../base/variables';
+
+.app-wrapper-global-type-raccord {
+  display: flex;
+  min-height: 100vh;
+  background: none;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE
+// =============================================
+.creation-sidebar-type-raccord {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 300px;
+  height: calc(100vh - 80px);
+  background: $color-background;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
+
+  .sidebar-header-type-raccord {
+    margin-bottom: $spacing-lg;
+
+    .sidebar-title-type-raccord {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+
+    .sidebar-subtitle-type-raccord {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+
+  .sidebar-section-type-raccord {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-sm;
+    padding: $padding-md;
+    box-shadow: $shadow-hover;
+
+    .section-title-type-raccord {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  .stats-type-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-type-raccord {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: linear-gradient(135deg, $color-primary, lighten($color-primary, 15%));
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-primary, 0.2);
+    color: $color-white;
+
+    .stat-number-type-raccord {
+      @include typography-playfair-h3;
+      font-size: calc(#{$font-size-h3} - 8px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-type-raccord {
+      @include typography-p4;
+      text-align: center;
+      opacity: 0.9;
+    }
+  }
+
+  .filter-group-type-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-type-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-input-container-type-raccord {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .search-input-type-raccord {
+      width: 100%;
+      height: 36px;
+      padding: 0 $padding-xs 0 ($padding-xs + 28px);
+      border: 2px solid $color-border;
+      border-radius: $border-radius-xs;
+      background: $color-white;
+      font-size: $font-size-p4;
+      color: $color-text-primary;
+      transition: $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      }
+    }
+
+    .search-icon-type-raccord {
+      position: absolute;
+      left: $padding-xs;
+      color: $color-primary;
+      font-size: $font-size-p4;
+    }
+  }
+
+  .sidebar-actions-type-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-type-raccord {
+    width: 100%;
+    height: 38px;
+    padding: 0 $padding-sm;
+    background: $color-white;
+    border: 2px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:first-child {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+
+      &:hover {
+        background: darken($color-primary, 10%);
+        border-color: darken($color-primary, 10%);
+      }
+    }
+  }
+
+  .common-types-type-raccord {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .common-type-item-type-raccord {
+    padding: $padding-xs $padding-sm;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &:hover {
+      background: rgba($color-primary, 0.05);
+      border-color: $color-primary;
+      transform: translateX(4px);
+    }
+
+    .common-type-code-type-raccord {
+      @include typography-p4;
+      color: $color-primary;
+      font-weight: $font-weight-bold;
+      font-size: $font-size-p5;
+      background: rgba($color-primary, 0.1);
+      padding: 2px 6px;
+      border-radius: $border-radius-xs;
+    }
+
+    .common-type-name-type-raccord {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-size: $font-size-p5;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL
+// =============================================
+.creation-body-type-raccord {
+  flex: 1;
+  margin-left: 300px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-type-raccord {
+  padding: $spacing-lg;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .main-header-type-raccord {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+
+    .page-title-type-raccord {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+    }
+
+    .page-subtitle-type-raccord {
+      @include typography-p3;
+      color: $color-text-muted;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+  }
+}
+
+// =============================================
+// CONTAINER DES TYPES
+// =============================================
+.types-container-type-raccord {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  overflow: hidden;
+}
+
+.types-header-type-raccord {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, $color-background-alt, lighten($color-background-alt, 5%));
+  border-bottom: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+
+  .types-title-type-raccord {
+    h3 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+    }
+
+    .types-description-type-raccord {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .btn-create-type-raccord {
+    padding: $gap-sm $padding-lg;
+    background: $color-primary;
+    border: none;
+    border-radius: $border-radius-xs;
+    color: $color-white;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    white-space: nowrap;
+
+    &:hover {
+      background: darken($color-primary, 10%);
+      transform: translateY(-2px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// =============================================
+// ÉTATS
+// =============================================
+.loading-state-type-raccord,
+.empty-state-type-raccord {
+  text-align: center;
+  padding: $spacing-xl * 2;
+  background: $color-white;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-md;
+    opacity: 0.7;
+  }
+
+  div {
+    @include typography-p3;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-type-raccord i {
+  animation: spin-type-raccord 1s linear infinite;
+}
+
+@keyframes spin-type-raccord {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// GRILLE DES TYPES
+// =============================================
+.types-grid-type-raccord {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $spacing-md;
+  padding: $spacing-lg;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+    padding: $spacing-md;
+  }
+}
+
+.type-card-type-raccord {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  border: 1px solid $color-border;
+  overflow: hidden;
+  transition: $transition-fast;
+  box-shadow: $shadow;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+    border-color: $color-primary;
+  }
+}
+
+.type-card-header-type-raccord {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-md;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+}
+
+.type-code-type-raccord {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+
+  .code-badge-type-raccord {
+    padding: 4px 10px;
+    background: $color-primary;
+    color: $color-white;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .type-date-type-raccord {
+    @include typography-p4;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    i {
+      font-size: $font-size-p4;
+    }
+  }
+}
+
+// Classes de couleur pour les codes
+.type-primary .code-badge-type-raccord {
+  background: linear-gradient(135deg, $color-primary, lighten($color-primary, 15%));
+}
+
+.type-secondary .code-badge-type-raccord {
+  background: linear-gradient(135deg, $color-accent, lighten($color-accent, 15%));
+}
+
+.type-tertiary .code-badge-type-raccord {
+  background: linear-gradient(135deg, $color-tertiary, lighten($color-tertiary, 15%));
+}
+
+.type-quaternary .code-badge-type-raccord {
+  background: linear-gradient(135deg, $color-text-primary, lighten($color-text-primary, 15%));
+}
+
+.type-default .code-badge-type-raccord {
+  background: linear-gradient(135deg, $color-text-muted, lighten($color-text-muted, 15%));
+}
+
+.type-actions-type-raccord {
+  display: flex;
+  gap: $gap-xs;
+
+  .btn-action-type-raccord {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+    background: $color-white;
+    border: 1px solid $color-border;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &.edit {
+      color: $color-warning;
+      border-color: rgba($color-warning, 0.3);
+
+      &:hover {
+        background: $color-warning;
+        color: $color-white;
+        border-color: $color-warning;
+      }
+    }
+
+    &.delete {
+      color: $color-error;
+      border-color: rgba($color-error, 0.3);
+
+      &:hover {
+        background: $color-error;
+        color: $color-white;
+        border-color: $color-error;
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+}
+
+.type-card-body-type-raccord {
+  padding: $padding-md;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .type-name-type-raccord {
+    @include typography-playfair-p3;
+    color: $color-text-primary;
+    margin: 0 0 $gap-sm 0;
+    font-size: calc(#{$font-size-p3} - 1px);
+  }
+
+  .type-description-type-raccord {
+    @include typography-p4;
+    color: $color-text-secondary;
+    margin: 0;
+    line-height: 1.5;
+    flex: 1;
+  }
+}
+
+// =============================================
+// MODAL
+// =============================================
+.modal-overlay-type-raccord {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content-type-raccord {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn-type-raccord 0.3s ease-out;
+}
+
+@keyframes modalSlideIn-type-raccord {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header-type-raccord {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  background: linear-gradient(135deg, $color-background-alt, $color-white);
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+}
+
+.modal-close-btn-type-raccord {
+  background: transparent;
+  border: none;
+  font-size: $font-size-h4;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 1px;
+  }
+}
+
+.modal-body-type-raccord {
+  padding: $spacing-lg;
+}
+
+// =============================================
+// FORMULAIRE
+// =============================================
+.type-form-type-raccord {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-type-raccord {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group-type-raccord {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+  }
+
+  .form-input-type-raccord,
+  .form-textarea-type-raccord {
+    width: 100%;
+    padding: $padding-sm;
+    border: 2px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+
+    &.error {
+      border-color: $color-error;
+    }
+  }
+
+  .form-textarea-type-raccord {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.4;
+  }
+
+  .error-message-type-raccord {
+    color: $color-error;
+    font-size: $font-size-p5;
+    margin-top: 2px;
+  }
+
+  .input-hint-type-raccord {
+    color: $color-text-muted;
+    font-size: $font-size-p5;
+    margin-top: 2px;
+    font-style: italic;
+  }
+}
+
+.form-error-type-raccord {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.form-actions-type-raccord {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .cancel-btn-type-raccord,
+  .submit-btn-type-raccord {
+    padding: $gap-sm $spacing-lg;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+
+  .cancel-btn-type-raccord {
+    background: transparent;
+    border: 2px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn-type-raccord {
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// =============================================
+// MODAL DE CONFIRMATION
+// =============================================
+.confirmation-modal-type-raccord {
+  max-width: 500px;
+}
+
+.confirmation-content-type-raccord {
+  text-align: center;
+}
+
+.confirmation-message-type-raccord {
+  @include typography-p3;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  line-height: 1.6;
+}
+
+.confirmation-actions-type-raccord {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: center;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+  }
+
+  .confirm-btn-type-raccord {
+    padding: $gap-sm $spacing-lg;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-sm) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+
+    &.confirm-danger {
+      background: $color-error;
+      color: $color-white;
+
+      &:hover:not(:disabled) {
+        background: darken($color-error, 10%);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+// =============================================
+// NOTIFICATIONS
+// =============================================
+.notifications-container-type-raccord {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: $z-index-modal + 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  max-width: 400px;
+  width: 100%;
+}
+
+.notification-type-raccord {
+  position: relative;
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  padding: $padding-md;
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  animation: slideInRight-type-raccord 0.3s ease-out;
+  overflow: hidden;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: transform $transition-fast;
+
+  &:hover {
+    transform: translateX(-4px);
+    box-shadow: $shadow-xl;
+  }
+}
+
+@keyframes slideInRight-type-raccord {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.notification-success {
+  border-left-color: $color-success;
+  background: rgba($color-success, 0.05);
+}
+
+.notification-error {
+  border-left-color: $color-error;
+  background: rgba($color-error, 0.05);
+}
+
+.notification-warning {
+  border-left-color: $color-warning;
+  background: rgba($color-warning, 0.05);
+}
+
+.notification-info {
+  border-left-color: $color-info;
+  background: rgba($color-info, 0.05);
+}
+
+.notification-icon-type-raccord {
+  font-size: 20px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.notification-success .notification-icon-type-raccord {
+  color: $color-success;
+}
+
+.notification-error .notification-icon-type-raccord {
+  color: $color-error;
+}
+
+.notification-warning .notification-icon-type-raccord {
+  color: $color-warning;
+}
+
+.notification-info .notification-icon-type-raccord {
+  color: $color-info;
+}
+
+.notification-content-type-raccord {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-message-type-raccord {
+  @include typography-p4;
+  color: $color-text-primary;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.notification-close-type-raccord {
+  background: transparent;
+  border: none;
+  color: $color-text-muted;
+  font-size: $font-size-p4;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  line-height: 1;
+  transition: $transition-fast;
+
+  &:hover {
+    color: $color-error;
+    background: rgba($color-error, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 1px;
+  }
+}
+
+.notification-progress-type-raccord {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  transform-origin: left;
+  animation: progressBar-type-raccord linear forwards;
+
+  .notification-success & {
+    background: $color-success;
+  }
+
+  .notification-error & {
+    background: $color-error;
+  }
+
+  .notification-warning & {
+    background: $color-warning;
+  }
+
+  .notification-info & {
+    background: $color-info;
+  }
+}
+
+@keyframes progressBar-type-raccord {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-type-raccord {
+    width: 280px;
+  }
+
+  .creation-body-type-raccord {
+    margin-left: 280px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-type-raccord {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+
+  .creation-body-type-raccord {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-type-raccord {
+    padding: $spacing-md;
+  }
+
+  .types-grid-type-raccord {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .creation-main-content-type-raccord {
+    padding: $spacing-sm;
+  }
+
+  .types-grid-type-raccord {
+    padding: $spacing-sm;
+  }
+
+  .type-card-header-type-raccord {
+    flex-direction: column;
+    gap: $gap-sm;
+    align-items: flex-start;
+  }
+
+  .type-code-type-raccord {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+
+  .type-actions-type-raccord {
+    align-self: flex-end;
+  }
+
+  .notifications-container-type-raccord {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-type-raccord,
+  .form-input-type-raccord,
+  .submit-btn-type-raccord,
+  .cancel-btn-type-raccord,
+  .btn-action-type-raccord,
+  .type-card-type-raccord,
+  .common-type-item-type-raccord,
+  .modal-content-type-raccord,
+  .notification-type-raccord {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .loading-state-type-raccord i {
+    animation: none;
+  }
+
+  .notification-type-raccord,
+  .modal-content-type-raccord {
+    animation: none;
+  }
+
+  .notification-progress-type-raccord {
+    animation: none;
+  }
+}
+

@@ -1,372 +1,1010 @@
-// Import des variables (à garder si tu les as déjà)
+// _calendrier.scss – Styles pour le calendrier de tournage
 @import '../base/variables';
 
-.app-wrapper-global {
-  background: none;
-  width: 100%;
-  overflow-x: hidden;
+.calendrier-tournage {
+  padding: $spacing-lg;
+  width: 1300px;
+  margin: auto;
+
+  @media (max-width: $breakpoint-xl) {
+    width: 100%;
+    padding: $spacing-md;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-sm;
+  }
 }
-// =============================================
-// REMINDME. - VERSION CINÉMA HOLLYWOOD
-// Avec tes variables _variables.scss
-// =============================================
-// =============================================
-// CALENDRIER REMINDME – STYLE CINÉMA DORÉ
-// Compatible avec ton HTML existant
-// =============================================
 
-@import '../base/variables';
+// =============================================
+// HEADER ET FILTRES
+// =============================================
+.calendrier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
 
-.calendrier-container {
-  display: grid;
-  grid-template-columns: 280px 1fr 380px;
-  grid-template-rows: auto 1fr;
-  height: 100vh;
-  background: linear-gradient(135deg, #0f0f1e 0%, #1a0d2e 100%);
-  font-family: $font-family-primary;
-  color: $color-text-primary;
-  overflow: hidden;
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
 
-  // ===================================
-  // SIDEBAR GAUCHE – STYLE REMINDME CINÉMA
-  // ===================================
-  .sidebar {
-    grid-row: 1 / -1;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-    border-right: 1px solid rgba(229, 198, 135, 0.2);
-    padding: 32px 24px;
-    border-radius: 0 28px 28px 0;
-    box-shadow: $shadow-xl;
-    z-index: 10;
+  h2 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+}
 
-    .logo {
-      font-family: $font-family-cinzel;
-      font-size: 28px;
-      color: $color-primary;
-      margin-bottom: 48px;
-      text-align: center;
-      text-shadow: 0 4px 15px rgba(229, 198, 135, 0.4);
+.filters {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    width: 100%;
+    gap: $spacing-xs;
+  }
+
+  select,
+  input[type="date"] {
+    padding: $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    min-width: 180px;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
 
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 14px 20px;
-      border-radius: 16px;
-      margin-bottom: 8px;
-      color: rgba(255, 255, 255, 0.7);
-      font-weight: $font-weight-medium;
-      cursor: pointer;
-      transition: $transition;
-
-      &:hover, &.active {
-        background: rgba(229, 198, 135, 0.15);
-        color: $color-primary;
-        box-shadow: $shadow-gold;
-        transform: translateX(8px);
-      }
-
-      &.schedule {
-        background: linear-gradient(135deg, $color-primary, $color-primary-light);
-        color: $color-black;
-        font-weight: $font-weight-bold;
-        box-shadow: $shadow-gold;
-      }
-    }
-
-    .logout {
-      margin-top: auto;
-      padding-top: 32px;
-      color: rgba(255, 255, 255, 0.5);
-      &:hover { color: $color-accent; }
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
     }
   }
 
-  // ===================================
-  // HEADER – STYLE REMINDME
-  // ===================================
-  .calendrier-header {
-    grid-column: 2 / 4;
-    padding: 24px 40px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(229, 198, 135, 0.2);
+  .btn {
+    padding: $padding-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &.btn-secondary {
+      background: $color-accent;
+      color: $color-white;
+
+      &:hover:not(:disabled) {
+        background: darken($color-accent, 10%);
+      }
+    }
+
+    @media (max-width: $breakpoint-md) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// =============================================
+// CALENDRIER PRINCIPAL
+// =============================================
+.calendrier-view {
+  margin-top: $spacing-lg;
+}
+
+.calendar-grid {
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  box-shadow: $shadow-md;
+}
+
+.calendar-header {
+  .calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md;
+    background-color: $color-background-alt;
+    border-bottom: 1px solid $color-border;
+
+    h3 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0;
+    }
+
+    button {
+      padding: $padding-sm $spacing-md;
+      border: 1px solid $color-border;
+      background: $color-white;
+      cursor: pointer;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p4;
+      color: $color-text-secondary;
+      transition: $transition-fast;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+
+      &:hover {
+        background: $color-primary;
+        border-color: $color-primary;
+        color: $color-white;
+      }
+
+      &:focus-visible {
+        outline: 2px solid $color-primary;
+        outline-offset: 1px;
+      }
+    }
+  }
+
+  .week-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: $color-background-alt;
+    border-bottom: 1px solid $color-border;
+
+    .week-day {
+      padding: $padding-md;
+      text-align: center;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      text-transform: uppercase;
+      font-size: $font-size-p4;
+    }
+  }
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+  min-height: 150px;
+  border: 1px solid $color-border;
+  padding: $padding-sm;
+  background-color: $color-white;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  position: relative;
+
+  &:hover {
+    background-color: rgba($color-primary, 0.05);
+  }
+
+  &.other-month {
+    background-color: $color-background-alt;
+    color: $color-text-muted;
+  }
+
+  &.has-tournages {
+    background-color: rgba($color-success, 0.05);
+  }
+
+  &.has-alertes-critiques {
+    background: rgba($color-error, 0.1) !important;
+    border: 2px solid $color-error !important;
+  }
+
+  .day-header {
+    font-weight: $font-weight-semibold;
+    margin-bottom: $gap-sm;
+    text-align: center;
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $gap-xs;
+
+    .alerte-indicator {
+      color: $color-error;
+      cursor: pointer;
+      font-size: $font-size-p4;
+      transition: $transition-fast;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+}
+
+// =============================================
+// TOURNAGES DANS LE CALENDRIER
+// =============================================
+.tournages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tournage-item {
+  position: relative;
+  padding: $padding-xs;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p5;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: $transition-fast;
+
+  &:hover {
+    opacity: 0.8;
+    transform: translateX(2px);
+  }
+
+  .tournage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2px;
+  }
+
+  .tournage-time {
+    font-weight: $font-weight-bold;
+    font-size: calc(#{$font-size-p5} - 1px);
+  }
+
+  .tournage-title {
+    font-size: $font-size-p5;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tournage-actions-small {
+    display: flex;
+    gap: 2px;
+
+    button {
+      padding: 2px 4px;
+      border: none;
+      border-radius: $border-radius-xs;
+      cursor: pointer;
+      font-size: calc(#{$font-size-p5} - 1px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      opacity: 0.7;
+      transition: $transition-fast;
+
+      &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+
+      &.btn-details-small {
+        background-color: $color-info;
+        color: $color-white;
+      }
+
+      &.btn-edit-small {
+        background-color: $color-warning;
+        color: $color-white;
+      }
+
+      &.btn-delete-small {
+        background-color: $color-error;
+        color: $color-white;
+      }
+    }
+  }
+}
+
+// Classes de statut pour les tournages
+.statut-planifie { 
+  background-color: rgba($color-warning, 0.2); 
+  color: darken($color-warning, 20%); 
+  border-left: 3px solid $color-warning;
+}
+
+.statut-confirme { 
+  background-color: rgba($color-info, 0.2); 
+  color: darken($color-info, 20%); 
+  border-left: 3px solid $color-info;
+}
+
+.statut-en_cours { 
+  background-color: rgba($color-primary, 0.2); 
+  color: darken($color-primary, 20%); 
+  border-left: 3px solid $color-primary;
+}
+
+.statut-termine { 
+  background-color: rgba($color-success, 0.2); 
+  color: darken($color-success, 20%); 
+  border-left: 3px solid $color-success;
+}
+
+.statut-reporte { 
+  background-color: rgba($color-error, 0.2); 
+  color: $color-error; 
+  border-left: 3px solid $color-error;
+}
+
+// =============================================
+// ALERTES RACCORDS CRITIQUES
+// =============================================
+.alertes-section {
+  background: rgba($color-warning, 0.1);
+  border: 1px solid $color-warning;
+  border-radius: $border-radius-sm;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  .alertes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-sm;
+
+    @media (max-width: $breakpoint-md) {
+      flex-direction: column;
+      gap: $spacing-sm;
+      align-items: flex-start;
+    }
+
+    h3 {
+      @include typography-playfair-h4;
+      color: darken($color-warning, 20%);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .btn-toggle {
+      padding: $padding-xs $spacing-sm;
+      background: $color-warning;
+      border: none;
+      border-radius: $border-radius-xs;
+      color: $color-white;
+      font-size: $font-size-p4;
+      font-weight: $font-weight-semibold;
+      cursor: pointer;
+      transition: $transition-fast;
+
+      &:hover {
+        background: darken($color-warning, 10%);
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: $breakpoint-md) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.alertes-list {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.alerte-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $padding-sm;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &.critique {
+    background: rgba($color-error, 0.1);
+    border: 1px solid $color-error;
+  }
+
+  &:hover {
+    opacity: 0.8;
+    transform: translateX(4px);
+  }
+
+  .alerte-icon {
+    font-size: $font-size-h4;
+  }
+
+  .alerte-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .alerte-title {
+    font-weight: $font-weight-semibold;
+    color: $color-error;
+    margin-bottom: 2px;
+    font-size: $font-size-p4;
+  }
+
+  .alerte-date {
+    font-size: $font-size-p5;
+    color: $color-text-muted;
+    margin-bottom: 2px;
+  }
+
+  .alerte-scenes {
+    font-size: $font-size-p5;
+    color: $color-text-secondary;
+  }
+}
+
+.alertes-list-day {
+  margin-top: $gap-xs;
+}
+
+.alerte-item-day {
+  background: $color-error;
+  color: $color-white;
+  padding: 2px 4px;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p5;
+  cursor: pointer;
+  margin-bottom: 2px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: $transition-fast;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+// =============================================
+// MODALS
+// =============================================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg;
+    border-bottom: 1px solid $color-border;
+
+    h3 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+    }
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    font-size: $font-size-h4;
+    color: $color-text-muted;
+    cursor: pointer;
+    padding: $gap-xs;
+    border-radius: $border-radius-xs;
+    transition: $transition-fast;
+
+    &:hover {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+}
+
+// =============================================
+// MODAL PLANNING
+// =============================================
+.planning-modal {
+  max-width: 800px;
+  width: 100%;
+
+  .planning-form {
+    padding: $spacing-lg;
+  }
+
+  .form-row {
+    display: flex;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+
+    @media (max-width: $breakpoint-md) {
+      flex-direction: column;
+      gap: $spacing-sm;
+    }
+  }
+
+  .form-group {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 20px;
 
-    .welcome {
-      font-size: 20px;
-      color: white;
-      span { color: $color-primary; font-family: $font-family-cinzel; }
+    &.full-width {
+      flex: 0 0 100%;
     }
 
-    .header-controls {
+    label {
+      @include typography-p4;
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $gap-xs;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: $gap-xs;
 
-      .view-tabs {
-        display: flex;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 4px;
-        button {
-          padding: 8px 20px;
-          border-radius: 10px;
-          background: transparent;
-          color: rgba(255,255,255,0.6);
-          font-weight: $font-weight-medium;
-          &.active {
-            background: $color-primary;
-            color: $color-black;
-            box-shadow: $shadow-gold;
-          }
-        }
-      }
-
-      .month-title {
-        font-size: 24px;
-        font-weight: $font-weight-bold;
-        color: white;
-        font-family: $font-family-cinzel;
-      }
-
-      .add-btn {
-        @include btn-cinema-primary;
-        padding: 10px 24px;
-        font-size: 14px;
+      &::after {
+        content: '*';
+        color: $color-error;
+        margin-left: 2px;
       }
     }
   }
 
-  // ===================================
-  // CALENDRIER GRID – MOIS
-  // ===================================
-  .calendrier {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 32px;
-    margin: 24px;
-    padding: 32px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    backdrop-filter: blur(10px);
-    overflow: hidden;
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
 
-    .calendrier-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 12px;
-
-      .calendrier-header-row {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        margin-bottom: 20px;
-        text-align: center;
-        font-weight: $font-weight-semibold;
-        color: $color-primary-dark;
-        text-transform: uppercase;
-        font-size: 13px;
-        letter-spacing: 1px;
-      }
-
-      .calendrier-day {
-        aspect-ratio: 1;
-        background: white;
-        border-radius: 20px;
-        padding: 12px;
-        box-shadow: $shadow;
-        transition: $transition;
-        position: relative;
-        cursor: pointer;
-
-        &:hover {
-          transform: translateY(-8px);
-          box-shadow: $shadow-xl;
-        }
-
-        &.other-month {
-          opacity: 0.3;
-        }
-
-        &.today {
-          background: linear-gradient(135deg, $color-primary, $color-primary-light);
-          color: $color-black;
-          font-weight: bold;
-          box-shadow: $shadow-gold;
-        }
-
-        .day-number {
-          font-size: 18px;
-          font-weight: $font-weight-bold;
-          text-align: right;
-          margin-bottom: 12px;
-        }
-
-        .tournage-events {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-
-          .tournage-event {
-            padding: 8px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            color: $color-black;
-            font-weight: $font-weight-medium;
-            @include text-truncate;
-
-            &.statut-planifie    { @include pastel-blue; }
-            &.statut-en-cours    { background: rgba($color-warning, 0.15); }
-            &.statut-termine     { background: rgba($color-success, 0.15); }
-            &.statut-annule      { background: rgba($color-error, 0.15); }
-            &.statut-reporte     { @include pastel-purple; }
-
-            &.lunch              { background: #fdebd0; }
-            &.presentation       { background: #d5d8fc; }
-            &.heart-check        { background: #f8d7da; }
-            &.team-meeting       { background: #d4edda; }
-            &.birthday           { background: #fff3cd; }
-          }
-        }
-      }
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
   }
 
-  // ===================================
-  // PANNEAU LATÉRAL DROIT – FORMULAIRE
-  // ===================================
-  .right-panel {
-    padding: 40px 32px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
+  .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
 
-    .form-card {
-      background: white;
-      border-radius: 24px;
-      padding: 32px;
-      box-shadow: $shadow-xl;
-      height: fit-content;
+  .form-select:disabled {
+    background-color: $color-background-alt;
+    cursor: not-allowed;
+  }
 
-      h3 {
-        font-family: $font-family-cinzel;
-        color: $color-primary-dark;
-        margin-bottom: 24px;
-        font-size: 22px;
+  small {
+    @include typography-p4;
+    color: $color-text-muted;
+    margin-top: $gap-xs;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &.field-info {
+      color: $color-info;
+    }
+
+    &.text-info {
+      color: $color-info;
+    }
+  }
+}
+
+// =============================================
+// MESSAGES D'ERREUR ET CONFLITS
+// =============================================
+.error-message {
+  background-color: rgba($color-error, 0.1);
+  color: $color-error;
+  padding: $padding-md;
+  border-radius: $border-radius-xs;
+  margin: $spacing-md 0;
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-sm;
+  border: 1px solid $color-error;
+
+  &.conflict-warning {
+    background-color: rgba($color-warning, 0.1);
+    border-color: $color-warning;
+    color: darken($color-warning, 20%);
+  }
+
+  .error-content {
+    flex: 1;
+  }
+
+  .conflict-title {
+    font-weight: $font-weight-semibold;
+    display: block;
+    margin-bottom: $gap-xs;
+  }
+
+  .error-text {
+    white-space: pre-wrap;
+    font-family: inherit;
+    margin: 0;
+    font-size: $font-size-p4;
+    line-height: 1.4;
+  }
+}
+
+.info-message {
+  background-color: rgba($color-info, 0.1);
+  color: $color-info;
+  padding: $padding-md;
+  border-radius: $border-radius-xs;
+  margin: $spacing-sm 0;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  font-size: $font-size-p4;
+}
+
+// =============================================
+// ACTIONS MODAL
+// =============================================
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .btn {
+    padding: $padding-sm $spacing-lg;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 120px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &.btn-secondary {
+      background: $color-accent;
+      color: $color-white;
+
+      &:hover:not(:disabled) {
+        background: darken($color-accent, 10%);
       }
+    }
 
-      .form-group {
-        margin-bottom: 20px;
+    &.btn-primary {
+      background: $color-primary;
+      color: $color-white;
 
-        label {
-          display: block;
-          margin-bottom: 8px;
-          color: $color-text-secondary;
-          font-weight: $font-weight-medium;
-        }
-
-        input, select, textarea {
-          width: 100%;
-          padding: 12px 16px;
-          border: 2px solid rgba($color-primary, 0.2);
-          border-radius: 14px;
-          background: $color-background-alt;
-          font-family: $font-family-primary;
-          transition: $transition;
-
-          &:focus {
-            outline: none;
-            border-color: $color-primary;
-            box-shadow: 0 0 0 4px rgba(229, 198, 135, 0.2);
-          }
-        }
-
-        textarea { min-height: 100px; resize: vertical; }
+      &:hover:not(:disabled) {
+        background: darken($color-primary, 10%);
       }
+    }
 
-      .time-row {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
-        gap: 12px;
-        margin: 16px 0;
+    &.btn-danger {
+      background: $color-error;
+      color: $color-white;
 
-        .time-input {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 12px;
-          background: $color-background-alt;
-          border-radius: 14px;
-          border: 2px solid rgba($color-primary, 0.2);
-        }
-      }
-
-      .date-picker-mini {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
-        margin: 16px 0;
-        text-align: center;
-        font-size: 12px;
-
-        .day-header { color: $color-primary; font-weight: bold; }
-        .mini-day {
-          padding: 8px;
-          border-radius: 8px;
-          &.selected {
-            background: $color-primary;
-            color: $color-black;
-            font-weight: bold;
-          }
-        }
-      }
-
-      .actions {
-        display: flex;
-        gap: 12px;
-        margin-top: 32px;
-
-        button {
-          flex: 1;
-          padding: 14px;
-          border-radius: none;
-          border-radius: 16px;
-          font-weight: $font-weight-semibold;
-          cursor: pointer;
-          transition: $transition;
-
-          &.cancel {
-            background: #f1f3f4;
-            color: $color-text-secondary;
-            &:hover { background: #e0e0e0; }
-          }
-
-          &.save {
-            @include btn-cinema-primary;
-          }
-        }
+      &:hover:not(:disabled) {
+        background: darken($color-error, 10%);
       }
     }
   }
 }
 
-// ===================================
-// RESPONSIVE
-// ===================================
-@include respond-to($breakpoint-lg) {
-  .calendrier-container {
-    grid-template-columns: 80px 1fr;
-    .right-panel { display: none; }
-  }
-}
+// =============================================
+// MODAL DÉTAILS
+// =============================================
+.details-modal {
+  max-width: 600px;
+  width: 100%;
 
-@include respond-to($breakpoint-md) {
-  .calendrier-container {
+  .details-content {
+    padding: $spacing-lg;
+  }
+
+  .detail-section {
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    h4 {
+      @include typography-playfair-p3;
+      color: $color-text-primary;
+      margin: 0 0 $spacing-sm 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+    }
+  }
+
+  .detail-grid {
+    display: grid;
     grid-template-columns: 1fr;
-    .sidebar { border-radius: 0; }
-    .calendrier { margin: 16px; padding: 20px; }
+    gap: $spacing-sm;
+
+    @media (min-width: $breakpoint-sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    padding: $padding-xs 0;
+
+    strong {
+      min-width: 100px;
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+      flex-shrink: 0;
+    }
+
+    span {
+      flex: 1;
+      color: $color-text-secondary;
+      word-break: break-word;
+    }
+  }
+
+  .notes-content {
+    background-color: $color-background-alt;
+    padding: $spacing-md;
+    border-radius: $border-radius-sm;
+    border-left: 4px solid $color-primary;
+    line-height: 1.5;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+  }
+}
+
+.statut-badge {
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-semibold;
+  display: inline-block;
+}
+
+// =============================================
+// MODAL ALERTE RACCORD
+// =============================================
+.alerte-raccord-content {
+  text-align: left;
+
+  .alerte-section {
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $color-border;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    h4 {
+      @include typography-p3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-sm 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+
+    p, ul {
+      margin: $gap-xs 0;
+      font-size: $font-size-p4;
+      color: $color-text-secondary;
+    }
+
+    ul {
+      padding-left: $spacing-md;
+    }
+
+    li {
+      margin: $gap-xs 0;
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .calendrier-tournage {
+    width: 100%;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .calendar-days {
+    grid-template-columns: repeat(7, 1fr);
+  }
+  
+  .calendar-day {
+    min-height: 120px;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .calendrier-header {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  .filters {
+    flex-direction: column;
+    width: 100%;
+
+    select,
+    input[type="date"],
+    .btn {
+      width: 100%;
+    }
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .calendar-days {
+    display: block;
+  }
+  
+  .calendar-day {
+    min-height: auto;
+    height: 100px;
+  }
+  
+  .tournage-item {
+    font-size: $font-size-p5;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .calendar-day,
+  .tournage-item,
+  .alerte-item,
+  .btn,
+  .form-input,
+  .form-select,
+  .form-textarea,
+  .close-btn {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .modal-content {
+    animation: none;
   }
 }

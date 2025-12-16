@@ -1,4 +1,5 @@
 <template>
+  <div class="app-wrapper-global">
   <div class="calendrier-tournage">
     <div class="calendrier-header">
       <h2>📅 Calendrier de Tournage</h2>
@@ -424,6 +425,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
