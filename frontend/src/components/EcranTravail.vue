@@ -699,6 +699,15 @@
                 </ul>
               </div>
 
+                  <button 
+      v-if="userPermissions.canCreateDialogue"
+      class="add-dialogue-btn-ecran-travail"
+      @click="startAddDialogue(scene)"
+      title="Ajouter un dialogue à cette scène"
+    >
+      <i class="fas fa-comment-medical"></i> Ajouter un dialogue
+    </button>
+
               <div class="add-dialogue-direct-ecran-travail" v-if="showAddDialogueSection && selectedSceneForDialogue?.idScene === scene.idScene">
                 <div class="dialogue-creation-form-ecran-travail">
                   <h4><i class="fas fa-plus-circle"></i> Ajouter un dialogue</h4>
