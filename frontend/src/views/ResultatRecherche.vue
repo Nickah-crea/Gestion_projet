@@ -176,111 +176,250 @@
         </div>
 
         <!-- Dialogue d'envoi d'email -->
-        <div v-if="emailDialogVisible" class="modal-overlay-resultat-recherche">
-          <div class="modal-content-resultat-recherche">
-            <div class="modal-header-resultat-recherche">
-              <h3>
-                <i class="fas fa-envelope"></i>
-                Envoyer le PDF par email
-              </h3>
-              <button @click="fermerDialogueEmail" class="modal-close-btn-resultat-recherche">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-            
-            <div class="modal-body-resultat-recherche">
-              <!-- Destinataires multiples -->
-              <div class="form-group-resultat-recherche">
-                <label for="toEmail">Destinataires *</label>
-                <div class="emails-input-container-resultat-recherche">
-                  <div class="email-tags-resultat-recherche">
-                    <span 
-                      v-for="(email, index) in emailForm.toEmails" 
-                      :key="index" 
-                      class="email-tag-resultat-recherche"
-                    >
-                      {{ email }}
-                      <button 
-                        type="button" 
-                        @click="supprimerEmail(index)" 
-                        class="email-tag-remove-resultat-recherche"
-                      >
-                        <i class="fas fa-times"></i>
-                      </button>
-                    </span>
-                  </div>
-                  <input
-                    id="toEmail"
-                    v-model="nouvelEmail"
-                    type="email"
-                    placeholder="Ajouter un email (exemple@email.com)"
-                    class="email-input-multiple-resultat-recherche"
-                    @keydown.enter="ajouterEmail"
-                    @blur="ajouterEmail"
-                  />
-                </div>
-                <small class="help-text-resultat-recherche">
-                  Appuyez sur Entrée, Tab ou cliquez en dehors pour ajouter un email
-                </small>
-              </div>
-              
-              <div class="form-group-resultat-recherche">
-                <label for="subject">Sujet</label>
-                <input
-                  id="subject"
-                  v-model="emailForm.subject"
-                  type="text"
-                  class="form-input-resultat-recherche"
-                />
-              </div>
-              
-              <div class="form-group-resultat-recherche">
-                <label for="message">Message</label>
-                <textarea
-                  id="message"
-                  v-model="emailForm.message"
-                  rows="4"
-                  class="form-textarea-resultat-recherche"
-                ></textarea>
-              </div>
-
-              <!-- Liste des destinataires -->
-              <div v-if="emailForm.toEmails.length > 0" class="destinataires-list-resultat-recherche">
-                <h4>Destinataires ({{ emailForm.toEmails.length }}) :</h4>
-                <ul class="emails-list-resultat-recherche">
-                  <li v-for="(email, index) in emailForm.toEmails" :key="index" class="email-item-resultat-recherche">
-                    <span class="email-address-resultat-recherche">{{ email }}</span>
-                    <button 
-                      type="button" 
-                      @click="supprimerEmail(index)" 
-                      class="email-remove-btn-resultat-recherche"
-                    >
-                      <i class="fas fa-times"></i>
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            
-            <div class="modal-footer-resultat-recherche">
-              <button 
-                @click="fermerDialogueEmail" 
-                class="cancel-btn-resultat-recherche"
-                :disabled="exportEnCours"
-              >
-                Annuler
-              </button>
-              <button 
-                @click="envoyerEmailAvecPDF" 
-                class="submit-btn-resultat-recherche"
-                :disabled="exportEnCours || emailForm.toEmails.length === 0"
-              >
-                <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
-                {{ exportEnCours ? 'Envoi en cours...' : `Envoyer à ${emailForm.toEmails.length} personne(s)` }}
-              </button>
-            </div>
+<!-- Remplacer la section du dialogue d'envoi d'email par cette version -->
+<div v-if="emailDialogVisible" class="modal-overlay-resultat-recherche">
+  <div class="modal-content-resultat-recherche">
+    <div class="modal-header-resultat-recherche">
+      <h3>
+        <i class="fas fa-envelope"></i>
+        Envoyer le PDF par email
+      </h3>
+      <button @click="fermerDialogueEmail" class="modal-close-btn-resultat-recherche">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body-resultat-recherche">
+      <!-- Type de destinataire simple -->
+      <div class="form-group-resultat-recherche">
+        <label class="form-label-resultat-recherche">Sélectionner le type de destinataires :</label>
+        <div class="recipient-type-simple-resultat-recherche">
+          <div class="recipient-type-option-resultat-recherche">
+            <input
+              type="radio"
+              id="manualType"
+              value="manual"
+              v-model="recipientType"
+              class="recipient-radio-resultat-recherche"
+            >
+            <label for="manualType" class="recipient-type-label-resultat-recherche">
+              <span class="recipient-type-icon-resultat-recherche"><i class="fas fa-edit"></i></span>
+              <span class="recipient-type-info-resultat-recherche">
+                <strong>Saisir des emails manuellement</strong>
+                <small>Pour envoyer à des personnes qui ne sont pas dans la liste des comédiens</small>
+              </span>
+            </label>
+          </div>
+          
+          <div class="recipient-type-option-resultat-recherche">
+            <input
+              type="radio"
+              id="comedienType"
+              value="comedien"
+              v-model="recipientType"
+              class="recipient-radio-resultat-recherche"
+            >
+            <label for="comedienType" class="recipient-type-label-resultat-recherche">
+              <span class="recipient-type-icon-resultat-recherche"><i class="fas fa-user-tie"></i></span>
+              <span class="recipient-type-info-resultat-recherche">
+                <strong>Sélectionner parmi les comédiens</strong>
+                <small>Choisir un ou plusieurs comédiens du projet</small>
+              </span>
+            </label>
           </div>
         </div>
+      </div>
+
+      <!-- Saisie manuelle d'emails -->
+      <div v-if="recipientType === 'manual'" class="recipient-section-resultat-recherche">
+        <div class="form-group-resultat-recherche">
+          <label for="toEmail" class="form-label-resultat-recherche">Emails des destinataires</label>
+          <div class="emails-input-container-resultat-recherche">
+            <div class="email-tags-resultat-recherche">
+              <span 
+                v-for="(email, index) in emailForm.toEmails" 
+                :key="index" 
+                class="email-tag-resultat-recherche"
+              >
+                {{ email }}
+                <button 
+                  type="button" 
+                  @click="supprimerEmail(index)" 
+                  class="email-tag-remove-resultat-recherche"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </span>
+            </div>
+            <input
+              id="toEmail"
+              v-model="nouvelEmail"
+              type="email"
+              placeholder="Saisir un email (exemple@domaine.com)"
+              class="email-input-multiple-resultat-recherche"
+              @keydown.enter="ajouterEmail"
+              @blur="ajouterEmail"
+            />
+          </div>
+          <small class="help-text-resultat-recherche">
+            Appuyez sur Entrée, Tab ou cliquez en dehors pour ajouter un email à la liste
+          </small>
+        </div>
+      </div>
+
+      <!-- Sélection de comédiens -->
+      <div v-if="recipientType === 'comedien'" class="recipient-section-resultat-recherche">
+        <div class="form-group-resultat-recherche">
+          <div v-if="loadingComediens" class="loading-indicator-resultat-recherche">
+            <i class="fas fa-spinner fa-spin"></i> Chargement de la liste des comédiens...
+          </div>
+          <div v-else>
+            <div class="comedien-selection-header-resultat-recherche">
+              <label class="form-label-resultat-recherche">
+                Sélectionner un ou plusieurs comédiens
+              </label>
+              <div class="comedien-selection-stats-resultat-recherche">
+                {{ selectedComedienIds.length }} sélectionné(s) sur {{ comediensList.filter(c => c.email).length }} avec email
+              </div>
+            </div>
+            
+            <!-- Filtre de recherche pour comédiens -->
+            <div class="comedien-search-resultat-recherche">
+              <div class="search-input-container-resultat-recherche">
+                <i class="fas fa-search search-icon-resultat-recherche"></i>
+                <input 
+                  v-model="comedienSearch" 
+                  type="text" 
+                  placeholder="Rechercher un comédien..." 
+                  class="search-input-resultat-recherche"
+                />
+              </div>
+            </div>
+            
+            <!-- Boutons de sélection rapide -->
+            <div class="comedien-quick-actions-resultat-recherche">
+              <button 
+                @click="selectAllComediens" 
+                type="button" 
+                class="quick-action-btn-resultat-recherche"
+                :disabled="filteredComediensWithEmail.length === 0"
+              >
+                Tout sélectionner
+              </button>
+              <button 
+                @click="clearAllComediens" 
+                type="button" 
+                class="quick-action-btn-resultat-recherche"
+                :disabled="selectedComedienIds.length === 0"
+              >
+                Tout effacer
+              </button>
+            </div>
+            
+            <!-- Liste des comédiens avec cases à cocher -->
+            <div class="comedien-checkbox-list-resultat-recherche">
+              <div 
+                v-for="comedien in filteredComediens" 
+                :key="comedien.id" 
+                class="comedien-checkbox-item-resultat-recherche"
+                :class="{'no-email': !comedien.email}"
+              >
+                <label class="checkbox-label-resultat-recherche">
+                  <input 
+                    type="checkbox" 
+                    :value="comedien.id" 
+                    v-model="selectedComedienIds"
+                    :disabled="!comedien.email"
+                    class="checkbox-input-resultat-recherche"
+                  >
+                  <span class="checkbox-custom-resultat-recherche"></span>
+                  <div class="comedien-info-resultat-recherche">
+                    <span class="comedien-name-resultat-recherche">{{ comedien.nom }}</span>
+                    <span class="comedien-email-resultat-recherche">
+                      {{ comedien.email || 'Email non disponible' }}
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <p v-if="filteredComediens.length === 0" class="no-comediens-resultat-recherche">
+              Aucun comédien trouvé avec ce nom
+            </p>
+            <p v-if="comediensList.length === 0 && !loadingComediens" class="no-comediens-resultat-recherche">
+              Aucun comédien disponible dans ce projet
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group-resultat-recherche">
+        <label for="subject">Sujet de l'email</label>
+        <input
+          id="subject"
+          v-model="emailForm.subject"
+          type="text"
+          class="form-input-resultat-recherche"
+          placeholder="Ex: Détails de la scène - [Nom du Projet]"
+        />
+      </div>
+      
+      <div class="form-group-resultat-recherche">
+        <label for="message">Message personnalisé</label>
+        <textarea
+          id="message"
+          v-model="emailForm.message"
+          rows="4"
+          class="form-textarea-resultat-recherche"
+          placeholder="Message accompagnant le PDF..."
+        ></textarea>
+      </div>
+
+      <!-- Liste des destinataires (affichage seulement) -->
+      <div v-if="currentRecipients.length > 0" class="destinataires-list-resultat-recherche">
+        <h4><i class="fas fa-users"></i> Destinataires ({{ currentRecipients.length }})</h4>
+        <ul class="emails-list-resultat-recherche">
+          <li v-for="(recipient, index) in currentRecipients" :key="index" class="email-item-resultat-recherche">
+            <span class="email-address-resultat-recherche">
+              <i v-if="recipient.type === 'comedien'" class="fas fa-user-tie recipient-icon-resultat-recherche"></i>
+              <i v-else class="fas fa-envelope recipient-icon-resultat-recherche"></i>
+              {{ recipient.email }}
+              <span v-if="recipient.name" class="recipient-name-resultat-recherche">
+                ({{ recipient.name }})
+              </span>
+            </span>
+            <button 
+              type="button" 
+              @click="removeRecipient(index)" 
+              class="email-remove-btn-resultat-recherche"
+              title="Supprimer ce destinataire"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="modal-footer-resultat-recherche">
+      <button 
+        @click="fermerDialogueEmail" 
+        class="cancel-btn-resultat-recherche"
+        :disabled="exportEnCours"
+      >
+        Annuler
+      </button>
+      <button 
+        @click="envoyerEmailAvecPDF" 
+        class="submit-btn-resultat-recherche"
+        :disabled="exportEnCours || currentRecipients.length === 0"
+      >
+        <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+        {{ exportEnCours ? 'Envoi en cours...' : `Envoyer (${currentRecipients.length})` }}
+      </button>
+    </div>
+  </div>
+</div>
 
         <!-- Chargement -->
         <div v-if="chargement" class="loading-state-resultat-recherche">
@@ -808,56 +947,95 @@ export default {
         message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
       },
       nouvelEmail: '',
-      generatedPdfBlob: null
+      generatedPdfBlob: null,
+      recipientType: 'manual',
+      selectedComedienId: '',
+      selectedComedienIds: [],
+      comediensList: [],
+      loadingComediens: false,
+      comedienSearch: '',
     }
   },
   computed: {
-    dialoguesFiltres() {
-      let dialogues = this.resultatDetails.dialogues || [];
+      dialoguesFiltres() {
+        let dialogues = this.resultatDetails.dialogues || [];
+        
+        // Filtre par recherche
+        if (this.rechercheDialogue) {
+          const terme = this.rechercheDialogue.toLowerCase();
+          dialogues = dialogues.filter(d => 
+            d.texte.toLowerCase().includes(terme) ||
+            (d.observation && d.observation.toLowerCase().includes(terme)) ||
+            (d.sceneTitre && d.sceneTitre.toLowerCase().includes(terme))
+          );
+        }
+        
+        // Tri
+        switch (this.triDialogues) {
+          case 'scene':
+            dialogues.sort((a, b) => (a.sceneTitre || '').localeCompare(b.sceneTitre || ''));
+            break;
+          case 'longueur':
+            dialogues.sort((a, b) => this.compterMots(b.texte) - this.compterMots(a.texte));
+            break;
+          case 'ordre':
+          default:
+            dialogues.sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
+            break;
+        }
+        
+        // Pagination
+        const start = (this.pageDialogues - 1) * this.dialoguesParPage;
+        const end = start + this.dialoguesParPage;
+        return dialogues.slice(start, end);
+      },
       
-      // Filtre par recherche
-      if (this.rechercheDialogue) {
-        const terme = this.rechercheDialogue.toLowerCase();
-        dialogues = dialogues.filter(d => 
-          d.texte.toLowerCase().includes(terme) ||
-          (d.observation && d.observation.toLowerCase().includes(terme)) ||
-          (d.sceneTitre && d.sceneTitre.toLowerCase().includes(terme))
-        );
-      }
-      
-      // Tri
-      switch (this.triDialogues) {
-        case 'scene':
-          dialogues.sort((a, b) => (a.sceneTitre || '').localeCompare(b.sceneTitre || ''));
-          break;
-        case 'longueur':
-          dialogues.sort((a, b) => this.compterMots(b.texte) - this.compterMots(a.texte));
-          break;
-        case 'ordre':
-        default:
-          dialogues.sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
-          break;
-      }
-      
-      // Pagination
-      const start = (this.pageDialogues - 1) * this.dialoguesParPage;
-      const end = start + this.dialoguesParPage;
-      return dialogues.slice(start, end);
-    },
-    
-    totalPagesDialogues() {
-      const total = this.resultatDetails.dialogues?.length || 0;
-      return Math.ceil(total / this.dialoguesParPage);
-    },
+      totalPagesDialogues() {
+        const total = this.resultatDetails.dialogues?.length || 0;
+        return Math.ceil(total / this.dialoguesParPage);
+      },
 
-    scenesAvecPlanning() {
-      if (!this.resultatDetails.scenes) return [];
-      return this.resultatDetails.scenes.filter(scene => scene.dateTournage);
-    }
+      scenesAvecPlanning() {
+        if (!this.resultatDetails.scenes) return [];
+        return this.resultatDetails.scenes.filter(scene => scene.dateTournage);
+      },
+      filteredComediens() {
+        if (!this.comedienSearch) return this.comediensList;
+        
+        const searchTerm = this.comedienSearch.toLowerCase();
+        return this.comediensList.filter(comedien => 
+          comedien.nom.toLowerCase().includes(searchTerm) ||
+          (comedien.email && comedien.email.toLowerCase().includes(searchTerm))
+        );
+      },
+      currentRecipients() {
+          if (this.recipientType === 'manual') {
+            return this.emailForm.toEmails.map(email => ({ 
+              email, 
+              type: 'manual' 
+            }));
+          } 
+          else if (this.recipientType === 'comedien') {
+            return this.selectedComedienIds
+              .map(id => this.comediensList.find(c => c.id === id))
+              .filter(comedien => comedien && comedien.email)
+              .map(comedien => ({
+                email: comedien.email,
+                name: comedien.nom,
+                id: comedien.id,
+                type: 'comedien'
+              }));
+          }
+          return [];
+        },
+      filteredComediensWithEmail() {
+        return this.filteredComediens.filter(comedien => comedien.email && comedien.email.trim() !== '');
+      }
   },
   async mounted() {
     await this.chargerDetails()
   },
+
   methods: {
     // NOUVELLE MÉTHODE : Copier le lien
     copierLien() {
@@ -978,22 +1156,92 @@ export default {
       return emailRegex.test(email);
     },
     
-    ouvrirDialogueEmail() {
-      this.exportEnCours = true;
+  async ouvrirDialogueEmail() {
+    this.exportEnCours = true;
+    
+    try {
+      const pdf = this.genererPDF();
+      const pdfBlob = pdf.output('blob');
+      this.generatedPdfBlob = pdfBlob;
       
-      try {
-        const pdf = this.genererPDF();
-        const pdfBlob = pdf.output('blob');
-        this.generatedPdfBlob = pdfBlob;
-        this.emailDialogVisible = true;
-        
-      } catch (error) {
-        console.error('Erreur lors de la génération du PDF:', error);
-        alert('Erreur lors de la préparation du PDF pour l\'envoi');
-      } finally {
-        this.exportEnCours = false;
-      }
-    },
+      // Réinitialiser le formulaire
+      this.resetEmailForm();
+      
+      this.emailDialogVisible = true;
+      
+    } catch (error) {
+      console.error('Erreur lors de la génération du PDF:', error);
+      alert('Erreur lors de la préparation du PDF pour l\'envoi');
+    } finally {
+      this.exportEnCours = false;
+    }
+  },
+
+    async loadComediens() {
+        // Ne charger que si on est en mode comédien
+        if (this.recipientType === 'comedien' && this.comediensList.length === 0) {
+          this.loadingComediens = true;
+          try {
+            const projetId = this.resultat?.projetId;
+            
+            if (projetId) {
+              try {
+                const response = await fetch(`/api/comediens/projet/${projetId}`);
+                if (response.ok) {
+                  this.comediensList = await response.json();
+                }
+              } catch (error) {
+                console.warn('Erreur API projet, tentative API générale:', error);
+              }
+            }
+            
+            if (this.comediensList.length === 0) {
+              const response = await fetch('/api/comediens');
+              if (response.ok) {
+                this.comediensList = await response.json();
+              }
+            }
+            
+            this.comediensList = this.comediensList.map(comedien => ({
+              id: comedien.id || comedien.idComedien || comedien._id,
+              nom: comedien.nom || comedien.prenomNom || `${comedien.prenom} ${comedien.nom}`,
+              email: comedien.email || comedien.courriel || ''
+            }));
+            
+          } catch (error) {
+            console.error('Erreur lors du chargement des comédiens:', error);
+            this.comediensList = [];
+          } finally {
+            this.loadingComediens = false;
+          }
+        }
+      },
+
+    selectAllComediens() {
+    this.selectedComedienIds = this.filteredComediens
+      .filter(comedien => comedien.email && comedien.email.trim() !== '')
+      .map(comedien => comedien.id);
+  },
+  
+  clearAllComediens() {
+    this.selectedComedienIds = [];
+  },
+
+removeRecipient(index) {
+  const recipient = this.currentRecipients[index];
+  
+  if (this.recipientType === 'manual') {
+    // Supprimer de la liste des emails manuels
+    const emailIndex = this.emailForm.toEmails.indexOf(recipient.email);
+    if (emailIndex !== -1) {
+      this.emailForm.toEmails.splice(emailIndex, 1);
+    }
+  } 
+  else if (this.recipientType === 'comedien') {
+    // Supprimer de la liste des comédiens sélectionnés
+    this.selectedComedienIds = this.selectedComedienIds.filter(id => id !== recipient.id);
+  }
+},
     
     fermerDialogueEmail() {
       this.emailDialogVisible = false;
@@ -1058,103 +1306,111 @@ export default {
       return pdf;
     },
 
-    async envoyerEmailAvecPDF() {
-      if (this.emailForm.toEmails.length === 0) {
-        alert('Veuillez ajouter au moins un destinataire');
-        return;
-      }
+  async envoyerEmailAvecPDF() {
+    if (this.currentRecipients.length === 0) {
+      alert('Veuillez sélectionner au moins un destinataire');
+      return;
+    }
 
-      this.exportEnCours = true;
+    this.exportEnCours = true;
+    
+    try {
+      // Préparer les emails selon le type de destinataire
+      const recipientEmails = this.currentRecipients.map(r => r.email);
       
-      try {
-        const reader = new FileReader();
-        reader.readAsDataURL(this.generatedPdfBlob);
+      const reader = new FileReader();
+      reader.readAsDataURL(this.generatedPdfBlob);
+      
+      reader.onload = async () => {
+        const base64Data = reader.result.split(',')[1];
+        const pdfData = this.base64ToArrayBuffer(base64Data);
         
-        reader.onload = async () => {
-          const base64Data = reader.result.split(',')[1];
-          const pdfData = this.base64ToArrayBuffer(base64Data);
-          
-          const promises = this.emailForm.toEmails.map(async (email) => {
-            const emailRequest = {
-              toEmail: email,
-              subject: this.emailForm.subject,
-              message: this.emailForm.message,
-              attachmentName: `${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`,
-              pdfData: Array.from(pdfData)
-            };
+        // Envoyer les emails
+        const promises = recipientEmails.map(async (email, index) => {
+         const emailRequest = {
+            toEmail: email,
+            subject: this.emailForm.subject,
+            message: this.emailForm.message,
+            attachmentName: `${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`,
+            pdfData: base64Data  // Envoie directement la chaîne Base64
+          };
 
-            const response = await fetch('/api/export/send-pdf-email', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(emailRequest)
-            });
-            
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status} pour ${email}`);
-            }
-
-            return response.json();
+          const response = await fetch('/api/export/send-pdf-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(emailRequest)
           });
-
-          const results = await Promise.allSettled(promises);
-          
-          const succes = results.filter(result => result.status === 'fulfilled' && result.value.success);
-          const echecs = results.filter(result => result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.success));
-          
-          if (echecs.length === 0) {
-            alert(`✅ PDF envoyé avec succès à ${succes.length} destinataire(s) !`);
-            this.fermerDialogueEmail();
-          } else {
-            let message = `📧 Résultat de l'envoi :\n`;
-            message += `✅ ${succes.length} email(s) envoyé(s) avec succès\n`;
-            message += `❌ ${echecs.length} email(s) en échec\n\n`;
-            
-            if (echecs.length > 0) {
-              message += `Échecs :\n`;
-              echecs.forEach((echec, index) => {
-                if (echec.status === 'rejected') {
-                  message += `${index + 1}. ${this.emailForm.toEmails[index]} - ${echec.reason}\n`;
-                } else {
-                  message += `${index + 1}. ${this.emailForm.toEmails[index]} - ${echec.value.message}\n`;
-                }
-              });
-            }
-            
-            alert(message);
-            
-            if (succes.length > 0) {
-              this.fermerDialogueEmail();
-            }
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} pour ${email}`);
           }
-        };
+
+          return response.json();
+        });
+
+        const results = await Promise.allSettled(promises);
         
-      } catch (error) {
-        console.error('Erreur lors de l\'envoi des emails:', error);
-        alert('Erreur lors de l\'envoi des emails: ' + error.message);
-      } finally {
-        this.exportEnCours = false;
-      }
-    },
-
-    base64ToArrayBuffer(base64) {
-      const binaryString = atob(base64);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      return bytes;
-    },
-
-    resetEmailForm() {
-      this.emailForm = {
-        toEmails: [],
-        subject: 'Export PDF - Détails du résultat',
-        message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
+        // Gérer les résultats comme avant...
+        const succes = results.filter(result => result.status === 'fulfilled' && result.value.success);
+        const echecs = results.filter(result => result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.success));
+        
+        if (echecs.length === 0) {
+          alert(`✅ PDF envoyé avec succès à ${succes.length} destinataire(s) !`);
+          this.fermerDialogueEmail();
+        } else {
+          let message = `📧 Résultat de l'envoi :\n`;
+          message += `✅ ${succes.length} email(s) envoyé(s) avec succès\n`;
+          message += `❌ ${echecs.length} email(s) en échec\n\n`;
+          
+          if (echecs.length > 0) {
+            message += `Échecs :\n`;
+            echecs.forEach((echec, index) => {
+              if (echec.status === 'rejected') {
+                message += `${index + 1}. ${recipientEmails[index]} - ${echec.reason}\n`;
+              } else {
+                message += `${index + 1}. ${recipientEmails[index]} - ${echec.value.message}\n`;
+              }
+            });
+          }
+          
+          alert(message);
+          
+          if (succes.length > 0) {
+            this.fermerDialogueEmail();
+          }
+        }
       };
-      this.nouvelEmail = '';
-    },
+      
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi des emails:', error);
+      alert('Erreur lors de l\'envoi des emails: ' + error.message);
+    } finally {
+      this.exportEnCours = false;
+    }
+  },
+
+  base64ToArrayBuffer(base64) {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes;
+  },
+  resetEmailForm() {
+    this.emailForm = {
+      toEmails: [],
+      subject: 'Export PDF - Détails du résultat',
+      message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
+    };
+    this.nouvelEmail = '';
+    this.recipientType = 'manual';
+    this.selectedComedienIds = [];
+    this.comediensList = [];
+    this.comedienSearch = '';
+    this.loadingComediens = false;
+  },
 
     // Méthodes d'export PDF (restaurées depuis l'original)
     exporterPDFPersonnage(pdf, margin, yPosition, contentWidth) {
@@ -1658,6 +1914,11 @@ export default {
     }
   },
   watch: {
+    recipientType(newType) {
+      if (newType === 'comedien') {
+        this.loadComediens();
+      }
+    },
     '$route.params': {
       handler: 'chargerDetails',
       deep: true
@@ -1670,5 +1931,503 @@ export default {
 </script>
 
 <style scoped>
-/* Le CSS sera importé depuis le fichier externe */
+/* Ajoutez ces styles CSS à la fin du fichier (dans la section style) */
+
+/* Styles pour la sélection des comédiens */
+.recipient-type-buttons-resultat-recherche {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.recipient-type-btn-resultat-recherche {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 15px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.recipient-type-btn-resultat-recherche:hover {
+  background: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.recipient-type-btn-resultat-recherche.active {
+  background: #21294F;
+  color: white;
+  border-color: #21294F;
+}
+
+.loading-indicator-resultat-recherche {
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.form-select-resultat-recherche {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: white;
+}
+
+.form-select-resultat-recherche:focus {
+  outline: none;
+  border-color: #21294F;
+  box-shadow: 0 0 0 2px rgba(33, 41, 79, 0.2);
+}
+
+.empty-message-resultat-recherche {
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.reload-btn-resultat-recherche {
+  background: none;
+  border: none;
+  color: #21294F;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: inherit;
+}
+
+.multiple-comediens-section-resultat-recherche {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.recipients-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.selection-buttons-resultat-recherche {
+  display: flex;
+  gap: 10px;
+}
+
+.selection-btn-resultat-recherche {
+  padding: 5px 12px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selection-btn-resultat-recherche:hover:not(:disabled) {
+  background: #f1f1f1;
+}
+
+.selection-btn-resultat-recherche:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comedien-search-resultat-recherche {
+  margin-bottom: 15px;
+}
+
+.search-input-container-resultat-recherche {
+  position: relative;
+}
+
+.search-icon-resultat-recherche {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.search-input-resultat-recherche {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-input-resultat-recherche:focus {
+  outline: none;
+  border-color: #21294F;
+  box-shadow: 0 0 0 2px rgba(33, 41, 79, 0.2);
+}
+
+.comedien-checkbox-list-resultat-recherche {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.comedien-checkbox-item-resultat-recherche {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.comedien-checkbox-item-resultat-recherche:hover {
+  background-color: #f8f9fa;
+}
+
+.comedien-checkbox-item-resultat-recherche:last-child {
+  border-bottom: none;
+}
+
+.comedien-checkbox-item-resultat-recherche.no-email {
+  opacity: 0.6;
+  background-color: #f8f8f8;
+}
+
+.checkbox-label-resultat-recherche {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.checkbox-input-resultat-recherche {
+  margin: 0;
+  cursor: pointer;
+}
+
+.checkbox-custom-resultat-recherche {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #21294F;
+  border-radius: 3px;
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.checkbox-input-resultat-recherche:checked + .checkbox-custom-resultat-recherche {
+  background-color: #21294F;
+}
+
+.checkbox-input-resultat-recherche:checked + .checkbox-custom-resultat-recherche::after {
+  content: '✓';
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+}
+
+.checkbox-input-resultat-recherche:disabled + .checkbox-custom-resultat-recherche {
+  border-color: #ccc;
+  background-color: #eee;
+  cursor: not-allowed;
+}
+
+.comedien-info-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.comedien-name-resultat-recherche {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.comedien-email-resultat-recherche {
+  font-size: 12px;
+  color: #666;
+}
+
+.comedien-checkbox-item-resultat-recherche.no-email .comedien-email-resultat-recherche {
+  color: #dc3545;
+  font-style: italic;
+}
+
+.no-comediens-resultat-recherche {
+  text-align: center;
+  padding: 15px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.recipient-name-resultat-recherche {
+  color: #666;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+/* Styles pour les options de type de destinataire */
+.recipient-type-simple-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.recipient-type-option-resultat-recherche {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.recipient-type-option-resultat-recherche:hover {
+  border-color: #21294F;
+  background-color: #f8f9fa;
+}
+
+.recipient-type-option-resultat-recherche input:checked + .recipient-type-label-resultat-recherche {
+  color: #21294F;
+}
+
+.recipient-type-option-resultat-recherche input:checked ~ .recipient-type-label-resultat-recherche {
+  border-color: #21294F;
+  background-color: rgba(33, 41, 79, 0.05);
+}
+
+.recipient-radio-resultat-recherche {
+  margin-top: 5px;
+}
+
+.recipient-type-label-resultat-recherche {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.recipient-type-icon-resultat-recherche {
+  font-size: 20px;
+  color: #21294F;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2ff;
+  border-radius: 8px;
+}
+
+.recipient-type-info-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.recipient-type-info-resultat-recherche strong {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.recipient-type-info-resultat-recherche small {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Section destinataire */
+.recipient-section-resultat-recherche {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #21294F;
+}
+
+/* Header pour sélection comédien */
+.comedien-selection-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.comedien-selection-stats-resultat-recherche {
+  font-size: 12px;
+  color: #666;
+  background: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+/* Actions rapides pour comédiens */
+.comedien-quick-actions-resultat-recherche {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.quick-action-btn-resultat-recherche {
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-action-btn-resultat-recherche:hover:not(:disabled) {
+  background: #f1f1f1;
+  border-color: #21294F;
+}
+
+.quick-action-btn-resultat-recherche:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Liste des destinataires améliorée */
+.destinataires-list-resultat-recherche {
+  margin-top: 25px;
+  padding: 20px;
+  background: #f0f7ff;
+  border-radius: 8px;
+  border: 1px solid #d0e3ff;
+}
+
+.destinataires-list-resultat-recherche h4 {
+  margin-bottom: 15px;
+  color: #21294F;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.emails-list-resultat-recherche {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.email-item-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s;
+}
+
+.email-item-resultat-recherche:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.email-address-resultat-recherche {
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recipient-icon-resultat-recherche {
+  color: #21294F;
+  font-size: 12px;
+  width: 16px;
+}
+
+.recipient-name-resultat-recherche {
+  color: #666;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.email-remove-btn-resultat-recherche {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.email-remove-btn-resultat-recherche:hover {
+  background: #f8d7da;
+}
+
+/* Amélioration du formulaire */
+.form-input-resultat-recherche,
+.form-textarea-resultat-recherche {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.form-input-resultat-recherche:focus,
+.form-textarea-resultat-recherche:focus {
+  outline: none;
+  border-color: #21294F;
+  box-shadow: 0 0 0 3px rgba(33, 41, 79, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .recipient-type-label-resultat-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .comedien-selection-header-resultat-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .comedien-quick-actions-resultat-recherche {
+    flex-wrap: wrap;
+  }
+}
 </style>
