@@ -86,52 +86,169 @@
           </select>
         </div>
 
-        <!-- Destinataire -->
-        <div class="form-section-email">
-          <label class="form-label-email">Destinataire :</label>
-          <div class="recipient-options-email">
-            <label class="radio-label-email">
-              <input 
-                type="radio" 
-                v-model="recipientType" 
-                value="comedien" 
-                class="radio-input-email"
-              >
-              Sélectionner un comédien
-            </label>
-            <label class="radio-label-email">
-              <input 
-                type="radio" 
-                v-model="recipientType" 
-                value="manual" 
-                class="radio-input-email"
-              >
-              Saisir un email manuellement
-            </label>
-          </div>
+<!-- Destinataire -->
+<!-- Destinataire -->
+<div class="form-section-email">
+  <label class="form-label-email">Sélectionner le type de destinataires :</label>
+  <div class="recipient-type-simple-email">
+    <div class="recipient-type-option-email">
+      <input
+        type="radio"
+        id="manualTypeEmail"
+        value="manual"
+        v-model="recipientType"
+        class="recipient-radio-email"
+      >
+      <label for="manualTypeEmail" class="recipient-type-label-email">
+        <span class="recipient-type-icon-email"><i class="fas fa-edit"></i></span>
+        <span class="recipient-type-info-email">
+          <strong>Saisir des emails manuellement</strong>
+          <small>Pour envoyer à des personnes qui ne sont pas dans la liste des comédiens</small>
+        </span>
+      </label>
+    </div>
+    
+    <div class="recipient-type-option-email">
+      <input
+        type="radio"
+        id="comedienTypeEmail"
+        value="comedien"
+        v-model="recipientType"
+        class="recipient-radio-email"
+      >
+      <label for="comedienTypeEmail" class="recipient-type-label-email">
+        <span class="recipient-type-icon-email"><i class="fas fa-user-tie"></i></span>
+        <span class="recipient-type-info-email">
+          <strong>Sélectionner parmi les comédiens</strong>
+          <small>Choisir un ou plusieurs comédiens du projet</small>
+        </span>
+      </label>
+    </div>
+  </div>
+</div>
 
-          <!-- Sélection du comédien destinataire -->
-          <select 
-            v-if="recipientType === 'comedien'" 
-            v-model="selectedRecipientComedienId" 
-            class="form-select-email"
-            :disabled="loadingComediens"
+<!-- Saisie manuelle d'emails -->
+<div v-if="recipientType === 'manual'" class="recipient-section-email">
+  <div class="form-group-email">
+    <label for="manualEmailsInput" class="form-label-email">Emails des destinataires</label>
+    <div class="emails-input-container-email">
+      <div class="email-tags-email">
+        <span 
+          v-for="(email, index) in validEmails" 
+          :key="index" 
+          class="email-tag-email"
+        >
+          {{ email }}
+          <button 
+            type="button" 
+            @click="supprimerEmailManuel(index)" 
+            class="email-tag-remove-email"
           >
-            <option value="">Sélectionnez un comédien</option>
-            <option v-for="comedien in comediensList" :key="comedien.id" :value="comedien.id">
-              {{ comedien.nom }} - {{ comedien.email || 'Email non disponible' }}
-            </option>
-          </select>
+            <i class="fas fa-times"></i>
+          </button>
+        </span>
+      </div>
+      <input
+        id="manualEmailsInput"
+        v-model="manualEmailsInput"
+        type="email"
+        placeholder="Saisir un email (exemple@domaine.com)"
+        class="email-input-multiple-email"
+        @keydown.enter.prevent="ajouterEmailManuel"
+        @blur="ajouterEmailManuel"
+      />
+    </div>
+    <small class="help-text-email">
+      Appuyez sur Entrée, Tab ou cliquez en dehors pour ajouter un email à la liste
+    </small>
+  </div>
+</div>
 
-          <!-- Saisie manuelle d'email -->
-          <input 
-            v-if="recipientType === 'manual'" 
-            v-model="manualEmail" 
-            type="email" 
-            placeholder="Entrez l'adresse email"
-            class="form-input-email"
-          >
+<!-- Sélection de comédiens -->
+<div v-if="recipientType === 'comedien'" class="recipient-section-email">
+  <div class="form-group-email">
+    <div v-if="loadingComediens" class="loading-indicator-email">
+      <i class="fas fa-spinner fa-spin"></i> Chargement de la liste des comédiens...
+    </div>
+    <div v-else>
+      <div class="comedien-selection-header-email">
+        <label class="form-label-email">
+          Sélectionner un ou plusieurs comédiens
+        </label>
+        <div class="comedien-selection-stats-email">
+          {{ selectedRecipientComedienIds.length }} sélectionné(s) sur {{ comediensList.filter(c => c.email).length }} avec email
         </div>
+      </div>
+      
+      <!-- Filtre de recherche pour comédiens -->
+      <div class="comedien-search-email">
+        <div class="search-input-container-email">
+          <i class="fas fa-search search-icon-email"></i>
+          <input 
+            v-model="comedienSearch" 
+            type="text" 
+            placeholder="Rechercher un comédien..." 
+            class="search-input-email"
+          />
+        </div>
+      </div>
+      
+      <!-- Boutons de sélection rapide -->
+      <div class="comedien-quick-actions-email">
+        <button 
+          @click="selectAllComediens" 
+          type="button" 
+          class="quick-action-btn-email"
+          :disabled="filteredComediensWithEmail.length === 0"
+        >
+          Tout sélectionner
+        </button>
+        <button 
+          @click="clearAllComediens" 
+          type="button" 
+          class="quick-action-btn-email"
+          :disabled="selectedRecipientComedienIds.length === 0"
+        >
+          Tout effacer
+        </button>
+      </div>
+      
+      <!-- Liste des comédiens avec cases à cocher -->
+      <div class="comedien-checkbox-list-email">
+        <div 
+          v-for="comedien in filteredComediens" 
+          :key="comedien.id" 
+          class="comedien-checkbox-item-email"
+          :class="{'no-email': !comedien.email}"
+        >
+          <label class="checkbox-label-email">
+            <input 
+              type="checkbox" 
+              :value="comedien.id" 
+              v-model="selectedRecipientComedienIds"
+              :disabled="!comedien.email"
+              class="checkbox-input-email"
+            >
+            <span class="checkbox-custom-email"></span>
+            <div class="comedien-info-email">
+              <span class="comedien-name-email">{{ comedien.nom }}</span>
+              <span class="comedien-email-email">
+                {{ comedien.email || 'Email non disponible' }}
+              </span>
+            </div>
+          </label>
+        </div>
+      </div>
+      
+      <p v-if="filteredComediens.length === 0" class="no-comediens-email">
+        Aucun comédien trouvé avec ce nom
+      </p>
+      <p v-if="comediensList.length === 0 && !loadingComediens" class="no-comediens-email">
+        Aucun comédien disponible dans ce projet
+      </p>
+    </div>
+  </div>
+</div>
 
         <!-- Sujet de l'email -->
         <div class="form-section-email">
@@ -220,14 +337,18 @@ const selectedExportType = ref('')
 const selectedComedienId = ref('')
 const selectedSceneId = ref('')
 const recipientType = ref('comedien')
-const selectedRecipientComedienId = ref('')
-const manualEmail = ref('')
+const selectedRecipientComedienIds = ref([]) 
+const manualEmails = ref('')
+const validEmails = ref([])
+const invalidEmails = ref([])
 const emailSubject = ref('')
 const emailMessage = ref('')
 const isLoading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
-
+const manualEmailsInput = ref('')
+const comedienSearch = ref('')
+const filteredComediens = ref([])
 const comediensList = ref([])
 const loadingComediens = ref(false)
 
@@ -247,17 +368,117 @@ const canSendEmail = computed(() => {
     return false
   }
   
-  // Vérification du destinataire
-  if (recipientType.value === 'comedien' && !selectedRecipientComedienId.value) {
-    return false
-  }
-  
-  if (recipientType.value === 'manual' && !manualEmail.value) {
-    return false
+  // Vérification des destinataires
+  if (recipientType.value === 'comedien') {
+    // Vérifier qu'au moins un comédien est sélectionné
+    if (selectedRecipientComedienIds.value.length === 0) {
+      return false
+    }
+    
+    // Vérifier que tous les comédiens sélectionnés ont un email
+    const selectedComediensWithoutEmail = selectedRecipientComedienIds.value
+      .map(id => comediensList.value.find(c => c.id === id))
+      .filter(comedien => !comedien || !comedien.email || comedien.email.trim() === '')
+    
+    if (selectedComediensWithoutEmail.length > 0) {
+      return false
+    }
+  } else if (recipientType.value === 'manual') {
+    // Vérifier qu'il y a au moins un email valide
+    if (validEmails.value.length === 0) {
+      return false
+    }
   }
   
   return !!emailSubject.value
 })
+
+
+// Computed property pour les comédiens filtrés avec email
+const filteredComediensWithEmail = computed(() => {
+  return filteredComediens.value.filter(comedien => comedien.email && comedien.email.trim() !== '')
+})
+
+// Méthode pour sélectionner tous les comédiens
+const selectAllComediens = () => {
+  selectedRecipientComedienIds.value = comediensList.value
+    .filter(comedien => comedien.email && comedien.email.trim() !== '')
+    .map(comedien => comedien.id)
+}
+
+// Méthode pour désélectionner tous les comédiens
+const clearAllComediens = () => {
+  selectedRecipientComedienIds.value = []
+}
+
+// Méthodes pour la saisie manuelle d'emails
+const ajouterEmailManuel = () => {
+  if (manualEmailsInput.value && estEmailValide(manualEmailsInput.value)) {
+    const email = manualEmailsInput.value.trim().toLowerCase()
+    if (!validEmails.value.includes(email)) {
+      validEmails.value.push(email)
+      manualEmailsInput.value = ''
+      // Mettre à jour manualEmails pour la validation
+      manualEmails.value = validEmails.value.join(', ')
+    }
+  }
+}
+
+const supprimerEmailManuel = (index) => {
+  validEmails.value.splice(index, 1)
+  // Mettre à jour manualEmails pour la validation
+  manualEmails.value = validEmails.value.join(', ')
+}
+
+const estEmailValide = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+// Filtrer les comédiens selon la recherche
+const filtrerComediens = () => {
+  if (!comedienSearch.value) {
+    filteredComediens.value = comediensList.value
+    return
+  }
+  
+  const searchTerm = comedienSearch.value.toLowerCase()
+  filteredComediens.value = comediensList.value.filter(comedien => 
+    comedien.nom.toLowerCase().includes(searchTerm) ||
+    (comedien.email && comedien.email.toLowerCase().includes(searchTerm))
+  )
+}
+// Watcher pour filtrer les comédiens
+watch(comedienSearch, () => {
+  filtrerComediens()
+})
+
+// Watcher pour initialiser les comédiens filtrés
+watch(comediensList, () => {
+  filtrerComediens()
+}, { immediate: true })
+
+// Méthode pour valider les emails
+const validateEmails = () => {
+  // Séparer les emails par différentes délimitations
+  const emails = manualEmails.value
+    .split(/[,;]/)
+    .map(email => email.trim())
+    .filter(email => email.length > 0)
+  
+  validEmails.value = []
+  invalidEmails.value = []
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  
+  emails.forEach(email => {
+    if (emailRegex.test(email)) {
+      validEmails.value.push(email)
+    } else {
+      invalidEmails.value.push(email)
+    }
+  })
+}
 
 // Méthodes
 const closeModal = () => {
@@ -269,13 +490,18 @@ const resetForm = () => {
   selectedExportType.value = ''
   selectedComedienId.value = ''
   selectedSceneId.value = ''
-  selectedRecipientComedienId.value = ''
-  manualEmail.value = ''
+  selectedRecipientComedienIds.value = []
+  manualEmails.value = ''
+  manualEmailsInput.value = ''
+  validEmails.value = []
+  invalidEmails.value = []
   emailSubject.value = ''
   emailMessage.value = ''
   errorMessage.value = ''
   successMessage.value = ''
   isLoading.value = false
+  recipientType.value = 'comedien'
+  comedienSearch.value = ''
 }
 
 const getExportTypeLabel = (type) => {
@@ -389,11 +615,12 @@ const getSceneName = (sceneId) => {
 }
 
 const getRecipientInfo = () => {
-  if (recipientType.value === 'comedien' && selectedRecipientComedienId.value) {
-    const comedien = comediensList.value.find(c => c.id === selectedRecipientComedienId.value)
-    return comedien ? `${comedien.nom} (${comedien.email || 'Email non disponible'})` : 'Non sélectionné'
-  } else if (recipientType.value === 'manual' && manualEmail.value) {
-    return manualEmail.value
+  if (recipientType.value === 'comedien') {
+    const count = selectedRecipientComedienIds.value.length
+    return `${count} comédien(s) sélectionné(s)`
+  } else if (recipientType.value === 'manual') {
+    const count = validEmails.value.length
+    return `${count} email(s) saisi(s)`
   }
   return 'Non spécifié'
 }
@@ -523,39 +750,35 @@ const sendEmail = async () => {
   successMessage.value = ''
   
   try {
-    // Debug: Afficher les données
-    console.log('Debug - comediensList:', comediensList.value)
-    console.log('Debug - selectedRecipientComedienId:', selectedRecipientComedienId.value)
-    console.log('Debug - recipientType:', recipientType.value)
+    // 1. Récupérer tous les emails des destinataires
+    let recipientEmails = []
     
-    // 1. Récupérer l'email du destinataire
-    let recipientEmail = ''
-    
-    if (recipientType.value === 'comedien') {
-      // CORRECTION : Utiliser comediensList.value
-      const comedien = comediensList.value.find(c => c.id === selectedRecipientComedienId.value)
+ if (recipientType.value === 'comedien') {
+      // Pour chaque comédien sélectionné, récupérer l'email
+      recipientEmails = selectedRecipientComedienIds.value
+        .map(id => {
+          const comedien = comediensList.value.find(c => c.id === id)
+          return comedien ? comedien.email.trim() : null
+        })
+        .filter(email => email && email.length > 0)
       
-      // Debug supplémentaire
-      console.log('Debug - comedien trouvé:', comedien)
-      console.log('Debug - email du comédien:', comedien?.email)
-      
-      if (!comedien) {
-        throw new Error('Comédien non trouvé')
+      if (recipientEmails.length === 0) {
+        throw new Error('Aucun email valide trouvé pour les comédiens sélectionnés')
       }
       
-      if (!comedien.email || comedien.email.trim() === '') {
-        throw new Error(`Le comédien "${comedien.nom}" n'a pas d'email enregistré`)
-      }
-      
-      recipientEmail = comedien.email.trim()
+      console.log('Debug - emails des comédiens:', recipientEmails)
     } else {
-      if (!manualEmail.value || manualEmail.value.trim() === '') {
-        throw new Error('Veuillez saisir une adresse email valide')
+      // Utiliser les emails manuels validés
+      recipientEmails = validEmails.value
+      
+      if (recipientEmails.length === 0) {
+        throw new Error('Aucun email valide saisi')
       }
-      recipientEmail = manualEmail.value.trim()
+      
+      console.log('Debug - emails manuels:', recipientEmails)
     }
     
-    console.log('Debug - recipientEmail final:', recipientEmail)
+    console.log('Debug - recipientEmails final:', recipientEmails)
     
     // 2. Générer le PDF selon le type sélectionné en utilisant les méthodes existantes
     let pdfData = null
@@ -617,42 +840,74 @@ const sendEmail = async () => {
     console.log('PDF en Base64, taille:', pdfBase64.length);
     
     // 3. Préparer les données pour l'envoi
-    const emailRequest = {
-      toEmail: recipientEmail,
+    const emailRequests = recipientEmails.map(email => ({
+      toEmail: email,
       subject: emailSubject.value,
       message: emailMessage.value,
       attachmentName: attachmentName,
       pdfData: pdfBase64
-    };
+    }));
     
-    console.log('Envoi email à:', recipientEmail);
+   console.log(`Envoi de ${emailRequests.length} email(s) à:`, recipientEmails);
     console.log('Sujet:', emailSubject.value);
     
-    // 4. Envoyer l'email via l'API
-    const response = await axios.post('/api/export/send-pdf-email', emailRequest, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      timeout: 30000 // 30 secondes timeout
-    });
+     // Envoyer les emails en parallèle
+    const emailPromises = emailRequests.map(emailRequest => 
+      axios.post('/api/export/send-pdf-email', emailRequest, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 30000
+      })
+    );
     
-    if (response.data.success) {
-      successMessage.value = 'Email envoyé avec succès !';
+    // Attendre tous les envois
+    const results = await Promise.allSettled(emailPromises);
+    
+    // Analyser les résultats
+    const successful = results.filter(r => r.status === 'fulfilled' && r.value.data.success).length;
+    const failed = results.filter(r => r.status === 'rejected' || !r.value.data.success).length;
+    
+    if (successful === emailRequests.length) {
+      successMessage.value = `Tous les emails (${successful}) ont été envoyés avec succès !`;
+    } else if (successful > 0) {
+      successMessage.value = `${successful} email(s) envoyé(s) avec succès, ${failed} échec(s).`;
+    } else {
+      throw new Error('Échec de l\'envoi de tous les emails');
+    }
+    
+    // Fermer la modale après succès
+    if (successful > 0) {
       setTimeout(() => {
         closeModal();
         emit('email-sent');
-      }, 2000);
-    } else {
-      throw new Error(response.data.message || 'Erreur lors de l\'envoi de l\'email');
+      }, 3000);
     }
     
   } catch (error) {
-    console.error('Erreur lors de l\'envoi de l\'email:', error);
-    errorMessage.value = error.response?.data?.message || error.message || 'Erreur lors de l\'envoi de l\'email';
+    console.error('Erreur lors de l\'envoi des emails:', error);
+    errorMessage.value = error.response?.data?.message || error.message || 'Erreur lors de l\'envoi des emails';
   } finally {
     isLoading.value = false;
   }
 };
+
+// Ajouter un watcher pour valider les emails lorsque la saisie change
+watch(manualEmails, () => {
+  if (recipientType.value === 'manual') {
+    validateEmails();
+  }
+});
+
+// Ajouter un watcher pour réinitialiser la validation lorsque le type change
+watch(recipientType, (newType) => {
+  if (newType === 'manual') {
+    validateEmails();
+  } else {
+    validEmails.value = [];
+    invalidEmails.value = [];
+  }
+});
 
 const generateAttachmentName = () => {
   let baseName = 'export';
@@ -2633,5 +2888,490 @@ defineExpose({
 .send-btn-email:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Styles pour la sélection multiple */
+.multiple-recipients-section {
+  margin-top: 10px;
+}
+
+.recipients-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.select-all-btn,
+.clear-all-btn {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.select-all-btn:hover {
+  background: #21294F;
+  color: white;
+  border-color: #21294F;
+}
+
+.clear-all-btn:hover {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.comedien-checkbox-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  background: #f9f9f9;
+}
+
+.comedien-checkbox-item {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.comedien-checkbox-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.checkbox-label-email {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 10px;
+}
+
+.checkbox-input-email {
+  margin: 0;
+}
+
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #21294F;
+  border-radius: 3px;
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.checkbox-input-email:checked + .checkbox-custom {
+  background-color: #21294F;
+}
+
+.checkbox-input-email:checked + .checkbox-custom::after {
+  content: '✓';
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+}
+
+.comedien-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.comedien-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.comedien-email {
+  font-size: 12px;
+  color: #666;
+}
+
+.comedien-email.no-email {
+  color: #dc3545;
+  font-style: italic;
+}
+
+/* Styles pour la saisie manuelle d'emails */
+.manual-emails-section {
+  margin-top: 10px;
+}
+
+.email-validation-result {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.valid-emails,
+.invalid-emails {
+  margin-bottom: 10px;
+}
+
+.valid-emails strong {
+  color: #28a745;
+}
+
+.invalid-emails strong {
+  color: #dc3545;
+}
+
+.email-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.email-tag {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.email-tag.valid {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.email-tag.invalid {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.hint-text {
+  font-size: 12px;
+  color: #6c757d;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Ajustement du pied de page pour le message */
+.modal-footer-email {
+  flex-wrap: wrap;
+}
+
+.send-btn-email {
+  min-width: 120px;
+}
+
+/* Styles pour la sélection de destinataire à la ResultatRecherche.vue */
+
+.recipient-type-simple-email {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.recipient-type-option-email {
+  display: flex;
+  align-items: flex-start;
+}
+
+.recipient-radio-email {
+  margin-top: 5px;
+  margin-right: 12px;
+}
+
+.recipient-type-label-email {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  flex: 1;
+  transition: all 0.2s ease;
+}
+
+.recipient-type-label-email:hover {
+  border-color: #21294F;
+  background-color: #f8f9fa;
+}
+
+.recipient-type-icon-email {
+  width: 40px;
+  height: 40px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #21294F;
+}
+
+.recipient-type-info-email {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.recipient-type-info-email strong {
+  font-weight: 600;
+  color: #333;
+}
+
+.recipient-type-info-email small {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Saisie manuelle d'emails */
+.emails-input-container-email {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  background: white;
+  min-height: 100px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.email-tags-email {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.email-tag-email {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.email-tag-remove-email {
+  background: none;
+  border: none;
+  color: #1565c0;
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.email-tag-remove-email:hover {
+  background: #1565c0;
+  color: white;
+}
+
+.email-input-multiple-email {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.help-text-email {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Sélection de comédiens */
+.comedien-selection-header-email {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.comedien-selection-stats-email {
+  font-size: 13px;
+  color: #666;
+  background: #f0f2f5;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.comedien-search-email {
+  margin-bottom: 15px;
+}
+
+.search-input-container-email {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon-email {
+  position: absolute;
+  left: 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+.search-input-email {
+  width: 100%;
+  padding: 10px 10px 10px 36px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.search-input-email:focus {
+  outline: none;
+  border-color: #21294F;
+}
+
+.comedien-quick-actions-email {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.quick-action-btn-email {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #333;
+}
+
+.quick-action-btn-email:hover:not(:disabled) {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.quick-action-btn-email:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comedien-checkbox-list-email {
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  background: white;
+}
+
+.comedien-checkbox-item-email {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.comedien-checkbox-item-email:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.comedien-checkbox-item-email.no-email {
+  opacity: 0.6;
+}
+
+.checkbox-label-email {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.checkbox-label-email:hover {
+  background-color: #f8f9fa;
+}
+
+.checkbox-input-email {
+  display: none;
+}
+
+.checkbox-custom-email {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ced4da;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.checkbox-input-email:checked + .checkbox-custom-email {
+  background-color: #21294F;
+  border-color: #21294F;
+}
+
+.checkbox-input-email:checked + .checkbox-custom-email::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+}
+
+.comedien-info-email {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.comedien-name-email {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.comedien-email-email {
+  font-size: 12px;
+  color: #666;
+}
+
+.no-comediens-email {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+  background: #f8f9fa;
+  border-radius: 6px;
+  margin: 15px 0;
+}
+
+.loading-indicator-email {
+  text-align: center;
+  padding: 20px;
+  color: #666;
 }
 </style> 
