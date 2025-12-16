@@ -217,7 +217,7 @@
                       </select>
                     </div>
 
-                    <div class="form-group-crea-plateau">
+                    <!-- <div class="form-group-crea-plateau">
                       <label for="sceneId">Scène (optionnel)</label>
                       <select 
                         id="sceneId"
@@ -229,7 +229,7 @@
                           {{ scene.titre }} - {{ scene.sequenceTitre }}
                         </option>
                       </select>
-                    </div>
+                    </div> -->
                   </div>
 
                   <!-- Ligne 3 : Description -->
