@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface TypeRaccordRepository extends JpaRepository<TypeRaccord, Long> {
     Optional<TypeRaccord> findByCode(String code);
     List<TypeRaccord> findAllByOrderByNomType();
+    Optional<TypeRaccord> findByNomType(String nomType);
 }
