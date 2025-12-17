@@ -1,0 +1,916 @@
+// _projet_scenariste.scss – Styles pour la page de détails du projet (scénariste)
+@import '../base/variables';
+
+// =============================================
+// CONTENEUR PRINCIPAL
+// =============================================
+.projet-scenariste-container {
+  min-height: 100vh;
+  background: $color-background;
+  padding: $spacing-lg;
+  box-sizing: border-box;
+}
+
+// =============================================
+// EN-TÊTE DU PROJET
+// =============================================
+.project-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 2px solid $color-border;
+
+  h2 {
+    @include typography-playfair-h2;
+    color: $color-text-primary;
+    margin: 0;
+    flex: 1;
+  }
+
+  .back-btn {
+    @include btn-cinema-primary;
+    padding: $gap-sm $spacing-md;
+    font-size: $font-size-p3;
+    height: auto;
+    min-width: auto;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      transform: translateX(-2px);
+    }
+  }
+}
+
+// =============================================
+// DÉTAILS DU PROJET
+// =============================================
+.project-details {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  margin-bottom: $spacing-xl;
+  overflow: hidden;
+}
+
+.project-info {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: $spacing-lg;
+  padding: $spacing-xl;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
+}
+
+.project-main {
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-primary;
+    margin: 0 0 $spacing-md 0;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $color-border;
+  }
+}
+
+.project-synopsis {
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $gap-sm 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  p {
+    @include typography-p1;
+    color: $color-text-secondary;
+    line-height: $line-height-loose;
+    margin: 0;
+    padding: $spacing-sm;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    border-left: 3px solid $color-primary;
+  }
+}
+
+.project-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  border: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.project-statut,
+.project-date,
+.project-genre {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  padding: $padding-sm;
+  background: $color-white;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-lg) {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .statut-label,
+  .date-label,
+  .genre-label {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .statut-value,
+  .date-value,
+  .genre-value {
+    @include typography-p3;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  .statut-value {
+    color: $color-success;
+  }
+}
+
+// =============================================
+// SECTION ÉPISODES
+// =============================================
+.episodes-section {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xl;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-white;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-md;
+    align-items: stretch;
+  }
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-white;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-md;
+  }
+
+  .add-episode-btn {
+    @include btn-cinema-accent;
+    padding: $gap-sm $spacing-lg;
+    font-size: $font-size-p2;
+    height: auto;
+    min-width: auto;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-xl;
+    }
+
+    @media (max-width: $breakpoint-md) {
+      width: 100%;
+    }
+  }
+}
+
+// =============================================
+// FILTRES
+// =============================================
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-lg;
+  padding: $spacing-xl;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    padding: $spacing-md;
+  }
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+
+  label {
+    @include typography-p3;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  select {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    background: $color-white;
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: $transition-fast;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23F57C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $padding-sm center;
+    background-size: 16px;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+
+    &:hover {
+      border-color: $color-primary-light;
+    }
+  }
+}
+
+// =============================================
+// LISTE DES ÉPISODES
+// =============================================
+.episodes-list {
+  padding: $spacing-xl;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    padding: $spacing-md;
+    gap: $spacing-md;
+  }
+}
+
+.episode-card {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  border: 1px solid $color-border;
+  overflow: hidden;
+  transition: $transition;
+  box-shadow: $shadow;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-xl;
+    border-color: $color-primary-light;
+  }
+}
+
+.episode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+}
+
+.episode-statut {
+  @include typography-p4;
+  font-weight: $font-weight-semibold;
+  padding: $gap-xs $gap-sm;
+  border-radius: $border-radius-pill;
+  background: $color-success;
+  color: $color-white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &[data-statut="brouillon"] {
+    background: $color-warning;
+  }
+
+  &[data-statut="en_cours"] {
+    background: $color-info;
+  }
+
+  &[data-statut="terminé"] {
+    background: $color-success;
+  }
+
+  &[data-statut="archivé"] {
+    background: $color-text-muted;
+  }
+}
+
+.episode-actions {
+  display: flex;
+  gap: $gap-sm;
+
+  .icon-edit,
+  .icon-delete {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    transition: $transition-fast;
+    font-size: $font-size-p2;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .icon-edit {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+
+    &:hover {
+      background: $color-warning;
+      color: $color-white;
+    }
+  }
+
+  .icon-delete {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
+  }
+}
+
+.episode-content {
+  padding: $spacing-lg;
+
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $gap-sm 0;
+    padding-bottom: $gap-sm;
+    border-bottom: 1px solid $color-border;
+  }
+
+  .episode-order {
+    @include typography-p4;
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+    margin: 0 0 $spacing-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.episode-dates {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  margin-bottom: $spacing-md;
+
+  p {
+    @include typography-p4;
+    color: $color-text-secondary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.episode-synopsis {
+  margin-bottom: $spacing-lg;
+
+  p {
+    @include typography-p3;
+    color: $color-text-secondary;
+    line-height: $line-height-base;
+    margin: 0;
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    border-left: 2px solid $color-primary-light;
+  }
+}
+
+.episode-footer {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: space-between;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .details-btn,
+  .add-sequence-btn {
+    flex: 1;
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p3;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  .details-btn {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover {
+      background: rgba($color-info, 0.1);
+      border-color: $color-info;
+      color: $color-info;
+    }
+  }
+
+  .add-sequence-btn {
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover {
+      background: darken($color-primary, 10%);
+      box-shadow: $shadow-md;
+    }
+  }
+}
+
+// =============================================
+// MODALE D'ÉDITION D'ÉPISODE
+// =============================================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: $color-white;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-xl;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin: 0 0 $spacing-lg 0;
+    padding-bottom: $spacing-md;
+    border-bottom: 2px solid $color-primary;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-content form {
+  padding: $spacing-xl;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-md;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+  margin-bottom: $spacing-lg;
+
+  label {
+    @include typography-p3;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: $gap-sm $padding-md;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    font-family: $font-family-primary;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+
+    &:hover {
+      border-color: $color-primary-light;
+    }
+
+    &:disabled {
+      background: $color-background-alt;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  input,
+  select {
+    height: 46px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: $line-height-base;
+  }
+
+  .error-input {
+    border-color: $color-error;
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($color-error, 0.1);
+    }
+  }
+}
+
+.error-message {
+  @include typography-p3;
+  color: $color-error;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  padding: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+}
+
+.error-text {
+  @include typography-p4;
+  color: $color-error;
+  margin-top: $gap-xs;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.suggestion-text {
+  @include typography-p4;
+  color: $color-primary;
+  margin-top: $gap-xs;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  flex-wrap: wrap;
+
+  .suggestion-btn {
+    padding: $gap-xs $gap-sm;
+    background: transparent;
+    border: 1px solid $color-primary;
+    border-radius: $border-radius-xs;
+    color: $color-primary;
+    font-size: $font-size-p4;
+    cursor: pointer;
+    transition: $transition-fast;
+
+    &:hover {
+      background: $color-primary;
+      color: $color-white;
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    padding: $gap-sm $spacing-xl;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p2;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    min-width: 140px;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+
+  .save-btn {
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      box-shadow: $shadow-md;
+    }
+  }
+
+  .cancel-btn {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: rgba($color-error, 0.1);
+      border-color: $color-error;
+      color: $color-error;
+    }
+  }
+}
+
+// =============================================
+// ÉTATS VIDES ET CHARGEMENT
+// =============================================
+.empty-episodes,
+.loading-episodes {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  border: 2px dashed $color-border;
+
+  i {
+    font-size: 48px;
+    color: $color-primary-light;
+    margin-bottom: $spacing-md;
+  }
+
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $gap-sm 0;
+  }
+
+  p {
+    @include typography-p2;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-episodes i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .projet-scenariste-container {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .project-info {
+    grid-template-columns: 1fr;
+  }
+
+  .episodes-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .project-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-sm;
+    
+    .back-btn {
+      align-self: flex-start;
+    }
+    
+    h2 {
+      text-align: center;
+    }
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .episodes-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .project-info,
+  .section-header,
+  .filters,
+  .episodes-list {
+    padding: $spacing-md;
+  }
+
+  .modal-content {
+    margin: $spacing-sm;
+  }
+
+  .episode-footer {
+    flex-direction: column;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    
+    .save-btn,
+    .cancel-btn {
+      width: 100%;
+    }
+  }
+}
+
+// =============================================
+// ANIMATIONS ET TRANSITIONS
+// =============================================
+.episode-card,
+.back-btn,
+.add-episode-btn,
+.details-btn,
+.add-sequence-btn,
+.icon-edit,
+.icon-delete,
+.save-btn,
+.cancel-btn,
+.suggestion-btn {
+  transition: $transition;
+
+  &:hover {
+    transition: $transition-fast;
+  }
+}
+
+// =============================================
+// ACCESSIBILITÉ
+// =============================================
+@media (prefers-reduced-motion: reduce) {
+  .episode-card,
+  .back-btn,
+  .add-episode-btn,
+  .details-btn,
+  .add-sequence-btn,
+  .icon-edit,
+  .icon-delete,
+  .save-btn,
+  .cancel-btn,
+  .suggestion-btn,
+  .modal-content {
+    transition: none;
+    animation: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .loading-episodes i {
+    animation: none;
+  }
+}
+
+// Focus styles pour l'accessibilité
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.icon-edit:focus-visible,
+.icon-delete:focus-visible {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+}
+
+// Contraste amélioré pour les états
+@media (prefers-contrast: high) {
+  .project-statut,
+  .project-date,
+  .project-genre {
+    border: 2px solid $color-border-dark;
+  }
+  
+  .episode-card {
+    border: 2px solid $color-border;
+  }
+}
