@@ -1,4 +1,5 @@
 <template>
+  <div class="app-wrapper-global">
   <div class="projects-list-container">
     <div class="projects-header">
       <h1>Bibliothèque de Projets</h1>
@@ -197,6 +198,7 @@
         </form>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
