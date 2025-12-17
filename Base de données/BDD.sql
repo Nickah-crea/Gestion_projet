@@ -19,6 +19,8 @@ INSERT INTO utilisateurs (nom, email, mot_de_passe, role, cree_le, modifie_le) V
 ('Marc Leroy', 'marc.leroy@gmail.com', '$2b$10$anTjad98OwaB86wuBZ9l9u4PHjagRFN8mNjMqxlAWKGZhcfDrD151', 'SCENARISTE', '2025-01-04 11:45:00', '2025-01-04 11:45:00'),
 ('Alice Dubois', 'alice.dubois@gmail.com', '$2b$10$gFJWNt6oW8d7xZ79VaOxQew4M.H3ojVdhtqRZJ5RNotsgAG7oXn6e', 'SCENARISTE', '2025-01-05 16:20:00', '2025-01-05 16:20:00');
 
+ALTER TABLE utilisateurs 
+ADD COLUMN profile_photo_path VARCHAR(500);
 
 CREATE TABLE scenaristes (
     id_scenariste BIGSERIAL PRIMARY KEY,
