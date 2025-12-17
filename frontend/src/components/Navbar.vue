@@ -3,13 +3,6 @@
     <div class="navbar-main">
       <!-- TOUT SUR LA MÊME LIGNE -->
       <div class="navbar-content">
-        <!-- [Prénom NOM + rôle] -->
-        <!-- <div class="user-info"> -->
-          <!-- <span class="logo"><img src="../assets/img/logo.png" alt="Logo"></span> -->
-          <!-- <span class="user-name"><p>{{ user?.nom || 'Utilisateur' }}</p></span> -->
-          <!-- <span class="user-role">{{ user?.role || 'Utilisateur' }}</span> -->
-        <!-- </div> -->
-
         <div class="navbar-left">
           <router-link to="/" class="logo-link">
             <img src="../assets/img/logo.png" alt="Logo" class="logo-img">
@@ -42,10 +35,6 @@
             <span class="link-text">Recherche</span>
           </router-link>
 
-           <router-link to="/profile" class="nav-link" @click="toggleNavbarIfMobile">
-            <span class="link-text">Profile</span>
-          </router-link>
-
           <!-- [+ Ajouter ▼] -->
           <div class="quick-add-section">
             <select class="quick-add-select" @change="navigateTo($event.target.value)" v-model="selectedAddOption">
@@ -66,9 +55,20 @@
 
         <!-- [Déconnexion + burger] -->
         <div class="nav-actions">
-          <!-- Lien vers Profile avec icône -->
+          <!-- Lien vers Profile avec photo -->
           <router-link to="/profile" class="profile-link">
-            <i class="fas fa-user-circle"></i>
+            <div class="profile-avatar-container">
+              <img 
+                v-if="user?.profilePhotoPath" 
+                :src="getProfilePhotoUrl" 
+                :alt="user?.nom || 'Utilisateur'"
+                class="profile-avatar"
+                @error="handleImageError"
+              />
+              <div v-else class="profile-avatar-placeholder">
+                <i class="fas fa-user"></i>
+              </div>
+            </div>
             <span class="profile-text" v-if="!isCollapsed">{{ user?.nom || 'Utilisateur' }}</span>
           </router-link>
 
@@ -87,6 +87,8 @@
 </template>
 
 <script>
+import defaultProfileImage from '../assets/img/default-profile.jpg';
+
 export default {
   name: 'Navbar',
   data() {
@@ -94,8 +96,18 @@ export default {
       user: null,
       isCollapsed: false,
       isMobile: false,
-      selectedAddOption: ''
+      selectedAddOption: '',
+      defaultPhoto: defaultProfileImage,
+      imageError: false
     };
+  },
+  computed: {
+    getProfilePhotoUrl() {
+      if (this.imageError || !this.user?.profilePhotoPath) {
+        return this.defaultPhoto;
+      }
+      return `/api/profil/photo/${this.user.profilePhotoPath}`;
+    }
   },
   mounted() {
     this.loadUser();
@@ -110,6 +122,7 @@ export default {
       const userData = localStorage.getItem('user');
       if (userData) {
         this.user = JSON.parse(userData);
+        this.imageError = false; // Réinitialiser l'erreur d'image
       }
     },
     logout() {
@@ -135,6 +148,20 @@ export default {
       this.isMobile = window.innerWidth <= 768;
       if (this.isMobile) {
         this.isCollapsed = true;
+      }
+    },
+    handleImageError(event) {
+      console.log('Erreur de chargement de la photo de profil, utilisation de l\'image par défaut');
+      this.imageError = true;
+      
+      // Forcer l'utilisation de l'image par défaut
+      if (event.target) {
+        event.target.src = this.defaultPhoto;
+      }
+      
+      // Empêcher les nouvelles tentatives
+      if (event.target) {
+        event.target.onerror = null;
       }
     }
   }
