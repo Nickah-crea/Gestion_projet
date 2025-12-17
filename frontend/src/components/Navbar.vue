@@ -4,10 +4,16 @@
       <!-- TOUT SUR LA MÊME LIGNE -->
       <div class="navbar-content">
         <!-- [Prénom NOM + rôle] -->
-        <div class="user-info">
+        <!-- <div class="user-info"> -->
           <!-- <span class="logo"><img src="../assets/img/logo.png" alt="Logo"></span> -->
-          <span class="user-name"><p>{{ user?.nom || 'Utilisateur' }}</p></span>
+          <!-- <span class="user-name"><p>{{ user?.nom || 'Utilisateur' }}</p></span> -->
           <!-- <span class="user-role">{{ user?.role || 'Utilisateur' }}</span> -->
+        <!-- </div> -->
+
+        <div class="navbar-left">
+          <router-link to="/" class="logo-link">
+            <img src="../assets/img/logo.png" alt="Logo" class="logo-img">
+          </router-link>
         </div>
 
         <!-- LIENS + SELECT CENTRÉS -->
@@ -24,7 +30,7 @@
             <span class="link-text">Scénariste</span>
           </router-link>
 
-          <router-link to="/statistiques" class="nav-link" v-if="user?.role === 'ADMIN' || user?.role === 'SCENARISTE'" @click="toggleNavbarIfMobile">
+          <router-link to="/statistiques" class="nav-link" v-if="user?.role === 'ADMIN'" @click="toggleNavbarIfMobile">
             <span class="link-text">Statistiques</span>
           </router-link>
 
@@ -34,6 +40,10 @@
 
           <router-link to="/recherche" class="nav-link" @click="toggleNavbarIfMobile">
             <span class="link-text">Recherche</span>
+          </router-link>
+
+           <router-link to="/profile" class="nav-link" @click="toggleNavbarIfMobile">
+            <span class="link-text">Profile</span>
           </router-link>
 
           <!-- [+ Ajouter ▼] -->
@@ -56,6 +66,12 @@
 
         <!-- [Déconnexion + burger] -->
         <div class="nav-actions">
+          <!-- Lien vers Profile avec icône -->
+          <router-link to="/profile" class="profile-link">
+            <i class="fas fa-user-circle"></i>
+            <span class="profile-text" v-if="!isCollapsed">{{ user?.nom || 'Utilisateur' }}</span>
+          </router-link>
+
           <a href="#" @click="logout" class="logout-link">
             <i class="fas fa-sign-out-alt"></i>
             <span class="logout-text" v-if="!isCollapsed"></span>
