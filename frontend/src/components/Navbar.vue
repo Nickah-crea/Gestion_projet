@@ -87,6 +87,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import defaultProfileImage from '../assets/img/default-profile.jpg';
 
 export default {
@@ -98,58 +99,143 @@ export default {
       isMobile: false,
       selectedAddOption: '',
       defaultPhoto: defaultProfileImage,
-      imageError: false
+      imageError: false,
+      loadingProfilePhoto: false
     };
   },
   computed: {
     getProfilePhotoUrl() {
-      if (this.imageError || !this.user?.profilePhotoPath) {
+      if (this.imageError) {
         return this.defaultPhoto;
       }
-      return `/api/profil/photo/${this.user.profilePhotoPath}`;
+      
+      if (this.user?.profilePhotoPath) {
+        return `/api/profil/photo/${this.user.profilePhotoPath}`;
+      }
+      
+      return this.defaultPhoto;
     }
   },
   mounted() {
     this.loadUser();
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
+    
+    // Écouter les changements de route pour rafraîchir les données utilisateur
+    this.$watch(
+      () => this.$route,
+      () => {
+        this.refreshUserData();
+      }
+    );
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.checkIfMobile);
   },
   methods: {
-    loadUser() {
+    async loadUser() {
       const userData = localStorage.getItem('user');
       if (userData) {
-        this.user = JSON.parse(userData);
-        this.imageError = false; // Réinitialiser l'erreur d'image
+        try {
+          const user = JSON.parse(userData);
+          this.user = user;
+          
+          // Si l'utilisateur a un ID mais pas de profilePhotoPath, on charge les données complètes
+          if (user.id && !user.profilePhotoPath) {
+            await this.loadUserProfile(user.id);
+          }
+          
+          this.imageError = false;
+        } catch (error) {
+          console.error('Erreur lors du parsing des données utilisateur:', error);
+          this.user = { nom: 'Utilisateur' };
+        }
       }
     },
+    
+    async loadUserProfile(userId) {
+      if (this.loadingProfilePhoto) return;
+      
+      this.loadingProfilePhoto = true;
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        
+        const response = await axios.get(`/api/profil/${userId}`, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.data) {
+          // Mettre à jour l'utilisateur avec les nouvelles données
+          this.user = response.data;
+          
+          // Mettre à jour le localStorage
+          const updatedUser = { 
+            ...JSON.parse(localStorage.getItem('user') || '{}'),
+            profilePhotoPath: response.data.profilePhotoPath,
+            nom: response.data.nom,
+            email: response.data.email
+          };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          
+          this.imageError = false;
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement du profil utilisateur:', error);
+        // Ne pas afficher d'erreur pour ne pas perturber l'utilisateur
+      } finally {
+        this.loadingProfilePhoto = false;
+      }
+    },
+    
+    async refreshUserData() {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          if (user.id) {
+            // Recharger les données utilisateur à chaque changement de route
+            await this.loadUserProfile(user.id);
+          }
+        } catch (error) {
+          console.error('Erreur lors du rafraîchissement des données utilisateur:', error);
+        }
+      }
+    },
+    
     logout() {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       this.$router.push('/');
     },
+    
     navigateTo(path) {
       if (path) {
         this.$router.push(path);
         this.selectedAddOption = '';
       }
     },
+    
     toggleNavbar() {
       this.isCollapsed = !this.isCollapsed;
     },
+    
     toggleNavbarIfMobile() {
       if (this.isMobile) {
         this.isCollapsed = true;
       }
     },
+    
     checkIfMobile() {
       this.isMobile = window.innerWidth <= 768;
       if (this.isMobile) {
         this.isCollapsed = true;
       }
     },
+    
     handleImageError(event) {
       console.log('Erreur de chargement de la photo de profil, utilisation de l\'image par défaut');
       this.imageError = true;
