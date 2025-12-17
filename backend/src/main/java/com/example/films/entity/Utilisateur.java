@@ -30,6 +30,9 @@ public class Utilisateur {
     @Column(nullable = false)
     private String role;
 
+    @Column(name = "profile_photo_path")
+    private String profilePhotoPath;
+
     @CreationTimestamp
     @Column(name = "cree_le", updatable = false)
     private LocalDateTime creeLe;
@@ -38,3 +41,4 @@ public class Utilisateur {
     @Column(name = "modifie_le")
     private LocalDateTime modifieLe;
 }
+
