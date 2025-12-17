@@ -19,6 +19,7 @@
             <span class="link-text">Admin</span>
           </router-link>
 
+          
           <router-link to="/scenariste" class="nav-link" v-if="user?.role === 'SCENARISTE'" @click="toggleNavbarIfMobile">
             <span class="link-text">Scénariste</span>
           </router-link>
