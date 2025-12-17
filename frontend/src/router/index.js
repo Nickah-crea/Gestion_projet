@@ -286,6 +286,11 @@ const routes = [
     name: 'type-raccord',
     component: () => import('../views/TypeRaccord.vue')
   },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../components/Profile.vue')
+  },
 ]
 
 const router = createRouter({
