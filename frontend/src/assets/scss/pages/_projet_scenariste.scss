@@ -1,270 +1,139 @@
-// _projet_scenariste.scss – Styles pour la page de détails du projet (scénariste)
+// _projet_scenariste.scss – Version avec sidebar et design cohérent pour la gestion de projets scénariste
 @import '../base/variables';
 
 // =============================================
-// CONTENEUR PRINCIPAL
+// WRAPPER GLOBAL
 // =============================================
-.projet-scenariste-container {
+.app-wrapper-global-projet-scenariste {
+  display: flex;
   min-height: 100vh;
-  background: $color-background;
-  padding: $spacing-lg;
-  box-sizing: border-box;
+  background: none;
 }
 
 // =============================================
-// EN-TÊTE DU PROJET
+// SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
-.project-header {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-  margin-bottom: $spacing-lg;
-  padding-bottom: $spacing-md;
-  border-bottom: 2px solid $color-border;
+.creation-sidebar-projet-scenariste {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 280px;
+  height: calc(100vh - 80px);
+  background: $color-background;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-md;
 
-  h2 {
-    @include typography-playfair-h2;
-    color: $color-text-primary;
-    margin: 0;
-    flex: 1;
-  }
+  .sidebar-header-projet-scenariste {
+    margin-bottom: $spacing-md;
 
-  .back-btn {
-    @include btn-cinema-primary;
-    padding: $gap-sm $spacing-md;
-    font-size: $font-size-p3;
-    height: auto;
-    min-width: auto;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
+    .sidebar-title-projet-scenariste {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
 
-    &:hover {
-      transform: translateX(-2px);
+    .sidebar-subtitle-projet-scenariste {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
     }
   }
-}
 
-// =============================================
-// DÉTAILS DU PROJET
-// =============================================
-.project-details {
-  background: $color-white;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
-  margin-bottom: $spacing-xl;
-  overflow: hidden;
-}
-
-.project-info {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: $spacing-lg;
-  padding: $spacing-xl;
-
-  @media (max-width: $breakpoint-lg) {
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
-  }
-
-  @media (max-width: $breakpoint-md) {
-    padding: $spacing-md;
-  }
-}
-
-.project-main {
-  h3 {
-    @include typography-playfair-h3;
-    color: $color-primary;
-    margin: 0 0 $spacing-md 0;
-    padding-bottom: $spacing-sm;
-    border-bottom: 1px solid $color-border;
-  }
-}
-
-.project-synopsis {
-  h4 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0 0 $gap-sm 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-  }
-
-  p {
-    @include typography-p1;
-    color: $color-text-secondary;
-    line-height: $line-height-loose;
-    margin: 0;
-    padding: $spacing-sm;
+  .sidebar-section-projet-scenariste {
+    margin-bottom: $spacing-md;
     background: $color-background-alt;
     border-radius: $border-radius-xs;
-    border-left: 3px solid $color-primary;
-  }
-}
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
 
-.project-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  padding: $spacing-lg;
-  background: $color-background-alt;
-  border-radius: $border-radius-lg;
-  border: 1px solid $color-border;
-
-  @media (max-width: $breakpoint-lg) {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: $spacing-sm;
+    .section-title-projet-scenariste {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
   }
 
-  @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
-  }
-}
-
-.project-statut,
-.project-date,
-.project-genre {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-xs;
-  padding: $padding-sm;
-  background: $color-white;
-  border-radius: $border-radius-xs;
-  border: 1px solid $color-border;
-
-  @media (max-width: $breakpoint-lg) {
-    flex: 1;
-    min-width: 180px;
-  }
-
-  .statut-label,
-  .date-label,
-  .genre-label {
-    @include typography-p4;
-    color: $color-text-muted;
-    font-weight: $font-weight-medium;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .statut-value,
-  .date-value,
-  .genre-value {
-    @include typography-p3;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
+  .sidebar-actions-projet-scenariste {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: $gap-xs;
   }
 
-  .statut-value {
-    color: $color-success;
-  }
-}
-
-// =============================================
-// SECTION ÉPISODES
-// =============================================
-.episodes-section {
-  background: $color-white;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
-  overflow: hidden;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-xl;
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
-  color: $color-white;
-
-  @media (max-width: $breakpoint-md) {
-    flex-direction: column;
-    gap: $spacing-md;
-    align-items: stretch;
-  }
-
-  h3 {
-    @include typography-playfair-h3;
-    color: $color-white;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-md;
-  }
-
-  .add-episode-btn {
-    @include btn-cinema-accent;
-    padding: $gap-sm $spacing-lg;
-    font-size: $font-size-p2;
-    height: auto;
-    min-width: auto;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: $shadow-xl;
-    }
-
-    @media (max-width: $breakpoint-md) {
-      width: 100%;
-    }
-  }
-}
-
-// =============================================
-// FILTRES
-// =============================================
-.filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $spacing-lg;
-  padding: $spacing-xl;
-  background: $color-background-alt;
-  border-bottom: 1px solid $color-border;
-
-  @media (max-width: $breakpoint-sm) {
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
-    padding: $spacing-md;
-  }
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-
-  label {
-    @include typography-p3;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-  }
-
-  select {
+  .sidebar-btn-projet-scenariste {
     width: 100%;
-    height: 42px;
+    height: 36px;
     padding: 0 $padding-sm;
+    background: $color-white;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
-    background: $color-white;
-    font-size: $font-size-p3;
-    color: $color-text-primary;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
     cursor: pointer;
     transition: $transition-fast;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23F57C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right $padding-sm center;
-    background-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba($color-primary, 0.1), rgba($color-primary-light, 0.1));
+      border-color: $color-primary;
+      color: $color-primary;
+      transform: translateY(-2px);
+      box-shadow: $shadow-hover;
+    }
+
+    &.active {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .filter-group-projet-scenariste {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-projet-scenariste {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .filter-select-projet-scenariste {
+    width: 100%;
+    height: 34px;
+    padding: 0 $padding-xs;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: $transition-fast;
 
     &:focus {
       outline: none;
@@ -273,290 +142,239 @@
     }
 
     &:hover {
-      border-color: $color-primary-light;
+      border-color: $color-primary;
     }
   }
-}
 
-// =============================================
-// LISTE DES ÉPISODES
-// =============================================
-.episodes-list {
-  padding: $spacing-xl;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: $spacing-lg;
-
-  @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-    padding: $spacing-md;
-    gap: $spacing-md;
-  }
-}
-
-.episode-card {
-  background: $color-white;
-  border-radius: $border-radius-lg;
-  border: 1px solid $color-border;
-  overflow: hidden;
-  transition: $transition;
-  box-shadow: $shadow;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: $shadow-xl;
-    border-color: $color-primary-light;
-  }
-}
-
-.episode-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-md;
-  background: $color-background-alt;
-  border-bottom: 1px solid $color-border;
-}
-
-.episode-statut {
-  @include typography-p4;
-  font-weight: $font-weight-semibold;
-  padding: $gap-xs $gap-sm;
-  border-radius: $border-radius-pill;
-  background: $color-success;
-  color: $color-white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-
-  &[data-statut="brouillon"] {
-    background: $color-warning;
-  }
-
-  &[data-statut="en_cours"] {
-    background: $color-info;
-  }
-
-  &[data-statut="terminé"] {
-    background: $color-success;
-  }
-
-  &[data-statut="archivé"] {
-    background: $color-text-muted;
-  }
-}
-
-.episode-actions {
-  display: flex;
-  gap: $gap-sm;
-
-  .icon-edit,
-  .icon-delete {
-    width: 32px;
-    height: 32px;
+  .stats-projet-scenariste {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: $border-radius-xs;
-    cursor: pointer;
-    transition: $transition-fast;
-    font-size: $font-size-p2;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
-  .icon-edit {
-    background: rgba($color-warning, 0.1);
-    color: $color-warning;
-
-    &:hover {
-      background: $color-warning;
-      color: $color-white;
-    }
-  }
-
-  .icon-delete {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
-
-    &:hover {
-      background: $color-error;
-      color: $color-white;
-    }
-  }
-}
-
-.episode-content {
-  padding: $spacing-lg;
-
-  h4 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0 0 $gap-sm 0;
-    padding-bottom: $gap-sm;
-    border-bottom: 1px solid $color-border;
-  }
-
-  .episode-order {
-    @include typography-p4;
-    color: $color-primary;
-    font-weight: $font-weight-bold;
-    margin: 0 0 $spacing-md 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-  }
-}
-
-.episode-dates {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-xs;
-  margin-bottom: $spacing-md;
-
-  p {
-    @include typography-p4;
-    color: $color-text-secondary;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-  }
-}
-
-.episode-synopsis {
-  margin-bottom: $spacing-lg;
-
-  p {
-    @include typography-p3;
-    color: $color-text-secondary;
-    line-height: $line-height-base;
-    margin: 0;
-    padding: $padding-sm;
-    background: $color-background-alt;
-    border-radius: $border-radius-xs;
-    border-left: 2px solid $color-primary-light;
-  }
-}
-
-.episode-footer {
-  display: flex;
-  gap: $spacing-sm;
-  justify-content: space-between;
-
-  @media (max-width: $breakpoint-sm) {
     flex-direction: column;
     gap: $gap-sm;
   }
 
-  .details-btn,
-  .add-sequence-btn {
-    flex: 1;
-    padding: $gap-sm $spacing-md;
-    border: none;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p3;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-fast;
+  .stat-item-projet-scenariste {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: $gap-xs;
-
-    &:hover {
-      transform: translateY(-1px);
-    }
-  }
-
-  .details-btn {
-    background: transparent;
+    padding: $padding-sm;
+    background: $color-white;
+    border-radius: $border-radius-xs;
     border: 1px solid $color-border;
-    color: $color-text-secondary;
+    transition: $transition-fast;
 
     &:hover {
-      background: rgba($color-info, 0.1);
-      border-color: $color-info;
-      color: $color-info;
+      box-shadow: $shadow-hover;
+      transform: translateY(-2px);
     }
-  }
 
-  .add-sequence-btn {
-    background: $color-primary;
-    color: $color-white;
+    .stat-number-projet-scenariste {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
 
-    &:hover {
-      background: darken($color-primary, 10%);
-      box-shadow: $shadow-md;
+    .stat-label-projet-scenariste {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
     }
   }
 }
 
 // =============================================
-// MODALE D'ÉDITION D'ÉPISODE
+// CONTENU PRINCIPAL À DROITE
 // =============================================
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+.creation-body-projet-scenariste {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-projet-scenariste {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-header-projet-scenariste {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+
+    .page-title-projet-scenariste {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+    }
+
+    .page-subtitle-projet-scenariste {
+      @include typography-p3;
+      color: $color-text-muted;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// =============================================
+// SYSTÈME D'ONGLETS (ADAPTÉ POUR PROJET SCÉNARISTE)
+// =============================================
+.tabs-container-projet-scenariste {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-projet-scenariste {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-projet-scenariste {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: $z-index-modal;
-  padding: $spacing-md;
-  backdrop-filter: blur(4px);
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
 }
 
-.modal-content {
-  background: $color-white;
-  border-radius: $border-radius-xl;
-  box-shadow: $shadow-xl;
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: modalSlideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+.tab-indicator-projet-scenariste {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-projet-scenariste {
+  position: relative;
+}
+
+.tab-pane-projet-scenariste {
+  padding: $spacing-lg;
+  animation: fadeInUp-projet-scenariste 0.3s ease-out;
+}
+
+@keyframes fadeInUp-projet-scenariste {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE D'ÉDITION (MODAL OU PANE)
+// =============================================
+.form-container-projet-scenariste {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tab-pane-projet-scenariste .form-header-projet-scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
 
   h3 {
     @include typography-playfair-h3;
     color: $color-text-primary;
-    margin: 0 0 $spacing-lg 0;
-    padding-bottom: $spacing-md;
-    border-bottom: 2px solid $color-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+
+  .back-btn-projet-scenariste {
+    padding: $gap-xs $padding-sm;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
   }
 }
 
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-40px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.modal-content form {
-  padding: $spacing-xl;
-
-  @media (max-width: $breakpoint-sm) {
-    padding: $spacing-md;
-  }
-}
-
-.form-group {
+.episode-form-projet-scenariste {
   display: flex;
   flex-direction: column;
-  gap: $gap-sm;
-  margin-bottom: $spacing-lg;
+  gap: $spacing-md;
+}
+
+.form-row-projet-scenariste {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-projet-scenariste {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
 
   label {
-    @include typography-p3;
+    @include typography-p4;
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
     display: flex;
@@ -568,349 +386,663 @@
       color: $color-error;
       margin-left: 2px;
     }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
   }
 
-  input,
-  textarea,
-  select {
+  .form-input-projet-scenariste {
     width: 100%;
-    padding: $gap-sm $padding-md;
+    height: 42px;
+    padding: 0 $padding-sm;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
-    font-size: $font-size-p3;
+    font-size: $font-size-p4;
     color: $color-text-primary;
     background: $color-white;
     transition: $transition-fast;
-    font-family: $font-family-primary;
+    box-sizing: border-box;
 
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
 
     &:hover {
-      border-color: $color-primary-light;
-    }
-
-    &:disabled {
-      background: $color-background-alt;
-      color: $color-text-muted;
-      cursor: not-allowed;
-    }
-  }
-
-  input,
-  select {
-    height: 46px;
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 120px;
-    line-height: $line-height-base;
-  }
-
-  .error-input {
-    border-color: $color-error;
-    
-    &:focus {
-      box-shadow: 0 0 0 3px rgba($color-error, 0.1);
+      border-color: darken($color-border, 10%);
     }
   }
 }
 
-.error-message {
-  @include typography-p3;
-  color: $color-error;
-  background: rgba($color-error, 0.1);
-  border: 1px solid $color-error;
-  border-radius: $border-radius-xs;
-  padding: $spacing-sm;
+// =============================================
+// LISTE DES ÉPISODES (CARDS)
+// =============================================
+.episodes-section-projet-scenariste {
   margin-bottom: $spacing-lg;
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-}
 
-.error-text {
-  @include typography-p4;
-  color: $color-error;
-  margin-top: $gap-xs;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-}
+  .section-header-projet-scenariste {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
 
-.suggestion-text {
-  @include typography-p4;
-  color: $color-primary;
-  margin-top: $gap-xs;
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  flex-wrap: wrap;
-
-  .suggestion-btn {
-    padding: $gap-xs $gap-sm;
-    background: transparent;
-    border: 1px solid $color-primary;
-    border-radius: $border-radius-xs;
-    color: $color-primary;
-    font-size: $font-size-p4;
-    cursor: pointer;
-    transition: $transition-fast;
-
-    &:hover {
-      background: $color-primary;
-      color: $color-white;
+    h3 {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      font-size: calc(#{$font-size-h3} - 4px);
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
     }
   }
 }
 
-.modal-actions {
+.filters-projet-scenariste {
   display: flex;
   gap: $spacing-md;
-  justify-content: flex-end;
-  padding-top: $spacing-lg;
-  border-top: 1px solid $color-border;
+  margin-bottom: $spacing-md;
 
-  @media (max-width: $breakpoint-sm) {
+  .filter-group-projet-scenariste {
+    flex: 1;
+    display: flex;
     flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+    }
+
+    select {
+      @extend .filter-select-projet-scenariste;
+    }
+  }
+}
+
+.episodes-list-projet-scenariste {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-md;
+}
+
+.episode-card-projet-scenariste {
+  background: linear-gradient(135deg, $color-white, $color-background-alt);
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  transition: $transition;
+
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: $shadow-xl;
   }
 
-  .save-btn,
-  .cancel-btn {
-    padding: $gap-sm $spacing-xl;
-    border: none;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p2;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition;
+  .episode-header-projet-scenariste {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md;
+    background: linear-gradient(135deg, $color-background-alt, $color-surface);
+    border-bottom: 1px solid $color-border;
+
+    .episode-statut-projet-scenariste {
+      padding: 4px 12px;
+      border-radius: $border-radius-pill;
+      font-size: $font-size-p5;
+      font-weight: $font-weight-semibold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
+    }
+
+    .episode-actions-projet-scenariste {
+      display: flex;
+      gap: $gap-xs;
+
+      i {
+        cursor: pointer;
+        font-size: $font-size-p3;
+        color: $color-text-muted;
+        transition: $transition-fast;
+        padding: 4px;
+        border-radius: $border-radius-xs;
+
+        &:hover {
+          color: $color-white;
+          transform: scale(1.2);
+        }
+      }
+
+      .icon-edit-projet-scenariste:hover {
+        background: $color-warning;
+      }
+
+      .icon-delete-projet-scenariste {
+        color: $color-error;
+      }
+
+      .icon-delete-projet-scenariste:hover {
+        background: $color-error;
+      }
+    }
+  }
+
+  .episode-content-projet-scenariste {
+    padding: $spacing-md;
+
+    h4 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-sm 0;
+    }
+
+    .episode-order-projet-scenariste {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin-bottom: $gap-sm;
+    }
+
+    .episode-dates-projet-scenariste {
+      display: flex;
+      flex-direction: column;
+      gap: $gap-xs;
+      margin-bottom: $gap-md;
+
+      p {
+        @include typography-p4;
+        color: $color-text-secondary;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: $gap-xs;
+      }
+    }
+
+    .episode-synopsis-projet-scenariste {
+      p {
+        @include typography-p3;
+        color: $color-text-muted;
+        margin-bottom: $gap-md;
+      }
+    }
+
+    .episode-footer-projet-scenariste {
+      display: flex;
+      gap: $gap-sm;
+
+      button {
+        flex: 1;
+        padding: $gap-sm $spacing-md;
+        border-radius: $border-radius-xs;
+        font-size: $font-size-p4;
+        font-weight: $font-weight-semibold;
+        cursor: pointer;
+        transition: $transition-fast;
+
+        &.details-btn-projet-scenariste {
+          background: $color-background-alt;
+          color: $color-text-muted;
+          border: 1px solid $color-border;
+
+          &:hover {
+            background: linear-gradient(135deg, $color-background-alt, $color-white);
+            transform: translateY(-2px);
+          }
+        }
+
+        &.add-sequence-btn-projet-scenariste {
+          background: $color-primary-dark;
+          color: $color-white;
+          border: none;
+
+          &:hover {
+            background: darken($color-primary-dark, 10%);
+            transform: translateY(-2px);
+          }
+        }
+      }
+    }
+  }
+}
+
+// =============================================
+// DÉTAILS DU PROJET
+// =============================================
+.project-details-projet-scenariste {
+  background: linear-gradient(135deg, $color-white, $color-background-alt);
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  transition: $transition;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+    transform: translateY(-3px);
+  }
+
+  .project-info-projet-scenariste {
+    display: flex;
+    gap: $spacing-lg;
+
+    @media (max-width: $breakpoint-md) {
+      flex-direction: column;
+    }
+
+    .project-main-projet-scenariste {
+      flex: 2;
+
+      h3 {
+        @include typography-playfair-h3;
+        color: $color-text-primary;
+        margin-bottom: $spacing-md;
+      }
+
+      .project-synopsis-projet-scenariste {
+        h4 {
+          @include typography-playfair-h4;
+          color: $color-text-primary;
+          margin-bottom: $gap-sm;
+        }
+
+        p {
+          @include typography-p2;
+          color: $color-text-secondary;
+        }
+      }
+    }
+
+    .project-sidebar-projet-scenariste {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: $gap-md;
+
+      div {
+        display: flex;
+        align-items: center;
+        gap: $gap-sm;
+
+        i {
+          color: $color-primary;
+          font-size: $font-size-p3;
+        }
+
+        .statut-label, .date-label, .genre-label {
+          @include typography-p4;
+          color: $color-text-muted;
+          font-weight: $font-weight-medium;
+        }
+
+        .statut-value, .date-value, .genre-value {
+          @include typography-p3;
+          color: $color-text-primary;
+        }
+      }
+    }
+  }
+}
+
+// =============================================
+// MODAL D'ÉDITION
+// =============================================
+.modal-overlay-projet-scenariste {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+}
+
+.modal-content-projet-scenariste {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header-projet-scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: $gap-sm;
-    min-width: 140px;
-    justify-content: center;
-
-    &:hover:not(:disabled) {
-      transform: translateY(-2px);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      width: 100%;
-      min-width: auto;
-    }
-  }
-
-  .save-btn {
-    background: $color-primary;
-    color: $color-white;
-
-    &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
-      box-shadow: $shadow-md;
-    }
-  }
-
-  .cancel-btn {
-    background: transparent;
-    border: 1px solid $color-border;
-    color: $color-text-secondary;
-
-    &:hover:not(:disabled) {
-      background: rgba($color-error, 0.1);
-      border-color: $color-error;
-      color: $color-error;
-    }
   }
 }
 
-// =============================================
-// ÉTATS VIDES ET CHARGEMENT
-// =============================================
-.empty-episodes,
-.loading-episodes {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: $spacing-xl;
-  background: $color-white;
-  border-radius: $border-radius-lg;
-  border: 2px dashed $color-border;
+.modal-close-btn-projet-scenariste {
+  background: transparent;
+  border: none;
+  font-size: $font-size-h4;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
 
-  i {
-    font-size: 48px;
-    color: $color-primary-light;
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+}
+
+.modal-body-projet-scenariste {
+  padding: $spacing-lg;
+
+  .error-message {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    padding: $padding-sm;
+    border-radius: $border-radius-xs;
     margin-bottom: $spacing-md;
   }
 
-  h4 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0 0 $gap-sm 0;
+  .error-input {
+    border-color: $color-error !important;
   }
 
-  p {
-    @include typography-p2;
-    color: $color-text-muted;
-    max-width: 400px;
-    margin: 0 auto;
+  .error-text {
+    color: $color-error;
+    font-size: $font-size-p4;
+    margin-top: $gap-xs;
+  }
+
+  .suggestion-text {
+    color: $color-success;
+    font-size: $font-size-p4;
+    margin-top: $gap-xs;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    .suggestion-btn-projet-scenariste {
+      background: $color-success;
+      color: $color-white;
+      border: none;
+      padding: 2px 8px;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p5;
+      cursor: pointer;
+      transition: $transition-fast;
+
+      &:hover {
+        background: darken($color-success, 10%);
+      }
+    }
   }
 }
 
-.loading-episodes i {
-  animation: spin 1s linear infinite;
-}
+.modal-actions-projet-scenariste {
+  display: flex;
+  gap: $gap-sm;
+  justify-content: flex-end;
+  padding: $spacing-lg;
+  border-top: 1px solid $color-border;
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  button {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &.save-btn-projet-scenariste {
+      background: $color-primary;
+      color: $color-white;
+
+      &:hover {
+        background: darken($color-primary, 10%);
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        background: $color-border;
+        cursor: not-allowed;
+      }
+    }
+
+    &.cancel-btn-projet-scenariste {
+      background: transparent;
+      border: 1px solid $color-border;
+      color: $color-text-secondary;
+
+      &:hover {
+        background: rgba($color-primary, 0.1);
+        border-color: $color-primary;
+        color: $color-primary;
+        transform: translateY(-2px);
+      }
+    }
+  }
 }
 
 // =============================================
-// RESPONSIVE
+// RESPONSIVE DESIGN
 // =============================================
-@media (max-width: $breakpoint-xl) {
-  .projet-scenariste-container {
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-projet-scenariste {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid $color-border;
+    top: auto;
+  }
+
+  .creation-body-projet-scenariste {
+    margin-left: 0;
+  }
+
+  .tabs-header-projet-scenariste {
+    flex-direction: column;
+  }
+
+  .tab-btn-projet-scenariste {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-projet-scenariste {
+    display: none;
+  }
+
+  .tab-pane-projet-scenariste {
     padding: $spacing-md;
   }
 }
 
-@media (max-width: $breakpoint-lg) {
-  .project-info {
-    grid-template-columns: 1fr;
-  }
-
-  .episodes-list {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
-}
-
 @media (max-width: $breakpoint-md) {
-  .project-header {
+  .creation-main-content-projet-scenariste {
+    padding: $spacing-sm;
+  }
+
+  .form-header-projet-scenariste {
     flex-direction: column;
-    align-items: stretch;
     gap: $spacing-sm;
-    
-    .back-btn {
-      align-self: flex-start;
-    }
-    
-    h2 {
-      text-align: center;
-    }
+    align-items: flex-start;
   }
 
-  .section-header {
+  .project-info-projet-scenariste {
     flex-direction: column;
-    gap: $spacing-md;
   }
 
-  .episodes-list {
+  .episodes-list-projet-scenariste {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: $breakpoint-sm) {
-  .project-info,
-  .section-header,
-  .filters,
-  .episodes-list {
-    padding: $spacing-md;
-  }
-
-  .modal-content {
-    margin: $spacing-sm;
-  }
-
-  .episode-footer {
+  .filters-projet-scenariste {
     flex-direction: column;
   }
 
-  .modal-actions {
-    flex-direction: column;
-    
-    .save-btn,
-    .cancel-btn {
-      width: 100%;
+  .tab-btn-projet-scenariste {
+    font-size: $font-size-p4;
+
+    i {
+      font-size: $font-size-p3;
     }
   }
 }
 
-// =============================================
-// ANIMATIONS ET TRANSITIONS
-// =============================================
-.episode-card,
-.back-btn,
-.add-episode-btn,
-.details-btn,
-.add-sequence-btn,
-.icon-edit,
-.icon-delete,
-.save-btn,
-.cancel-btn,
-.suggestion-btn {
-  transition: $transition;
-
-  &:hover {
-    transition: $transition-fast;
-  }
-}
-
-// =============================================
-// ACCESSIBILITÉ
-// =============================================
+// Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-  .episode-card,
-  .back-btn,
-  .add-episode-btn,
-  .details-btn,
-  .add-sequence-btn,
-  .icon-edit,
-  .icon-delete,
-  .save-btn,
-  .cancel-btn,
-  .suggestion-btn,
-  .modal-content {
+
+  .sidebar-btn-projet-scenariste,
+  .form-input-projet-scenariste,
+  .episode-card-projet-scenariste,
+  .tab-btn-projet-scenariste,
+  .tab-indicator-projet-scenariste {
     transition: none;
-    animation: none;
-    
+
     &:hover {
       transform: none;
     }
   }
 
-  .loading-episodes i {
+  .tab-pane-projet-scenariste {
     animation: none;
   }
 }
 
-// Focus styles pour l'accessibilité
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-.icon-edit:focus-visible,
-.icon-delete:focus-visible {
-  outline: 2px solid $color-primary;
-  outline-offset: 2px;
+// =============================================
+// BADGES COLORÉS POUR LES STATUTS (ADAPTÉ AUX ÉPISODES)
+// =============================================
+.status-badge-projet-scenariste {
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+
+  // Statut En cours
+  &.status-en-cours-projet-scenariste {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    box-shadow: 0 2px 4px rgba($color-primary, 0.2);
+  }
+
+  // Statut Terminé
+  &.status-termine-projet-scenariste {
+    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
+    color: $color-white;
+    box-shadow: 0 2px 4px rgba($color-success, 0.3);
+  }
+
+  // Statut Brouillon
+  &.status-brouillon-projet-scenariste {
+    background: linear-gradient(135deg, $color-info, darken($color-info, 10%));
+    color: $color-white;
+    box-shadow: 0 2px 4px rgba($color-info, 0.3);
+  }
+
+  // Ajoutez d'autres statuts si nécessaire, e.g., &.status-autre-projet-scenariste { ... }
+
+  // Icône dans le badge
+  i {
+    font-size: 10px;
+  }
 }
 
-// Contraste amélioré pour les états
-@media (prefers-contrast: high) {
-  .project-statut,
-  .project-date,
-  .project-genre {
-    border: 2px solid $color-border-dark;
+// =============================================
+// ACTIONS SUR LES CARTES ÉPISODES
+// =============================================
+.table-actions-projet-scenariste {
+  display: flex;
+  gap: $gap-xs;
+  justify-content: center;
+
+  .btn-view-projet-scenariste,
+  .btn-edit-projet-scenariste,
+  .btn-delete-projet-scenariste {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+
+    &:hover {
+      transform: scale(1.1);
+    }
   }
-  
-  .episode-card {
-    border: 2px solid $color-border;
+
+  .btn-view-projet-scenariste {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+
+    &:hover {
+      background: $color-info;
+      color: $color-white;
+    }
+  }
+
+  .btn-edit-projet-scenariste {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+
+    &:hover {
+      background: $color-warning;
+      color: $color-white;
+    }
+  }
+
+  .btn-delete-projet-scenariste {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
   }
 }
