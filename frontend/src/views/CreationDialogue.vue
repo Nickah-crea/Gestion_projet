@@ -132,7 +132,7 @@
               @click="activeTab = 'form'"
               :class="['tab-btn-crea-dialogue', { active: activeTab === 'form' }]"
             >
-              <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
               {{ isEditing ? 'Modifier dialogue' : 'Créer dialogue' }}
             </button>
             <button 
@@ -154,7 +154,7 @@
               <div class="form-container-crea-dialogue">
                 <div class="form-header-crea-dialogue">
                   <h3>
-                    <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ isEditing ? 'Modifier le dialogue' : 'Créer un nouveau dialogue' }}
                   </h3>
                   <button 
@@ -370,7 +370,7 @@
                             {{ dialogue.commentCount || 0 }}
                           </button>
                           <button @click="editDialogue(dialogue)" class="btn-edit-crea-dialogue" title="Modifier">
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-marker"></i>
                           </button>
                           <button @click="deleteDialogue(dialogue.id)" class="btn-delete-crea-dialogue" title="Supprimer">
                             <i class="fas fa-trash"></i>

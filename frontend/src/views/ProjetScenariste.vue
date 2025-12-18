@@ -103,22 +103,27 @@
             
             <div class="project-sidebar-projet-scenariste">
               <div class="project-statut-projet-scenariste">
+                <i class="fas fa-circle-notch"></i>
                 <span class="statut-label">Statut:</span>
                 <span class="statut-value">{{ projet.statutNom }}</span>
               </div>
               <div class="project-date-projet-scenariste">
+                <i class="fas fa-calendar-alt"></i>
                 <span class="date-label">Créé le:</span>
                 <span class="date-value">{{ formatDate(projet.creeLe) }}</span>
               </div>
               <div class="project-date-projet-scenariste">
+                <i class="fas fa-calendar-alt"></i>
                 <span class="date-label">Modifié le:</span>
                 <span class="date-value">{{ formatDate(projet.modifieLe) }}</span>
               </div>
               <div class="project-date-projet-scenariste" v-if="projet.dateFin">
+                <i class="fas fa-calendar-alt"></i>
                 <span class="date-label">Terminé le:</span>
                 <span class="date-value">{{ formatDate(projet.dateFin) }}</span>
               </div>
               <div class="project-genre-projet-scenariste">
+                <i class="fas fa-tags"></i>
                 <span class="genre-label">Genre:</span>
                 <span class="genre-value">{{ projet.genreNom }}</span>
               </div>
@@ -137,7 +142,7 @@
             <div v-for="episode in filteredEpisodes" :key="episode.idEpisode" class="episode-card-projet-scenariste">
               <div class="episode-header-projet-scenariste">
                 <div class="episode-statut-projet-scenariste status-badge-projet-scenariste" :class="getStatutBadgeClass(episode.statutNom)">
-                  {{ episode.statutNom }}
+                  {{ episode.statutNom.toUpperCase() }}
                 </div>
                 <div class="episode-actions-projet-scenariste">
                   <i class="fas fa-pencil-alt icon-edit-projet-scenariste" @click="startEditEpisode(episode)"></i>
@@ -147,16 +152,17 @@
               
               <div class="episode-content-projet-scenariste">
                 <h4>{{ episode.titre }}</h4>
-                <p class="episode-order-projet-scenariste">Ordre: {{ episode.ordre }}</p>
-                
-                <div class="episode-dates-projet-scenariste">
-                  <p>Créé le: {{ formatDate(episode.creeLe) }}</p>
-                  <p>Modifié le: {{ formatDate(episode.modifieLe) }}</p>
-                  <p>Nombre de séquences: {{ episode.nombreSequences || 0 }}</p>
-                </div>
                 
                 <div class="episode-synopsis-projet-scenariste" v-if="episode.synopsis">
                   <p>{{ truncateText(episode.synopsis, 100) }}</p>
+                </div>
+                
+                <p class="episode-order-projet-scenariste">Ordre: {{ episode.ordre }}</p>
+                
+                <div class="episode-dates-projet-scenariste">
+                  <p><i class="fas fa-calendar-alt"></i> Créé le: {{ formatDate(episode.creeLe) }}</p>
+                  <p><i class="fas fa-calendar-alt"></i> Modifié le: {{ formatDate(episode.modifieLe) }}</p>
+                  <p><i class="fas fa-list-ol"></i> Nombre de séquences: {{ episode.nombreSequences || 0 }}</p>
                 </div>
                 
                 <div class="episode-footer-projet-scenariste">
@@ -241,7 +247,6 @@
 
 <script>
 import axios from 'axios';
-// import '../assets/css/projet_scenariste.css'; // Remplacer par l'import SCSS si nécessaire
 
 export default {
   data() {

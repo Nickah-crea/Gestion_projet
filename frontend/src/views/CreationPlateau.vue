@@ -114,7 +114,7 @@
               @click="activeTab = 'form'"
               :class="['tab-btn-crea-plateau', { active: activeTab === 'form' }]"
             >
-              <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
               {{ isEditing ? 'Modifier plateau' : 'Créer plateau' }}
             </button>
             <button 
@@ -136,7 +136,7 @@
               <div class="form-container-crea-plateau">
                 <div class="form-header-crea-plateau">
                   <h3>
-                    <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ isEditing ? 'Modifier le plateau' : 'Créer un nouveau plateau' }}
                   </h3>
                   <button 
@@ -328,7 +328,7 @@
                         </div>
                         <div class="plateau-actions-crea-plateau">
                           <button @click="editPlateau(plateau)" class="btn-edit-crea-plateau" title="Modifier">
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-marker"></i>
                           </button>
                           <button @click="deletePlateau(plateau.id)" class="btn-delete-crea-plateau" title="Supprimer">
                             <i class="fas fa-trash"></i>

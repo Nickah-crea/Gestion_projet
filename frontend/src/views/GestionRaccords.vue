@@ -103,7 +103,7 @@
               @click="activeTab = 'form'"
               :class="['tab-btn-crea-raccord', { active: activeTab === 'form' }]"
             >
-              <i :class="editingRaccord ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              <i :class="editingRaccord ? 'fas fa-marker' : 'fas fa-plus'"></i>
               {{ editingRaccord ? 'Modifier raccord' : 'Créer raccord' }}
             </button>
             <button 
@@ -125,7 +125,7 @@
               <div class="form-container-crea-raccord">
                 <div class="form-header-crea-raccord">
                   <h3>
-                    <i :class="editingRaccord ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    <i :class="editingRaccord ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ editingRaccord ? 'Modifier le raccord' : 'Créer un nouveau raccord' }}
                   </h3>
                   <button 
@@ -477,7 +477,7 @@
 
                             <div class="raccord-actions-crea-raccord">
                               <button @click="editRaccord(raccord)" class="btn-edit-crea-raccord" title="Modifier">
-                                <i class="fas fa-edit"></i>
+                                <i class="fas fa-marker"></i>
                               </button>
                             
                               <button 

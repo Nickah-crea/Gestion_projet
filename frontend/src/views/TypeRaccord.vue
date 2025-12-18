@@ -157,7 +157,7 @@
                     class="btn-action-type-raccord edit" 
                     title="Modifier"
                   >
-                    <i class="fas fa-edit"></i>
+                    <i class="fas fa-marker"></i>
                   </button>
                   <button 
                     @click="deleteType(type)" 

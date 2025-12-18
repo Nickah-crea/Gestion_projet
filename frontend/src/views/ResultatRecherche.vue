@@ -203,7 +203,7 @@
               class="recipient-radio-resultat-recherche"
             >
             <label for="manualType" class="recipient-type-label-resultat-recherche">
-              <span class="recipient-type-icon-resultat-recherche"><i class="fas fa-edit"></i></span>
+              <span class="recipient-type-icon-resultat-recherche"><i class="fas fa-marker"></i></span>
               <span class="recipient-type-info-resultat-recherche">
                 <strong>Saisir des emails manuellement</strong>
                 <small>Pour envoyer à des personnes qui ne sont pas dans la liste des comédiens</small>

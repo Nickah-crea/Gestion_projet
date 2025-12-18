@@ -386,11 +386,11 @@
                               <i class="fas fa-eye"></i>
                             </button>
                             <button @click="editComedien(comedien)" class="btn-edit-crea-comedien" title="Modifier">
-                              <i class="fas fa-edit"></i>
+                              <i class="fas fa-marker"></i>
                             </button>
-                            <button @click="goToSceneComedien(comedien.id)" class="btn-link-crea-comedien" title="Lier à une scène">
+                            <!-- <button @click="goToSceneComedien(comedien.id)" class="btn-link-crea-comedien" title="Lier à une scène">
                               <i class="fas fa-link"></i>
-                            </button>
+                            </button> -->
                             <button @click="deleteComedien(comedien.id)" class="btn-delete-crea-comedien" title="Supprimer">
                               <i class="fas fa-trash"></i>
                             </button>
@@ -494,7 +494,7 @@
         
         <div class="modal-footer-crea-comedien">
           <button @click="editComedien(selectedComedien)" class="btn-edit-modal-crea-comedien">
-            <i class="fas fa-edit"></i> Modifier
+            <i class="fas fa-marker"></i> Modifier
           </button>
           <button @click="closeDetailsModal" class="btn-close-modal-crea-comedien">
             <i class="fas fa-times"></i> Fermer
