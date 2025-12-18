@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-plateau">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-plateau">
       <div class="sidebar-header-crea-plateau">
@@ -102,10 +102,10 @@
       <div class="creation-main-content-crea-plateau">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-plateau">
+        <!-- <div class="main-header-crea-plateau">
           <h1 class="page-title-crea-plateau"><i class="fas fa-video"></i> Gestion des Plateaux</h1>
           <p class="page-subtitle-crea-plateau">Créez, modifiez et gérez l'ensemble des plateaux de tournage</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-plateau">

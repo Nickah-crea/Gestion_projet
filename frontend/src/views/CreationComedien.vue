@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-comedien">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-comedien">
       <div class="sidebar-header-crea-comedien">
@@ -87,10 +87,10 @@
       <div class="creation-main-content-crea-comedien">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-comedien">
+        <!-- <div class="main-header-crea-comedien">
           <h1 class="page-title-crea-comedien"><i class="fas fa-user-plus"></i> Gestion des Comédiens</h1>
           <p class="page-subtitle-crea-comedien">Créez, modifiez et gérez l'ensemble des comédiens de vos projets</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-comedien">

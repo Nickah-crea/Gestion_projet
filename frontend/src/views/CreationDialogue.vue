@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-dialogue">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-dialogue">
       <div class="sidebar-header-crea-dialogue">
@@ -120,10 +120,10 @@
       <div class="creation-main-content-crea-dialogue">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-dialogue">
+        <!-- <div class="main-header-crea-dialogue">
           <h1 class="page-title-crea-dialogue"><i class="fas fa-comments"></i> Gestion des Dialogues</h1>
           <p class="page-subtitle-crea-dialogue">Créez, modifiez et gérez l'ensemble des dialogues de vos scènes</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-dialogue">

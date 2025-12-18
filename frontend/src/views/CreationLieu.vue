@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-lieu">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-lieu">
       <div class="sidebar-header-crea-lieu">
@@ -102,10 +102,10 @@
       <div class="creation-main-content-crea-lieu">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-lieu">
+        <!-- <div class="main-header-crea-lieu">
           <h1 class="page-title-crea-lieu"><i class="fas fa-map-marker-alt"></i> Gestion des Lieux</h1>
           <p class="page-subtitle-crea-lieu">Créez, modifiez et gérez l'ensemble des lieux de vos projets</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-lieu">

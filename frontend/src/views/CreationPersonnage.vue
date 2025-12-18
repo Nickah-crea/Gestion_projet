@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-personnage">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-personnage">
       <div class="sidebar-header-crea-personnage">
@@ -87,10 +87,10 @@
       <div class="creation-main-content-crea-personnage">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-personnage">
+        <!-- <div class="main-header-crea-personnage">
           <h1 class="page-title-crea-personnage"><i class="fas fa-user-tie"></i> Création et Gestion des Personnages</h1>
           <p class="page-subtitle-crea-personnage">Créez, modifiez et gérez l'ensemble des personnages de vos projets</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-personnage">

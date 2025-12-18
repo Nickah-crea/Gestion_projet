@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-raccord">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-raccord">
       <div class="sidebar-header-crea-raccord">
@@ -91,10 +91,10 @@
       <div class="creation-main-content-crea-raccord">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-raccord">
+        <!-- <div class="main-header-crea-raccord">
           <h1 class="page-title-crea-raccord"><i class="fas fa-link"></i> Gestion des Raccords</h1>
           <p class="page-subtitle-crea-raccord">Créez et gérez les raccords de continuité entre vos scènes</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-raccord">
