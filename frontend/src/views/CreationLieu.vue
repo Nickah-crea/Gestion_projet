@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-lieu">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-lieu">
       <div class="sidebar-header-crea-lieu">
@@ -102,10 +102,10 @@
       <div class="creation-main-content-crea-lieu">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-lieu">
+        <!-- <div class="main-header-crea-lieu">
           <h1 class="page-title-crea-lieu"><i class="fas fa-map-marker-alt"></i> Gestion des Lieux</h1>
           <p class="page-subtitle-crea-lieu">Créez, modifiez et gérez l'ensemble des lieux de vos projets</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-lieu">
@@ -114,7 +114,7 @@
               @click="activeTab = 'form'"
               :class="['tab-btn-crea-lieu', { active: activeTab === 'form' }]"
             >
-              <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
               {{ isEditing ? 'Modifier lieu' : 'Créer lieu' }}
             </button>
             <button 
@@ -136,7 +136,7 @@
               <div class="form-container-crea-lieu">
                 <div class="form-header-crea-lieu">
                   <h3>
-                    <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ isEditing ? 'Modifier le lieu' : 'Créer un nouveau lieu' }}
                   </h3>
                   <button 
@@ -315,7 +315,7 @@
                             {{ lieu.sceneCount || 0 }}
                           </button>
                           <button @click="editLieu(lieu)" class="btn-edit-crea-lieu" title="Modifier">
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-marker"></i>
                           </button>
                           <button @click="deleteLieu(lieu.id)" class="btn-delete-crea-lieu" title="Supprimer">
                             <i class="fas fa-trash"></i>

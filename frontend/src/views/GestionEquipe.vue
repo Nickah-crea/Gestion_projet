@@ -208,7 +208,7 @@
             </div>
             <div class="member-actions">
               <button @click="modifierScenariste(scenariste)" class="btn-edit">
-                <i class="fas fa-edit"></i> Modifier
+                <i class="fas fa-marker"></i> Modifier
               </button>
               <button @click="supprimerScenariste(scenariste.idScenariste)" class="btn-delete">
                 <i class="fas fa-trash"></i> Supprimer
@@ -249,7 +249,7 @@
             </div>
             <div class="member-actions">
               <button @click="modifierRealisateur(realisateur)" class="btn-edit">
-                <i class="fas fa-edit"></i> Modifier
+                <i class="fas fa-marker"></i> Modifier
               </button>
               <button @click="supprimerRealisateur(realisateur.idRealisateur)" class="btn-delete">
                 <i class="fas fa-trash"></i> Supprimer

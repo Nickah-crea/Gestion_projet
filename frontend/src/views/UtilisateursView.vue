@@ -57,7 +57,7 @@
             <td>{{ formatDate(user.creeLe) }}</td>
             <td class="actions">
               <button class="btn-edit" @click="editUser(user)" title="Modifier">
-                <i class="fas fa-edit"></i>
+                <i class="fas fa-marker"></i>
               </button>
               <button class="btn-delete" @click="confirmDelete(user)" title="Supprimer">
                 <i class="fas fa-trash"></i>

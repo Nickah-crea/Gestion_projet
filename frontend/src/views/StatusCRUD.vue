@@ -154,7 +154,7 @@
                         </div>
                         <div class="statut-actions-status">
                           <button @click="editStatut(tab.id, statut)" class="btn-action-status edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-marker"></i>
                           </button>
                           <button 
                             @click="toggleActivation(tab.id, statut)" 
@@ -199,7 +199,7 @@
       <div class="modal-content-status" @click.stop>
         <div class="modal-header-status">
           <h3>
-            <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+            <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
             {{ isEditing ? 'Modifier le statut' : 'Créer un nouveau statut' }}
           </h3>
           <button @click="closeModal" class="modal-close-btn-status">

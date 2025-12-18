@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-comedien">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-comedien">
       <div class="sidebar-header-crea-comedien">
@@ -87,10 +87,10 @@
       <div class="creation-main-content-crea-comedien">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-comedien">
+        <!-- <div class="main-header-crea-comedien">
           <h1 class="page-title-crea-comedien"><i class="fas fa-user-plus"></i> Gestion des Comédiens</h1>
           <p class="page-subtitle-crea-comedien">Créez, modifiez et gérez l'ensemble des comédiens de vos projets</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-comedien">
@@ -386,11 +386,11 @@
                               <i class="fas fa-eye"></i>
                             </button>
                             <button @click="editComedien(comedien)" class="btn-edit-crea-comedien" title="Modifier">
-                              <i class="fas fa-edit"></i>
+                              <i class="fas fa-marker"></i>
                             </button>
-                            <button @click="goToSceneComedien(comedien.id)" class="btn-link-crea-comedien" title="Lier à une scène">
+                            <!-- <button @click="goToSceneComedien(comedien.id)" class="btn-link-crea-comedien" title="Lier à une scène">
                               <i class="fas fa-link"></i>
-                            </button>
+                            </button> -->
                             <button @click="deleteComedien(comedien.id)" class="btn-delete-crea-comedien" title="Supprimer">
                               <i class="fas fa-trash"></i>
                             </button>
@@ -494,7 +494,7 @@
         
         <div class="modal-footer-crea-comedien">
           <button @click="editComedien(selectedComedien)" class="btn-edit-modal-crea-comedien">
-            <i class="fas fa-edit"></i> Modifier
+            <i class="fas fa-marker"></i> Modifier
           </button>
           <button @click="closeDetailsModal" class="btn-close-modal-crea-comedien">
             <i class="fas fa-times"></i> Fermer

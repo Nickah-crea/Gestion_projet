@@ -81,7 +81,7 @@
             <td>
               <div class="action-buttons">
                 <button class="btn-icon edit-btn" @click="editProject(project)" title="Modifier">
-                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-marker"></i>
                 </button>
                 <button class="btn-icon view-btn" @click="viewProject(project.id)" title="Voir détails">
                   <i class="fas fa-eye"></i>

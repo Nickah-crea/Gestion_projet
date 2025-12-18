@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-personnage">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-personnage">
       <div class="sidebar-header-crea-personnage">
@@ -87,10 +87,10 @@
       <div class="creation-main-content-crea-personnage">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-personnage">
+        <!-- <div class="main-header-crea-personnage">
           <h1 class="page-title-crea-personnage"><i class="fas fa-user-tie"></i> Création et Gestion des Personnages</h1>
           <p class="page-subtitle-crea-personnage">Créez, modifiez et gérez l'ensemble des personnages de vos projets</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-personnage">
@@ -99,7 +99,7 @@
               @click="activeTab = 'form'"
               :class="['tab-btn-crea-personnage', { active: activeTab === 'form' }]"
             >
-              <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
               {{ isEditing ? 'Modifier personnage' : 'Créer personnage' }}
             </button>
             <button 
@@ -121,7 +121,7 @@
               <div class="form-container-crea-personnage">
                 <div class="form-header-crea-personnage">
                   <h3>
-                    <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ isEditing ? 'Modifier le personnage' : 'Créer un nouveau personnage' }}
                   </h3>
                   <button 
@@ -344,7 +344,7 @@
                               <i class="fas fa-eye"></i>
                             </button>
                             <button @click="editPersonnage(personnage)" class="btn-edit-crea-personnage" title="Modifier">
-                              <i class="fas fa-edit"></i>
+                              <i class="fas fa-marker"></i>
                             </button>
                             <button @click="deletePersonnage(personnage.id)" class="btn-delete-crea-personnage" title="Supprimer">
                               <i class="fas fa-trash"></i>
@@ -417,7 +417,7 @@
         
         <div class="modal-footer-crea-personnage">
           <button @click="editPersonnage(selectedPersonnage)" class="btn-edit-modal-crea-personnage">
-            <i class="fas fa-edit"></i> Modifier
+            <i class="fas fa-marker"></i> Modifier
           </button>
           <button @click="closeDetailsModal" class="btn-close-modal-crea-personnage">
             <i class="fas fa-times"></i> Fermer

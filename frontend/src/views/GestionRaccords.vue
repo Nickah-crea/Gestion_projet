@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-raccord">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-raccord">
       <div class="sidebar-header-crea-raccord">
@@ -91,10 +91,10 @@
       <div class="creation-main-content-crea-raccord">
         
         <!-- En-tête principal -->
-        <div class="main-header-crea-raccord">
+        <!-- <div class="main-header-crea-raccord">
           <h1 class="page-title-crea-raccord"><i class="fas fa-link"></i> Gestion des Raccords</h1>
           <p class="page-subtitle-crea-raccord">Créez et gérez les raccords de continuité entre vos scènes</p>
-        </div>
+        </div> -->
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-raccord">
@@ -103,7 +103,7 @@
               @click="activeTab = 'form'"
               :class="['tab-btn-crea-raccord', { active: activeTab === 'form' }]"
             >
-              <i :class="editingRaccord ? 'fas fa-edit' : 'fas fa-plus'"></i>
+              <i :class="editingRaccord ? 'fas fa-marker' : 'fas fa-plus'"></i>
               {{ editingRaccord ? 'Modifier raccord' : 'Créer raccord' }}
             </button>
             <button 
@@ -125,7 +125,7 @@
               <div class="form-container-crea-raccord">
                 <div class="form-header-crea-raccord">
                   <h3>
-                    <i :class="editingRaccord ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                    <i :class="editingRaccord ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ editingRaccord ? 'Modifier le raccord' : 'Créer un nouveau raccord' }}
                   </h3>
                   <button 
@@ -477,7 +477,7 @@
 
                             <div class="raccord-actions-crea-raccord">
                               <button @click="editRaccord(raccord)" class="btn-edit-crea-raccord" title="Modifier">
-                                <i class="fas fa-edit"></i>
+                                <i class="fas fa-marker"></i>
                               </button>
                             
                               <button 
