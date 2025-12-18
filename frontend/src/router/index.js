@@ -233,15 +233,6 @@ const routes = [
     component: () => import('../views/GestionRaccords.vue')
   },
   {
-    path: '/raccords-verification',
-    name: 'RaccordsVerification',
-    component: () => import('../views/RaccordsVerification.vue'),
-    meta: {
-      title: 'Vérification des Raccords',
-      requiresAuth: true
-    }
-  },
-  {
     path: '/inscription',
     name: 'inscription',
     component: () => import('../views/Inscription.vue')
