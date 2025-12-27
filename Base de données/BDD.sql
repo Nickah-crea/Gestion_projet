@@ -1097,3 +1097,126 @@ CREATE INDEX idx_historique_date ON historique_planning(date_replanification);
 COMMENT ON TABLE historique_planning IS 'Historique des replanifications de tournage';
 COMMENT ON COLUMN historique_planning.type_planning IS 'Type de planning: SCENE_TOURNAGE ou PLANNING_TOURNAGE';
 COMMENT ON COLUMN historique_planning.raison_replanification IS 'Raison de la replanification';
+
+-- Créer une table simple pour le suivi d'écriture
+CREATE TABLE suivi_ecriture (
+    id_suivi BIGSERIAL PRIMARY KEY,
+    id_utilisateur BIGINT NOT NULL REFERENCES utilisateurs(id_utilisateur) ON DELETE CASCADE,
+    duree_minutes INTEGER NOT NULL,
+    date_session DATE NOT NULL,
+    heure_session TIME NOT NULL,
+    periode_journee VARCHAR(20) CHECK (periode_journee IN ('matin', 'apres_midi', 'soir', 'nuit')),
+    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Supprimez l'ancienne fonction si elle existe
+DROP FUNCTION IF EXISTS get_periode_journee(TIME);
+
+-- Créez la fonction avec le bon type
+CREATE OR REPLACE FUNCTION get_periode_journee(heure TIME WITH TIME ZONE)
+RETURNS VARCHAR(20) AS $$
+DECLARE
+    heure_int INTEGER;
+BEGIN
+    heure_int := EXTRACT(HOUR FROM heure);
+    
+    IF heure_int >= 6 AND heure_int < 12 THEN
+        RETURN 'matin';
+    ELSIF heure_int >= 12 AND heure_int < 18 THEN
+        RETURN 'apres_midi';
+    ELSIF heure_int >= 18 AND heure_int < 22 THEN
+        RETURN 'soir';
+    ELSE
+        RETURN 'nuit';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Testez la fonction
+SELECT get_periode_journee(CURRENT_TIME);
+SELECT get_periode_journee('08:30'::TIME);
+SELECT get_periode_journee('14:45'::TIME);
+SELECT get_periode_journee('20:15'::TIME);
+SELECT get_periode_journee('23:30'::TIME);
+
+
+
+-- Procédure pour enregistrer automatiquement une session quand un utilisateur se connecte
+CREATE OR REPLACE PROCEDURE enregistrer_session_connexion(
+    p_id_utilisateur BIGINT,
+    p_duree_minutes INTEGER DEFAULT 15
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_heure_session TIME := CURRENT_TIME;
+    v_periode VARCHAR(20);
+BEGIN
+    -- Déterminer la période
+    v_periode := get_periode_journee(v_heure_session);
+    
+    -- Enregistrer la session
+    INSERT INTO suivi_ecriture 
+    (id_utilisateur, duree_minutes, date_session, heure_session, periode_journee)
+    VALUES 
+    (p_id_utilisateur, p_duree_minutes, CURRENT_DATE, v_heure_session, v_periode);
+    
+    RAISE NOTICE 'Session enregistrée pour utilisateur %: % minutes le % à % (période: %)', 
+        p_id_utilisateur, p_duree_minutes, CURRENT_DATE, v_heure_session, v_periode;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION enregistrer_session_auto()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_id_episode BIGINT;
+    v_id_scenariste BIGINT;
+    v_id_utilisateur BIGINT;
+BEGIN
+    -- Pour scenes : Trouver episode via sequence
+    IF TG_TABLE_NAME = 'scenes' THEN
+        SELECT id_episode INTO v_id_episode 
+        FROM sequences WHERE id_sequence = NEW.id_sequence;
+    ELSIF TG_TABLE_NAME = 'dialogues' THEN
+        SELECT seq.id_episode INTO v_id_episode 
+        FROM scenes s JOIN sequences seq ON s.id_sequence = seq.id_sequence 
+        WHERE s.id_scene = NEW.id_scene;
+    END IF;
+
+    -- Trouver un scenariste associé à l'épisode (prendre le premier pour simplicité)
+    SELECT id_scenariste INTO v_id_scenariste 
+    FROM episode_scenaristes WHERE id_episode = v_id_episode LIMIT 1;
+
+    -- Trouver id_utilisateur
+    SELECT id_utilisateur INTO v_id_utilisateur 
+    FROM scenaristes WHERE id_scenariste = v_id_scenariste;
+
+    IF v_id_utilisateur IS NOT NULL THEN
+        -- Enregistrer session (10-30 min aléatoire)
+        CALL enregistrer_session_connexion(v_id_utilisateur, (FLOOR(RANDOM() * 21) + 10)::INTEGER);
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_session_scene
+AFTER INSERT OR UPDATE ON scenes
+FOR EACH ROW EXECUTE FUNCTION enregistrer_session_auto();
+
+CREATE TRIGGER trigger_session_dialogue
+AFTER INSERT OR UPDATE ON dialogues
+FOR EACH ROW EXECUTE FUNCTION enregistrer_session_auto();
+
+-- Vérifiez le résultat
+SELECT 
+    id_suivi,
+    date_session,
+    heure_session,
+    periode_journee,
+    duree_minutes
+FROM suivi_ecriture 
+WHERE id_utilisateur = 4
+ORDER BY date_session DESC, heure_session DESC;
+
