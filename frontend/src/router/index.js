@@ -282,7 +282,13 @@ const routes = [
     name: 'profile',
     component: () => import('../components/Profile.vue')
   },
+  {
+    path: '/activities',
+    name: 'activities',
+    component: () => import('../components/Activities.vue')
+  },
 ]
+
 
 const router = createRouter({
   history: createWebHistory(),
