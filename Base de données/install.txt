@@ -1,0 +1,5 @@
+npm install
+npm install jspdf html2canvas
+npm install @fortawesome/fontawesome-free
+npm install postcss-nesting --save-dev
+npm install -D tailwindcss@^3.4.0 postcss@^8.4.0 autoprefixer@^10.4.0 daisyui@^4.12.10
