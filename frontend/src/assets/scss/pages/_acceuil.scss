@@ -1,14 +1,7 @@
-// =============================================
-// ACCUEIL SCÉNARISTE – VERSION CORRECTE & ÉQUILIBRÉE
-// Police Cinzel partout ≥ h3 | Tailles harmonisées
-// =============================================
-
 @import '../base/variables';
 
+/*RESET GLOBAL – EMPÊCHE TOUT DÉCALAGE*/
 
-// =============================================
-// RESET GLOBAL – EMPÊCHE TOUT DÉCALAGE
-// =============================================
 body, html {
   margin: 0 !important;
   padding: 0 !important;
@@ -22,62 +15,433 @@ body, html {
   padding: 0 !important;
   width: 100%;
   background: $color-background;
-  width: calc(100% - 220px); // Ajustement de la largeur
-  transition: margin-left $duration-slow cubic-bezier(0.4, 0, 0.2, 1),
-              width $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  display: flex;
+  position: relative;
+}
 
-  // Quand la sidebar est réduite
-  .sidebar.collapsed ~ & {
-    margin-left: 51px; // Largeur de la sidebar réduite
-    width: calc(100% - 51px);
+//  CONTENU PRINCIPAL – STRUCTURE OPTIMISÉE
+
+.main-content-container {
+  flex: 1;
+  margin-left: 280px; // Espace pour la sidebar gauche
+  transition: margin-left $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
+  
+  @media (max-width: 1400px) {
+    margin-left: 240px;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    margin-left: 0 !important;
   }
 }
 
-// =============================================
-// CONTENU PRINCIPAL – STRUCTURE OPTIMISÉE
-// =============================================
 .main-content-scenariste-Scenariste {
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 20px 50px 120px 50px; // 50px à gauche pour espace avec sidebar
   min-height: 100vh;
   box-sizing: border-box;
   width: 100%;
-  max-width: 1250px;
-  // AUGMENTER le padding-bottom pour compenser la navbar
-  padding-bottom: 120px; // ← Augmenté de 80px à 120px
+  max-width: calc(1250px - 50px);
+  padding-bottom: 120px;
 
   @media (max-width: $breakpoint-md) {
-    padding: 0 15px;
-    padding-bottom: 120px; // ← Même correction
+    padding: 0 15px 120px 15px;
   }
 
   @media (max-width: $breakpoint-sm) {
-    padding: 0 12px;
-    padding-bottom: 110px; // ← Légèrement réduit sur mobile si nécessaire
+    padding: 0 12px 110px 12px;
+  }
+}
+
+// SIDEBAR GAUCHE FIXE - STATISTIQUES & ACTIVITÉS
+
+.sidebar-left-fixed-Scenariste {
+  position: fixed;
+  top: 50px; // 50px de marge en haut
+  left: 0;
+  width: 280px;
+  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  z-index: $z-index-fixed - 1;
+  overflow-y: auto;
+  padding: $padding-lg;
+  background: transparent !important; // Pas de fond
+  box-sizing: border-box;
+  
+  // Suppression de tout background
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
+}
+
+// Styles des divs à l'intérieur de la sidebar (sans fond sauf si nécessaire)
+.personal-stats-compact-Scenariste,
+.recent-activity-compact-Scenariste,
+.personal-stat-card-compact-Scenariste {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin-bottom: $margin-lg;
+}
+
+// Exception: les cartes peuvent avoir un léger fond pour la lisibilité
+.personal-stat-card-compact-Scenariste {
+  background: rgba($color-white, 0.9) !important;
+  border: 1px solid rgba($color-border, 0.3) !important;
+  border-radius: $border-radius;
+  padding: $padding-md;
+  box-shadow: $shadow !important;
+}
+
+// =============================================
+// STATISTIQUES PERSONNELLES COMPACTES (SIDEBAR)
+// =============================================
+
+.personal-stats-compact-Scenariste {
+  margin-bottom: $margin-xl;
+  padding-bottom: $margin-lg;
+  border-bottom: 1px solid rgba($color-border, 0.3);
+}
+
+.section-title-compact-Scenariste {
+  font-size: $font-size-p1;
+  color: $color-text-primary;
+  margin-bottom: $margin-lg;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  font-weight: $font-weight-semibold;
+  @include typography-playfair-h4;
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p1;
+    background: rgba($color-primary, 0.1);
+    padding: $padding-xs;
+    border-radius: $border-radius-sm;
+  }
+}
+
+.personal-stats-grid-compact-Scenariste {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+}
+
+.stat-header-compact-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: $margin-md;
+  
+  i {
+    font-size: $font-size-p1;
+    color: $color-primary;
+    width: 32px;
+    height: 32px;
+    background: rgba($color-primary, 0.1);
+    border-radius: $border-radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  h4 {
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    margin: 0;
+    font-weight: $font-weight-semibold;
+    @include typography-cinzel-h4;
+  }
+}
+
+.stat-content-compact-Scenariste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $gap-md;
+}
+
+.stat-value-compact-Scenariste {
+  font-size: $font-size-h4;
+  font-weight: $font-weight-black;
+  color: $color-primary;
+  line-height: 1;
+  @include typography-cinzel-h4;
+}
+
+.progress-ring-compact-Scenariste {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  
+  svg {
+    transform: rotate(-90deg);
+  }
+  
+  circle:nth-child(1) {
+    fill: none;
+    stroke: rgba($color-border, 0.3);
+    stroke-width: 3;
+  }
+  
+  circle:nth-child(2) {
+    fill: none;
+    stroke: $color-success;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dasharray 1s ease;
   }
 }
 
 // =============================================
-// RESPONSIVE POUR LA SIDEBAR
+// ACTIVITÉS RÉCENTES COMPACTES (SIDEBAR)
 // =============================================
-@media (max-width: $breakpoint-lg) {
-  .app-wrapper-global {
-    margin-left: 0 !important;
-    width: 100% !important;
+
+.recent-activity-compact-Scenariste {
+  margin-top: $margin-lg;
+}
+
+.activity-header-compact-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  
+  .activity-title-compact-Scenariste {
+    font-size: $font-size-p1;
+    color: $color-text-primary;
+    margin: 0;
+    font-weight: $font-weight-semibold;
+    @include typography-playfair-h4;
+  }
+}
+
+.view-all-btn-compact-Scenariste {
+  background: none;
+  border: none;
+  color: $color-primary;
+  font-size: $font-size-p3;
+  cursor: pointer;
+  padding: $padding-xs;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    transform: translateX(2px);
+  }
+  
+  i {
+    font-size: $font-size-p2;
+  }
+}
+
+.activity-timeline-compact-Scenariste {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $color-border;
+  }
+}
+
+.activity-item-compact-Scenariste {
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-md;
+  margin-bottom: $margin-md;
+  position: relative;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.activity-icon-compact-Scenariste {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-p4;
+  flex-shrink: 0;
+  z-index: 1;
+  position: relative;
+  
+  // Couleurs par type d'activité
+  &.type-create {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border: 2px solid $color-success;
+  }
+  
+  &.type-edit {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border: 2px solid $color-primary;
+  }
+  
+  &.type-comment {
+    background: rgba($color-accent, 0.1);
+    color: $color-accent;
+    border: 2px solid $color-accent;
+  }
+  
+  &.type-status {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+    border: 2px solid $color-warning;
+  }
+  
+  &.type-collaboration {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+    border: 2px solid $color-info;
+  }
+}
+
+.activity-content-compact-Scenariste {
+  flex: 1;
+  padding-bottom: $padding-sm;
+}
+
+.activity-text-compact-Scenariste {
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  line-height: 1.4;
+  margin-bottom: $gap-xs;
+}
+
+.activity-time-compact-Scenariste {
+  font-size: $font-size-p5;
+  color: $color-text-muted;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &::before {
+    content: '🕒';
+    font-size: $font-size-p4;
+  }
+}
+
+.no-activities-compact-Scenariste {
+  text-align: center;
+  padding: $padding-lg 0;
+  color: $color-text-muted;
+  
+  i {
+    font-size: 1.5rem;
+    margin-bottom: $gap-sm;
+    opacity: 0.3;
+  }
+  
+  p {
+    font-size: $font-size-p4;
+    margin: 0;
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR LA SIDEBAR GAUCHE
+// =============================================
+
+@media (max-width: 1400px) {
+  .sidebar-left-fixed-Scenariste {
+    padding: $padding-md;
+  }
+  
+  .personal-stat-card-compact-Scenariste {
+    padding: $padding-sm;
+  }
+  
+  .stat-header-compact-Scenariste {
+    i {
+      width: 28px;
+      height: 28px;
+      font-size: $font-size-p3;
+    }
     
-    .sidebar.collapsed ~ & {
-      margin-left: 0 !important;
-      width: 100% !important;
+    h4 {
+      font-size: $font-size-p4;
     }
   }
   
-  .main-content-scenariste-Scenariste {
-    margin-left: 0;
-    padding: 0 15px;
+  .stat-value-compact-Scenariste {
+    font-size: $font-size-p1;
+  }
+  
+  .progress-ring-compact-Scenariste {
+    width: 40px;
+    height: 40px;
   }
 }
 
-// Le reste de votre code CSS existant reste inchangé...
+@media (max-width: $breakpoint-lg) {
+  .sidebar-left-fixed-Scenariste {
+    display: none;
+  }
+  
+  .main-content-container {
+    margin-left: 0 !important;
+  }
+  
+  .main-content-scenariste-Scenariste {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+// =============================================
+// SCROLLBAR PERSONNALISÉE POUR LA SIDEBAR
+// =============================================
+
+.sidebar-left-fixed-Scenariste {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-border, 0.1);
+    border-radius: $border-radius-pill;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-primary, 0.3);
+    border-radius: $border-radius-pill;
+    
+    &:hover {
+      background: rgba($color-primary, 0.5);
+    }
+  }
+}
+
+// =============================================
+// AJUSTEMENTS POUR LE CONTENU PRINCIPAL
+// =============================================
+
+// Le reste du CSS existant reste inchangé...
 .welcome-section-Scenariste h2,
 .projects-label-Scenariste,
 .movie-title-Scenariste,
@@ -91,22 +455,19 @@ body, html {
 
 // Tailles équilibrées
 .welcome-section-Scenariste h2 {
-  // font-size: $font-size-h2; // 24px avec vos nouvelles variables
   margin-bottom: $gap-sm;
   color: $color-text-primary;
   font-weight: $font-weight-black;
   @include typography-playfair-h2-italic;
-
 }
 
 .welcome-section-Scenariste p {
-  font-size: $font-size-p4; // 24px avec vos nouvelles variables
+  font-size: $font-size-p4;
   color: $color-text-primary;
   font-weight: $font-weight-regular;
 }
 
 .projects-label-Scenariste {
-  // font-size: $font-size-h3; // 18px avec vos nouvelles variables
   margin: 0;
   color: $color-text-primary;
   font-weight: $font-weight-medium;
@@ -114,11 +475,10 @@ body, html {
 }
 
 .movie-title-Scenariste {
-  font-size: $font-size-h3; // 16px avec vos nouvelles variables
+  font-size: $font-size-h3;
   font-weight: $font-weight-semibold;
   margin: 0 0 $gap-xs 0;
   color: $color-text-primary;
-  // @include typography-playfair-h3;
 }
 
 // =============================================
@@ -184,7 +544,7 @@ body, html {
   padding: $padding-sm $padding-md $padding-sm $padding-md;
   border-radius: $border-radius-sm;
   border: 1px solid $color-border;
-  background: $color-background-alt; // Fond changé comme demandé
+  background: $color-background-alt;
   font-size: $font-size-p2;
   box-shadow: $shadow;
   transition: all $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
@@ -232,7 +592,7 @@ body, html {
 
 .clear-search-btn-Scenariste {
   position: absolute;
-  right: 45px; // Positionné à gauche du bouton toggle
+  right: 45px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -339,11 +699,10 @@ body, html {
   @include typography-playfair-h4;
   color: $color-background;
 
-
   &:hover {
     background: lighten($color-background-dark, 5%);
     transform: translateY(-1px);
-    box-shadow: $shadow-md;
+    box-shadow: $shadow;
   }
 }
 
@@ -360,7 +719,7 @@ body, html {
 .movie-card-Scenariste {
   background: $color-background-alt;
   border-radius: $border-radius-xs;
-  box-shadow: $shadow-md;
+  box-shadow: $shadow;
   overflow: hidden;
   transition: $transition;
   position: relative;
@@ -558,7 +917,6 @@ body, html {
   height: 520px;
 }
 
-
 .modal-header-Scenariste {
   display: flex;
   justify-content: space-between;
@@ -736,7 +1094,6 @@ nav.fixed-bottom,
   }
 }
 
-
 // =============================================
 // BOUTONS CARTES PROJETS - STYLE ÉLÉGANT
 // =============================================
@@ -777,7 +1134,7 @@ nav.fixed-bottom,
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: $shadow-md;
+    box-shadow: $shadow;
     
     .icon, i {
       transform: scale(1.1);
@@ -1046,5 +1403,2439 @@ nav.fixed-bottom,
   .save-btn-Scenariste {
     width: 100%;
     min-width: auto;
+  }
+}
+
+// =============================================
+// SECTION STATISTIQUES
+// =============================================
+.stats-section-Scenariste {
+  margin: $margin-xl 0;
+}
+
+.stats-grid-Scenariste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: $gap-lg;
+  margin-bottom: $margin-xl;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+    gap: $gap-md;
+  }
+}
+
+.stat-card-Scenariste {
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  display: flex;
+  align-items: center;
+  gap: $gap-lg;
+  transition: $transition;
+  box-shadow: $shadow;
+  border: 1px solid rgba($color-border, 0.3);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+
+  // Couleurs par type de carte
+  &.stat-projects {
+    border-left: 4px solid $color-primary;
+  }
+
+  &.stat-scenes {
+    border-left: 4px solid $color-accent;
+  }
+
+  &.stat-collaborations {
+    border-left: 4px solid $color-success;
+  }
+
+  &.stat-deadlines {
+    border-left: 4px solid $color-warning;
+  }
+}
+
+.stat-icon-Scenariste {
+  width: 56px;
+  height: 56px;
+  border-radius: $border-radius;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-h3;
+  flex-shrink: 0;
+
+  // Couleurs d'icônes cohérentes
+  .stat-projects & {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+
+  .stat-scenes & {
+    background: rgba($color-accent, 0.1);
+    color: $color-accent;
+  }
+
+  .stat-collaborations & {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  .stat-deadlines & {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+  }
+}
+
+.stat-content-Scenariste {
+  flex: 1;
+}
+
+.stat-value-Scenariste {
+  font-size: $font-size-h1;
+  font-weight: $font-weight-black;
+  color: $color-text-primary;
+  line-height: 1;
+  margin-bottom: $gap-xs;
+  @include typography-cinzel-h2;
+}
+
+.stat-label-Scenariste {
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  margin-bottom: $gap-xs;
+  @include typography-cinzel-h4;
+}
+
+.stat-trend-Scenariste {
+  font-size: $font-size-p4;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  color: $color-text-muted;
+  margin-top: $gap-sm;
+
+  .fas {
+    font-size: $font-size-p3;
+  }
+
+  .stat-projects &,
+  .stat-scenes & {
+    .fa-arrow-up {
+      color: $color-success;
+    }
+
+    .fa-arrow-down {
+      color: $color-error;
+    }
+  }
+}
+
+.stat-subtext-Scenariste {
+  font-size: $font-size-p4;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+}
+
+.stat-warning-Scenariste {
+  font-size: $font-size-p4;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  color: $color-warning;
+  margin-top: $gap-sm;
+
+  .fa-exclamation-circle {
+    font-size: $font-size-p3;
+  }
+}
+
+// Le reste du CSS existant reste inchangé...
+// (Conserver toutes les autres sections du fichier original)
+
+// =============================================
+// SECTION DERNIÈRES ACTIVITÉS
+// =============================================
+.recent-activity-Scenariste {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  padding: $padding-xl;
+  margin: $margin-xl 0;
+  box-shadow: $shadow;
+}
+
+.activity-header-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
+}
+
+.activity-title-Scenariste {
+  font-size: $font-size-h3;
+  color: $color-text-primary;
+  margin: 0;
+  @include typography-playfair-h3;
+}
+
+.view-all-btn-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  background: none;
+  border: none;
+  color: $color-primary;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    transform: translateX(4px);
+  }
+
+  .fa-chevron-right {
+    font-size: $font-size-p3;
+    transition: transform $transition-fast;
+  }
+
+  &:hover .fa-chevron-right {
+    transform: translateX(2px);
+  }
+}
+
+.activity-timeline-Scenariste {
+  position: relative;
+  padding-left: 40px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $color-border;
+  }
+}
+
+.activity-item-Scenariste {
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-lg;
+  margin-bottom: $margin-lg;
+  position: relative;
+}
+
+.activity-icon-Scenariste {
+  position: absolute;
+  left: -40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-p1;
+  z-index: 1;
+
+  // Couleurs par type d'activité
+  &.type-create {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border: 2px solid $color-success;
+  }
+
+  &.type-edit {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border: 2px solid $color-primary;
+  }
+
+  &.type-comment {
+    background: rgba($color-accent, 0.1);
+    color: $color-accent;
+    border: 2px solid $color-accent;
+  }
+
+  &.type-status {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+    border: 2px solid $color-warning;
+  }
+
+  &.type-collaboration {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+    border: 2px solid $color-info;
+  }
+}
+
+.activity-content-Scenariste {
+  flex: 1;
+  background: $color-white;
+  padding: $padding-md;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+}
+
+.activity-text-Scenariste {
+  font-size: $font-size-p2;
+  color: $color-text-primary;
+  margin-bottom: $gap-sm;
+  line-height: $line-height-base;
+}
+
+.activity-meta-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-lg;
+  font-size: $font-size-p4;
+  color: $color-text-muted;
+}
+
+.activity-time-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  &::before {
+    content: '🕒';
+    font-size: $font-size-p3;
+  }
+}
+
+.activity-project-Scenariste {
+  color: $color-primary;
+  cursor: pointer;
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    text-decoration: underline;
+  }
+}
+
+.no-activities-Scenariste {
+  text-align: center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+
+  .fa-history {
+    font-size: 3rem;
+    margin-bottom: $margin-md;
+    opacity: 0.3;
+  }
+
+  p {
+    font-size: $font-size-p2;
+    margin: 0;
+  }
+}
+
+// =============================================
+// SECTION PROJETS PRIORITAIRES
+// =============================================
+.priority-projects-Scenariste {
+  margin: $margin-xl 0;
+}
+
+.priority-title-Scenariste {
+  font-size: $font-size-h3;
+  color: $color-text-primary;
+  margin-bottom: $margin-lg;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  @include typography-playfair-h3;
+
+  .fa-star {
+    color: $color-warning;
+    font-size: $font-size-h4;
+  }
+}
+
+.priority-grid-Scenariste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $gap-lg;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.priority-card-Scenariste {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  padding: $padding-xl;
+  box-shadow: $shadow-lg;
+  transition: $transition;
+  border: 1px solid transparent;
+
+  // Couleurs de bordure par priorité
+  &.priority-high {
+    border-color: $color-error;
+
+    .priority-badge-Scenariste {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+    }
+  }
+
+  &.priority-medium {
+    border-color: $color-warning;
+
+    .priority-badge-Scenariste {
+      background: rgba($color-warning, 0.1);
+      color: $color-warning;
+    }
+  }
+
+  &.priority-low {
+    border-color: $color-success;
+
+    .priority-badge-Scenariste {
+      background: rgba($color-success, 0.1);
+      color: $color-success;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-xl;
+  }
+}
+
+.priority-header-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $margin-md;
+}
+
+.priority-badge-Scenariste {
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.priority-actions-Scenariste {
+  display: flex;
+  gap: $gap-xs;
+
+  button {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    padding: $padding-xs;
+    border-radius: $border-radius-sm;
+    transition: $transition-fast;
+
+    &:hover {
+      background: $color-surface-hover;
+      color: $color-text-primary;
+    }
+  }
+}
+
+.priority-project-title-Scenariste {
+  font-size: $font-size-h4;
+  color: $color-text-primary;
+  margin: $margin-md 0;
+  line-height: 1.3;
+  @include typography-cinzel-h4;
+}
+
+.priority-progress-Scenariste {
+  margin: $margin-lg 0;
+}
+
+.progress-bar-Scenariste {
+  height: 8px;
+  background: rgba($color-border, 0.5);
+  border-radius: $border-radius-pill;
+  overflow: hidden;
+  margin-bottom: $gap-sm;
+}
+
+.progress-fill-Scenariste {
+  height: 100%;
+  background: linear-gradient(90deg, $color-primary, $color-primary-light);
+  border-radius: $border-radius-pill;
+  transition: width 1s ease;
+}
+
+.progress-text-Scenariste {
+  font-size: $font-size-p4;
+  color: $color-text-muted;
+  display: block;
+  text-align: right;
+}
+
+.priority-deadline-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  font-size: $font-size-p3;
+  color: $color-text-secondary;
+  padding: $padding-sm;
+  background: rgba($color-border, 0.1);
+  border-radius: $border-radius-sm;
+  margin: $margin-md 0;
+
+  &.urgent {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    font-weight: $font-weight-semibold;
+  }
+
+  .fa-clock {
+    font-size: $font-size-p2;
+  }
+}
+
+.priority-actions-bottom-Scenariste {
+  margin-top: $margin-lg;
+}
+
+.btn-work-Scenariste {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  width: 100%;
+  padding: $padding-md;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-primary;
+  border: none;
+  border-radius: $border-radius;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover {
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+    color: $color-white;
+  }
+
+  .fa-pencil-alt {
+    font-size: $font-size-p1;
+  }
+}
+
+// =============================================
+// RESPONSIVE ADAPTATIONS
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .stats-grid-Scenariste {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .priority-grid-Scenariste {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .stats-grid-Scenariste {
+    grid-template-columns: 1fr;
+  }
+
+  .priority-grid-Scenariste {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-timeline-Scenariste {
+    padding-left: 30px;
+  }
+
+  .activity-icon-Scenariste {
+    left: -30px;
+    width: 32px;
+    height: 32px;
+    font-size: $font-size-p3;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .recent-activity-Scenariste,
+  .priority-projects-Scenariste,
+  .stats-section-Scenariste {
+    padding: $padding-md;
+  }
+
+  .activity-header-Scenariste {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+
+  .view-all-btn-Scenariste {
+    align-self: flex-end;
+  }
+
+  .activity-meta-Scenariste {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-sm;
+  }
+}
+
+// =============================================
+// RÉSULTATS DE RECHERCHE GLOBALE - DÉTAILS
+// =============================================
+
+.search-results-group-Scenariste {
+  margin-bottom: $margin-xl;
+
+  h4 {
+    font-size: $font-size-h4;
+    color: $color-text-primary;
+    margin-bottom: $margin-md;
+    padding-bottom: $padding-sm;
+    border-bottom: 1px solid $color-border;
+    @include typography-cinzel-h4;
+  }
+}
+
+.search-result-item-Scenariste {
+  background: $color-white;
+  border-radius: $border-radius;
+  margin-bottom: $gap-sm;
+  border: 1px solid $color-border;
+  overflow: hidden;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-md;
+  }
+}
+
+.result-header-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-md $padding-lg;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-primary, 0.03);
+  }
+}
+
+.result-main-info-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  flex: 1;
+  flex-wrap: wrap;
+
+  @media (max-width: $breakpoint-sm) {
+    gap: $gap-sm;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.result-icon-Scenariste {
+  font-size: $font-size-p1;
+  color: $color-primary;
+  width: 24px;
+  text-align: center;
+}
+
+.result-title-Scenariste {
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  flex: 1;
+  min-width: 200px;
+}
+
+.result-type-Scenariste,
+.result-statut-Scenariste {
+  font-size: $font-size-p4;
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-pill;
+  font-weight: $font-weight-medium;
+}
+
+.result-type-Scenariste {
+  background: rgba($color-accent, 0.1);
+  color: $color-accent;
+  border: 1px solid rgba($color-accent, 0.2);
+}
+
+.result-statut-Scenariste {
+  &.statut-en-cours { background: rgba($color-primary, 0.1); color: $color-primary; border: 1px solid rgba($color-primary, 0.2); }
+  &.statut-termine { background: rgba($color-success, 0.1); color: $color-success; border: 1px solid rgba($color-success, 0.2); }
+  &.statut-attente { background: rgba($color-warning, 0.1); color: $color-warning; border: 1px solid rgba($color-warning, 0.2); }
+  &.statut-annule { background: rgba($color-error, 0.1); color: $color-error; border: 1px solid rgba($color-error, 0.2); }
+  &.statut-planifie { background: rgba($color-info, 0.1); color: $color-info; border: 1px solid rgba($color-info, 0.2); }
+}
+
+.result-actions-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.toggle-icon-Scenariste {
+  color: $color-text-muted;
+  transition: transform $transition-fast;
+  margin-left: $gap-md;
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.action-btn-Scenariste {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $padding-xs;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+
+  &:hover {
+    background: $color-surface-hover;
+    color: $color-text-primary;
+  }
+
+  .fa-external-link-alt {
+    font-size: $font-size-p3;
+  }
+}
+
+// =============================================
+// DÉTAILS DÉPLIANTS DES PROJETS
+// =============================================
+
+.project-details-Scenariste {
+  background: $color-background-alt;
+  padding: $padding-lg;
+  border-top: 1px solid $color-border;
+  animation: slideDown 0.3s ease-out;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.content-section-Scenariste {
+  margin-bottom: $margin-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h5 {
+    font-size: $font-size-p2;
+    color: $color-text-secondary;
+    margin-bottom: $margin-md;
+    padding-bottom: $padding-xs;
+    border-bottom: 1px dashed $color-border;
+    @include typography-cinzel-h4;
+  }
+}
+
+.content-item-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  padding: $padding-sm $padding-md;
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  margin-bottom: $gap-sm;
+  cursor: pointer;
+  transition: $transition-fast;
+  border: 1px solid transparent;
+
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.03);
+    transform: translateX(4px);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  i {
+    color: $color-primary;
+    font-size: $font-size-p2;
+    width: 20px;
+  }
+
+  span {
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    flex: 1;
+  }
+}
+
+.loading-content-Scenariste {
+  text-align: center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+  font-style: italic;
+  background: rgba($color-border, 0.1);
+  border-radius: $border-radius;
+}
+
+// =============================================
+// MESSAGE AUCUN RÉSULTAT
+// =============================================
+.no-results-Scenariste {
+  text-align: center;
+  padding: $padding-xl $padding-lg;
+  color: $color-text-muted;
+  font-size: $font-size-p2;
+  background: rgba($color-border, 0.1);
+  border-radius: $border-radius;
+  border: 1px dashed $color-border;
+
+  strong {
+    color: $color-text-secondary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// =============================================
+// BOUTON FERMER RÉSULTATS
+// =============================================
+.close-results-btn-Scenariste {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $padding-xs;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+}
+
+// =============================================
+// RESPONSIVE RECHERCHE
+// =============================================
+@media (max-width: $breakpoint-md) {
+  .search-results-header-Scenariste {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+
+    h3 {
+      font-size: $font-size-h4;
+    }
+  }
+
+  .result-main-info-Scenariste {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-sm;
+  }
+
+  .result-title-Scenariste {
+    min-width: auto;
+  }
+
+  .result-type-Scenariste,
+  .result-statut-Scenariste {
+    font-size: $font-size-p4;
+    padding: 2px 8px;
+  }
+
+  .result-actions-Scenariste {
+    align-self: flex-end;
+    margin-top: $gap-sm;
+  }
+
+  .project-details-Scenariste {
+    padding: $padding-md;
+  }
+
+  .content-item-Scenariste {
+    padding: $padding-sm;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-sm;
+
+    span {
+      font-size: $font-size-p4;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .global-search-results-Scenariste {
+    padding: $padding-md;
+  }
+
+  .search-result-item-Scenariste {
+    margin-bottom: $gap-md;
+  }
+
+  .result-header-Scenariste {
+    padding: $padding-sm;
+  }
+
+  .result-main-info-Scenariste {
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// ANIMATIONS POUR LE DÉPLIEMENT
+// =============================================
+.project-details-Scenariste {
+  overflow: hidden;
+  
+  .content-section-Scenariste {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInUp 0.4s ease forwards;
+    
+    @for $i from 1 through 5 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// STATISTIQUES PERSONNELLES - VERSION ÉLÉGANTE
+// =============================================
+
+.personal-stats-Scenariste {
+  background: linear-gradient(135deg, rgba($color-primary-light, 0.05) 0%, rgba($color-accent-light, 0.05) 100%);
+  border-radius: $border-radius-lg;
+  padding: $padding-xl;
+  margin: $margin-xl 0;
+  border: 1px solid rgba($color-primary, 0.1);
+  box-shadow: $shadow-md;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $color-primary, $color-accent);
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+  }
+}
+
+.section-title-Scenariste {
+  font-size: $font-size-h3;
+  color: $color-text-primary;
+  margin-bottom: $margin-xl;
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  @include typography-playfair-h3;
+
+  .fa-chart-line {
+    color: $color-primary;
+    font-size: $font-size-h4;
+    background: rgba($color-primary, 0.1);
+    padding: $padding-sm;
+    border-radius: $border-radius;
+  }
+}
+
+.personal-stats-grid-Scenariste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $gap-lg;
+  margin-top: $margin-lg;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.personal-stat-card-Scenariste {
+  background: $color-white;
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  box-shadow: $shadow;
+  border: 1px solid $color-border;
+  transition: all $transition;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+    border-color: $color-primary;
+  }
+
+  // Couleurs d'accent par carte
+  &:nth-child(1) {
+    border-top: 4px solid $color-success;
+
+    .stat-header-Scenariste i {
+      color: $color-success;
+      background: rgba($color-success, 0.1);
+    }
+  }
+
+  &:nth-child(2) {
+    border-top: 4px solid $color-primary;
+
+    .stat-header-Scenariste i {
+      color: $color-primary;
+      background: rgba($color-primary, 0.1);
+    }
+  }
+
+  &:nth-child(3) {
+    border-top: 4px solid $color-accent;
+
+    .stat-header-Scenariste i {
+      color: $color-accent;
+      background: rgba($color-accent, 0.1);
+    }
+  }
+
+  &:nth-child(4) {
+    border-top: 4px solid $color-warning;
+
+    .stat-header-Scenariste i {
+      color: $color-warning;
+      background: rgba($color-warning, 0.1);
+    }
+  }
+}
+
+.stat-header-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid rgba($color-border, 0.5);
+
+  i {
+    font-size: $font-size-h4;
+    width: 48px;
+    height: 48px;
+    border-radius: $border-radius;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  h4 {
+    font-size: $font-size-h4;
+    color: $color-text-primary;
+    margin: 0;
+    flex: 1;
+    @include typography-cinzel-h4;
+  }
+}
+
+.stat-content-Scenariste {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+// =============================================
+// CARTE PRODUCTIVITÉ
+// =============================================
+
+.stat-value-Scenariste {
+  font-size: $font-size-h1;
+  font-weight: $font-weight-black;
+  color: $color-text-primary;
+  line-height: 1;
+  margin-bottom: $gap-xs;
+  @include typography-cinzel-h2;
+
+  .personal-stat-card-Scenariste:nth-child(1) & {
+    color: $color-success;
+  }
+
+  .personal-stat-card-Scenariste:nth-child(2) & {
+    color: $color-primary;
+  }
+
+  .personal-stat-card-Scenariste:nth-child(3) & {
+    color: $color-accent;
+  }
+
+  .personal-stat-card-Scenariste:nth-child(4) & {
+    color: $color-warning;
+  }
+}
+
+.stat-label-Scenariste {
+  font-size: $font-size-p3;
+  color: $color-text-secondary;
+  margin-bottom: $margin-md;
+  font-weight: $font-weight-medium;
+}
+
+.progress-ring-Scenariste {
+  margin: $margin-md auto;
+  position: relative;
+  width: 60px;
+  height: 60px;
+
+  svg {
+    transform: rotate(-90deg);
+  }
+
+  circle {
+    transition: stroke-dasharray 1s ease;
+  }
+
+  // Cercle coloré selon la valeur
+  .personal-stat-card-Scenariste:nth-child(1) & circle:nth-child(2) {
+    stroke: $color-success;
+  }
+
+  .personal-stat-card-Scenariste:nth-child(2) & circle:nth-child(2) {
+    stroke: $color-primary;
+  }
+}
+
+// =============================================
+// TENDANCES ET INDICATEURS
+// =============================================
+
+.stat-trend-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  font-size: $font-size-p4;
+  margin-top: $margin-md;
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-pill;
+  width: fit-content;
+
+  &.up {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+
+    i {
+      color: $color-success;
+    }
+  }
+
+  &.down {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    i {
+      color: $color-error;
+    }
+  }
+
+  i {
+    font-size: $font-size-p3;
+  }
+}
+
+.time-details-Scenariste {
+  margin-top: $margin-md;
+  background: rgba($color-border, 0.05);
+  border-radius: $border-radius-sm;
+  padding: $padding-md;
+}
+
+.time-item-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-xs 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba($color-border, 0.3);
+  }
+}
+
+.time-label-Scenariste {
+  font-size: $font-size-p4;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.time-value-Scenariste {
+  font-size: $font-size-p3;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+// =============================================
+// CARTE OBJECTIFS
+// =============================================
+
+.goal-item-Scenariste {
+  &:not(:last-child) {
+    margin-bottom: $margin-lg;
+  }
+}
+
+.goal-header-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-sm;
+}
+
+.goal-title-Scenariste {
+  font-size: $font-size-p3;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  flex: 1;
+}
+
+.goal-progress-Scenariste {
+  font-size: $font-size-p4;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+  background: rgba($color-border, 0.2);
+  padding: 2px 8px;
+  border-radius: $border-radius-pill;
+}
+
+.goal-bar-Scenariste {
+  height: 8px;
+  background: rgba($color-border, 0.3);
+  border-radius: $border-radius-pill;
+  overflow: hidden;
+  position: relative;
+}
+
+.goal-fill-Scenariste {
+  height: 100%;
+  border-radius: $border-radius-pill;
+  transition: width 1s ease-in-out;
+  position: relative;
+  overflow: hidden;
+
+  // Couleur par objectif
+  .goal-item-Scenariste:nth-child(1) & {
+    background: linear-gradient(90deg, $color-primary, $color-primary-light);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(white, 0.4) 50%, 
+        transparent 100%);
+      animation: shimmer 2s infinite;
+    }
+  }
+
+  .goal-item-Scenariste:nth-child(2) & {
+    background: linear-gradient(90deg, $color-accent, $color-accent-light);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(white, 0.4) 50%, 
+        transparent 100%);
+      animation: shimmer 2s infinite 0.5s;
+    }
+  }
+}
+
+// Animation de scintillement
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba($color-primary, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba($color-primary, 0);
+  }
+}
+
+.personal-stat-card-Scenariste {
+  &:hover .stat-value-Scenariste {
+    animation: pulse-glow 2s infinite;
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR STATS PERSONNELLES - CORRIGÉ
+// =============================================
+
+@media (max-width: $breakpoint-lg) {
+  .personal-stats-Scenariste {
+    padding: $padding-lg;
+  }
+
+  .personal-stats-grid-Scenariste {
+    gap: $gap-md;
+  }
+
+  .personal-stat-card-Scenariste {
+    padding: $padding-md;
+  }
+
+  .stat-value-Scenariste {
+    font-size: $font-size-h2;
+  }
+
+  .stat-header-Scenariste {
+    i {
+      width: 40px;
+      height: 40px;
+      font-size: $font-size-h4;
+    }
+
+    h4 {
+      font-size: $font-size-p1;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .personal-stats-Scenariste {
+    padding: $padding-md;
+    margin: $margin-lg 0;
+  }
+
+  .section-title-Scenariste {
+    font-size: $font-size-h4;
+    margin-bottom: $margin-lg;
+  }
+
+  .personal-stats-grid-Scenariste {
+    gap: $gap-sm;
+  }
+
+  .personal-stat-card-Scenariste {
+    padding: $padding-md $padding-sm;
+  }
+
+  .time-details-Scenariste {
+    padding: $padding-sm;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .personal-stats-Scenariste {
+    border-radius: $border-radius;
+  }
+
+  .stat-header-Scenariste {
+    flex-direction: column;
+    text-align: center;
+    gap: $gap-sm;
+    margin-bottom: $margin-md;
+
+    i {
+      width: 36px;
+      height: 36px;
+      font-size: $font-size-h4; // Ajouté pour conserver la taille
+    }
+    
+    h4 {
+      font-size: $font-size-p2; // Ajustement pour mobile
+    }
+  }
+
+  .goal-header-Scenariste {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+
+  .goal-progress-Scenariste {
+    align-self: flex-start;
+  }
+  
+  // Ajouts pour améliorer l'affichage mobile
+  .personal-stats-grid-Scenariste {
+    gap: $gap-md;
+  }
+  
+  .personal-stat-card-Scenariste {
+    padding: $padding-lg $padding-md;
+  }
+  
+  .stat-value-Scenariste {
+    font-size: $font-size-h3;
+  }
+  
+  .section-title-Scenariste {
+    font-size: $font-size-h4;
+    flex-direction: column;
+    text-align: center;
+    gap: $gap-sm;
+    
+    .fa-chart-line {
+      margin-bottom: $gap-sm;
+    }
+  }
+}
+
+// =============================================
+// INDICATEUR VISUEL DE PROGRESSION
+// =============================================
+
+.progress-ring-Scenariste::after {
+  content: attr(data-progress) '%';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: $font-size-p4;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+// =============================================
+// TOOLTIP POUR LES CARTES
+// =============================================
+
+.personal-stat-card-Scenariste {
+  position: relative;
+
+  &::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: $color-text-primary;
+    color: $color-white;
+    padding: $gap-xs $padding-sm;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-p4;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all $transition-fast;
+    z-index: $z-index-tooltip;
+    pointer-events: none;
+    box-shadow: $shadow-md;
+  }
+
+  &:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-12px);
+  }
+}
+
+/* Styles pour les nouvelles fonctionnalités */
+
+.advanced-stats-Scenariste {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: white;
+}
+
+.advanced-stats-Scenariste .section-title-Scenariste {
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.advanced-stats-grid-Scenariste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.advanced-stat-card-Scenariste {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.advanced-stat-card-Scenariste:hover {
+  transform: translateY(-5px);
+}
+
+.advanced-stat-card-Scenariste.habit-card {
+  background: var(--couleur-fond, #f0f8ff);
+}
+
+.advanced-stat-card-Scenariste .stat-header-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.advanced-stat-card-Scenariste .stat-header-Scenariste i {
+  font-size: 1.5rem;
+  color: #667eea;
+}
+
+.habit-card .stat-header-Scenariste i {
+  color: #333;
+}
+
+.advanced-stat-card-Scenariste .stat-header-Scenariste h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+/* Styles pour le suivi du temps */
+.time-stats-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.time-stat-item-Scenariste {
+  text-align: center;
+}
+
+.time-stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.time-stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.time-progress-Scenariste {
+  margin-top: 1rem;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  transition: width 0.5s ease;
+}
+
+/* Styles pour le compteur de mots */
+.word-stats-Scenariste {
+  text-align: center;
+}
+
+.word-stat-main {
+  margin-bottom: 1.5rem;
+}
+
+.word-count-large {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2196F3;
+  line-height: 1;
+}
+
+.word-count-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.word-stat-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.word-stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.word-stat-label {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.word-stat-value {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Styles pour la conversion en pages */
+.page-stats-Scenariste {
+  text-align: center;
+}
+
+.page-stat-main {
+  margin-bottom: 1.5rem;
+}
+
+.page-count {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #9C27B0;
+  line-height: 1;
+}
+
+.page-count-label {
+  font-size: 1rem;
+  color: #666;
+  margin: 0.25rem 0;
+}
+
+.page-ratio {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.page-stat-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.page-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.page-stat-item i {
+  font-size: 1.2rem;
+  color: #9C27B0;
+}
+
+.page-stat-info {
+  flex: 1;
+  text-align: left;
+}
+
+.page-stat-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.page-stat-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.page-goal {
+  margin-top: 1rem;
+}
+
+.goal-progress {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.goal-label {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.goal-bar {
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.goal-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #9C27B0, #E91E63);
+  transition: width 0.5s ease;
+}
+
+.goal-percentage {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #9C27B0;
+  font-weight: bold;
+}
+
+/* Styles pour les habitudes d'écriture */
+.habit-analysis-Scenariste {
+  text-align: center;
+}
+
+.habit-period {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+}
+
+.period-icon-large i {
+  font-size: 2.5rem;
+  color: #FF9800;
+}
+
+.period-info {
+  flex: 1;
+  text-align: left;
+}
+
+.period-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.period-desc {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.period-distribution {
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.period-distribution h5 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.period-item {
+  margin-bottom: 0.75rem;
+}
+
+.period-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.period-label i {
+  color: #FF9800;
+}
+
+.period-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #777;
+  margin-bottom: 0.25rem;
+}
+
+.period-bar {
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.period-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF9800, #FFB74D);
+  transition: width 0.5s ease;
+}
+
+.personal-advice {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  text-align: left;
+}
+
+.personal-advice h5 {
+  color: #333;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.personal-advice ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.personal-advice li {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+/* Analyse par type de contenu */
+.content-type-analysis {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.content-type-analysis h4 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.content-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.content-type-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.content-type-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.content-type-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.content-type-header i {
+  font-size: 1.2rem;
+  color: #667eea;
+}
+
+.content-type-header h5 {
+  margin: 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.content-type-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.type-stat {
+  text-align: center;
+}
+
+.type-stat-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.type-stat-label {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .advanced-stats-grid-Scenariste {
+    grid-template-columns: 1fr;
+  }
+  
+  .word-stat-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .content-type-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .habit-period {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .period-info {
+    text-align: center;
+  }
+}
+
+// =============================================
+// SIDEBAR DROITE FIXE - STATISTIQUES & ACTIVITÉS
+// =============================================
+
+.sidebar-right-fixed-Scenariste {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 100vh;
+  background: $color-background-alt;
+  border-left: 1px solid $color-border;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
+  z-index: $z-index-fixed - 1;
+  overflow-y: auto;
+  padding: $padding-lg;
+  transform: translateX(100%);
+  transition: transform $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  
+  // S'assurer que la sidebar est visible
+  &.visible {
+    transform: translateX(0);
+  }
+  
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none; // Cacher sur les petits écrans
+  }
+}
+
+// S'assurer que le contenu principal n'est pas caché par la sidebar
+.app-wrapper-global {
+  padding-right: 0 !important;
+  transition: margin-right $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
+  
+  .sidebar-right-fixed-Scenariste.visible ~ & {
+    margin-right: 280px;
+    
+    @media (max-width: 1400px) {
+      margin-right: 240px;
+    }
+  }
+}
+
+// =============================================
+// STATISTIQUES PERSONNELLES COMPACTES
+// =============================================
+
+.personal-stats-compact-Scenariste {
+  margin-bottom: $margin-xl;
+  padding-bottom: $margin-lg;
+  border-bottom: 1px solid rgba($color-border, 0.5);
+}
+
+.section-title-compact-Scenariste {
+  font-size: $font-size-p1;
+  color: $color-text-primary;
+  margin-bottom: $margin-lg;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  font-weight: $font-weight-semibold;
+  @include typography-playfair-h4;
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p1;
+    background: rgba($color-primary, 0.1);
+    padding: $padding-xs;
+    border-radius: $border-radius-sm;
+  }
+}
+
+.personal-stats-grid-compact-Scenariste {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+}
+
+.personal-stat-card-compact-Scenariste {
+  background: $color-white;
+  border-radius: $border-radius;
+  padding: $padding-md;
+  box-shadow: $shadow;
+  border: 1px solid $color-border;
+  transition: $transition-fast;
+  
+  &:hover {
+    box-shadow: $shadow;
+    border-color: $color-primary;
+  }
+}
+
+.stat-header-compact-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: $margin-md;
+  
+  i {
+    font-size: $font-size-p1;
+    color: $color-primary;
+    width: 32px;
+    height: 32px;
+    background: rgba($color-primary, 0.1);
+    border-radius: $border-radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  h4 {
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    margin: 0;
+    font-weight: $font-weight-semibold;
+    @include typography-cinzel-h4;
+  }
+}
+
+.stat-content-compact-Scenariste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $gap-md;
+}
+
+.stat-value-compact-Scenariste {
+  font-size: $font-size-h4;
+  font-weight: $font-weight-black;
+  color: $color-primary;
+  line-height: 1;
+  @include typography-cinzel-h4;
+}
+
+.progress-ring-compact-Scenariste {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  
+  svg {
+    transform: rotate(-90deg);
+  }
+  
+  circle:nth-child(1) {
+    fill: none;
+    stroke: rgba($color-border, 0.3);
+    stroke-width: 3;
+  }
+  
+  circle:nth-child(2) {
+    fill: none;
+    stroke: $color-success;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dasharray 1s ease;
+  }
+}
+
+// =============================================
+// ACTIVITÉS RÉCENTES COMPACTES
+// =============================================
+
+.recent-activity-compact-Scenariste {
+  margin-top: $margin-lg;
+}
+
+.activity-header-compact-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  
+  .activity-title-compact-Scenariste {
+    font-size: $font-size-p1;
+    color: $color-text-primary;
+    margin: 0;
+    font-weight: $font-weight-semibold;
+    @include typography-playfair-h4;
+  }
+}
+
+.view-all-btn-compact-Scenariste {
+  background: none;
+  border: none;
+  color: $color-primary;
+  font-size: $font-size-p3;
+  cursor: pointer;
+  padding: $padding-xs;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    transform: translateX(2px);
+  }
+  
+  i {
+    font-size: $font-size-p2;
+  }
+}
+
+.activity-timeline-compact-Scenariste {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $color-border;
+  }
+}
+
+.activity-item-compact-Scenariste {
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-md;
+  margin-bottom: $margin-md;
+  position: relative;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.activity-icon-compact-Scenariste {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-p4;
+  flex-shrink: 0;
+  z-index: 1;
+  position: relative;
+  
+  // Couleurs par type d'activité
+  &.type-create {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border: 2px solid $color-success;
+  }
+  
+  &.type-edit {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border: 2px solid $color-primary;
+  }
+  
+  &.type-comment {
+    background: rgba($color-accent, 0.1);
+    color: $color-accent;
+    border: 2px solid $color-accent;
+  }
+  
+  &.type-status {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+    border: 2px solid $color-warning;
+  }
+  
+  &.type-collaboration {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+    border: 2px solid $color-info;
+  }
+}
+
+.activity-content-compact-Scenariste {
+  flex: 1;
+  padding-bottom: $padding-sm;
+}
+
+.activity-text-compact-Scenariste {
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  line-height: 1.4;
+  margin-bottom: $gap-xs;
+}
+
+.activity-time-compact-Scenariste {
+  font-size: $font-size-p5;
+  color: $color-text-muted;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &::before {
+    content: '🕒';
+    font-size: $font-size-p4;
+  }
+}
+
+.no-activities-compact-Scenariste {
+  text-align: center;
+  padding: $padding-lg 0;
+  color: $color-text-muted;
+  
+  i {
+    font-size: 1.5rem;
+    margin-bottom: $gap-sm;
+    opacity: 0.3;
+  }
+  
+  p {
+    font-size: $font-size-p4;
+    margin: 0;
+  }
+}
+
+// =============================================
+// BOUTON TOGGLE POUR AFFICHER/MASQUER LA SIDEBAR
+// =============================================
+
+.sidebar-toggle-btn-Scenariste {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: $color-primary;
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-p2;
+  z-index: $z-index-fixed;
+  box-shadow: $shadow;
+  transition: $transition;
+  
+  &:hover {
+    background: $color-primary-dark;
+    transform: scale(1.05);
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none; // Cacher le bouton toggle sur mobile
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR LA SIDEBAR DROITE
+// =============================================
+
+@media (max-width: 1400px) {
+  .sidebar-right-fixed-Scenariste {
+    padding: $padding-md;
+  }
+  
+  .personal-stat-card-compact-Scenariste {
+    padding: $padding-sm;
+  }
+  
+  .stat-header-compact-Scenariste {
+    i {
+      width: 28px;
+      height: 28px;
+      font-size: $font-size-p3;
+    }
+    
+    h4 {
+      font-size: $font-size-p4;
+    }
+  }
+  
+  .stat-value-compact-Scenariste {
+    font-size: $font-size-p1;
+  }
+  
+  .progress-ring-compact-Scenariste {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .sidebar-right-fixed-Scenariste {
+    display: none;
+  }
+  
+  .app-wrapper-global {
+    margin-right: 0 !important;
+  }
+}
+
+// =============================================
+// ANIMATIONS POUR LA SIDEBAR
+// =============================================
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.sidebar-right-fixed-Scenariste {
+  animation: slideInRight 0.3s ease-out forwards;
+  
+  &.closing {
+    animation: slideOutRight 0.3s ease-out forwards;
+  }
+}
+
+// =============================================
+// SCROLLBAR PERSONNALISÉE POUR LA SIDEBAR
+// =============================================
+
+.sidebar-right-fixed-Scenariste {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-border, 0.1);
+    border-radius: $border-radius-pill;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-primary, 0.3);
+    border-radius: $border-radius-pill;
+    
+    &:hover {
+      background: rgba($color-primary, 0.5);
+    }
+  }
+}
+
+// =============================================
+// AJUSTEMENTS POUR LE CONTENU PRINCIPAL
+// =============================================
+
+.main-content-scenariste-Scenariste {
+  transition: padding-right $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
+  
+  .sidebar-right-fixed-Scenariste.visible ~ & {
+    @media (min-width: $breakpoint-lg + 1) {
+      padding-right: 300px; // Compenser la sidebar
+    }
   }
 }
