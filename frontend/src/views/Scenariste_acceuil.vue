@@ -1,64 +1,64 @@
 <template>
   <div class="app-wrapper-global">
+    <!-- SIDEBAR GAUCHE FIXE -->
+    <aside class="sidebar-left-fixed-Scenariste">
+      <!-- Statistiques Personnelles compactes -->
+      <div class="personal-stats-compact-Scenariste">
+        <h3 class="section-title-compact-Scenariste">
+          <i class="fas fa-chart-line"></i> Vos statistiques
+        </h3>
+        
+        <div class="personal-stats-grid-compact-Scenariste">
+          <!-- Productivité hebdomadaire -->
+          <div class="personal-stat-card-compact-Scenariste">
+            <div class="stat-header-compact-Scenariste">
+              <i class="fas fa-bolt"></i>
+              <h4>Productivité</h4>
+            </div>
+            <div class="stat-content-compact-Scenariste">
+              <div class="stat-value-compact-Scenariste">{{ userStats.productivite || 0 }}%</div>
+              <div class="progress-ring-compact-Scenariste" :style="{ '--progress': userStats.productivite || 0 }">
+                <svg width="50" height="50">
+                  <circle cx="25" cy="25" r="20" fill="none" stroke="#e0e0e0" stroke-width="3"/>
+                  <circle cx="25" cy="25" r="20" fill="none" stroke="#4CAF50" stroke-width="3" 
+                          :stroke-dasharray="`${(userStats.productivite || 0) * 1.256} 125.6`" stroke-dashoffset="0"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Dernières activités compacte -->
+      <div class="recent-activity-compact-Scenariste">
+        <div class="activity-header-compact-Scenariste">
+          <h3 class="activity-title-compact-Scenariste">Dernières activités</h3>
+          <button class="view-all-btn-compact-Scenariste" @click="viewAllActivities">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        
+        <div class="activity-timeline-compact-Scenariste">
+          <div v-for="activity in recentActivities.slice(0, 3)" :key="activity.id" class="activity-item-compact-Scenariste">
+            <div class="activity-icon-compact-Scenariste" :class="getActivityTypeClass(activity.type)">
+              <i :class="getActivityIcon(activity.type)"></i>
+            </div>
+            <div class="activity-content-compact-Scenariste">
+              <div class="activity-text-compact-Scenariste">{{ truncateText(activity.description, 40) }}</div>
+              <div class="activity-time-compact-Scenariste">{{ formatActivityTime(activity.date) }}</div>
+            </div>
+          </div>
+          
+          <div v-if="recentActivities.length === 0" class="no-activities-compact-Scenariste">
+            <i class="fas fa-history"></i>
+            <p>Aucune activité</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENU PRINCIPAL -->
     <div class="main-content-container">
-      <!-- SIDEBAR DROITE FIXE -->
-      <aside class="sidebar-right-fixed-Scenariste">
-        <!-- Statistiques Personnelles compactes -->
-        <div class="personal-stats-compact-Scenariste">
-          <h3 class="section-title-compact-Scenariste">
-            <i class="fas fa-chart-line"></i> Vos statistiques
-          </h3>
-          
-          <div class="personal-stats-grid-compact-Scenariste">
-            <!-- Productivité hebdomadaire -->
-            <div class="personal-stat-card-compact-Scenariste">
-              <div class="stat-header-compact-Scenariste">
-                <i class="fas fa-bolt"></i>
-                <h4>Productivité</h4>
-              </div>
-              <div class="stat-content-compact-Scenariste">
-                <div class="stat-value-compact-Scenariste">{{ userStats.productivite || 0 }}%</div>
-                <div class="progress-ring-compact-Scenariste" :style="{ '--progress': userStats.productivite || 0 }">
-                  <svg width="50" height="50">
-                    <circle cx="25" cy="25" r="20" fill="none" stroke="#e0e0e0" stroke-width="3"/>
-                    <circle cx="25" cy="25" r="20" fill="none" stroke="#4CAF50" stroke-width="3" 
-                            :stroke-dasharray="`${(userStats.productivite || 0) * 1.256} 125.6`" stroke-dashoffset="0"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section Dernières activités compacte -->
-        <div class="recent-activity-compact-Scenariste">
-          <div class="activity-header-compact-Scenariste">
-            <h3 class="activity-title-compact-Scenariste">Dernières activités</h3>
-            <button class="view-all-btn-compact-Scenariste" @click="viewAllActivities">
-              <i class="fas fa-chevron-right"></i>
-            </button>
-          </div>
-          
-          <div class="activity-timeline-compact-Scenariste">
-            <div v-for="activity in recentActivities.slice(0, 3)" :key="activity.id" class="activity-item-compact-Scenariste">
-              <div class="activity-icon-compact-Scenariste" :class="getActivityTypeClass(activity.type)">
-                <i :class="getActivityIcon(activity.type)"></i>
-              </div>
-              <div class="activity-content-compact-Scenariste">
-                <div class="activity-text-compact-Scenariste">{{ truncateText(activity.description, 40) }}</div>
-                <div class="activity-time-compact-Scenariste">{{ formatActivityTime(activity.date) }}</div>
-              </div>
-            </div>
-            
-            <div v-if="recentActivities.length === 0" class="no-activities-compact-Scenariste">
-              <i class="fas fa-history"></i>
-              <p>Aucune activité</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- CONTENU PRINCIPAL -->
       <main class="main-content-scenariste-Scenariste">
         <!-- Header avec bienvenue à gauche et barre de recherche à droite -->
         <div class="header-section-Scenariste">
@@ -430,7 +430,6 @@
   </div>
 </template>
 
- 
 <script>
 import axios from 'axios';
 
@@ -1589,5 +1588,4 @@ export default {
   }
 };
 </script>
-
 
