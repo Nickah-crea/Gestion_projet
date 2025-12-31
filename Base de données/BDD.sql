@@ -1,7 +1,3 @@
-CREATE DATABASE gestion_projet_film;
-
-\c gestion_projet_film;
-
 CREATE TABLE utilisateurs (
     id_utilisateur BIGSERIAL PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
@@ -164,7 +160,6 @@ INSERT INTO statuts_episode (code, nom_statuts_episode, description, ordre_affic
 UPDATE statuts_episode SET 
     nom_statuts_episode = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nom_statuts_episode, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A'),
     description = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(description, 'é', 'e'), 'è', 'e'), 'ê', 'e'), 'à', 'a'), 'À', 'A');
-
 
 
 CREATE TABLE episodes (
@@ -703,28 +698,28 @@ CREATE INDEX idx_planning_tournage_scene ON planning_tournage(id_scene);
 CREATE INDEX idx_planning_tournage_statut ON planning_tournage(id_statut_planning);
 
 
-CREATE VIEW v_planning_global AS
-SELECT 
-    pt.date_tournage,
-    pt.heure_debut,
-    pt.heure_fin,
-    s.titre as scene_titre,
-    seq.titre as sequence_titre,
-    e.titre as episode_titre,
-    p.titre as projet_titre,
-    sp.nom_statut,
-    pt.lieu_tournage,
-    l.nom_lieu,
-    pl.nom as nom_plateau
-FROM planning_tournage pt
-JOIN scenes s ON pt.id_scene = s.id_scene
-JOIN sequences seq ON s.id_sequence = seq.id_sequence  -- Lien via sequences
-JOIN episodes e ON seq.id_episode = e.id_episode       -- Puis vers episodes
-JOIN projets p ON e.id_projet = p.id_projet
-JOIN statuts_planning sp ON pt.id_statut_planning = sp.id_statut_planning
-LEFT JOIN lieux l ON pt.id_lieu = l.id_lieu
-LEFT JOIN plateaux pl ON pt.id_plateau = pl.id_plateau
-ORDER BY pt.date_tournage, pt.heure_debut;
+-- CREATE VIEW v_planning_global AS
+-- SELECT 
+--     pt.date_tournage,
+--     pt.heure_debut,
+--     pt.heure_fin,
+--     s.titre as scene_titre,
+--     seq.titre as sequence_titre,
+--     e.titre as episode_titre,
+--     p.titre as projet_titre,
+--     sp.nom_statut,
+--     pt.lieu_tournage,
+--     l.nom_lieu,
+--     pl.nom as nom_plateau
+-- FROM planning_tournage pt
+-- JOIN scenes s ON pt.id_scene = s.id_scene
+-- JOIN sequences seq ON s.id_sequence = seq.id_sequence  -- Lien via sequences
+-- JOIN episodes e ON seq.id_episode = e.id_episode       -- Puis vers episodes
+-- JOIN projets p ON e.id_projet = p.id_projet
+-- JOIN statuts_planning sp ON pt.id_statut_planning = sp.id_statut_planning
+-- LEFT JOIN lieux l ON pt.id_lieu = l.id_lieu
+-- LEFT JOIN plateaux pl ON pt.id_plateau = pl.id_plateau
+-- ORDER BY pt.date_tournage, pt.heure_debut;
 
 
 
@@ -760,12 +755,6 @@ LEFT JOIN scenes s ON cs.id_scene = s.id_scene
 LEFT JOIN planning_tournage pt ON s.id_scene = pt.id_scene
 ORDER BY c.nom_comedien, dc.date;
 
-
--- Ajout de données de test pour le planning
-INSERT INTO planning_tournage (id_scene, date_tournage, heure_debut, heure_fin, id_statut_planning, id_lieu, id_plateau, description) VALUES
-(1, '2024-03-20', '09:00', '12:00', 1, 1, 1, 'Tournage scène d''ouverture'),
-(2, '2024-03-20', '14:00', '17:00', 1, 2, 2, 'Tournage scène dialogue'),
-(3, '2024-03-21', '10:00', '13:00', 2, 1, 1, 'Tournage scène extérieure confirmé');
 
 -- Vue améliorée pour le planning
 CREATE OR REPLACE VIEW v_planning_complet AS
@@ -1002,7 +991,7 @@ CREATE INDEX idx_raccords_scene_source ON raccords(scene_source_id);
 CREATE INDEX idx_raccords_scene_cible ON raccords(scene_cible_id);
 CREATE INDEX idx_raccords_type ON raccords(id_type_raccord);
 CREATE INDEX idx_raccord_images_raccord ON raccord_images(id_raccord);
-CREATE INDEX idx_verification_raccord ON verification_raccords(id_raccord);
+-- CREATE INDEX idx_verification_raccord ON verification_raccords(id_raccord);
 
 ALTER TABLE raccords DROP CONSTRAINT IF EXISTS unique_raccord_different_scenes;
 
@@ -1220,3 +1209,65 @@ FROM suivi_ecriture
 WHERE id_utilisateur = 4
 ORDER BY date_session DESC, heure_session DESC;
 
+
+
+-- Script de correction pour la base de données
+-- Exécutez CE SCRIPT EN PREMIER avant de redémarrer l'application
+
+-- 1. Créer les scénaristes manquants pour les utilisateurs SCENARISTE
+INSERT INTO scenaristes (id_utilisateur, specialite, biographie)
+SELECT 
+    u.id_utilisateur,
+    'Général',
+    'Scénariste'
+FROM utilisateurs u
+WHERE u.role = 'SCENARISTE'
+AND u.id_utilisateur NOT IN (SELECT id_utilisateur FROM scenaristes);
+
+-- 2. Créer les réalisateurs manquants pour les utilisateurs REALISATEUR
+INSERT INTO realisateurs (id_utilisateur, specialite, biographie)
+SELECT 
+    u.id_utilisateur,
+    'Général',
+    'Réalisateur'
+FROM utilisateurs u
+WHERE u.role = 'REALISATEUR'
+AND u.id_utilisateur NOT IN (SELECT id_utilisateur FROM realisateurs);
+
+-- 3. Créer un trigger pour automatiser la création future
+CREATE OR REPLACE FUNCTION create_scenariste_realsateur_on_user_insert()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.role = 'SCENARISTE' THEN
+        INSERT INTO scenaristes (id_utilisateur, specialite, biographie)
+        VALUES (NEW.id_utilisateur, 'Général', 'Nouveau scénariste');
+    ELSIF NEW.role = 'REALISATEUR' THEN
+        INSERT INTO realisateurs (id_utilisateur, specialite, biographie)
+        VALUES (NEW.id_utilisateur, 'Général', 'Nouveau réalisateur');
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Supprimer le trigger existant s'il existe
+DROP TRIGGER IF EXISTS trigger_create_scenariste_realsateur ON utilisateurs;
+
+-- Créer le nouveau trigger
+CREATE TRIGGER trigger_create_scenariste_realsateur
+AFTER INSERT ON utilisateurs
+FOR EACH ROW EXECUTE FUNCTION create_scenariste_realsateur_on_user_insert();
+
+-- 4. Vérification
+SELECT 
+    u.id_utilisateur,
+    u.nom,
+    u.role,
+    CASE 
+        WHEN u.role = 'SCENARISTE' AND s.id_scenariste IS NULL THEN 'MANQUANT'
+        WHEN u.role = 'REALISATEUR' AND r.id_realisateur IS NULL THEN 'MANQUANT'
+        ELSE 'OK'
+    END as statut
+FROM utilisateurs u
+LEFT JOIN scenaristes s ON u.id_utilisateur = s.id_utilisateur
+LEFT JOIN realisateurs r ON u.id_utilisateur = r.id_utilisateur
+WHERE u.role IN ('SCENARISTE', 'REALISATEUR');
