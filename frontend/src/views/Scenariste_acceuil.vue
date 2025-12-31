@@ -1,5 +1,67 @@
 <template>
   <div class="app-wrapper-global accueil-scenariste">
+    <!-- SIDEBAR GAUCHE - Productivité et Dernières activités -->
+    <div class="sidebar-left-fixed-Scenariste">
+      <!-- Section Productivité -->
+      <div class="personal-stats-compact-Scenariste">
+        <h3 class="section-title-compact-Scenariste">
+          <i class="fas fa-chart-line"></i> Productivité
+        </h3>
+        
+        <div class="personal-stats-grid-compact-Scenariste">
+          <div class="personal-stat-card-compact-Scenariste">
+            <div class="stat-header-compact-Scenariste">
+              <i class="fas fa-bolt"></i>
+              <h4>Productivité</h4>
+            </div>
+            <div class="stat-content-compact-Scenariste">
+              <div class="stat-value-compact-Scenariste">{{ userStats.productivite || 0 }}%</div>
+              <div class="progress-ring-compact-Scenariste" :style="{ '--progress': userStats.productivite || 0 }">
+                <svg width="50" height="50">
+                  <circle cx="25" cy="25" r="20" fill="none" stroke="#e0e0e0" stroke-width="3"/>
+                  <circle cx="25" cy="25" r="20" fill="none" stroke="#4CAF50" stroke-width="3" 
+                          :stroke-dasharray="`${(userStats.productivite || 0) * 1.26} 126`" stroke-dashoffset="0"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-subtext-Scenariste">Cette semaine</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Dernières activités -->
+      <div class="recent-activity-compact-Scenariste">
+        <div class="activity-header-compact-Scenariste">
+          <h3 class="activity-title-compact-Scenariste">Dernières activités</h3>
+          <button class="view-all-btn-compact-Scenariste" @click="viewAllActivities" title="Voir tout">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        
+        <div class="activity-timeline-compact-Scenariste">
+          <div v-for="activity in recentActivities" :key="activity.id" class="activity-item-compact-Scenariste">
+            <div class="activity-icon-compact-Scenariste" :class="getActivityTypeClass(activity.type)">
+              <i :class="getActivityIcon(activity.type)"></i>
+            </div>
+            <div class="activity-content-compact-Scenariste">
+              <div class="activity-text-compact-Scenariste">
+                {{ truncateText(activity.description, 50) }}
+              </div>
+              <div class="activity-time-compact-Scenariste">
+                {{ formatActivityTime(activity.date) }}
+              </div>
+            </div>
+          </div>
+          
+          <div v-if="recentActivities.length === 0" class="no-activities-compact-Scenariste">
+            <i class="fas fa-history"></i>
+            <p>Aucune activité récente</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENU PRINCIPAL -->
     <div class="main-content-container">
       <main class="main-content-scenariste-Scenariste">
         <!-- Header avec bienvenue à gauche et barre de recherche à droite -->
@@ -30,35 +92,7 @@
           </div>
         </div>
 
-        <!-- Nouvelle section : Statistiques Personnelles -->
-        <div class="personal-stats-Scenariste">
-          <h3 class="section-title-Scenariste">
-            <i class="fas fa-chart-line"></i> Vos statistiques
-          </h3>
-          
-          <div class="personal-stats-grid-Scenariste">
-            <!-- Productivité hebdomadaire -->
-            <div class="personal-stat-card-Scenariste">
-              <div class="stat-header-Scenariste">
-                <i class="fas fa-bolt"></i>
-                <h4>Productivité</h4>
-              </div>
-              <div class="stat-content-Scenariste">
-                <div class="stat-value-Scenariste">{{ userStats.productivite || 0 }}%</div>
-                <div class="stat-label-Scenariste">Cette semaine</div>
-                <div class="progress-ring-Scenariste" :style="{ '--progress': userStats.productivite || 0 }">
-                  <svg width="60" height="60">
-                    <circle cx="30" cy="30" r="25" fill="none" stroke="#e0e0e0" stroke-width="4"/>
-                    <circle cx="30" cy="30" r="25" fill="none" stroke="#4CAF50" stroke-width="4" 
-                            :stroke-dasharray="`${(userStats.productivite || 0) * 1.57} 157`" stroke-dashoffset="0"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section Statistiques -->
+        <!-- Section Statistiques (RESTE dans le contenu principal) -->
         <div class="stats-section-Scenariste">
           <div class="stats-grid-Scenariste">
             <!-- Carte projets actifs -->
@@ -116,38 +150,6 @@
                   {{ stats.urgentCount || 0 }} urgentes
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section Dernières activités -->
-        <div class="recent-activity-Scenariste">
-          <div class="activity-header-Scenariste">
-            <h3 class="activity-title-Scenariste">Dernières activités</h3>
-            <button class="view-all-btn-Scenariste" @click="viewAllActivities">
-              Voir tout <i class="fas fa-chevron-right"></i>
-            </button>
-          </div>
-          
-          <div class="activity-timeline-Scenariste">
-            <div v-for="activity in recentActivities" :key="activity.id" class="activity-item-Scenariste">
-              <div class="activity-icon-Scenariste" :class="getActivityTypeClass(activity.type)">
-                <i :class="getActivityIcon(activity.type)"></i>
-              </div>
-              <div class="activity-content-Scenariste">
-                <div class="activity-text-Scenariste">{{ activity.description }}</div>
-                <div class="activity-meta-Scenariste">
-                  <span class="activity-time-Scenariste">{{ formatActivityTime(activity.date) }}</span>
-                  <span class="activity-project-Scenariste" @click="goToProject(activity.projetId)">
-                    {{ activity.projetTitre }}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div v-if="recentActivities.length === 0" class="no-activities-Scenariste">
-              <i class="fas fa-history"></i>
-              <p>Aucune activité récente</p>
             </div>
           </div>
         </div>
@@ -1549,21 +1551,96 @@ export default {
       return cleaned.split(' ').filter(word => word.length > 0).length;
     },
     
-    // Icônes et classes
+    // REMPLACEZ la méthode actuelle par celle-ci :
     getActivityIcon(type) {
       const icons = {
+        // Création
+        'scene_created': 'fas fa-plus-circle',
+        'dialogue_created': 'fas fa-plus-circle',
+        'project_created': 'fas fa-plus-circle',
+        'episode_created': 'fas fa-plus-circle',
+        
+        // Modification
+        'scene_modified': 'fas fa-marker',
+        'scene_edit': 'fas fa-marker',
+        
+        // Suppression (si vous avez ce type)
+        'scene_deleted': 'fas fa-trash',
+        'project_deleted': 'fas fa-trash',
+        
+        // Commentaires
+        'comment': 'fas fa-comment',
+        
+        // Statut
+        'status': 'fas fa-sync',
+        'status_changed': 'fas fa-sync',
+        
+        // Collaboration
+        'collaboration': 'fas fa-user-plus',
+        'user_added': 'fas fa-user-plus',
+        
+        // Par défaut
         'create': 'fas fa-plus-circle',
         'edit': 'fas fa-marker',
-        'comment': 'fas fa-comment',
-        'status': 'fas fa-sync',
-        'collaboration': 'fas fa-user-plus'
+        'delete': 'fas fa-trash'
       };
+      
+      // Retourne l'icône spécifique ou une icône par défaut
       return icons[type] || 'fas fa-circle';
     },
     
-    getActivityTypeClass(type) {
-      return `type-${type}`;
-    },
+  getActivityTypeClass(type) {
+    // Classes CSS pour le style de l'icône (couleur de fond)
+    const typeClasses = {
+      // Création - vert
+      'scene_created': 'type-create',
+      'dialogue_created': 'type-create',
+      'project_created': 'type-create',
+      'episode_created': 'type-create',
+      'create': 'type-create',
+      
+      // Modification - bleu
+      'scene_modified': 'type-edit',
+      'scene_edit': 'type-edit',
+      'edit': 'type-edit',
+      
+      // Suppression - rouge
+      'scene_deleted': 'type-delete',
+      'project_deleted': 'type-delete',
+      'delete': 'type-delete',
+      
+      // Commentaires - orange
+      'comment': 'type-comment',
+      
+      // Statut - violet
+      'status': 'type-status',
+      'status_changed': 'type-status',
+      
+      // Collaboration - turquoise
+      'collaboration': 'type-collaboration',
+      'user_added': 'type-collaboration'
+    };
+    
+    return typeClasses[type] || 'type-default';
+  },
+
+  getActivityTypeLabel(type) {
+    const labels = {
+      'scene_created': 'Créé',
+      'dialogue_created': 'Créé',
+      'project_created': 'Créé',
+      'episode_created': 'Créé',
+      'scene_modified': 'Modifié',
+      'scene_edit': 'Modifié',
+      'scene_deleted': 'Supprimé',
+      'project_deleted': 'Supprimé',
+      'comment': 'Commentaire',
+      'status': 'Statut',
+      'collaboration': 'Collaboration'
+    };
+    
+    return labels[type] || 'Activité';
+  },
     
     getStatutClass(statutNom) {
       const statutClasses = {
