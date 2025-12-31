@@ -1,63 +1,5 @@
 <template>
-  <div class="app-wrapper-global">
-    <!-- SIDEBAR GAUCHE FIXE -->
-    <aside class="sidebar-left-fixed-Scenariste">
-      <!-- Statistiques Personnelles compactes -->
-      <div class="personal-stats-compact-Scenariste">
-        <h3 class="section-title-compact-Scenariste">
-          <i class="fas fa-chart-line"></i> Vos statistiques
-        </h3>
-        
-        <div class="personal-stats-grid-compact-Scenariste">
-          <!-- Productivité hebdomadaire -->
-          <div class="personal-stat-card-compact-Scenariste">
-            <div class="stat-header-compact-Scenariste">
-              <i class="fas fa-bolt"></i>
-              <h4>Productivité</h4>
-            </div>
-            <div class="stat-content-compact-Scenariste">
-              <div class="stat-value-compact-Scenariste">{{ userStats.productivite || 0 }}%</div>
-              <div class="progress-ring-compact-Scenariste" :style="{ '--progress': userStats.productivite || 0 }">
-                <svg width="50" height="50">
-                  <circle cx="25" cy="25" r="20" fill="none" stroke="#e0e0e0" stroke-width="3"/>
-                  <circle cx="25" cy="25" r="20" fill="none" stroke="#4CAF50" stroke-width="3" 
-                          :stroke-dasharray="`${(userStats.productivite || 0) * 1.256} 125.6`" stroke-dashoffset="0"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section Dernières activités compacte -->
-      <div class="recent-activity-compact-Scenariste">
-        <div class="activity-header-compact-Scenariste">
-          <h3 class="activity-title-compact-Scenariste">Dernières activités</h3>
-          <button class="view-all-btn-compact-Scenariste" @click="viewAllActivities">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-        
-        <div class="activity-timeline-compact-Scenariste">
-          <div v-for="activity in recentActivities.slice(0, 3)" :key="activity.id" class="activity-item-compact-Scenariste">
-            <div class="activity-icon-compact-Scenariste" :class="getActivityTypeClass(activity.type)">
-              <i :class="getActivityIcon(activity.type)"></i>
-            </div>
-            <div class="activity-content-compact-Scenariste">
-              <div class="activity-text-compact-Scenariste">{{ truncateText(activity.description, 40) }}</div>
-              <div class="activity-time-compact-Scenariste">{{ formatActivityTime(activity.date) }}</div>
-            </div>
-          </div>
-          
-          <div v-if="recentActivities.length === 0" class="no-activities-compact-Scenariste">
-            <i class="fas fa-history"></i>
-            <p>Aucune activité</p>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- CONTENU PRINCIPAL -->
+  <div class="app-wrapper-global accueil-scenariste">
     <div class="main-content-container">
       <main class="main-content-scenariste-Scenariste">
         <!-- Header avec bienvenue à gauche et barre de recherche à droite -->
@@ -88,7 +30,35 @@
           </div>
         </div>
 
-        <!-- Section Statistiques principales -->
+        <!-- Nouvelle section : Statistiques Personnelles -->
+        <div class="personal-stats-Scenariste">
+          <h3 class="section-title-Scenariste">
+            <i class="fas fa-chart-line"></i> Vos statistiques
+          </h3>
+          
+          <div class="personal-stats-grid-Scenariste">
+            <!-- Productivité hebdomadaire -->
+            <div class="personal-stat-card-Scenariste">
+              <div class="stat-header-Scenariste">
+                <i class="fas fa-bolt"></i>
+                <h4>Productivité</h4>
+              </div>
+              <div class="stat-content-Scenariste">
+                <div class="stat-value-Scenariste">{{ userStats.productivite || 0 }}%</div>
+                <div class="stat-label-Scenariste">Cette semaine</div>
+                <div class="progress-ring-Scenariste" :style="{ '--progress': userStats.productivite || 0 }">
+                  <svg width="60" height="60">
+                    <circle cx="30" cy="30" r="25" fill="none" stroke="#e0e0e0" stroke-width="4"/>
+                    <circle cx="30" cy="30" r="25" fill="none" stroke="#4CAF50" stroke-width="4" 
+                            :stroke-dasharray="`${(userStats.productivite || 0) * 1.57} 157`" stroke-dashoffset="0"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Statistiques -->
         <div class="stats-section-Scenariste">
           <div class="stats-grid-Scenariste">
             <!-- Carte projets actifs -->
@@ -150,7 +120,39 @@
           </div>
         </div>
 
-        <!-- Filtres avec la phrase "Les projets existants" -->
+        <!-- Section Dernières activités -->
+        <div class="recent-activity-Scenariste">
+          <div class="activity-header-Scenariste">
+            <h3 class="activity-title-Scenariste">Dernières activités</h3>
+            <button class="view-all-btn-Scenariste" @click="viewAllActivities">
+              Voir tout <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          
+          <div class="activity-timeline-Scenariste">
+            <div v-for="activity in recentActivities" :key="activity.id" class="activity-item-Scenariste">
+              <div class="activity-icon-Scenariste" :class="getActivityTypeClass(activity.type)">
+                <i :class="getActivityIcon(activity.type)"></i>
+              </div>
+              <div class="activity-content-Scenariste">
+                <div class="activity-text-Scenariste">{{ activity.description }}</div>
+                <div class="activity-meta-Scenariste">
+                  <span class="activity-time-Scenariste">{{ formatActivityTime(activity.date) }}</span>
+                  <span class="activity-project-Scenariste" @click="goToProject(activity.projetId)">
+                    {{ activity.projetTitre }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div v-if="recentActivities.length === 0" class="no-activities-Scenariste">
+              <i class="fas fa-history"></i>
+              <p>Aucune activité récente</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtres restants avec la phrase "Les projets existants" à gauche -->
         <div class="filters-section-Scenariste">
           <div class="filters-row-Scenariste">
             <h3 class="projects-label-Scenariste">Les projets existants</h3>
@@ -177,7 +179,7 @@
                   <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.nomStatutsProjet">{{ statut.nomStatutsProjet }}</option>
                 </select>
               </div>
-              <!-- Bouton Nouveau Projet -->
+              <!-- Bouton centré -->
               <div class="add-project-center-Scenariste">
                 <button class="add-project-btn-scenariste" @click="goToAddProject">
                   <i class="fas fa-plus-circle icon-Scenariste"></i> 
@@ -317,7 +319,7 @@
               <div class="movie-synopsis" v-if="project.synopsis">
                 <p>{{ truncateText(project.synopsis, 120) }}</p>
               </div>
-                                  
+                            
               <!-- Type et Date côte à côte avec séparateur (version compacte) -->
               <div class="movie-meta-Scenariste">
                 <i class="fas fa-film"></i><span>{{ project.genreNom }}</span>
@@ -634,18 +636,76 @@ export default {
     // =============================================
     // GESTION UTILISATEUR
     // =============================================
-    
+    getUserId() {
+  // Essayez plusieurs propriétés
+  const user = this.user;
+  
+  if (!user) {
+    console.warn("User non défini");
+    return 4; // ID de test par défaut
+  }
+  
+  // Cherchez l'ID dans différentes propriétés
+  const possibleIds = [
+    user.id_utilisateur,
+    user.id,
+    user.userId,
+    user.ID,
+    user.user_id
+  ];
+  
+  for (const id of possibleIds) {
+    if (id && !isNaN(id)) {
+      console.log("ID trouvé:", id);
+      return parseInt(id);
+    }
+  }
+  
+  console.warn("Aucun ID trouvé, utilisation par défaut (4)");
+  return 4; // ID par défaut pour test
+},
+
     loadUser() {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        this.user = JSON.parse(userStr);
-        if (this.user.role !== 'SCENARISTE' && this.user.role !== 'REALISATEUR') {
-          this.$router.push('/accueil');
-        }
-      } else {
-        this.$router.push('/');
+  const userStr = localStorage.getItem('user');
+  console.log("Raw user from localStorage:", userStr);
+  
+  if (userStr) {
+    try {
+      this.user = JSON.parse(userStr);
+      console.log("Parsed user object:", this.user);
+      
+      // DEBUG: Vérifiez la structure
+      console.log("User keys:", Object.keys(this.user));
+      console.log("User id_utilisateur:", this.user.id_utilisateur);
+      console.log("User id:", this.user.id);
+      
+      // Essayez différentes propriétés
+      if (!this.user.id_utilisateur) {
+        // Essayez d'autres noms de propriétés courantes
+        this.user.id_utilisateur = this.user.id || this.user.userId || this.user.ID;
       }
-    },
+      
+      console.log("Final user ID for API:", this.user.id_utilisateur);
+      
+      if (!this.user.role) {
+        console.error("Role non défini dans l'utilisateur");
+        this.$router.push('/');
+        return;
+      }
+      
+      if (this.user.role !== 'SCENARISTE' && this.user.role !== 'REALISATEUR') {
+        this.$router.push('/accueil');
+      }
+    } catch (error) {
+      console.error("Erreur parsing user:", error);
+      localStorage.removeItem('user');
+      this.$router.push('/');
+    }
+  } else {
+    console.log("Pas d'utilisateur en localStorage, redirection");
+    this.$router.push('/');
+  }
+},
     
     toggleProfileMenu() {
       this.showProfileMenu = !this.showProfileMenu;
@@ -1002,31 +1062,38 @@ export default {
     // =============================================
     
     async loadStats() {
-      try {
-        const response = await axios.get('/api/scenariste/scenariste/stats', {
-          params: { userId: this.user.id_utilisateur }
-        });
-        
-        if (response.data && typeof response.data === 'object') {
-          this.stats = {
-            projetsActifs: response.data.projetsActifs || 0,
-            projetsVariation: response.data.projetsVariation || 0,
-            scenesEcrites: response.data.scenesEcrites || 0,
-            scenesVariation: response.data.scenesVariation || 0,
-            collaborations: response.data.collaborations || 0,
-            realisateursActifs: response.data.realisateursActifs || 0,
-            echeancesProches: response.data.echeancesProches || 0,
-            urgentCount: response.data.urgentCount || 0,
-            tempsEcriture: response.data.tempsEcriture || '0h 00mn'
-          };
-        } else {
-          this.calculateLocalStats();
-        }
-      } catch (error) {
-        console.error('Erreur chargement stats générales:', error);
-        this.calculateLocalStats();
-      }
-    },
+  try {
+    console.log("🔍 DEBUG: Chargement stats générales pour userId:", this.user?.id_utilisateur);
+    
+    const userId = this.getUserId();
+    const response = await axios.get('/api/scenariste/stats', {
+      params: { userId: userId }
+    });
+    
+    console.log("📊 DEBUG: Réponse API stats générales:", response.data);
+    
+    if (response.data && typeof response.data === 'object') {
+      this.stats = {
+        projetsActifs: response.data.projetsActifs || 0,
+        projetsVariation: response.data.projetsVariation || 0,
+        scenesEcrites: response.data.scenesEcrites || 0,
+        scenesVariation: response.data.scenesVariation || 0,
+        collaborations: response.data.collaborations || 0,
+        realisateursActifs: response.data.realisateursActifs || 0,
+        echeancesProches: response.data.echeancesProches || 0,
+        urgentCount: response.data.urgentCount || 0,
+        tempsEcriture: response.data.tempsEcriture || '0h 00mn'
+      };
+      console.log("✅ DEBUG: stats générales mises à jour:", this.stats);
+    } else {
+      console.warn("⚠️ DEBUG: Format de réponse inattendu, calcul local");
+      this.calculateLocalStats();
+    }
+  } catch (error) {
+    console.error('❌ DEBUG: Erreur chargement stats générales:', error.response?.data || error.message);
+    this.calculateLocalStats();
+  }
+},
     
     calculateLocalStats() {
       const now = new Date();
@@ -1069,68 +1136,82 @@ export default {
     },
     
     async loadUserStatistics() {
-      try {
-        const response = await axios.get('/api/scenariste/statistiques-personnelles', {
-          params: { userId: this.user.id_utilisateur }
-        });
-        
-        const apiData = response.data;
-        this.userStats = {
-          productivite: Math.round(apiData.productivite || 0),
-          scenesModifiees7j: apiData.scenesModifiees7j || 0,
-          tendanceScenes: apiData.tendanceScenes || 0,
-          tempsTotalMinutes: apiData.tempsTotalMinutes || 0,
-          moyenneQuotidienneMinutes: apiData.moyenneQuotidienneMinutes || 0,
-          sessionMoyenneMinutes: apiData.sessionMoyenneMinutes || 0,
-          objectifs: apiData.objectifs || {
-            scenesCompletees: 0,
-            scenesCibles: 10,
-            dialoguesEcrits: 0,
-            dialoguesCibles: 50,
-            progressionScenes: 0,
-            progressionDialogues: 0
-          }
-        };
-        
-      } catch (error) {
-        console.error('Erreur chargement stats personnelles:', error);
-        this.calculateBasicStats();
+  try {
+    console.log("🔍 DEBUG: Chargement stats personnelles pour userId:", this.user?.id_utilisateur);
+    
+    const userId = this.getUserId();
+    console.log("🔍 DEBUG: ID utilisé pour API:", userId);
+    
+    const response = await axios.get('/api/scenariste/statistiques-personnelles', {
+      params: { userId: userId }
+    });
+    
+    console.log("📊 DEBUG: Réponse API stats:", response.data);
+    
+    const apiData = response.data;
+    this.userStats = {
+      productivite: Math.round(apiData.productivite || 0),
+      scenesModifiees7j: apiData.scenesModifiees7j || 0,
+      tendanceScenes: apiData.tendanceScenes || 0,
+      tempsTotalMinutes: apiData.tempsTotalMinutes || 0,
+      moyenneQuotidienneMinutes: apiData.moyenneQuotidienneMinutes || 0,
+      sessionMoyenneMinutes: apiData.sessionMoyenneMinutes || 0,
+      objectifs: apiData.objectifs || {
+        scenesCompletees: 0,
+        scenesCibles: 10,
+        dialoguesEcrits: 0,
+        dialoguesCibles: 50,
+        progressionScenes: 0,
+        progressionDialogues: 0
       }
-    },
+    };
+    
+    console.log("✅ DEBUG: userStats mis à jour:", this.userStats);
+    
+  } catch (error) {
+    console.error('❌ DEBUG: Erreur chargement stats personnelles', error.response?.data || error.message);
+    this.calculateBasicStats();
+  }
+},
     
     calculateBasicStats() {
-      const now = new Date();
-      const totalProjects = this.projects.length;
-      const activeProjects = this.projects.filter(p => 
-        p.statutNom === 'En cours' || p.statutNom === 'En préparation'
-      ).length;
-      
-      const productivite = totalProjects > 0 ? Math.round((activeProjects / totalProjects) * 100) : 0;
-      
-      let totalScenes = 0;
-      this.projects.forEach(p => {
-        totalScenes += p.nombreScenes || 0;
-      });
-      
-      const estimatedMinutes = totalScenes * 45;
-      
-      this.userStats = {
-        productivite,
-        scenesModifiees7j: Math.floor(totalScenes * 0.3),
-        tendanceScenes: 0,
-        tempsTotalMinutes: estimatedMinutes,
-        moyenneQuotidienneMinutes: Math.floor(estimatedMinutes / 30),
-        sessionMoyenneMinutes: 45,
-        objectifs: {
-          scenesCompletees: Math.floor(totalScenes * 0.5),
-          scenesCibles: Math.max(totalScenes, 10),
-          dialoguesEcrits: Math.floor(totalScenes * 3),
-          dialoguesCibles: Math.max(totalScenes * 3, 50),
-          progressionScenes: totalScenes > 0 ? Math.round((Math.floor(totalScenes * 0.5) / Math.max(totalScenes, 10)) * 100) : 0,
-          progressionDialogues: totalScenes > 0 ? Math.round((Math.floor(totalScenes * 3) / Math.max(totalScenes * 3, 50)) * 100) : 0
-        }
-      };
-    },
+  console.log("🔍 DEBUG: Calcul stats basiques pour projets:", this.projects.length);
+  
+  const now = new Date();
+  const totalProjects = this.projects.length;
+  const activeProjects = this.projects.filter(p => 
+    p.statutNom === 'En cours' || p.statutNom === 'En préparation'
+  ).length;
+  
+  // Productivité basée sur les projets actifs vs total
+  const productivite = totalProjects > 0 ? Math.round((activeProjects / totalProjects) * 100) : 0;
+  
+  let totalScenes = 0;
+  this.projects.forEach(p => {
+    totalScenes += p.nombreScenes || 0;
+  });
+  
+  const estimatedMinutes = totalScenes * 45;
+  
+  this.userStats = {
+    productivite: productivite,
+    scenesModifiees7j: Math.floor(totalScenes * 0.3),
+    tendanceScenes: 0,
+    tempsTotalMinutes: estimatedMinutes,
+    moyenneQuotidienneMinutes: Math.floor(estimatedMinutes / 30),
+    sessionMoyenneMinutes: 45,
+    objectifs: {
+      scenesCompletees: Math.floor(totalScenes * 0.5),
+      scenesCibles: Math.max(totalScenes, 10),
+      dialoguesEcrits: Math.floor(totalScenes * 3),
+      dialoguesCibles: Math.max(totalScenes * 3, 50),
+      progressionScenes: totalScenes > 0 ? Math.round((Math.floor(totalScenes * 0.5) / Math.max(totalScenes, 10)) * 100) : 0,
+      progressionDialogues: totalScenes > 0 ? Math.round((Math.floor(totalScenes * 3) / Math.max(totalScenes * 3, 50)) * 100) : 0
+    }
+  };
+  
+  console.log("✅ DEBUG: Stats basiques calculées:", this.userStats);
+},
     
     async loadWritingStats() {
       try {
@@ -1268,26 +1349,40 @@ export default {
     // =============================================
     
     async loadRecentActivities() {
-      try {
-        const response = await axios.get('/api/scenariste/activites/recentes', {
-          params: { 
-            userId: this.user.id_utilisateur,
-            limit: 5 
-          }
-        });
-        
-        if (response.data && response.data.activities) {
-          this.recentActivities = response.data.activities;
-        } else if (Array.isArray(response.data)) {
-          this.recentActivities = response.data;
-        } else {
-          this.recentActivities = [];
-        }
-      } catch (error) {
-        console.error('Erreur chargement activités:', error);
-        this.generateBasicActivities();
+  console.log("🔍 DEBUG: Chargement activités pour userId:", this.user?.id_utilisateur);
+  
+  try {
+    const userId = this.getUserId();
+    const response = await axios.get('/api/scenariste/activites/recentes', {
+      params: { 
+        userId: userId,
+        limit: 5 
       }
-    },
+    });
+    
+    console.log("📊 DEBUG: Réponse API activités:", response.data);
+    
+    if (response.data && response.data.activities) {
+      this.recentActivities = response.data.activities;
+    } else if (Array.isArray(response.data)) {
+      this.recentActivities = response.data;
+    } else if (response.data && Array.isArray(response.data.data)) {
+      this.recentActivities = response.data.data;
+    } else if (response.data && response.data.success !== false) {
+      // Nouveau format avec la réponse corrigée
+      this.recentActivities = response.data.activities || [];
+    } else {
+      console.warn("⚠️ DEBUG: Format de réponse inattendu:", response.data);
+      this.recentActivities = [];
+    }
+    
+    console.log("✅ DEBUG: Activités chargées:", this.recentActivities.length);
+    
+  } catch (error) {
+    console.error('❌ DEBUG: Erreur chargement activités:', error.response?.data || error.message);
+    this.recentActivities = [];
+  }
+},
     
     generateBasicActivities() {
       const activities = [];
@@ -1588,4 +1683,5 @@ export default {
   }
 };
 </script>
+
 
