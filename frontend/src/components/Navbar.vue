@@ -9,7 +9,7 @@
           </router-link>
         </div>
 
-        <!-- LIENS + SELECT CENTRÉS -->
+        <!-- LIENS + BOUTON AJOUTER CENTRÉS -->
         <div class="nav-center" v-if="!isCollapsed">
           <router-link to="/accueil" class="nav-link" v-if="user?.role !== 'ADMIN' && user?.role !== 'SCENARISTE'" @click="toggleNavbarIfMobile">
             <span class="link-text">Accueil</span>
@@ -19,7 +19,6 @@
             <span class="link-text">Admin</span>
           </router-link>
 
-          
           <router-link to="/scenariste" class="nav-link" v-if="user?.role === 'SCENARISTE'" @click="toggleNavbarIfMobile">
             <span class="link-text">Scénariste</span>
           </router-link>
@@ -36,21 +35,66 @@
             <span class="link-text">Recherche</span>
           </router-link>
 
-          <!-- [+ Ajouter ▼] -->
+          <!-- BOUTON + AJOUTER AVEC POP-UP STYLISÉ -->
           <div class="quick-add-section">
-            <select class="quick-add-select" @change="navigateTo($event.target.value)" v-model="selectedAddOption">
-              <option value="" disabled selected>+ Ajouter</option>
-              <option value="/creation-comedien">Comédien</option>
-              <option value="/creation-personnage">Personnage</option>
-              <option value="/creation-dialogue">Dialogue</option>
-              <option value="/creation-lieu">Lieu</option>
-              <option value="/creation-plateau">Plateau</option>
-              <option value="/raccords">Raccord</option>
-              <option value="/gestion-equipe" v-if="user?.role === 'ADMIN'">Équipe</option>
-              <option value="/utilisateurs" v-if="user?.role === 'ADMIN'">Utilisateurs</option>
-              <option value="/status-gestion" v-if="user?.role === 'ADMIN'">Tous Status</option>
-              <option value="/type-raccord" v-if="user?.role === 'ADMIN'">Type Raccord</option>
-            </select>
+            <button 
+              class="quick-add-btn" 
+              @click="toggleAddPopup"
+              :aria-expanded="showAddPopup"
+              aria-haspopup="true"
+            >
+              <span>+ Ajouter</span>
+              <i class="fas fa-chevron-down" :class="{ 'rotate-180': showAddPopup }"></i>
+            </button>
+            
+            <!-- POP-UP SOUS LA NAVBAR : GRILLE DE BOUTONS (4 par ligne max) -->
+            <div v-if="showAddPopup" class="add-popup" @click.stop>
+              <div class="popup-content">
+                <div class="popup-grid">
+                  <!-- Ligne 1 : 4 boutons -->
+                  <div class="popup-row">
+                    <button class="popup-btn" @click="navigateTo('/creation-comedien')">
+                      Comédien
+                    </button>
+                    <button class="popup-btn" @click="navigateTo('/creation-personnage')">
+                      Personnage
+                    </button>
+                    <button class="popup-btn" @click="navigateTo('/creation-dialogue')">
+                      Dialogue
+                    </button>
+                    <button class="popup-btn" @click="navigateTo('/creation-lieu')">
+                      Lieu
+                    </button>
+                  </div>
+                  
+                  <!-- Ligne 2 : jusqu'à 4 boutons -->
+                  <div class="popup-row">
+                    <button class="popup-btn" @click="navigateTo('/creation-plateau')">
+                      Plateau
+                    </button>
+                    <button class="popup-btn" @click="navigateTo('/raccords')">
+                      Raccord
+                    </button>
+                    <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/gestion-equipe')">
+                      Équipe
+                    </button>
+                    <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/utilisateurs')">
+                      Utilisateurs
+                    </button>
+                  </div>
+                  
+                  <!-- Ligne 3 : centrée si moins de 4 -->
+                  <div class="popup-row">
+                    <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/status-gestion')">
+                      Tous Status
+                    </button>
+                    <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/type-raccord')">
+                      Type Raccord
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -73,7 +117,7 @@
             <span class="profile-text" v-if="!isCollapsed">{{ user?.nom || 'Utilisateur' }}</span>
           </router-link>
 
-          <a href="#" @click="logout" class="logout-link">
+          <a href="#" @click.prevent="logout" class="logout-link">
             <i class="fas fa-sign-out-alt"></i>
             <span class="logout-text" v-if="!isCollapsed"></span>
           </a>
@@ -86,6 +130,7 @@
     </div>
   </nav>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -101,7 +146,8 @@ export default {
       selectedAddOption: '',
       defaultPhoto: defaultProfileImage,
       imageError: false,
-      loadingProfilePhoto: false
+      loadingProfilePhoto: false,
+      showAddPopup: false
     };
   },
   computed: {
@@ -122,16 +168,21 @@ export default {
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
     
+    // Fermer le pop-up quand on clique en dehors
+    document.addEventListener('click', this.closeAddPopup);
+    
     // Écouter les changements de route pour rafraîchir les données utilisateur
     this.$watch(
       () => this.$route,
       () => {
         this.refreshUserData();
+        this.closeAddPopup();
       }
     );
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.checkIfMobile);
+    document.removeEventListener('click', this.closeAddPopup);
   },
   methods: {
     async loadUser() {
@@ -216,18 +267,20 @@ export default {
     navigateTo(path) {
       if (path) {
         this.$router.push(path);
-        this.selectedAddOption = '';
+        this.closeAddPopup();
       }
     },
     
     toggleNavbar() {
       this.isCollapsed = !this.isCollapsed;
+      this.closeAddPopup();
     },
     
     toggleNavbarIfMobile() {
       if (this.isMobile) {
         this.isCollapsed = true;
       }
+      this.closeAddPopup();
     },
     
     checkIfMobile() {
@@ -250,6 +303,15 @@ export default {
       if (event.target) {
         event.target.onerror = null;
       }
+    },
+    
+    toggleAddPopup(event) {
+      event.stopPropagation();
+      this.showAddPopup = !this.showAddPopup;
+    },
+    
+    closeAddPopup() {
+      this.showAddPopup = false;
     }
   }
 };
