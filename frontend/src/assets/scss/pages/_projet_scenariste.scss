@@ -702,6 +702,354 @@
 }
 
 // =============================================
+// MODAL DE CONFIRMATION DE SUPPRESSION
+// =============================================
+.delete-confirmation-modal-Scenariste {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal + 10;
+  padding: $spacing-md;
+}
+
+.modal-overlay-Scenariste {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-black, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content-confirm-Scenariste {
+  position: relative;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: $shadow-xl;
+  z-index: 1;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header-confirm-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-lg;
+  border-bottom: 1px solid $color-border;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-error;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      font-size: $font-size-h4;
+    }
+  }
+  
+  .close-modal-btn-Scenariste {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    font-size: $font-size-p2;
+    cursor: pointer;
+    padding: $gap-xs;
+    border-radius: $border-radius-xs;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+    }
+  }
+}
+
+.modal-body-confirm-Scenariste {
+  padding: $padding-xl;
+  text-align: center;
+  
+  .warning-icon-Scenariste {
+    font-size: 48px;
+    color: $color-error;
+    margin-bottom: $margin-lg;
+    
+    i {
+      background: rgba($color-error, 0.1);
+      padding: $padding-lg;
+      border-radius: 50%;
+    }
+  }
+  
+  .warning-text-Scenariste {
+    @include typography-p1;
+    color: $color-text-primary;
+    margin-bottom: $margin-sm;
+    
+    strong {
+      color: $color-error;
+    }
+  }
+  
+  .warning-subtext-Scenariste {
+    @include typography-p3;
+    color: $color-text-muted;
+    margin: 0;
+  }
+  
+  .error-message-Scenariste {
+    @include typography-p3;
+    color: $color-error;
+    background: rgba($color-error, 0.1);
+    padding: $padding-sm;
+    border-radius: $border-radius-xs;
+    margin-top: $margin-md;
+    border-left: 3px solid $color-error;
+  }
+}
+
+
+.modal-footer-confirm-Scenariste {
+  display: flex;
+  gap: $gap-sm; // Espacement réduit
+  padding: $padding-md $padding-lg; // Padding réduit
+  border-top: 1px solid $color-border;
+  
+  button {
+    flex: 1;
+    padding: 8px 16px; // Taille très compacte
+    border-radius: $border-radius-xs; // Rayon plus petit
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-p4; // Texte encore plus petit
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: none;
+    height: 36px; // Hauteur compacte
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+  
+  .cancel-confirm-btn-Scenariste {
+    background: $color-background;
+    color: $color-text-secondary;
+    border: 1px solid $color-border;
+    
+    &:hover:not(:disabled) {
+      background: rgba($color-text-muted, 0.1);
+      color: $color-text-primary;
+    }
+  }
+  
+  .delete-confirm-btn-Scenariste {
+    background: $color-error;
+    color: $color-white;
+    
+    &:hover:not(:disabled) {
+      background: darken($color-error, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+  }
+}
+
+// Responsive pour le modal
+@media (max-width: $breakpoint-sm) {
+  .modal-content-confirm-Scenariste {
+    max-width: 100%;
+  }
+  
+  .modal-footer-confirm-Scenariste {
+    flex-direction: column;
+  }
+}
+
+
+// =============================================
+// NOTIFICATIONS - MÊME STYLE QUE PROFIL.VUE
+// =============================================
+
+.message-crea-profile {
+  position: fixed;
+  top: 100px;
+  right: $spacing-lg;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-xs;
+  color: $color-white;
+  z-index: $z-index-modal + 20;
+  animation: slideInRight 0.3s ease-out;
+  max-width: 400px;
+  box-shadow: $shadow-lg;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  cursor: pointer;
+
+  &.success {
+    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
+    border-left: 4px solid darken($color-success, 20%);
+  }
+
+  &.error {
+    background: linear-gradient(135deg, $color-error, darken($color-error, 10%));
+    border-left: 4px solid darken($color-error, 20%);
+  }
+
+  i {
+    font-size: $font-size-p3;
+  }
+
+  .message-close-crea-profile {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: $color-white;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// Animation pour la notification
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.edit-project-modal-Scenariste {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($color-text-primary, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  
+  .modal-content-Scenariste {
+    background: $color-white;
+    padding: $padding-xl;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-xl;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh; // Limite la hauteur maximale
+    overflow-y: auto; // Ajoute le défilement si nécessaire
+    display: flex;
+    flex-direction: column;
+    
+    .modal-body-Scenariste {
+      flex: 1;
+      overflow-y: auto; // Défilement pour le contenu
+      margin-bottom: $margin-lg;
+      padding-right: $padding-sm; // Espace pour la scrollbar
+      
+      // Styles spécifiques pour l'édition d'épisode
+      &.episode-edit-modal {
+        min-height: 300px; // Hauteur minimale
+        max-height: 400px; // Hauteur maximale ajustée
+      }
+    }
+    
+    .modal-footer-Scenariste {
+      flex-shrink: 0; // Empêche le footer de rétrécir
+      margin-top: auto; // Pousse le footer vers le bas
+    }
+  }
+}
+
+// Pour s'assurer que la notification est au-dessus des modals
+.edit-project-modal-Scenariste,
+.delete-confirmation-modal-Scenariste {
+  .message-crea-profile {
+    z-index: $z-index-modal + 30;
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .message-crea-profile {
+    left: $spacing-sm;
+    right: $spacing-sm;
+    max-width: none;
+  }
+}
+
+.error-message-Scenariste {
+  background: rgba($color-error, 0.1);
+  color: $color-error;
+  padding: $padding-sm;
+  border-radius: $border-radius-sm;
+  margin-bottom: $margin-md;
+  font-size: $font-size-p3;
+  border-left: 3px solid $color-error;
+  word-wrap: break-word; // Force le retour à la ligne
+  overflow-wrap: break-word; // Alternative pour compatibilité
+}
+
+.order-error {
+  color: $color-error;
+  font-size: $font-size-p4;
+  margin-top: $gap-xs;
+  font-weight: $font-weight-medium;
+}
+
+// Style pour les champs en erreur
+.error-input {
+  border-color: $color-error !important;
+  background-color: rgba($color-error, 0.05) !important;
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba($color-error, 0.2) !important;
+  }
+}
+
+
+// =============================================
 // IMPORTATION DES STYLES D'ACCUEIL POUR LA COMPATIBILITÉ
 // =============================================
 
