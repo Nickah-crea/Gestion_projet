@@ -932,18 +932,112 @@ body, html {
   }
 }
 
-.modal-header-Scenariste h3{
+
+// =============================================
+// MODALS - RÉDUCTION TAILLE ICÔNES DE FERMETURE
+// =============================================
+
+.modal-header-Scenariste {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: $margin-lg;
-  @include typography-playfair-h3-italic;
-  font-weight: $font-weight-semibold;
-
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
+  
   h3 {
     font-size: $font-size-h4;
     color: $color-text-primary;
     margin: 0;
+    @include typography-playfair-h3-italic;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .close-modal-btn-Scenariste {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    font-size: $font-size-p1; // Réduit de h4/h3 à p1
+    cursor: pointer;
+    padding: $padding-xs;
+    border-radius: $border-radius-sm;
+    transition: $transition-fast;
+    width: 32px; // Largeur fixe
+    height: 32px; // Hauteur fixe
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+      transform: scale(1.05);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+    
+    i {
+      font-size: $font-size-p2; // Icone plus petite
+      line-height: 1;
+    }
+  }
+}
+
+// Modal de suppression - version encore plus petite
+.modal-header-confirm-Scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-lg;
+  border-bottom: 1px solid $color-border;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-error;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    font-size: $font-size-h4;
+    
+    i {
+      font-size: $font-size-p1; // Icone d'avertissement plus petite
+    }
+  }
+  
+  .close-modal-btn-Scenariste {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    font-size: $font-size-p3; // Très petit
+    cursor: pointer;
+    padding: 4px;
+    border-radius: $border-radius-xs;
+    transition: $transition-fast;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+    }
+    
+    i {
+      font-size: $font-size-p3;
+    }
+  }
+}
+ 
+// Pour le modal d'édition d'épisode dans ProjetScenariste
+.edit-project-modal-Scenariste .modal-header-Scenariste .close-modal-btn-Scenariste {
+  i {
+    font-size: $font-size-p2 !important; // Force une taille cohérente
   }
 }
 
@@ -3837,5 +3931,159 @@ nav.fixed-bottom,
     @media (min-width: $breakpoint-lg + 1) {
       padding-right: 300px; // Compenser la sidebar
     }
+  }
+}
+
+// =============================================
+// FORMULAIRES - GESTION DES CHAMPS IMPAIRES
+// =============================================
+
+// Pour les formulaires avec nombre impair de champs
+.form-rows-container-Scenariste.odd-fields {
+  .form-row-Scenariste {
+    &:last-child {
+      grid-template-columns: 1fr;
+      
+      .form-group-Scenariste {
+        // Pour un seul champ dans la dernière ligne
+        &:first-child:nth-last-child(1) {
+          grid-column: 1 / -1;
+        }
+        
+        // Pour trois champs (le dernier occupe toute la largeur)
+        &:first-child:nth-last-child(3),
+        &:first-child:nth-last-child(1) {
+          grid-column: 1 / -1;
+        }
+      }
+    }
+  }
+}
+
+// Cas spécifique pour le modal d'édition d'épisode (3 champs)
+.modal-body-Scenariste.episode-edit-modal {
+  .form-rows-container-Scenariste {
+    .form-row-Scenariste {
+      // Les deux premiers champs (titre et ordre) côte à côte
+      &:first-child {
+        grid-template-columns: 1fr 1fr;
+        gap: $gap-lg;
+      }
+      
+      // Le statut (deuxième ligne) - pleine largeur
+      &:nth-child(2) {
+        grid-template-columns: 1fr;
+        
+        .form-group-Scenariste {
+          grid-column: 1 / -1;
+        }
+      }
+      
+      // Le synopsis (troisième ligne) - pleine largeur
+      &:last-child {
+        grid-template-columns: 1fr;
+        
+        .form-group-Scenariste {
+          grid-column: 1 / -1;
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+// =============================================
+// MESSAGES - MÊME STYLE QUE PROFIL.VUE
+// =============================================
+
+.message-crea-profile {
+  position: fixed;
+  top: 100px;
+  right: $spacing-lg;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-xs;
+  color: $color-white;
+  z-index: $z-index-modal + 1;
+  animation: slideInRight 0.3s ease-out;
+  max-width: 400px;
+  box-shadow: $shadow-lg;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  cursor: pointer;
+
+  &.success {
+    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
+    border-left: 4px solid darken($color-success, 20%);
+  }
+
+  &.error {
+    background: linear-gradient(135deg, $color-error, darken($color-error, 10%));
+    border-left: 4px solid darken($color-error, 20%);
+  }
+
+  i {
+    font-size: $font-size-p3;
+  }
+
+  .message-close-crea-profile {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: $color-white;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// Animation pour la notification
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Pour s'assurer que la notification est au-dessus des modals
+.edit-project-modal-Scenariste,
+.delete-confirmation-modal-Scenariste {
+  .message-crea-profile {
+    z-index: $z-index-modal + 20;
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .message-crea-profile {
+    left: $spacing-sm;
+    right: $spacing-sm;
+    max-width: none;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .message-crea-profile {
+    animation: none;
   }
 }

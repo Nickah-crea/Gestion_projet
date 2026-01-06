@@ -308,7 +308,7 @@
                 <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEdit(project)" title="Modifier">
                   <i class="fas fa-marker"></i>
                 </button>
-                <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="deleteProject(project.id)" title="Supprimer">
+                <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="confirmDeleteProject(project)" title="Supprimer">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -431,6 +431,54 @@
         </div>
       </main>
     </div>
+    <!-- Modal de confirmation de suppression -->
+      <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+        <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+        <div class="modal-content-confirm-Scenariste">
+          <div class="modal-header-confirm-Scenariste">
+            <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+            <button @click="closeDeleteModal" class="close-modal-btn-Scenariste">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="modal-body-confirm-Scenariste">
+            <div class="warning-icon-Scenariste">
+              <i class="fas fa-trash"></i>
+            </div>
+            <p class="warning-text-Scenariste">
+              Êtes-vous sûr de vouloir supprimer le projet <strong>"{{ projectToDelete?.titre }}"</strong> ?
+            </p>
+            <p class="warning-subtext-Scenariste">
+              Cette action est irréversible. Tous les épisodes, séquences et scènes associés à ce projet seront également supprimés.
+            </p>
+            
+            <div v-if="deleteError" class="error-message-Scenariste">
+              {{ deleteError }}
+            </div>
+          </div>
+          
+          <div class="modal-footer-confirm-Scenariste">
+            <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
+              <i class="fas fa-times"></i> Annuler
+            </button>
+            <button @click="executeDeleteProject" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+              <span v-if="isDeleting">Suppression...</span>
+              <span v-else>Supprimer définitivement</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Notification de succès/erreur -->
+      <div v-if="message" :class="['message-crea-profile', message.type]" @click="clearMessage">
+        <i :class="message.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
+        {{ message.text }}
+        <button class="message-close-crea-profile" @click.stop="clearMessage">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
   </div>
 </template>
 
@@ -540,7 +588,14 @@ export default {
         projetId: null,
         typeContenu: null,
         contenuId: null
-      }
+      },
+      showDeleteModal: false,
+      projectToDelete: null,
+      isDeleting: false,
+      deleteError: '',
+       message: null,  // Changé de 'showNotification' à 'message'
+      notificationType: 'success',
+      notificationTimeout: null
     };
   },
   
@@ -826,25 +881,133 @@ export default {
       };
       this.editError = '';
     },
+
+      
+  confirmDeleteProject(project) {
+    this.projectToDelete = project;
+    this.showDeleteModal = true;
+    this.deleteError = '';
+  },
+
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+    this.projectToDelete = null;
+    this.isDeleting = false;
+    this.deleteError = '';
+  },
+
+   showNotification(text, type = 'success') {
+    this.message = {
+      text: text,
+      type: type
+    };
     
-    async deleteProject(projectId) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
-        try {
-          await axios.delete(`/api/projets/${projectId}`);
-          await this.fetchProjects();
-          await this.loadStats();
-          await this.loadRecentActivities();
-          await this.loadUserStatistics();
-        } catch (error) {
-          console.error('Erreur lors de la suppression du projet:', error);
-          alert('Erreur lors de la suppression du projet');
-        }
+    // Annuler le timeout précédent s'il existe
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+    
+    // Masquer automatiquement après 5 secondes
+    this.notificationTimeout = setTimeout(() => {
+      this.clearMessage();
+    }, 5000);
+  },
+  
+  clearMessage() {
+    this.message = null;
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+      this.notificationTimeout = null;
+    }
+  },
+  
+  // Alias pour compatibilité
+  hideNotification() {
+    this.clearMessage();
+  },
+
+  async executeDeleteProject() {
+    if (!this.projectToDelete) return;
+    
+    this.isDeleting = true;
+    this.deleteError = '';
+    
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+        this.deleteError = 'Utilisateur non connecté';
+        this.showNotification('Utilisateur non connecté', 'error');
+        this.isDeleting = false;
+        return;
       }
-    },
+
+      // Utilisez getUserId() pour obtenir l'ID correct
+      const userId = this.getUserId();
+      
+      console.log("DEBUG - User ID pour suppression:", userId);
+
+      await axios.delete(`/api/projets/${this.projectToDelete.id}`, {
+        headers: {
+          'X-User-Id': userId
+        }
+      });
+      
+      await this.fetchProjects();
+      await this.loadStats();
+      await this.loadRecentActivities();
+      await this.loadUserStatistics();
+      this.closeDeleteModal();
+
+      // Afficher la notification de succès
+      this.showNotification('Projet supprimé avec succès !', 'success');
+      
+    } catch (error) {
+      console.error('Erreur lors de la suppression du projet:', error);
+      
+      // Amélioration du message d'erreur
+      let errorMessage = 'Erreur lors de la suppression du projet';
+      
+      if (error.response) {
+        console.error('Détails erreur:', error.response.data);
+        console.error('Status erreur:', error.response.status);
+        
+        if (error.response.status === 401 || error.response.status === 403) {
+          errorMessage = 'Vous n\'êtes pas autorisé à supprimer ce projet';
+        } else {
+          errorMessage = error.response.data?.message || `Erreur serveur (${error.response.status})`;
+        }
+      } else if (error.request) {
+        errorMessage = 'Pas de réponse du serveur';
+      }
+      
+      this.deleteError = errorMessage;
+      this.showNotification(errorMessage, 'error');
+      this.isDeleting = false;
+    }
+  },
+
+  showSuccessNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.textContent = message;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 4px;
+      z-index: 9999;
+      animation: fadeInOut 3s ease;
+    `;
+    document.body.appendChild(notification);
     
-    // =============================================
-    // NAVIGATION
-    // =============================================
+    setTimeout(() => {
+      notification.remove();
+    }, 3000);
+  },
+    
     
     goToProject(projectId) {
       if (projectId) {
