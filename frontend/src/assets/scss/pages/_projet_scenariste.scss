@@ -11,7 +11,7 @@
 }
 
 // =============================================
-// SIDEBAR LATÉRALE FIXE À GAUCHE
+// SIDEBAR LATÉRALE FIXE À GAUCHE - CORRIGÉ POUR CORRESPONDRE AUX AUTRES FICHIERS
 // =============================================
 .creation-sidebar-projet-scenariste {
   position: fixed;
@@ -85,11 +85,9 @@
     box-sizing: border-box;
 
     &:hover {
-      background: linear-gradient(135deg, rgba($color-primary, 0.1), rgba($color-primary-light, 0.1));
+      background: rgba($color-primary, 0.1);
       border-color: $color-primary;
       color: $color-primary;
-      transform: translateY(-2px);
-      box-shadow: $shadow-hover;
     }
 
     &.active {
@@ -101,6 +99,18 @@
     &:focus-visible {
       outline: 2px solid $color-primary;
       outline-offset: 1px;
+    }
+    
+    // BOUTON "NOUVEL ÉPISODE" EN ORANGE
+    &.nouvel-episode-btn {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+      font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-white;
+      }
     }
   }
 
@@ -133,15 +143,9 @@
     color: $color-text-primary;
     cursor: pointer;
     box-sizing: border-box;
-    transition: $transition-fast;
-
+    
     &:focus {
       outline: none;
-      border-color: $color-primary;
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
-    }
-
-    &:hover {
       border-color: $color-primary;
     }
   }
@@ -160,12 +164,6 @@
     background: $color-white;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
-    transition: $transition-fast;
-
-    &:hover {
-      box-shadow: $shadow-hover;
-      transform: translateY(-2px);
-    }
 
     .stat-number-projet-scenariste {
       @include typography-playfair-h4;
@@ -222,197 +220,188 @@
 }
 
 // =============================================
-// SYSTÈME D'ONGLETS (ADAPTÉ POUR PROJET SCÉNARISTE)
+// DÉTAILS DU PROJET AMÉLIORÉS
 // =============================================
-.tabs-container-projet-scenariste {
+.project-details-spiral-Scenariste {
   background: $color-white;
-  border-radius: $border-radius-sm;
-  box-shadow: $shadow-md;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  margin: $margin-xl 0 $margin-lg 0; 
+  padding: $padding-xl;
+  position: relative;
   overflow: hidden;
-  margin-bottom: $spacing-lg;
+  border: 1px solid rgba($color-primary, 0.1);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+  }
 }
 
-.tabs-header-projet-scenariste {
+.project-info-spiral-Scenariste {
   display: flex;
-  background: $color-background-alt;
-  border-bottom: 1px solid $color-border;
   position: relative;
 }
 
-.tab-btn-projet-scenariste {
+.project-main-content-Scenariste {
   flex: 1;
-  padding: $spacing-md $spacing-lg;
-  background: transparent;
-  border: none;
-  @include typography-p3;
-  color: $color-text-secondary;
-  cursor: pointer;
-  transition: $transition-fast;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $gap-sm;
-  position: relative;
-  z-index: 2;
-
-  &:hover {
-    color: $color-primary;
-    background: rgba($color-primary, 0.05);
-  }
-
-  &.active {
-    color: $color-primary;
-    font-weight: $font-weight-semibold;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-primary;
-    outline-offset: -2px;
-  }
+  padding: $padding-md 0;
 }
 
-.tab-indicator-projet-scenariste {
-  position: absolute;
-  bottom: 0;
-  height: 3px;
-  background: $color-primary;
-  transition: transform $transition;
-  z-index: 1;
-}
-
-.tabs-content-projet-scenariste {
-  position: relative;
-}
-
-.tab-pane-projet-scenariste {
-  padding: $spacing-lg;
-  animation: fadeInUp-projet-scenariste 0.3s ease-out;
-}
-
-@keyframes fadeInUp-projet-scenariste {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// =============================================
-// FORMULAIRE D'ÉDITION (MODAL OU PANE)
-// =============================================
-.form-container-projet-scenariste {
-  background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0;
-  margin-bottom: 0;
-}
-
-.tab-pane-projet-scenariste .form-header-projet-scenariste {
+.project-header-spiral-Scenariste {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $spacing-lg;
-  padding-bottom: $spacing-md;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
   border-bottom: 1px solid $color-border;
+}
 
-  h3 {
-    @include typography-playfair-h3;
+.project-title-spiral-Scenariste {
+  @include typography-playfair-h3;
+  color: $color-text-primary;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-h4;
+  }
+}
+
+.project-statut-badge-Scenariste {
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.statut-en-cours { 
+    background: rgba($color-primary, 0.2); 
+    color: $color-primary-dark; 
+  }
+  &.statut-termine { 
+    background: rgba($color-success, 0.2); 
+    color: $color-success; 
+  }
+  &.statut-attente { 
+    background: rgba($color-warning, 0.2); 
+    color: $color-warning; 
+  }
+  &.statut-annule { 
+    background: rgba($color-error, 0.2); 
+    color: $color-error; 
+  }
+  &.statut-planifie { 
+    background: rgba($color-accent, 0.2); 
+    color: $color-accent; 
+  }
+}
+
+.project-meta-spiral-Scenariste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $gap-md;
+  margin-bottom: $margin-lg;
+}
+
+.meta-item-spiral-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-sm;
+  background: rgba($color-border, 0.1);
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  min-height: calc(#{$font-size-p4} + #{$padding-sm} * 2);
+  line-height: normal;
+  
+  &:hover {
+    background: rgba($color-border, 0.2);
+  }
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p2;
+    width: 20px;
+    text-align: center;
+  }
+  
+  .meta-label {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    white-space: nowrap;
+  }
+  
+  .meta-value {
+    @include typography-p3;
     color: $color-text-primary;
-    font-size: calc(#{$font-size-h3} - 4px);
+    font-weight: $font-weight-semibold;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+}
+
+.project-synopsis-spiral-Scenariste {
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  position: relative;
+  
+  // Effet de bordure intérieure PLUS FINE
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: $border-radius;
+    box-shadow: inset 0 0 0 1px rgba($color-primary, 0.15); 
+    pointer-events: none;
+  }
+  
+  // Effet d'ombre intérieure subtile
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: $border-radius;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    pointer-events: none;
+  }
+  
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin-bottom: $margin-md;
     display: flex;
     align-items: center;
     gap: $gap-sm;
-    margin: 0;
-  }
-
-  .back-btn-projet-scenariste {
-    padding: $gap-xs $padding-sm;
-    background: transparent;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    color: $color-text-secondary;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-
-    &:hover {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
+    
+    i {
       color: $color-primary;
     }
   }
-}
-
-.episode-form-projet-scenariste {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.form-row-projet-scenariste {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-md;
-
-  @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-    gap: $spacing-sm;
-  }
-}
-
-.form-group-projet-scenariste {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-xs;
-
-  label {
-    @include typography-p4;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-
-    &::after {
-      content: '*';
-      color: $color-error;
-      margin-left: 2px;
-    }
-
-    &:not([for*="*"])::after {
-      content: '';
-    }
-  }
-
-  .form-input-projet-scenariste {
-    width: 100%;
-    height: 42px;
-    padding: 0 $padding-sm;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    color: $color-text-primary;
-    background: $color-white;
-    transition: $transition-fast;
-    box-sizing: border-box;
-
-    &:focus {
-      outline: none;
-      border-color: $color-primary;
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
-    }
-
-    &:hover {
-      border-color: darken($color-border, 10%);
-    }
+  
+  p {
+    @include typography-p2;
+    color: $color-text-secondary;
+    line-height: $line-height-base;
+    margin: 0;
+    position: relative;
+    z-index: 1;
   }
 }
 
@@ -420,14 +409,17 @@
 // LISTE DES ÉPISODES (CARDS)
 // =============================================
 .episodes-section-projet-scenariste {
-  margin-bottom: $spacing-lg;
-
+  margin: 0 0 $spacing-lg 0;
+  position: relative;
+  top: 30px;
+  
   .section-header-projet-scenariste {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: $spacing-md;
-
+     border-bottom: 1px solid $color-border;
+    
     h3 {
       @include typography-playfair-h3;
       color: $color-text-primary;
@@ -437,49 +429,33 @@
       gap: $gap-sm;
     }
   }
-}
-
-.filters-projet-scenariste {
-  display: flex;
-  gap: $spacing-md;
-  margin-bottom: $spacing-md;
-
-  .filter-group-projet-scenariste {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: $gap-xs;
-
-    label {
-      @include typography-p4;
-      color: $color-text-primary;
-      font-weight: $font-weight-semibold;
-    }
-
-    select {
-      @extend .filter-select-projet-scenariste;
-    }
+  
+ 
+  .projects-library-Scenariste {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-md;
   }
 }
 
+// Suppression de la classe episodes-list-projet-scenariste car elle est remplacée par projects-library-Scenariste
 .episodes-list-projet-scenariste {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: $spacing-md;
+  display: none; // Masqué car non utilisé
 }
 
+// Les styles des cartes d'épisodes sont maintenant appliqués via la classe movie-card-Scenariste
 .episode-card-projet-scenariste {
   background: linear-gradient(135deg, $color-white, $color-background-alt);
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
   transition: $transition;
-
+  
   &:hover {
     transform: translateY(-5px) scale(1.02);
     box-shadow: $shadow-xl;
   }
-
+  
   .episode-header-projet-scenariste {
     display: flex;
     justify-content: space-between;
@@ -487,7 +463,7 @@
     padding: $spacing-md;
     background: linear-gradient(135deg, $color-background-alt, $color-surface);
     border-bottom: 1px solid $color-border;
-
+    
     .episode-statut-projet-scenariste {
       padding: 4px 12px;
       border-radius: $border-radius-pill;
@@ -498,11 +474,11 @@
       background: rgba($color-primary, 0.1);
       color: $color-primary;
     }
-
+    
     .episode-actions-projet-scenariste {
       display: flex;
       gap: $gap-xs;
-
+      
       i {
         cursor: pointer;
         font-size: $font-size-p3;
@@ -510,48 +486,48 @@
         transition: $transition-fast;
         padding: 4px;
         border-radius: $border-radius-xs;
-
+        
         &:hover {
           color: $color-white;
           transform: scale(1.2);
         }
       }
-
+      
       .icon-edit-projet-scenariste:hover {
         background: $color-warning;
       }
-
+      
       .icon-delete-projet-scenariste {
         color: $color-error;
       }
-
+      
       .icon-delete-projet-scenariste:hover {
         background: $color-error;
       }
     }
   }
-
+  
   .episode-content-projet-scenariste {
     padding: $spacing-md;
-
+    
     h4 {
       @include typography-playfair-h4;
       color: $color-text-primary;
       margin: 0 0 $gap-sm 0;
     }
-
+    
     .episode-order-projet-scenariste {
       @include typography-p4;
       color: $color-text-muted;
       margin-bottom: $gap-sm;
     }
-
+    
     .episode-dates-projet-scenariste {
       display: flex;
       flex-direction: column;
       gap: $gap-xs;
       margin-bottom: $gap-md;
-
+      
       p {
         @include typography-p4;
         color: $color-text-secondary;
@@ -561,7 +537,7 @@
         gap: $gap-xs;
       }
     }
-
+    
     .episode-synopsis-projet-scenariste {
       p {
         @include typography-p3;
@@ -569,11 +545,11 @@
         margin-bottom: $gap-md;
       }
     }
-
+    
     .episode-footer-projet-scenariste {
       display: flex;
       gap: $gap-sm;
-
+      
       button {
         flex: 1;
         padding: $gap-sm $spacing-md;
@@ -582,274 +558,28 @@
         font-weight: $font-weight-semibold;
         cursor: pointer;
         transition: $transition-fast;
-
+        
         &.details-btn-projet-scenariste {
           background: $color-background-alt;
           color: $color-text-muted;
           border: 1px solid $color-border;
-
+          
           &:hover {
-            background: linear-gradient(135deg, $color-background-alt, $color-white);
-            transform: translateY(-2px);
+            background: rgba($color-primary, 0.1);
+            border-color: $color-primary;
+            color: $color-primary;
           }
         }
-
+        
         &.add-sequence-btn-projet-scenariste {
           background: $color-primary-dark;
           color: $color-white;
           border: none;
-
+          
           &:hover {
             background: darken($color-primary-dark, 10%);
-            transform: translateY(-2px);
           }
         }
-      }
-    }
-  }
-}
-
-// =============================================
-// DÉTAILS DU PROJET
-// =============================================
-.project-details-projet-scenariste {
-  background: linear-gradient(135deg, $color-white, $color-background-alt);
-  border-radius: $border-radius-sm;
-  box-shadow: $shadow-md;
-  padding: $spacing-lg;
-  margin-bottom: $spacing-lg;
-  transition: $transition;
-
-  &:hover {
-    box-shadow: $shadow-lg;
-    transform: translateY(-3px);
-  }
-
-  .project-info-projet-scenariste {
-    display: flex;
-    gap: $spacing-lg;
-
-    @media (max-width: $breakpoint-md) {
-      flex-direction: column;
-    }
-
-    .project-main-projet-scenariste {
-      flex: 2;
-
-      h3 {
-        @include typography-playfair-h3;
-        color: $color-text-primary;
-        margin-bottom: $spacing-md;
-      }
-
-      .project-synopsis-projet-scenariste {
-        h4 {
-          @include typography-playfair-h4;
-          color: $color-text-primary;
-          margin-bottom: $gap-sm;
-        }
-
-        p {
-          @include typography-p2;
-          color: $color-text-secondary;
-        }
-      }
-    }
-
-    .project-sidebar-projet-scenariste {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: $gap-md;
-
-      div {
-        display: flex;
-        align-items: center;
-        gap: $gap-sm;
-
-        i {
-          color: $color-primary;
-          font-size: $font-size-p3;
-        }
-
-        .statut-label, .date-label, .genre-label {
-          @include typography-p4;
-          color: $color-text-muted;
-          font-weight: $font-weight-medium;
-        }
-
-        .statut-value, .date-value, .genre-value {
-          @include typography-p3;
-          color: $color-text-primary;
-        }
-      }
-    }
-  }
-}
-
-// =============================================
-// MODAL D'ÉDITION
-// =============================================
-.modal-overlay-projet-scenariste {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: $z-index-modal;
-  padding: $spacing-md;
-}
-
-.modal-content-projet-scenariste {
-  background: $color-white;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-xl;
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-50px) scale(0.9);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.modal-header-projet-scenariste {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-lg;
-  border-bottom: 1px solid $color-border;
-
-  h3 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-  }
-}
-
-.modal-close-btn-projet-scenariste {
-  background: transparent;
-  border: none;
-  font-size: $font-size-h4;
-  color: $color-text-muted;
-  cursor: pointer;
-  padding: $gap-xs;
-  border-radius: $border-radius-xs;
-  transition: $transition-fast;
-
-  &:hover {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
-  }
-}
-
-.modal-body-projet-scenariste {
-  padding: $spacing-lg;
-
-  .error-message {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
-    padding: $padding-sm;
-    border-radius: $border-radius-xs;
-    margin-bottom: $spacing-md;
-  }
-
-  .error-input {
-    border-color: $color-error !important;
-  }
-
-  .error-text {
-    color: $color-error;
-    font-size: $font-size-p4;
-    margin-top: $gap-xs;
-  }
-
-  .suggestion-text {
-    color: $color-success;
-    font-size: $font-size-p4;
-    margin-top: $gap-xs;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-
-    .suggestion-btn-projet-scenariste {
-      background: $color-success;
-      color: $color-white;
-      border: none;
-      padding: 2px 8px;
-      border-radius: $border-radius-xs;
-      font-size: $font-size-p5;
-      cursor: pointer;
-      transition: $transition-fast;
-
-      &:hover {
-        background: darken($color-success, 10%);
-      }
-    }
-  }
-}
-
-.modal-actions-projet-scenariste {
-  display: flex;
-  gap: $gap-sm;
-  justify-content: flex-end;
-  padding: $spacing-lg;
-  border-top: 1px solid $color-border;
-
-  button {
-    padding: $gap-sm $spacing-md;
-    border: none;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-
-    &.save-btn-projet-scenariste {
-      background: $color-primary;
-      color: $color-white;
-
-      &:hover {
-        background: darken($color-primary, 10%);
-        transform: translateY(-2px);
-      }
-
-      &:disabled {
-        background: $color-border;
-        cursor: not-allowed;
-      }
-    }
-
-    &.cancel-btn-projet-scenariste {
-      background: transparent;
-      border: 1px solid $color-border;
-      color: $color-text-secondary;
-
-      &:hover {
-        background: rgba($color-primary, 0.1);
-        border-color: $color-primary;
-        color: $color-primary;
-        transform: translateY(-2px);
       }
     }
   }
@@ -867,26 +597,9 @@
     border-bottom: 1px solid $color-border;
     top: auto;
   }
-
+  
   .creation-body-projet-scenariste {
     margin-left: 0;
-  }
-
-  .tabs-header-projet-scenariste {
-    flex-direction: column;
-  }
-
-  .tab-btn-projet-scenariste {
-    padding: $spacing-sm $spacing-md;
-    justify-content: flex-start;
-  }
-
-  .tab-indicator-projet-scenariste {
-    display: none;
-  }
-
-  .tab-pane-projet-scenariste {
-    padding: $spacing-md;
   }
 }
 
@@ -894,30 +607,34 @@
   .creation-main-content-projet-scenariste {
     padding: $spacing-sm;
   }
-
-  .form-header-projet-scenariste {
-    flex-direction: column;
-    gap: $spacing-sm;
-    align-items: flex-start;
-  }
-
+  
   .project-info-projet-scenariste {
     flex-direction: column;
   }
-
-  .episodes-list-projet-scenariste {
+  
+  .episodes-section-projet-scenariste .projects-library-Scenariste {
+    grid-template-columns: 1fr;
+  }
+  
+  .project-details-spiral-Scenariste {
+    padding: $padding-lg;
+  }
+  
+  .project-header-spiral-Scenariste {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .project-meta-spiral-Scenariste {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: $breakpoint-sm) {
-  .filters-projet-scenariste {
-    flex-direction: column;
-  }
-
   .tab-btn-projet-scenariste {
     font-size: $font-size-p4;
-
+    
     i {
       font-size: $font-size-p3;
     }
@@ -926,123 +643,123 @@
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-
   .sidebar-btn-projet-scenariste,
   .form-input-projet-scenariste,
   .episode-card-projet-scenariste,
   .tab-btn-projet-scenariste,
   .tab-indicator-projet-scenariste {
     transition: none;
-
+    
     &:hover {
       transform: none;
     }
   }
-
+  
   .tab-pane-projet-scenariste {
     animation: none;
   }
 }
 
 // =============================================
-// BADGES COLORÉS POUR LES STATUTS (ADAPTÉ AUX ÉPISODES)
+// STYLES COMPLÉMENTAIRES POUR LES BOUTONS
 // =============================================
-.status-badge-projet-scenariste {
-  padding: 4px 12px;
-  border-radius: $border-radius-pill;
-  font-size: $font-size-p5;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-flex;
+
+.add-project-btn-large-Scenariste {
+  @include btn-cinema-primary;
+  padding: $padding-md $padding-xl;
+  font-size: $font-size-p1;
+  display: flex;
   align-items: center;
-  gap: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  background: rgba($color-primary, 0.1);
-  color: $color-primary;
-
-  // Statut En cours
-  &.status-en-cours-projet-scenariste {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    box-shadow: 0 2px 4px rgba($color-primary, 0.2);
-  }
-
-  // Statut Terminé
-  &.status-termine-projet-scenariste {
-    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
-    color: $color-white;
-    box-shadow: 0 2px 4px rgba($color-success, 0.3);
-  }
-
-  // Statut Brouillon
-  &.status-brouillon-projet-scenariste {
-    background: linear-gradient(135deg, $color-info, darken($color-info, 10%));
-    color: $color-white;
-    box-shadow: 0 2px 4px rgba($color-info, 0.3);
-  }
-
-  // Ajoutez d'autres statuts si nécessaire, e.g., &.status-autre-projet-scenariste { ... }
-
-  // Icône dans le badge
+  gap: $gap-sm;
+  margin: $margin-md auto;
+  
   i {
-    font-size: 10px;
+    font-size: $font-size-h4;
+  }
+}
+
+// Animation pour les cartes d'épisodes
+.movie-card-Scenariste {
+  animation: fadeInUp 0.5s ease-out;
+  animation-fill-mode: both;
+  
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 // =============================================
-// ACTIONS SUR LES CARTES ÉPISODES
+// IMPORTATION DES STYLES D'ACCUEIL POUR LA COMPATIBILITÉ
 // =============================================
-.table-actions-projet-scenariste {
-  display: flex;
-  gap: $gap-xs;
-  justify-content: center;
 
-  .btn-view-projet-scenariste,
-  .btn-edit-projet-scenariste,
-  .btn-delete-projet-scenariste {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: $border-radius-xs;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: $transition-fast;
+// Ces classes sont importées depuis _acceuil.scss mais sont nécessaires ici
+.header-section-Scenariste,
+.welcome-section-Scenariste,
+.movie-card-header-Scenariste,
+.movie-statut-Scenariste,
+.statut-badge-Scenariste,
+.movie-actions-Scenariste,
+.action-btn-Scenariste,
+.movie-info-Scenariste,
+.movie-title-Scenariste,
+.movie-synopsis,
+.movie-meta-Scenariste,
+.meta-separator-Scenariste,
+.movie-actions-bottom-Scenariste,
+.actions-top-Scenariste,
+.accent-btn,
+.primary-btn,
+.no-projects-Scenariste,
+.no-projects-icon-Scenariste,
+.edit-project-modal-Scenariste,
+.modal-content-Scenariste,
+.modal-header-Scenariste,
+.close-modal-btn-Scenariste,
+.modal-body-Scenariste,
+.error-message-Scenariste,
+.form-rows-container-Scenariste,
+.form-row-Scenariste,
+.form-group-Scenariste,
+.form-input-Scenariste,
+.form-select-Scenariste,
+.form-textarea-Scenariste,
+.form-full-width-Scenariste,
+.modal-footer-Scenariste,
+.cancel-btn-Scenariste,
+.save-btn-Scenariste {
+  // Ces classes sont définies dans _acceuil.scss
+  // Elles sont utilisées ici pour assurer la cohérence du design
+}
 
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
-  .btn-view-projet-scenariste {
-    background: rgba($color-info, 0.1);
-    color: $color-info;
-
-    &:hover {
-      background: $color-info;
-      color: $color-white;
-    }
-  }
-
-  .btn-edit-projet-scenariste {
-    background: rgba($color-warning, 0.1);
-    color: $color-warning;
-
-    &:hover {
-      background: $color-warning;
-      color: $color-white;
-    }
-  }
-
-  .btn-delete-projet-scenariste {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
-
-    &:hover {
-      background: $color-error;
-      color: $color-white;
-    }
+// =============================================
+// CLASSE POUR LE BOUTON DE SUGGESTION D'ORDRE
+// =============================================
+.suggestion-btn-projet-scenariste {
+  margin-left: $gap-sm;
+  padding: $gap-xs $padding-xs;
+  background: rgba($color-primary, 0.1);
+  border: 1px solid $color-primary;
+  border-radius: $border-radius-xs;
+  color: $color-primary;
+  font-size: $font-size-p4;
+  cursor: pointer;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
   }
 }
