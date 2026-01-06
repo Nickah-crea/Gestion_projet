@@ -207,83 +207,129 @@
           </button>
         </div>
 
-        <!-- Modal d'édition d'épisode -->
-        <div v-if="showEditModal" class="edit-project-modal-Scenariste">
-          <div class="modal-content-Scenariste">
-            <div class="modal-header-Scenariste">
-              <h3>Modifier l'épisode</h3>
-              <button @click="closeEditModal" class="close-modal-btn-Scenariste">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-            
-            <div class="modal-body-Scenariste">
-              <div v-if="editError" class="error-message-Scenariste">
-                {{ editError }}
+          <!-- Modal d'édition d'épisode -->
+          <div v-if="showEditModal" class="edit-project-modal-Scenariste">
+            <div class="modal-content-Scenariste">
+              <div class="modal-header-Scenariste">
+                <h3>Modifier l'épisode</h3>
+                <button @click="closeEditModal" class="close-modal-btn-Scenariste">
+                  <i class="fas fa-times"></i>
+                </button>
               </div>
               
-              <div class="form-rows-container-Scenariste">
-                <!-- Ligne 1 : Titre + Ordre -->
-                <div class="form-row-Scenariste">
-                  <div class="form-group-Scenariste">
-                    <label>Titre:</label>
-                    <input v-model="editingEpisode.titre" type="text" class="form-input-Scenariste" required>
+              <div class="modal-body-Scenariste episode-edit-modal">
+                <!-- Message d'erreur principal -->
+                <div v-if="editError" class="error-message-Scenariste">
+                  {{ editError }}
+                </div>
+                
+                <div class="form-rows-container-Scenariste">
+                  <!-- Ligne 1 : Titre + Ordre (côte à côte) -->
+                  <div class="form-row-Scenariste">
+                    <div class="form-group-Scenariste form-half-width-Scenariste">
+                      <label>Titre:</label>
+                      <input v-model="editingEpisode.titre" type="text" class="form-input-Scenariste" required>
+                    </div>
+                    
+                    <div class="form-group-Scenariste form-half-width-Scenariste">
+                      <label>Ordre:</label>
+                      <input 
+                        v-model="editingEpisode.ordre" 
+                        type="number" 
+                        class="form-input-Scenariste"
+                        :class="{ 'error-input': orderError }"
+                        @blur="validateOrder"
+                        required
+                      >
+                      <!-- Message d'erreur pour l'ordre -->
+                      <div v-if="orderError" class="order-error">
+                        {{ orderError }}
+                      </div>
+                      <div v-if="suggestedOrder && !editingEpisode.ordre" class="suggestion-text">
+                        Suggestion: Le prochain ordre disponible est {{ suggestedOrder }}
+                        <button type="button" @click="useSuggestedOrder" class="suggestion-btn-projet-scenariste">
+                          Utiliser cette valeur
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div class="form-group-Scenariste">
-                    <label>Ordre:</label>
-                    <input 
-                      v-model="editingEpisode.ordre" 
-                      type="number" 
-                      class="form-input-Scenariste"
-                      :class="{ 'error-input': orderError }"
-                      @blur="validateOrder"
-                      required
-                    >
-                    <div v-if="orderError" class="error-text">
-                      {{ orderError }}
-                    </div>
-                    <div v-if="suggestedOrder && !editingEpisode.ordre" class="suggestion-text">
-                      Suggestion: Le prochain ordre disponible est {{ suggestedOrder }}
-                      <button type="button" @click="useSuggestedOrder" class="suggestion-btn-projet-scenariste">
-                        Utiliser cette valeur
-                      </button>
+                  <!-- Ligne 2 : Statut (pleine largeur) -->
+                  <div class="form-row-Scenariste">
+                    <div class="form-group-Scenariste form-full-width-Scenariste">
+                      <label>Statut:</label>
+                      <select v-model="editingEpisode.statutId" class="form-select-Scenariste" required>
+                        <option value="">Sélectionnez un statut</option>
+                        <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
+                          {{ statut.nomStatutsEpisode }}
+                        </option>
+                      </select>
                     </div>
                   </div>
-                </div>
-                
-                <!-- Ligne 2 : Statut -->
-                <div class="form-row-Scenariste">
-                  <div class="form-group-Scenariste">
-                    <label>Statut:</label>
-                    <select v-model="editingEpisode.statutId" class="form-select-Scenariste" required>
-                      <option value="">Sélectionnez un statut</option>
-                      <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
-                        {{ statut.nomStatutsEpisode }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                
-                <!-- Ligne 3 : Synopsis (pleine largeur) -->
-                <div class="form-row-Scenariste">
-                  <div class="form-group-Scenariste form-full-width-Scenariste">
-                    <label>Synopsis:</label>
-                    <textarea v-model="editingEpisode.synopsis" class="form-textarea-Scenariste" rows="4" required></textarea>
+                  
+                  <!-- Ligne 3 : Synopsis (pleine largeur) -->
+                  <div class="form-row-Scenariste">
+                    <div class="form-group-Scenariste form-full-width-Scenariste">
+                      <label>Synopsis:</label>
+                      <textarea v-model="editingEpisode.synopsis" class="form-textarea-Scenariste" rows="4" required></textarea>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div class="modal-footer-Scenariste">
-              <button @click="closeEditModal" class="cancel-btn-Scenariste">Annuler</button>
-              <button @click="saveEditedEpisode" :disabled="orderError !== ''" class="save-btn-Scenariste">
-                Enregistrer
-              </button>
+              
+              <div class="modal-footer-Scenariste">
+                <button @click="closeEditModal" class="cancel-btn-Scenariste">Annuler</button>
+                <button @click="saveEditedEpisode" :disabled="orderError !== '' || editLoading" class="save-btn-Scenariste">
+                  <span v-if="editLoading">Enregistrement...</span>
+                  <span v-else>Enregistrer</span>
+                </button>
+              </div>
             </div>
           </div>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+      <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+      <div class="modal-content-confirm-Scenariste">
+        <div class="modal-header-confirm-Scenariste">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+          <button @click="closeDeleteModal" class="close-modal-btn-Scenariste">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body-confirm-Scenariste">
+          <div class="warning-icon-Scenariste">
+            <i class="fas fa-trash"></i>
+          </div>
+          <p class="warning-text-Scenariste">
+            Êtes-vous sûr de vouloir supprimer l'épisode <strong>"{{ episodeToDelete?.titre }}"</strong> ?
+          </p>
+          <p class="warning-subtext-Scenariste">
+            Cette action est irréversible. Toutes les séquences associées à cet épisode seront également supprimées.
+          </p>
+        </div>
+        
+        <div class="modal-footer-confirm-Scenariste">
+          <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button @click="executeDeleteEpisode" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+            <span v-if="isDeleting">Suppression...</span>
+            <span v-else>Supprimer définitivement</span>
+          </button>
         </div>
       </div>
+    </div>
+      <!-- Notification de succès/erreur -->
+     <div v-if="notification.show" :class="['message-crea-profile', notification.type]" @click="hideNotification">
+      <i :class="notification.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
+      {{ notification.message }}
+      <button class="message-close-crea-profile" @click.stop="hideNotification">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
   </div>
 </template>
@@ -308,11 +354,23 @@ export default {
         ordre: null,
         statutId: null,
       },
-      editError: '',
-      orderError: '', 
-      suggestedOrder: null, 
-      existingOrders: [],
-      originalOrder: null 
+     editError: '',
+    orderError: '', 
+    suggestedOrder: null, 
+    existingOrders: [],
+    originalOrder: null,
+    showDeleteModal: false,
+    episodeToDelete: null,
+    isDeleting: false,
+    deleteError: '' ,
+      notification: {
+      show: false,
+      message: '',
+      type: 'success' // 'success' ou 'error'
+    },
+    notificationTimeout: null,
+     editLoading: false, 
+
     };
   },
   computed: {
@@ -323,7 +381,6 @@ export default {
     },
     filteredEpisodes() {
       let filtered = this.episodes;
-
       // Filtrer par statut
       if (this.filterStatut) {
         filtered = filtered.filter(episode => episode.statutNom === this.filterStatut);
@@ -466,85 +523,176 @@ export default {
       const statut = this.statutsEpisode.find(s => s.nomStatutsEpisode === nom);
       return statut ? statut.idStatutEpisode : null;
     },
-    async saveEditedEpisode() {
-      this.validateOrder();
-      if (this.orderError) {
+  async saveEditedEpisode() {
+        this.validateOrder();
+    if (this.orderError) {
+      return;
+    }
+  
+   this.editLoading = true; 
+    
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        this.editError = 'Utilisateur non connecté';
+        this.showNotification('Utilisateur non connecté', 'error');
         return;
       }
-      
-      try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.id) {
-          this.editError = 'Utilisateur non connecté';
-          return;
-        }
 
-        const response = await axios.put(`/api/episodes/${this.editingEpisode.idEpisode}`, {
-          titre: this.editingEpisode.titre,
-          synopsis: this.editingEpisode.synopsis,
-          ordre: parseInt(this.editingEpisode.ordre),
-          statutId: this.editingEpisode.statutId,
-        }, {
-          headers: {
-            'X-User-Id': user.id
-          }
-        });
-        
-        this.showEditModal = false;
-        this.editError = '';
-        this.orderError = '';
-        await this.loadEpisodes();
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour de l épisode:', error);
-        
-        if (error.response?.status === 403) {
-          this.editError = 'Modification refusée. Vous n\'avez pas les droits nécessaires.';
-        } else if (error.response?.status === 400 && 
-            error.response?.data?.message?.includes('ordre')) {
-          this.orderError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
-          this.editError = 'Erreur de validation: ' + this.orderError;
-        } else {
-          this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
+      const response = await axios.put(`/api/episodes/${this.editingEpisode.idEpisode}`, {
+        titre: this.editingEpisode.titre,
+        synopsis: this.editingEpisode.synopsis,
+        ordre: parseInt(this.editingEpisode.ordre),
+        statutId: this.editingEpisode.statutId,
+      }, {
+        headers: {
+          'X-User-Id': user.id
         }
-      }
-    },
-    closeEditModal() {
+      });
+      
       this.showEditModal = false;
-      this.editingEpisode = {
-        idEpisode: null,
-        titre: '',
-        synopsis: '',
-        ordre: null,
-        statutId: null,
-      };
       this.editError = '';
       this.orderError = '';
-      this.suggestedOrder = null;
-      this.existingOrders = [];
-      this.originalOrder = null;
-    },
+      await this.loadEpisodes();
+      
+      // Notification de succès pour la modification
+      this.showNotification('Épisode modifié avec succès !', 'success');
+      
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l épisode:', error);
+      
+      if (error.response?.status === 403) {
+        // this.editError = 'Modification refusée. Vous n\'avez pas les droits nécessaires.';
+        this.showNotification('Modification refusée. Vous n\'avez pas les droits nécessaires.', 'error');
+      } else if (error.response?.status === 400 && 
+          error.response?.data?.message?.includes('ordre')) {
+        this.orderError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
+        this.editError = 'Erreur de validation: ' + this.orderError;
+        this.showNotification(this.orderError, 'error');
+      } else if (error.response?.status === 401) {
+        this.editError = 'Session expirée. Veuillez vous reconnecter.';
+        this.showNotification('Session expirée. Veuillez vous reconnecter.', 'error');
+      } else {
+        this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
+        this.showNotification(this.editError, 'error');
+      }
+    } finally {
+      this.editLoading = false;
+    }
+  },
+closeEditModal() {
+  this.showEditModal = false;
+  this.editingEpisode = {
+    idEpisode: null,
+    titre: '',
+    synopsis: '',
+    ordre: null,
+    statutId: null,
+  };
+  this.editError = '';
+  this.orderError = '';
+  this.suggestedOrder = null;
+  this.existingOrders = [];
+  this.originalOrder = null;
+  this.hideNotification(); 
+},
     async confirmDeleteEpisode(episodeId) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer cet épisode ?')) {
-        try {
-          const user = JSON.parse(localStorage.getItem('user'));
-          if (!user || !user.id) {
-            alert('Utilisateur non connecté');
-            return;
-          }
+      const episode = this.episodes.find(ep => ep.idEpisode === episodeId);
+      if (!episode) return;
+      
+      this.episodeToDelete = episode;
+      this.showDeleteModal = true;
+      this.deleteError = '';
+    },
 
-          await axios.delete(`/api/episodes/${episodeId}`, {
-            headers: {
-              'X-User-Id': user.id
-            }
-          });
-          await this.loadEpisodes();
-          alert('Épisode supprimé avec succès!');
-        } catch (error) {
-          console.error('Erreur lors de la suppression de l\'épisode:', error);
-          alert('Erreur lors de la suppression de l\'épisode: ' + (error.response?.data?.message || error.message));
-        }
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+      this.episodeToDelete = null;
+      this.isDeleting = false;
+      this.deleteError = '';
+    },
+
+     showNotification(message, type = 'success') {
+      this.notification = {
+        show: true,
+        message: message,
+        type: type
+      };
+      
+      // Annuler le timeout précédent s'il existe
+      if (this.notificationTimeout) {
+        clearTimeout(this.notificationTimeout);
+      }
+      
+      // Masquer automatiquement après 5 secondes
+      this.notificationTimeout = setTimeout(() => {
+        this.hideNotification();
+      }, 5000);
+    },
+    
+    hideNotification() {
+      this.notification.show = false;
+      this.notification.message = '';
+      if (this.notificationTimeout) {
+        clearTimeout(this.notificationTimeout);
+        this.notificationTimeout = null;
       }
     },
+    
+    // Mettez à jour la méthode showSuccessNotification existante :
+    showSuccessNotification(message) {
+      this.showNotification(message, 'success');
+    },
+
+    async executeDeleteEpisode() {
+    if (!this.episodeToDelete) return;
+    
+    this.isDeleting = true;
+    this.deleteError = '';
+    
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        this.deleteError = 'Utilisateur non connecté';
+        this.showNotification('Utilisateur non connecté', 'error');
+        this.isDeleting = false;
+        return;
+      }
+
+      await axios.delete(`/api/episodes/${this.episodeToDelete.idEpisode}`, {
+        headers: {
+          'X-User-Id': user.id
+        }
+      });
+      
+      await this.loadEpisodes();
+      this.closeDeleteModal();
+      
+      // Notification de succès
+      this.showNotification('Épisode supprimé avec succès !', 'success');
+      
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'épisode:', error);
+      
+      let errorMessage = 'Erreur lors de la suppression de l\'épisode';
+      
+      if (error.response) {
+        if (error.response.status === 403) {
+          errorMessage = 'Suppression refusée. Vous n\'avez pas les droits nécessaires pour supprimer cet épisode.';
+        } else if (error.response.status === 401) {
+          errorMessage = 'Session expirée. Veuillez vous reconnecter.';
+        } else {
+          errorMessage = error.response.data?.message || `Erreur serveur (${error.response.status})`;
+        }
+      } else if (error.request) {
+        errorMessage = 'Pas de réponse du serveur. Vérifiez votre connexion.';
+      }
+      
+      this.deleteError = errorMessage;
+      this.showNotification(errorMessage, 'error');
+      this.isDeleting = false;
+    }
+  },
     goToAddEpisode() {
       this.$router.push(`/projet/${this.$route.params.id}/add-episode`);
     },
