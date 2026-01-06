@@ -14,7 +14,7 @@
               loop 
               playsinline 
               class="scenariste-video"
-            >
+            > 
               <source src="../assets/img/autor.mp4" type="video/mp4">
               <!-- Fallback si la vidéo ne charge pas -->
               <img src="../assets/img/autor.png" alt="Scénariste au travail" class="scenariste-image">
