@@ -1,455 +1,331 @@
+// _login.scss - Interface de connexion VDFI
 @import '../base/variables';
 
-// =============================================
-// STRUCTURE PRINCIPALE - STYLE CARNET DE TOURNAGE
-// =============================================
+// Variables charte VDFI
+$vdfi-primary: #E97C11;
+$vdfi-accent: #E01F5A;
+$vdfi-accent-light: #E1DC49;
+$vdfi-accent-dark: #751613;
+$vdfi-text: #261213;
+$vdfi-background: #F5FAF5;
+$vdfi-white: #FFFFFF;
+
+// Styles de base
 .app-wrapper-co-conn {
   min-height: 100vh;
-  background: $color-background;
+  background: $vdfi-background;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
+  padding: 20px;
   font-family: $font-family-primary;
 }
 
-// =============================================
-// ICÔNES FLOTTANTES - GRANDES ET COLORÉES (inchangées)
-// =============================================
-.film-icons-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-  
-  .film-icon {
-    position: absolute;
-    font-size: 42px;
-    opacity: 0.25;
-    animation: icon-float 25s ease-in-out infinite;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    filter: drop-shadow(0 4px 8px rgba(242, 217, 160, 0.4));
-    
-    &.icon-gold { color: $color-primary; }
-    &.icon-burgundy { color: $color-accent; }
-    &.icon-champagne { color: $color-primary-light; }
-    &.icon-wine { color: $color-text-primary; }
-    &.icon-success { color: $color-success; }
-    
-    &.size-lg { font-size: 48px; opacity: 0.3; }
-    &.size-md { font-size: 38px; }
-    &.size-sm { font-size: 32px; opacity: 0.2; }
-  }
-  
-  .icon-1 { top: 12%; left: 8%; animation-delay: 0s; font-size: 46px; }
-  .icon-2 { top: 22%; right: 12%; animation-delay: 3s; font-size: 44px; }
-  .icon-3 { top: 65%; left: 6%; animation-delay: 6s; font-size: 42px; }
-  .icon-4 { top: 40%; right: 10%; animation-delay: 9s; font-size: 48px; }
-  .icon-5 { top: 78%; left: 18%; animation-delay: 12s; font-size: 38px; }
-  .icon-6 { top: 30%; left: 22%; animation-delay: 15s; font-size: 40px; }
-  .icon-7 { top: 58%; right: 22%; animation-delay: 18s; font-size: 44px; }
-  .icon-8 { top: 18%; left: 32%; animation-delay: 21s; font-size: 36px; }
-  .icon-9 { top: 70%; right: 6%; animation-delay: 24s; font-size: 46px; }
-  .icon-10 { top: 45%; left: 42%; animation-delay: 27s; font-size: 39px; }
-  .icon-11 { top: 82%; right: 18%; animation-delay: 30s; font-size: 35px; }
-  .icon-12 { top: 25%; right: 4%; animation-delay: 33s; font-size: 41px; }
-}
-
-@keyframes icon-float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  20% { transform: translate(20px, -25px) rotate(8deg) scale(1.15); }
-  40% { transform: translate(-15px, 20px) rotate(-5deg) scale(0.95); }
-  60% { transform: translate(25px, 15px) rotate(4deg) scale(1.1); }
-  80% { transform: translate(-10px, -15px) rotate(-3deg) scale(0.98); }
-}
-
-// =============================================
-// CONTENEUR ET CARTE - STYLE CARNET DE TOURNAGE (VARIABLE)
-// =============================================
 .connexion-container-conn {
   width: 100%;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
+  max-width: 1400px; // AGRANDI pour plus d'espace
+  height: 90vh;
+  min-height: 600px;
 }
 
-.connexion-form-section-conn {
-  width: 100%;
-  max-width: 510px; // MÊME TAILLE POUR CONNEXION ET INSCRIPTION
+// Conteneur split-screen
+.split-screen-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: $z-index-modal;
-  padding: 20px;
+  height: 100%;
+  background: $vdfi-white;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-lg;
   
-  // // Largeur augmentée pour inscription
-  // &.inscription-mode {
-  //   max-width: 610px; // RÉDUIT À 610px (était 800px)
-  // }
+  // Mode connexion: image à droite
+  flex-direction: row;
+  
+  // Mode inscription: image à gauche
+  &.inscription-mode {
+    flex-direction: row-reverse;
+    
+    // PLUS D'ESPACE pour le formulaire d'inscription
+    .form-side {
+      flex: 1.3; // 30% plus large
+    }
+    
+    .image-side {
+      flex: 0.7; // 30% plus petit
+    }
+  }
 }
 
-.connexion-card-conn {
-  background: rgba(255, 255, 255, 0.96);
-  width: 100%;
-  width: 490px; // MÊME TAILLE POUR CONNEXION ET INSCRIPTION
-  padding: 36px 28px;
-  border-radius: 20px;
-  border: 1.5px solid $color-border;
-  box-shadow: 
-    $shadow-primary,
-    0 20px 60px rgba(59, 1, 11, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+// CÔTÉ IMAGE
+.image-side {
+  flex: 1;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(12px);
   
-  background-image: 
-    linear-gradient(rgba(242, 229, 198, 0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(242, 229, 198, 0.08) 1px, transparent 1px);
-  background-size: 100% 24px, 24px 100%;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
+  .image-wrapper {
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 20% 30%, $color-pastel-gold 0%, transparent 50%);
-    opacity: 0.5;
-    z-index: -1;
+    
+    .scenariste-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    
+    .image-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba($vdfi-text, 0.8);
+      color: $vdfi-white;
+      padding: $padding-lg;
+      
+      .overlay-content {
+        .overlay-title {
+          @include typography-playfair-h4;
+          color: $vdfi-white;
+          font-weight: $font-weight-bold;
+          margin-bottom: 8px;
+          text-transform: uppercase;
+        }
+        
+        .overlay-text {
+          @include typography-p3;
+          font-family: $font-family-primary;
+          color: rgba($vdfi-white, 0.9);
+          margin-bottom: 16px;
+          line-height: 1.4;
+        }
+        
+        .overlay-features {
+          display: flex;
+          justify-content: space-between;
+          
+          .feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            
+            i {
+              font-size: 14px;
+              color: $vdfi-primary;
+            }
+            
+            span {
+              @include typography-p4;
+              font-family: $font-family-primary;
+              color: $vdfi-white;
+              font-weight: $font-weight-medium;
+            }
+          }
+        }
+      }
+    }
   }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 14px;
-    height: 80%;
-    background: 
-      radial-gradient(circle at 7px 20px, $color-primary 45%, transparent 46%),
-      radial-gradient(circle at 7px 40px, $color-primary 45%, transparent 46%),
-      radial-gradient(circle at 7px 60px, $color-primary 45%, transparent 46%),
-      radial-gradient(circle at 7px 80px, $color-primary 45%, transparent 46%);
-    opacity: 0.4;
-  }
-  
-  // // Largeur augmentée pour inscription
-  // &.inscription-mode {
-  //   width: 590px; // RÉDUIT À 590px (était 800px)
-  // }
 }
 
-// =============================================
-// LOGO - STYLE CARNET DE TOURNAGE AMÉLIORÉ (RÉDUIT)
-// =============================================
-.cinema-logo {
+// CÔTÉ FORMULAIRE
+.form-side {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 28px;
-  text-align: center;
-  position: relative;
-  
-  .logo-icon {
-    font-size: 42px;
-    color: $color-primary;
-    margin-bottom: 10px;
-    opacity: 0.9;
-    text-shadow: 0 4px 12px rgba(242, 217, 160, 0.4);
-    filter: drop-shadow(0 4px 8px rgba(242, 217, 160, 0.3));
-    animation: logo-pulse 4s ease-in-out infinite;
-  }
-  
-  .logo-text {
-    font-family: $font-family-cinzel;
-    font-size: 36px;
-    font-weight: 500;
-    color: $color-text-primary;
-    margin: 0 0 4px 0;
-    letter-spacing: 1.5px;
-    line-height: 1.1;
-    text-shadow: 0 2px 6px rgba(59, 1, 11, 0.15);
-  }
-  
-  .logo-subtitle {
-    font-size: 14px;
-    color: $color-text-muted;
-    font-weight: 400;
-    line-height: 1.4;
-    letter-spacing: 0.6px;
-    font-style: italic;
-  }
+  padding: $padding-xl;
+  overflow: hidden;
 }
 
-@keyframes logo-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-// =============================================
-// FORMULAIRES - STYLE CARNET CRÉATIF (RÉDUIT + CÔTE À CÔTE)
-// =============================================
-.container-inscription {
+// Carte principale - PLUS GRANDE EN INSCRIPTION
+.connexion-card-conn {
   width: 100%;
-}
-
-.form-group-cinema {
-  margin-bottom: 16px;
-  position: relative;
-}
-
-// CONTENEUR POUR CHAMPS CÔTE À CÔTE - CORRECTION
-// CONTENEUR POUR CHAMPS CÔTE À CÔTE - CORRECTION
-.form-row {
+  max-width: 450px; // AGRANDI
+  margin: 0 auto;
   display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
+  flex-direction: column;
+  height: 100%;
   
+  // En mode inscription, encore plus large
+  .inscription-mode & {
+    max-width: 550px; // +100px pour l'inscription
+  }
+  
+  .cinema-logo {
+    text-align: center;
+    margin-bottom: $margin-lg; // RÉDUIT: $margin-xl → $margin-lg
+    flex-shrink: 0;
+    
+    .logo-icon {
+      font-size: 32px;
+      color: $vdfi-primary;
+      margin-bottom: 8px; // RÉDUIT: 10px → 8px
+    }
+    
+    .logo-text {
+      @include typography-playfair-h2;
+      color: $vdfi-text;
+      font-weight: $font-weight-black;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+      
+      background: linear-gradient(135deg, $vdfi-primary 0%, $vdfi-accent 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .logo-subtitle {
+      @include typography-p2;
+      font-family: $font-family-primary;
+      color: lighten($vdfi-text, 30%);
+    }
+  }
+}
+
+// Conteneurs formulaire
+.connexion-formulaire,
+.inscription-formulaire {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($vdfi-primary, 0.1);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($vdfi-primary, 0.3);
+    border-radius: 2px;
+  }
+}
+
+// =============================================
+// FORMULAIRES - ESPACEMENT RÉDUIT DE 4px
+// =============================================
+
+// STYLES COMMUNS POUR CONNEXION ET INSCRIPTION
+.cinema-form {
   .form-group-cinema {
-    flex: 1;
-    margin-bottom: 0;
-    min-width: 0;
+    margin-bottom: 12px; // RÉDUIT: 16px → 12px (-4px)
     
     .input-wrapper {
-      width: 100%;
+      position: relative;
+      
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $vdfi-primary;
+        font-size: 16px;
+        z-index: 1;
+      }
+    }
+  }
+}
+
+// CONNEXION (simple)
+.connexion-formulaire {
+  // Rien de spécifique à ajouter
+}
+
+// INSCRIPTION - INPUTS CÔTE À CÔTE SUR DESKTOP
+.inscription-formulaire {
+  .cinema-form {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr; // Par défaut en colonne (mobile)
+      gap: 8px; // RÉDUIT: 12px → 8px (-4px)
+      margin-bottom: 12px; // RÉDUIT: 16px → 12px (-4px)
+      
+      &.double {
+        @media (min-width: 768px) {
+          grid-template-columns: 1fr 1fr; // Côte à côte sur tablette/desktop
+          gap: 8px; // RÉDUIT: 12px → 8px (-4px)
+        }
+      }
     }
     
-    .cinema-input {
-      width: 100%;
+    // IMPORTANT: Supprimer les marges des .form-group-cinema dans les lignes
+    .form-row .form-group-cinema {
+      margin-bottom: 0; // PAS de marge ici
+    }
+    
+    // Rétablir la marge seulement pour les groupes en dehors des lignes
+    .form-group-cinema {
+      margin-bottom: 12px; // Pour biographie, erreur, etc. RÉDUIT: 16px → 12px
     }
   }
 }
 
-@include respond-to($breakpoint-md) {
-  .form-row {
-    gap: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-  .form-row {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .form-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
-
-// .input-wrapper {
-//   position: relative;
-//   display: flex;
-//   align-items: center;
-//   width: 100%;
-// }
-
-
-
-.input-icon {
-  position: absolute;
-  left: 16px;
-  color: $color-text-muted;
-  font-size: 16px;
-  z-index: 2;
-  transition: all 0.3s ease;
-}
-
+// Inputs
 .cinema-input {
   width: 100%;
-  padding: 12px 16px 12px 44px;
-  border: 1.5px solid $color-border;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  font-size: 14px;
-  color: $color-text-primary;
-  transition: all 0.3s ease;
+  padding: 12px 12px 12px 44px; // RÉDUIT: 14px → 12px (-2px)
+  border: 1px solid rgba($vdfi-primary, 0.2);
+  border-radius: $border-radius;
+  background: rgba($vdfi-background, 0.5);
   font-family: $font-family-primary;
-  box-shadow: 0 2px 6px rgba(59, 1, 11, 0.06);
-  box-sizing: border-box; // AJOUT: Inclut le padding dans la largeur
+  font-size: 14px;
+  color: $vdfi-text;
+  transition: $transition-fast;
   
   &::placeholder {
-    color: lighten($color-text-muted, 15%);
-    font-style: italic;
+    color: lighten($vdfi-text, 40%);
+    font-size: 13px;
   }
   
   &:focus {
     outline: none;
-    border-color: $color-primary;
-    background: white;
-    box-shadow: 0 0 0 4px $color-pastel-gold, 0 6px 12px rgba(242, 217, 160, 0.25);
-    
-    + .input-icon {
-      color: $color-primary;
-      transform: scale(1.15);
-    }
+    border-color: $vdfi-primary;
+    box-shadow: 0 0 0 3px rgba($vdfi-primary, 0.1);
   }
   
   &.error {
-    border-color: $color-error;
-    box-shadow: 0 0 0 4px $color-pastel-red;
+    border-color: $vdfi-accent;
+    background: rgba($vdfi-accent, 0.05);
   }
 }
 
+// Select
 .cinema-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2375162D'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23E97C11' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;
-  background-size: 16px;
-  padding-right: 44px;
+  padding-right: 40px;
+  
+  &.role-select {
+    padding: 12px 16px 12px 44px; // RÉDUIT: 14px → 12px (-2px)
+    font-size: 15px;
+    height: 46px; // RÉDUIT: 48px → 46px (-2px)
+    border-radius: $border-radius;
+    border: 2px solid rgba($vdfi-primary, 0.3);
+    background-color: rgba($vdfi-primary, 0.05);
+    
+    &:focus {
+      border-color: $vdfi-primary;
+      background-color: rgba($vdfi-primary, 0.1);
+    }
+  }
 }
 
+// Textarea
 .textarea-cinema {
-  border-radius: 12px;
+  min-height: 80px; // RÉDUIT: 90px → 80px (-10px)
   resize: vertical;
-  min-height: 80px;
-  padding-top: 12px;
-  padding-bottom: 12px;
   line-height: 1.5;
-  font-family: $font-family-primary;
-  box-sizing: border-box; // AJOUT
+  padding-top: 10px; // RÉDUIT: 12px → 10px (-2px)
+  padding-bottom: 10px; // RÉDUIT: 12px → 10px (-2px)
+  font-size: 14px;
 }
 
-// =============================================
-// BOUTONS - STYLE CALL TO ACTION FILM AMÉLIORÉ (RÉDUIT)
-// =============================================
-.premier-btn {
-  width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
-  color: $color-text-primary;
-  border: none;
-  border-radius: $border-radius-xs; // CHANGÉ ICI (était: 50px)
-  font-size: 15px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: $shadow-primary;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  font-family: $font-family-primary;
-  letter-spacing: 0.4px;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: left 0.6s ease;
-  }
-  
-  &:hover:not(:disabled) {
-    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
-    transform: translateY(-3px);
-    box-shadow: $shadow-accent;
-    
-    &::before {
-      left: 100%;
-    }
-  }
-  
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-}
-
-// =============================================
-// OPTIONS ET LIENS - STYLE CARNET (RÉDUIT)
-// =============================================
-.form-options-cinema {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  font-size: 13px;
-}
-
-.forgot-link-cinema {
-  color: $color-accent;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  font-style: italic;
-  
-  &:hover {
-    color: $color-accent-dark;
-    text-decoration: underline;
-  }
-}
-
-// =============================================
-// LIEN D'INSCRIPTION/CONNEXION (RÉDUIT)
-// =============================================
-.signup-link-cinema-center {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 13px;
-  color: $color-text-secondary;
-  
-  .link-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  
-  .switch-link {
-    color: $color-accent;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    font-style: italic;
-    
-    &:hover {
-      color: $color-accent-dark;
-      text-decoration: underline;
-    }
-  }
-}
-
-// =============================================
-// ERREURS ET HINTS - STYLE NOTES AMÉLIORÉ (RÉDUIT)
-// =============================================
-.error-message-cinema {
-  color: $color-error;
-  font-size: 13px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: $color-pastel-red;
-  border-radius: 12px;
-  border-left: 5px solid $color-error;
-  font-weight: 500;
-  box-shadow: 0 3px 8px rgba(117, 22, 45, 0.15);
-}
-
+// Indicateurs email
 .email-status-cinema {
   position: absolute;
   right: 16px;
@@ -457,164 +333,408 @@
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: 6px;
   
-  .fa-check {
-    color: $color-success;
-    font-size: 12px;
+  i {
+    font-size: 14px;
+    
+    &.fa-check {
+      color: $color-success;
+    }
+    
+    &.fa-times {
+      color: $vdfi-accent;
+    }
   }
   
-  .fa-times {
-    color: $color-error;
-    font-size: 12px;
+  .email-error-cinema {
+    @include typography-p3;
+    color: $vdfi-accent;
   }
-}
-
-.email-error-cinema {
-  color: $color-error;
-  font-size: 11px;
-  font-weight: 500;
 }
 
 .password-hint-cinema {
-  font-size: 11px;
-  color: $color-error;
-  margin-top: 4px;
-  padding-left: 0;
-  font-weight: 500;
-  font-style: italic;
-  position: absolute;
-  bottom: -18px;
-  left: 0;
+  @include typography-p3;
+  color: lighten($vdfi-text, 30%);
+  margin-top: 6px; // RÉDUIT: 8px → 6px (-2px)
+  padding-left: 44px;
+}
+
+// Options du formulaire
+.form-options-cinema {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px; // RÉDUIT: 16px → 12px (-4px)
+}
+
+.forgot-link-cinema {
+  @include typography-p2;
+  color: $vdfi-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  transition: $transition-fast;
+  
+  &:hover {
+    color: $vdfi-accent;
+    text-decoration: underline;
+  }
+}
+
+// Messages d'erreur
+.error-message-cinema {
+  background: rgba($vdfi-accent, 0.08);
+  border-left: 2px solid $vdfi-accent;
+  padding: 12px; // RÉDUIT: 16px → 12px (-4px)
+  border-radius: $border-radius-xs;
+  margin-bottom: 12px; // RÉDUIT: 16px → 12px (-4px)
+  display: flex;
+  align-items: center;
+  gap: 10px; // RÉDUIT: 12px → 10px (-2px)
+  
+  i {
+    color: $vdfi-accent;
+    font-size: 16px;
+  }
+  
+  @include typography-p2;
+  color: $vdfi-accent-dark;
+}
+
+// Bouton principal
+.premier-btn {
   width: 100%;
+  border: none;
+  background: $vdfi-primary;
+  color: $vdfi-white;
+  font-family: $font-family-primary;
+  font-weight: $font-weight-semibold;
+  font-size: 16px;
+  padding: 14px 28px; // RÉDUIT: 16px → 14px (-2px)
+  margin-top: 12px; // RÉDUIT: 16px → 12px (-4px)
+  cursor: pointer;
+  border-radius: $border-radius;
+  transition: $transition;
+  
+  &:hover:not(:disabled) {
+    background: darken($vdfi-primary, 8%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($vdfi-primary, 0.3);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  i {
+    font-size: 16px;
+  }
 }
 
-// Ajuster la marge pour les groupes avec message d'erreur
-.form-group-cinema:has(.password-hint-cinema) {
-  margin-bottom: 24px;
+// Animation de chargement
+.loading-film {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  
+  .film-frame {
+    width: 8px;
+    height: 12px;
+    background: $vdfi-white;
+    animation: filmRoll 1.2s infinite ease-in-out;
+    
+    &:nth-child(1) {
+      animation-delay: -0.4s;
+    }
+    
+    &:nth-child(2) {
+      animation-delay: -0.2s;
+    }
+  }
 }
 
+@keyframes filmRoll {
+  0%, 80%, 100% {
+    transform: scaleY(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scaleY(1.2);
+    opacity: 1;
+  }
+}
+
+// Lien de bascule
+.signup-link-cinema-center {
+  text-align: center;
+  margin-top: 16px; // RÉDUIT: 20px → 16px (-4px)
+  padding-top: 16px; // RÉDUIT: 20px → 16px (-4px)
+  border-top: 1px solid rgba($vdfi-primary, 0.1);
+  flex-shrink: 0;
+  
+  .link-content {
+    @include typography-p2;
+    color: lighten($vdfi-text, 30%);
+  }
+  
+  .switch-link {
+    color: $vdfi-primary;
+    text-decoration: none;
+    font-weight: $font-weight-semibold;
+    margin-left: 8px;
+    transition: $transition-fast;
+    
+    &:hover {
+      color: $vdfi-accent;
+      text-decoration: underline;
+    }
+  }
+}
 
 // =============================================
-// RESPONSIVE (AJUSTÉ)
+// RESPONSIVE CORRIGÉ
 // =============================================
-@include respond-to($breakpoint-md) {
-  .connexion-form-section-conn {
-    padding: 40px 20px;
+
+// DESKTOP (> 992px) - INPUTS CÔTE À CÔTE
+@media (min-width: 992px) {
+  .split-screen-container {
+    flex-direction: row;
     
     &.inscription-mode {
-      max-width: 610px;
+      flex-direction: row-reverse;
+      
+      .form-side {
+        flex: 1.4; // 40% plus large en inscription sur desktop
+      }
+      
+      .image-side {
+        flex: 0.6; // 40% plus petit
+      }
     }
   }
   
   .connexion-card-conn {
-    padding: 32px 24px;
+    max-width: 480px;
     
-    &.inscription-mode {
-      width: 590px;
+    .inscription-mode & {
+      max-width: 600px; // Encore plus large
     }
   }
   
-  // Sur tablette, passer les champs côte à côte en vertical
-  .form-row {
+  // SUR DESKTOP, LES INPUTS RESTENT CÔTE À CÔTE
+  .inscription-formulaire {
+    .cinema-form {
+      .form-row {
+        &.double {
+          grid-template-columns: 1fr 1fr !important;
+          gap: 8px; // RÉDUIT: 12px → 8px (-4px)
+        }
+      }
+    }
+  }
+}
+
+// TABLETTE (768px - 991px)
+@media (max-width: 991px) and (min-width: 768px) {
+  .connexion-container-conn {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .split-screen-container {
     flex-direction: column;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-   .connexion-form-section-conn {
-    max-width: 410px !important;
-  }
-  
- .connexion-card-conn {
-    width: 390px !important;
-  }
-  
-  // Sur tablette moyenne, forcer les champs en colonne
-  // .form-row {
-  //   flex-direction: column;
-  // }
-}
-
-@media (max-width: 480px) {
-  .connexion-card-conn {
-    padding: 28px 20px;
-    margin: 10px;
-    
-    &::after {
-      display: none;
-    }
+    height: auto;
     
     &.inscription-mode {
-      width: 390px !important;
+      flex-direction: column;
+    }
+    
+    .image-side {
+      height: 300px;
+      min-height: 300px;
+      flex: none;
+      
+      .image-overlay {
+        padding: $padding-md;
+      }
+    }
+    
+    .form-side {
+      flex: 1;
+      min-height: auto;
+      padding: $padding-xl;
     }
   }
   
-  .cinema-logo .logo-text {
-    font-size: 32px;
-  }
-  
-  .cinema-logo .logo-icon {
-    font-size: 38px;
-  }
-  
-  .film-icons-background .film-icon {
-    font-size: 28px !important;
+  .connexion-card-conn {
+    max-width: 700px;
     
-    &.size-lg { font-size: 32px !important; }
-    &.size-md { font-size: 26px !important; }
-    &.size-sm { font-size: 22px !important; }
+    .inscription-mode & {
+      max-width: 700px;
+    }
+  }
+  
+  // SUR TABLETTE, LES INPUTS PEUVENT RESTER CÔTE À CÔTE
+  .inscription-formulaire {
+    .cinema-form {
+      .form-row {
+        &.double {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px; // RÉDUIT: 12px → 8px (-4px)
+        }
+      }
+    }
+  }
+}
+
+// MOBILE (< 768px)
+@media (max-width: 767px) {
+  .app-wrapper-co-conn {
+    padding: 10px;
+  }
+  
+  .connexion-container-conn {
+    height: 100vh;
+    max-width: 100%;
+  }
+  
+  .split-screen-container {
+    flex-direction: column;
+    height: 100%;
+    
+    &.inscription-mode {
+      flex-direction: column;
+    }
+    
+    .image-side {
+      height: 220px;
+      min-height: 220px;
+      flex: none;
+    }
+    
+    .form-side {
+      flex: 1;
+      padding: $padding-lg;
+      overflow: hidden;
+    }
+  }
+  
+  .connexion-card-conn {
+    max-width: 100%;
+    height: 100%;
+    
+    .cinema-logo {
+      margin-bottom: $margin-md; // RÉDUIT: $margin-lg → $margin-md
+      
+      .logo-text {
+        font-size: $font-size-h3;
+      }
+      
+      .logo-icon {
+        font-size: 28px;
+        margin-bottom: 6px; // RÉDUIT: 8px → 6px (-2px)
+      }
+    }
+  }
+  
+  // SUR MOBILE, TOUT EN COLONNE
+  .inscription-formulaire {
+    .cinema-form {
+      .form-row {
+        &.double {
+          grid-template-columns: 1fr;
+          gap: 8px; // RÉDUIT: 12px → 8px (-4px)
+        }
+      }
+    }
+  }
+  
+  // Réductions sur mobile
+  .form-group-cinema {
+    margin-bottom: 10px; // RÉDUIT: 14px → 10px (-4px)
   }
   
   .cinema-input {
-    padding: 10px 12px 10px 40px;
+    padding: 10px 10px 10px 40px; // RÉDUIT: 12px → 10px (-2px)
     font-size: 13px;
   }
   
-  .input-icon {
-    left: 12px;
-    font-size: 14px;
+  .premier-btn {
+    padding: 12px 24px; // RÉDUIT: 14px → 12px (-2px)
+    font-size: 15px;
+    margin-top: 10px; // RÉDUIT: 14px → 10px (-4px)
+  }
+}
+
+// PETIT MOBILE (< 576px)
+@media (max-width: 575px) {
+  .split-screen-container {
+    .image-side {
+      height: 180px;
+      min-height: 180px;
+      
+      .image-overlay {
+        padding: $padding-sm;
+        
+        .overlay-content {
+          .overlay-title {
+            font-size: $font-size-p1;
+            margin-bottom: 4px;
+          }
+          
+          .overlay-text {
+            font-size: $font-size-p4;
+            margin-bottom: 8px;
+          }
+        }
+      }
+    }
+    
+    .form-side {
+      padding: $padding-md;
+    }
+  }
+  
+  .connexion-card-conn {
+    .cinema-logo {
+      .logo-text {
+        font-size: $font-size-h4;
+      }
+      
+      .logo-subtitle {
+        font-size: $font-size-p3;
+      }
+    }
+  }
+  
+  // Réductions supplémentaires
+  .form-group-cinema {
+    margin-bottom: 8px; // RÉDUIT: 12px → 8px (-4px)
+  }
+  
+  .cinema-input {
+    padding: 8px 8px 8px 36px; // RÉDUIT: 10px → 8px (-2px)
+    font-size: 12px;
   }
   
   .premier-btn {
-    padding: 12px 16px;
+    padding: 10px 20px; // RÉDUIT: 12px → 10px (-2px)
     font-size: 14px;
+    margin-top: 8px; // RÉDUIT: 12px → 8px (-4px)
   }
-  
-  // Sur mobile, toujours en colonne
-  .form-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .film-icons-background .film-icon:nth-child(n+9) {
-    display: none;
-  }
-}
-
-// =============================================
-// SUPPRESSION DES ANCIENS STYLES
-// =============================================
-.organic-bg,
-.doodles,
-.ravinala,
-.organic-background-overlay,
-.doodle-lines,
-.organic-elements,
-.plant-element {
-  display: none !important;
-}
-
-// Supprimer l'ancienne règle fixe pour inscription-formulaire
-.inscription-formulaire {
-  width: 100%;
-}
-
-// Supprimer l'espaceur invisible qui causait des problèmes
-.form-group-cinema[style*="visibility: hidden"] {
-  display: none;
 }
 
 
