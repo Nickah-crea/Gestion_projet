@@ -1,6 +1,6 @@
 <template>
   <div class="app-wrapper-global">
-    <!-- Sidebar latérale -->
+    <!-- Sidebar latérale originale - inchangée -->
     <div class="creation-sidebar-projet-scenariste">
       <div class="sidebar-header-projet-scenariste">
         <h2 class="sidebar-title-projet-scenariste">Gestion Projets</h2>
@@ -9,24 +9,24 @@
 
       <!-- Section Actions Rapides -->
       <div class="sidebar-section-projet-scenariste">
-        <h3 class="section-title-projet-scenariste"><i class="fas fa-bolt"></i> Actions Rapides</h3>
-        <div class="sidebar-actions-projet-scenariste">
-          <button 
-            @click="goToAddEpisode" 
-            class="sidebar-btn-projet-scenariste"
-          >
-            <i class="fas fa-plus"></i>
-            Nouvel épisode
-          </button>
-          <button 
-            @click="goBack" 
-            class="sidebar-btn-projet-scenariste"
-          >
-            <i class="fas fa-arrow-left"></i>
-            Retour aux projets
-          </button>
-        </div>
-      </div>
+              <h3 class="section-title-projet-scenariste"><i class="fas fa-bolt"></i> Actions Rapides</h3>
+              <div class="sidebar-actions-projet-scenariste">
+                <button 
+                  @click="goToAddEpisode" 
+                  class="sidebar-btn-projet-scenariste nouvel-episode-btn" 
+                >
+                  <i class="fas fa-plus"></i>
+                  Nouvel épisode
+                </button>
+                <button 
+                  @click="goBack" 
+                  class="sidebar-btn-projet-scenariste"
+                >
+                  <i class="fas fa-arrow-left"></i>
+                  Retour aux projets
+                </button>
+              </div>
+            </div>
 
       <!-- Section Filtres -->
       <div class="sidebar-section-projet-scenariste">
@@ -83,160 +83,203 @@
     <!-- Contenu principal à droite -->
     <div class="creation-body-projet-scenariste">
       <div class="creation-main-content-projet-scenariste">
-        
-        <!-- En-tête principal -->
-        <!-- <div class="main-header-projet-scenariste">
-          <h1 class="page-title-projet-scenariste"><i class="fas fa-film"></i> Détails du Projet</h1>
-          <p class="page-subtitle-projet-scenariste">Gérez les épisodes et détails de votre projet</p>
-        </div> -->
 
-        <!-- Détails du projet -->
-        <div class="project-details-projet-scenariste">
-          <div class="project-info-projet-scenariste">
-            <div class="project-main-projet-scenariste">
-              <h3>{{ projet.titre }}</h3>
-              <div class="project-synopsis-projet-scenariste">
-                <h4>Synopsis</h4>
-                <p>{{ projet.synopsis || 'Aucun synopsis disponible' }}</p>
-              </div>
-            </div>
-            
-            <div class="project-sidebar-projet-scenariste">
-              <div class="project-statut-projet-scenariste">
-                <i class="fas fa-circle-notch"></i>
-                <span class="statut-label">Statut:</span>
-                <span class="statut-value">{{ projet.statutNom }}</span>
-              </div>
-              <div class="project-date-projet-scenariste">
-                <i class="fas fa-calendar-alt"></i>
-                <span class="date-label">Créé le:</span>
-                <span class="date-value">{{ formatDate(projet.creeLe) }}</span>
-              </div>
-              <div class="project-date-projet-scenariste">
-                <i class="fas fa-calendar-alt"></i>
-                <span class="date-label">Modifié le:</span>
-                <span class="date-value">{{ formatDate(projet.modifieLe) }}</span>
-              </div>
-              <div class="project-date-projet-scenariste" v-if="projet.dateFin">
-                <i class="fas fa-calendar-alt"></i>
-                <span class="date-label">Terminé le:</span>
-                <span class="date-value">{{ formatDate(projet.dateFin) }}</span>
-              </div>
-              <div class="project-genre-projet-scenariste">
-                <i class="fas fa-tags"></i>
-                <span class="genre-label">Genre:</span>
-                <span class="genre-value">{{ projet.genreNom }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Section épisodes -->
-        <div class="episodes-section-projet-scenariste">
-          <div class="section-header-projet-scenariste">
-            <h3>Épisodes</h3>
-          </div>
-
-          <!-- Liste des épisodes -->
-          <div class="episodes-list-projet-scenariste">
-            <div v-for="episode in filteredEpisodes" :key="episode.idEpisode" class="episode-card-projet-scenariste">
-              <div class="episode-header-projet-scenariste">
-                <div class="episode-statut-projet-scenariste status-badge-projet-scenariste" :class="getStatutBadgeClass(episode.statutNom)">
-                  {{ episode.statutNom.toUpperCase() }}
+        <!-- Détails du projet avec design amélioré -->
+        <div class="project-details-spiral-Scenariste">
+          <div class="project-info-spiral-Scenariste">
+            <div class="project-main-content-Scenariste">
+              <div class="project-header-spiral-Scenariste">
+                <h3 class="project-title-spiral-Scenariste">
+                  <i class="fas fa-film"></i>
+                  {{ projet.titre }}
+                </h3>
+                <span class="project-statut-badge-Scenariste" :class="getStatutClass(projet.statutNom)">
+                  {{ projet.statutNom }}
+                </span>
+              </div>
+              
+              <div class="project-meta-spiral-Scenariste">
+                <div class="meta-item-spiral-Scenariste">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span class="meta-label">Créé le:</span>
+                  <span class="meta-value">{{ formatDate(projet.creeLe) }}</span>
                 </div>
-                <div class="episode-actions-projet-scenariste">
-                  <i class="fas fa-pencil-alt icon-edit-projet-scenariste" @click="startEditEpisode(episode)"></i>
-                  <i class="fas fa-trash-alt icon-delete-projet-scenariste" @click="confirmDeleteEpisode(episode.idEpisode)"></i>
+                <div class="meta-item-spiral-Scenariste">
+                  <i class="fas fa-edit"></i>
+                  <span class="meta-label">Modifié le:</span>
+                  <span class="meta-value">{{ formatDate(projet.modifieLe) }}</span>
+                </div>
+                <div class="meta-item-spiral-Scenariste" v-if="projet.dateFin">
+                  <i class="fas fa-calendar-check"></i>
+                  <span class="meta-label">Terminé le:</span>
+                  <span class="meta-value">{{ formatDate(projet.dateFin) }}</span>
+                </div>
+                <div class="meta-item-spiral-Scenariste">
+                  <i class="fas fa-tags"></i>
+                  <span class="meta-label">Genre:</span>
+                  <span class="meta-value">{{ projet.genreNom }}</span>
                 </div>
               </div>
               
-              <div class="episode-content-projet-scenariste">
-                <h4>{{ episode.titre }}</h4>
-                
-                <div class="episode-synopsis-projet-scenariste" v-if="episode.synopsis">
-                  <p>{{ truncateText(episode.synopsis, 100) }}</p>
-                </div>
-                
-                <p class="episode-order-projet-scenariste">Ordre: {{ episode.ordre }}</p>
-                
-                <div class="episode-dates-projet-scenariste">
-                  <p><i class="fas fa-calendar-alt"></i> Créé le: {{ formatDate(episode.creeLe) }}</p>
-                  <p><i class="fas fa-calendar-alt"></i> Modifié le: {{ formatDate(episode.modifieLe) }}</p>
-                  <p><i class="fas fa-list-ol"></i> Nombre de séquences: {{ episode.nombreSequences || 0 }}</p>
-                </div>
-                
-                <div class="episode-footer-projet-scenariste">
-                  <button class="details-btn-projet-scenariste" @click="goToDetails(episode.idEpisode)">Détails</button>
-                  <button class="add-sequence-btn-projet-scenariste" @click="goToAddSequence(episode.idEpisode)">+ Séquence</button>
-                </div>
+              <div class="project-synopsis-spiral-Scenariste" v-if="projet.synopsis">
+                <h4><i class="fas fa-align-left"></i> Synopsis</h4>
+                <p>{{ projet.synopsis }}</p>
               </div>
-
             </div>
           </div>
         </div>
 
-        <!-- Modale pour modifier l'épisode -->
-        <div v-if="showEditModal" class="modal-overlay-projet-scenariste" @click="closeEditModal">
-          <div class="modal-content-projet-scenariste" @click.stop>
-            <div class="modal-header-projet-scenariste">
-              <h3>Modifier l'Épisode</h3>
-              <button class="modal-close-btn-projet-scenariste" @click="closeEditModal">×</button>
+      <!-- Grille des épisodes -->
+      <div class="episodes-section-projet-scenariste">
+            <div class="section-header-projet-scenariste">
+              <h3>Liste des épisodes du projet</h3>
+            </div>
+        <div class="projects-library-Scenariste">
+          <div 
+            v-for="(episode, index) in filteredEpisodes" 
+            :key="episode.idEpisode" 
+            class="movie-card-Scenariste" 
+            :style="{'--index': index + 1}"
+          >
+            <!-- Header de la carte avec statut à gauche et actions à droite -->
+            <div class="movie-card-header-Scenariste">
+              <div class="movie-statut-Scenariste">
+                <span class="statut-badge-Scenariste" :class="getStatutClass(episode.statutNom)">
+                  {{ episode.statutNom }}
+                </span>
+              </div>
+              <div class="movie-actions-Scenariste">
+                <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEditEpisode(episode)" title="Modifier">
+                  <i class="fas fa-marker"></i>
+                </button>
+                <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="confirmDeleteEpisode(episode.idEpisode)" title="Supprimer">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
             </div>
             
-            <div class="modal-body-projet-scenariste">
-              <!-- Message d'erreur général -->
-              <div v-if="editError" class="error-message">
+            <!-- Contenu de la carte -->
+            <div class="movie-info-Scenariste">
+              <h3 class="movie-title-Scenariste">{{ episode.titre }}</h3>
+              
+              <div class="movie-synopsis" v-if="episode.synopsis">
+                <p>{{ truncateText(episode.synopsis, 120) }}</p>
+              </div>
+                            
+              <!-- Métadonnées côte à côte avec séparateur -->
+              <div class="movie-meta-Scenariste">
+                <i class="fas fa-list-ol"></i><span>Ordre: {{ episode.ordre }}</span>
+                <span class="meta-separator-Scenariste">|</span>
+                <i class="fas fa-calendar"></i><span>{{ formatShortDate(episode.creeLe) }}</span>
+                <span class="meta-separator-Scenariste">|</span>
+                <i class="fas fa-layer-group"></i><span>{{ episode.nombreSequences || 0 }} séquences</span>
+              </div>
+              
+              <!-- Actions en bas de carte -->
+              <div class="movie-actions-bottom-Scenariste">
+                <div class="actions-top-Scenariste">
+                  <button class="action-btn-Scenariste accent-btn" @click="goToDetails(episode.idEpisode)" title="Détails">
+                    <i class="fas fa-info-circle icon"></i>
+                    <span>Détails</span>
+                  </button>
+                  <button class="action-btn-Scenariste primary-btn" @click="goToAddSequence(episode.idEpisode)" title="Ajouter séquence">
+                    <i class="fas fa-plus"></i>
+                    <span>Séquence</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Message si aucun épisode -->
+        <div v-if="filteredEpisodes.length === 0" class="no-projects-Scenariste">
+          <div class="no-projects-icon-Scenariste">
+            <i class="fas fa-list-alt"></i>
+          </div>
+          <h3>Aucun épisode trouvé</h3>
+          <p>Commencez par créer votre premier épisode !</p>
+          <button class="add-project-btn-large-Scenariste" @click="goToAddEpisode">
+            <i class="fas fa-plus-circle"></i>
+            Créer un épisode
+          </button>
+        </div>
+
+        <!-- Modal d'édition d'épisode -->
+        <div v-if="showEditModal" class="edit-project-modal-Scenariste">
+          <div class="modal-content-Scenariste">
+            <div class="modal-header-Scenariste">
+              <h3>Modifier l'épisode</h3>
+              <button @click="closeEditModal" class="close-modal-btn-Scenariste">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div class="modal-body-Scenariste">
+              <div v-if="editError" class="error-message-Scenariste">
                 {{ editError }}
               </div>
               
-              <form @submit.prevent="saveEditedEpisode">
-                <div class="form-group-projet-scenariste">
-                  <label>Titre de l'épisode:</label>
-                  <input v-model="editingEpisode.titre" type="text" required class="form-input-projet-scenariste"/>
-                </div>
-                <div class="form-group-projet-scenariste">
-                  <label>Synopsis:</label>
-                  <textarea v-model="editingEpisode.synopsis" required class="form-input-projet-scenariste"></textarea>
-                </div>
-                <div class="form-group-projet-scenariste">
-                  <label>Ordre dans le projet:</label>
-                  <input 
-                    v-model="editingEpisode.ordre" 
-                    type="number" 
-                    required 
-                    :class="{ 'error-input': orderError }"
-                    @blur="validateOrder"
-                    class="form-input-projet-scenariste"
-                  />
-                  <!-- Message d'erreur spécifique pour l'ordre -->
-                  <div v-if="orderError" class="error-text">
-                    {{ orderError }}
+              <div class="form-rows-container-Scenariste">
+                <!-- Ligne 1 : Titre + Ordre -->
+                <div class="form-row-Scenariste">
+                  <div class="form-group-Scenariste">
+                    <label>Titre:</label>
+                    <input v-model="editingEpisode.titre" type="text" class="form-input-Scenariste" required>
                   </div>
-                  <!-- Suggestion d'ordre -->
-                  <div v-if="suggestedOrder && !editingEpisode.ordre" class="suggestion-text">
-                    Suggestion: Le prochain ordre disponible est {{ suggestedOrder }}
-                    <button type="button" @click="useSuggestedOrder" class="suggestion-btn-projet-scenariste">
-                      Utiliser cette valeur
-                    </button>
+                  
+                  <div class="form-group-Scenariste">
+                    <label>Ordre:</label>
+                    <input 
+                      v-model="editingEpisode.ordre" 
+                      type="number" 
+                      class="form-input-Scenariste"
+                      :class="{ 'error-input': orderError }"
+                      @blur="validateOrder"
+                      required
+                    >
+                    <div v-if="orderError" class="error-text">
+                      {{ orderError }}
+                    </div>
+                    <div v-if="suggestedOrder && !editingEpisode.ordre" class="suggestion-text">
+                      Suggestion: Le prochain ordre disponible est {{ suggestedOrder }}
+                      <button type="button" @click="useSuggestedOrder" class="suggestion-btn-projet-scenariste">
+                        Utiliser cette valeur
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div class="form-group-projet-scenariste">
-                  <label>Titre du projet:</label>
-                  <input :value="projet.titre" type="text" disabled class="form-input-projet-scenariste"/>
+                
+                <!-- Ligne 2 : Statut -->
+                <div class="form-row-Scenariste">
+                  <div class="form-group-Scenariste">
+                    <label>Statut:</label>
+                    <select v-model="editingEpisode.statutId" class="form-select-Scenariste" required>
+                      <option value="">Sélectionnez un statut</option>
+                      <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
+                        {{ statut.nomStatutsEpisode }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
-                <div class="form-group-projet-scenariste">
-                  <label>Statut:</label>
-                  <select v-model="editingEpisode.statutId" required class="form-input-projet-scenariste">
-                    <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
-                      {{ statut.nomStatutsEpisode }}
-                    </option>
-                  </select>
+                
+                <!-- Ligne 3 : Synopsis (pleine largeur) -->
+                <div class="form-row-Scenariste">
+                  <div class="form-group-Scenariste form-full-width-Scenariste">
+                    <label>Synopsis:</label>
+                    <textarea v-model="editingEpisode.synopsis" class="form-textarea-Scenariste" rows="4" required></textarea>
+                  </div>
                 </div>
-                <div class="modal-actions-projet-scenariste">
-                  <button type="submit" class="save-btn-projet-scenariste" :disabled="orderError !== ''">Sauvegarder</button>
-                  <button type="button" @click="closeEditModal" class="cancel-btn-projet-scenariste">Annuler</button>
-                </div>
-              </form>
+              </div>
+            </div>
+            
+            <div class="modal-footer-Scenariste">
+              <button @click="closeEditModal" class="cancel-btn-Scenariste">Annuler</button>
+              <button @click="saveEditedEpisode" :disabled="orderError !== ''" class="save-btn-Scenariste">
+                Enregistrer
+              </button>
             </div>
           </div>
         </div>
@@ -252,7 +295,6 @@ export default {
   data() {
     return {
       user: JSON.parse(localStorage.getItem('user')) || null,
-      showProfileMenu: false,
       projet: {},
       episodes: [],
       statutsEpisode: [],
@@ -318,14 +360,25 @@ export default {
     await this.loadProjet();
     await this.loadEpisodes();
     await this.loadStatutsEpisode();
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
-    getStatutBadgeClass(statutNom) {
-      return `status-${statutNom.toLowerCase().replace(/\s+/g, '-')}-projet-scenariste`;
+    getStatutClass(statutNom) {
+      if (!statutNom) return '';
+      
+      const statut = statutNom.toLowerCase();
+      if (statut.includes('en cours') || statut.includes('actif')) {
+        return 'statut-en-cours';
+      } else if (statut.includes('terminé') || statut.includes('complet')) {
+        return 'statut-termine';
+      } else if (statut.includes('attente') || statut.includes('en attente')) {
+        return 'statut-attente';
+      } else if (statut.includes('annulé') || statut.includes('abandonné')) {
+        return 'statut-annule';
+      } else if (statut.includes('planifié') || statut.includes('planification')) {
+        return 'statut-planifie';
+      } else {
+        return 'statut-attente';
+      }
     },
     async loadProjet() {
       try {
@@ -351,7 +404,7 @@ export default {
         console.error('Erreur lors du chargement des statuts:', error);
       }
     }, 
-   startEditEpisode(episode) {
+    startEditEpisode(episode) {
       this.editingEpisode = {
         idEpisode: episode.idEpisode,
         titre: episode.titre,
@@ -359,39 +412,32 @@ export default {
         ordre: episode.ordre,
         statutId: this.getStatutIdByNom(episode.statutNom),
       };
-      this.originalOrder = episode.ordre; // Sauvegarder l'ordre original
+      this.originalOrder = episode.ordre;
       this.showEditModal = true;
       
-      // Charger les ordres existants et calculer la suggestion
       this.loadExistingOrders();
     },
-     async loadExistingOrders() {
+    async loadExistingOrders() {
       try {
-        // Récupérer tous les épisodes du projet
         const response = await axios.get(`/api/episodes/projet/${this.$route.params.id}`);
         
-        // Filtrer les ordres existants (exclure l'épisode en cours d'édition)
         this.existingOrders = response.data
           .filter(episode => episode.idEpisode !== this.editingEpisode.idEpisode)
           .map(episode => episode.ordre);
         
-        // Calculer le prochain ordre disponible
         this.calculateSuggestedOrder();
       } catch (error) {
         console.error('Erreur lors du chargement des ordres existants:', error);
       }
     },
-    
     calculateSuggestedOrder() {
       if (this.existingOrders.length === 0) {
         this.suggestedOrder = 1;
       } else {
-        // Trouver le plus grand ordre existant et ajouter 1
         const maxOrder = Math.max(...this.existingOrders);
         this.suggestedOrder = maxOrder + 1;
       }
     },
-    
     validateOrder() {
       if (!this.editingEpisode.ordre) {
         this.orderError = 'L\'ordre est requis';
@@ -405,7 +451,6 @@ export default {
         return;
       }
       
-      // Vérifier si l'ordre existe déjà (sauf si c'est l'ordre original de cet épisode)
       if (this.existingOrders.includes(orderNum) && orderNum !== this.originalOrder) {
         this.orderError = `L'ordre ${orderNum} existe déjà pour ce projet. Veuillez choisir un autre numéro.`;
         return;
@@ -413,60 +458,56 @@ export default {
       
       this.orderError = '';
     },
-    
     useSuggestedOrder() {
       this.editingEpisode.ordre = this.suggestedOrder;
       this.validateOrder();
     },
-
     getStatutIdByNom(nom) {
       const statut = this.statutsEpisode.find(s => s.nomStatutsEpisode === nom);
       return statut ? statut.idStatutEpisode : null;
     },
     async saveEditedEpisode() {
-  // Valider l'ordre avant soumission
-  this.validateOrder();
-  if (this.orderError) {
-    return;
-  }
-  
-  try {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.id) {
-      this.editError = 'Utilisateur non connecté';
-      return;
-    }
-
-    const response = await axios.put(`/api/episodes/${this.editingEpisode.idEpisode}`, {
-      titre: this.editingEpisode.titre,
-      synopsis: this.editingEpisode.synopsis,
-      ordre: parseInt(this.editingEpisode.ordre),
-      statutId: this.editingEpisode.statutId,
-    }, {
-      headers: {
-        'X-User-Id': user.id
+      this.validateOrder();
+      if (this.orderError) {
+        return;
       }
-    });
-    
-    this.showEditModal = false;
-    this.editError = '';
-    this.orderError = '';
-    await this.loadEpisodes();
-  } catch (error) {
-    console.error('Erreur lors de la mise à jour de l épisode:', error);
-    
-    if (error.response?.status === 403) {
-      this.editError = 'Modification refusée. Vous n\'avez pas les droits nécessaires pour accéder à cet épisode.';
-    } else if (error.response?.status === 400 && 
-        error.response?.data?.message?.includes('ordre')) {
-      this.orderError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
-      this.editError = 'Erreur de validation: ' + this.orderError;
-    } else {
-      this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
-    }
-  }
-},
+      
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+          this.editError = 'Utilisateur non connecté';
+          return;
+        }
 
+        const response = await axios.put(`/api/episodes/${this.editingEpisode.idEpisode}`, {
+          titre: this.editingEpisode.titre,
+          synopsis: this.editingEpisode.synopsis,
+          ordre: parseInt(this.editingEpisode.ordre),
+          statutId: this.editingEpisode.statutId,
+        }, {
+          headers: {
+            'X-User-Id': user.id
+          }
+        });
+        
+        this.showEditModal = false;
+        this.editError = '';
+        this.orderError = '';
+        await this.loadEpisodes();
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour de l épisode:', error);
+        
+        if (error.response?.status === 403) {
+          this.editError = 'Modification refusée. Vous n\'avez pas les droits nécessaires.';
+        } else if (error.response?.status === 400 && 
+            error.response?.data?.message?.includes('ordre')) {
+          this.orderError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
+          this.editError = 'Erreur de validation: ' + this.orderError;
+        } else {
+          this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
+        }
+      }
+    },
     closeEditModal() {
       this.showEditModal = false;
       this.editingEpisode = {
@@ -483,27 +524,27 @@ export default {
       this.originalOrder = null;
     },
     async confirmDeleteEpisode(episodeId) {
-  if (confirm('Êtes-vous sûr de vouloir supprimer cet épisode ?')) {
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.id) {
-        alert('Utilisateur non connecté');
-        return;
-      }
+      if (confirm('Êtes-vous sûr de vouloir supprimer cet épisode ?')) {
+        try {
+          const user = JSON.parse(localStorage.getItem('user'));
+          if (!user || !user.id) {
+            alert('Utilisateur non connecté');
+            return;
+          }
 
-      await axios.delete(`/api/episodes/${episodeId}`, {
-        headers: {
-          'X-User-Id': user.id
+          await axios.delete(`/api/episodes/${episodeId}`, {
+            headers: {
+              'X-User-Id': user.id
+            }
+          });
+          await this.loadEpisodes();
+          alert('Épisode supprimé avec succès!');
+        } catch (error) {
+          console.error('Erreur lors de la suppression de l\'épisode:', error);
+          alert('Erreur lors de la suppression de l\'épisode: ' + (error.response?.data?.message || error.message));
         }
-      });
-      await this.loadEpisodes();
-      alert('Épisode supprimé avec succès!');
-    } catch (error) {
-      console.error('Erreur lors de la suppression de l\'épisode:', error);
-      alert('Erreur lors de la suppression de l\'épisode: ' + (error.response?.data?.message || error.message));
-    }
-  }
-},
+      }
+    },
     goToAddEpisode() {
       this.$router.push(`/projet/${this.$route.params.id}/add-episode`);
     },
@@ -517,24 +558,24 @@ export default {
       this.$router.push('/scenariste');
     },
     formatDate(date) {
-      return new Date(date).toLocaleString();
+      if (!date) return 'Non spécifié';
+      return new Date(date).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    },
+    formatShortDate(date) {
+      if (!date) return '';
+      return new Date(date).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'short'
+      });
     },
     truncateText(text, length) {
+      if (!text) return '';
       if (text.length <= length) return text;
       return text.substring(0, length) + '...';
-    },
-    toggleProfileMenu() {
-      this.showProfileMenu = !this.showProfileMenu;
-    },
-    handleClickOutside(event) {
-      if (!event.target.closest('.profile-section')) {
-        this.showProfileMenu = false;
-      }
-    },
-    seDeconnecter() {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      this.$router.push('/');
     },
   },
 };
