@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class EpisodeDTO {
     private Long idEpisode;
     private Long projetId;
+    private String projetTitre; 
     private String titre;
     private Integer ordre;
     private String synopsis;
@@ -19,4 +20,11 @@ public class EpisodeDTO {
     private RealisateurDTO realisateur; 
     private ScenaristeDTO scenariste; 
     private ProjetDTO projet;
+
+    // Pour les affichages simples
+    private String realisateurNom;
+    private Long realisateurId;
+    private String scenaristeNom;
+    private Long scenaristeId;
+
 }

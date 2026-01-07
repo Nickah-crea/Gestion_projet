@@ -200,6 +200,7 @@ public class EpisodeService {
         EpisodeDTO dto = new EpisodeDTO();
         dto.setIdEpisode(episode.getId());
         dto.setProjetId(episode.getProjet().getId());
+          dto.setProjetTitre(episode.getProjet().getTitre());
         dto.setTitre(episode.getTitre());
         dto.setOrdre(episode.getOrdre());
         dto.setSynopsis(episode.getSynopsis());
@@ -226,25 +227,43 @@ public class EpisodeService {
             dto.setNombreSequences(sequenceRepository.countByEpisodeId(episode.getId()));
 
             //Récupérer le Réalisateur 
-            List<EpisodeRealisateur> realisateurs = episodeRealisateurRepository.findByEpisodeIdWithRealisateur(episode.getId());
+             List<EpisodeRealisateur> realisateurs = episodeRealisateurRepository.findByEpisodeIdWithRealisateur(episode.getId());
                 if (!realisateurs.isEmpty()) {
                     EpisodeRealisateur er = realisateurs.get(0);
+                    
+                    // Version simple pour l'affichage
+                    dto.setRealisateurId(er.getRealisateur().getId());
+                    dto.setRealisateurNom(er.getRealisateur().getUtilisateur().getNom());
+                    
+                    // Version DTO complète
                     RealisateurDTO realisateurDTO = new RealisateurDTO();
                     realisateurDTO.setIdRealisateur(er.getRealisateur().getId());
                     realisateurDTO.setNom(er.getRealisateur().getUtilisateur().getNom());
                     realisateurDTO.setEmail(er.getRealisateur().getUtilisateur().getEmail());
                     dto.setRealisateur(realisateurDTO);
+                } else {
+                    dto.setRealisateurNom(null);
+                    dto.setRealisateurId(null);
                 }
 
             // Récupérer le scénariste
-            List<EpisodeScenariste> scenaristes = episodeScenaristeRepository.findByEpisodeIdWithScenariste(episode.getId());
+          List<EpisodeScenariste> scenaristes = episodeScenaristeRepository.findByEpisodeIdWithScenariste(episode.getId());
             if (!scenaristes.isEmpty()) {
                 EpisodeScenariste es = scenaristes.get(0);
+                
+                // Version simple pour l'affichage
+                dto.setScenaristeId(es.getScenariste().getId());
+                dto.setScenaristeNom(es.getScenariste().getUtilisateur().getNom());
+                
+                // Version DTO complète
                 ScenaristeDTO scenaristeDTO = new ScenaristeDTO();
                 scenaristeDTO.setIdScenariste(es.getScenariste().getId());
                 scenaristeDTO.setNom(es.getScenariste().getUtilisateur().getNom());
                 scenaristeDTO.setEmail(es.getScenariste().getUtilisateur().getEmail());
                 dto.setScenariste(scenaristeDTO);
+            } else {
+                dto.setScenaristeNom(null);
+                dto.setScenaristeId(null);
             }
             
             return dto;
