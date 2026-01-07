@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global">
+<div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-personnage">
       <div class="sidebar-header-crea-personnage">
