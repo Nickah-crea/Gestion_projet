@@ -562,7 +562,6 @@ export default {
       console.error('Erreur lors de la mise à jour de l épisode:', error);
       
       if (error.response?.status === 403) {
-        // this.editError = 'Modification refusée. Vous n\'avez pas les droits nécessaires.';
         this.showNotification('Modification refusée. Vous n\'avez pas les droits nécessaires.', 'error');
       } else if (error.response?.status === 400 && 
           error.response?.data?.message?.includes('ordre')) {
