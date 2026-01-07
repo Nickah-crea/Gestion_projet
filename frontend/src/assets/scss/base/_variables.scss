@@ -6,6 +6,8 @@
 $font-family-primary: 'Hauora Sans', sans-serif;
 $font-family-cinzel: 'Playfair Display', serif;
 
+$font-family-playfair: 'Playfair Display', serif;
+$font-family-hauora: 'Hauora Sans', sans-serif;
 
 // Poids de police - Playfair Display
 $font-weight-light: 300;
@@ -405,7 +407,7 @@ $z-index-toast: 1070;
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   color: $color-white;
   border: none;
-  border-radius: $border-radius-xs;
+  border-radius: $border-radius-pill;
   padding: 12px 24px;
   font-weight: $font-weight-semibold;
   transition: $transition;
@@ -752,3 +754,65 @@ $z-index-toast: 1070;
 @mixin typography-cinzel-p1 {
   @include typography-playfair-p1;
 }
+
+// =============================================
+// TRANSITIONS & ANIMATIONS - CINÉMA
+// =============================================
+
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+// Ajouter cette ligne :
+$transition-medium: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); // <-- AJOUTER CETTE LIGNE
+
+// Durées d'animation
+$duration-fast: 0.2s;
+$duration-normal: 0.3s;
+$duration-slow: 0.5s;
+$duration-cinematic: 0.8s;
+
+// Animations spéciales cinéma
+$ease-in-out-cinema: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-out-cinema: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+
+
+// =============================================
+// TYPOGRAPHIE SPÉCIFIQUE
+// =============================================
+@mixin typography-playfair-h1 {
+  font-family: $font-family-playfair;
+  font-size: calc(#{$font-size-h1} + 8px);
+  font-weight: $font-weight-black;
+  line-height: 1.1;
+}
+
+@mixin typography-playfair-h2 {
+  font-family: $font-family-playfair;
+  font-size: calc(#{$font-size-h2} + 4px);
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+}
+
+@mixin typography-hauora-p2 {
+  font-family: $font-family-hauora;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-regular;
+  line-height: 1.5;
+}
+
+@mixin typography-hauora-p4 {
+  font-family: $font-family-hauora;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  line-height: 1.4;
+}
+
+@mixin typography-hauora-p5 {
+  font-family: $font-family-hauora;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-regular;
+  line-height: 1.4;
+}
+
+
