@@ -327,18 +327,25 @@
     background: rgba($color-border, 0.2);
   }
   
-  i {
+i {
     color: $color-primary;
     font-size: $font-size-p2;
     width: 20px;
-    text-align: center;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
   }
   
   .meta-label {
     @include typography-p4;
     color: $color-text-muted;
-    font-weight: $font-weight-medium;
+    font-weight: $font-weight-bold;
     white-space: nowrap;
+    padding-top : 5px;
+    margin-top: 5px;
   }
   
   .meta-value {
@@ -347,6 +354,7 @@
     font-weight: $font-weight-semibold;
     margin-left: auto;
     white-space: nowrap;
+    margin-top: 5px;
   }
 }
 
@@ -1048,6 +1056,52 @@
   }
 }
 
+.access-denied {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: $z-index-modal + 100;
+  padding: 2rem;
+}
+
+.access-denied-content {
+  background: white;
+  padding: 3rem;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.access-denied-content i {
+  font-size: 4rem;
+  color: $color-error;
+  margin-bottom: 1rem;
+}
+
+.access-denied-content h3 {
+  color: $color-text-primary;
+  margin-bottom: 1rem;
+}
+
+.access-denied-content p {
+  color: $color-text-secondary;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.access-denied-content .back-btn {
+  @include btn-cinema-primary;
+  padding: $padding-md $padding-xl;
+}
 
 // =============================================
 // IMPORTATION DES STYLES D'ACCUEIL POUR LA COMPATIBILITÉ
