@@ -132,15 +132,12 @@
 
       <!-- Grille des épisodes -->
       <div class="episodes-section-projet-scenariste">
-        <div class="section-header-projet-scenariste">
-          <h3>Liste des épisodes du projet</h3>
-          <div class="episodes-count">
-            <span class="count-text">{{ filteredEpisodes.length }} épisode(s)</span>
-          </div>
-        </div>
+            <div class="section-header-projet-scenariste">
+              <h3>Liste des épisodes du projet</h3>
+            </div>
         <div class="projects-library-Scenariste">
           <div 
-            v-for="(episode, index) in paginatedEpisodes" 
+            v-for="(episode, index) in filteredEpisodes" 
             :key="episode.idEpisode" 
             class="movie-card-Scenariste" 
             :style="{'--index': index + 1}"
@@ -196,13 +193,6 @@
           </div>
         </div>
       </div>
-
-          <div v-if="shouldShowLoadMore" class="load-more-container">
-                    <button class="load-more-btn" @click="loadMoreEpisodes">
-                      <i class="fas fa-chevron-down"></i>
-                      Voir plus d'épisodes ({{ filteredEpisodes.length - paginatedEpisodes.length }} restant(s))
-                    </button>
-          </div>
 
         <!-- Message si aucun épisode -->
         <div v-if="filteredEpisodes.length === 0" class="no-projects-Scenariste">
@@ -380,8 +370,6 @@ export default {
     },
     notificationTimeout: null,
      editLoading: false, 
-     itemsPerPage: 6, // Afficher 6 épisodes initialement (2 lignes de 3)
-    showLoadMore: false
 
     };
   },
@@ -424,14 +412,6 @@ export default {
 
       return filtered;
     },
-
-    paginatedEpisodes() {
-      return this.filteredEpisodes.slice(0, this.itemsPerPage);
-    },
-    // Computed pour savoir s'il faut afficher le bouton "Voir plus"
-    shouldShowLoadMore() {
-      return this.filteredEpisodes.length > this.itemsPerPage;
-    }
   },
   async created() {
     await this.loadProjet();
@@ -539,17 +519,6 @@ export default {
       this.editingEpisode.ordre = this.suggestedOrder;
       this.validateOrder();
     },
-
-     loadMoreEpisodes() {
-        // Augmente le nombre d'épisodes affichés par 6 (une nouvelle ligne)
-        this.itemsPerPage += 6;
-      },
-      
-      resetPagination() {
-        // Réinitialise la pagination quand les filtres changent
-        this.itemsPerPage = 6;
-      },
-  
     getStatutIdByNom(nom) {
       const statut = this.statutsEpisode.find(s => s.nomStatutsEpisode === nom);
       return statut ? statut.idStatutEpisode : null;
@@ -587,7 +556,7 @@ export default {
       await this.loadEpisodes();
       
       // Notification de succès pour la modification
-      // this.showNotification('Épisode modifié avec succès !', 'success');
+      this.showNotification('Épisode modifié avec succès !', 'success');
       
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l épisode:', error);
@@ -758,3 +727,4 @@ closeEditModal() {
   },
 };
 </script>
+
