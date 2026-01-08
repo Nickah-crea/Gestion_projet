@@ -133,15 +133,18 @@
       <!-- Grille des épisodes -->
       <div class="episodes-section-projet-scenariste">
             <div class="section-header-projet-scenariste">
-              <h3>Liste des épisodes du projet</h3>
-            </div>
-        <div class="projects-library-Scenariste">
-          <div 
-            v-for="(episode, index) in filteredEpisodes" 
-            :key="episode.idEpisode" 
-            class="movie-card-Scenariste" 
-            :style="{'--index': index + 1}"
-          >
+                <h3>Liste des épisodes du projet</h3>
+                    <div class="episodes-count">
+                      <span class="count-text">{{ filteredEpisodes.length }} épisode(s)</span>
+                    </div>
+                  </div>
+                  <div class="projects-library-Scenariste">
+                    <div 
+                      v-for="(episode, index) in paginatedEpisodes" 
+                      :key="episode.idEpisode" 
+                      class="movie-card-Scenariste" 
+                      :style="{'--index': index + 1}"
+                    >
             <!-- Header de la carte avec statut à gauche et actions à droite -->
             <div class="movie-card-header-Scenariste">
               <div class="movie-statut-Scenariste">
@@ -193,6 +196,13 @@
           </div>
         </div>
       </div>
+
+      <div v-if="shouldShowLoadMore" class="load-more-container">
+            <button class="load-more-btn" @click="loadMoreEpisodes">
+              <i class="fas fa-chevron-down"></i>
+              Voir plus ({{ filteredEpisodes.length - paginatedEpisodes.length }} restant(s))
+            </button>
+        </div>
 
         <!-- Message si aucun épisode -->
         <div v-if="filteredEpisodes.length === 0" class="no-projects-Scenariste">
@@ -289,6 +299,7 @@
       </div>
     </div>
 
+        
     <!-- Modal de confirmation de suppression -->
     <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
       <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
@@ -366,10 +377,12 @@ export default {
       notification: {
       show: false,
       message: '',
-      type: 'success' // 'success' ou 'error'
+      type: 'success' 
     },
     notificationTimeout: null,
      editLoading: false, 
+      itemsPerPage: 6, 
+      showLoadMore: false,
 
     };
   },
@@ -412,6 +425,13 @@ export default {
 
       return filtered;
     },
+
+    paginatedEpisodes() {
+      return this.filteredEpisodes.slice(0, this.itemsPerPage);
+    },
+    shouldShowLoadMore() {
+      return this.filteredEpisodes.length > this.itemsPerPage;
+    }
   },
   async created() {
     await this.loadProjet();
@@ -638,10 +658,21 @@ closeEditModal() {
       }
     },
     
-    // Mettez à jour la méthode showSuccessNotification existante :
+    loadMoreEpisodes() {
+      // Augmente le nombre d'épisodes affichés par 6 (une nouvelle ligne)
+      this.itemsPerPage += 6;
+    },
+    
+    resetPagination() {
+      // Réinitialise la pagination quand les filtres changent
+      this.itemsPerPage = 6;
+    },
+    
     showSuccessNotification(message) {
       this.showNotification(message, 'success');
     },
+
+
 
     async executeDeleteEpisode() {
     if (!this.episodeToDelete) return;
@@ -725,6 +756,15 @@ closeEditModal() {
       return text.substring(0, length) + '...';
     },
   },
+
+  watch: {
+  filterTimePeriod() {
+    this.resetPagination();
+  },
+  filterStatut() {
+    this.resetPagination();
+  }
+},
 };
 </script>
 
