@@ -1,0 +1,494 @@
+// add_seq_ecran.scss
+@import '../base/variables';
+
+.add-sequence-container {
+  flex: 1;
+  padding: $spacing-md;
+  max-width: 900px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f9fafb;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+// =============================================
+// CONTENU PRINCIPAL
+// =============================================
+.main-content {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  padding: $spacing-xl;
+  animation: slideIn 0.3s ease-out;
+}
+
+// =============================================
+// EN-TÊTE DE SÉQUENCE
+// =============================================
+.sequence-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h2 {
+    color: $color-text-primary;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: $font-weight-semibold;
+  }
+
+  .back-btn {
+    padding: $gap-sm $padding-sm;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+}
+
+// =============================================
+// FORMULAIRE D'AJOUT DE SÉQUENCE
+// =============================================
+.add-sequence-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.add-sequence-form form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+// =============================================
+// GROUPES DE FORMULAIRES CÔTE À CÔTE
+// =============================================
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+// =============================================
+// CHAMP DE FORMULAIRE INDIVIDUEL
+// =============================================
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+
+  label {
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-p4;
+    margin-bottom: $gap-xs;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: $gap-md $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+
+    &:hover {
+      border-color: darken($color-border, 15%);
+    }
+
+    &.error-input {
+      border-color: $color-error;
+      
+      &:focus {
+        box-shadow: 0 0 0 3px rgba($color-error, 0.1);
+      }
+    }
+  }
+
+  input,
+  select {
+    height: 44px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+    line-height: $line-height-base;
+    padding: $padding-sm;
+  }
+
+  select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $padding-sm center;
+    background-size: 12px;
+    padding-right: $padding-lg;
+  }
+
+  input[disabled] {
+    background: #f3f4f6;
+    color: $color-text-secondary;
+    cursor: not-allowed;
+    border-color: $color-border;
+  }
+}
+
+// =============================================
+// SYNOPSIS (PLEINE LARGEUR)
+// =============================================
+.form-group-full-width {
+  grid-column: 1 / -1;
+}
+
+// =============================================
+// SUGGESTION D'ORDRE
+// =============================================
+.suggestion-text {
+  margin-top: $gap-xs;
+  font-size: $font-size-p5;
+  color: $color-primary;
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  flex-wrap: wrap;
+
+  .suggestion-btn {
+    background: transparent;
+    color: $color-primary;
+    border: 1px solid $color-primary;
+    padding: $gap-xs $padding-xs;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p5;
+    cursor: pointer;
+    transition: $transition-fast;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+}
+
+// =============================================
+// MESSAGES D'ERREUR
+// =============================================
+.error-text {
+  font-size: $font-size-p5;
+  color: $color-error;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  margin-top: $gap-xs;
+
+  &::before {
+    content: '!';
+    font-size: $font-size-p5;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.error-message {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  animation: shake 0.3s ease-in-out;
+  margin-bottom: $spacing-md;
+
+  &::before {
+    content: '⚠';
+    font-size: $font-size-p3;
+  }
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    padding: $gap-md $spacing-lg;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-sm;
+    min-width: 160px;
+    height: 44px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .cancel-btn {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn {
+    background: $color-primary;
+    color: $color-white;
+    position: relative;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// =============================================
+// SPINNER DE CHARGEMENT
+// =============================================
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid $color-white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: $gap-sm;
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .add-sequence-container {
+    padding: $spacing-sm;
+  }
+
+  .main-content {
+    padding: $spacing-lg;
+  }
+
+  .sequence-header {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+
+    h2 {
+      font-size: 1.25rem;
+    }
+  }
+
+  .form-row {
+    gap: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .main-content {
+    padding: $spacing-md;
+    border-radius: $border-radius-sm;
+  }
+
+  .add-sequence-form form {
+    gap: $spacing-lg;
+  }
+
+  .form-actions {
+    margin-top: $spacing-lg;
+  }
+
+  .suggestion-text {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .add-sequence-container {
+    padding: $spacing-xs;
+  }
+
+  .main-content {
+    padding: $spacing-sm;
+  }
+
+  .form-group {
+    input,
+    textarea,
+    select {
+      padding: $gap-sm $padding-xs;
+      font-size: $font-size-p4;
+    }
+
+    input,
+    select {
+      height: 40px;
+    }
+  }
+
+  .form-actions {
+    .submit-btn,
+    .cancel-btn {
+      padding: $gap-sm $spacing-md;
+      height: 40px;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// =============================================
+// AMÉLIORATIONS D'ACCESSIBILITÉ
+// =============================================
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .error-message,
+  .loading-spinner {
+    animation: none;
+  }
+}
+
+// Support des modes de contraste élevé
+@media (prefers-contrast: high) {
+  input,
+  textarea,
+  select {
+    border-width: 2px;
+  }
+
+  .error-message {
+    border-width: 2px;
+  }
+
+  .back-btn,
+  .cancel-btn {
+    border-width: 2px;
+  }
+}
+
+// Amélioration de la visibilité du focus
+:focus-visible {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+}
+

@@ -6,6 +6,8 @@
 $font-family-primary: 'Hauora Sans', sans-serif;
 $font-family-cinzel: 'Playfair Display', serif;
 
+$font-family-playfair: 'Playfair Display', serif;
+$font-family-hauora: 'Hauora Sans', sans-serif;
 
 // Poids de police - Playfair Display
 $font-weight-light: 300;
@@ -51,21 +53,58 @@ $line-height-loose: 1.7;
 // =============================================
 // COULEURS – PALETTE CHAMPAGNE BEIGE & VIN CHAUD (LUXE DOUX)
 // =============================================
-
 // Couleurs principales
-$color-primary: #F57C00;       // Orange vif – énergie créative explosive, cœur du logo
-$color-primary-light: #FFB74D; // Jaune-orangé doux – version lumineuse et transitionnelle
-$color-primary-dark: #E31C34;  // Rouge passion – plus intense pour hovers et dynamisme
+$color-primary: #E37C11;       // Orange vif – énergie créative explosive, cœur du logo
+$color-primary-light: #EDCA49; // Jaune-orangé doux – version lumineuse et transitionnelle
+$color-primary-dark: #E0154A;  // Rouge passion – plus intense pour hovers et dynamisme
 
 // Couleurs secondaires → tons chauds progressifs vers le profond
-$color-accent: #E31C34;        // Rouge passion – accent principal, émotion cinématographique
-$color-accent-light: #BFE246;  // Lime/chartreuse – frais et punchy pour états actifs
-$color-accent-dark: #6D1A2A;   // Bordeaux profond – élégance mature
+$color-accent: #E0154A;        // Rouge passion – accent principal, émotion cinématographique
+$color-accent-light: #EDCA49;   // Jaune clair lumineux – frais et punchy pour états actifs
+$color-accent-dark: #793513;   // Bordeaux profond – élégance mature
 
 // Couleurs tertiaires → fraîcheur et profondeur pour contrastes
-$color-tertiary: #BFE246;      // Lime/chartreuse – tertiaire vibrant et jeune
-$color-tertiary-light: #FFF8F0; // Beige crème clair – ultra doux pour surfaces
-$color-tertiary-dark: #2D1A1A;  // Presque noir chaud – pour ombres et profondeur
+$color-tertiary: #EDCA49;      // Jaune clair – tertiaire vibrant et jeune
+$color-tertiary-light: #F5F4F5; // Beige crème clair – ultra doux pour surfaces
+$color-tertiary-dark: #262133; // Presque noir chaud – pour ombres et profondeur
+
+// Couleurs neutres (inchangées)
+$color-white: #FFFFFF;
+$color-black: #262133;
+
+// Couleurs de fond
+$color-background: #F5F4F5;     // Beige crème clair → fond principal chaud et accueillant
+$color-background-alt: #FFFFFF; // Blanc pur pour sections clean
+$color-background-dark: #262133; // Sombre chaud – alternative pour contrastes profonds
+
+// Couleurs de texte
+$color-text-primary: #262133;   // Presque noir chaud → lisible et élégant
+$color-text-secondary: #793513; // Bordeaux pour texte secondaire
+$color-text-muted: #E37C11;     // Orange vif atténué visuellement
+$color-text-light: #FFFFFF;     // Blanc sur accents colorés
+
+// Couleurs d'interface (adaptées à la nouvelle palette)
+$color-border: rgba(227, 124, 17, 0.18);       // Orange vif très léger (basé sur #E37C11)
+$color-border-dark: rgba(121, 53, 19, 0.35);   // Bordeaux dilué (basé sur #793513)
+$color-surface: rgba(237, 202, 73, 0.12);      // Jaune clair dilué pour surfaces (basé sur #EDCA49)
+$color-surface-hover: rgba(237, 202, 73, 0.22);
+
+// Couleurs d'état – dans la famille chaude/vibrante
+$color-success: #EDCA49;        // Jaune clair pour succès (lumineux et positif)
+$color-warning: #EDCA49;        // Jaune-orangé doux
+$color-error: #E0154A;          // Rouge passion pour erreurs
+$color-info: #E37C11;           // Orange vif
+
+// Couleurs pastel pour cartes et surfaces douces
+$color-pastel-blue: rgba(245, 244, 245, 0.15);  // Beige crème dilué (#F5F4F5)
+$color-pastel-red: rgba(224, 21, 74, 0.09);     // Rouge passion dilué (#E0154A)
+$color-pastel-gold: rgba(227, 124, 17, 0.18);   // Orange dilué (#E37C11)
+$color-pastel-purple: rgba(121, 53, 19, 0.1);   // Bordeaux dilué (#793513)
+$color-pastel-dark: rgba(38, 33, 51, 0.07);     // Sombre dilué (#262133)
+
+// Ombres colorées adaptées à cette palette vibrante
+$shadow-primary: 0 4px 20px rgba(237, 202, 73, 0.3);   // Ombre jaune clair douce
+$shadow-accent: 0 6px 24px rgba(224, 21, 74, 0.22);    // Ombre rouge passion élég
 
 // Couleurs neutres (inchangées)
 $color-white: #FFFFFF;
@@ -370,7 +409,7 @@ $z-index-toast: 1070;
 
 // Glassmorphism effect version cinéma
 @mixin glassmorphism {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba($color-tertiary-dark, 0.30);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -405,7 +444,7 @@ $z-index-toast: 1070;
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   color: $color-white;
   border: none;
-  border-radius: $border-radius-xs;
+  border-radius: $border-radius-pill;
   padding: 12px 24px;
   font-weight: $font-weight-semibold;
   transition: $transition;
@@ -752,3 +791,65 @@ $z-index-toast: 1070;
 @mixin typography-cinzel-p1 {
   @include typography-playfair-p1;
 }
+
+// =============================================
+// TRANSITIONS & ANIMATIONS - CINÉMA
+// =============================================
+
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+// Ajouter cette ligne :
+$transition-medium: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); // <-- AJOUTER CETTE LIGNE
+
+// Durées d'animation
+$duration-fast: 0.2s;
+$duration-normal: 0.3s;
+$duration-slow: 0.5s;
+$duration-cinematic: 0.8s;
+
+// Animations spéciales cinéma
+$ease-in-out-cinema: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-out-cinema: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+
+
+// =============================================
+// TYPOGRAPHIE SPÉCIFIQUE
+// =============================================
+@mixin typography-playfair-h1 {
+  font-family: $font-family-playfair;
+  font-size: calc(#{$font-size-h1} + 8px);
+  font-weight: $font-weight-black;
+  line-height: 1.1;
+}
+
+@mixin typography-playfair-h2 {
+  font-family: $font-family-playfair;
+  font-size: calc(#{$font-size-h2} + 4px);
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+}
+
+@mixin typography-hauora-p2 {
+  font-family: $font-family-hauora;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-regular;
+  line-height: 1.5;
+}
+
+@mixin typography-hauora-p4 {
+  font-family: $font-family-hauora;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  line-height: 1.4;
+}
+
+@mixin typography-hauora-p5 {
+  font-family: $font-family-hauora;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-regular;
+  line-height: 1.4;
+}
+
+

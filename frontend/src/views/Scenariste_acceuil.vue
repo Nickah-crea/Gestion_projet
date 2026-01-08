@@ -53,9 +53,10 @@
             </div>
           </div>
           
+          <!-- TOUJOURS afficher au moins un message -->
           <div v-if="recentActivities.length === 0" class="no-activities-compact-Scenariste">
             <i class="fas fa-history"></i>
-            <p>Aucune activité récente</p>
+            <p>Chargement des activités...</p>
           </div>
         </div>
       </div>
@@ -593,9 +594,9 @@ export default {
       projectToDelete: null,
       isDeleting: false,
       deleteError: '',
-       message: null,  // Changé de 'showNotification' à 'message'
-      notificationType: 'success',
-      notificationTimeout: null
+      message: null,
+      notificationTimeout: null,
+      activityRefreshInterval: null
     };
   },
   
@@ -635,10 +636,23 @@ export default {
   
   mounted() {
     this.initializeComponent();
+    
+    // Rafraîchir les activités toutes les 30 secondes
+    this.activityRefreshInterval = setInterval(() => {
+      if (this.user && this.user.id_utilisateur) {
+        console.log("🔄 Rafraîchissement automatique des activités");
+        this.loadRecentActivities();
+      }
+    }, 30000); // 30 secondes
   },
   
   beforeUnmount() {
     this.cleanupComponent();
+    
+    // Nettoyer l'intervalle
+    if (this.activityRefreshInterval) {
+      clearInterval(this.activityRefreshInterval);
+    }
   },
   
   methods: {
@@ -654,12 +668,16 @@ export default {
       this.loadAllStatuts();
       
       // Charger les statistiques après un petit délai
-      setTimeout(() => {
-        this.loadStats();
-        this.loadRecentActivities();
-        this.loadPriorityProjects();
-        this.loadUserStatistics();
-        this.loadWritingStats();
+      setTimeout(async () => {
+        await this.loadStats();
+        
+        // Charger d'abord les données de démo pour tester
+        console.log("🔄 Chargement des activités (démo d'abord)");
+        await this.loadRecentActivities();
+        
+        await this.loadPriorityProjects();
+        await this.loadUserStatistics();
+        await this.loadWritingStats();
       }, 100);
       
       // Ajouter les écouteurs d'événements
@@ -694,75 +712,74 @@ export default {
     // GESTION UTILISATEUR
     // =============================================
     getUserId() {
-  // Essayez plusieurs propriétés
-  const user = this.user;
-  
-  if (!user) {
-    console.warn("User non défini");
-    return 4; // ID de test par défaut
-  }
-  
-  // Cherchez l'ID dans différentes propriétés
-  const possibleIds = [
-    user.id_utilisateur,
-    user.id,
-    user.userId,
-    user.ID,
-    user.user_id
-  ];
-  
-  for (const id of possibleIds) {
-    if (id && !isNaN(id)) {
-      console.log("ID trouvé:", id);
-      return parseInt(id);
-    }
-  }
-  
-  console.warn("Aucun ID trouvé, utilisation par défaut (4)");
-  return 4; // ID par défaut pour test
-},
+      const user = this.user;
+      
+      if (!user) {
+        console.warn("User non défini");
+        return 4; // ID de test par défaut
+      }
+      
+      // Cherchez l'ID dans différentes propriétés
+      const possibleIds = [
+        user.id_utilisateur,
+        user.id,
+        user.userId,
+        user.ID,
+        user.user_id
+      ];
+      
+      for (const id of possibleIds) {
+        if (id && !isNaN(id)) {
+          console.log("ID trouvé:", id);
+          return parseInt(id);
+        }
+      }
+      
+      console.warn("Aucun ID trouvé, utilisation par défaut (4)");
+      return 4; // ID par défaut pour test
+    },
 
     loadUser() {
-  const userStr = localStorage.getItem('user');
-  console.log("Raw user from localStorage:", userStr);
-  
-  if (userStr) {
-    try {
-      this.user = JSON.parse(userStr);
-      console.log("Parsed user object:", this.user);
+      const userStr = localStorage.getItem('user');
+      console.log("Raw user from localStorage:", userStr);
       
-      // DEBUG: Vérifiez la structure
-      console.log("User keys:", Object.keys(this.user));
-      console.log("User id_utilisateur:", this.user.id_utilisateur);
-      console.log("User id:", this.user.id);
-      
-      // Essayez différentes propriétés
-      if (!this.user.id_utilisateur) {
-        // Essayez d'autres noms de propriétés courantes
-        this.user.id_utilisateur = this.user.id || this.user.userId || this.user.ID;
-      }
-      
-      console.log("Final user ID for API:", this.user.id_utilisateur);
-      
-      if (!this.user.role) {
-        console.error("Role non défini dans l'utilisateur");
+      if (userStr) {
+        try {
+          this.user = JSON.parse(userStr);
+          console.log("Parsed user object:", this.user);
+          
+          // DEBUG: Vérifiez la structure
+          console.log("User keys:", Object.keys(this.user));
+          console.log("User id_utilisateur:", this.user.id_utilisateur);
+          console.log("User id:", this.user.id);
+          
+          // Essayez différentes propriétés
+          if (!this.user.id_utilisateur) {
+            // Essayez d'autres noms de propriétés courantes
+            this.user.id_utilisateur = this.user.id || this.user.userId || this.user.ID;
+          }
+          
+          console.log("Final user ID for API:", this.user.id_utilisateur);
+          
+          if (!this.user.role) {
+            console.error("Role non défini dans l'utilisateur");
+            this.$router.push('/');
+            return;
+          }
+          
+          if (this.user.role !== 'SCENARISTE' && this.user.role !== 'REALISATEUR') {
+            this.$router.push('/accueil');
+          }
+        } catch (error) {
+          console.error("Erreur parsing user:", error);
+          localStorage.removeItem('user');
+          this.$router.push('/');
+        }
+      } else {
+        console.log("Pas d'utilisateur en localStorage, redirection");
         this.$router.push('/');
-        return;
       }
-      
-      if (this.user.role !== 'SCENARISTE' && this.user.role !== 'REALISATEUR') {
-        this.$router.push('/accueil');
-      }
-    } catch (error) {
-      console.error("Erreur parsing user:", error);
-      localStorage.removeItem('user');
-      this.$router.push('/');
-    }
-  } else {
-    console.log("Pas d'utilisateur en localStorage, redirection");
-    this.$router.push('/');
-  }
-},
+    },
     
     toggleProfileMenu() {
       this.showProfileMenu = !this.showProfileMenu;
@@ -858,9 +875,15 @@ export default {
         if (response.status === 200) {
           await this.fetchProjects();
           await this.loadStats();
+          
+          // FORCER le rechargement des activités
+          console.log("🔄 Rechargement des activités après modification");
           await this.loadRecentActivities();
+          
           await this.loadUserStatistics();
           this.cancelEdit();
+          
+          this.showNotification('Projet modifié avec succès !', 'success');
         }
       } catch (error) {
         console.error('Erreur lors de la modification du projet:', error);
@@ -882,132 +905,134 @@ export default {
       this.editError = '';
     },
 
-      
-  confirmDeleteProject(project) {
-    this.projectToDelete = project;
-    this.showDeleteModal = true;
-    this.deleteError = '';
-  },
+    confirmDeleteProject(project) {
+      this.projectToDelete = project;
+      this.showDeleteModal = true;
+      this.deleteError = '';
+    },
 
-  closeDeleteModal() {
-    this.showDeleteModal = false;
-    this.projectToDelete = null;
-    this.isDeleting = false;
-    this.deleteError = '';
-  },
-
-   showNotification(text, type = 'success') {
-    this.message = {
-      text: text,
-      type: type
-    };
-    
-    // Annuler le timeout précédent s'il existe
-    if (this.notificationTimeout) {
-      clearTimeout(this.notificationTimeout);
-    }
-    
-    // Masquer automatiquement après 5 secondes
-    this.notificationTimeout = setTimeout(() => {
-      this.clearMessage();
-    }, 5000);
-  },
-  
-  clearMessage() {
-    this.message = null;
-    if (this.notificationTimeout) {
-      clearTimeout(this.notificationTimeout);
-      this.notificationTimeout = null;
-    }
-  },
-  
-  // Alias pour compatibilité
-  hideNotification() {
-    this.clearMessage();
-  },
-
-  async executeDeleteProject() {
-    if (!this.projectToDelete) return;
-    
-    this.isDeleting = true;
-    this.deleteError = '';
-    
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user) {
-        this.deleteError = 'Utilisateur non connecté';
-        this.showNotification('Utilisateur non connecté', 'error');
-        this.isDeleting = false;
-        return;
-      }
-
-      // Utilisez getUserId() pour obtenir l'ID correct
-      const userId = this.getUserId();
-      
-      console.log("DEBUG - User ID pour suppression:", userId);
-
-      await axios.delete(`/api/projets/${this.projectToDelete.id}`, {
-        headers: {
-          'X-User-Id': userId
-        }
-      });
-      
-      await this.fetchProjects();
-      await this.loadStats();
-      await this.loadRecentActivities();
-      await this.loadUserStatistics();
-      this.closeDeleteModal();
-
-      // Afficher la notification de succès
-      this.showNotification('Projet supprimé avec succès !', 'success');
-      
-    } catch (error) {
-      console.error('Erreur lors de la suppression du projet:', error);
-      
-      // Amélioration du message d'erreur
-      let errorMessage = 'Erreur lors de la suppression du projet';
-      
-      if (error.response) {
-        console.error('Détails erreur:', error.response.data);
-        console.error('Status erreur:', error.response.status);
-        
-        if (error.response.status === 401 || error.response.status === 403) {
-          errorMessage = 'Vous n\'êtes pas autorisé à supprimer ce projet';
-        } else {
-          errorMessage = error.response.data?.message || `Erreur serveur (${error.response.status})`;
-        }
-      } else if (error.request) {
-        errorMessage = 'Pas de réponse du serveur';
-      }
-      
-      this.deleteError = errorMessage;
-      this.showNotification(errorMessage, 'error');
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+      this.projectToDelete = null;
       this.isDeleting = false;
-    }
-  },
+      this.deleteError = '';
+    },
 
-  showSuccessNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'success-notification';
-    notification.textContent = message;
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #4CAF50;
-      color: white;
-      padding: 12px 24px;
-      border-radius: 4px;
-      z-index: 9999;
-      animation: fadeInOut 3s ease;
-    `;
-    document.body.appendChild(notification);
+    showNotification(text, type = 'success') {
+      this.message = {
+        text: text,
+        type: type
+      };
+      
+      // Annuler le timeout précédent s'il existe
+      if (this.notificationTimeout) {
+        clearTimeout(this.notificationTimeout);
+      }
+      
+      // Masquer automatiquement après 5 secondes
+      this.notificationTimeout = setTimeout(() => {
+        this.clearMessage();
+      }, 5000);
+    },
     
-    setTimeout(() => {
-      notification.remove();
-    }, 3000);
-  },
+    clearMessage() {
+      this.message = null;
+      if (this.notificationTimeout) {
+        clearTimeout(this.notificationTimeout);
+        this.notificationTimeout = null;
+      }
+    },
     
+    // Alias pour compatibilité
+    hideNotification() {
+      this.clearMessage();
+    },
+
+    async executeDeleteProject() {
+      if (!this.projectToDelete) return;
+      
+      this.isDeleting = true;
+      this.deleteError = '';
+      
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+          this.deleteError = 'Utilisateur non connecté';
+          this.showNotification('Utilisateur non connecté', 'error');
+          this.isDeleting = false;
+          return;
+        }
+
+        // Utilisez getUserId() pour obtenir l'ID correct
+        const userId = this.getUserId();
+        
+        console.log("DEBUG - User ID pour suppression:", userId);
+
+        await axios.delete(`/api/projets/${this.projectToDelete.id}`, {
+          headers: {
+            'X-User-Id': userId
+          }
+        });
+        
+        await this.fetchProjects();
+        await this.loadStats();
+        
+        // Recharger les activités après suppression
+        console.log("🔄 Rechargement des activités après suppression");
+        await this.loadRecentActivities();
+        
+        await this.loadUserStatistics();
+        this.closeDeleteModal();
+
+        // Afficher la notification de succès
+        this.showNotification('Projet supprimé avec succès !', 'success');
+        
+      } catch (error) {
+        console.error('Erreur lors de la suppression du projet:', error);
+        
+        // Amélioration du message d'erreur
+        let errorMessage = 'Erreur lors de la suppression du projet';
+        
+        if (error.response) {
+          console.error('Détails erreur:', error.response.data);
+          console.error('Status erreur:', error.response.status);
+          
+          if (error.response.status === 401 || error.response.status === 403) {
+            errorMessage = 'Vous n\'êtes pas autorisé à supprimer ce projet';
+          } else {
+            errorMessage = error.response.data?.message || `Erreur serveur (${error.response.status})`;
+          }
+        } else if (error.request) {
+          errorMessage = 'Pas de réponse du serveur';
+        }
+        
+        this.deleteError = errorMessage;
+        this.showNotification(errorMessage, 'error');
+        this.isDeleting = false;
+      }
+    },
+
+    showSuccessNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'success-notification';
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 4px;
+        z-index: 9999;
+        animation: fadeInOut 3s ease;
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    },
     
     goToProject(projectId) {
       if (projectId) {
@@ -1227,38 +1252,38 @@ export default {
     // =============================================
     
     async loadStats() {
-  try {
-    console.log("🔍 DEBUG: Chargement stats générales pour userId:", this.user?.id_utilisateur);
-    
-    const userId = this.getUserId();
-    const response = await axios.get('/api/scenariste/stats', {
-      params: { userId: userId }
-    });
-    
-    console.log("📊 DEBUG: Réponse API stats générales:", response.data);
-    
-    if (response.data && typeof response.data === 'object') {
-      this.stats = {
-        projetsActifs: response.data.projetsActifs || 0,
-        projetsVariation: response.data.projetsVariation || 0,
-        scenesEcrites: response.data.scenesEcrites || 0,
-        scenesVariation: response.data.scenesVariation || 0,
-        collaborations: response.data.collaborations || 0,
-        realisateursActifs: response.data.realisateursActifs || 0,
-        echeancesProches: response.data.echeancesProches || 0,
-        urgentCount: response.data.urgentCount || 0,
-        tempsEcriture: response.data.tempsEcriture || '0h 00mn'
-      };
-      console.log("✅ DEBUG: stats générales mises à jour:", this.stats);
-    } else {
-      console.warn("⚠️ DEBUG: Format de réponse inattendu, calcul local");
-      this.calculateLocalStats();
-    }
-  } catch (error) {
-    console.error('❌ DEBUG: Erreur chargement stats générales:', error.response?.data || error.message);
-    this.calculateLocalStats();
-  }
-},
+      try {
+        console.log("🔍 DEBUG: Chargement stats générales pour userId:", this.user?.id_utilisateur);
+        
+        const userId = this.getUserId();
+        const response = await axios.get('/api/scenariste/stats', {
+          params: { userId: userId }
+        });
+        
+        console.log("📊 DEBUG: Réponse API stats générales:", response.data);
+        
+        if (response.data && typeof response.data === 'object') {
+          this.stats = {
+            projetsActifs: response.data.projetsActifs || 0,
+            projetsVariation: response.data.projetsVariation || 0,
+            scenesEcrites: response.data.scenesEcrites || 0,
+            scenesVariation: response.data.scenesVariation || 0,
+            collaborations: response.data.collaborations || 0,
+            realisateursActifs: response.data.realisateursActifs || 0,
+            echeancesProches: response.data.echeancesProches || 0,
+            urgentCount: response.data.urgentCount || 0,
+            tempsEcriture: response.data.tempsEcriture || '0h 00mn'
+          };
+          console.log("✅ DEBUG: stats générales mises à jour:", this.stats);
+        } else {
+          console.warn("⚠️ DEBUG: Format de réponse inattendu, calcul local");
+          this.calculateLocalStats();
+        }
+      } catch (error) {
+        console.error('❌ DEBUG: Erreur chargement stats générales:', error.response?.data || error.message);
+        this.calculateLocalStats();
+      }
+    },
     
     calculateLocalStats() {
       const now = new Date();
@@ -1301,82 +1326,82 @@ export default {
     },
     
     async loadUserStatistics() {
-  try {
-    console.log("🔍 DEBUG: Chargement stats personnelles pour userId:", this.user?.id_utilisateur);
-    
-    const userId = this.getUserId();
-    console.log("🔍 DEBUG: ID utilisé pour API:", userId);
-    
-    const response = await axios.get('/api/scenariste/statistiques-personnelles', {
-      params: { userId: userId }
-    });
-    
-    console.log("📊 DEBUG: Réponse API stats:", response.data);
-    
-    const apiData = response.data;
-    this.userStats = {
-      productivite: Math.round(apiData.productivite || 0),
-      scenesModifiees7j: apiData.scenesModifiees7j || 0,
-      tendanceScenes: apiData.tendanceScenes || 0,
-      tempsTotalMinutes: apiData.tempsTotalMinutes || 0,
-      moyenneQuotidienneMinutes: apiData.moyenneQuotidienneMinutes || 0,
-      sessionMoyenneMinutes: apiData.sessionMoyenneMinutes || 0,
-      objectifs: apiData.objectifs || {
-        scenesCompletees: 0,
-        scenesCibles: 10,
-        dialoguesEcrits: 0,
-        dialoguesCibles: 50,
-        progressionScenes: 0,
-        progressionDialogues: 0
+      try {
+        console.log("🔍 DEBUG: Chargement stats personnelles pour userId:", this.user?.id_utilisateur);
+        
+        const userId = this.getUserId();
+        console.log("🔍 DEBUG: ID utilisé pour API:", userId);
+        
+        const response = await axios.get('/api/scenariste/statistiques-personnelles', {
+          params: { userId: userId }
+        });
+        
+        console.log("📊 DEBUG: Réponse API stats:", response.data);
+        
+        const apiData = response.data;
+        this.userStats = {
+          productivite: Math.round(apiData.productivite || 0),
+          scenesModifiees7j: apiData.scenesModifiees7j || 0,
+          tendanceScenes: apiData.tendanceScenes || 0,
+          tempsTotalMinutes: apiData.tempsTotalMinutes || 0,
+          moyenneQuotidienneMinutes: apiData.moyenneQuotidienneMinutes || 0,
+          sessionMoyenneMinutes: apiData.sessionMoyenneMinutes || 0,
+          objectifs: apiData.objectifs || {
+            scenesCompletees: 0,
+            scenesCibles: 10,
+            dialoguesEcrits: 0,
+            dialoguesCibles: 50,
+            progressionScenes: 0,
+            progressionDialogues: 0
+          }
+        };
+        
+        console.log("✅ DEBUG: userStats mis à jour:", this.userStats);
+        
+      } catch (error) {
+        console.error('❌ DEBUG: Erreur chargement stats personnelles', error.response?.data || error.message);
+        this.calculateBasicStats();
       }
-    };
-    
-    console.log("✅ DEBUG: userStats mis à jour:", this.userStats);
-    
-  } catch (error) {
-    console.error('❌ DEBUG: Erreur chargement stats personnelles', error.response?.data || error.message);
-    this.calculateBasicStats();
-  }
-},
+    },
     
     calculateBasicStats() {
-  console.log("🔍 DEBUG: Calcul stats basiques pour projets:", this.projects.length);
-  
-  const now = new Date();
-  const totalProjects = this.projects.length;
-  const activeProjects = this.projects.filter(p => 
-    p.statutNom === 'En cours' || p.statutNom === 'En préparation'
-  ).length;
-  
-  // Productivité basée sur les projets actifs vs total
-  const productivite = totalProjects > 0 ? Math.round((activeProjects / totalProjects) * 100) : 0;
-  
-  let totalScenes = 0;
-  this.projects.forEach(p => {
-    totalScenes += p.nombreScenes || 0;
-  });
-  
-  const estimatedMinutes = totalScenes * 45;
-  
-  this.userStats = {
-    productivite: productivite,
-    scenesModifiees7j: Math.floor(totalScenes * 0.3),
-    tendanceScenes: 0,
-    tempsTotalMinutes: estimatedMinutes,
-    moyenneQuotidienneMinutes: Math.floor(estimatedMinutes / 30),
-    sessionMoyenneMinutes: 45,
-    objectifs: {
-      scenesCompletees: Math.floor(totalScenes * 0.5),
-      scenesCibles: Math.max(totalScenes, 10),
-      dialoguesEcrits: Math.floor(totalScenes * 3),
-      dialoguesCibles: Math.max(totalScenes * 3, 50),
-      progressionScenes: totalScenes > 0 ? Math.round((Math.floor(totalScenes * 0.5) / Math.max(totalScenes, 10)) * 100) : 0,
-      progressionDialogues: totalScenes > 0 ? Math.round((Math.floor(totalScenes * 3) / Math.max(totalScenes * 3, 50)) * 100) : 0
-    }
-  };
-  
-  console.log("✅ DEBUG: Stats basiques calculées:", this.userStats);
-},
+      console.log("🔍 DEBUG: Calcul stats basiques pour projets:", this.projects.length);
+      
+      const now = new Date();
+      const totalProjects = this.projects.length;
+      const activeProjects = this.projects.filter(p => 
+        p.statutNom === 'En cours' || p.statutNom === 'En préparation'
+      ).length;
+      
+      // Productivité basée sur les projets actifs vs total
+      const productivite = totalProjects > 0 ? Math.round((activeProjects / totalProjects) * 100) : 0;
+      
+      let totalScenes = 0;
+      this.projects.forEach(p => {
+        totalScenes += p.nombreScenes || 0;
+      });
+      
+      const estimatedMinutes = totalScenes * 45;
+      
+      this.userStats = {
+        productivite: productivite,
+        scenesModifiees7j: Math.floor(totalScenes * 0.3),
+        tendanceScenes: 0,
+        tempsTotalMinutes: estimatedMinutes,
+        moyenneQuotidienneMinutes: Math.floor(estimatedMinutes / 30),
+        sessionMoyenneMinutes: 45,
+        objectifs: {
+          scenesCompletees: Math.floor(totalScenes * 0.5),
+          scenesCibles: Math.max(totalScenes, 10),
+          dialoguesEcrits: Math.floor(totalScenes * 3),
+          dialoguesCibles: Math.max(totalScenes * 3, 50),
+          progressionScenes: totalScenes > 0 ? Math.round((Math.floor(totalScenes * 0.5) / Math.max(totalScenes, 10)) * 100) : 0,
+          progressionDialogues: totalScenes > 0 ? Math.round((Math.floor(totalScenes * 3) / Math.max(totalScenes * 3, 50)) * 100) : 0
+        }
+      };
+      
+      console.log("✅ DEBUG: Stats basiques calculées:", this.userStats);
+    },
     
     async loadWritingStats() {
       try {
@@ -1514,54 +1539,233 @@ export default {
     // =============================================
     
     async loadRecentActivities() {
-  console.log("🔍 DEBUG: Chargement activités pour userId:", this.user?.id_utilisateur);
-  
-  try {
-    const userId = this.getUserId();
-    const response = await axios.get('/api/scenariste/activites/recentes', {
-      params: { 
-        userId: userId,
-        limit: 5 
-      }
-    });
-    
-    console.log("📊 DEBUG: Réponse API activités:", response.data);
-    
-    if (response.data && response.data.activities) {
-      this.recentActivities = response.data.activities;
-    } else if (Array.isArray(response.data)) {
-      this.recentActivities = response.data;
-    } else if (response.data && Array.isArray(response.data.data)) {
-      this.recentActivities = response.data.data;
-    } else if (response.data && response.data.success !== false) {
-      // Nouveau format avec la réponse corrigée
-      this.recentActivities = response.data.activities || [];
-    } else {
-      console.warn("⚠️ DEBUG: Format de réponse inattendu:", response.data);
-      this.recentActivities = [];
-    }
-    
-    console.log("✅ DEBUG: Activités chargées:", this.recentActivities.length);
-    
-  } catch (error) {
-    console.error('❌ DEBUG: Erreur chargement activités:', error.response?.data || error.message);
-    this.recentActivities = [];
-  }
-},
-    
-    generateBasicActivities() {
-      const activities = [];
-      this.projects.slice(0, 3).forEach((project, index) => {
-        activities.push({
-          id: index + 1,
-          type: 'edit',
-          description: `Projet "${project.titre}" modifié récemment`,
-          date: project.modifieLe || project.creeLe,
-          projetId: project.id,
-          projetTitre: project.titre
+      console.log("🔍 DEBUG: Chargement activités pour userId:", this.user?.id_utilisateur);
+      
+      try {
+        const userId = this.getUserId();
+        console.log("🔍 DEBUG: ID utilisé pour API activités:", userId);
+        
+        const response = await axios.get('/api/scenariste/activites/recentes', {
+          params: { 
+            userId: userId,
+            limit: 5 
+          }
         });
-      });
-      this.recentActivities = activities;
+        
+        console.log("📊 DEBUG: Réponse brute API activités:", response);
+        console.log("📊 DEBUG: Données API activités:", response.data);
+        
+        // IMPORTANT: Le backend retourne un objet avec une propriété "activities"
+        const responseData = response.data;
+        
+        if (responseData && responseData.activities && Array.isArray(responseData.activities)) {
+          // Les activités sont dans response.data.activities
+          this.recentActivities = responseData.activities.map(activity => {
+            // Si l'activité a déjà un format correct
+            if (activity.description && activity.date) {
+              return {
+                id: activity.id || Math.random().toString(36).substr(2, 9),
+                type: activity.type || 'edit',
+                description: activity.description,
+                date: activity.date,
+                projetId: activity.projetId,
+                projetTitre: activity.projetTitre
+              };
+            }
+            
+            // Sinon, formater pour l'affichage
+            return {
+              id: activity.id || Math.random().toString(36).substr(2, 9),
+              type: activity.type || 'edit',
+              description: this.formatActivityDescription(activity),
+              date: activity.date || activity.timestamp || new Date().toISOString(),
+              projetId: activity.projetId,
+              projetTitre: activity.projetTitre || 'Projet'
+            };
+          });
+          
+          console.log("✅ DEBUG: Activités formatées:", this.recentActivities);
+          
+          // Si aucune activité n'est retournée, afficher un message
+          if (this.recentActivities.length === 0) {
+            console.log("ℹ️ Aucune activité récente trouvée");
+          }
+          
+        } else {
+          console.warn("⚠️ DEBUG: Format de réponse inattendu, génération basique");
+          this.showExampleActivities();
+        }
+        
+      } catch (error) {
+        console.error('❌ DEBUG: Erreur chargement activités:', error);
+        console.error('❌ DEBUG: Détails:', error.response?.data || error.message);
+        
+        // En cas d'erreur, afficher des exemples
+        this.showExampleActivities();
+      }
+    },
+
+    // Méthode pour afficher des exemples pendant le développement
+    showExampleActivities() {
+      console.log("🔄 Affichage d'exemples d'activités");
+      
+      const now = new Date();
+      this.recentActivities = [
+        {
+          id: 'example-1',
+          type: 'scene_modified',
+          description: 'Scène "Le Rendez-vous" modifiée',
+          date: new Date(now.getTime() - 30 * 60000).toISOString(), // Il y a 30 minutes
+          projetId: 1,
+          projetTitre: 'Mon Film'
+        },
+        {
+          id: 'example-2',
+          type: 'project_created',
+          description: 'Projet "Nouvelle Série" créé',
+          date: new Date(now.getTime() - 2 * 3600000).toISOString(), // Il y a 2 heures
+          projetId: 2,
+          projetTitre: 'Nouvelle Série'
+        },
+        {
+          id: 'example-3',
+          type: 'dialogue_created',
+          description: 'Dialogue créé dans "Scène d\'ouverture"',
+          date: new Date(now.getTime() - 1 * 24 * 3600000).toISOString(), // Il y a 1 jour
+          projetId: 1,
+          projetTitre: 'Mon Film'
+        },
+        {
+          id: 'example-4',
+          type: 'scene_created',
+          description: 'Nouvelle scène "Rencontre" créée',
+          date: new Date(now.getTime() - 3 * 24 * 3600000).toISOString(), // Il y a 3 jours
+          projetId: 1,
+          projetTitre: 'Mon Film'
+        },
+        {
+          id: 'example-5',
+          type: 'status_changed',
+          description: 'Statut du projet "Documentaire" mis à jour',
+          date: new Date(now.getTime() - 5 * 24 * 3600000).toISOString(), // Il y a 5 jours
+          projetId: 3,
+          projetTitre: 'Documentaire'
+        }
+      ];
+      
+      console.log("✅ Exemples d'activités chargés:", this.recentActivities);
+    },
+
+    // Formater la description d'une activité
+    formatActivityDescription(activity) {
+      const type = activity.type || '';
+      const projetTitre = activity.projetTitre || 'un projet';
+      
+      switch(type) {
+        case 'scene_created':
+          return `Scène créée dans ${projetTitre}`;
+        case 'scene_modified':
+          return `Scène modifiée dans ${projetTitre}`;
+        case 'project_created':
+          return `Projet "${projetTitre}" créé`;
+        case 'project_modified':
+          return `Projet "${projetTitre}" modifié`;
+        case 'dialogue_created':
+          return `Dialogue créé dans ${projetTitre}`;
+        case 'episode_created':
+          return `Épisode créé dans ${projetTitre}`;
+        case 'status_changed':
+          return `Statut mis à jour dans ${projetTitre}`;
+        default:
+          return `Activité dans ${projetTitre}`;
+      }
+    },
+
+    getActivityIcon(type) {
+      const icons = {
+        // Création
+        'scene_created': 'fas fa-plus-circle',
+        'dialogue_created': 'fas fa-plus-circle',
+        'project_created': 'fas fa-plus-circle',
+        'episode_created': 'fas fa-plus-circle',
+        
+        // Modification
+        'scene_modified': 'fas fa-marker',
+        'project_modified': 'fas fa-marker',
+        'episode_modified': 'fas fa-marker',
+        
+        // Suppression
+        'scene_deleted': 'fas fa-trash',
+        'project_deleted': 'fas fa-trash',
+        
+        // Commentaires
+        'comment': 'fas fa-comment',
+        
+        // Statut
+        'status': 'fas fa-sync',
+        'status_changed': 'fas fa-sync',
+        
+        // Par défaut
+        'create': 'fas fa-plus-circle',
+        'edit': 'fas fa-marker',
+        'delete': 'fas fa-trash',
+        'test_modified': 'fas fa-test'
+      };
+      
+      // Retourne l'icône spécifique ou une icône par défaut
+      return icons[type] || 'fas fa-circle';
+    },
+    
+    getActivityTypeClass(type) {
+      const typeClasses = {
+        // Création - vert
+        'scene_created': 'type-create',
+        'dialogue_created': 'type-create',
+        'project_created': 'type-create',
+        'episode_created': 'type-create',
+        'create': 'type-create',
+        
+        // Modification - bleu
+        'scene_modified': 'type-edit',
+        'project_modified': 'type-edit',
+        'episode_modified': 'type-edit',
+        'edit': 'type-edit',
+        
+        // Suppression - rouge
+        'scene_deleted': 'type-delete',
+        'project_deleted': 'type-delete',
+        'delete': 'type-delete',
+        
+        // Commentaires - orange
+        'comment': 'type-comment',
+        
+        // Statut - violet
+        'status': 'type-status',
+        'status_changed': 'type-status',
+        
+        // Test - gris
+        'test_modified': 'type-default'
+      };
+      
+      return typeClasses[type] || 'type-default';
+    },
+
+    getActivityTypeLabel(type) {
+      const labels = {
+        'scene_created': 'Créé',
+        'dialogue_created': 'Créé',
+        'project_created': 'Créé',
+        'episode_created': 'Créé',
+        'scene_modified': 'Modifié',
+        'project_modified': 'Modifié',
+        'scene_deleted': 'Supprimé',
+        'project_deleted': 'Supprimé',
+        'comment': 'Commentaire',
+        'status': 'Statut',
+        'collaboration': 'Collaboration'
+      };
+      
+      return labels[type] || 'Activité';
     },
     
     async loadPriorityProjects() {
@@ -1714,97 +1918,6 @@ export default {
       return cleaned.split(' ').filter(word => word.length > 0).length;
     },
     
-    // REMPLACEZ la méthode actuelle par celle-ci :
-    getActivityIcon(type) {
-      const icons = {
-        // Création
-        'scene_created': 'fas fa-plus-circle',
-        'dialogue_created': 'fas fa-plus-circle',
-        'project_created': 'fas fa-plus-circle',
-        'episode_created': 'fas fa-plus-circle',
-        
-        // Modification
-        'scene_modified': 'fas fa-marker',
-        'scene_edit': 'fas fa-marker',
-        
-        // Suppression (si vous avez ce type)
-        'scene_deleted': 'fas fa-trash',
-        'project_deleted': 'fas fa-trash',
-        
-        // Commentaires
-        'comment': 'fas fa-comment',
-        
-        // Statut
-        'status': 'fas fa-sync',
-        'status_changed': 'fas fa-sync',
-        
-        // Collaboration
-        'collaboration': 'fas fa-user-plus',
-        'user_added': 'fas fa-user-plus',
-        
-        // Par défaut
-        'create': 'fas fa-plus-circle',
-        'edit': 'fas fa-marker',
-        'delete': 'fas fa-trash'
-      };
-      
-      // Retourne l'icône spécifique ou une icône par défaut
-      return icons[type] || 'fas fa-circle';
-    },
-    
-  getActivityTypeClass(type) {
-    // Classes CSS pour le style de l'icône (couleur de fond)
-    const typeClasses = {
-      // Création - vert
-      'scene_created': 'type-create',
-      'dialogue_created': 'type-create',
-      'project_created': 'type-create',
-      'episode_created': 'type-create',
-      'create': 'type-create',
-      
-      // Modification - bleu
-      'scene_modified': 'type-edit',
-      'scene_edit': 'type-edit',
-      'edit': 'type-edit',
-      
-      // Suppression - rouge
-      'scene_deleted': 'type-delete',
-      'project_deleted': 'type-delete',
-      'delete': 'type-delete',
-      
-      // Commentaires - orange
-      'comment': 'type-comment',
-      
-      // Statut - violet
-      'status': 'type-status',
-      'status_changed': 'type-status',
-      
-      // Collaboration - turquoise
-      'collaboration': 'type-collaboration',
-      'user_added': 'type-collaboration'
-    };
-    
-    return typeClasses[type] || 'type-default';
-  },
-
-  getActivityTypeLabel(type) {
-    const labels = {
-      'scene_created': 'Créé',
-      'dialogue_created': 'Créé',
-      'project_created': 'Créé',
-      'episode_created': 'Créé',
-      'scene_modified': 'Modifié',
-      'scene_edit': 'Modifié',
-      'scene_deleted': 'Supprimé',
-      'project_deleted': 'Supprimé',
-      'comment': 'Commentaire',
-      'status': 'Statut',
-      'collaboration': 'Collaboration'
-    };
-    
-    return labels[type] || 'Activité';
-  },
-    
     getStatutClass(statutNom) {
       const statutClasses = {
         'En cours': 'statut-en-cours',
@@ -1924,4 +2037,64 @@ export default {
 };
 </script>
 
+<style scoped>
+/* Styles pour les icônes d'activité */
+.activity-icon-compact-Scenariste {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+/* Types d'activités */
+.type-create {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+}
+
+.type-edit {
+  background-color: #d1ecf1 !important;
+  color: #0c5460 !important;
+}
+
+.type-delete {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.type-comment {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+}
+
+.type-status {
+  background-color: #e2e3e5 !important;
+  color: #383d41 !important;
+}
+
+.type-collaboration {
+  background-color: #d6d8db !important;
+  color: #1b1e21 !important;
+}
+
+.type-default {
+  background-color: #f8f9fa !important;
+  color: #212529 !important;
+}
+
+/* Animation pour le rafraîchissement */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.activity-item-compact-Scenariste {
+  animation: fadeIn 0.3s ease;
+}
+</style>
 
