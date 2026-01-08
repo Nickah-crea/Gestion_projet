@@ -444,7 +444,7 @@ $z-index-toast: 1070;
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   color: $color-white;
   border: none;
-  border-radius: $border-radius-pill;
+  border-radius: $border-radius-xs;
   padding: 12px 24px;
   font-weight: $font-weight-semibold;
   transition: $transition;
