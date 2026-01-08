@@ -12,13 +12,8 @@
   align-items: center;
   transition: $transition;
   z-index: $z-index-fixed;
-  
-  /* Glassmorphism effect */
-  @include glassmorphism;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba($color-border, 0.2);
-  
+  background-color: $color-accent-dark;
+
   &.collapsed {
     height: 70px;
     padding: 0 $padding-md;
