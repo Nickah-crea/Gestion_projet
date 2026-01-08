@@ -15,14 +15,14 @@ public class PlanningTournageService {
     private final PlanningTournageRepository planningTournageRepository;
     private final SceneRepository sceneRepository;
     private final StatutPlanningRepository statutPlanningRepository;
-    private final LieuRepository lieuRepository; // Added missing repository
-    private final PlateauRepository plateauRepository; // Added missing repository
+    private final LieuRepository lieuRepository; 
+    private final PlateauRepository plateauRepository; 
 
     public PlanningTournageService(PlanningTournageRepository planningTournageRepository,
                                  SceneRepository sceneRepository,
                                  StatutPlanningRepository statutPlanningRepository,
-                                 LieuRepository lieuRepository, // Added in constructor
-                                 PlateauRepository plateauRepository) { // Added in constructor
+                                 LieuRepository lieuRepository, 
+                                 PlateauRepository plateauRepository) { 
         this.planningTournageRepository = planningTournageRepository;
         this.sceneRepository = sceneRepository;
         this.statutPlanningRepository = statutPlanningRepository;
@@ -55,7 +55,6 @@ public class PlanningTournageService {
     public PlanningTournageDTO createPlanningTournage(CreatePlanningTournageDTO createDTO) {
         PlanningTournage planning = new PlanningTournage();
         
-        // CORRECTION: Utiliser findByIdWithDetails au lieu de findByIdWithFullDetails
         Scene scene = sceneRepository.findByIdWithDetails(createDTO.getSceneId())
                 .orElseThrow(() -> new RuntimeException("Scène non trouvée"));
         planning.setScene(scene);
@@ -107,7 +106,7 @@ public class PlanningTournageService {
             planning.setStatut(statut);
         }
         
-        // Update lieu if provided
+    
         if (updateDTO.getLieuId() != null && 
             (planning.getLieu() == null || !planning.getLieu().getId().equals(updateDTO.getLieuId()))) {
             Lieu lieu = lieuRepository.findById(updateDTO.getLieuId())
@@ -115,7 +114,7 @@ public class PlanningTournageService {
             planning.setLieu(lieu);
         }
         
-        // Update plateau if provided
+
         if (updateDTO.getPlateauId() != null && 
             (planning.getPlateau() == null || !planning.getPlateau().getId().equals(updateDTO.getPlateauId()))) {
             Plateau plateau = plateauRepository.findById(updateDTO.getPlateauId())
@@ -158,13 +157,13 @@ public class PlanningTournageService {
         if (planning.getLieu() != null) {
             dto.setLieuId(planning.getLieu().getId());
             dto.setLieuNom(planning.getLieu().getNomLieu());
-            dto.setLieuTournage(planning.getLieu().getNomLieu()); // Pour compatibilité
+            dto.setLieuTournage(planning.getLieu().getNomLieu()); 
         }
         
         if (planning.getPlateau() != null) {
             dto.setPlateauId(planning.getPlateau().getId());
             dto.setPlateauNom(planning.getPlateau().getNom());
-            // Si on veut afficher le lieu + plateau
+
             if (planning.getLieu() != null) {
                 dto.setLieuTournage(planning.getLieu().getNomLieu() + " - " + planning.getPlateau().getNom());
             }
@@ -177,30 +176,28 @@ public class PlanningTournageService {
     public PlanningTournageDTO createPlanning(CreatePlanningTournageDTO createDTO) {
         PlanningTournage planning = new PlanningTournage();
         
-        // Mapping des champs existants
         planning.setDateTournage(createDTO.getDateTournage());
         planning.setHeureDebut(createDTO.getHeureDebut());
         planning.setHeureFin(createDTO.getHeureFin());
         planning.setDescription(createDTO.getDescription());
-        
-        // Associer la scène
+
         Scene scene = sceneRepository.findById(createDTO.getSceneId())
                 .orElseThrow(() -> new RuntimeException("Scène non trouvée"));
         planning.setScene(scene);
         
-        // Associer le statut
+
         StatutPlanning statut = statutPlanningRepository.findById(createDTO.getStatutId())
                 .orElseThrow(() -> new RuntimeException("Statut non trouvé"));
         planning.setStatut(statut);
         
-        // Associer le lieu
+ 
         if (createDTO.getLieuId() != null) {
             Lieu lieu = lieuRepository.findById(createDTO.getLieuId())
                     .orElseThrow(() -> new RuntimeException("Lieu non trouvé"));
             planning.setLieu(lieu);
         }
         
-        // Associer le plateau
+
         if (createDTO.getPlateauId() != null) {
             Plateau plateau = plateauRepository.findById(createDTO.getPlateauId())
                     .orElseThrow(() -> new RuntimeException("Plateau non trouvé"));

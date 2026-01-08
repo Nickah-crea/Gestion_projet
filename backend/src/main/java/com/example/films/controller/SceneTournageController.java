@@ -44,9 +44,8 @@ public class SceneTournageController {
             List<SceneTournageDTO> tournages;
             
             if (sceneId != null) {
-                // Filtrer spécifiquement par scène
                 tournages = sceneTournageService.getTournagesBySceneId(sceneId);
-                // Filtrer également par date range
+    
                 tournages = tournages.stream()
                     .filter(t -> !t.getDateTournage().isBefore(startDate) && !t.getDateTournage().isAfter(endDate))
                     .collect(Collectors.toList());

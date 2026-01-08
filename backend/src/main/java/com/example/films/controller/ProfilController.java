@@ -42,12 +42,12 @@ public class ProfilController {
         }
     }
     
-    // MODIFICATION IMPORTANTE : Utiliser consumes = MediaType.APPLICATION_JSON_VALUE
+    
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateProfil(@PathVariable Long id, 
                                           @RequestBody UpdateProfilRequest request) {
         try {
-            // Validation basique
+           
             if (request.getNom() != null && request.getNom().trim().isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(creerReponseErreur("Le nom ne peut pas être vide"));
@@ -81,7 +81,6 @@ public class ProfilController {
         }
     }
     
-    // MÊME STRUCTURE QUE COMEDIEN POUR L'UPLOAD
     @PostMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadProfilePhoto(@PathVariable Long id,
                                                 @RequestParam("photo") MultipartFile file) {
@@ -103,7 +102,7 @@ public class ProfilController {
         }
     }
     
-    // MÊME STRUCTURE QUE COMEDIEN POUR LA SUPPRESSION
+   
     @DeleteMapping("/{id}/photo")
     public ResponseEntity<?> deleteProfilePhoto(@PathVariable Long id) {
         try {
@@ -126,7 +125,6 @@ public class ProfilController {
         }
     }
     
-    // MÊME STRUCTURE QUE COMEDIEN POUR RÉCUPÉRER LA PHOTO
     @GetMapping("/photo/{filename}")
     public ResponseEntity<?> getProfilePhoto(@PathVariable String filename) {
         try {
@@ -146,7 +144,6 @@ public class ProfilController {
         }
     }
     
-    // AJOUTER UN ENDPOINT POUR MODIFIER LA PHOTO (comme Comedien)
     @PutMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProfilePhoto(@PathVariable Long id,
                                                 @RequestParam("photo") MultipartFile file) {
@@ -168,7 +165,6 @@ public class ProfilController {
         }
     }
     
-    // Méthode utilitaire pour créer des réponses d'erreur standardisées
     private Map<String, Object> creerReponseErreur(String message) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);

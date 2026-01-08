@@ -4,7 +4,6 @@ public class AssociateImageDTO {
     private Long imageId;
     private String description;
     
-    // Getters et setters
     public Long getImageId() { return imageId; }
     public void setImageId(Long imageId) { this.imageId = imageId; }
     

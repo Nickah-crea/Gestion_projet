@@ -170,11 +170,11 @@ public class PDFExportService {
                             PDImageXObject pdImage = LosslessFactory.createFromImage(document, bufferedImage);
                             
                             // Redimensionner l'image pour s'adapter à la page
-                            float scale = 0.2f; // Échelle réduite
+                            float scale = 0.2f; 
                             float imageWidth = pdImage.getWidth() * scale;
                             float imageHeight = pdImage.getHeight() * scale;
                             
-                            if (yPosition - imageHeight < 50) break; // Vérifier l'espace
+                            if (yPosition - imageHeight < 50) break; 
                             
                             contentStream.drawImage(pdImage, margin, yPosition - imageHeight, imageWidth, imageHeight);
                             
@@ -185,7 +185,6 @@ public class PDFExportService {
                             yPosition -= (imageHeight + 20);
                         }
                     } catch (Exception e) {
-                        // En cas d'erreur de lecture d'image, continuer avec les suivantes
                         System.err.println("Erreur lecture image: " + e.getMessage());
                     }
                 }

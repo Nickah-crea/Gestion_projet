@@ -117,7 +117,7 @@ public class RaccordSceneService {
                 throw new RuntimeException("Un raccord de type " + typeRaccord.getNomType() + " existe déjà entre ces scènes");
             }
             
-            // Créer le raccord
+           
             Raccord raccord = new Raccord();
             raccord.setSceneSource(sceneSource);
             raccord.setSceneCible(sceneCible);
@@ -126,13 +126,12 @@ public class RaccordSceneService {
             raccord.setEstCritique(createRaccordSceneDTO.getEstCritique());
             raccord.setStatutRaccord(statutRaccord);
             
-            // Pour la compatibilité avec l'ancienne structure, on prend le premier personnage/comédien
-            // Vous devrez peut-être adapter votre entité Raccord pour supporter plusieurs personnages/comédiens
+          
             if (!personnages.isEmpty()) {
-                raccord.setPersonnage(personnages.get(0)); // Premier personnage
+                raccord.setPersonnage(personnages.get(0)); 
             }
             if (!comediens.isEmpty()) {
-                raccord.setComedien(comediens.get(0)); // Premier comédien
+                raccord.setComedien(comediens.get(0)); 
             }
             
             Raccord savedRaccord = raccordRepository.save(raccord);
@@ -241,7 +240,7 @@ public class RaccordSceneService {
                 .map(this::convertImageToDTO)
                 .collect(Collectors.toList());
         
-        // Ajouter les images partagées comme propriété séparée
+       
         dto.setSharedImages(imagesPartagees); 
         
         return dto;
@@ -256,7 +255,7 @@ public class RaccordSceneService {
         dto.setEstImageReference(image.getEstImageReference());
         dto.setCreeLe(image.getCreeLe());
         
-        // Ajouter l'ID du type de raccord pour le filtrage
+        
         if (image.getRaccord() != null && image.getRaccord().getTypeRaccord() != null) {
             dto.setTypeRaccordId(image.getRaccord().getTypeRaccord().getId());
         }
@@ -266,16 +265,16 @@ public class RaccordSceneService {
     
     private SceneDTO convertSceneToDTO(Scene scene) {
         SceneDTO dto = new SceneDTO();
-        dto.setIdScene(scene.getId()); // Utiliser setId() qui va définir idScene
+        dto.setIdScene(scene.getId()); 
         dto.setTitre(scene.getTitre());
         dto.setOrdre(scene.getOrdre());
         dto.setSynopsis(scene.getSynopsis());
         
-        // Récupérer le statut via SceneStatutRepository comme dans votre SceneService
+      
         Optional<SceneStatut> statutOpt = sceneStatutRepository.findLatestStatutBySceneId(scene.getId());
         if (statutOpt.isPresent()) {
             SceneStatut statut = statutOpt.get();
-            dto.setStatutNom(statut.getStatut().getNomStatutsScene()); // Utiliser getNomStatutsScene()
+            dto.setStatutNom(statut.getStatut().getNomStatutsScene()); 
         } else {
             dto.setStatutNom("Non défini");
         }

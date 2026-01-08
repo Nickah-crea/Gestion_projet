@@ -26,7 +26,6 @@ public class SequenceController {
     public ResponseEntity<List<SequenceDTO>> getSequencesByEpisodeId(@PathVariable Long episodeId,
                                                                     @RequestHeader(value = "X-User-Id", required = false) Long userId) {
         try {
-            // Vérifier l'accès en lecture à l'épisode (moins restrictif)
             if (userId != null && !authorizationService.hasReadAccessToEpisode(userId, episodeId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }

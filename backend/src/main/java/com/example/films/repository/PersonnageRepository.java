@@ -47,11 +47,11 @@ public interface PersonnageRepository extends JpaRepository<Personnage, Long> {
     Optional<String> findPersonnageNameByComedienAndScene(@Param("comedienId") Long comedienId, 
                                                          @Param("sceneId") Long sceneId);
 
-        // Méthode pour trouver les personnages par scène
+        // Trouver les personnages par scène
     @Query("SELECT p FROM Personnage p JOIN Dialogue d ON d.personnage = p WHERE d.scene.id = :sceneId")
     List<Personnage> findPersonnagesDialogueBySceneId(@Param("sceneId") Long sceneId);
     
-    // NOUVELLE MÉTHODE : Trouver les dialogues d'un personnage
+    // Trouver les dialogues d'un personnage
     @Query("SELECT d FROM Dialogue d WHERE d.personnage.id = :personnageId")
     List<Dialogue> findDialoguesByPersonnageId(@Param("personnageId") Long personnageId);
     

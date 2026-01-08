@@ -9,9 +9,9 @@ public class RechercheSceneDTO {
     private String sequenceTitre;
     private String episodeTitre;
     private String projetTitre;
-    private Long projetId; // AJOUTER CETTE PROPRIÉTÉ
-    private Long episodeId; // AJOUTER AUSSI POUR LA NAVIGATION
-    private Long sequenceId; // AJOUTER AUSSI POUR LA NAVIGATION
+    private Long projetId; 
+    private Long episodeId; 
+    private Long sequenceId; 
     
     public RechercheSceneDTO(Long id, String titre, String synopsis, String sequenceTitre, 
                            String episodeTitre, String projetTitre, Long projetId, 
@@ -27,7 +27,7 @@ public class RechercheSceneDTO {
         this.sequenceId = sequenceId;
     }
     
-    // Getters and setters
+   
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     

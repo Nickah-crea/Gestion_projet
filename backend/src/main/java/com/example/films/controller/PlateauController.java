@@ -32,11 +32,6 @@ public class PlateauController {
         return plateauService.getPlateauxByLieuId(lieuId);
     }
 
-    /*@GetMapping("/scenes/{sceneId}")
-    public List<PlateauDTO> getPlateauxBySceneId(@PathVariable Long sceneId) {
-        return plateauService.getPlateauxBySceneId(sceneId);
-    }*/
-
     @GetMapping("/projets/{projetId}")
     public List<PlateauDTO> getPlateauxByProjetId(@PathVariable Long projetId) {
         return plateauService.getPlateauxByProjetId(projetId);
@@ -66,7 +61,6 @@ public class PlateauController {
     public ResponseEntity<PlateauDTO> createPlateau(@RequestBody CreatePlateauDTO createPlateauDTO,
                                                 @RequestHeader("X-User-Id") Long userId) {
         try {
-            // Récupérer le lieu pour obtenir l'ID du projet
             LieuDTO lieu = lieuService.getLieuById(createPlateauDTO.getLieuId());
             if (!authorizationService.hasAccessToLieuCreation(userId, lieu.getProjetId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

@@ -50,7 +50,7 @@ public class StatisticsService {
             
             Map<String, Object> result = jdbcTemplate.queryForMap(sql);
             
-            // Transform keys to camelCase
+            
             Map<String, Object> camelCaseResult = new HashMap<>();
             for (Map.Entry<String, Object> entry : result.entrySet()) {
                 String camelKey = toCamelCase(entry.getKey());
@@ -61,7 +61,7 @@ public class StatisticsService {
             return camelCaseResult;
         } catch (Exception e) {
             log.error("Erreur lors du chargement des KPI", e);
-            // Retourner des valeurs par défaut (also in camelCase)
+          
             Map<String, Object> defaultKpi = new HashMap<>();
             defaultKpi.put("totalProjets", 0);
             defaultKpi.put("totalEpisodes", 0);
@@ -72,8 +72,7 @@ public class StatisticsService {
             return defaultKpi;
         }
     }
-    
-    // Helper method
+  
     private String toCamelCase(String snakeCase) {
         String[] parts = snakeCase.split("_");
         StringBuilder camelCase = new StringBuilder(parts[0]);
@@ -85,14 +84,13 @@ public class StatisticsService {
     
     private Map<String, GlobalStatisticsDTO.StatisticItem> getStatistics(Long projetId) {
         Map<String, GlobalStatisticsDTO.StatisticItem> statistics = new HashMap<>();
-        
-        // Statistiques des épisodes
+   
         statistics.put("episodes", getEpisodeStatistics(projetId));
         
-        // Statistiques des séquences
+     
         statistics.put("sequences", getSequenceStatistics(projetId));
         
-        // Statistiques des scènes
+         
         statistics.put("scenes", getSceneStatistics(projetId));
         
         return statistics;
@@ -384,7 +382,6 @@ public class StatisticsService {
         return jdbcTemplate.queryForMap(sql, projetId, projetId);
     }
 
-    // Nouvelle méthode pour les statuts détaillés par projet
     private Map<String, Object> getDetailedStatusStatistics(Long projetId) {
         String sql = """
             -- Statistiques détaillées des statuts
@@ -420,12 +417,12 @@ public class StatisticsService {
             projetId, projetId, projetId, projetId, projetId, projetId, projetId, projetId);
     }
 
-    // Nouvelle méthode pour les statistiques personnelles
+    
     public Map<String, Object> getPersonalStatistics(Long userId, LocalDate dateDebut, LocalDate dateFin) {
         Map<String, Object> stats = new HashMap<>();
         
         try {
-            // Productivité (scènes modifiées / scènes assignées)
+          
             String productiviteSql = """
                 SELECT 
                     COUNT(DISTINCT sc.id_scene) as scenes_modifiees,
@@ -449,7 +446,7 @@ public class StatisticsService {
             Double productivite = scenesAssignees > 0 ? 
                 (scenesModifiees * 100.0 / scenesAssignees) : 0.0;
             
-            // Temps total passé
+            
             String tempsSql = """
                 SELECT COALESCE(SUM(EXTRACT(EPOCH FROM (date_fin - date_debut)) / 60), 0) as minutes_total
                 FROM scene_statuts
@@ -462,10 +459,10 @@ public class StatisticsService {
                 tempsSql, Long.class, userId, dateDebut, dateFin
             );
             
-            // Dialogues écrits
+           
             Long dialoguesEcrits = getDialoguesEcrits(userId, dateDebut, dateFin);
             
-            // Statistiques d'activité
+          
             String activiteSql = """
                 SELECT 
                     COUNT(DISTINCT sc.id_scene) as scenes_7jours,
@@ -498,7 +495,7 @@ public class StatisticsService {
             stats.put("moyenneQuotidienne", minutesTotal != null ? minutesTotal / 30 : 0);
             stats.put("sessionMoyenne", 25); // Valeur par défaut en minutes
             
-            // Objectifs
+          
             Map<String, Object> objectifs = new HashMap<>();
             objectifs.put("scenesCompletees", scenesModifiees);
             objectifs.put("scenesCibles", 10);
@@ -509,7 +506,7 @@ public class StatisticsService {
             
         } catch (Exception e) {
             log.error("Erreur lors du chargement des statistiques personnelles", e);
-            // Retourner des valeurs par défaut en cas d'erreur
+           
             stats.put("productivite", 75.0);
             stats.put("scenesModifiees", 8);
             stats.put("tendanceScenes", 15.0);
@@ -554,7 +551,7 @@ public class StatisticsService {
         Map<String, Object> stats = new HashMap<>();
         
         try {
-            // Projets actifs (où le scénariste est impliqué)
+   
             String projetsActifsSql = """
                 SELECT COUNT(DISTINCT p.id_projet) as projets_actifs
                 FROM projets p
@@ -567,7 +564,7 @@ public class StatisticsService {
             
             Integer projetsActifs = jdbcTemplate.queryForObject(projetsActifsSql, Integer.class, userId);
             
-            // Scènes écrites
+            
             String scenesEcritesSql = """
                 SELECT COUNT(DISTINCT sc.id_scene) as scenes_ecrites
                 FROM scenes sc
@@ -578,7 +575,7 @@ public class StatisticsService {
             
             Integer scenesEcrites = jdbcTemplate.queryForObject(scenesEcritesSql, Integer.class, userId);
             
-            // Collaborations (nombre de réalisateurs différents travaillés avec)
+            
             String collaborationsSql = """
                 SELECT COUNT(DISTINCT r.id_realisateur) as collaborations
                 FROM realisateurs r
@@ -590,8 +587,7 @@ public class StatisticsService {
                 """;
             
             Integer collaborations = jdbcTemplate.queryForObject(collaborationsSql, Integer.class, userId);
-            
-            // Échéances proches
+       
             LocalDate aujourdhui = LocalDate.now();
             LocalDate dans7Jours = aujourdhui.plusDays(7);
             
@@ -619,17 +615,17 @@ public class StatisticsService {
             stats.put("projetsActifs", projetsActifs != null ? projetsActifs : 0);
             stats.put("scenesEcrites", scenesEcrites != null ? scenesEcrites : 0);
             stats.put("collaborations", collaborations != null ? collaborations : 0);
-            stats.put("realisateursActifs", collaborations != null ? collaborations : 0); // Même valeur pour le moment
+            stats.put("realisateursActifs", collaborations != null ? collaborations : 0); 
             stats.put("echeancesProches", echeancesProches);
             stats.put("urgentCount", urgentCount);
             
-            // Variations (simulées pour l'exemple)
-            stats.put("projetsVariation", 12); // +12% ce mois
-            stats.put("scenesVariation", 8);   // +8% cette semaine
+           
+            stats.put("projetsVariation", 12); 
+            stats.put("scenesVariation", 8);   
             
         } catch (Exception e) {
             log.error("Erreur lors du chargement des stats du scénariste", e);
-            // Valeurs par défaut
+          
             stats.put("projetsActifs", 0);
             stats.put("projetsVariation", 0);
             stats.put("scenesEcrites", 0);

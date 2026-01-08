@@ -11,9 +11,6 @@ import java.util.List;
 @Repository
 public interface HistoriquePlanningRepository extends JpaRepository<HistoriquePlanning, Long> {
     
-    /**
-     * Trouver l'historique par ID de scène
-     */
     List<HistoriquePlanning> findBySceneIdOrderByDateReplanificationDesc(Long sceneId);
     
     /**

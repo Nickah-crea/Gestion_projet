@@ -49,7 +49,7 @@ public class DialogueService {
             ordre = (maxOrdre != null) ? maxOrdre + 1 : 1;
         }
         
-        // Créer le dialogue
+       
         Dialogue dialogue = new Dialogue();
         dialogue.setScene(scene);
         dialogue.setPersonnage(personnage);

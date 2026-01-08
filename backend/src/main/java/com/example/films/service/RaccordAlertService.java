@@ -71,7 +71,7 @@ public RaccordAlerteDTO analyserRaccord(Raccord raccord) {
     // Vérification 1: Scène source déjà tournée vs scène cible pas planifiée
     if (tournageSource.isPresent() && "termine".equals(tournageSource.get().getStatut().getCode()) && 
         (tournageCible.isEmpty() || !"termine".equals(tournageCible.get().getStatut().getCode()))) {
-        messagesAlerte.add("⚠️ Scène source déjà tournée, mais scène cible pas encore terminée");
+        messagesAlerte.add(" Scène source déjà tournée, mais scène cible pas encore terminée");
         hasAlert = true;
     }
     
@@ -83,13 +83,13 @@ public RaccordAlerteDTO analyserRaccord(Raccord raccord) {
         long ecartJours = Math.abs(java.time.temporal.ChronoUnit.DAYS.between(dateSource, dateCible));
         
         if (ecartJours > SEUIL_ALERTE_JOURS) {
-            messagesAlerte.add("📅 Écart important de " + ecartJours + " jours entre les tournages");
+            messagesAlerte.add(" Écart important de " + ecartJours + " jours entre les tournages");
             hasAlert = true;
         }
         
         // Vérification 3: Incohérence chronologique
         if (dateCible.isBefore(dateSource)) {
-            messagesAlerte.add("❌ Incohérence chronologique: scène cible tournée avant scène source");
+            messagesAlerte.add(" Incohérence chronologique: scène cible tournée avant scène source");
             hasAlert = true;
             alerte.setIncoherenceChronologique(true);
         } else {

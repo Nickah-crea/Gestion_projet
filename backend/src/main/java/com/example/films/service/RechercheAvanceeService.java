@@ -58,15 +58,15 @@ public class RechercheAvanceeService {
             return resultats;
         }
         
-        // Filtrer par types de recherche sélectionnés
+       
         if (criteres.getTypesRecherche() == null || criteres.getTypesRecherche().isEmpty()) {
-            // Par défaut, rechercher dans tous les types
+           
             resultats.addAll(rechercherScenes(criteres));
             resultats.addAll(rechercherPersonnages(criteres));
             resultats.addAll(rechercherLieux(criteres));
             resultats.addAll(rechercherPlateaux(criteres));
         } else {
-            // Rechercher uniquement dans les types sélectionnés
+           
             if (criteres.getTypesRecherche().contains("scenes")) {
                 resultats.addAll(rechercherScenes(criteres));
             }
@@ -81,7 +81,7 @@ public class RechercheAvanceeService {
             }
         }
         
-        // Appliquer le regroupement si demandé
+       
         if (criteres.getRegroupement() != null && !criteres.getRegroupement().isEmpty()) {
             resultats = regrouperResultats(resultats, criteres.getRegroupement());
         }
@@ -99,7 +99,7 @@ public class RechercheAvanceeService {
                 dialogueMap.put("ordre", dialogue.getOrdre());
                 dialogueMap.put("observation", dialogue.getObservation());
                 
-                // Ajouter le nom du personnage
+                
                 if (dialogue.getPersonnage() != null) {
                     dialogueMap.put("personnageNom", dialogue.getPersonnage().getNom());
                     if (dialogue.getPersonnage().getComedien() != null) {
@@ -113,7 +113,7 @@ public class RechercheAvanceeService {
     }
     
     public RechercheAvanceeDTO getDetailsParTypeEtId(String type, Long id) {
-        // CORRECTION : Ajouter une implémentation de base avec return
+       
         if (type == null || id == null) {
             throw new IllegalArgumentException("Type et ID ne peuvent pas être null");
         }
@@ -140,7 +140,7 @@ public class RechercheAvanceeService {
         }
     }
 
-    // NOUVELLE MÉTHODE - Détails complets par type et ID
+   
     public Map<String, Object> getDetailsCompletsParTypeEtId(String type, Long id) {
         Map<String, Object> details = new HashMap<>();
         
@@ -188,7 +188,7 @@ public class RechercheAvanceeService {
         return details;
     }
     
-    // NOUVELLE MÉTHODE - Statistiques par type
+    
     public Map<String, Object> getStatistiquesParTypeEtId(String type, Long id) {
         switch (type.toLowerCase()) {
             case "personnage":
@@ -204,7 +204,7 @@ public class RechercheAvanceeService {
         }
     }
 
-    // MÉTHODES DE CALCUL DES STATISTIQUES (AMÉLIORÉES)
+   
     private Map<String, Object> calculerStatistiquesPersonnage(Long personnageId) {
         Map<String, Object> stats = new HashMap<>();
         
@@ -242,7 +242,7 @@ public class RechercheAvanceeService {
         int nbPersonnages = personnageRepository.findPersonnagesBySceneId(sceneId).size();
         int nbDialogues = dialogues.size();
         
-        // Durée estimée
+       
         int dureeSecondes = (int) Math.ceil(totalMots / 2.5);
         String dureeEstimee = String.format("%dh %02dm", 
             dureeSecondes / 3600, 
@@ -263,7 +263,6 @@ public class RechercheAvanceeService {
         int nbScenes = tournages.size();
         int nbPlateaux = plateauRepository.findByLieuId(lieuId).size();
         
-        // Calcul des jours de tournage uniques
         long joursTournage = tournages.stream()
             .map(SceneTournage::getDateTournage)
             .filter(Objects::nonNull)
@@ -273,7 +272,7 @@ public class RechercheAvanceeService {
         stats.put("nbScenes", nbScenes);
         stats.put("nbPlateaux", nbPlateaux);
         stats.put("joursTournage", joursTournage);
-        stats.put("dureeTotale", "À calculer"); // À implémenter selon vos besoins
+        stats.put("dureeTotale", "À calculer");
         
         return stats;
     }
@@ -286,11 +285,11 @@ public class RechercheAvanceeService {
         
         Optional<Plateau> plateauOpt = plateauRepository.findById(plateauId);
         
-        // CORRECTION : Ne pas utiliser getCapacite() puisque la colonne n'existe pas
+       
         String capacite = "Non spécifiée";
         String equipements = plateauOpt.map(Plateau::getDescription).orElse("Non spécifiés");
         
-        // Jours d'utilisation uniques
+
         long joursUtilisation = tournages.stream()
             .map(SceneTournage::getDateTournage)
             .filter(Objects::nonNull)
@@ -298,14 +297,14 @@ public class RechercheAvanceeService {
             .count();
         
         stats.put("nbScenes", nbScenes);
-        stats.put("capacite", capacite); // Toujours "Non spécifiée"
+        stats.put("capacite", capacite); 
         stats.put("equipements", equipements);
         stats.put("joursUtilisation", joursUtilisation);
         
         return stats;
     }
 
-    // NOUVELLES MÉTHODES POUR LES INFORMATIONS COMPLÉMENTAIRES
+
     private Map<String, Object> getInformationsPersonnage(Long personnageId) {
         Map<String, Object> infos = new HashMap<>();
         
@@ -356,16 +355,15 @@ public class RechercheAvanceeService {
         return infos;
     }
 
-    // MÉTHODES UTILITAIRES
+   
     private String extraireAge(String description) {
-        // Logique simplifiée pour extraire l'âge de la description
+      
         if (description == null) return "Non spécifié";
-        // Implémentez votre logique d'extraction d'âge ici
         return "Adulte";
     }
     
     private String determinerTypePersonnage(Personnage personnage) {
-        // Logique pour déterminer le type de personnage
+
         List<Dialogue> dialogues = dialogueRepository.findByPersonnageId(personnage.getId());
         int nbDialogues = dialogues.size();
         
@@ -375,7 +373,7 @@ public class RechercheAvanceeService {
     }
     
     private String estimerDifficulteScene(Long sceneId) {
-        // Logique pour estimer la difficulté d'une scène
+
         List<Dialogue> dialogues = dialogueRepository.findBySceneId(sceneId);
         int totalMots = dialogues.stream()
             .mapToInt(d -> d.getTexte().split(" ").length)
@@ -387,21 +385,19 @@ public class RechercheAvanceeService {
     }
     
     private double calculerPourcentageDialoguesPersonnage(Long personnageId) {
-        // CORRECTION : Remplacer countByPersonnageId par une méthode existante
+       
         Personnage personnage = personnageRepository.findById(personnageId).orElseThrow();
         Long projetId = personnage.getProjet().getId();
         
-        // Utiliser une méthode qui existe dans votre repository
         long totalDialoguesProjet = dialogueRepository.countBySceneSequenceEpisodeProjetId(projetId);
-        
-        // Remplacer countByPersonnageId par size() de la liste
+  
         long dialoguesPersonnage = dialogueRepository.findByPersonnageId(personnageId).size();
         
         return totalDialoguesProjet > 0 ? 
             (dialoguesPersonnage * 100.0) / totalDialoguesProjet : 0;
     }
 
-    // MÉTHODES DE RÉCUPÉRATION DES DONNÉES ASSOCIÉES
+
     private List<Map<String, Object>> recupererDialoguesPersonnage(Long personnageId) {
         return dialogueRepository.findByPersonnageId(personnageId).stream()
             .map(dialogue -> {
@@ -411,7 +407,6 @@ public class RechercheAvanceeService {
                 dialogueMap.put("ordre", dialogue.getOrdre());
                 dialogueMap.put("observation", dialogue.getObservation());
                 
-                // Informations sur la scène
                 if (dialogue.getScene() != null) {
                     dialogueMap.put("sceneId", dialogue.getScene().getId());
                     dialogueMap.put("sceneTitre", dialogue.getScene().getTitre());
@@ -510,7 +505,6 @@ public class RechercheAvanceeService {
                 plan.put("id", st.getId());
                 plan.put("dateTournage", st.getDateTournage());
                 
-                // CORRECTION : Récupérer les heures
                 if (st.getHeureDebut() != null) {
                     plan.put("heureDebut", st.getHeureDebut().toString());
                 }
@@ -617,7 +611,6 @@ public class RechercheAvanceeService {
             .collect(Collectors.toList());
     }
     
-    // Les méthodes existantes de recherche et conversion restent inchangées
     private List<RechercheAvanceeDTO> rechercherScenes(CritereRechercheDTO criteres) {
         List<SceneTournage> tournages;
         
@@ -648,15 +641,14 @@ public class RechercheAvanceeService {
                 })
                 .collect(Collectors.toList());
         } else {
-            // CORRECTION : Quand AUCUN projet n'est sélectionné, 
-            // ne chercher que les scènes SANS PROJET
+           
             tournages = sceneTournageRepository.findAll().stream()
                 .filter(tournage -> tournage.getScene() != null &&
-                                // Scènes sans projet (hiérarchie incomplète)
+                              
                                 (tournage.getScene().getSequence() == null ||
                                 tournage.getScene().getSequence().getEpisode() == null ||
                                 tournage.getScene().getSequence().getEpisode().getProjet() == null))
-                // Filtrer par dates
+          
                 .filter(tournage -> {
                     if (criteres.getDateDebut() != null || criteres.getDateFin() != null) {
                         if (tournage.getDateTournage() == null) {
@@ -686,13 +678,13 @@ public class RechercheAvanceeService {
         List<Personnage> personnages;
         
         if (criteres.getProjetId() != null) {
-            // CORRECTION : Filtrer par projet
+           
             personnages = personnageRepository.findAll().stream()
                 .filter(personnage -> personnage.getProjet() != null && 
                                     personnage.getProjet().getId().equals(criteres.getProjetId()))
                 .collect(Collectors.toList());
         } else {
-            // Tous les personnages
+        
             personnages = personnageRepository.findAll();
         }
         
@@ -715,13 +707,13 @@ public class RechercheAvanceeService {
         List<Lieu> lieux;
         
         if (criteres.getProjetId() != null) {
-            // CORRECTION : Filtrer par projet
+           
             lieux = lieuRepository.findAll().stream()
                 .filter(lieu -> lieu.getProjet() != null && 
                             lieu.getProjet().getId().equals(criteres.getProjetId()))
                 .collect(Collectors.toList());
         } else {
-            // Tous les lieux
+      
             lieux = lieuRepository.findAll();
         }
         
@@ -743,15 +735,14 @@ public class RechercheAvanceeService {
     List<Plateau> plateaux;
     
     if (criteres.getProjetId() != null) {
-        // CORRECTION : Filtrer les plateaux par projet
-        // Récupérer d'abord tous les plateaux, puis filtrer côté Java
+      
         plateaux = plateauRepository.findAll().stream()
             .filter(plateau -> plateau.getLieu() != null && 
                               plateau.getLieu().getProjet() != null && 
                               plateau.getLieu().getProjet().getId().equals(criteres.getProjetId()))
             .collect(Collectors.toList());
     } else {
-        // Tous les plateaux
+ 
         plateaux = plateauRepository.findAll();
     }
     
@@ -771,29 +762,7 @@ public class RechercheAvanceeService {
         .collect(Collectors.toList());
 }
     
-    // private boolean filtreParTermeEtStatut(SceneTournage tournage, CritereRechercheDTO criteres) {
-    //     String terme = criteres.getTermeRecherche() != null ? 
-    //         criteres.getTermeRecherche().toLowerCase() : "";
-        
-    //     boolean matchesTerme = terme.isEmpty() ||
-    //         tournage.getScene().getTitre().toLowerCase().contains(terme) ||
-    //         (tournage.getScene().getSynopsis() != null && 
-    //         tournage.getScene().getSynopsis().toLowerCase().contains(terme)) ||
-    //         (tournage.getLieu() != null && 
-    //         tournage.getLieu().getNomLieu().toLowerCase().contains(terme)) ||
-    //         (tournage.getPlateau() != null && 
-    //         tournage.getPlateau().getNom().toLowerCase().contains(terme)) ||
-    //         // Recherche dans les dialogues
-    //         dialogueRepository.findBySceneId(tournage.getScene().getId()).stream()
-    //             .anyMatch(dialogue -> dialogue.getTexte().toLowerCase().contains(terme));
-        
-    //     boolean matchesStatut = criteres.getStatuts() == null || 
-    //         criteres.getStatuts().isEmpty() ||
-    //         criteres.getStatuts().contains(tournage.getStatutTournage());
-        
-    //     return matchesTerme && matchesStatut;
-    // }
-    
+
     private boolean filtreParTermeEtStatut(SceneTournage tournage, CritereRechercheDTO criteres) {
         String terme = criteres.getTermeRecherche() != null ? 
             criteres.getTermeRecherche().toLowerCase() : "";
@@ -806,7 +775,7 @@ public class RechercheAvanceeService {
             tournage.getLieu().getNomLieu().toLowerCase().contains(terme)) ||
             (tournage.getPlateau() != null && 
             tournage.getPlateau().getNom().toLowerCase().contains(terme)) ||
-            // Recherche dans les dialogues
+           
             dialogueRepository.findBySceneId(tournage.getScene().getId()).stream()
                 .anyMatch(dialogue -> dialogue.getTexte().toLowerCase().contains(terme));
         
@@ -814,7 +783,7 @@ public class RechercheAvanceeService {
             criteres.getStatuts().isEmpty() ||
             criteres.getStatuts().contains(tournage.getStatutTournage());
         
-        // CORRECTION : Vérifier aussi le projet si spécifié
+      
         boolean matchesProjet = criteres.getProjetId() == null ||
             (tournage.getScene().getSequence() != null &&
             tournage.getScene().getSequence().getEpisode() != null &&
@@ -943,7 +912,7 @@ public class RechercheAvanceeService {
             dto.setProjetTitre(personnage.getProjet().getTitre());
         }
         
-        // RÉCUPÉRATION DES VRAIS DIALOGUES DU PERSONNAGE
+       
         List<String> dialogues = dialogueRepository.findByPersonnageId(personnage.getId())
             .stream()
             .map(Dialogue::getTexte)
@@ -952,7 +921,7 @@ public class RechercheAvanceeService {
         
         dto.setModifieLe(personnage.getModifieLe());
         
-         // Ajouter l'ID du projet
+    
         if (personnage.getProjet() != null) {
             dto.setProjetId(personnage.getProjet().getId());
         }
@@ -999,7 +968,7 @@ public class RechercheAvanceeService {
         return dto;
     }
 
-    // NOUVELLE MÉTHODE - Récupérer les statuts disponibles pour un projet spécifique
+    // Récupérer les statuts disponibles pour un projet spécifique
     public List<String> getStatutsDisponiblesParProjet(Long projetId) {
         // Récupérer les statuts distincts des scènes de tournage pour ce projet
         List<String> statuts = sceneTournageRepository.findStatutsDistinctsByProjetId(projetId);

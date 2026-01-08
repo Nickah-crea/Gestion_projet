@@ -76,14 +76,12 @@ public class AuthService {
         userData.put("role", utilisateur.getRole());
         
         response.put("user", userData);
-        response.put("token", genererTokenSimule(utilisateur)); // À remplacer par JWT
+        response.put("token", genererTokenSimule(utilisateur)); 
 
         return response;
     }
 
     private String genererTokenSimule(Utilisateur utilisateur) {
-        // Pour l'instant, génération d'un token simple
-        // À remplacer par une implémentation JWT réelle
         return "token-simule-" + utilisateur.getId() + "-" + System.currentTimeMillis();
     }
 }

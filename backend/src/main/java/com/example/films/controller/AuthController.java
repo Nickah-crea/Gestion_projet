@@ -2,7 +2,6 @@ package com.example.films.controller;
 
 import com.example.films.dto.CreationUtilisateurRequest;
 import com.example.films.dto.UtilisateurCreeDTO;
-import com.example.films.entity.Utilisateur;
 import com.example.films.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody CreationUtilisateurRequest request) {
         try {
-            // Validation basique
             if (request.getNom() == null || request.getNom().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body(creerReponseErreur("Le nom est obligatoire"));
             }

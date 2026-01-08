@@ -23,7 +23,7 @@ public interface SequenceRepository extends JpaRepository<Sequence, Long> {
     Integer countByEpisodeId(@Param("episodeId") Long episodeId);
 
     @Query("SELECT new com.example.films.dto.RechercheSequenceDTO(" +
-       "s.id, s.titre, s.synopsis, e.titre, p.titre, p.id, e.id, s.ordre) " + // Ajouter p.id, e.id
+       "s.id, s.titre, s.synopsis, e.titre, p.titre, p.id, e.id, s.ordre) " + 
        "FROM Sequence s " +
        "LEFT JOIN s.episode e " +
        "LEFT JOIN e.projet p " +

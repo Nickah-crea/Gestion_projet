@@ -19,7 +19,7 @@ public class ConflictDetectionService {
         // Récupérer tous les tournages pour la même date
         List<PlanningTournage> tournagesMemeDate = planningTournageRepository.findByDateTournageBetween(date, date);
         
-        // Convertir les heures String en LocalTime
+       
         LocalTime debut = convertirHeure(heureDebut);
         LocalTime fin = convertirHeure(heureFin);
         
@@ -46,10 +46,10 @@ public class ConflictDetectionService {
             return LocalTime.of(0, 0);
         }
         
-        // Gérer différents formats d'heure
-        if (heure.length() == 5) { // Format "HH:mm"
+     
+        if (heure.length() == 5) {
             return LocalTime.parse(heure);
-        } else if (heure.length() >= 8) { // Format "HH:mm:ss"
+        } else if (heure.length() >= 8) { 
             return LocalTime.parse(heure.substring(0, 5));
         } else {
             throw new IllegalArgumentException("Format d'heure non supporté: " + heure);

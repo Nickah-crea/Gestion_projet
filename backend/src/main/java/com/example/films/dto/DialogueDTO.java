@@ -12,7 +12,7 @@ public class DialogueDTO {
     private LocalDateTime creeLe;
     private LocalDateTime modifieLe;
     
-    // Références
+
     private Long sceneId;
     private String sceneTitre;
     

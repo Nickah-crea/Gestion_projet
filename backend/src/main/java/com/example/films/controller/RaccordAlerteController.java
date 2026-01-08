@@ -42,7 +42,6 @@ public class RaccordAlerteController {
         try {
             List<RaccordAlerteDTO> alertes = raccordAlerteService.getAlertesPourRaccords();
             
-            // Filtrer seulement les alertes critiques
             List<RaccordAlerteCalendrierDTO> alertesCalendrier = alertes.stream()
                 .filter(alerte -> "CRITIQUE".equals(alerte.getNiveauAlerte()))
                 .map(this::convertToCalendrierDTO)

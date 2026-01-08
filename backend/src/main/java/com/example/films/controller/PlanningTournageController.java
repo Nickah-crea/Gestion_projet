@@ -24,13 +24,6 @@ public class PlanningTournageController {
         this.planningTournageService = planningTournageService;
     }
 
-    //@GetMapping
-    // public List<PlanningTournageDTO> getPlanningByDateRange(
-    //         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-    //         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-    //     return planningTournageService.getPlanningByDateRange(startDate, endDate);
-    // }
-
     @GetMapping
     public ResponseEntity<?> getPlanningByDateRange(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -51,10 +44,6 @@ public class PlanningTournageController {
         }
     }
 
-    // @GetMapping("/projet/{projetId}")
-    // public List<PlanningTournageDTO> getPlanningByProjetId(@PathVariable Long projetId) {
-    //     return planningTournageService.getPlanningByProjetId(projetId);
-    // }
 
     @GetMapping("/projet/{projetId}")
     public List<PlanningTournageDTO> getPlanningByProjetId(
@@ -62,7 +51,6 @@ public class PlanningTournageController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         
-        // Implémentez la logique de filtrage par projet et date
         return planningTournageService.getPlanningByProjetId(projetId);
     }
 
@@ -114,9 +102,8 @@ public class PlanningTournageController {
     @GetMapping("/all")
     public ResponseEntity<List<PlanningTournageDTO>> getAllPlanning() {
         try {
-            // Récupérer tout le planning sans filtre de date
-            LocalDate startDate = LocalDate.of(2000, 1, 1); // Date très ancienne
-            LocalDate endDate = LocalDate.of(2100, 12, 31); // Date très future
+            LocalDate startDate = LocalDate.of(2000, 1, 1); 
+            LocalDate endDate = LocalDate.of(2100, 12, 31); 
             List<PlanningTournageDTO> planning = planningTournageService.getPlanningByDateRange(startDate, endDate);
             return ResponseEntity.ok(planning);
         } catch (Exception e) {
@@ -134,25 +121,6 @@ public class PlanningTournageController {
     dto.setStatutNom(planning.getStatut().getNomStatut());
     return dto;
 }
-
-    // @GetMapping("/form-data")
-    // public ResponseEntity<Map<String, Object>> getFormData() {
-    //     try {
-    //         Map<String, Object> formData = new HashMap<>();
-            
-    //         // Récupérer toutes les données nécessaires
-    //         formData.put("projets", projetService.getAllProjets());
-    //         formData.put("episodes", episodeService.getAllEpisodes());
-    //         formData.put("sequences", sequenceService.getAllSequences());
-    //         formData.put("scenes", sceneService.getAllScenes());
-    //         formData.put("statuts", statutPlanningService.getAllStatuts());
-    //         formData.put("lieux", lieuService.getAllLieux());
-            
-    //         return ResponseEntity.ok(formData);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.badRequest().build();
-    //     }
-    // }
     
 }
 

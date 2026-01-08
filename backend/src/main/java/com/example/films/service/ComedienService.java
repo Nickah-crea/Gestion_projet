@@ -42,7 +42,6 @@ public class ComedienService {
         this.disponibiliteRepository = disponibiliteRepository;
         this.projetRepository = projetRepository;
         
-        // Créer le répertoire s'il n'existe pas
         try {
             Files.createDirectories(Paths.get(uploadDir));
         } catch (IOException e) {
@@ -61,10 +60,9 @@ public class ComedienService {
         Projet projet = projetRepository.findById(createComedienDTO.getProjetId())
                 .orElseThrow(() -> new ResourceNotFoundException("Projet", "id", createComedienDTO.getProjetId()));
 
-        // Validation des données
+
         validateComedienData(createComedienDTO);
 
-        // Créer le comédien
         Comedien comedien = new Comedien();
         comedien.setProjet(projet);
         comedien.setNom(createComedienDTO.getNom());
@@ -74,7 +72,6 @@ public class ComedienService {
 
         Comedien savedComedien = comedienRepository.save(comedien);
 
-        // Créer les disponibilités multiples si fournies
         if (createComedienDTO.getDatesDisponibilite() != null && 
             createComedienDTO.getStatutsDisponibilite() != null &&
             !createComedienDTO.getDatesDisponibilite().isEmpty()) {
@@ -147,27 +144,27 @@ public class ComedienService {
             throw new BusinessValidationException("Le fichier photo est vide");
         }
 
-        // Validation du type de fichier
+       
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new BusinessValidationException("Le fichier doit être une image");
         }
 
         // Validation de la taille (max 5MB)
-        long maxSize = 5 * 1024 * 1024; // 5MB
+        long maxSize = 5 * 1024 * 1024;
         if (file.getSize() > maxSize) {
             throw new BusinessValidationException("La taille de l'image ne doit pas dépasser 5MB");
         }
 
-        // Générer un nom de fichier unique
+        
         String originalFilename = file.getOriginalFilename();
         String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
         String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
 
-        // Chemin complet du fichier
+    
         Path filePath = Paths.get(uploadDir + uniqueFilename);
         
-        // Sauvegarder le fichier
+        
         try {
             Files.copy(file.getInputStream(), filePath);
         } catch (IOException e) {
@@ -266,7 +263,7 @@ public class ComedienService {
 
     @Transactional
     private void handleDisponibilitesUpdate(Comedien comedien, CreateComedienDTO updateComedienDTO) {
-        // Supprimer TOUTES les disponibilités existantes de ce comédien
+        // Supprimer toutes les disponibilités existantes de ce comédien
         disponibiliteRepository.deleteByComedienId(comedien.getId());
         
         // Recréer les disponibilités seulement si des nouvelles sont fournies
@@ -315,7 +312,7 @@ public class ComedienService {
         Comedien comedien = comedienRepository.findById(comedienId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comédien", "id", comedienId));
 
-        // Validation
+       
         if (date == null) {
             throw new BusinessValidationException("La date de disponibilité est obligatoire");
         }
@@ -351,7 +348,7 @@ public class ComedienService {
             throw new BusinessValidationException("Cette disponibilité n'appartient pas au comédien spécifié");
         }
         
-        // Validation
+    
         if (date != null && date.isBefore(LocalDate.now())) {
             throw new BusinessValidationException("La date de disponibilité ne peut pas être dans le passé");
         }

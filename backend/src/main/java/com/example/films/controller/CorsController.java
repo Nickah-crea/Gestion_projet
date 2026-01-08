@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/export")
-@CrossOrigin(origins = "*") // Autorise toutes les origines pour ce contrôleur
+@CrossOrigin(origins = "*")
 public class CorsController {
 
     @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)

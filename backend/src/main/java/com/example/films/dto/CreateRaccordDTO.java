@@ -20,7 +20,6 @@ public class CreateRaccordDTO {
      private Long personnageId;
     private Long comedienId;
     
-    // constructeur sans images pour faciliter la création
     public CreateRaccordDTO(Long sceneSourceId, Long sceneCibleId, Long typeRaccordId, 
                            String description, Boolean estCritique, Long statutRaccordId) {
         this.sceneSourceId = sceneSourceId;

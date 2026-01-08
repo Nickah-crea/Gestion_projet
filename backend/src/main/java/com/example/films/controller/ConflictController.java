@@ -1,4 +1,3 @@
-// ConflictController.java - Ajouter un nouvel endpoint
 package com.example.films.controller;
 
 import com.example.films.service.ConflictVerificationService;
@@ -48,8 +47,7 @@ public class ConflictController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
-
-    // NOUVEAU: Endpoint pour vérifier seulement les disponibilités
+    
     @GetMapping("/check-disponibilites")
     public ResponseEntity<Map<String, Object>> verifierDisponibilites(
             @RequestParam Long sceneId,

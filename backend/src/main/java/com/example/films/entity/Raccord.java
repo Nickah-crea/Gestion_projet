@@ -49,10 +49,6 @@ public class Raccord {
     @JoinColumn(name = "id_statut_raccord")
     private StatutRaccord statutRaccord;
 
-    //  @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "id_planning_tournage")
-    // private PlanningTournage planningTournage;
-
     @Column(name = "est_raccord_replanification")
     private Boolean estRaccordReplanification = false;
 

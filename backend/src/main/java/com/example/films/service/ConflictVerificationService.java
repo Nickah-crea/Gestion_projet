@@ -91,7 +91,7 @@ public class ConflictVerificationService {
         for (Comedien comedien : comediensScene) {
             // 5. Vérifier les conflits horaires pour chaque comédien
             List<SceneTournage> conflitsComedien = tournagesMemeDate.stream()
-                .filter(tournage -> !tournage.getScene().getId().equals(sceneId)) // Exclure la scène actuelle
+                .filter(tournage -> !tournage.getScene().getId().equals(sceneId)) 
                 .filter(tournage -> estComedienDansScene(comedien.getId(), tournage.getScene().getId()))
                 .filter(tournage -> chevauchementHoraires(heureDebut, heureFin, 
                          tournage.getHeureDebut(), tournage.getHeureFin()))
@@ -119,7 +119,7 @@ public class ConflictVerificationService {
         return new ConflictVerificationResult(!conflits.isEmpty(), conflits);
     }
     
-    // Méthode pour vérifier les disponibilités seulement (sans conflits horaires)
+    // vérifier les disponibilités seulement (sans conflits horaires)
     public ConflictVerificationResult verifierDisponibilitesComediens(Long sceneId, LocalDate dateTournage) {
         List<String> conflits = new ArrayList<>();
         
@@ -198,7 +198,7 @@ public class ConflictVerificationService {
             this.conflicts = conflicts;
         }
         
-        // Getters
+     
         public boolean isHasConflicts() { return hasConflicts; }
         public List<String> getConflicts() { return conflicts; }
     }

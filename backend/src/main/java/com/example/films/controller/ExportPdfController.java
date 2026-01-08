@@ -61,7 +61,6 @@ public class ExportPdfController {
         }
     }
 
-    // Méthode OPTIONS pour CORS preflight
     @RequestMapping(value = "/send-pdf-email", method = RequestMethod.OPTIONS)
     public ResponseEntity<?> handleOptions() {
         return ResponseEntity.ok().build();

@@ -49,12 +49,11 @@ public class PersonnageService {
                     .orElseThrow(() -> new RuntimeException("Comédien non trouvé"));
         }
         
-        // Créer le personnage
         Personnage personnage = new Personnage();
         personnage.setNom(createPersonnageDTO.getNom());
         personnage.setDescription(createPersonnageDTO.getDescription());
         personnage.setProjet(projet);
-        personnage.setComedien(comedien); // Peut être null
+        personnage.setComedien(comedien);
         
         Personnage savedPersonnage = personnageRepository.save(personnage);
         return convertToDTO(savedPersonnage);
@@ -100,7 +99,7 @@ public class PersonnageService {
         personnage.setNom(updatePersonnageDTO.getNom());
         personnage.setDescription(updatePersonnageDTO.getDescription());
         personnage.setProjet(projet);
-        personnage.setComedien(comedien); // Peut être null
+        personnage.setComedien(comedien); 
         
         Personnage updatedPersonnage = personnageRepository.save(personnage);
         return convertToDTO(updatedPersonnage);

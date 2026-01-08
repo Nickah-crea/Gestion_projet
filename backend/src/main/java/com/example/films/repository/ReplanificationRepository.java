@@ -20,7 +20,6 @@ public interface ReplanificationRepository extends JpaRepository<Replanification
     @Query("SELECT r FROM Replanification r LEFT JOIN FETCH r.scene")
     List<Replanification> findAllWithDetails();
     
-    // Méthodes existantes à adapter ou supprimer
     List<Replanification> findByStatut(String statut);
     
     @Query("SELECT r FROM Replanification r LEFT JOIN FETCH r.scene s LEFT JOIN s.sequence seq LEFT JOIN seq.episode e LEFT JOIN e.projet p WHERE p.id = :projetId")

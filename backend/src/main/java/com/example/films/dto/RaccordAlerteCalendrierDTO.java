@@ -16,7 +16,6 @@ public class RaccordAlerteCalendrierDTO {
     private String sceneSourceTitre;
     private String sceneCibleTitre;
     
-    // Méthode utilitaire pour obtenir la date d'alerte
     public LocalDate getDateAlerte() {
         return dateTournageCible != null ? dateTournageCible : dateTournageSource;
     }

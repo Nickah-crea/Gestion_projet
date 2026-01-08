@@ -19,8 +19,6 @@ public class WebConfig implements WebMvcConfigurer {
    
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Servir les images des raccords statiquement
-        // Le chemin doit être absolu ou relatif au répertoire de travail
         String currentDir = System.getProperty("user.dir");
         System.out.println("Répertoire courant: " + currentDir);
         

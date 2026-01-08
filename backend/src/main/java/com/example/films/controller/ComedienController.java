@@ -63,8 +63,6 @@ public class ComedienController {
                 String photoPath = comedienService.savePhoto(photo);
                 createComedienDTO.setPhotoPath(photoPath);
             } catch (IOException e) {
-                // L'exception sera automatiquement gérée par GlobalExceptionHandler
-                // car FileStorageException est lancée dans savePhoto
                 throw new RuntimeException("Erreur lors de la sauvegarde de la photo", e);
             }
         }

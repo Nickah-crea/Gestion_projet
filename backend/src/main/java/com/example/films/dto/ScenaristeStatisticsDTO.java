@@ -11,23 +11,23 @@ public class ScenaristeStatisticsDTO {
     private String nom;
     private String email;
     
-    // Statistiques productivité
-    private Double productivite; // Pourcentage (0-100)
-    private Integer scenesModifiees7j; // Scènes modifiées dans les 7 derniers jours
-    private Integer tendanceScenes; // Variation en % (+15% ou -8%)
-    private Integer tempsTotalMinutes; // Temps total en minutes ce mois
-    private Integer moyenneQuotidienneMinutes; // Moyenne par jour
-    private Integer sessionMoyenneMinutes; // Durée moyenne des sessions
     
-    // Objectifs
+    private Double productivite; 
+    private Integer scenesModifiees7j; 
+    private Integer tendanceScenes; 
+    private Integer tempsTotalMinutes; 
+    private Integer moyenneQuotidienneMinutes;
+    private Integer sessionMoyenneMinutes; 
+    
+
     private ObjectifsDTO objectifs;
     
-    // Détails temporels
-    private Map<String, Integer> activitesParJour; // Activités par jour de la semaine
-    private Integer heuresProductives; // Heures de travail productif
-    private Integer joursActifs; // Nombre de jours avec activité
+
+    private Map<String, Integer> activitesParJour; 
+    private Integer heuresProductives; 
+    private Integer joursActifs; 
     
-    // Timestamps
+
     private LocalDateTime dernierAcces;
     private LocalDateTime dateCalcul;
 }

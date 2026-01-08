@@ -21,7 +21,6 @@ public class EpisodeDTO {
     private ScenaristeDTO scenariste; 
     private ProjetDTO projet;
 
-    // Pour les affichages simples
     private String realisateurNom;
     private Long realisateurId;
     private String scenaristeNom;

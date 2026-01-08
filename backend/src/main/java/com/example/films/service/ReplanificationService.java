@@ -347,7 +347,7 @@ public class ReplanificationService {
         dto.setStatut(replanification.getStatut());
         dto.setCreeLe(replanification.getCreeLe());
         
-        // Désérialiser les IDs des raccords
+       
         try {
             if (replanification.getRaccordIds() != null) {
                 List<Long> raccordIds = objectMapper.readValue(
@@ -355,8 +355,7 @@ public class ReplanificationService {
                     new TypeReference<List<Long>>() {}
                 );
                 dto.setRaccordIds(raccordIds);
-                
-                // Récupérer les types de raccords concernés
+            
                 List<String> types = new ArrayList<>();
                 for (Long raccordId : raccordIds) {
                     Optional<Raccord> raccordOpt = raccordRepository.findById(raccordId);

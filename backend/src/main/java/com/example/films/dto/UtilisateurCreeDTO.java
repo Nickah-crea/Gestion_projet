@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class UtilisateurCreeDTO {
     private Long idUtilisateur;
-    private Long idRole; // id du scénariste ou réalisateur créé
+    private Long idRole; 
     private String nom;
     private String email;
     private String role;

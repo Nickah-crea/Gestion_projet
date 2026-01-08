@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class RechercheAvanceeDTO {
     private Long id;
-    private String type; // "scene", "personnage", "lieu", "plateau"
+    private String type; 
     private String titre;
     private String description;
     private LocalDate dateTournage;

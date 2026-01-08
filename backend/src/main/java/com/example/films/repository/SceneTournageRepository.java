@@ -36,7 +36,6 @@ public interface SceneTournageRepository extends JpaRepository<SceneTournage, Lo
     @Query("SELECT st FROM SceneTournage st LEFT JOIN FETCH st.scene s LEFT JOIN FETCH s.sequence seq LEFT JOIN FETCH seq.episode e LEFT JOIN FETCH e.projet WHERE st.id = :id")
     Optional<SceneTournage> findByIdWithDetails(@Param("id") Long id);
 
-    // NOUVELLE MÉTHODE : Trouver les statuts distincts par projet
         @Query("SELECT DISTINCT st.statutTournage FROM SceneTournage st " +
             "JOIN st.scene s " +
             "JOIN s.sequence seq " +
@@ -45,19 +44,9 @@ public interface SceneTournageRepository extends JpaRepository<SceneTournage, Lo
             "WHERE p.id = :projetId")
         List<String> findStatutsDistinctsByProjetId(@Param("projetId") Long projetId);
         
-    // @Query("SELECT st FROM SceneTournage st " +
-    //        "JOIN st.scene s " +
-    //        "JOIN ComedienScene cs ON s.id = cs.scene.id " +
-    //        "WHERE cs.comedien.id = :comedienId " +
-    //        "AND st.dateTournage = :date " +
-    //        "AND st.statutTournage IN ('planifie', 'confirme', 'en_cours')")
-    // List<SceneTournage> findTournagesByComedienAndDate(@Param("comedienId") Long comedienId, 
-    //                                                   @Param("date") LocalDate date);
-     
-     // SceneTournageRepository.java                  
+             
         List<SceneTournage> findByPlateauId(Long plateauId);
 
-    // Dans SceneTournageRepository
     @Query("SELECT st FROM SceneTournage st " +
         "WHERE st.scene.sequence.episode.projet IS NULL " +
         "OR st.scene.sequence IS NULL " +

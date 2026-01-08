@@ -60,11 +60,10 @@ public interface SceneRepository extends JpaRepository<Scene, Long> {
            "LEFT JOIN FETCH e.projet p")
     List<Scene> findAllWithDetails();
 
-    // Ajouter ces méthodes dans SceneRepository.java
-@Query("SELECT s FROM Scene s " +
-       "LEFT JOIN FETCH s.sequence seq " +
-       "LEFT JOIN FETCH seq.episode e " +
-       "WHERE e.id = :episodeId")
-List<Scene> findByEpisodeId(@Param("episodeId") Long episodeId);
+       @Query("SELECT s FROM Scene s " +
+              "LEFT JOIN FETCH s.sequence seq " +
+              "LEFT JOIN FETCH seq.episode e " +
+              "WHERE e.id = :episodeId")
+       List<Scene> findByEpisodeId(@Param("episodeId") Long episodeId);
 
 }

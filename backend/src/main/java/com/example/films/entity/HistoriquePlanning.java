@@ -19,7 +19,7 @@ public class HistoriquePlanning {
     private Long sceneId;
     
     @Column(name = "type_planning", nullable = false, length = 50)
-    private String typePlanning; // 'SCENE_TOURNAGE' ou 'PLANNING_TOURNAGE'
+    private String typePlanning; 
     
     @Column(name = "ancienne_date", nullable = false)
     private LocalDate ancienneDate;
@@ -49,7 +49,7 @@ public class HistoriquePlanning {
     @JoinColumn(name = "id_replanification")
     private Replanification replanification;
     
-    // Constructeurs
+
     public HistoriquePlanning() {}
     
     public HistoriquePlanning(Long sceneId, String typePlanning, LocalDate ancienneDate, 
@@ -62,7 +62,7 @@ public class HistoriquePlanning {
         this.dateReplanification = LocalDateTime.now();
     }
     
-    // Constructeur complet
+
     public HistoriquePlanning(Long sceneId, String typePlanning, LocalDate ancienneDate,
                              String ancienneHeureDebut, String ancienneHeureFin,
                              String ancienStatut, Long ancienLieuId, Long ancienPlateauId,

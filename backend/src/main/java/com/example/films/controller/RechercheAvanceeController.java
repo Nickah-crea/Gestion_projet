@@ -22,7 +22,6 @@ public class RechercheAvanceeController {
         this.rechercheAvanceeService = rechercheAvanceeService;
     }
     
-    // ENDPOINT EXISTANT - Recherche avancée
     @PostMapping
     public ResponseEntity<List<RechercheAvanceeDTO>> rechercherAvance(@RequestBody CritereRechercheDTO criteres) {
         try {
@@ -33,7 +32,7 @@ public class RechercheAvanceeController {
         }
     }
     
-    // ENDPOINT EXISTANT - Statuts disponibles
+
     @GetMapping("/statuts")
     public ResponseEntity<List<String>> getStatutsDisponibles() {
         try {
@@ -44,7 +43,6 @@ public class RechercheAvanceeController {
         }
     }
 
-    // ENDPOINT EXISTANT - Détails simples
     @GetMapping("/details/{type}/{id}")
     public ResponseEntity<RechercheAvanceeDTO> getDetailsResultat(
             @PathVariable String type, 
@@ -57,7 +55,6 @@ public class RechercheAvanceeController {
         }
     }
 
-    // NOUVEL ENDPOINT - Détails complets selon le type
     @GetMapping("/details/{type}/{id}/complets")
     public ResponseEntity<Map<String, Object>> getDetailsComplets(
             @PathVariable String type, 
@@ -70,7 +67,6 @@ public class RechercheAvanceeController {
         }
     }
 
-    // NOUVEL ENDPOINT - Statistiques par type
     @GetMapping("/statistiques/{type}/{id}")
     public ResponseEntity<Map<String, Object>> getStatistiques(
             @PathVariable String type,
@@ -83,7 +79,6 @@ public class RechercheAvanceeController {
         }
     }
 
-     // NOUVEL ENDPOINT - Statuts disponibles par projet
     @GetMapping("/statuts/projet/{projetId}")
     public ResponseEntity<List<String>> getStatutsParProjet(@PathVariable Long projetId) {
         try {

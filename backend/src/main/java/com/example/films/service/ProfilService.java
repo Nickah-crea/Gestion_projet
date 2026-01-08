@@ -39,7 +39,6 @@ public class ProfilService {
         this.realisateurRepository = realisateurRepository;
         this.passwordEncoder = passwordEncoder;
         
-        // Créer le répertoire pour les photos de profil
         try {
             Files.createDirectories(Paths.get(profilePhotosDir));
         } catch (IOException e) {
@@ -125,20 +124,18 @@ public class ProfilService {
         }
     }
     
-    // MÉTHODE UNIFIÉE POUR SAUVEGARDER LES PHOTOS (identique à ComedienService)
     public String saveProfilePhoto(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new BusinessValidationException("Le fichier photo est vide");
         }
 
-        // Validation du type de fichier
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new BusinessValidationException("Le fichier doit être une image");
         }
 
         // Validation de la taille (max 5MB)
-        long maxSize = 5 * 1024 * 1024; // 5MB
+        long maxSize = 5 * 1024 * 1024;
         if (file.getSize() > maxSize) {
             throw new BusinessValidationException("La taille de l'image ne doit pas dépasser 5MB");
         }
@@ -228,10 +225,9 @@ public class ProfilService {
         utilisateurRepository.save(utilisateur);
     }
     
-    // MÉTHODE POUR LA MISE À JOUR DE LA PHOTO (identique au pattern Comedien)
     @Transactional
     public PhotoProfileResponse updateProfilePhoto(Long utilisateurId, MultipartFile file) throws IOException {
-        return uploadProfilePhoto(utilisateurId, file); // Même logique
+        return uploadProfilePhoto(utilisateurId, file);
     }
     
     private ProfilUtilisateurDTO convertToProfilDTO(Utilisateur utilisateur) {
@@ -244,7 +240,7 @@ public class ProfilService {
         dto.setCreeLe(utilisateur.getCreeLe());
         dto.setModifieLe(utilisateur.getModifieLe());
         
-        // Ajouter les informations spécifiques au rôle
+
         if ("SCENARISTE".equals(utilisateur.getRole())) {
             Scenariste scenariste = scenaristeRepository.findByUtilisateurId(utilisateur.getId())
                     .orElse(null);

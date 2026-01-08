@@ -22,18 +22,16 @@ public class SceneController {
         this.sceneService = sceneService;
     }
 
-    // Endpoint pour récupérer les scènes d'une séquence
     @GetMapping("/sequences/{sequenceId}")
-    public List<SceneDTO> getScenesBySequenceId(@PathVariable Long sequenceId) {
+    public List<SceneDTO> getScenesBySequenceId(@PathVariable Long sequenceId) { 
         return sceneService.getScenesBySequenceId(sequenceId);
     }
 
-    // Endpoint pour récupérer les scènes d'un projet
+ 
     @GetMapping("/projet/{projetId}")
     public ResponseEntity<List<SceneDTO>> getScenesByProjetId(@PathVariable Long projetId,
                                                             @RequestHeader(value = "X-User-Id", required = false) Long userId) {
         try {
-            // Vérifier l'accès au projet si userId est fourni
             if (userId != null && !authorizationService.hasAccessToProjet(userId, projetId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
@@ -45,7 +43,6 @@ public class SceneController {
         }
     }
 
-    // Endpoint UNIQUE pour récupérer les scènes avec filtres optionnels
     @GetMapping
     public ResponseEntity<List<SceneDTO>> getScenes(
             @RequestParam(value = "projetId", required = false) Long projetId,
@@ -71,7 +68,6 @@ public class SceneController {
         }
     }
 
-    // Endpoint pour récupérer une scène par son ID
     @GetMapping("/{id}")
     public ResponseEntity<SceneDTO> getSceneById(@PathVariable Long id) {
         try {
@@ -82,13 +78,11 @@ public class SceneController {
         }
     }
 
-    // Endpoint pour créer une scène dans une séquence
     @PostMapping("/sequences/{sequenceId}")
     public ResponseEntity<SceneDTO> createScene(@PathVariable Long sequenceId, 
                                             @RequestBody CreateSceneDTO createSceneDTO,
                                             @RequestHeader("X-User-Id") Long userId) {
         try {
-            // Vérifier l'accès via la séquence et l'épisode parent
             if (!authorizationService.hasAccessToSequence(userId, sequenceId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
@@ -100,7 +94,6 @@ public class SceneController {
         }
     }
 
-    // Endpoint pour mettre à jour une scène
     @PutMapping("/{id}")
     public ResponseEntity<SceneDTO> updateScene(@PathVariable Long id, 
                                             @RequestBody CreateSceneDTO updateSceneDTO,
@@ -117,7 +110,6 @@ public class SceneController {
         }
     }
 
-    // Endpoint pour supprimer une scène
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteScene(@PathVariable Long id,
                                         @RequestHeader("X-User-Id") Long userId) {

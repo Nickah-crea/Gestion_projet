@@ -25,7 +25,7 @@ public class DisponibiliteComedien {
     @Column(nullable = false)
     private String statut;
 
-    // Constructeurs
+
     public DisponibiliteComedien() {}
 
     public DisponibiliteComedien(Comedien comedien, LocalDate date, String statut) {
@@ -34,7 +34,6 @@ public class DisponibiliteComedien {
         this.statut = statut;
     }
 
-    // Getters et setters si Lombok ne fonctionne pas
     public Comedien getComedien() {
         return comedien;
     }

@@ -37,14 +37,14 @@ public class EcranTravailController {
     public EcranTravailController(EpisodeService episodeService, SequenceService sequenceService,
                                   SceneService sceneService, SceneLieuService sceneLieuService,
                                   DialogueService dialogueService, AuthorizationService authorizationService,
-                                  ProjetService projetService) { // Ajouter ce paramètre
+                                  ProjetService projetService) { 
         this.episodeService = episodeService;
         this.sequenceService = sequenceService;
         this.sceneService = sceneService;
         this.sceneLieuService = sceneLieuService;
         this.dialogueService = dialogueService;
         this.authorizationService = authorizationService;
-        this.projetService = projetService; // Initialiser le service
+        this.projetService = projetService; 
     }
 
     // Récupérer tous les informations d'un projet
@@ -52,7 +52,7 @@ public class EcranTravailController {
     public ResponseEntity<ProjetDTO> getProjetInfos(@PathVariable Long projetId) {
         logger.info("Récupération infos projet ID: {}", projetId);
         try {
-            ProjetDTO projet = projetService.getProjetById(projetId); // Maintenant ça fonctionnera
+            ProjetDTO projet = projetService.getProjetById(projetId); 
             return ResponseEntity.ok(projet);
         } catch (RuntimeException e) {
             logger.error("Projet non trouvé ID: {}", projetId);
@@ -68,13 +68,13 @@ public class EcranTravailController {
             List<EpisodeDTO> episodes = episodeService.getEpisodesByProjetId(projetId);
             if (episodes.isEmpty()) {
                 logger.warn("Aucun épisode trouvé pour le projet ID: {}", projetId);
-                return ResponseEntity.noContent().build(); // 204 si aucun épisode
+                return ResponseEntity.noContent().build(); 
             }
             logger.info("Épisodes trouvés: {}", episodes.size());
             return ResponseEntity.ok(episodes);
         } catch (RuntimeException e) {
             logger.error("Erreur lors de la récupération des épisodes pour le projet ID: {}. Erreur: {}", projetId, e.getMessage());
-            return ResponseEntity.status(404).body(null); // 404 si projet non trouvé
+            return ResponseEntity.status(404).body(null); 
         }
     }
 

@@ -28,11 +28,6 @@ public class PlateauService {
         return plateaux.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // RETIRER cette méthode - elle n'est plus utilisée
-    // public List<PlateauDTO> getPlateauxBySceneId(Long sceneId) {
-    //     List<Plateau> plateaux = plateauRepository.findBySceneId(sceneId);
-    //     return plateaux.stream().map(this::convertToDTO).collect(Collectors.toList());
-    // }
 
     public List<PlateauDTO> getPlateauxByProjetId(Long projetId) {
         List<Plateau> plateaux = plateauRepository.findByProjetId(projetId);
@@ -108,10 +103,9 @@ public class PlateauService {
         dto.setCreeLe(plateau.getCreeLe());
         dto.setModifieLe(plateau.getModifieLe());
         
-        // Informations du lieu
+    
         dto.setLieuNom(plateau.getLieu().getNomLieu());
-        
-        // Informations du projet via le lieu
+
         if (plateau.getLieu().getProjet() != null) {
             dto.setProjetTitre(plateau.getLieu().getProjet().getTitre());
         }

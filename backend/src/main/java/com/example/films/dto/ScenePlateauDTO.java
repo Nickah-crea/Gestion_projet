@@ -11,13 +11,10 @@ public class ScenePlateauDTO {
     private String descriptionUtilisation;
     private LocalDateTime creeLe;
     
-    // Informations de la scène
     private String sceneTitre;
     private String sequenceTitre;
     private String episodeTitre;
     private String projetTitre;
-    
-    // Informations du plateau
     private String plateauNom;
     private String plateauType;
     private String lieuNom;

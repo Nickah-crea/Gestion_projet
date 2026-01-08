@@ -6,14 +6,13 @@ import java.time.LocalDateTime;
 @Data
 public class RechercheGlobaleDTO {
     private Long id;
-    private String type; // "projet", "episode", "sequence", "scene"
+    private String type; 
     private String titre;
     private String synopsis;
     private String statutNom;
     private LocalDateTime modifieLe;
     private LocalDateTime creeLe;
     
-    // Liens hiérarchiques
     private Long projetId;
     private String projetTitre;
     private Long episodeId;
@@ -21,7 +20,7 @@ public class RechercheGlobaleDTO {
     private Long sequenceId;
     private String sequenceTitre;
     
-    // Ordres pour le tri
+   
     private Integer ordreEpisode;
     private Integer ordreSequence;
     private Integer ordreScene;

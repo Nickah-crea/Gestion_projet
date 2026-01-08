@@ -24,7 +24,7 @@ public class HistoriquePlanningDTO {
     private String sceneTitre;
     private String projetTitre;
     
-    // Constructeurs
+
     public HistoriquePlanningDTO() {}
     
     public HistoriquePlanningDTO(Long id, Long sceneId, String typePlanning, 

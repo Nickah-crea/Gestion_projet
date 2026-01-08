@@ -85,7 +85,7 @@ public class SceneLieuService {
             .orElseThrow(() -> new RuntimeException("Lieu non trouvé"));
     sceneLieu.setLieu(lieu);
 
-    // Gestion du plateau
+
     if (createSceneLieuDTO.getPlateauId() != null) {
         Plateau plateau = plateauRepository.findById(createSceneLieuDTO.getPlateauId())
                 .orElseThrow(() -> new RuntimeException("Plateau non trouvé"));

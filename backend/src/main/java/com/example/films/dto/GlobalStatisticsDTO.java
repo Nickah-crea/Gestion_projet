@@ -6,7 +6,7 @@ import java.util.Map;
 
 @Data
 public class GlobalStatisticsDTO {
-    private Map<String, Object> kpi; // Garder comme Map
+    private Map<String, Object> kpi; 
     private Map<String, StatisticItem> statistics;
     private List<ProjectRanking> topProjects;
     private List<TeamDistribution> teamDistribution;
@@ -67,7 +67,7 @@ public class GlobalStatisticsDTO {
         private Long scenes;
     }
 
-    // Ajouter dans GlobalStatisticsDTO.java
+   
         
     @Data
     public static class ProjectTotals {
@@ -78,7 +78,7 @@ public class GlobalStatisticsDTO {
         private Long totalDialogues;
         private Long totalRealisateurs;
         private Long totalScenaristes;
-        // getters/setters
+
     }
     
     @Data
@@ -89,7 +89,7 @@ public class GlobalStatisticsDTO {
         private Long scenesTournage;
         private Long scenesPlanifiees;
         private Long scenesEcrites;
-        // getters/setters
+        
     }
     
     @Data
@@ -98,6 +98,6 @@ public class GlobalStatisticsDTO {
         private Long nouvellesScenes;
         private Long scenesTerminees;
         private Long progressionMoyenne;
-        // getters/setters
+      
     }
 }

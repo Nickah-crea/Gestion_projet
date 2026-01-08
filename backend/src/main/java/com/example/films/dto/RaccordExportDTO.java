@@ -22,7 +22,6 @@ public class RaccordExportDTO {
     private LocalDate dateTournageCible;
     private List<RaccordImageDTO> images;
     
-    // Méthodes utilitaires pour l'export
     public String getInfoComplet() {
         return String.format("Raccord %s - %s -> %s", 
             typeRaccordNom, sceneSourceTitre, sceneCibleTitre);

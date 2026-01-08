@@ -86,8 +86,7 @@ public class RaccordService {
                 throw new RuntimeException("Un raccord de ce type existe déjà entre ces scènes");
             }
         } else {
-            // Pour les raccords sur la même scène, on peut avoir plusieurs types différents
-            // Mais on évite les doublons exacts
+    
             if (raccordRepository.existsBySameSceneAndType(
                     createRaccordDTO.getSceneSourceId(),
                     createRaccordDTO.getTypeRaccordId())) {
@@ -95,7 +94,7 @@ public class RaccordService {
             }
         }
         
-        // Récupérer les entités
+  
         Scene sceneSource = sceneRepository.findById(createRaccordDTO.getSceneSourceId())
                 .orElseThrow(() -> new RuntimeException("Scène source non trouvée"));
         Scene sceneCible = sceneRepository.findById(createRaccordDTO.getSceneCibleId())
@@ -119,7 +118,7 @@ public class RaccordService {
                     .orElseThrow(() -> new RuntimeException("Comédien non trouvé"));
         }
 
-        // Créer le raccord
+
         Raccord raccord = new Raccord();
         raccord.setSceneSource(sceneSource);
         raccord.setSceneCible(sceneCible);
@@ -154,7 +153,7 @@ public class RaccordService {
         return convertToDTO(savedRaccord);
     }
     
-     // des méthodes de filtrage
+
     @Transactional(readOnly = true)
     public List<RaccordDTO> getRaccordsByPersonnage(Long personnageId) {
         List<Raccord> raccords = raccordRepository.findByPersonnageId(personnageId);
@@ -185,7 +184,7 @@ public class RaccordService {
         Raccord raccord = raccordRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new RuntimeException("Raccord non trouvé"));
         
-        // Mettre à jour tous les champs
+  
         if (updateRaccordDTO.getSceneSourceId() != null) {
             Scene sceneSource = sceneRepository.findById(updateRaccordDTO.getSceneSourceId())
                     .orElseThrow(() -> new RuntimeException("Scène source non trouvée"));
@@ -375,7 +374,7 @@ public class RaccordService {
         return raccords.stream()
                 .map(raccord -> {
                     RaccordDTO dto = convertToDTO(raccord);
-                    // Ajouter les informations de tournage
+                  
                     Optional<SceneTournage> tournageSource = sceneTournageRepository.findBySceneId(raccord.getSceneSource().getId());
                     Optional<SceneTournage> tournageCible = sceneTournageRepository.findBySceneId(raccord.getSceneCible().getId());
                     

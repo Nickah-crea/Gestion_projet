@@ -15,7 +15,6 @@ public interface DialogueSurlignageRepository extends JpaRepository<DialogueSurl
     @Query("SELECT ds FROM DialogueSurlignage ds WHERE ds.dialogue.id = :dialogueId AND ds.utilisateurId = :utilisateurId")
     List<DialogueSurlignage> findByDialogueIdAndUtilisateurId(Long dialogueId, Long utilisateurId);
     
-    // Méthode pour supprimer par dialogue et utilisateur
     void deleteByDialogueIdAndUtilisateurId(Long dialogueId, Long utilisateurId);
 }
 

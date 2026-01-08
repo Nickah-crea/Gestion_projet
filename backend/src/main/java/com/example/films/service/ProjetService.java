@@ -43,22 +43,22 @@ public class ProjetService {
 
     @Transactional
     public ProjetDTO createProjet(CreateProjetDTO createProjetDTO) {
-        // Créer le projet
+    
         Projet projet = new Projet();
         projet.setTitre(createProjetDTO.getTitre());
         projet.setSynopsis(createProjetDTO.getSynopsis());
         projet.setDateDebut(createProjetDTO.getDateDebut());
         projet.setDateFin(createProjetDTO.getDateFin());
         
-        // Associer le genre
+   
         Genre genre = genreRepository.findById(createProjetDTO.getGenreId())
                 .orElseThrow(() -> new RuntimeException("Genre non trouvé"));
         projet.setGenre(genre);
         
-        // Sauvegarder le projet
+       
         Projet savedProjet = projetRepository.save(projet);
         
-        // Créer le statut du projet
+     
         ProjetStatut projetStatut = new ProjetStatut();
         projetStatut.setProjet(savedProjet);
         
@@ -69,7 +69,7 @@ public class ProjetService {
         
         projetStatutRepository.save(projetStatut);
         
-        // Retourner le DTO
+
         return convertToDTO(savedProjet);
     }
 

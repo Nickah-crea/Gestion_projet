@@ -18,7 +18,6 @@ public class ImageController {
     private final Path raccordsImagesPath;
     
     public ImageController() {
-        // Obtenir le chemin absolu du projet
         String projectRoot = System.getProperty("user.dir");
         System.out.println("📁 Racine du projet: " + projectRoot);
         

@@ -25,9 +25,8 @@ public class HistoriquePlanningService {
     private final LieuRepository lieuRepository;
     private final PlateauRepository plateauRepository;
     
-    /**
-     * Récupérer l'historique complet d'une scène
-     */
+    //Récupérer l'historique complet d'une scène
+    
     @Transactional(readOnly = true)
     public List<HistoriquePlanningDTO> getHistoriqueBySceneId(Long sceneId) {
         List<HistoriquePlanning> historique = historiquePlanningRepository.findBySceneIdWithDetails(sceneId);
@@ -36,9 +35,8 @@ public class HistoriquePlanningService {
                 .collect(Collectors.toList());
     }
     
-    /**
-     * Récupérer l'historique par projet
-     */
+    // Récupérer l'historique par projet
+  
     @Transactional(readOnly = true)
     public List<HistoriquePlanningDTO> getHistoriqueByProjetId(Long projetId) {
         List<HistoriquePlanning> historique = historiquePlanningRepository.findByProjetId(projetId);
@@ -47,9 +45,8 @@ public class HistoriquePlanningService {
                 .collect(Collectors.toList());
     }
     
-    /**
-     * Sauvegarder l'historique d'un SceneTournage
-     */
+    // Sauvegarder l'historique d'un SceneTournage
+    
    @Transactional
     public void sauvegarderHistoriqueSceneTournage(SceneTournage tournage, Replanification replanification) {
         HistoriquePlanning historique = new HistoriquePlanning();
@@ -58,7 +55,6 @@ public class HistoriquePlanningService {
         historique.setTypePlanning("SCENE_TOURNAGE");
         historique.setAncienneDate(tournage.getDateTournage());
         
-        // Convertir LocalTime en String pour l'historique
         if (tournage.getHeureDebut() != null) {
             historique.setAncienneHeureDebut(tournage.getHeureDebut().toString());
         }
@@ -81,9 +77,7 @@ public class HistoriquePlanningService {
         historiquePlanningRepository.save(historique);
     }
     
-    /**
-     * Sauvegarder l'historique d'un PlanningTournage
-     */
+    //Sauvegarder l'historique d'un PlanningTournage
     @Transactional
     public void sauvegarderHistoriquePlanningTournage(PlanningTournage planning, Replanification replanification) {
         HistoriquePlanning historique = new HistoriquePlanning();
@@ -108,9 +102,7 @@ public class HistoriquePlanningService {
         historiquePlanningRepository.save(historique);
     }
     
-    /**
-     * Sauvegarder un historique simple
-     */
+    //Sauvegarder un historique simple
     @Transactional
     public void sauvegarderHistoriqueSimple(Long sceneId, String typePlanning, 
                                            String ancienStatut, String raison, 
@@ -125,9 +117,6 @@ public class HistoriquePlanningService {
         historiquePlanningRepository.save(historique);
     }
     
-    /**
-     * Convertir l'entité en DTO
-     */
     private HistoriquePlanningDTO convertToDTO(HistoriquePlanning historique) {
         HistoriquePlanningDTO dto = new HistoriquePlanningDTO();
         
@@ -173,18 +162,12 @@ public class HistoriquePlanningService {
         return dto;
     }
     
-    /**
-     * Supprimer l'historique d'une scène
-     */
     @Transactional
     public void supprimerHistoriqueBySceneId(Long sceneId) {
         List<HistoriquePlanning> historique = historiquePlanningRepository.findBySceneIdOrderByDateReplanificationDesc(sceneId);
         historiquePlanningRepository.deleteAll(historique);
     }
     
-    /**
-     * Compter les replanifications par scène
-     */
     @Transactional(readOnly = true)
     public Long compterReplanificationsBySceneId(Long sceneId) {
         return historiquePlanningRepository.countBySceneId(sceneId);

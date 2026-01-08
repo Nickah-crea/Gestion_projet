@@ -70,21 +70,14 @@ public class StatutProjetService {
         statutProjet.setDescription(statutProjetDetails.getDescription());
         statutProjet.setOrdreAffichage(statutProjetDetails.getOrdreAffichage());
         
-        // On ne permet pas de modifier estActif via update, seulement via toggleActivation
-        // statutProjet.setEstActif(statutProjetDetails.getEstActif());
-        
+       
         return statutProjetRepository.save(statutProjet);
     }
 
     public void deleteStatut(Long id) {
         StatutProjet statutProjet = getStatutById(id);
         
-        // Vérifier si le statut est utilisé (vous devrez ajouter cette logique selon vos besoins)
-        // if (statutProjetEstUtilise(statutProjet)) {
-        //     throw new RuntimeException("Impossible de supprimer ce statut car il est utilisé dans un ou plusieurs projets");
-        // }
-        
-        // Suppression logique (désactivation) plutôt que suppression physique
+      
         statutProjet.setEstActif(false);
         statutProjetRepository.save(statutProjet);
     }

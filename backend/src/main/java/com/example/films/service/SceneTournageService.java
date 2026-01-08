@@ -101,11 +101,11 @@ public class SceneTournageService {
                 case "termine":
                     return "tournee";
                 case "confirme":
-                    return "preparee"; // ou garder le statut actuel
+                    return "preparee"; 
                 case "reporte":
-                    return "a_retourner"; // ou garder le statut actuel
+                    return "a_retourner"; 
                 default:
-                    return null; // Pas de synchronisation pour les autres statuts
+                    return null; 
             }
     }
 
@@ -125,14 +125,12 @@ public class SceneTournageService {
             throw new RuntimeException(message);
         }
             
-        // Vérifier si la scène est déjà planifiée
+
         if (sceneTournageRepository.existsBySceneId(createDTO.getSceneId())) {
             throw new RuntimeException("Cette scène est déjà planifiée");
         }
 
-        // Vérifier les conflits de dates pour les comédiens
-       // verifierConflitsComediens(createDTO);
-
+     
         SceneTournage tournage = new SceneTournage();
         
         Scene scene = sceneRepository.findByIdWithDetails(createDTO.getSceneId())

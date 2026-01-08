@@ -74,14 +74,14 @@ public class EpisodeService {
 
    public List<EpisodeDTO> getEpisodesByProjetId(Long projetId) {
         List<Episode> episodes = episodeRepository.findByProjetId(projetId);
-        // Pas de throw si vide ; on retourne simplement la liste triée (potentiellement vide)
+        
         List<Episode> sortedEpisodes = episodes.stream()
                 .sorted(Comparator.comparingInt(Episode::getOrdre))
                 .collect(Collectors.toList());
         return sortedEpisodes.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // Nouvelle méthode pour vérifier si un ordre existe déjà
+    // vérifier si un ordre existe déjà
     public boolean orderExists(Long projetId, Integer order) {
         List<Episode> existingEpisodes = episodeRepository.findByProjetId(projetId);
         return existingEpisodes.stream()
@@ -89,7 +89,7 @@ public class EpisodeService {
     }
 
     public List<EpisodeDTO> getEpisodesByUtilisateurId(Long utilisateurId) {
-        // Récupérer l'utilisateur
+ 
         Utilisateur utilisateur = utilisateurRepository.findById(utilisateurId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         
@@ -112,15 +112,14 @@ public class EpisodeService {
             Scenariste scenariste = scenaristeRepository.findByUtilisateurId(utilisateurId)
                     .orElseThrow(() -> new RuntimeException("Scénariste non trouvé"));
             
-            // CORRECTION : Utiliser le bon repository
+    
             List<EpisodeScenariste> episodeScenaristes = episodeScenaristeRepository.findByScenaristeId(scenariste.getId());
             
             episodes = episodeScenaristes.stream()
                     .map(es -> es.getEpisode())
                     .collect(Collectors.toList());
         } else if ("ADMIN".equals(utilisateur.getRole())) {
-            // Les admins voient tous les épisodes
-            episodes = episodeRepository.findAll();
+             episodes = episodeRepository.findAll();
         }
         
         return episodes.stream()
@@ -139,7 +138,7 @@ public class EpisodeService {
             throw new RuntimeException("L'ordre " + createEpisodeDTO.getOrdre() + " existe déjà pour ce projet");
         }
         
-        // Créer l'épisode
+    
         Episode episode = new Episode();
         episode.setTitre(createEpisodeDTO.getTitre());
         episode.setOrdre(createEpisodeDTO.getOrdre());
@@ -153,7 +152,6 @@ public class EpisodeService {
         // Sauvegarder l'épisode
         Episode savedEpisode = episodeRepository.save(episode);
         
-        // Créer le statut de l'épisode
         EpisodeStatut episodeStatut = new EpisodeStatut();
         episodeStatut.setEpisode(savedEpisode);
         
@@ -192,7 +190,7 @@ public class EpisodeService {
             episodeScenaristeRepository.save(episodeScenariste);
         }
         
-        // Retourner le DTO
+    
         return convertToDTO(savedEpisode);
     }
 
@@ -231,11 +229,10 @@ public class EpisodeService {
                 if (!realisateurs.isEmpty()) {
                     EpisodeRealisateur er = realisateurs.get(0);
                     
-                    // Version simple pour l'affichage
+                   
                     dto.setRealisateurId(er.getRealisateur().getId());
                     dto.setRealisateurNom(er.getRealisateur().getUtilisateur().getNom());
                     
-                    // Version DTO complète
                     RealisateurDTO realisateurDTO = new RealisateurDTO();
                     realisateurDTO.setIdRealisateur(er.getRealisateur().getId());
                     realisateurDTO.setNom(er.getRealisateur().getUtilisateur().getNom());
@@ -246,16 +243,15 @@ public class EpisodeService {
                     dto.setRealisateurId(null);
                 }
 
-            // Récupérer le scénariste
           List<EpisodeScenariste> scenaristes = episodeScenaristeRepository.findByEpisodeIdWithScenariste(episode.getId());
             if (!scenaristes.isEmpty()) {
                 EpisodeScenariste es = scenaristes.get(0);
                 
-                // Version simple pour l'affichage
+                
                 dto.setScenaristeId(es.getScenariste().getId());
                 dto.setScenaristeNom(es.getScenariste().getUtilisateur().getNom());
                 
-                // Version DTO complète
+  
                 ScenaristeDTO scenaristeDTO = new ScenaristeDTO();
                 scenaristeDTO.setIdScenariste(es.getScenariste().getId());
                 scenaristeDTO.setNom(es.getScenariste().getUtilisateur().getNom());
@@ -344,14 +340,12 @@ public class EpisodeService {
         
         EpisodeDTO dto = convertToDTO(episode);
         
-        // Ajoutez le comptage des séquences si nécessaire
         Integer sequenceCount = sequenceRepository.countByEpisodeId(id);
         dto.setNombreSequences(sequenceCount);
         
         return dto;
     }
 
-    // Dans EpisodeService.java
     public List<RechercheEpisodeDTO> rechercherEpisodes(String query) {
         return episodeRepository.rechercherEpisodes(query.toLowerCase());
     }

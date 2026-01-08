@@ -15,7 +15,7 @@ public class RaccordAlerteDTO {
     private Long ecartJours;
     private boolean incoherenceChronologique;
     private List<String> messagesAlerte;
-    private String niveauAlerte; // "FAIBLE", "MOYEN", "CRITIQUE"
+    private String niveauAlerte; 
     private String couleurStatut;
 
     private String sceneSourceTitre;
@@ -23,7 +23,6 @@ public class RaccordAlerteDTO {
     private Long sceneSourceId;
     private Long sceneCibleId;
 
-    // Méthode utilitaire pour la couleur
     public String getCouleurAlerte() {
         return switch (niveauAlerte) {
             case "CRITIQUE" -> "#dc3545";

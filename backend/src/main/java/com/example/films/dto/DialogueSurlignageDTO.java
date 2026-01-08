@@ -9,7 +9,7 @@ public class DialogueSurlignageDTO {
     private Long dialogueId;
     private CouleurDTO couleur;
     private Long utilisateurId;
-    private String utilisateurNom; // Optionnel: pour afficher le nom de l'utilisateur
+    private String utilisateurNom; 
     private String texteSurligne;
     private Integer debutIndex;
     private Integer finIndex;

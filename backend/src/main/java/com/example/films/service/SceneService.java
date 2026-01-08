@@ -67,7 +67,7 @@ public class SceneService {
         // Sauvegarder la scène
         Scene savedScene = sceneRepository.save(scene);
         
-        // Créer le statut de la scène
+      
         SceneStatut sceneStatut = new SceneStatut();
         sceneStatut.setScene(savedScene);
         
@@ -78,7 +78,7 @@ public class SceneService {
         
         sceneStatutRepository.save(sceneStatut);
         
-        // Retourner le DTO
+   
         return convertToDTO(savedScene);
     }
 
@@ -93,7 +93,7 @@ public class SceneService {
         dto.setModifieLe(scene.getModifieLe());
         dto.setSequenceTitre(scene.getSequence().getTitre());
         
-        // Récupérer le statut le plus récent
+       
         Optional<SceneStatut> statutOpt = sceneStatutRepository.findLatestStatutBySceneId(scene.getId());
         if (statutOpt.isPresent()) {
             SceneStatut statut = statutOpt.get();

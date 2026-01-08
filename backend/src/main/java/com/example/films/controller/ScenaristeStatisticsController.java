@@ -29,7 +29,6 @@ public class ScenaristeStatisticsController {
             @RequestParam(defaultValue = "5") Integer limit) {
         log.info("Requête activités récentes pour userId: {}, limit: {}", userId, limit);
 
-        // Cette méthode pourrait être ajoutée au service
         return Map.of(
                 "userId", userId,
                 "limit", limit,
@@ -41,7 +40,6 @@ public class ScenaristeStatisticsController {
             @RequestParam(defaultValue = "3") Integer limit) {
         log.info("Requête projets prioritaires pour userId: {}, limit: {}", userId, limit);
 
-        // Cette méthode pourrait être ajoutée au service
         return Map.of(
                 "userId", userId,
                 "limit", limit,
@@ -83,7 +81,6 @@ public class ScenaristeStatisticsController {
 
             Long userId = Long.valueOf(sessionData.get("userId").toString());
 
-            // Gérer les valeurs optionnelles
             Long projetId = null;
             if (sessionData.containsKey("projetId") && sessionData.get("projetId") != null) {
                 projetId = Long.valueOf(sessionData.get("projetId").toString());
@@ -95,7 +92,6 @@ public class ScenaristeStatisticsController {
             Integer motsAjoutes = Integer.valueOf(sessionData.get("motsAjoutes").toString());
             Integer motsSupprimes = Integer.valueOf(sessionData.get("motsSupprimes").toString());
 
-            // Convertir les dates
             LocalDateTime dateDebut = LocalDateTime.parse((String) sessionData.get("dateDebut"));
             LocalDateTime dateFin = LocalDateTime.parse((String) sessionData.get("dateFin"));
 

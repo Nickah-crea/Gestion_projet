@@ -46,19 +46,16 @@ public class RechercheGlobaleService {
     }
     
     public List<RechercheGlobaleDTO> rechercherGlobalement(String query, String statut, String dateFiltre, String specificDate) {
-        // Recherche dans les projets
+        
         List<RechercheGlobaleDTO> projets = rechercherProjets(query, statut, dateFiltre, specificDate);
         
-        // Recherche dans les épisodes
         List<RechercheGlobaleDTO> episodes = rechercherEpisodes(query, statut, dateFiltre, specificDate); // CORRIGÉ
-        
-        // Recherche dans les séquences
+
         List<RechercheGlobaleDTO> sequences = rechercherSequences(query, statut, dateFiltre, specificDate); // CORRIGÉ
         
-        // Recherche dans les scènes
         List<RechercheGlobaleDTO> scenes = rechercherScenes(query, statut, dateFiltre, specificDate); // CORRIGÉ
         
-        // Combiner tous les résultats
+
         List<RechercheGlobaleDTO> tousResultats = Stream.concat(
             projets.stream(),
             Stream.concat(
@@ -67,7 +64,7 @@ public class RechercheGlobaleService {
             )
         ).collect(Collectors.toList());
         
-        // Trier par date de modification (les plus récents en premier)
+        
         return tousResultats.stream()
                 .sorted((a, b) -> b.getModifieLe().compareTo(a.getModifieLe()))
                 .collect(Collectors.toList());
@@ -93,7 +90,7 @@ public class RechercheGlobaleService {
                 .collect(Collectors.toList());
     }
 
-    // CORRIGÉ : Ajout du paramètre specificDate
+
     private List<RechercheGlobaleDTO> rechercherEpisodes(String query, String statut, String dateFiltre, String specificDate) {
         String queryLower = query.toLowerCase();
         
@@ -116,7 +113,7 @@ public class RechercheGlobaleService {
                 .collect(Collectors.toList());
     }
     
-    // CORRIGÉ : Ajout du paramètre specificDate
+  
     private List<RechercheGlobaleDTO> rechercherSequences(String query, String statut, String dateFiltre, String specificDate) {
         String queryLower = query.toLowerCase();
         
@@ -141,7 +138,7 @@ public class RechercheGlobaleService {
                 .collect(Collectors.toList());
     }
     
-    // CORRIGÉ : Ajout du paramètre specificDate
+   
     private List<RechercheGlobaleDTO> rechercherScenes(String query, String statut, String dateFiltre, String specificDate) {
         String queryLower = query.toLowerCase();
         
@@ -168,7 +165,7 @@ public class RechercheGlobaleService {
                 .collect(Collectors.toList());
     }
     
-    // Méthodes pour récupérer les statuts depuis les repositories
+   
     private String getProjetStatutNom(Long projetId) {
         return projetStatutRepository.findLatestStatutByProjetId(projetId)
                 .map(statut -> statut.getStatut().getNomStatutsProjet())
@@ -194,7 +191,7 @@ public class RechercheGlobaleService {
     }
     
     private boolean filtrerParDate(LocalDateTime date, String dateFiltre, String specificDate) {
-        // PRIORITÉ à la date spécifique
+      
         if (specificDate != null && !specificDate.isEmpty()) {
             try {
                 LocalDate selectedDate = LocalDate.parse(specificDate);
@@ -203,12 +200,12 @@ public class RechercheGlobaleService {
                 
                 return !date.isBefore(dateDebut) && !date.isAfter(dateFin);
             } catch (Exception e) {
-                // En cas d'erreur de parsing, ignorer le filtre de date spécifique
+              
                 System.err.println("Erreur de parsing de la date spécifique: " + specificDate);
             }
         }
         
-        // Fallback sur les périodes prédéfinies si pas de date spécifique
+  
         if (dateFiltre == null || dateFiltre.isEmpty()) {
             return true;
         }

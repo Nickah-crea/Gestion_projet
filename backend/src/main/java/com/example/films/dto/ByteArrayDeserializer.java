@@ -18,7 +18,6 @@ public class ByteArrayDeserializer extends JsonDeserializer<byte[]> {
         
         JsonNode node = p.getCodec().readTree(p);
         
-        // Si c'est une chaîne Base64 (approche recommandée)
         if (node.isTextual()) {
             String base64String = node.asText();
             try {
@@ -28,7 +27,6 @@ public class ByteArrayDeserializer extends JsonDeserializer<byte[]> {
             }
         }
         
-        // Si c'est un tableau (fallback)
         if (node.isArray()) {
             byte[] result = new byte[node.size()];
             for (int i = 0; i < node.size(); i++) {
@@ -37,9 +35,7 @@ public class ByteArrayDeserializer extends JsonDeserializer<byte[]> {
             return result;
         }
         
-        // Si c'est un objet, essayer d'extraire les données
         if (node.isObject()) {
-            // Essayer de trouver un champ data ou pdfData
             JsonNode dataNode = node.get("data");
             if (dataNode != null && dataNode.isTextual()) {
                 String base64String = dataNode.asText();

@@ -61,7 +61,7 @@ public class AuthorizationService {
     }
 
     public boolean hasReadAccessToEpisode(Long utilisateurId, Long episodeId) {
-        // Pour la lecture, permettre l'accès même si non associé
+      
         var utilisateur = utilisateurRepository.findById(utilisateurId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         
@@ -69,7 +69,6 @@ public class AuthorizationService {
             return true;
         }
         
-        // Les réalisateurs et scénaristes peuvent voir tous les épisodes du projet
         return true;
     }
 

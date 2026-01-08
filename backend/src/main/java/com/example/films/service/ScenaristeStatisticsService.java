@@ -142,7 +142,6 @@ public class ScenaristeStatisticsService {
     private Double calculateProductivite(Long userId) {
         LocalDate debutSemaine = LocalDate.now().minusDays(7);
         
-        // REQUÊTE CORRIGÉE - Prend en compte les nouveaux utilisateurs
         String sql = """
                 WITH user_scenes AS (
                     -- Scènes modifiées cette semaine par l'utilisateur
@@ -270,7 +269,7 @@ public class ScenaristeStatisticsService {
     private Map<String, Integer> calculateTempsUtilisation(Long userId) {
         LocalDate debutMois = LocalDate.now().withDayOfMonth(1);
 
-        // Calcul réel depuis suivi_ecriture
+
         String sqlReal = """
                     SELECT
                         COALESCE(COUNT(DISTINCT date_session), 0) as jours_actifs,
@@ -465,7 +464,7 @@ public class ScenaristeStatisticsService {
         }
     }
 
-    // MÉTHODE CORRIGÉE POUR LES ACTIVITÉS RÉCENTES (TOUS TYPES)
+  
     public List<Map<String, Object>> getRecentActivities(Long userId, Integer limit) {
         log.info("Récupération activités récentes complètes pour userId: {}, limit: {}", userId, limit);
         
@@ -594,12 +593,12 @@ public class ScenaristeStatisticsService {
         }
     }
 
-    // MÉTHODE CORRIGÉE POUR LES STATISTIQUES GÉNÉRALES
+ 
     public Map<String, Object> getScenaristeStats(Long userId) {
         try {
             log.info("Computing stats for userId: {}", userId);
 
-            // REQUÊTE COMPLÈTEMENT CORRIGÉE AVEC LEFT JOIN
+           
             String sql = """
                     SELECT
                         -- Projets actifs

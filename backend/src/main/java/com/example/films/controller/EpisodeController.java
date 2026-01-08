@@ -54,7 +54,7 @@ public class EpisodeController {
     public ResponseEntity<EpisodeDTO> getEpisodeById(@PathVariable Long id, 
                                             @RequestHeader("X-User-Id") Long userId) {
         try {
-            // Vérifier l'accès en lecture (moins restrictif)
+            
             if (!authorizationService.hasReadAccessToEpisode(userId, id)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
@@ -80,7 +80,7 @@ public class EpisodeController {
         @PathVariable Long projetId, 
         @PathVariable Integer order) {
         boolean exists = episodeService.orderExists(projetId, order);
-        return ResponseEntity.ok(!exists); // true si disponible
+        return ResponseEntity.ok(!exists); 
     }
 
     @GetMapping("/{id}/permissions")
@@ -89,7 +89,6 @@ public class EpisodeController {
         try {
             Map<String, Boolean> permissions = new HashMap<>();
             
-            // Vérifier l'accès de base
             boolean hasAccess = authorizationService.hasAccessToEpisode(userId, id);
             boolean hasReadAccess = authorizationService.hasReadAccessToEpisode(userId, id);
             

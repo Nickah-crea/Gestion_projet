@@ -10,13 +10,13 @@ import java.util.List;
 @Service
 public class AlerteService {
     private final SceneTournageService sceneTournageService;
-    //private final EmailService emailService; // À implémenter si nécessaire
+   
 
     public AlerteService(SceneTournageService sceneTournageService) {
         this.sceneTournageService = sceneTournageService;
     }
 
-    @Scheduled(cron = "0 0 9 * * ?") // Tous les jours à 9h
+    @Scheduled(cron = "0 0 9 * * ?")
     public void verifierTournagesAConfirmer() {
         List<SceneTournageDTO> tournagesAConfirmer = sceneTournageService.getTournagesAConfirmer();
         
@@ -26,7 +26,7 @@ public class AlerteService {
     }
 
     private void envoyerAlerteTournagesAConfirmer(List<SceneTournageDTO> tournages) {
-        // Implémentez l'envoi d'email ou de notification
+       
         System.out.println("=== ALERTE: Tournages à confirmer ===");
         tournages.forEach(tournage -> {
             System.out.println("• " + tournage.getSceneTitre() + " - " + 

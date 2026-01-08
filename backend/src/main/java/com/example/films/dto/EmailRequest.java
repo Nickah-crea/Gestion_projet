@@ -15,7 +15,6 @@ public class EmailRequest {
 
     private String pdfData; 
     
-    // Constructeurs
     public EmailRequest() {}
     
     public EmailRequest(String toEmail, String subject, String message, String attachmentName, String pdfData) {
@@ -26,7 +25,6 @@ public class EmailRequest {
         this.pdfData = pdfData;
     }
     
-    // Getters et Setters
     public String getToEmail() { return toEmail; }
     public void setToEmail(String toEmail) { this.toEmail = toEmail; }
     

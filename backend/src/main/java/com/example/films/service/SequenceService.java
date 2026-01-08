@@ -88,7 +88,6 @@ public class SequenceService {
         
         sequenceStatutRepository.save(sequenceStatut);
         
-        // Retourner le DTO
         return convertToDTO(savedSequence);
     }
 

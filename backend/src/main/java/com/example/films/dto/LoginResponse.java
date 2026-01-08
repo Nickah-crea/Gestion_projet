@@ -6,7 +6,6 @@ public class LoginResponse {
     private String token;
     private Utilisateur user;
     
-    // Constructeurs
     public LoginResponse() {}
     
     public LoginResponse(String token, Utilisateur user) {
@@ -14,7 +13,7 @@ public class LoginResponse {
         this.user = user;
     }
     
-    // Getters et Setters
+
     public String getToken() {
         return token;
     }
