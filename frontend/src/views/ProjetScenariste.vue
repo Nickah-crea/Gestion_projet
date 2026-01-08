@@ -182,9 +182,9 @@
               <!-- Actions en bas de carte -->
               <div class="movie-actions-bottom-Scenariste">
                 <div class="actions-top-Scenariste">
-                  <button class="action-btn-Scenariste accent-btn" @click="goToDetails(episode.idEpisode)" title="Détails">
-                    <i class="fas fa-info-circle icon"></i>
-                    <span>Détails</span>
+                  <button class="action-btn-Scenariste primary-btn" @click="goToDetails(episode.idEpisode)" title="Détails">
+                    <i class="fa fa-film"></i>
+                    <span>Aller dans Séquences</span>
                   </button>
                 </div>
               </div>
