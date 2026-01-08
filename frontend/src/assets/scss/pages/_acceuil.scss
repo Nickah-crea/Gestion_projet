@@ -8,7 +8,7 @@ body, html {
   overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;
-  background: $color-background;
+  background: $color-background-alt;
 }
 
 .app-wrapper-global {
@@ -727,6 +727,8 @@ body, html {
   flex-direction: column;
   height: 300px;
   padding: $padding-lg;
+  width: 350px;
+  margin-right: 80px;
 
   &:hover {
     transform: translateY(-4px);
@@ -4087,3 +4089,5 @@ nav.fixed-bottom,
     animation: none;
   }
 }
+
+
