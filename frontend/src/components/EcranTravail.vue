@@ -1,374 +1,60 @@
 <template>
   <div class="app-wrapper-global">
     
-    <!-- ==================== SIDEBAR GAUCHE (PROJET/ÉPISODE/SÉQUENCE/SCÈNE) ==================== -->
-    <div class="left-sidebar">
-      <!-- 1 - PROJET (Menu déroulant) -->
-      <div class="sidebar-section">
-        <div class="sidebar-header" @click="toggleProjectDropdown">
-          <div class="sidebar-title">
-            <i class="fas fa-project-diagram"></i>
-            <h3>{{ store.projetTitle }}</h3>
-          </div>
-          <i class="fas" :class="projectDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-        </div>
-        
-        <div v-if="projectDropdownOpen" class="sidebar-content-dropdown">
-          <!-- Synopsis du projet -->
-          <div class="info-section">
-            <label class="info-label">Synopsis</label>
-            <p class="info-content">{{ store.projetSynopsis || 'Aucun synopsis' }}</p>
-          </div>
-          
-          <!-- Statut du projet -->
-          <div class="info-section">
-            <label class="info-label">Statut</label>
-            <div class="status-container">
-              <span 
-                class="status-badge" 
-                :style="{ backgroundColor: store.statusColor }"
-              >
-                {{ store.projetStatus }}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Nombres d'épisodes et séquences -->
-          <div class="info-section">
-            <label class="info-label">Contenu</label>
-            <div class="stats-container">
-              <div class="stat-item">
-                <i class="fas fa-film"></i>
-                <span>{{ store.episodes.length }} épisode(s)</span>
-              </div>
-              <div class="stat-item">
-                <i class="fas fa-list-ol"></i>
-                <span>{{ store.totalSequences }} séquence(s)</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Actions (Modifier/Supprimer) -->
-          <div class="actions-section">
-            <button 
-              class="action-btn edit-btn"
-              @click="startEditProject"
-              title="Modifier le projet"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button 
-              class="action-btn delete-btn"
-              @click="confirmDeleteProject"
-              title="Supprimer le projet"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-      </div>
+     <LeftSidebar
+      :projet-title="store.projetTitle"
+      :projet-synopsis="store.projetSynopsis"
+      :status-color="store.statusColor"
+      :projet-status="store.projetStatus"
+      :episodes-count="store.episodes.length"
+      :total-sequences="store.totalSequences"
+      :episodes="episodes"                
+      :sequences="sequences"              
+      :scenes="scenes"                    
+      :current-episode="currentEpisode"
+      :current-sequence="currentSequence"
+      :current-scene="currentScene"
+      :sequence-comment-count="sequenceCommentCount"
+      :scene-comment-count="getSceneCommentCount(currentScene?.idScene)"
+      :user-permissions="userPermissions"
+      @edit-project="startEditProject"
+      @delete-project="confirmDeleteProject"
+      @edit-episode="startEditEpisode"
+      @delete-episode="confirmDeleteEpisode"
+      @edit-sequence="startEditSequence"
+      @delete-sequence="deleteSequence"
+      @edit-scene="startEditScene"
+      @delete-scene="deleteScene"
+      @view-sequence-comments="toggleSequenceCommentSection"
+      @select-scene="selectScene"
+      @select-episode="selectEpisodeFromSidebar"     
+      @select-sequence="selectSequenceFromSidebar"   
       
-      <!-- 2 - ÉPISODE (Menu déroulant) - Visible uniquement si un épisode est sélectionné -->
-      <div v-if="currentEpisode" class="sidebar-section">
-        <div class="sidebar-header" @click="toggleEpisodeDropdown">
-          <div class="sidebar-title">
-            <i class="fas fa-tv"></i>
-            <h3>Épisode {{ currentEpisode.ordre }}: {{ currentEpisode.titre }}</h3>
-          </div>
-          <i class="fas" :class="episodeDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-        </div>
-        
-        <div v-if="episodeDropdownOpen" class="sidebar-content-dropdown">
-          <!-- Synopsis de l'épisode -->
-          <div class="info-section">
-            <label class="info-label">Synopsis</label>
-            <p class="info-content">{{ currentEpisode.synopsis || 'Aucun synopsis' }}</p>
-          </div>
-          
-          <!-- Statut de l'épisode -->
-          <div class="info-section">
-            <label class="info-label">Statut</label>
-            <div class="status-container">
-              <span class="status-badge">
-                {{ currentEpisode.statutNom || 'Non défini' }}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Équipe de l'épisode -->
-          <div v-if="currentEpisode.realisateur || currentEpisode.scenariste" class="info-section">
-            <label class="info-label">Équipe</label>
-            <div class="team-container">
-              <div v-if="currentEpisode.realisateur" class="team-member">
-                <i class="fas fa-video"></i>
-                <span>Réalisateur: {{ currentEpisode.realisateur.nom }}</span>
-              </div>
-              <div v-if="currentEpisode.scenariste" class="team-member">
-                <i class="fas fa-pen"></i>
-                <span>Scénariste: {{ currentEpisode.scenariste.nom }}</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Actions (Modifier/Supprimer) -->
-          <div v-if="userPermissions.canEditEpisode" class="actions-section">
-            <button 
-              class="action-btn edit-btn"
-              @click="startEditEpisode"
-              title="Modifier l'épisode"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button 
-              class="action-btn delete-btn"
-              @click="confirmDeleteEpisode"
-              title="Supprimer l'épisode"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 3 - SÉQUENCE (Menu déroulant) - Visible uniquement si une séquence est sélectionnée -->
-      <div v-if="currentSequence" class="sidebar-section">
-        <div class="sidebar-header" @click="toggleSequenceDropdown">
-          <div class="sidebar-title">
-            <i class="fas fa-list-ol"></i>
-            <h3>Séquence {{ currentSequence.ordre }}: {{ currentSequence.titre }}</h3>
-          </div>
-          <i class="fas" :class="sequenceDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-        </div>
-        
-        <div v-if="sequenceDropdownOpen" class="sidebar-content-dropdown">
-          <!-- Synopsis de la séquence -->
-          <div class="info-section">
-            <label class="info-label">Synopsis</label>
-            <p class="info-content">{{ currentSequence.synopsis || 'Aucun synopsis' }}</p>
-          </div>
-          
-          <!-- Statut de la séquence -->
-          <div class="info-section">
-            <label class="info-label">Statut</label>
-            <div class="status-container">
-              <span class="status-badge">
-                {{ currentSequence.statutNom || 'Non défini' }}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Commentaires -->
-          <div class="info-section">
-            <label class="info-label">Commentaires</label>
-            <div class="comment-count">
-              <i class="fas fa-comments"></i>
-              <span>{{ sequenceCommentCount }} commentaire(s)</span>
-              <button 
-                class="view-comments-btn"
-                @click="toggleSequenceCommentSection"
-                title="Voir les commentaires"
-              >
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-          </div>
-          
-          <!-- Actions (Modifier/Supprimer) -->
-          <div v-if="userPermissions.canCreateSequence" class="actions-section">
-            <button 
-              class="action-btn edit-btn"
-              @click="startEditSequence(currentSequence)"
-              title="Modifier la séquence"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button 
-              class="action-btn delete-btn"
-              @click="deleteSequence(currentSequence.idSequence)"
-              title="Supprimer la séquence"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 4 - SCÈNE (Menu déroulant) - Visible uniquement si une scène est sélectionnée -->
-      <div v-if="currentScene" class="sidebar-section">
-        <div class="sidebar-header" @click="toggleSceneDropdown">
-          <div class="sidebar-title">
-            <i class="fas fa-film"></i>
-            <h3>Scène {{ currentScene.ordre }}: {{ currentScene.titre }}</h3>
-          </div>
-          <i class="fas" :class="sceneDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-        </div>
-        
-        <div v-if="sceneDropdownOpen" class="sidebar-content-dropdown">
-          <!-- Synopsis de la scène -->
-          <div class="info-section">
-            <label class="info-label">Synopsis</label>
-            <p class="info-content">{{ currentScene.synopsis || 'Aucun synopsis' }}</p>
-          </div>
-          
-          <!-- Statut de la scène -->
-          <div class="info-section">
-            <label class="info-label">Statut</label>
-            <div class="status-container">
-              <span class="status-badge">
-                {{ currentScene.statutNom || 'Non défini' }}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Commentaires -->
-          <div class="info-section">
-            <label class="info-label">Commentaires</label>
-            <div class="comment-count">
-              <i class="fas fa-comments"></i>
-              <span>{{ getSceneCommentCount(currentScene.idScene) }} commentaire(s)</span>
-            </div>
-          </div>
-          
-          <!-- Actions (Modifier/Supprimer) -->
-          <div v-if="userPermissions.canCreateScene" class="actions-section">
-            <button 
-              class="action-btn edit-btn"
-              @click="startEditScene(currentScene)"
-              title="Modifier la scène"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button 
-              class="action-btn delete-btn"
-              @click="deleteScene(currentScene.idScene)"
-              title="Supprimer la scène"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Message si aucune scène sélectionnée -->
-      <div v-else-if="currentSequence && scenes.length > 0" class="sidebar-section">
-        <div class="sidebar-header" @click="toggleSceneDropdown">
-          <div class="sidebar-title">
-            <i class="fas fa-film"></i>
-            <h3>Scènes ({{ scenes.length }})</h3>
-          </div>
-          <i class="fas" :class="sceneDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-        </div>
-        
-        <div v-if="sceneDropdownOpen" class="sidebar-content-dropdown">
-          <p class="info-content">Sélectionnez une scène pour voir ses détails</p>
-          <div class="scenes-list-mini">
-            <div 
-              v-for="scene in scenes" 
-              :key="scene.idScene"
-              class="scene-item-mini"
-              @click="selectScene(scene.idScene)"
-              :class="{ 'selected': currentScene?.idScene === scene.idScene }"
-            >
-              <span>Scène {{ scene.ordre }}: {{ scene.titre }}</span>
-              <i class="fas fa-chevron-right"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    />
     
-    <!-- Sidebar fixée à droite -->
-    <div class="options-sidebar" :class="{ 'open': sidebarOpen }">
-      <button class="sidebar-toggle" @click="toggleSidebar">
-        <i class="fas" :class="sidebarOpen ? 'fa-chevron-right' : 'fa-plus-circle'"></i>
-      </button>
-
-      <div class="sidebar-content">
-        <button class="nav-btn-ecran-travail" @click="goToCalendrierTournage">
-          <i class="fas fa-calendar-alt"></i> Calendrier
-        </button>
-
-        <!-- Section Export dans la sidebar -->
-        <div class="export-container">
-          <div class="export-dropdown">
-            <button class="export-main-btn">
-              <i class="fas fa-file-export"></i> Exporter en PDF
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="export-dropdown-content">
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportScenesOnlyPDF"
-                title="Exporter les scènes en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Scènes PDF
-              </button>
-
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportSequenceDialoguesPDF"
-                title="Exporter tous les dialogues de la séquence en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Dialogues PDF
-              </button>
-
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportSequenceCompletePDF"
-                title="Exporter la séquence complète en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Séquence PDF
-              </button>
-
-              <button 
-                v-if="currentEpisode" 
-                class="export-option" 
-                @click="exportEpisodeWithSequencePDF"
-                title="Exporter l'épisode avec séquence en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Épisode PDF
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="liens-ecran-travail">
-          <button 
-            v-if="episodes.length === 0 || userPermissions.canEditEpisode" 
-            class="add-scene-btn-ecran-travail" 
-            @click="goToAddEpisode"
-          >
-            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Episode
-          </button>     
-          
-          <button v-if="userPermissions.canCreateSequence" class="add-scene-btn-ecran-travail" @click="goToAddSequence">
-            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Séquence
-          </button>
-          
-          <button v-if="userPermissions.canCreateLieu" class="add-scene-btn-ecran-travail" @click="goToAddLieu">
-            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Lieu
-          </button>
-          
-          <button v-if="userPermissions.canCreatePlateau" class="add-scene-btn-ecran-travail" @click="goToAddPlateau">
-            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Plateau
-          </button>
-          
-          <button v-if="userPermissions.canCreateComedien" class="add-scene-btn-ecran-travail" @click="goToAddComedien">
-            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Comedien
-          </button>
-          
-          <button v-if="userPermissions.canCreatePersonnage" class="add-scene-btn-ecran-travail" @click="goToAddPersonnage">
-            <i class="fas fa-plus-circle" style="color: #21294F;"></i> Personnage
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Sidebar droite AVEC TOGGLE FONCTIONNEL -->
+    <RightSidebar
+      :open="sidebarOpen"
+      :current-episode="currentEpisode"
+      :current-sequence="currentSequence"
+      :episodes="episodes"
+      :user-permissions="userPermissions"
+      @toggle="toggleSidebar"
+      @go-to-calendrier="goToCalendrierTournage"
+      @export-scenes-only="exportScenesOnlyPDF"
+      @export-sequence-dialogues="exportSequenceDialoguesPDF"
+      @export-sequence-complete="exportSequenceCompletePDF"
+      @export-episode="exportEpisodeWithSequencePDF"
+      @add-episode="goToAddEpisode"
+      @add-sequence="goToAddSequence"
+      @add-lieu="goToAddLieu"
+      @add-plateau="goToAddPlateau"
+      @add-comedien="goToAddComedien"
+      @add-personnage="goToAddPersonnage"
+    />
     
-    <!-- Contenu principal -->
-    <div class="ecran-travail-ecran-travail">
+    <!-- Contenu principal AVEC AJUSTEMENT DES MARGES -->
+    <div class="ecran-travail-ecran-travail" :class="{ 'sidebar-open': sidebarOpen }">
       <!-- Header avec titre de l'épisode -->
       <header class="header-ecran-travail">
         <div class="navigation-ecran-travail">
@@ -1009,7 +695,8 @@ import ModalEditSequence from './ModalEditSequence.vue'
 import ModalEditScene from './ModalEditScene.vue'
 import ModalEditDialogue from './ModalEditDialogue.vue'
 import ModalAddLieu from './ModalAddLieu.vue'
-
+import LeftSidebar from './sidebar/LeftSidebar.vue';
+import RightSidebar from './sidebar/RightSidebar.vue';
 import jsPDF from 'jspdf';
 
 // Importez les fonctions d'export depuis vos nouveaux fichiers
@@ -2873,6 +2560,37 @@ const loadComediens = async () => {
   }
 };
 
+const selectEpisodeFromSidebar = async (episodeId) => {
+  try {
+    await store.selectEpisodeById(episodeId);
+    router.push({ 
+      query: { 
+        ...route.query, 
+        episodeId,
+        sceneId: undefined,  // Réinitialiser la scène quand on change d'épisode
+        sequenceId: undefined // Réinitialiser la séquence
+      } 
+    });
+  } catch (error) {
+    console.error('Erreur lors de la sélection de l\'épisode depuis sidebar:', error);
+  }
+};
+
+const selectSequenceFromSidebar = async (sequenceId) => {
+  try {
+    await store.selectSequenceById(sequenceId);
+    router.push({ 
+      query: { 
+        ...route.query, 
+        sequenceId,
+        sceneId: undefined  // Réinitialiser la scène quand on change de séquence
+      } 
+    });
+  } catch (error) {
+    console.error('Erreur lors de la sélection de la séquence depuis sidebar:', error);
+  }
+};
+
 // Propriétés calculées
 const currentEpisode = computed(() => store.currentEpisode);
 const currentSequence = computed(() => store.currentSequence);
@@ -3405,6 +3123,41 @@ const hasPrev = computed(() => store.hasPrev);
   cursor: pointer;
   font-size: 16px;
 }
+
+
+.ecran-travail-ecran-travail {
+  margin-left: 300px; /* Largeur sidebar gauche */
+  margin-right: 60px; /* Espace pour le bouton toggle (45px + marge) */
+  transition: margin-right 0.3s ease;
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Quand la sidebar droite est ouverte */
+.ecran-travail-ecran-travail.sidebar-open {
+  margin-right: 120px; /* Largeur sidebar droite ouverte */
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .ecran-travail-ecran-travail {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ecran-travail-ecran-travail {
+    margin-left: 0;
+    margin-right: 60px;
+    padding: 15px;
+  }
+  
+  .ecran-travail-ecran-travail.sidebar-open {
+    margin-right: 100px;
+  }
+}
+
 
 </style>
 
