@@ -186,10 +186,6 @@
                     <i class="fas fa-info-circle icon"></i>
                     <span>Détails</span>
                   </button>
-                  <button class="action-btn-Scenariste primary-btn" @click="goToAddSequence(episode.idEpisode)" title="Ajouter séquence">
-                    <i class="fas fa-plus"></i>
-                    <span>Séquence</span>
-                  </button>
                 </div>
               </div>
             </div>
@@ -729,9 +725,7 @@ closeEditModal() {
     goToDetails(episodeId) {
       this.$router.push(`/episode/${episodeId}/detail-episode`);
     },
-    goToAddSequence(episodeId) {
-      this.$router.push(`/episode/${episodeId}/add-sequence`);
-    },
+
     goBack() {
       this.$router.push('/scenariste');
     },
