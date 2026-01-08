@@ -764,8 +764,7 @@ async submitForm() {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log('Réponse mise à jour:', response.data);
-      alert('Comédien modifié avec succès');
+      console.log('Réponse mise à jour:', response.data)
       await this.forceRefresh();
     } else {
       response = await axios.post('/api/comediens', formData, {
@@ -773,7 +772,6 @@ async submitForm() {
           'Content-Type': 'multipart/form-data'
         }
       });
-      alert('Comédien créé avec succès');
     }
     
     this.resetForm();

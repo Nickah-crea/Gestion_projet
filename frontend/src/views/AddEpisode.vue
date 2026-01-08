@@ -285,7 +285,6 @@
                   
                   <div class="search-section-add-episode">
                     <div class="search-group-add-episode">
-                      <label for="episodeSearch">Rechercher un épisode</label>
                       <div class="search-input-container-add-episode">
                         <i class="fas fa-search search-icon-add-episode"></i>
                         <input
@@ -293,7 +292,7 @@
                           id="episodeSearch"
                           v-model="episodeSearch"
                           @input="filterEpisodes"
-                          placeholder="Rechercher par titre, projet ou statut..."
+                          placeholder=" Rechercher par titre, projet ou statut..."
                           class="search-input-large-add-episode"
                         />
                       </div>
@@ -808,7 +807,7 @@ export default {
             }
           });
           
-          alert('Épisode modifié avec succès');
+          // alert('Épisode modifié avec succès');
         } else {
           // Pour la CRÉATION : Envoyer tous les champs
           episodeData = {
@@ -822,7 +821,7 @@ export default {
           };
           
           response = await axios.post(`/api/episodes/projet/${this.form.projetId}`, episodeData);
-          alert('Épisode créé avec succès');
+          // alert('Épisode créé avec succès');
         }
         
         if (response.status === 201 || response.status === 200) {
