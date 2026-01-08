@@ -1245,12 +1245,12 @@ nav.fixed-bottom,
 // Bouton Détails - Style Accent
 .action-btn-Scenariste.accent-btn {
   background: none;
-  border: 1.5px solid $color-background-dark;
-  color: $color-background-dark;
+  border: 1.5px solid $color-accent-dark;
+  color: $color-accent-dark;
 
   &:hover {
-    background: rgba($color-accent-light, 0.2);
-    color: $color-background-dark;
+    background:$color-accent-dark;
+    color: $color-white;
     border-color: $color-tertiary-dark;
     box-shadow: 0 2px 6px rgba($color-background-dark, 0.3);
   }
@@ -1258,16 +1258,16 @@ nav.fixed-bottom,
 
 // Bouton Écran - Style Primary
 .action-btn-Scenariste.primary-btn {
-  background: $color-primary-dark;
-  border: 1.5px solid $color-primary;
-  color: $color-text-primary;
+  background: $color-primary;
+  border:none;
+  color: $color-white;
   font-weight: $font-weight-semibold;
   
   &:hover {
-    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+    background: $color-jaune;
     border-color: $color-primary-dark;
     box-shadow: 0 4px 12px rgba($color-primary, 0.3);
-    color: $color-background-dark;
+    color:$color-text-primary;
     font-weight: $font-weight-semibold;
   }
 }
