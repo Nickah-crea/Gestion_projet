@@ -68,6 +68,8 @@ $color-tertiary: #EDCA49;      // Jaune clair – tertiaire vibrant et jeune
 $color-tertiary-light: #F5F4F5; // Beige crème clair – ultra doux pour surfaces
 $color-tertiary-dark: #262133; // Presque noir chaud – pour ombres et profondeur
 
+$color-jaune:#e9d96b;
+
 // Couleurs neutres (inchangées)
 $color-white: #FFFFFF;
 $color-black: #262133;
@@ -465,7 +467,7 @@ $z-index-toast: 1070;
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   color: $color-white;
   border: none;
-  border-radius: $border-radius-xs;
+  border-radius: $border-radius-sm;
   padding: 12px 24px;
   font-weight: $font-weight-semibold;
   transition: $transition;
