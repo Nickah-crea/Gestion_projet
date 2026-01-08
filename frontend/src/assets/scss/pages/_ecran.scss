@@ -1357,36 +1357,3 @@
   }
 }
 
-
-
-
-.ecran-travail-ecran-travail {
-  min-height: 100vh;
-  background: $color-white;
-  font-family: $font-family-primary;
-  color: $color-text-primary;
-  line-height: $line-height-base;
-  padding: $spacing-md;
-  margin: 0;
-  margin-left: 320px; // Laisser de la place pour la sidebar gauche
-  margin-right: 280px; // Laisser de la place pour la sidebar droite
-  width: calc(100% - 600px); // Calculer la largeur restante
-  
-  @include respond-to($breakpoint-lg) {
-    margin-left: 300px;
-    margin-right: 250px;
-    width: calc(100% - 550px);
-  }
-  
-  @include respond-to($breakpoint-md) {
-    padding: $spacing-sm;
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%;
-  }
-  
-  @include respond-to($breakpoint-sm) {
-    padding: $spacing-xs;
-  }
-}
-

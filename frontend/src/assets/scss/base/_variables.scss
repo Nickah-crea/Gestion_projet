@@ -95,6 +95,27 @@ $color-warning: #EDCA49;        // Jaune-orangé doux
 $color-error: #E0154A;          // Rouge passion pour erreurs
 $color-info: #E37C11;           // Orange vif
 
+// Couleurs spécifiques pour les types d'éléments
+$color-episode: #e74c3c;      // Rouge pour épisodes
+$color-sequence: #9b59b6;     // Violet pour séquences
+$color-scene: #3498db;        // Bleu pour scènes
+$color-project: #2ecc71;      // Vert pour projet
+
+// Z-index
+$z-index-dropdown: 1000;
+$z-index-fixed: 1030;
+$z-index-tooltip: 1070;
+
+// Dans votre fichier _variables.scss, ajoutez :
+$color-calendar: #3498db;
+$color-episode: #e74c3c;
+$color-sequence: #9b59b6;
+$color-location: #1abc9c;
+$color-set: #f39c12;
+$color-actor: #e67e22;
+$color-character: #2ecc71;
+
+
 // Couleurs pastel pour cartes et surfaces douces
 $color-pastel-blue: rgba(245, 244, 245, 0.15);  // Beige crème dilué (#F5F4F5)
 $color-pastel-red: rgba(224, 21, 74, 0.09);     // Rouge passion dilué (#E0154A)
