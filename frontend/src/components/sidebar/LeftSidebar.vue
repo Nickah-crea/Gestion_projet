@@ -1,334 +1,179 @@
 <template>
-  <div class="left-sidebar">
-    <!-- Panneau gauche - Navigation (60px) -->
-    <div class="sidebar-nav">
-      <!-- PROJET - Toujours en haut -->
-      <button 
-        class="nav-item project-item main-item" 
-        :class="{ 'active': activeSection === 'project' }"
-        @click="openSection('project')"
-        :title="projetTitle"
-      >
+  <div class="left-sidebar-compact" :class="{ 'closed': !open }">
+    <!-- BOUTON TOGGLE EN HAUT -->
+    <button class="sidebar-toggle" @click="$emit('toggle-left')" :title="open ? 'Fermer la sidebar' : 'Ouvrir la sidebar'">
+      <i class="fas" :class="open ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
+    </button>
+    
+    <!-- PROJET - Toujours visible en haut -->
+    <div class="sidebar-header" v-if="open">
+      <div class="project-header" @click="selectItem('project', null)">
         <i class="fas fa-project-diagram"></i>
-        <span class="nav-label">Projet</span>
-      </button>
-      
-      <!-- Séparateur -->
-      <div class="nav-separator" v-if="episodes && episodes.length > 0"></div>
-      
-      <!-- ÉPISODES - Section -->
-      <div v-if="episodes && episodes.length > 0" class="nav-section">
-        <div class="nav-section-header" @click="toggleEpisodesSection">
-          <i class="fas fa-tv"></i>
-          <span class="nav-label">Épisodes ({{ episodes.length }})</span>
-          <i class="fas episodes-toggle" :class="episodesCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+        <div class="project-info">
+          <h4 class="project-title">{{ projetTitle }}</h4>
+          <span class="project-status" :style="{ color: statusColor }">
+            {{ projetStatus }}
+          </span>
         </div>
-        
-        <div v-if="!episodesCollapsed" class="nav-items">
-          <button 
-            v-for="episode in episodes" 
-            :key="episode.idEpisode"
-            class="nav-item episode-item sub-item"
-            :class="{ 
-              'active': activeSection === 'episode' && activeId === episode.idEpisode,
-              'has-details': episode.synopsis || episode.realisateur || episode.scenariste,
-              'current': currentEpisode && currentEpisode.idEpisode === episode.idEpisode
-            }"
-            @click="openEpisode(episode)"
-            :title="`Épisode ${episode.ordre}: ${episode.titre}`"
-          >
-            <i class="fas fa-tv sub-icon"></i>
-            <span class="item-number">{{ episode.ordre }}</span>
-          </button>
-        </div>
+        <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': projectExpanded }"></i>
       </div>
       
-      <!-- SÉQUENCES - Section -->
-      <div v-if="sequences && sequences.length > 0" class="nav-section">
-        <div class="nav-section-header" @click="toggleSequencesSection">
-          <i class="fas fa-list-ol"></i>
-          <span class="nav-label">Séquences ({{ sequences.length }})</span>
-          <i class="fas sequences-toggle" :class="sequencesCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+      <!-- Détails projet (dépliable) -->
+      <div v-if="projectExpanded" class="project-details">
+        <p class="synopsis">{{ projetSynopsis || 'Aucun synopsis' }}</p>
+        <div class="project-stats">
+          <span><i class="fas fa-tv"></i> {{ episodesCount }} épisode(s)</span>
+          <span><i class="fas fa-list-ol"></i> {{ totalSequences }} séquence(s)</span>
         </div>
-        
-        <div v-if="!sequencesCollapsed" class="nav-items">
-          <button 
-            v-for="sequence in sequences" 
-            :key="sequence.idSequence"
-            class="nav-item sequence-item sub-item"
-            :class="{ 
-              'active': activeSection === 'sequence' && activeId === sequence.idSequence,
-              'has-details': sequence.synopsis,
-              'current': currentSequence && currentSequence.idSequence === sequence.idSequence
-            }"
-            @click="openSequence(sequence)"
-            :title="`Séquence ${sequence.ordre}: ${sequence.titre}`"
-          >
-            <i class="fas fa-list-ol sub-icon"></i>
-            <span class="item-number">{{ sequence.ordre }}</span>
+        <div class="project-actions">
+          <button @click="$emit('edit-project')" class="icon-btn" title="Modifier">
+            <i class="fas fa-pen"></i>
           </button>
-        </div>
-      </div>
-      
-      <!-- SCÈNES - Section -->
-      <div v-if="scenes && scenes.length > 0" class="nav-section">
-        <div class="nav-section-header" @click="toggleScenesSection">
-          <i class="fas fa-film"></i>
-          <span class="nav-label">Scènes ({{ scenes.length }})</span>
-          <i class="fas scenes-toggle" :class="scenesCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
-        </div>
-        
-        <div v-if="!scenesCollapsed" class="nav-items">
-          <button 
-            v-for="scene in scenes" 
-            :key="scene.idScene"
-            class="nav-item scene-item sub-item"
-            :class="{ 
-              'active': activeSection === 'scene' && activeId === scene.idScene,
-              'has-details': scene.synopsis,
-              'current': currentScene && currentScene.idScene === scene.idScene
-            }"
-            @click="openScene(scene)"
-            :title="`Scène ${scene.ordre}: ${scene.titre}`"
-          >
-            <i class="fas fa-film sub-icon"></i>
-            <span class="item-number">{{ scene.ordre }}</span>
+          <button @click="$emit('delete-project')" class="icon-btn delete" title="Supprimer">
+            <i class="fas fa-trash"></i>
           </button>
         </div>
       </div>
     </div>
+
+    <!-- Navigation compacte - Mode icône quand fermé -->
+    <div class="compact-nav">
+      <!-- ÉPISODES -->
+      <div class="nav-category">
+        <div class="category-header" @click="toggleEpisodesDropdown">
+          <div class="category-info">
+            <i class="fas fa-tv"></i>
+            <template v-if="open">
+              <span>Épisodes</span>
+              <span class="item-count">{{ episodes?.length || 0 }}</span>
+            </template>
+          </div>
+          <i v-if="open" class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': episodesDropdownOpen }"></i>
+        </div>
+        
+        <div v-if="episodesDropdownOpen && open && episodes?.length" class="category-items">
+          <div 
+            v-for="episode in episodes" 
+            :key="episode.idEpisode"
+            class="nav-item"
+            :class="{
+              'active': sidebarSelection.type === 'episode' && sidebarSelection.id === episode.idEpisode,
+              'current': currentEpisode?.idEpisode === episode.idEpisode
+            }"
+            @click="selectItem('episode', episode.idEpisode)"
+          >
+            <i class="fas fa-tv"></i>
+            <span class="item-text">Épisode {{ episode.ordre }}</span>
+            <span class="item-title">{{ episode.titre }}</span>
+            <div v-if="episodeHasDetails(episode)" class="has-details-indicator"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SÉQUENCES -->
+      <div class="nav-category">
+        <div class="category-header" @click="toggleSequencesDropdown">
+          <div class="category-info">
+            <i class="fas fa-list-ol"></i>
+            <template v-if="open">
+              <span>Séquences</span>
+              <span class="item-count">{{ sequences?.length || 0 }}</span>
+            </template>
+          </div>
+          <i v-if="open" class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': sequencesDropdownOpen }"></i>
+        </div>
+        
+        <div v-if="sequencesDropdownOpen && open && sequences?.length" class="category-items">
+          <div 
+            v-for="sequence in sequences" 
+            :key="sequence.idSequence"
+            class="nav-item"
+            :class="{
+              'active': sidebarSelection.type === 'sequence' && sidebarSelection.id === sequence.idSequence,
+              'current': currentSequence?.idSequence === sequence.idSequence
+            }"
+            @click="selectItem('sequence', sequence.idSequence)"
+          >
+            <i class="fas fa-list-ol"></i>
+            <span class="item-text">Séquence {{ sequence.ordre }}</span>
+            <span class="item-title">{{ sequence.titre }}</span>
+            <div v-if="sequence.synopsis" class="has-details-indicator"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCÈNES -->
+      <div class="nav-category">
+        <div class="category-header" @click="toggleScenesDropdown">
+          <div class="category-info">
+            <i class="fas fa-film"></i>
+            <template v-if="open">
+              <span>Scènes</span>
+              <span class="item-count">{{ scenes?.length || 0 }}</span>
+            </template>
+          </div>
+          <i v-if="open" class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': scenesDropdownOpen }"></i>
+        </div>
+        
+        <div v-if="scenesDropdownOpen && open && scenes?.length" class="category-items">
+          <div 
+            v-for="scene in scenes" 
+            :key="scene.idScene"
+            class="nav-item"
+            :class="{
+              'active': sidebarSelection.type === 'scene' && sidebarSelection.id === scene.idScene,
+              'current': currentScene?.idScene === scene.idScene
+            }"
+            @click="selectItem('scene', scene.idScene)"
+          >
+            <i class="fas fa-film"></i>
+            <span class="item-text">Scène {{ scene.ordre }}</span>
+            <span class="item-title">{{ scene.titre }}</span>
+            <div v-if="scene.synopsis" class="has-details-indicator"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions globales - Seulement quand ouvert -->
+    <div class="sidebar-footer" v-if="open">
+      <button v-if="userPermissions?.canCreateEpisode" class="action-btn" @click="$emit('add-episode')">
+        <i class="fas fa-plus"></i>
+        <span>Nouvel épisode</span>
+      </button>
+      <button v-if="userPermissions?.canCreateSequence" class="action-btn" @click="$emit('add-sequence')">
+        <i class="fas fa-plus"></i>
+        <span>Nouvelle séquence</span>
+      </button>
+      <button v-if="userPermissions?.canCreateScene" class="action-btn" @click="$emit('add-scene')">
+        <i class="fas fa-plus"></i>
+        <span>Nouvelle scène</span>
+      </button>
+    </div>
     
-    <!-- Panneau droit - Détails (250px) -->
-    <div class="sidebar-details" :class="{ 'open': detailsOpen }">
-      <div class="details-header">
-        <button class="close-details" @click="closeDetails" title="Fermer les détails">
-          <i class="fas fa-times"></i>
-        </button>
-        <h3 class="details-title">{{ detailsTitle }}</h3>
-      </div>
-      
-      <div class="details-content">
-        <!-- DÉTAILS DU PROJET -->
-        <div v-if="activeSection === 'project' && detailsOpen" class="details-section">
-          <!-- Synopsis du projet -->
-          <div class="info-section">
-            <label class="info-label">Synopsis</label>
-            <p class="info-content">{{ projetSynopsis || 'Aucun synopsis' }}</p>
-          </div>
-          
-          <!-- Statut du projet -->
-          <div class="info-section">
-            <label class="info-label">Statut</label>
-            <div class="status-container">
-              <span 
-                class="status-badge" 
-                :style="{ backgroundColor: statusColor }"
-              >
-                {{ projetStatus }}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Nombres d'épisodes et séquences -->
-          <div class="info-section">
-            <label class="info-label">Contenu</label>
-            <div class="stats-container">
-              <div class="stat-item">
-                <i class="fas fa-film"></i>
-                <span>{{ episodesCount }} épisode(s)</span>
-              </div>
-              <div class="stat-item">
-                <i class="fas fa-list-ol"></i>
-                <span>{{ totalSequences }} séquence(s)</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Actions (Modifier/Supprimer) -->
-          <div class="actions-section">
-            <button 
-              class="action-btn edit-btn"
-              @click="$emit('edit-project')"
-              title="Modifier le projet"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button 
-              class="action-btn delete-btn"
-              @click="$emit('delete-project')"
-              title="Supprimer le projet"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-        
-        <!-- DÉTAILS DE L'ÉPISODE -->
-        <div v-if="activeSection === 'episode' && activeEpisode && detailsOpen" class="details-section">
-          <!-- Synopsis de l'épisode -->
-          <div class="info-section">
-            <label class="info-label">Synopsis</label>
-            <p class="info-content">{{ activeEpisode.synopsis || 'Aucun synopsis' }}</p>
-          </div>
-          
-          <!-- Statut de l'épisode -->
-          <div class="info-section">
-            <label class="info-label">Statut</label>
-            <div class="status-container">
-              <span class="status-badge">
-                {{ activeEpisode.statutNom || 'Non défini' }}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Équipe de l'épisode -->
-          <div v-if="activeEpisode.realisateur || activeEpisode.scenariste" class="info-section">
-            <label class="info-label">Équipe</label>
-            <div class="team-container">
-              <div v-if="activeEpisode.realisateur" class="team-member">
-                <i class="fas fa-video"></i>
-                <span>Réalisateur: {{ activeEpisode.realisateur.nom }}</span>
-              </div>
-              <div v-if="activeEpisode.scenariste" class="team-member">
-                <i class="fas fa-pen"></i>
-                <span>Scénariste: {{ activeEpisode.scenariste.nom }}</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Actions (Modifier/Supprimer) -->
-          <div v-if="userPermissions.canEditEpisode" class="actions-section">
-            <button 
-              class="action-btn edit-btn"
-              @click="$emit('edit-episode', activeEpisode)"
-              title="Modifier l'épisode"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button 
-              class="action-btn delete-btn"
-              @click="$emit('delete-episode', activeEpisode.idEpisode)"
-              title="Supprimer l'épisode"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-        
-        <!-- DÉTAILS DE LA SÉQUENCE -->
-        <div v-if="activeSection === 'sequence' && activeSequence && detailsOpen" class="details-section">
-          <!-- Synopsis de la séquence -->
-          <div class="info-section">
-            <label class="info-label">Synopsis</label>
-            <p class="info-content">{{ activeSequence.synopsis || 'Aucun synopsis' }}</p>
-          </div>
-          
-          <!-- Statut de la séquence -->
-          <div class="info-section">
-            <label class="info-label">Statut</label>
-            <div class="status-container">
-              <span class="status-badge">
-                {{ activeSequence.statutNom || 'Non défini' }}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Commentaires -->
-          <div class="info-section">
-            <label class="info-label">Commentaires</label>
-            <div class="comment-count">
-              <i class="fas fa-comments"></i>
-              <span>{{ sequenceCommentCount }} commentaire(s)</span>
-              <button 
-                class="view-comments-btn"
-                @click="$emit('view-sequence-comments', activeSequence.idSequence)"
-                title="Voir les commentaires"
-              >
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-          </div>
-          
-          <!-- Actions (Modifier/Supprimer) -->
-          <div v-if="userPermissions.canCreateSequence" class="actions-section">
-            <button 
-              class="action-btn edit-btn"
-              @click="$emit('edit-sequence', activeSequence)"
-              title="Modifier la séquence"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button 
-              class="action-btn delete-btn"
-              @click="$emit('delete-sequence', activeSequence.idSequence)"
-              title="Supprimer la séquence"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-        
-        <!-- DÉTAILS DE LA SCÈNE -->
-        <div v-if="activeSection === 'scene' && activeScene && detailsOpen" class="details-section">
-          <!-- Synopsis de la scène -->
-          <div class="info-section">
-            <label class="info-label">Synopsis</label>
-            <p class="info-content">{{ activeScene.synopsis || 'Aucun synopsis' }}</p>
-          </div>
-          
-          <!-- Statut de la scène -->
-          <div class="info-section">
-            <label class="info-label">Statut</label>
-            <div class="status-container">
-              <span class="status-badge">
-                {{ activeScene.statutNom || 'Non défini' }}
-              </span>
-            </div>
-          </div>
-          
-          <!-- Commentaires -->
-          <div class="info-section">
-            <label class="info-label">Commentaires</label>
-            <div class="comment-count">
-              <i class="fas fa-comments"></i>
-              <span>{{ sceneCommentCount }} commentaire(s)</span>
-            </div>
-          </div>
-          
-          <!-- Actions (Modifier/Supprimer) -->
-          <div v-if="userPermissions.canCreateScene" class="actions-section">
-            <button 
-              class="action-btn edit-btn"
-              @click="$emit('edit-scene', activeScene)"
-              title="Modifier la scène"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button 
-              class="action-btn delete-btn"
-              @click="$emit('delete-scene', activeScene.idScene)"
-              title="Supprimer la scène"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-        
-        <!-- MESSAGE SI AUCUN ÉLÉMENT SÉLECTIONNÉ -->
-        <div v-if="!activeSection && detailsOpen" class="no-selection">
-          <i class="fas fa-info-circle"></i>
-          <p>Sélectionnez un élément pour voir ses détails</p>
-        </div>
-      </div>
+    <!-- Quick Actions en mode fermé -->
+    <div class="quick-actions-closed" v-if="!open">
+      <button v-if="userPermissions?.canCreateEpisode" class="icon-btn-closed" @click="$emit('add-episode')" title="Nouvel épisode">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button v-if="userPermissions?.canCreateSequence" class="icon-btn-closed" @click="$emit('add-sequence')" title="Nouvelle séquence">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button v-if="userPermissions?.canCreateScene" class="icon-btn-closed" @click="$emit('add-scene')" title="Nouvelle scène">
+        <i class="fas fa-plus"></i>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, defineEmits, defineProps } from 'vue';
 
-// Props
 const props = defineProps({
+  open: {
+    type: Boolean,
+    default: true
+  },
   projetTitle: String,
   projetSynopsis: String,
   statusColor: String,
@@ -341,146 +186,106 @@ const props = defineProps({
   episodes: Array,
   sequences: Array,
   scenes: Array,
-  sequenceCommentCount: Number,
-  sceneCommentCount: Number,
-  userPermissions: Object
+  userPermissions: Object,
+  sidebarSelection: Object
 });
 
-// Emits
 const emit = defineEmits([
+  'toggle-left',
   'edit-project',
   'delete-project',
-  'edit-episode',
-  'delete-episode',
-  'edit-sequence',
-  'delete-sequence',
-  'edit-scene',
-  'delete-scene',
-  'view-sequence-comments',
-  'select-scene',
-  'select-episode',
-  'select-sequence'
+  'add-episode',
+  'add-sequence',
+  'add-scene',
+  'select-item'
 ]);
 
-// Local state
-const activeSection = ref('project');
-const activeId = ref(null);
-const detailsOpen = ref(true);
-const activeEpisode = ref(null);
-const activeSequence = ref(null);
-const activeScene = ref(null);
-const episodesCollapsed = ref(false);
-const sequencesCollapsed = ref(false);
-const scenesCollapsed = ref(false);
+// État local
+const projectExpanded = ref(false);
+const episodesDropdownOpen = ref(false);
+const sequencesDropdownOpen = ref(false);
+const scenesDropdownOpen = ref(false);
 
-// Computed
-const detailsTitle = computed(() => {
-  switch (activeSection.value) {
-    case 'project':
-      return props.projetTitle;
-    case 'episode':
-      return activeEpisode.value ? `Épisode ${activeEpisode.value.ordre}: ${activeEpisode.value.titre}` : '';
-    case 'sequence':
-      return activeSequence.value ? `Séquence ${activeSequence.value.ordre}: ${activeSequence.value.titre}` : '';
-    case 'scene':
-      return activeScene.value ? `Scène ${activeScene.value.ordre}: ${activeScene.value.titre}` : '';
-    default:
-      return '';
-  }
-});
+// Méthodes
+const openProjectDetails = () => {
+  projectExpanded.value = !projectExpanded.value;
+};
 
-// Methods
-const openSection = (section) => {
-  activeSection.value = section;
-  activeId.value = null;
-  
-  if (section === 'project') {
-    // Garder les références aux éléments actuels
-    activeEpisode.value = props.currentEpisode;
-    activeSequence.value = props.currentSequence;
-    activeScene.value = props.currentScene;
-  } else {
-    activeEpisode.value = null;
-    activeSequence.value = null;
-    activeScene.value = null;
+const toggleEpisodesDropdown = () => {
+  if (!props.open) {
+    episodesDropdownOpen.value = !episodesDropdownOpen.value;
+    if (episodesDropdownOpen.value) {
+      sequencesDropdownOpen.value = false;
+      scenesDropdownOpen.value = false;
+    }
+    return;
   }
   
-  detailsOpen.value = true;
-};
-
-const openEpisode = (episode) => {
-  activeSection.value = 'episode';
-  activeId.value = episode.idEpisode;
-  activeEpisode.value = episode;
-  activeSequence.value = null;
-  activeScene.value = null;
-  detailsOpen.value = true;
-  
-  // Émettre l'événement pour sélectionner l'épisode
-  emit('select-episode', episode.idEpisode);
-};
-
-const openSequence = (sequence) => {
-  activeSection.value = 'sequence';
-  activeId.value = sequence.idSequence;
-  activeEpisode.value = null;
-  activeSequence.value = sequence;
-  activeScene.value = null;
-  detailsOpen.value = true;
-  
-  // Émettre l'événement pour sélectionner la séquence
-  emit('select-sequence', sequence.idSequence);
-};
-
-const openScene = (scene) => {
-  activeSection.value = 'scene';
-  activeId.value = scene.idScene;
-  activeEpisode.value = null;
-  activeSequence.value = null;
-  activeScene.value = scene;
-  detailsOpen.value = true;
-  
-  // Émettre l'événement pour sélectionner la scène
-  emit('select-scene', scene.idScene);
-};
-
-const closeDetails = () => {
-  detailsOpen.value = false;
-};
-
-const toggleEpisodesSection = () => {
-  episodesCollapsed.value = !episodesCollapsed.value;
-};
-
-const toggleSequencesSection = () => {
-  sequencesCollapsed.value = !sequencesCollapsed.value;
-};
-
-const toggleScenesSection = () => {
-  scenesCollapsed.value = !scenesCollapsed.value;
-};
-
-// Watchers pour synchroniser avec les props
-watch(() => props.currentEpisode, (newEpisode) => {
-  if (newEpisode && activeSection.value === 'episode' && activeId.value === newEpisode.idEpisode) {
-    activeEpisode.value = newEpisode;
+  episodesDropdownOpen.value = !episodesDropdownOpen.value;
+  if (episodesDropdownOpen.value) {
+    sequencesDropdownOpen.value = false;
+    scenesDropdownOpen.value = false;
   }
-});
+};
 
-watch(() => props.currentSequence, (newSequence) => {
-  if (newSequence && activeSection.value === 'sequence' && activeId.value === newSequence.idSequence) {
-    activeSequence.value = newSequence;
+const toggleSequencesDropdown = () => {
+  if (!props.open) {
+    sequencesDropdownOpen.value = !sequencesDropdownOpen.value;
+    if (sequencesDropdownOpen.value) {
+      episodesDropdownOpen.value = false;
+      scenesDropdownOpen.value = false;
+    }
+    return;
   }
-});
-
-watch(() => props.currentScene, (newScene) => {
-  if (newScene && activeSection.value === 'scene' && activeId.value === newScene.idScene) {
-    activeScene.value = newScene;
+  
+  sequencesDropdownOpen.value = !sequencesDropdownOpen.value;
+  if (sequencesDropdownOpen.value) {
+    episodesDropdownOpen.value = false;
+    scenesDropdownOpen.value = false;
   }
-});
+};
 
-// Initialiser avec le projet
-openSection('project');
+const toggleScenesDropdown = () => {
+  if (!props.open) {
+    scenesDropdownOpen.value = !scenesDropdownOpen.value;
+    if (scenesDropdownOpen.value) {
+      episodesDropdownOpen.value = false;
+      sequencesDropdownOpen.value = false;
+    }
+    return;
+  }
+  
+  scenesDropdownOpen.value = !scenesDropdownOpen.value;
+  if (scenesDropdownOpen.value) {
+    episodesDropdownOpen.value = false;
+    sequencesDropdownOpen.value = false;
+  }
+};
+
+const selectItem = (type, id) => {
+  if (type !== 'project') {
+    projectExpanded.value = false;
+  }
+  
+  if (type === 'episode') {
+    episodesDropdownOpen.value = true;
+    sequencesDropdownOpen.value = false;
+    scenesDropdownOpen.value = false;
+  } else if (type === 'sequence') {
+    sequencesDropdownOpen.value = true;
+    episodesDropdownOpen.value = false;
+    scenesDropdownOpen.value = false;
+  } else if (type === 'scene') {
+    scenesDropdownOpen.value = true;
+    episodesDropdownOpen.value = false;
+    sequencesDropdownOpen.value = false;
+  }
+  
+  emit('select-item', { type, id });
+};
+
+const episodeHasDetails = (episode) => {
+  return episode.synopsis || episode.realisateur || episode.scenariste;
+};
 </script>
-
 

@@ -165,6 +165,10 @@ const props = defineProps({
       canCreateComedien: false,
       canCreatePersonnage: false
     })
+  },
+  isSceneMode: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -189,5 +193,11 @@ const showAddEpisode = computed(() => {
   return props.episodes.length === 0 || props.userPermissions.canEditEpisode;
 });
 </script>
+
+
+
+
+
+
 
 
