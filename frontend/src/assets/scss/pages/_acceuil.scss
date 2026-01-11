@@ -516,7 +516,6 @@ body, html {
   align-items: center;
   justify-content: flex-end;
   transition: all $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
-  
   // État replié (par défaut)
   width: 44px;
   overflow: hidden;
@@ -568,8 +567,8 @@ body, html {
   height: 40px;
   border: none;
   border-radius: $border-radius-sm;
-  background: $color-background-alt; // Changé: blanc
-  color: $color-accent-dark; // Changé: orange foncé
+  background: $color-tertiary-dark; // Changé: blanc
+  color: $color-background-alt; // Changé: orange foncé
   font-size: $font-size-p1;
   cursor: pointer;
   display: flex;
@@ -684,7 +683,7 @@ body, html {
   text-align: center;
   gap: $gap-sm;
   padding: $padding-sm $padding-lg;
-  background: $color-text-primary; // Changé: brun foncé
+  background: $color-primary-dark; // Changé: brun foncé
   color: $color-text-light; // Changé: blanc
   border: none;
   border-radius: $border-radius-xs;
@@ -725,8 +724,9 @@ body, html {
   flex-direction: column;
   height: 300px;
   padding: $padding-lg;
-  width: 350px;
+  width: 330px;
   margin-right: 80px;
+  margin-bottom: 30px;
 
   &:hover {
     transform: translateY(-4px);
