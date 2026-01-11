@@ -44,7 +44,7 @@
 
 .btn-add {
   background: linear-gradient(135deg, $color-primary, $color-accent);
-  color: $color-white;
+  color: $color-text-light;
   border: none;
   padding: $padding-sm $padding-lg;
   border-radius: $border-radius-pill;
@@ -79,13 +79,13 @@
   border: $border-width solid $color-border-dark;
   border-radius: $border-radius-pill;
   font-size: $font-size-p1;
-  background: $color-white;
+  background: $color-background-alt;
   transition: $transition;
   
   &:focus {
     outline: none;
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    box-shadow: 0 0 0 3px $color-pastel-gold;
   }
   
   &::placeholder {
@@ -103,7 +103,7 @@
 
 // Conteneur du tableau
 .table-container {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow;
   overflow: hidden;
@@ -116,7 +116,7 @@
   border-collapse: collapse;
   
   th {
-    background: lighten($color-primary-light, 25%);
+    background: $color-primary-light;
     padding: $padding-lg;
     text-align: left;
     font-weight: $font-weight-semibold;
@@ -136,7 +136,7 @@
   }
   
   tr:hover {
-    background: rgba($color-primary-light, 0.05);
+    background: $color-surface-hover;
   }
 }
 
@@ -152,7 +152,7 @@
   background: linear-gradient(135deg, $color-primary, $color-accent);
   border-radius: 50%;
   @include flex-center;
-  color: $color-white;
+  color: $color-text-light;
   flex-shrink: 0;
 }
 
@@ -204,19 +204,19 @@
 
 .btn-edit {
   background: $color-primary;
-  color: $color-white;
+  color: $color-text-light;
   
   &:hover {
-    background: darken($color-primary, 10%);
+    background: $color-primary-dark;
   }
 }
 
 .btn-delete {
   background: $color-error;
-  color: $color-white;
+  color: $color-text-light;
   
   &:hover {
-    background: darken($color-error, 10%);
+    background: $color-secondary-dark;
   }
 }
 
@@ -252,7 +252,7 @@
 }
 
 .modal-content {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   width: 90%;
   max-width: 500px;
@@ -330,7 +330,7 @@
   &:focus {
     outline: none;
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    box-shadow: 0 0 0 3px $color-pastel-gold;
   }
 }
 
@@ -376,7 +376,7 @@
 
 .btn-cancel {
   background: $color-text-muted;
-  color: $color-white;
+  color: $color-text-light;
   
   &:hover:not(:disabled) {
     background: darken($color-text-muted, 10%);
@@ -385,7 +385,7 @@
 
 .btn-submit {
   background: linear-gradient(135deg, $color-primary, $color-accent);
-  color: $color-white;
+  color: $color-text-light;
   
   &:hover:not(:disabled) {
     box-shadow: $shadow-hover;
@@ -394,10 +394,10 @@
 
 .btn-delete-confirm {
   background: $color-error;
-  color: $color-white;
+  color: $color-text-light;
   
   &:hover:not(:disabled) {
-    background: darken($color-error, 10%);
+    background: $color-secondary-dark;
   }
 }
 
@@ -431,7 +431,7 @@
   right: $spacing-lg;
   padding: $padding-md $padding-lg;
   border-radius: $border-radius;
-  color: $color-white;
+  color: $color-text-light;
   @include flex-center;
   gap: $gap-lg;
   z-index: $z-index-toast;
@@ -571,3 +571,4 @@ textarea:focus-visible {
     background: rgba($color-text-primary, 0.1);
   }
 }
+

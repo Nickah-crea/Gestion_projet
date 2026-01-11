@@ -1,669 +1,591 @@
-// _left-sidebar.scss
 @import '../base/variables';
 
-.left-sidebar {
+.left-sidebar-compact {
   position: fixed;
   left: 0;
   top: 0;
-  bottom: 0;
-  display: flex;
-  z-index: $z-index-fixed;
-  background: $color-white;
-  border-right: 1px solid rgba($color-primary, 0.1);
+  width: 280px;
+  height: 100vh;
+  background: $color-background; // Changé: champagne beige
+  border-right: 1px solid $color-border; // Changé: bordure dorée
   box-shadow: $shadow-md;
-  
-  @include respond-to($breakpoint-md) {
-    position: relative;
-    width: 100%;
-    height: auto;
-    flex-direction: column;
-    border-right: none;
-    border-bottom: 1px solid rgba($color-primary, 0.1);
-    margin-bottom: $spacing-md;
-  }
-}
-
-// =============================================
-// PANEAU GAUCHE - NAVIGATION (60px)
-// =============================================
-.sidebar-nav {
-  width: 60px;
-  min-width: 60px;
-  background: rgba($color-primary, 0.05);
-  border-right: 1px solid rgba($color-primary, 0.1);
+  z-index: $z-index-fixed;
+  transition: all $transition-slow ease;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: $spacing-sm 0;
+  padding: $spacing-md;
+  box-sizing: border-box;
   
-  @include respond-to($breakpoint-lg) {
-    width: 55px;
-    min-width: 55px;
+  // QUAND FERMÉ
+  &.closed {
+    width: 80px;
+    padding: $spacing-sm;
+    
+    // Pousser le contenu à droite
+    & ~ * {
+      margin-left: 20px;
+      transition: margin-left $transition-slow ease;
+    }
+    
+    .sidebar-header,
+    .sidebar-footer {
+      display: none;
+    }
+    
+    .category-header {
+      justify-content: center;
+      padding: $spacing-xs;
+      margin-bottom: $gap-sm;
+      
+      .category-info {
+        justify-content: center;
+        
+        i {
+          margin: 0;
+          font-size: $font-size-p2;
+        }
+        
+        span {
+          display: none;
+        }
+      }
+      
+      .dropdown-icon {
+        display: none;
+      }
+    }
+    
+    .category-items {
+      display: none !important;
+    }
+    
+    .nav-item {
+      justify-content: center;
+      padding: $spacing-xs;
+      margin-bottom: $gap-xs;
+      
+      i {
+        margin: 0;
+        font-size: $font-size-p2;
+      }
+      
+      .item-text,
+      .item-title {
+        display: none;
+      }
+      
+      .has-details-indicator {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 6px;
+        height: 6px;
+      }
+    }
   }
   
-  @include respond-to($breakpoint-md) {
-    width: 100%;
-    min-width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: $spacing-xs;
-    border-right: none;
-    border-bottom: 1px solid rgba($color-primary, 0.1);
+  // QUAND OUVERT
+  &:not(.closed) {
+    & ~ * {
+      margin-left: 280px;
+      transition: margin-left $transition-slow ease;
+    }
+    
+    @include respond-to($breakpoint-lg) {
+      & ~ * {
+        margin-left: 250px;
+      }
+    }
   }
 }
 
-// Élément de navigation principal
-.nav-item {
+// BOUTON TOGGLE EN HAUT
+.sidebar-toggle {
   width: 100%;
   height: 50px;
   min-height: 50px;
-  padding: 0;
-  margin: 0;
+  background: $color-primary; // Changé: doré
+  color: $color-text-light; // Changé: blanc
   border: none;
-  background: transparent;
-  color: $color-text-secondary;
-  font-size: $font-size-p2;
-  cursor: pointer;
-  transition: all $transition;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
+  font-size: $font-size-p1;
+  cursor: pointer;
+  transition: $transition;
+  margin-bottom: $spacing-md;
+  border-radius: $border-radius-xs;
   
   &:hover {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-  }
-  
-  &.active {
-    background: $color-primary;
-    color: $color-white;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: $color-accent;
-    }
-  }
-  
-  &.has-details::after {
-    content: '';
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: $color-info;
-    border: 1px solid $color-white;
-  }
-  
-  &.current::before {
-    content: '';
-    position: absolute;
-    left: 2px;
-    top: 2px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: $color-accent;
+    background: darken($color-primary, 10%); // Doré plus foncé
   }
   
   i {
-    font-size: $font-size-h4;
-    margin-bottom: 2px;
+    transition: transform $transition;
   }
   
-  .nav-label {
-    font-size: $font-size-p4;
-    margin-top: 2px;
-    display: none;
+  .left-sidebar-compact.closed & i {
+    transform: rotate(180deg);
+  }
+}
+
+// EN-TÊTE DU PROJET
+.sidebar-header {
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  
+  .project-header {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    cursor: pointer;
+    padding: $spacing-sm;
+    border-radius: $border-radius-xs;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+    }
+    
+    i.fa-project-diagram {
+      font-size: $font-size-p1;
+      color: $color-primary; // Changé: doré
+    }
+    
+    .project-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      
+      .project-title {
+        @include typography-playfair-p4;
+        color: $color-text-primary; // Changé: brun foncé
+        margin: 0;
+        font-size: calc(#{$font-size-p4} + 1px);
+      }
+      
+      .project-status {
+        @include typography-p4;
+        font-size: $font-size-p5;
+        font-weight: $font-weight-medium;
+      }
+    }
+    
+    .dropdown-icon {
+      transition: transform $transition;
+      color: $color-text-muted; // Changé: taupe
+      
+      &.rotated {
+        transform: rotate(180deg);
+      }
+    }
   }
   
-  .item-number {
-    font-size: $font-size-p1;
+  .project-details {
+    padding: $spacing-sm;
+    background: $color-background-alt; // Changé: blanc
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border; // Changé: bordure dorée
+    margin-top: $gap-sm;
+    
+    .synopsis {
+      @include typography-p4;
+      color: $color-text-secondary; // Changé: brun
+      margin: 0 0 $gap-sm 0;
+      font-style: italic;
+      line-height: 1.4;
+    }
+    
+    .project-stats {
+      display: flex;
+      gap: $gap-md;
+      margin-bottom: $gap-sm;
+      
+      span {
+        @include typography-p4;
+        color: $color-text-muted; // Changé: taupe
+        font-size: $font-size-p5;
+        display: flex;
+        align-items: center;
+        gap: $gap-xs;
+        
+        i {
+          color: $color-primary; // Changé: doré
+        }
+      }
+    }
+    
+    .project-actions {
+      display: flex;
+      gap: $gap-xs;
+      justify-content: flex-end;
+      
+      .icon-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid $color-border; // Changé: bordure dorée
+        background: $color-background-alt; // Changé: blanc
+        border-radius: $border-radius-xs;
+        color: $color-text-secondary; // Changé: brun
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: $transition-fast;
+        
+        &:hover {
+          background: rgba($color-primary, 0.1); // Changé: doré subtil
+          border-color: $color-primary; // Changé: doré
+          color: $color-primary; // Changé: doré
+        }
+        
+        &.delete:hover {
+          background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
+          border-color: $color-error; // Changé: rouge bordeaux
+          color: $color-error; // Changé: rouge bordeaux
+        }
+      }
+    }
+  }
+}
+
+// NAVIGATION COMPACTE
+.compact-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.nav-category {
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-xs $spacing-sm;
+    background: $color-background-alt; // Changé: blanc
+    border: 1px solid $color-border; // Changé: bordure dorée
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    transition: $transition-fast;
+    margin-bottom: $gap-xs;
+    
+    &:hover {
+      border-color: $color-primary; // Changé: doré
+      background: rgba($color-primary, 0.05); // Changé: doré très subtil
+    }
+    
+    .category-info {
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+      
+      i {
+        color: $color-primary; // Changé: doré
+        font-size: $font-size-p2;
+        width: 20px;
+        text-align: center;
+      }
+      
+      span {
+        @include typography-p4;
+        color: $color-text-primary; // Changé: brun foncé
+        font-weight: $font-weight-medium;
+      }
+      
+      .item-count {
+        background: $color-primary; // Changé: doré
+        color: $color-text-light; // Changé: blanc
+        font-size: $font-size-p5;
+        padding: 2px 6px;
+        border-radius: $border-radius-pill;
+        font-weight: $font-weight-semibold;
+      }
+    }
+    
+    .dropdown-icon {
+      transition: transform $transition;
+      color: $color-text-muted; // Changé: taupe
+      font-size: $font-size-p3;
+      
+      &.rotated {
+        transform: rotate(180deg);
+      }
+    }
+  }
+  
+  .category-items {
+    padding-left: $spacing-sm;
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+  
+  .empty-state {
+    @include typography-p4;
+    color: $color-text-muted; // Changé: taupe
+    text-align: center;
+    padding: $spacing-sm;
+    font-style: italic;
+  }
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-xs;
+  cursor: pointer;
+  transition: $transition-fast;
+  position: relative;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1); // Changé: doré subtil
+  }
+  
+  &.active {
+    background: rgba($color-primary, 0.15); // Changé: doré plus visible
+    border-left: 3px solid $color-primary; // Changé: doré
     font-weight: $font-weight-semibold;
   }
   
-  @include respond-to($breakpoint-md) {
-    width: 50px;
-    min-width: 50px;
-    height: 45px;
-    min-height: 45px;
-    margin: 0 $gap-xs 0 0;
+  &.current {
+    background: rgba($color-scene, 0.1); // Gardé orange (scène)
+  }
+  
+  i {
+    color: $color-primary; // Changé: doré
+    font-size: $font-size-p3;
+    width: 16px;
+    text-align: center;
+  }
+  
+  .item-text {
+    @include typography-p4;
+    color: $color-text-primary; // Changé: brun foncé
+    font-weight: $font-weight-medium;
+    min-width: 80px;
+  }
+  
+  .item-title {
+    @include typography-p4;
+    color: $color-text-secondary; // Changé: brun
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .has-details-indicator {
+    width: 8px;
+    height: 8px;
+    background: $color-accent; // Changé: orange
+    border-radius: 50%;
+  }
+}
+
+// ACTIONS GLOBALES
+.sidebar-footer {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border; // Changé: bordure dorée
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  
+  .action-btn {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-background-alt; // Changé: blanc
+    border: 1px solid $color-border; // Changé: bordure dorée
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary; // Changé: brun
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
     
-    i {
-      font-size: $font-size-p1;
+    &:hover {
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary; // Changé: doré
+      color: $color-primary; // Changé: doré
     }
     
-    .item-number {
+    i {
+      color: $color-primary; // Changé: doré
+    }
+  }
+}
+
+// ACTIONS RAPIDES EN MODE FERMÉ
+.quick-actions-closed {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border; // Changé: bordure dorée
+  
+  .icon-btn-closed {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: $color-background-alt; // Changé: blanc
+    border: 1px solid $color-border; // Changé: bordure dorée
+    border-radius: $border-radius-xs;
+    color: $color-text-secondary; // Changé: brun
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary; // Changé: doré
+      color: $color-primary; // Changé: doré
+      transform: scale(1.05);
+    }
+    
+    i {
       font-size: $font-size-p2;
     }
   }
 }
 
-// Élément principal (Projet)
-.main-item {
-  font-weight: $font-weight-semibold;
-  border-bottom: 1px solid rgba($color-primary, 0.1);
-  margin-bottom: $spacing-sm;
-  
-  i {
-    font-size: $font-size-h3;
-  }
-}
-
-// Élément secondaire (épisodes, séquences, scènes)
-.sub-item {
-  height: 40px;
-  min-height: 40px;
-  margin-left: 10px;
-  width: calc(100% - 10px);
-  border-radius: $border-radius-sm 0 0 $border-radius-sm;
-  
-  .sub-icon {
-    font-size: $font-size-p2;
-    margin-right: $gap-xs;
-    margin-bottom: 0;
-  }
-  
-  @include respond-to($breakpoint-md) {
-    margin-left: 0;
-    width: 100%;
-  }
-}
-
-// Séparateur entre sections
-.nav-separator {
-  height: 1px;
-  background: rgba($color-primary, 0.1);
-  margin: $spacing-sm $gap-sm;
-  
-  @include respond-to($breakpoint-md) {
-    display: none;
-  }
-}
-
-// Section de navigation (épisodes, séquences, scènes)
-.nav-section {
-  margin-bottom: $spacing-sm;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-  
-  @include respond-to($breakpoint-md) {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-// En-tête de section
-.nav-section-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: $gap-sm 0;
-  color: $color-text-muted;
-  font-size: $font-size-p4;
-  text-align: center;
-  border-bottom: 1px solid rgba($color-primary, 0.1);
-  margin: 0 $gap-sm $gap-sm $gap-sm;
-  cursor: pointer;
-  transition: $transition;
-  position: relative;
-  
-  &:hover {
-    color: $color-primary;
-    background: rgba($color-primary, 0.05);
-  }
-  
-  i {
-    font-size: $font-size-p2;
-    margin-bottom: 2px;
-    color: $color-primary;
-  }
-  
-  i.episodes-toggle,
-  i.sequences-toggle,
-  i.scenes-toggle {
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: $font-size-p3;
-    display: none;
-  }
-  
-  .nav-label {
-    display: none;
-  }
-  
-  @include respond-to($breakpoint-md) {
-    flex-direction: row;
-    padding: $gap-xs $gap-sm;
-    margin: 0;
-    border-bottom: none;
+// TOOLTIPS POUR LE MODE FERMÉ
+.left-sidebar-compact.closed {
+  .nav-item,
+  .category-header,
+  .icon-btn-closed {
+    position: relative;
     
-    i {
-      margin-bottom: 0;
-      margin-right: $gap-xs;
-    }
-    
-    i.episodes-toggle,
-    i.sequences-toggle,
-    i.scenes-toggle {
-      position: relative;
-      right: auto;
-      top: auto;
-      transform: none;
-      margin-left: auto;
-      display: block;
-    }
-    
-    .nav-label {
-      display: block;
+    &:hover::after {
+      content: attr(title);
+      position: absolute;
+      left: 100%;
+      top: 60px;
+      transform: translateY(-50%);
+      margin-left: $gap-sm;
+      padding: $gap-xs $gap-sm;
+      background: $color-text-primary; // Changé: brun foncé
+      color: $color-text-light; // Changé: blanc
       font-size: $font-size-p3;
+      white-space: nowrap;
+      border-radius: $border-radius-xs;
+      z-index: $z-index-tooltip;
+      pointer-events: none;
+      box-shadow: $shadow;
     }
   }
 }
 
-// Liste des éléments dans une section
-.nav-items {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  
-  @include respond-to($breakpoint-md) {
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: $gap-xs;
-    background: rgba($color-primary, 0.02);
-    border-radius: $border-radius-sm;
-    margin-top: $gap-xs;
-  }
-}
-
-// Couleurs spécifiques pour chaque type
-.project-item {
-  i {
-    color: $color-project;
-  }
-  
-  &.active {
-    background: $color-project;
-    
-    &::before {
-      background: lighten($color-project, 20%);
-    }
-  }
-}
-
-.episode-item {
-  i {
-    color: $color-episode;
-  }
-  
-  &.active {
-    background: $color-episode;
-  }
-}
-
-.sequence-item {
-  i {
-    color: $color-sequence;
-  }
-  
-  &.active {
-    background: $color-sequence;
-  }
-}
-
-.scene-item {
-  i {
-    color: $color-scene;
-  }
-  
-  &.active {
-    background: $color-scene;
-  }
-}
-
-// =============================================
-// PANEAU DROIT - DÉTAILS (250px)
-// =============================================
-.sidebar-details {
-  width: 0;
-  overflow: hidden;
-  transition: width $transition-slow ease;
-  background: $color-white;
-  
-  &.open {
+// RESPONSIVE
+@include respond-to($breakpoint-lg) {
+  .left-sidebar-compact {
     width: 250px;
     
-    @include respond-to($breakpoint-lg) {
-      width: 240px;
+    &:not(.closed) ~ * {
+      margin-left: 250px;
     }
     
-    @include respond-to($breakpoint-md) {
-      width: 100%;
-      height: auto;
-      max-height: 400px;
-      overflow-y: auto;
-      border-top: 1px solid rgba($color-primary, 0.1);
-    }
-  }
-  
-  @include respond-to($breakpoint-md) {
-    position: absolute;
-    left: 0;
-    top: 100%;
-    z-index: $z-index-dropdown;
-    box-shadow: $shadow-lg;
-    border: 1px solid rgba($color-primary, 0.1);
-    border-radius: 0 0 $border-radius $border-radius;
-  }
-}
-
-// En-tête du panneau de détails
-.details-header {
-  display: flex;
-  align-items: center;
-  padding: $spacing-md;
-  border-bottom: 1px solid rgba($color-primary, 0.1);
-  background: rgba($color-primary, 0.05);
-  
-  @include respond-to($breakpoint-md) {
-    padding: $spacing-sm;
-  }
-}
-
-// Bouton pour fermer les détails
-.close-details {
-  width: 32px;
-  height: 32px;
-  margin-right: $gap-sm;
-  border: 1px solid rgba($color-primary, 0.2);
-  border-radius: $border-radius-sm;
-  background: $color-white;
-  color: $color-text-secondary;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &:hover {
-    border-color: $color-primary;
-    color: $color-primary;
-  }
-  
-  @include respond-to($breakpoint-md) {
-    width: 28px;
-    height: 28px;
-    margin-right: $gap-xs;
-  }
-}
-
-// Titre des détails
-.details-title {
-  @include typography-h4;
-  margin: 0;
-  color: $color-text-primary;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-// Contenu des détails
-.details-content {
-  padding: $spacing-md;
-  overflow-y: auto;
-  max-height: calc(100vh - 80px);
-  
-  @include respond-to($breakpoint-md) {
-    padding: $spacing-sm;
-    max-height: 350px;
-  }
-}
-
-// Section de détails
-.details-section {
-  animation: fadeIn $transition;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-// =============================================
-// STYLES POUR LES INFORMATIONS
-// =============================================
-.info-section {
-  margin-bottom: $spacing-md;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.info-label {
-  display: block;
-  margin-bottom: $gap-xs;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  font-size: $font-size-p1;
-}
-
-.info-content {
-  @include typography-p1;
-  color: $color-text-secondary;
-  margin: 0;
-  line-height: $line-height-base;
-}
-
-.status-container {
-  display: flex;
-  align-items: center;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: $gap-xs $gap-sm;
-  border-radius: $border-radius-pill;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-medium;
-  color: $color-white;
-  text-align: center;
-  min-width: 80px;
-}
-
-.stats-container {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  color: $color-text-secondary;
-  font-size: $font-size-p2;
-  
-  i {
-    color: $color-primary;
-    width: 20px;
-    text-align: center;
-  }
-}
-
-.team-container {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.team-member {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  color: $color-text-secondary;
-  font-size: $font-size-p2;
-  
-  i {
-    color: $color-primary;
-    width: 20px;
-    text-align: center;
-  }
-}
-
-.comment-count {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  color: $color-text-secondary;
-  font-size: $font-size-p2;
-  
-  i {
-    color: $color-primary;
-  }
-}
-
-.view-comments-btn {
-  margin-left: auto;
-  padding: $gap-xs;
-  border: 1px solid rgba($color-primary, 0.2);
-  border-radius: $border-radius-sm;
-  background: transparent;
-  color: $color-primary;
-  cursor: pointer;
-  transition: $transition;
-  
-  &:hover {
-    background: rgba($color-primary, 0.1);
-    border-color: $color-primary;
-  }
-}
-
-.actions-section {
-  display: flex;
-  gap: $gap-sm;
-  margin-top: $spacing-md;
-  padding-top: $spacing-md;
-  border-top: 1px solid rgba($color-primary, 0.1);
-}
-
-.action-btn {
-  flex: 1;
-  padding: $spacing-sm;
-  border: 1px solid rgba($color-primary, 0.2);
-  border-radius: $border-radius-sm;
-  background: $color-white;
-  color: $color-text-primary;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: $transition;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $gap-xs;
-  
-  &:hover {
-    transform: translateY(-1px);
-  }
-  
-  &.edit-btn {
-    border-color: rgba($color-info, 0.3);
-    color: $color-info;
-    
-    &:hover {
-      background: rgba($color-info, 0.1);
-      border-color: $color-info;
-    }
-  }
-  
-  &.delete-btn {
-    border-color: rgba($color-error, 0.3);
-    color: $color-error;
-    
-    &:hover {
-      background: rgba($color-error, 0.1);
-      border-color: $color-error;
+    &.closed {
+      width: 50px;
+      
+      & ~ * {
+        margin-left: 50px;
+      }
     }
   }
 }
 
-// Message quand rien n'est sélectionné
-.no-selection {
-  text-align: center;
-  padding: $spacing-xl;
-  color: $color-text-muted;
-  
-  i {
-    font-size: $font-size-h1;
-    margin-bottom: $spacing-md;
-    color: rgba($color-primary, 0.2);
-  }
-  
-  p {
-    @include typography-p1;
-    margin: 0;
-  }
-}
-
-// =============================================
-// RESPONSIVE
-// =============================================
 @include respond-to($breakpoint-md) {
-  .left-sidebar {
-    .details-header {
-      padding: $spacing-sm;
+  .left-sidebar-compact {
+    width: 220px;
+    
+    &:not(.closed) ~ * {
+      margin-left: 220px;
     }
     
-    .details-content {
-      padding: $spacing-sm;
+    &.closed {
+      width: 45px;
+      
+      & ~ * {
+        margin-left: 45px;
+      }
     }
     
-    .actions-section {
-      flex-direction: column;
-    }
-    
-    .action-btn {
-      width: 100%;
+    .sidebar-toggle {
+      height: 45px;
+      font-size: $font-size-p2;
     }
   }
 }
 
+// SUPPRIMEZ ou CORRIGEZ cette partie problématique :
 @include respond-to($breakpoint-sm) {
-  .sidebar-nav {
-    padding: $spacing-xs 0;
-  }
-  
-  .nav-item {
-    width: 45px;
-    min-width: 45px;
-    height: 40px;
-    min-height: 40px;
+  .left-sidebar-compact {
+    width: 45px; // Gardez la même largeur que sur tablette
     
-    .item-number {
-      font-size: $font-size-p3;
+    &.closed {
+      width: 45px;
+      height: 100vh; // Gardez la hauteur complète
+      flex-direction: column; // Restez en colonne
+      align-items: center;
+      padding: $spacing-sm;
+      
+      & ~ * {
+        margin-left: 45px;
+      }
+      
+      .sidebar-toggle {
+        width: 100%;
+        height: 50px;
+        margin: 0 0 $spacing-md 0;
+      }
+      
+      .compact-nav {
+        flex-direction: column;
+        flex: 1;
+      }
+      
+      .nav-category {
+        margin-bottom: $gap-sm;
+      }
+      
+      .quick-actions-closed {
+        flex-direction: column;
+        margin-top: auto;
+        padding-top: $spacing-sm;
+        border-top: 1px solid $color-border; // Changé: bordure dorée
+      }
+    }
+    
+    &:not(.closed) {
+      width: 220px; // Ou 100% si vous voulez qu'elle prenne toute la largeur
+      position: fixed;
+      z-index: $z-index-modal + 1; // Au-dessus du contenu
+      
+      & ~ * {
+        margin-left: 220px;
+        
+        @media (max-width: $breakpoint-sm) {
+          margin-left: 0;
+          position: relative;
+          z-index: 1;
+        }
+      }
     }
   }
-  
-  .sidebar-details.open {
-    width: 100%;
-  }
 }
+
 

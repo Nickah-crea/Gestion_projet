@@ -1,4 +1,4 @@
- // _liste-projet.scss
+// _liste-projet.scss
 @import '../base/variables';
 
 .projects-list-container {
@@ -36,7 +36,7 @@
     padding: $padding-lg;
     background-color: $color-background-alt;
     border-radius: $border-radius;
-    box-shadow: $shadow;
+    box-shadow: $shadow-primary;
 
     @include respond-to($breakpoint-md) {
       flex-wrap: nowrap;
@@ -123,7 +123,7 @@
   .table-container {
     background-color: $color-background;
     border-radius: $border-radius;
-    box-shadow: $shadow;
+    box-shadow: $shadow-primary;
     overflow: hidden;
 
     .projects-table {
@@ -131,7 +131,7 @@
       border-collapse: collapse;
 
       thead {
-        background-color: $color-background-alt;
+        background-color: $color-surface;
         border-bottom: $border-width solid $color-border;
 
         th {
@@ -201,8 +201,8 @@
           .genre-tag {
             display: inline-block;
             padding: $gap-xs $gap-md;
-            background-color: $color-pastel-blue;
-            color: $color-primary;
+            background-color: $color-pastel-brown;
+            color: $color-tertiary;
             border-radius: $border-radius-pill;
             @include typography-p2;
             font-weight: $font-weight-medium;
@@ -324,13 +324,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba($color-black, 0.5);
+    background-color: rgba($color-text-primary, 0.5);
     @include flex-center;
     z-index: $z-index-modal;
     padding: $spacing-md;
 
     .modal-content {
-      background-color: $color-background;
+      background-color: $color-background-alt;
       border-radius: $border-radius-lg;
       box-shadow: $shadow-xl;
       width: 100%;
@@ -587,4 +587,5 @@
 .modal-content {
   animation: modalFadeIn $duration-normal $ease-out-cinema;
 }
+
 

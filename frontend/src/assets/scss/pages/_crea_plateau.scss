@@ -69,7 +69,7 @@
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -82,7 +82,7 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -90,7 +90,7 @@
     &.active {
       background: $color-primary;
       border-color: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
     }
 
     &:focus-visible {
@@ -125,14 +125,14 @@
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
-    background: $color-white;
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      box-shadow: 0 0 0 2px $color-pastel-gold;
     }
   }
 
@@ -147,7 +147,7 @@
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
 
@@ -209,7 +209,7 @@
 // SYSTÈME D'ONGlets
 // =============================================
 .tabs-container-crea-plateau {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -218,7 +218,7 @@
 
 .tabs-header-crea-plateau {
   display: flex;
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
   position: relative;
 }
@@ -241,7 +241,7 @@
 
   &:hover {
     color: $color-primary;
-    background: rgba($color-primary, 0.05);
+    background: $color-surface-hover;
   }
 
   &.active {
@@ -320,7 +320,7 @@
   border: none;
   border-radius: $border-radius-xs;
   @include typography-p4;
-  color: $color-white;
+  color: $color-text-light;
   font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: $transition-fast;
@@ -394,14 +394,14 @@
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
-    background: $color-white;
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      box-shadow: 0 0 0 2px $color-pastel-gold;
     }
   }
 
@@ -410,7 +410,7 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     box-shadow: $shadow-md;
@@ -428,7 +428,7 @@
     border-bottom: 1px solid $color-border;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
     }
 
     &.clear-filter {
@@ -479,7 +479,7 @@
   border-radius: $border-radius-xs;
   font-size: $font-size-p4;
   color: $color-text-primary;
-  background: $color-white;
+  background: $color-background-alt;
   transition: $transition-fast;
   resize: vertical;
   min-height: 80px;
@@ -489,7 +489,7 @@
   &:focus {
     outline: none;
     border-color: $color-primary;
-    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    box-shadow: 0 0 0 2px $color-pastel-gold;
   }
 }
 
@@ -534,10 +534,10 @@
     gap: $gap-xs;
     min-width: 160px;
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -566,10 +566,10 @@
     display: flex;
     align-items: center;
     gap: $gap-xs;
-    color: $color-white;
+    color: $color-text-light;
 
     &:hover {
-      background: darken($color-error, 10%);
+      background: $color-secondary-dark;
     }
   }
 }
@@ -632,7 +632,7 @@
       padding: 0 $padding-md 0 ($padding-md + $padding-xs);
       border: 1px solid $color-border;
       border-radius: $border-radius-pill;
-      background: $color-white;
+      background: $color-background-alt;
       font-size: $font-size-p3;
       color: $color-text-primary;
       transition: $transition-fast;
@@ -640,7 +640,7 @@
       &:focus {
         outline: none;
         border-color: $color-primary;
-        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+        box-shadow: 0 0 0 2px $color-pastel-gold;
       }
 
       @media (max-width: $breakpoint-sm) {
@@ -677,7 +677,7 @@
 }
 
 .plateau-card-crea-plateau {
-  background: $color-white;
+  background: $color-background-alt;
   border: 1px solid $color-border;
   border-radius: $border-radius-xs;
   padding: $spacing-md;
@@ -773,7 +773,7 @@
 
     &:hover {
       background: $color-warning;
-      color: $color-white;
+      color: $color-text-light;
     }
   }
 
@@ -783,7 +783,7 @@
 
     &:hover {
       background: $color-error;
-      color: $color-white;
+      color: $color-text-light;
     }
   }
 }
@@ -829,7 +829,7 @@
 .empty-state-crea-plateau {
   text-align: center;
   padding: $spacing-xl;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-xs;
   box-shadow: $shadow;
   margin: $spacing-md 0;
@@ -944,4 +944,6 @@
     animation: none;
   }
 }
+
+
 

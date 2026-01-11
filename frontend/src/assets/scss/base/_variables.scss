@@ -3,10 +3,16 @@
 // =============================================
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
-$font-family-primary: 'Hauora Sans', sans-serif;
-$font-family-cinzel: 'Playfair Display', serif;
+// $font-family-primary: 'Hauora Sans', sans-serif;
+// $font-family-cinzel: 'Playfair Display', serif;
 
-$font-family-playfair: 'Playfair Display', serif;
+// $font-family-playfair: 'Playfair Display', serif;
+// $font-family-hauora: 'Hauora Sans', sans-serif;
+
+$font-family-primary: 'Hauora Sans', sans-serif;
+$font-family-cinzel: 'Hauora Sans', sans-serif;
+
+$font-family-playfair: 'Hauora Sans', sans-serif;
 $font-family-hauora: 'Hauora Sans', sans-serif;
 
 // Poids de police - Playfair Display
@@ -45,131 +51,103 @@ $font-size-p3: 12px;
 $font-size-p4: 11px;
 $font-size-p5: 8px;
 
+$font-size-28: 28px;
 // Line heights
 $line-height-base: 1.5;
 $line-height-tight: 1.3;
 $line-height-loose: 1.7;
 
 // =============================================
-// COULEURS – PALETTE CHAMPAGNE BEIGE & VIN CHAUD (LUXE DOUX)
+// COULEURS – VDFI WARM LUXE 2026 (Logo-Inspired: Champagne Beige → Vin Chaud)
+// Warm minimalism + cinematic energy – Yellow-Orange-Red-Brown progression
 // =============================================
-// Couleurs principales
-$color-primary: #E37C11;       // Orange vif – énergie créative explosive, cœur du logo
-$color-primary-light: #EDCA49; // Jaune-orangé doux – version lumineuse et transitionnelle
-$color-primary-dark: #E0154A;  // Rouge passion – plus intense pour hovers et dynamisme
 
-// Couleurs secondaires → tons chauds progressifs vers le profond
-$color-accent: #E0154A;        // Rouge passion – accent principal, émotion cinématographique
-$color-accent-light: #EDCA49;   // Jaune clair lumineux – frais et punchy pour états actifs
-$color-accent-dark: #793513;   // Bordeaux profond – élégance mature
+// === Primaries (Logo Core – Energetic & Positive) ===
+$color-primary:       #EDCA49;      // Golden yellow – main brand, success, highlights
+$color-primary-light: #F5E8B2;      // Soft champagne glow – hovers, gradients
+$color-primary-dark:  #D4A832;      // Deep gold – shadows, pressed states
 
-// Couleurs tertiaires → fraîcheur et profondeur pour contrastes
-$color-tertiary: #EDCA49;      // Jaune clair – tertiaire vibrant et jeune
-$color-tertiary-light: #F5F4F5; // Beige crème clair – ultra doux pour surfaces
-$color-tertiary-dark: #262133; // Presque noir chaud – pour ombres et profondeur
+// === Accents (Dynamic, Cinematic Passion) ===
+$color-accent:        #E67E22;      // Warm orange – CTAs, active states, warnings
+$color-accent-light:  #F4A05A;      // Lighter orange – subtle accents
+$color-accent-dark:   #C45F00;      // Deep burnt orange – borders, dark hovers
 
-$color-jaune:#e9d96b;
+$color-secondary:     #EC7784;      // Soft wine red – alerts, episodes, emotion
+$color-secondary-dark:#B94A55;      // Deeper wine – errors, depth
 
-// Couleurs neutres (inchangées)
-$color-white: #FFFFFF;
-$color-black: #262133;
+$color-tertiary:      #8D695D;      // Rich brown – grounding, sequences/sets, elegance
+$color-tertiary-light:#B08E7F;      // Warm taupe – surfaces, cards
+$color-tertiary-dark: #5C3F34;      // Deep chocolate – text on light, dark mode bg
 
-// Couleurs de fond
-$color-background: #F5F4F5;     // Beige crème clair → fond principal chaud et accueillant
-$color-background-alt: #FFFFFF; // Blanc pur pour sections clean
-$color-background-dark: #262133; // Sombre chaud – alternative pour contrastes profonds
+// === Cool Accent (Very Limited – Organizational Only) ===
+$color-cool:          #81a3c5;     // Muted blue – calendars, projects (use sparingly!)
+$color-cool-light:    #E9EFFF; 
 
-// Couleurs de texte
-$color-text-primary: #262133;   // Presque noir chaud → lisible et élégant
-$color-text-secondary: #793513; // Bordeaux pour texte secondaire
-$color-text-muted: #E37C11;     // Orange vif atténué visuellement
-$color-text-light: #FFFFFF;     // Blanc sur accents colorés
+$color-green:         #d6ed8c;     
+$color-green-light:   #b5c779;     
+$color-green-dark:    #828F58;     
 
-// Couleurs d'interface (adaptées à la nouvelle palette)
-$color-border: rgba(227, 124, 17, 0.18);       // Orange vif très léger (basé sur #E37C11)
-$color-border-dark: rgba(121, 53, 19, 0.35);   // Bordeaux dilué (basé sur #793513)
-$color-surface: rgba(237, 202, 73, 0.12);      // Jaune clair dilué pour surfaces (basé sur #EDCA49)
-$color-surface-hover: rgba(237, 202, 73, 0.22);
+// === Neutrals (Warm & Luxurious) ===
+$color-background:    #F5F4F5;      // Champagne beige – main bg, soft & welcoming
+$color-background-alt:#FFFFFF;      // Clean white – cards, sections
+$color-background-dark:#3A2A24;     // Warm dark brown – future dark mode
+$color-white:         #FFFFFF;  
+$color-black:         #000000;      
 
-// Couleurs d'état – dans la famille chaude/vibrante
-$color-success: #EDCA49;        // Jaune clair pour succès (lumineux et positif)
-$color-warning: #EDCA49;        // Jaune-orangé doux
-$color-error: #E0154A;          // Rouge passion pour erreurs
-$color-info: #E37C11;           // Orange vif
+$color-text-primary:  #2D1A1A;      // Warm near-black – main text
+$color-text-secondary:#5C3F34;      // Brown – subtitles, muted
+$color-text-muted:    #8D695D;      // Taupe – inactive, hints
+$color-text-light:    #FFFFFF;      // White on accents
 
-// Couleurs spécifiques pour les types d'éléments
-$color-episode: #e74c3c;      // Rouge pour épisodes
-$color-sequence: #9b59b6;     // Violet pour séquences
-$color-scene: #3498db;        // Bleu pour scènes
-$color-project: #2ecc71;      // Vert pour projet
+// === Interface & States ===
+$color-border:        rgba(237, 202, 73, 0.25);  // Golden yellow tint – subtle borders
+$color-border-dark:   rgba(140, 105, 93, 0.4);   // Brown tint – stronger borders
+$color-surface:       rgba(237, 202, 73, 0.12);  // Soft golden overlay – cards
+$color-surface-hover: rgba(237, 202, 73, 0.25);  // Hover depth
 
-// Z-index
-$z-index-dropdown: 1000;
-$z-index-fixed: 1030;
-$z-index-tooltip: 1070;
+$color-success:       $color-primary;           // Golden – positive, done
+$color-warning:       $color-accent;            // Orange – in progress
+$color-error:         $color-secondary;         // Wine red – issues
+$color-info:          $color-cool;              // Blue – info only
 
-// Dans votre fichier _variables.scss, ajoutez :
-$color-calendar: #3498db;
-$color-episode: #e74c3c;
-$color-sequence: #9b59b6;
-$color-location: #1abc9c;
-$color-set: #f39c12;
-$color-actor: #e67e22;
-$color-character: #2ecc71;
+// === Category-Specific (Harmonized) ===
+$color-calendar:      $color-cool;              // Blue – calm organization
+$color-project:       $color-primary-dark;      // Deep gold – projects
+$color-episode:       $color-secondary;         // Wine red – episodes
+$color-sequence:      $color-tertiary;          // Brown – sequences
+$color-scene:         $color-accent-light;      // Soft orange – scenes (energetic writing)
+$color-location:      $color-tertiary-light;    // Taupe – locations
+$color-set:           $color-primary;           // Gold – sets
+$color-actor:         $color-accent;            // Orange – actors
+$color-character:     #D4A832;                  // Deep gold variant – characters
 
+// === Shadows & Pastels (Soft Depth) ===
+$shadow-primary:      0 4px 20px rgba(237, 202, 73, 0.22);  // Golden soft glow
+$shadow-accent:       0 6px 24px rgba(230, 126, 34, 0.18);  // Orange warmth
 
-// Couleurs pastel pour cartes et surfaces douces
-$color-pastel-blue: rgba(245, 244, 245, 0.15);  // Beige crème dilué (#F5F4F5)
-$color-pastel-red: rgba(224, 21, 74, 0.09);     // Rouge passion dilué (#E0154A)
-$color-pastel-gold: rgba(227, 124, 17, 0.18);   // Orange dilué (#E37C11)
-$color-pastel-purple: rgba(121, 53, 19, 0.1);   // Bordeaux dilué (#793513)
-$color-pastel-dark: rgba(38, 33, 51, 0.07);     // Sombre dilué (#262133)
+$color-pastel-gold:   rgba(237, 202, 73, 0.15);
+$color-pastel-wine:   rgba(236, 119, 132, 0.12);
+$color-pastel-brown:  rgba(141, 105, 93, 0.1);
 
-// Ombres colorées adaptées à cette palette vibrante
-$shadow-primary: 0 4px 20px rgba(237, 202, 73, 0.3);   // Ombre jaune clair douce
-$shadow-accent: 0 6px 24px rgba(224, 21, 74, 0.22);    // Ombre rouge passion élég
-
-// Couleurs neutres (inchangées)
-$color-white: #FFFFFF;
-$color-black: #2D1A1A;
-
-// Couleurs de fond
-$color-background: #F5F4F5;     // Beige crème clair → fond principal chaud et accueillant
-$color-background-alt: #FFFFFF; // Blanc pur pour sections clean
-$color-background-dark: #E0D8D0; // Gris chaud clair – alternative légère (pas de vrai dark mode)
-
-// Couleurs de texte
-$color-text-primary: #2D1A1A;   // Presque noir chaud → lisible et élégant
-$color-text-secondary: #6D1A2A; // Bordeaux pour texte secondaire
-$color-text-muted: #F57C00;     // Orange vif atténué visuellement
-$color-text-light: #FFFFFF;     // Blanc sur accents colorés
-
-// Couleurs d'interface
-$color-border: rgba(245, 124, 0, 0.18);       // Orange vif très léger
-$color-border-dark: rgba(109, 26, 42, 0.35);  // Bordeaux dilué
-$color-surface: rgba(191, 226, 70, 0.12);     // Lime dilué pour surfaces
-$color-surface-hover: rgba(191, 226, 70, 0.22);
-
-// Couleurs d'état – dans la famille chaude/vibrante
-$color-success: #BFE246;        // Lime pour succès (frais et positif)
-$color-warning: #FFB74D;        // Jaune-orangé doux
-$color-error: #E31C34;          // Rouge passion pour erreurs
-$color-info: #F57C00;           // Orange vif
-
-// Couleurs pastel pour cartes et surfaces douces
-$color-pastel-blue: rgba(255, 248, 240, 0.15);  // Beige crème dilué
-$color-pastel-red: rgba(227, 28, 52, 0.09);     // Rouge passion dilué
-$color-pastel-gold: rgba(255, 183, 77, 0.18);   // Jaune-orangé dilué
-$color-pastel-purple: rgba(109, 26, 42, 0.1);   // Bordeaux dilué
-$color-pastel-dark: rgba(45, 26, 26, 0.07);
-
-// Ombres colorées adaptées à cette palette vibrante
-$shadow-primary: 0 4px 20px rgba(191, 226, 70, 0.3);   // Ombre lime douce
-$shadow-accent: 0 6px 24px rgba(227, 28, 52, 0.22);    // Ombre rouge passion élégante
-$shadow-gold: 0 6px 20px rgba(245, 124, 0, 0.18);      // Ombre Deep Wine très subtile
 // =============================================
 // ESPACEMENTS - CORRIGÉ
 // =============================================
+
+// Dans _variables.scss, ajoutez ces mixins :
+@mixin pastel-gold {
+  background: $color-pastel-gold;
+  border: 1px solid rgba($color-primary, 0.2);
+}
+
+@mixin pastel-wine {
+  background: $color-pastel-wine;
+  border: 1px solid rgba($color-secondary, 0.2);
+}
+
+@mixin pastel-brown {
+  background: $color-pastel-brown;
+  border: 1px solid rgba($color-tertiary, 0.2);
+}
 
 // Gaps (espacements entre éléments)
 $gap-xs: 4px;
@@ -432,10 +410,10 @@ $z-index-toast: 1070;
 
 // Glassmorphism effect version cinéma
 @mixin glassmorphism {
-  background: rgba($color-tertiary-dark, 0.30);
+  background: rgba($color-background-alt, 0.30);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.209);
 }
 
 @mixin glassmorphism-dark {
@@ -463,39 +441,137 @@ $z-index-toast: 1070;
 @mixin pastel-dark { background: $color-pastel-dark; }
 
 // Boutons cinéma
+// Cherchez ces mixins dans votre fichier _variables.scss et remplacez $color-white par $color-background-alt :
+
+// Mixin pour les boutons cinéma primaires
 @mixin btn-cinema-primary {
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
-  color: $color-white;
+  padding: $padding-sm $padding-lg;
+  background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+  color: $color-background-alt;  // Changé ici
   border: none;
-  border-radius: $border-radius-sm;
-  padding: 12px 24px;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
   font-weight: $font-weight-semibold;
-  transition: $transition;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   box-shadow: $shadow-primary;
+  position: relative;
+  overflow: hidden;
   
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
-    transform: translateY(-2px);
-    box-shadow: $shadow-lg;
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+    background: linear-gradient(135deg, $color-primary-dark, $color-primary);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+  
+  // Effet cinéma
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+      transparent 30%, 
+      rgba($color-background-alt, 0.1) 50%,  // Changé ici
+      transparent 70%);
+    transform: rotate(30deg);
+    transition: $transition-fast;
+    opacity: 0;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+    transform: rotate(30deg) translate(10%, 10%);
   }
 }
 
+// Répétez pour les autres mixins si nécessaire (btn-cinema-accent, etc.)
 @mixin btn-cinema-accent {
-  background: linear-gradient(135deg, $color-accent 0%, $color-accent-light 100%);
-  color: $color-white;
+  padding: $padding-sm $padding-lg;
+  background: linear-gradient(135deg, $color-accent, $color-accent-dark);
+  color: $color-background-alt;  // Changé ici
   border: none;
-  border-radius: $border-radius-pill;
-  padding: 12px 24px;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
   font-weight: $font-weight-semibold;
-  transition: $transition;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   box-shadow: $shadow-accent;
+  position: relative;
+  overflow: hidden;
   
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, $color-accent-dark 0%, $color-accent 100%);
-    transform: translateY(-2px);
-    box-shadow: $shadow-lg;
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+    background: linear-gradient(135deg, $color-accent-dark, $color-accent);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+      transparent 30%, 
+      rgba($color-background-alt, 0.1) 50%,  // Changé ici
+      transparent 70%);
+    transform: rotate(30deg);
+    transition: $transition-fast;
+    opacity: 0;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+    transform: rotate(30deg) translate(10%, 10%);
   }
 }
+
 
 @mixin btn-cinema-gold {
   background: linear-gradient(135deg, $color-tertiary 0%, $color-tertiary-light 100%);

@@ -37,43 +37,53 @@ p, .p1 {
 .font-bold { font-weight: $font-weight-bold; }
 
 // Classes utilitaires pour les couleurs de texte
-.text-primary { color: $color-primary; }           // #1A237E - Bleu nuit
-.text-primary-light { color: $color-primary-light; } // #534BAE - Bleu nuit clair
-.text-primary-dark { color: $color-primary-dark; }   // #000051 - Bleu nuit foncé
-.text-accent { color: $color-accent; }             // #B71C1C - Rouge bordeaux
-.text-accent-light { color: $color-accent-light; }   // #F05545 - Rouge clair
-.text-accent-dark { color: $color-accent-dark; }     // #7F0000 - Rouge foncé
+.text-primary { color: $color-primary; }           // #EDCA49 - Doré principal
+.text-primary-light { color: $color-primary-light; } // #F5E8B2 - Doré clair
+.text-primary-dark { color: $color-primary-dark; }   // #D4A832 - Doré foncé
+.text-accent { color: $color-accent; }             // #E67E22 - Orange
+.text-accent-light { color: $color-accent-light; }   // #F4A05A - Orange clair
+.text-accent-dark { color: $color-accent-dark; }     // #C45F00 - Orange foncé
 
-// Couleurs tertiaires (cinéma)
-.text-tertiary { color: $color-tertiary; }         // #E5C687 - Or/doré
-.text-tertiary-light { color: $color-tertiary-light; } // #F4E4B3 - Or clair
-.text-tertiary-dark { color: $color-tertiary-dark; }   // #B8943C - Or foncé
+// Couleurs secondaires et tertiaires
+.text-secondary { color: $color-secondary; }         // #EC7784 - Vin rouge
+.text-secondary-dark { color: $color-secondary-dark; } // #B94A55 - Vin rouge foncé
+.text-tertiary { color: $color-tertiary; }           // #8D695D - Brun
+.text-tertiary-light { color: $color-tertiary-light; } // #B08E7F - Brun clair
+.text-tertiary-dark { color: $color-tertiary-dark; }   // #5C3F34 - Brun foncé
+.text-cool { color: $color-cool; }                   // #6687A8 - Bleu (usage limité)
 
 // Couleurs de texte principales
-.text-primary-dark { color: $color-text-primary; }    // #000000 - Texte principal noir
-.text-secondary { color: $color-text-secondary; }     // #424242 - Texte secondaire
-.text-muted { color: $color-text-muted; }             // #757575 - Texte atténué
-.text-light { color: $color-text-light; }             // #FFFFFF - Texte clair
+.text-text-primary { color: $color-text-primary; }    // #2D1A1A - Brun noir
+.text-text-secondary { color: $color-text-secondary; } // #5C3F34 - Brun moyen
+.text-text-muted { color: $color-text-muted; }        // #8D695D - Brun clair
+.text-text-light { color: $color-text-light; }        // #FFFFFF - Blanc
 
 // Couleurs de fond et neutres
-.text-background { color: $color-background; }        // #FFFFFF - Arrière-plan
-.text-background-alt { color: $color-background-alt; } // #F8F9FA - Fond alternatif
-.text-background-dark { color: $color-background-dark; } // #0A0A0A - Fond sombre
-.text-white { color: $color-white; }                  // #FFFFFF - Blanc pur
-.text-black { color: $color-black; }                  // #000000 - Noir pur
+.text-background { color: $color-background; }        // #F5F4F5 - Beige champagne
+.text-background-alt { color: $color-background-alt; } // #FFFFFF - Blanc pur
+.text-background-dark { color: $color-background-dark; } // #3A2A24 - Brun foncé
 
-// Classes pour les états
-.text-success { color: $color-success; }              // #2E7D32 - Vert
-.text-warning { color: $color-warning; }              // #F57C00 - Orange
-.text-error { color: $color-error; }                  // #D32F2F - Rouge
-.text-info { color: $color-info; }                    // #1976D2 - Bleu info
+// Classes pour les états (reliées à votre palette)
+.text-success { color: $color-success; }              // #EDCA49 - Doré (succès)
+.text-warning { color: $color-warning; }              // #E67E22 - Orange (avertissement)
+.text-error { color: $color-error; }                  // #EC7784 - Vin rouge (erreur)
+.text-info { color: $color-info; }                    // #6687A8 - Bleu (info)
 
-// Classes pour les couleurs pastel (cinéma)
-.text-pastel-blue { color: $color-pastel-blue; }
-.text-pastel-red { color: $color-pastel-red; }
+// Classes pour les couleurs spécifiques aux catégories
+.text-calendar { color: $color-calendar; }            // #6687A8 - Bleu (calendrier)
+.text-project { color: $color-project; }              // #D4A832 - Doré foncé (projets)
+.text-episode { color: $color-episode; }              // #EC7784 - Vin rouge (épisodes)
+.text-sequence { color: $color-sequence; }            // #8D695D - Brun (séquences)
+.text-scene { color: $color-scene; }                  // #F4A05A - Orange clair (scènes)
+.text-location { color: $color-location; }            // #B08E7F - Brun clair (lieux)
+.text-set { color: $color-set; }                      // #EDCA49 - Doré (plateaux)
+.text-actor { color: $color-actor; }                  // #E67E22 - Orange (acteurs)
+.text-character { color: $color-character; }          // #D4A832 - Doré foncé (personnages)
+
+// Classes pour les couleurs pastel (nuances subtiles)
 .text-pastel-gold { color: $color-pastel-gold; }
-.text-pastel-purple { color: $color-pastel-purple; }
-.text-pastel-dark { color: $color-pastel-dark; }
+.text-pastel-wine { color: $color-pastel-wine; }
+.text-pastel-brown { color: $color-pastel-brown; }
 
 // Classes utilitaires pour les arrière-plans
 .bg-primary { background-color: $color-primary; }
@@ -83,17 +93,18 @@ p, .p1 {
 .bg-accent-light { background-color: $color-accent-light; }
 .bg-accent-dark { background-color: $color-accent-dark; }
 
-// Couleurs tertiaires (cinéma)
+// Arrière-plans secondaires et tertiaires
+.bg-secondary { background-color: $color-secondary; }
+.bg-secondary-dark { background-color: $color-secondary-dark; }
 .bg-tertiary { background-color: $color-tertiary; }
 .bg-tertiary-light { background-color: $color-tertiary-light; }
 .bg-tertiary-dark { background-color: $color-tertiary-dark; }
+.bg-cool { background-color: $color-cool; }
 
 // Arrière-plans de base
 .bg-background { background-color: $color-background; }
 .bg-background-alt { background-color: $color-background-alt; }
 .bg-background-dark { background-color: $color-background-dark; }
-.bg-white { background-color: $color-white; }
-.bg-black { background-color: $color-black; }
 
 // Backgrounds pour les états
 .bg-success { background-color: $color-success; }
@@ -101,25 +112,33 @@ p, .p1 {
 .bg-error { background-color: $color-error; }
 .bg-info { background-color: $color-info; }
 
-// Backgrounds pastel (cinéma)
-.bg-pastel-blue { background-color: $color-pastel-blue; }
-.bg-pastel-red { background-color: $color-pastel-red; }
-.bg-pastel-gold { background-color: $color-pastel-gold; }
-.bg-pastel-purple { background-color: $color-pastel-purple; }
-.bg-pastel-dark { background-color: $color-pastel-dark; }
+// Backgrounds pour les catégories
+.bg-calendar { background-color: $color-calendar; }
+.bg-project { background-color: $color-project; }
+.bg-episode { background-color: $color-episode; }
+.bg-sequence { background-color: $color-sequence; }
+.bg-scene { background-color: $color-scene; }
+.bg-location { background-color: $color-location; }
+.bg-set { background-color: $color-set; }
+.bg-actor { background-color: $color-actor; }
+.bg-character { background-color: $color-character; }
 
-// Classes pour les surfaces
+// Backgrounds pastel (nuances subtiles)
+.bg-pastel-gold { background-color: $color-pastel-gold; }
+.bg-pastel-wine { background-color: $color-pastel-wine; }
+.bg-pastel-brown { background-color: $color-pastel-brown; }
+
+// Classes pour les surfaces (interactions)
 .bg-surface { background-color: $color-surface; }
 .bg-surface-hover { background-color: $color-surface-hover; }
 
 // Classes pour les bordures
 .border-primary { border-color: $color-primary; }
 .border-accent { border-color: $color-accent; }
+.border-secondary { border-color: $color-secondary; }
 .border-tertiary { border-color: $color-tertiary; }
 .border-light { border-color: $color-border; }
 .border-dark { border-color: $color-border-dark; }
-.border-white { border-color: $color-white; }
-.border-black { border-color: $color-black; }
 
 // Classes utilitaires pour les espacements
 .gap-xs { gap: $gap-xs; }
@@ -157,10 +176,9 @@ p, .p1 {
 .shadow-hover { box-shadow: $shadow-hover; }
 .shadow-inset { box-shadow: $shadow-inset; }
 
-// Ombres colorées cinéma
+// Ombres colorées
 .shadow-primary { box-shadow: $shadow-primary; }
 .shadow-accent { box-shadow: $shadow-accent; }
-.shadow-gold { box-shadow: $shadow-gold; }
 
 // Classes pour les transitions
 .transition { transition: $transition; }
@@ -186,24 +204,13 @@ p, .p1 {
   @include spotlight-effect;
 }
 
-// Mixins pastel disponibles via classes
-.pastel-blue { @include pastel-blue; }
-.pastel-red { @include pastel-red; }
-.pastel-gold { @include pastel-gold; }
-.pastel-purple { @include pastel-purple; }
-.pastel-dark { @include pastel-dark; }
-
-// Boutons cinéma
-.btn-cinema-primary {
+// Boutons avec votre palette
+.btn-primary {
   @include btn-cinema-primary;
 }
 
-.btn-cinema-accent {
+.btn-accent {
   @include btn-cinema-accent;
-}
-
-.btn-cinema-gold {
-  @include btn-cinema-gold;
 }
 
 // Flexbox utilities
@@ -214,13 +221,21 @@ p, .p1 {
 .text-truncate { @include text-truncate; }
 .sr-only { @include sr-only; }
 
-// Classes typographiques spéciales Cinzel
-.cinzel-h1 {
-  @include typography-cinzel-h1;
+// Classes typographiques spéciales (Playfair Display pour votre marque)
+.playfair-h1 {
+  @include typography-playfair-h1;
 }
 
-.cinzel-h2 {
-  @include typography-cinzel-h2;
+.playfair-h2 {
+  @include typography-playfair-h2;
+}
+
+.playfair-h3 {
+  @include typography-playfair-h3;
+}
+
+.playfair-h4 {
+  @include typography-playfair-h4;
 }
 
 // Classes utilitaires pour les largeurs de bordure
@@ -246,5 +261,38 @@ p, .p1 {
 @include respond-to($breakpoint-lg) {
   .lg\:flex-center { @include flex-center; }
   .lg\:flex-between { @include flex-between; }
+}
+
+// Classes Playfair Display pour paragraphes et textes longs
+.playfair-p1 { @include typography-playfair-p1; }
+.playfair-p2 { @include typography-playfair-p2; }
+.playfair-p3 { @include typography-playfair-p3; }
+.playfair-p4 { @include typography-playfair-p4; }
+
+// Classes additionnelles pour votre nouvelle palette
+.text-gradient-primary {
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, $color-accent, $color-accent-light);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
+}
+
+.bg-gradient-accent {
+  background: linear-gradient(135deg, $color-accent, $color-accent-light);
+}
+
+.bg-gradient-warm {
+  background: linear-gradient(135deg, $color-primary, $color-accent);
 }
 

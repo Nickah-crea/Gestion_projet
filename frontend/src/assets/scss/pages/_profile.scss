@@ -69,7 +69,7 @@
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -82,7 +82,7 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -90,7 +90,7 @@
     &.active {
       background: $color-primary;
       border-color: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
     }
 
     &:focus-visible {
@@ -110,7 +110,7 @@
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
 
@@ -139,7 +139,7 @@
     align-items: center;
     gap: $gap-xs;
     padding: $gap-xs;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
 
@@ -209,14 +209,14 @@
 }
 
 .profile-section-crea-profile {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   padding: $spacing-lg;
   animation: fadeInUp-crea-profile 0.3s ease-out;
 
   &.dates-section-crea-profile {
-    background: $color-background-alt;
+    background: $color-surface;
     border: 1px solid $color-border;
   }
 }
@@ -265,7 +265,7 @@
     gap: $gap-xs;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -305,10 +305,10 @@
   .save-section-btn-crea-profile {
     background: $color-primary;
     border: 1px solid $color-primary;
-    color: $color-white;
+    color: $color-text-light;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
     }
   }
 
@@ -318,7 +318,7 @@
     color: $color-text-secondary;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -346,7 +346,7 @@
   border-radius: $border-radius-sm;
   overflow: hidden;
   border: 3px solid $color-border;
-  background: $color-background-alt;
+  background: $color-surface;
 
   .profile-photo-crea-profile {
     width: 100%;
@@ -365,7 +365,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(to top, rgba($color-text-primary, 0.8), transparent);
   padding: $spacing-md;
   display: flex;
   justify-content: center;
@@ -381,7 +381,7 @@
   display: flex;
   align-items: center;
   gap: $gap-xs;
-  color: $color-white;
+  color: $color-text-light;
   cursor: pointer;
   padding: $gap-xs $padding-sm;
   border-radius: $border-radius-xs;
@@ -437,10 +437,10 @@
 
   .upload-confirm-btn-crea-profile {
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
     }
   }
 
@@ -450,7 +450,7 @@
     color: $color-text-secondary;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -505,7 +505,7 @@
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
-    background: $color-white;
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
@@ -520,7 +520,7 @@
     }
 
     &:disabled {
-      background: $color-background-alt;
+      background: $color-surface;
       color: $color-text-muted;
       cursor: not-allowed;
     }
@@ -596,7 +596,7 @@
   align-items: center;
   gap: $gap-md;
   padding: $padding-sm;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-xs;
   border: 1px solid $color-border;
 
@@ -628,7 +628,7 @@
   right: $spacing-lg;
   padding: $padding-sm $padding-md;
   border-radius: $border-radius-xs;
-  color: $color-white;
+  color: $color-text-light;
   z-index: $z-index-modal + 1;
   animation: slideInRight 0.3s ease-out;
   max-width: 400px;
@@ -639,8 +639,8 @@
   cursor: pointer;
 
   &.success {
-    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
-    border-left: 4px solid darken($color-success, 20%);
+    background: linear-gradient(135deg, $color-success, $color-primary-dark);
+    border-left: 4px solid $color-primary-dark;
   }
 
   &.error {
@@ -656,7 +656,7 @@
     margin-left: auto;
     background: transparent;
     border: none;
-    color: $color-white;
+    color: $color-text-light;
     cursor: pointer;
     padding: 0;
     display: flex;
@@ -793,6 +793,5 @@
     transition: none;
   }
 }
-
 
 

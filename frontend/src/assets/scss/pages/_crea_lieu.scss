@@ -68,7 +68,7 @@
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -81,7 +81,7 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -89,7 +89,7 @@
     &.active {
       background: $color-primary;
       border-color: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
     }
 
     &:focus-visible {
@@ -124,14 +124,14 @@
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
-    background: $color-white;
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      box-shadow: 0 0 0 2px $color-pastel-gold;
     }
   }
 
@@ -146,7 +146,7 @@
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
 
@@ -208,7 +208,7 @@
 // SYSTÈME D'ONGlets
 // =============================================
 .tabs-container-crea-lieu {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -217,7 +217,7 @@
 
 .tabs-header-crea-lieu {
   display: flex;
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
   position: relative;
 }
@@ -238,329 +238,442 @@
   position: relative;
   z-index: 2;
 
+  &:hover {
+    color: $color-primary;
+    background: $color-surface-hover;
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-crea-lieu {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-crea-lieu {
+  position: relative;
+}
+
+.tab-pane-crea-lieu {
+  padding: $spacing-lg;
+  animation: fadeInUp-crea-lieu 0.3s ease-out;
+}
+
+@keyframes fadeInUp-crea-lieu {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION
+// =============================================
+.form-container-crea-lieu {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tab-pane-crea-lieu .form-header-crea-lieu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+}
+
+.back-btn-crea-lieu {
+  padding: $gap-sm $spacing-md;
+  background: $color-success;
+  border: none;
+  border-radius: $border-radius-xs;
+  @include typography-p4;
+  color: $color-text-light;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  &:hover {
+    background: darken($color-success, 10%);
+    transform: translateY(-1px);
+  }
+}
+
+.lieu-form-crea-lieu {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-crea-lieu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-crea-lieu {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+  }
+}
+
+// =============================================
+// RECHERCHE AVEC SUGGESTIONS
+// =============================================
+.search-container-crea-lieu {
+  position: relative;
+
+  .search-input-crea-lieu {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+  }
+
+  .suggestions-dropdown-crea-lieu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    box-shadow: $shadow-md;
+    z-index: $z-index-dropdown;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .suggestion-item-crea-lieu {
+    padding: $gap-sm $padding-sm;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: $transition-fast;
+    border-bottom: 1px solid $color-border;
+
     &:hover {
-      color: $color-primary;
-      background: rgba($color-primary, 0.05);
+      background: $color-surface-hover;
     }
 
-    &.active {
+    &.clear-filter {
       color: $color-primary;
       font-weight: $font-weight-semibold;
+      border-top: 1px solid $color-border;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .projet-option-info-crea-lieu {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .projet-title-crea-lieu {
+      font-weight: $font-weight-medium;
+    }
+
+    .projet-details-crea-lieu {
+      font-size: $font-size-p5;
+      color: $color-text-muted;
+    }
+  }
+
+  .no-results-crea-lieu {
+    padding: $gap-sm $padding-sm;
+    text-align: center;
+    color: $color-text-muted;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// MESSAGES D'ERREUR
+// =============================================
+.error-message-crea-lieu {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-crea-lieu {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  .submit-btn-crea-lieu {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 160px;
+    background: $color-primary;
+    color: $color-text-light;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-dark;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
 
     &:focus-visible {
       outline: 2px solid $color-primary;
-      outline-offset: -2px;
+      outline-offset: 1px;
     }
   }
 
-  .tab-indicator-crea-lieu {
-    position: absolute;
-    bottom: 0;
-    height: 3px;
-    background: $color-primary;
-    transition: transform $transition;
-    z-index: 1;
-  }
-
-  .tabs-content-crea-lieu {
-    position: relative;
-  }
-
-  .tab-pane-crea-lieu {
-    padding: $spacing-lg;
-    animation: fadeInUp-crea-lieu 0.3s ease-out;
-  }
-
-  @keyframes fadeInUp-crea-lieu {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  // =============================================
-  // FORMULAIRE DE CRÉATION
-  // =============================================
-  .form-container-crea-lieu {
-    background: transparent;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-    margin-bottom: 0;
-  }
-
-  .tab-pane-crea-lieu .form-header-crea-lieu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-md;
-    border-bottom: 1px solid $color-border;
-
-    h3 {
-      @include typography-playfair-h3;
-      color: $color-text-primary;
-      font-size: calc(#{$font-size-h3} - 4px);
-      display: flex;
-      align-items: center;
-      gap: $gap-sm;
-      margin: 0;
-    }
-  }
-
-  .back-btn-crea-lieu {
+  .cancel-btn-crea-lieu {
     padding: $gap-sm $spacing-md;
-    background: $color-success;
+    background: $color-error;
     border: none;
     border-radius: $border-radius-xs;
-    @include typography-p4;
-    color: $color-white;
+    font-size: $font-size-p4;
     font-weight: $font-weight-semibold;
     cursor: pointer;
     transition: $transition-fast;
     display: flex;
     align-items: center;
     gap: $gap-xs;
+    color: $color-text-light;
 
     &:hover {
-      background: darken($color-success, 10%);
-      transform: translateY(-1px);
+      background: $color-secondary-dark;
     }
   }
+}
 
-  .lieu-form-crea-lieu {
+// =============================================
+// LISTE DES LIEUX
+// =============================================
+.lieux-list-crea-lieu {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.list-header-crea-lieu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
     display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  @media (max-width: $breakpoint-lg) {
     flex-direction: column;
-    gap: $spacing-md;
+    align-items: flex-start;
+    gap: $spacing-sm;
   }
+}
 
-  .form-row-crea-lieu {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $spacing-md;
-
-    @media (max-width: $breakpoint-md) {
-      grid-template-columns: 1fr;
-      gap: $spacing-sm;
-    }
-  }
-
-  .form-group-crea-lieu {
+.search-section-crea-lieu {
+  .search-group-crea-lieu {
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
 
     label {
       @include typography-p4;
-      color: $color-text-primary;
-      font-weight: $font-weight-semibold;
-      display: flex;
-      align-items: center;
-      gap: $gap-xs;
-
-      &::after {
-        content: '*';
-        color: $color-error;
-        margin-left: 2px;
-      }
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
     }
   }
 
-  // =============================================
-  // RECHERCHE AVEC SUGGESTIONS
-  // =============================================
-  .search-container-crea-lieu {
+  .search-input-container-crea-lieu {
     position: relative;
+    display: flex;
+    align-items: center;
 
-    .search-input-crea-lieu {
-      width: 100%;
+    .search-input-large-crea-lieu {
+      width: 300px;
       height: 42px;
-      padding: 0 $padding-sm;
+      padding: 0 $padding-md 0 ($padding-md + $padding-xs);
       border: 1px solid $color-border;
-      border-radius: $border-radius-xs;
-      font-size: $font-size-p4;
+      border-radius: $border-radius-pill;
+      background: $color-background-alt;
+      font-size: $font-size-p3;
       color: $color-text-primary;
-      background: $color-white;
       transition: $transition-fast;
-      box-sizing: border-box;
 
       &:focus {
         outline: none;
         border-color: $color-primary;
-        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+        box-shadow: 0 0 0 2px $color-pastel-gold;
+      }
+
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
       }
     }
 
-    .suggestions-dropdown-crea-lieu {
+    .search-icon-crea-lieu {
       position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: $color-white;
-      border: 1px solid $color-border;
-      border-radius: $border-radius-xs;
-      box-shadow: $shadow-md;
-      z-index: $z-index-dropdown;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .suggestion-item-crea-lieu {
-      padding: $gap-sm $padding-sm;
-      font-size: $font-size-p4;
-      color: $color-text-primary;
-      cursor: pointer;
-      transition: $transition-fast;
-      border-bottom: 1px solid $color-border;
-
-      &:hover {
-        background: rgba($color-primary, 0.1);
-      }
-
-      &.clear-filter {
-        color: $color-primary;
-        font-weight: $font-weight-semibold;
-        border-top: 1px solid $color-border;
-      }
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .projet-option-info-crea-lieu {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .projet-title-crea-lieu {
-        font-weight: $font-weight-medium;
-      }
-
-      .projet-details-crea-lieu {
-        font-size: $font-size-p5;
-        color: $color-text-muted;
-      }
-    }
-
-    .no-results-crea-lieu {
-      padding: $gap-sm $padding-sm;
-      text-align: center;
-      color: $color-text-muted;
-      font-style: italic;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: $gap-xs;
+      left: $padding-sm;
+      color: $color-primary;
+      font-size: $font-size-p3;
     }
   }
+}
 
-  // =============================================
-  // MESSAGES D'ERREUR
-  // =============================================
-  .error-message-crea-lieu {
-    padding: $padding-sm;
-    background: rgba($color-error, 0.1);
-    border: 1px solid $color-error;
-    border-radius: $border-radius-xs;
-    color: $color-error;
-    font-size: $font-size-p4;
-    font-weight: $font-weight-medium;
+// =============================================
+// GRILLE DES LIEUX
+// =============================================
+.lieux-container-crea-lieu {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.lieux-grid-crea-lieu {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lieu-card-crea-lieu {
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  box-shadow: $shadow;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-hover;
+    transform: translateY(-2px);
+  }
+}
+
+.lieu-header-crea-lieu {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-sm;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  .lieu-info-crea-lieu {
+    flex: 1;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: $gap-xs;
-  }
 
-  // =============================================
-  // ACTIONS DU FORMULAIRE
-  // =============================================
-  .form-actions-crea-lieu {
-    display: flex;
-    gap: $spacing-sm;
-    justify-content: flex-end;
-    margin-top: $spacing-lg;
-    padding-top: $spacing-sm;
-    border-top: 1px solid $color-border;
-
-    .submit-btn-crea-lieu {
-      padding: $gap-sm $spacing-md;
-      border: none;
-      border-radius: $border-radius-xs;
-      font-size: $font-size-p4;
-      font-weight: $font-weight-semibold;
-      cursor: pointer;
-      transition: $transition-fast;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: $gap-xs;
-      min-width: 160px;
-      background: $color-primary;
-      color: $color-white;
-
-      &:hover:not(:disabled) {
-        background: darken($color-primary, 10%);
-        transform: translateY(-1px);
-        box-shadow: $shadow-hover;
-      }
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      &:focus-visible {
-        outline: 2px solid $color-primary;
-        outline-offset: 1px;
-      }
-    }
-
-    .cancel-btn-crea-lieu {
-      padding: $gap-sm $spacing-md;
-      background: $color-error;
-      border: none;
-      border-radius: $border-radius-xs;
-      font-size: $font-size-p4;
-      font-weight: $font-weight-semibold;
-      cursor: pointer;
-      transition: $transition-fast;
-      display: flex;
-      align-items: center;
-      gap: $gap-xs;
-      color: $color-white;
-
-      &:hover {
-        background: darken($color-error, 10%);
-      }
-    }
-  }
-
-  // =============================================
-  // LISTE DES LIEUX
-  // =============================================
-  .lieux-list-crea-lieu {
-    background: transparent;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-  }
-
-  .list-header-crea-lieu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-sm;
-    border-bottom: 1px solid $color-border;
-
-    h3 {
-      @include typography-playfair-h4;
+    .lieu-title-crea-lieu {
+      @include typography-playfair-p4;
       color: $color-text-primary;
       margin: 0;
       display: flex;
@@ -568,540 +681,427 @@
       gap: $gap-xs;
     }
 
-    @media (max-width: $breakpoint-lg) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: $spacing-sm;
-    }
-  }
-
-  .search-section-crea-lieu {
-    .search-group-crea-lieu {
-      display: flex;
-      flex-direction: column;
-      gap: $gap-xs;
-
-      label {
-        @include typography-p4;
-        color: $color-text-secondary;
-        font-weight: $font-weight-medium;
-      }
-    }
-
-    .search-input-container-crea-lieu {
-      position: relative;
-      display: flex;
-      align-items: center;
-
-      .search-input-large-crea-lieu {
-        width: 300px;
-        height: 42px;
-        padding: 0 $padding-md 0 ($padding-md + $padding-xs);
-        border: 1px solid $color-border;
-        border-radius: $border-radius-pill;
-        background: $color-white;
-        font-size: $font-size-p3;
-        color: $color-text-primary;
-        transition: $transition-fast;
-
-        &:focus {
-          outline: none;
-          border-color: $color-primary;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
-        }
-
-        @media (max-width: $breakpoint-sm) {
-          width: 100%;
-        }
-      }
-
-      .search-icon-crea-lieu {
-        position: absolute;
-        left: $padding-sm;
-        color: $color-primary;
-        font-size: $font-size-p3;
-      }
-    }
-  }
-
-  // =============================================
-  // GRILLE DES LIEUX
-  // =============================================
-  .lieux-container-crea-lieu {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-lg;
-  }
-
-  .lieux-grid-crea-lieu {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: $spacing-md;
-
-    @media (max-width: $breakpoint-md) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .lieu-card-crea-lieu {
-    background: $color-white;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    padding: $spacing-md;
-    transition: $transition-fast;
-    box-shadow: $shadow;
-
-    &:hover {
-      border-color: $color-primary;
-      box-shadow: $shadow-hover;
-      transform: translateY(-2px);
-    }
-  }
-
-  .lieu-header-crea-lieu {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: $spacing-sm;
-    padding-bottom: $spacing-sm;
-    border-bottom: 1px solid $color-border;
-
-    .lieu-info-crea-lieu {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: $gap-xs;
-
-      .lieu-title-crea-lieu {
-        @include typography-playfair-p4;
-        color: $color-text-primary;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: $gap-xs;
-      }
-
-      .type-badge-crea-lieu {
-        @include typography-p4;
-        padding: 2px 8px;
-        border-radius: $border-radius-pill;
-        font-weight: $font-weight-medium;
-        width: fit-content;
-
-        &.type-interieur {
-          background: rgba($color-primary, 0.1);
-          color: $color-primary;
-        }
-        &.type-exterieur {
-          background: rgba($color-success, 0.1);
-          color: $color-success;
-        }
-        &.type-mixte {
-          background: rgba($color-warning, 0.1);
-          color: $color-warning;
-        }
-        &.type-studio {
-          background: rgba($color-info, 0.1);
-          color: $color-info;
-        }
-        &.type-naturel {
-          background: rgba($color-tertiary, 0.1);
-          color: $color-tertiary;
-        }
-        &.type-urbain {
-          background: rgba($color-text-primary, 0.1);
-          color: $color-text-primary;
-        }
-      }
-    }
-  }
-
-  .lieu-actions-crea-lieu {
-    display: flex;
-    gap: $gap-xs;
-
-    .btn-scenes-crea-lieu,
-    .btn-edit-crea-lieu,
-    .btn-delete-crea-lieu {
-      width: 32px;
-      height: 32px;
-      border: none;
-      border-radius: $border-radius-xs;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: $transition-fast;
-      font-size: $font-size-p4;
-    }
-
-    .btn-scenes-crea-lieu {
-      background: rgba($color-info, 0.1);
-      color: $color-info;
-
-      &:hover {
-        background: $color-info;
-        color: $color-white;
-      }
-    }
-
-    .btn-edit-crea-lieu {
-      background: rgba($color-warning, 0.1);
-      color: $color-warning;
-
-      &:hover {
-        background: $color-warning;
-        color: $color-white;
-      }
-    }
-
-    .btn-delete-crea-lieu {
-      background: rgba($color-error, 0.1);
-      color: $color-error;
-
-      &:hover {
-        background: $color-error;
-        color: $color-white;
-      }
-    }
-  }
-
-  .lieu-content-crea-lieu {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-sm;
-  }
-
-  .lieu-details-crea-lieu {
-    display: flex;
-    flex-direction: column;
-    gap: $gap-sm;
-  }
-
-  .detail-item-crea-lieu {
-    @include typography-p4;
-    color: $color-text-muted;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-
-    i {
-      color: $color-primary;
-      width: 14px;
-      text-align: center;
-    }
-  }
-
-  .scenes-section-crea-lieu {
-    margin-top: $spacing-sm;
-    padding-top: $spacing-sm;
-    border-top: 1px solid $color-border;
-  }
-
-  .scenes-title-crea-lieu {
-    @include typography-p4;
-    color: $color-text-primary;
-    margin: 0 0 $gap-sm 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-  }
-
-  .scenes-list-crea-lieu {
-    display: flex;
-    flex-direction: column;
-    gap: $gap-xs;
-  }
-
-  .scene-item-crea-lieu {
-    @include typography-p4;
-    color: $color-text-secondary;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    padding: $gap-xs;
-    background: $color-background-alt;
-    border-radius: $border-radius-xs;
-
-    .scene-name-crea-lieu {
+    .type-badge-crea-lieu {
+      @include typography-p4;
+      padding: 2px 8px;
+      border-radius: $border-radius-pill;
       font-weight: $font-weight-medium;
-    }
+      width: fit-content;
 
-    .scene-usage-crea-lieu {
-      font-size: $font-size-p5;
-      color: $color-text-muted;
+      &.type-interieur {
+        background: rgba($color-primary, 0.1);
+        color: $color-primary;
+      }
+      &.type-exterieur {
+        background: rgba($color-success, 0.1);
+        color: $color-success;
+      }
+      &.type-mixte {
+        background: rgba($color-warning, 0.1);
+        color: $color-warning;
+      }
+      &.type-studio {
+        background: rgba($color-info, 0.1);
+        color: $color-info;
+      }
+      &.type-naturel {
+        background: rgba($color-tertiary, 0.1);
+        color: $color-tertiary;
+      }
+      &.type-urbain {
+        background: rgba($color-text-primary, 0.1);
+        color: $color-text-primary;
+      }
     }
   }
+}
 
-  // =============================================
-  // ÉTATS SPÉCIAUX
-  // =============================================
-  .loading-state-crea-lieu,
-  .empty-state-crea-lieu {
-    text-align: center;
-    padding: $spacing-xl;
-    background: $color-white;
+.lieu-actions-crea-lieu {
+  display: flex;
+  gap: $gap-xs;
+
+  .btn-scenes-crea-lieu,
+  .btn-edit-crea-lieu,
+  .btn-delete-crea-lieu {
+    width: 32px;
+    height: 32px;
+    border: none;
     border-radius: $border-radius-xs;
-    box-shadow: $shadow;
-    margin: $spacing-md 0;
-
-    i {
-      font-size: 48px;
-      color: $color-primary;
-      margin-bottom: $gap-sm;
-    }
-
-    h3 {
-      @include typography-playfair-p4;
-      color: $color-text-primary;
-      margin-bottom: $gap-xs;
-    }
-
-    p {
-      @include typography-p3;
-      color: $color-text-muted;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-  }
-
-  .loading-state-crea-lieu i {
-    animation: spin-crea-lieu 1s linear infinite;
-  }
-
-  @keyframes spin-crea-lieu {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  // =============================================
-  // MODALE SCÈNES
-  // =============================================
-  .modal-overlay-crea-lieu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: $z-index-modal;
-    padding: $spacing-md;
-  }
-
-  .modal-content-crea-lieu {
-    background: $color-white;
-    border-radius: $border-radius-sm;
-    box-shadow: $shadow-lg;
-    max-width: 600px;
-    width: 100%;
-    max-height: 80vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .modal-header-crea-lieu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: $spacing-md;
-    background: $color-background-alt;
-    border-bottom: 1px solid $color-border;
-
-    h3 {
-      @include typography-playfair-h4;
-      color: $color-text-primary;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: $gap-xs;
-    }
-  }
-
-  .modal-close-btn-crea-lieu {
-    background: none;
-    border: none;
-    font-size: $font-size-p3;
-    color: $color-text-muted;
-    cursor: pointer;
-    padding: $gap-xs;
-    border-radius: $border-radius-xs;
     transition: $transition-fast;
+    font-size: $font-size-p4;
+  }
+
+  .btn-scenes-crea-lieu {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
 
     &:hover {
-      background: rgba($color-error, 0.1);
-      color: $color-error;
+      background: $color-info;
+      color: $color-text-light;
     }
   }
 
-  .modal-body-crea-lieu {
-    padding: $spacing-md;
-    flex: 1;
-    overflow-y: auto;
+  .btn-edit-crea-lieu {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+
+    &:hover {
+      background: $color-warning;
+      color: $color-text-light;
+    }
   }
 
-  .no-scenes-crea-lieu {
+  .btn-delete-crea-lieu {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    &:hover {
+      background: $color-error;
+      color: $color-text-light;
+    }
+  }
+}
+
+.lieu-content-crea-lieu {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.lieu-details-crea-lieu {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.detail-item-crea-lieu {
+  @include typography-p4;
+  color: $color-text-muted;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  i {
+    color: $color-primary;
+    width: 14px;
     text-align: center;
-    padding: $spacing-xl;
+  }
+}
+
+.scenes-section-crea-lieu {
+  margin-top: $spacing-sm;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+}
+
+.scenes-title-crea-lieu {
+  @include typography-p4;
+  color: $color-text-primary;
+  margin: 0 0 $gap-sm 0;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.scenes-list-crea-lieu {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.scene-item-crea-lieu {
+  @include typography-p4;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  padding: $gap-xs;
+  background: $color-background;
+  border-radius: $border-radius-xs;
+
+  .scene-name-crea-lieu {
+    font-weight: $font-weight-medium;
+  }
+
+  .scene-usage-crea-lieu {
+    font-size: $font-size-p5;
     color: $color-text-muted;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $gap-sm;
+  }
+}
 
-    i {
-      font-size: 48px;
-    }
+// =============================================
+// ÉTATS SPÉCIAUX
+// =============================================
+.loading-state-crea-lieu,
+.empty-state-crea-lieu {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow;
+  margin: $spacing-md 0;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
   }
 
-  .scenes-details-crea-lieu {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
-  }
-
-  .scene-detail-crea-lieu {
-    background: $color-background-alt;
-    border-radius: $border-radius-xs;
-    padding: $spacing-md;
-    border: 1px solid $color-border;
-  }
-
-  .scene-title-crea-lieu {
+  h3 {
     @include typography-playfair-p4;
     color: $color-text-primary;
-    margin: 0 0 $spacing-sm 0;
+    margin-bottom: $gap-xs;
   }
 
-  .scene-info-crea-lieu {
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-crea-lieu i {
+  animation: spin-crea-lieu 1s linear infinite;
+}
+
+@keyframes spin-crea-lieu {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// MODALE SCÈNES
+// =============================================
+.modal-overlay-crea-lieu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-text-primary, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+}
+
+.modal-content-crea-lieu {
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header-crea-lieu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-background;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
     display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.modal-close-btn-crea-lieu {
+  background: none;
+  border: none;
+  font-size: $font-size-p3;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+}
+
+.modal-body-crea-lieu {
+  padding: $spacing-md;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.no-scenes-crea-lieu {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $color-text-muted;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $gap-sm;
+
+  i {
+    font-size: 48px;
+  }
+}
+
+.scenes-details-crea-lieu {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.scene-detail-crea-lieu {
+  background: $color-background;
+  border-radius: $border-radius-xs;
+  padding: $spacing-md;
+  border: 1px solid $color-border;
+}
+
+.scene-title-crea-lieu {
+  @include typography-playfair-p4;
+  color: $color-text-primary;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.scene-info-crea-lieu {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.info-item-crea-lieu {
+  @include typography-p4;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  i {
+    color: $color-primary;
+    width: 16px;
+    text-align: center;
+  }
+}
+
+.modal-footer-crea-lieu {
+  padding: $spacing-md;
+  background: $color-background;
+  border-top: 1px solid $color-border;
+  text-align: right;
+}
+
+.btn-close-modal-crea-lieu {
+  padding: $gap-sm $spacing-md;
+  background: $color-error;
+  border: none;
+  border-radius: $border-radius-xs;
+  @include typography-p4;
+  color: $color-text-light;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  &:hover {
+    background: $color-secondary-dark;
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-crea-lieu {
+    width: 250px;
+  }
+  
+  .creation-body-crea-lieu {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-crea-lieu {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .creation-body-crea-lieu {
+    margin-left: 0;
+  }
+  
+  .tabs-header-crea-lieu {
     flex-direction: column;
-    gap: $gap-sm;
   }
 
-  .info-item-crea-lieu {
-    @include typography-p4;
-    color: $color-text-secondary;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-
-    i {
-      color: $color-primary;
-      width: 16px;
-      text-align: center;
-    }
+  .tab-btn-crea-lieu {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
   }
 
-  .modal-footer-crea-lieu {
+  .tab-indicator-crea-lieu {
+    display: none;
+  }
+
+  .tab-pane-crea-lieu {
     padding: $spacing-md;
-    background: $color-background-alt;
-    border-top: 1px solid $color-border;
-    text-align: right;
   }
+}
 
-  .btn-close-modal-crea-lieu {
-    padding: $gap-sm $spacing-md;
-    background: $color-error;
-    border: none;
-    border-radius: $border-radius-xs;
-    @include typography-p4;
-    color: $color-white;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-crea-lieu {
+    padding: $spacing-sm;
+  }
+  
+  .lieux-grid-crea-lieu {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions-crea-lieu {
+    flex-direction: column;
+  }
+}
 
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-crea-lieu,
+  .search-input-crea-lieu,
+  .submit-btn-crea-lieu,
+  .tab-btn-crea-lieu,
+  .tab-indicator-crea-lieu,
+  .lieu-card-crea-lieu,
+  .btn-scenes-crea-lieu,
+  .btn-edit-crea-lieu,
+  .btn-delete-crea-lieu {
+    transition: none;
+    
     &:hover {
-      background: darken($color-error, 10%);
-    }
-  }
-
-  // =============================================
-  // RESPONSIVE
-  // =============================================
-  @media (max-width: $breakpoint-xl) {
-    .creation-sidebar-crea-lieu {
-      width: 250px;
-    }
-    
-    .creation-body-crea-lieu {
-      margin-left: 250px;
-    }
-  }
-
-  @media (max-width: $breakpoint-lg) {
-    .creation-sidebar-crea-lieu {
-      position: relative;
-      width: 100%;
-      height: auto;
-    }
-    
-    .creation-body-crea-lieu {
-      margin-left: 0;
-    }
-    
-    .tabs-header-crea-lieu {
-      flex-direction: column;
-    }
-
-    .tab-btn-crea-lieu {
-      padding: $spacing-sm $spacing-md;
-      justify-content: flex-start;
-    }
-
-    .tab-indicator-crea-lieu {
-      display: none;
-    }
-
-    .tab-pane-crea-lieu {
-      padding: $spacing-md;
-    }
-  }
-
-  @media (max-width: $breakpoint-md) {
-    .creation-main-content-crea-lieu {
-      padding: $spacing-sm;
-    }
-    
-    .lieux-grid-crea-lieu {
-      grid-template-columns: 1fr;
-    }
-    
-    .form-actions-crea-lieu {
-      flex-direction: column;
-    }
-  }
-
-  // Amélioration de l'accessibilité
-  @media (prefers-reduced-motion: reduce) {
-    .sidebar-btn-crea-lieu,
-    .search-input-crea-lieu,
-    .submit-btn-crea-lieu,
-    .tab-btn-crea-lieu,
-    .tab-indicator-crea-lieu,
-    .lieu-card-crea-lieu,
-    .btn-scenes-crea-lieu,
-    .btn-edit-crea-lieu,
-    .btn-delete-crea-lieu {
-      transition: none;
-      
-      &:hover {
-        transform: none;
-      }
-    }
-    
-    .loading-state-crea-lieu i {
-      animation: none;
-    }
-    
-    .tab-pane-crea-lieu {
-      animation: none;
+      transform: none;
     }
   }
   
+  .loading-state-crea-lieu i {
+    animation: none;
+  }
+  
+  .tab-pane-crea-lieu {
+    animation: none;
+  }
+}
+

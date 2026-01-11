@@ -4,7 +4,7 @@
 .app-wrapper-global-recherche {
   display: flex;
   min-height: 100vh;
-  background: $color-background-alt;
+  background: $color-background;
 }
 
 // =============================================
@@ -74,7 +74,7 @@
       width: 100%;
       height: 34px;
       padding: 0 $padding-xs;
-      background: $color-white;
+      background: $color-background-alt;
       border: 1px solid $color-border;
       border-radius: $border-radius-xs;
       font-size: $font-size-p4;
@@ -123,7 +123,7 @@
       right: 0; // CORRECTION: au lieu de auto pour éviter le débordement
       width: 100%; // CORRECTION: s'assurer qu'il ne dépasse pas
       margin-top: $gap-xs;
-      background: $color-white;
+      background: $color-background-alt;
       border: 1px solid $color-border;
       border-radius: $border-radius-xs;
       box-shadow: $shadow-md;
@@ -154,7 +154,7 @@
           box-sizing: border-box;
 
           &:hover {
-            background: rgba($color-primary, 0.1);
+            background: $color-surface-hover;
           }
 
           // Style des checkboxes
@@ -182,7 +182,7 @@
             height: 14px;
             border: 1.5px solid $color-border;
             border-radius: 2px;
-            background: $color-white;
+            background: $color-background-alt;
             transition: all $transition-fast;
             z-index: 1;
           }
@@ -200,7 +200,7 @@
             left: 10px;
             top: 50%;
             transform: translateY(-50%);
-            color: $color-white;
+            color: $color-text-light;
             font-size: 9px;
             font-weight: bold;
             z-index: 1;
@@ -234,7 +234,7 @@
           border: 1px solid $color-border;
           border-radius: $border-radius-xs;
           font-size: $font-size-p4;
-          background: $color-white;
+          background: $color-background-alt;
           cursor: pointer;
           box-sizing: border-box;
           
@@ -276,7 +276,7 @@
     width: 100%; // CORRECTION: s'assurer qu'il ne dépasse pas
     height: 34px;
     padding: 0 $padding-xs;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -334,7 +334,7 @@
     box-sizing: border-box;
     
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
     }
   }
@@ -371,10 +371,10 @@
 
     .search-btn-sidebar-recherche {
       background: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
 
       &:hover:not(:disabled) {
-        background: darken($color-primary, 10%);
+        background: $color-primary-dark;
         transform: translateY(-1px);
       }
 
@@ -391,7 +391,7 @@
       color: $color-text-secondary;
 
       &:hover {
-        background: rgba($color-primary, 0.1);
+        background: $color-surface-hover;
         border-color: $color-primary;
       }
     }
@@ -434,7 +434,6 @@
   }
 }
 
-
 // Barre de recherche principale - Taille réduite
 .search-bar-main-recherche {
   max-width: 550px; // Réduit
@@ -451,7 +450,7 @@
       padding: 0 $padding-md 0 ($padding-md + $padding-xs); // Réduit
       border: 1px solid $color-border;
       border-radius: $border-radius-pill;
-      background: $color-white;
+      background: $color-background-alt;
       font-size: $font-size-p3; // Plus petit
       color: $color-text-primary;
       transition: $transition-fast;
@@ -548,9 +547,9 @@
     align-items: center;
     margin-bottom: $spacing-sm; // Réduit
     padding: $padding-xs; // Réduit
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs; // Plus petit
-    box-shadow: $shadow;
+    box-shadow: $shadow-primary;
 
     h2 {
       @include typography-playfair-p4; // H5 au lieu de H4
@@ -604,7 +603,7 @@
       gap: $gap-xs; // Réduit
 
       &:hover {
-        background: rgba($color-primary, 0.1);
+        background: $color-surface-hover;
         border-color: $color-primary;
       }
     }
@@ -625,8 +624,8 @@
     .group-header-recherche {
       padding: $padding-xs;
       border-radius: $border-radius-xs;
-      background: $color-white;
-      box-shadow: $shadow;
+      background: $color-background-alt;
+      box-shadow: $shadow-primary;
       display: flex;
       align-items: center;
       gap: $gap-sm; // Réduit
@@ -682,7 +681,7 @@
 
   // Style pour les résultats sans regroupement - Tailles réduites
   .result-item-recherche {
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     box-shadow: $shadow-md;
     padding: $padding-sm; // Réduit
@@ -774,11 +773,26 @@
         font-weight: $font-weight-medium;
         align-self: flex-start;
 
-        &.status-planifie { background: rgba($color-warning, 0.2); color: darken($color-warning, 20%); }
-        &.status-confirme { background: rgba($color-info, 0.2); color: darken($color-info, 20%); }
-        &.status-en_cours { background: rgba($color-primary, 0.2); color: $color-primary-dark; }
-        &.status-termine { background: rgba($color-success, 0.2); color: darken($color-success, 20%); }
-        &.status-reporte { background: rgba($color-error, 0.2); color: $color-error; }
+        &.status-planifie { 
+          background: rgba($color-warning, 0.2); 
+          color: darken($color-warning, 20%); 
+        }
+        &.status-confirme { 
+          background: rgba($color-info, 0.2); 
+          color: darken($color-info, 20%); 
+        }
+        &.status-en_cours { 
+          background: rgba($color-primary, 0.2); 
+          color: $color-primary-dark; 
+        }
+        &.status-termine { 
+          background: rgba($color-success, 0.2); 
+          color: darken($color-success, 20%); 
+        }
+        &.status-reporte { 
+          background: rgba($color-error, 0.2); 
+          color: $color-error; 
+        }
       }
     }
 
@@ -951,9 +965,9 @@
 .empty-state-recherche, .loading-state-recherche {
   text-align: center;
   padding: $spacing-md; // Réduit
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-xs;
-  box-shadow: $shadow;
+  box-shadow: $shadow-primary;
   margin: $spacing-md 0; // Réduit
 
   .empty-icon-recherche, .spinner-recherche {
@@ -995,7 +1009,7 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      background: linear-gradient(90deg, transparent, rgba($color-background-alt, 0.4), transparent);
       animation: loading 1.5s infinite;
     }
   }
@@ -1078,3 +1092,4 @@
     animation: none;
   }
 }
+

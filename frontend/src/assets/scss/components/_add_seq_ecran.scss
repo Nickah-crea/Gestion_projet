@@ -1,3 +1,7 @@
+// =============================================
+// _add_seq_ecran.scss - MODIFIÉ AVEC NOUVELLE PALETTE
+// =============================================
+
 // add_seq_ecran.scss
 @import '../base/variables';
 
@@ -7,7 +11,7 @@
   max-width: 900px;
   margin: 0 auto;
   min-height: 100vh;
-  background: #f9fafb;
+  background: $color-background; // Changé: champagne beige
   animation: fadeIn 0.5s ease-in-out;
 }
 
@@ -15,7 +19,7 @@
 // CONTENU PRINCIPAL
 // =============================================
 .main-content {
-  background: $color-white;
+  background: $color-background-alt; // Changé: blanc propre
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   padding: $spacing-xl;
@@ -31,10 +35,10 @@
   align-items: center;
   margin-bottom: $spacing-lg;
   padding-bottom: $spacing-md;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid $color-border; // Changé: bordure dorée subtile
 
   h2 {
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     margin: 0;
     font-size: 1.5rem;
     font-weight: $font-weight-semibold;
@@ -43,10 +47,10 @@
   .back-btn {
     padding: $gap-sm $padding-sm;
     background: transparent;
-    border: 1px solid $color-border;
+    border: 1px solid $color-border; // Changé: bordure dorée
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Changé: brun
     cursor: pointer;
     transition: $transition-fast;
     display: flex;
@@ -54,13 +58,13 @@
     gap: $gap-xs;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
-      color: $color-primary;
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary; // Changé: doré
+      color: $color-primary; // Changé: doré
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary;
+      outline: 2px solid $color-primary; // Changé: doré
       outline-offset: 1px;
     }
   }
@@ -104,7 +108,7 @@
   gap: $gap-sm;
 
   label {
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     font-weight: $font-weight-semibold;
     font-size: $font-size-p4;
     margin-bottom: $gap-xs;
@@ -115,29 +119,29 @@
   select {
     width: 100%;
     padding: $gap-md $padding-sm;
-    border: 1px solid $color-border;
+    border: 1px solid $color-border; // Changé: bordure dorée
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-primary;
-    background: $color-white;
+    color: $color-text-primary; // Changé: brun foncé
+    background: $color-background-alt; // Changé: blanc
     transition: $transition-fast;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
-      border-color: $color-primary;
-      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      border-color: $color-primary; // Changé: doré
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1); // Changé: doré subtil
     }
 
     &:hover {
-      border-color: darken($color-border, 15%);
+      border-color: rgba($color-primary, 0.5); // Changé: doré plus visible
     }
 
     &.error-input {
-      border-color: $color-error;
+      border-color: $color-error; // Changé: rouge bordeaux
       
       &:focus {
-        box-shadow: 0 0 0 3px rgba($color-error, 0.1);
+        box-shadow: 0 0 0 3px rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
       }
     }
   }
@@ -166,10 +170,10 @@
   }
 
   input[disabled] {
-    background: #f3f4f6;
-    color: $color-text-secondary;
+    background: #f3f4f6; // Gardé gris neutre
+    color: $color-text-secondary; // Changé: brun
     cursor: not-allowed;
-    border-color: $color-border;
+    border-color: $color-border; // Changé: bordure dorée
   }
 }
 
@@ -186,7 +190,7 @@
 .suggestion-text {
   margin-top: $gap-xs;
   font-size: $font-size-p5;
-  color: $color-primary;
+  color: $color-primary; // Changé: doré
   display: flex;
   align-items: center;
   gap: $gap-md;
@@ -194,8 +198,8 @@
 
   .suggestion-btn {
     background: transparent;
-    color: $color-primary;
-    border: 1px solid $color-primary;
+    color: $color-primary; // Changé: doré
+    border: 1px solid $color-primary; // Changé: doré
     padding: $gap-xs $padding-xs;
     border-radius: $border-radius-xs;
     font-size: $font-size-p5;
@@ -203,11 +207,11 @@
     transition: $transition-fast;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary;
+      outline: 2px solid $color-primary; // Changé: doré
       outline-offset: 1px;
     }
   }
@@ -218,7 +222,7 @@
 // =============================================
 .error-text {
   font-size: $font-size-p5;
-  color: $color-error;
+  color: $color-error; // Changé: rouge bordeaux
   display: flex;
   align-items: center;
   gap: $gap-xs;
@@ -233,10 +237,10 @@
 
 .error-message {
   padding: $padding-sm;
-  background: rgba($color-error, 0.1);
-  border: 1px solid $color-error;
+  background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
+  border: 1px solid $color-error; // Changé: rouge bordeaux
   border-radius: $border-radius-xs;
-  color: $color-error;
+  color: $color-error; // Changé: rouge bordeaux
   font-size: $font-size-p4;
   font-weight: $font-weight-medium;
   display: flex;
@@ -260,7 +264,7 @@
   justify-content: flex-end;
   margin-top: $spacing-xl;
   padding-top: $spacing-md;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid $color-border; // Changé: bordure dorée
 
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
@@ -288,7 +292,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary;
+      outline: 2px solid $color-primary; // Changé: doré
       outline-offset: 2px;
     }
 
@@ -301,20 +305,19 @@
 
   .cancel-btn {
     background: transparent;
-    border: 1px solid $color-border;
-    color: $color-text-secondary;
+    border: 1px solid $color-border; // Changé: bordure dorée
+    color: $color-text-secondary; // Changé: brun
 
     &:hover:not(:disabled) {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
-      color: $color-primary;
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary; // Changé: doré
+      color: $color-primary; // Changé: doré
     }
   }
 
   .submit-btn {
-    background: $color-primary;
-    color: $color-white;
-    position: relative;
+    background: $color-primary; // Changé: doré
+    color: $color-text-light; // Changé: blanc
 
     &:hover:not(:disabled) {
       background: darken($color-primary, 10%);
@@ -335,7 +338,7 @@
   width: 16px;
   height: 16px;
   border: 2px solid transparent;
-  border-top: 2px solid $color-white;
+  border-top: 2px solid $color-text-light; // Changé: blanc
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: $gap-sm;
@@ -488,7 +491,8 @@
 
 // Amélioration de la visibilité du focus
 :focus-visible {
-  outline: 2px solid $color-primary;
+  outline: 2px solid $color-primary; // Changé: doré
   outline-offset: 2px;
 }
+
 

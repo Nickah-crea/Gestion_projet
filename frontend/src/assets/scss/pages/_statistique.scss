@@ -78,7 +78,7 @@
         width: 100%;
         height: 34px;
         padding: 0 $padding-xs;
-        background: $color-white;
+        background: $color-background-alt;
         border: 1px solid $color-border;
         border-radius: $border-radius-xs;
         font-size: $font-size-p4;
@@ -123,7 +123,7 @@
     }
 
     .kpi-sidebar-card-statistiques {
-      background: $color-white;
+      background: $color-background-alt;
       border-radius: $border-radius-xs;
       padding: $padding-sm;
       box-shadow: $shadow;
@@ -146,7 +146,7 @@
         height: 40px;
         border-radius: $border-radius-xs;
         font-size: $font-size-p1;
-        color: $color-white;
+        color: $color-text-light;
         flex-shrink: 0;
 
         i {
@@ -177,23 +177,23 @@
       }
 
       &.total-episodes-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, $color-accent 0%, $color-accent-light 100%);
+        background: linear-gradient(135deg, $color-secondary 0%, $color-secondary-dark 100%);
       }
 
       &.total-sequences-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, #6B8A6E 0%, #8BAE8E 100%);
+        background: linear-gradient(135deg, $color-tertiary 0%, $color-tertiary-dark 100%);
       }
 
       &.total-scenes-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, #E5C687 0%, #F2D9A0 100%);
+        background: linear-gradient(135deg, $color-accent 0%, $color-accent-dark 100%);
       }
 
       &.total-dialogues-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, #983750 0%, #B54A6B 100%);
+        background: linear-gradient(135deg, $color-secondary 0%, $color-secondary-dark 100%);
       }
 
       &.team-members-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, #560B18 0%, #75162D 100%);
+        background: linear-gradient(135deg, $color-primary-dark 0%, darken($color-primary-dark, 10%) 100%);
       }
     }
   }
@@ -248,7 +248,7 @@
     text-align: center;
     margin-bottom: $spacing-xl;
     padding: $spacing-lg;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-lg;
     box-shadow: $shadow-md;
     border: 1px solid $color-border;
@@ -297,7 +297,7 @@
 // COMPOSANTS COMMUNS
 // =============================================
 .chart-container-statistiques {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-md;
   border: 1px solid $color-border;
@@ -339,7 +339,7 @@
   .chart-header-statistiques {
     padding: $spacing-lg;
     border-bottom: 1px solid $color-border;
-    background: rgba($color-primary, 0.02);
+    background: $color-surface;
 
     h3 {
       @include typography-playfair-h3;
@@ -373,13 +373,13 @@
           border-radius: 50%;
           display: inline-block;
 
-          &.completed-statistiques { background: $color-success; }
-          &.in-progress-statistiques { background: $color-primary; }
-          &.planned-statistiques { background: $color-error; }
+          &.completed-statistiques { background: $color-primary; }
+          &.in-progress-statistiques { background: $color-accent; }
+          &.planned-statistiques { background: $color-warning; }
           &.to-do-statistiques { background: $color-border; }
-          &.episodes-statistiques { background: $color-accent; }
+          &.episodes-statistiques { background: $color-secondary; }
           &.sequences-statistiques { background: $color-primary; }
-          &.scenes-statistiques { background: $color-success; }
+          &.scenes-statistiques { background: $color-accent; }
         }
       }
     }
@@ -394,7 +394,7 @@
 // TOTAUX DU PROJET
 // =============================================
 .totals-section-statistiques {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   padding: $spacing-lg;
   box-shadow: $shadow-md;
@@ -423,13 +423,13 @@
       @include flex-center;
       flex-direction: column;
       padding: $spacing-lg;
-      background: rgba($color-primary, 0.05);
+      background: $color-surface;
       border-radius: $border-radius;
-      border: 1px solid rgba($color-primary, 0.2);
+      border: 1px solid $color-border;
       transition: $transition-fast;
 
       &:hover {
-        background: rgba($color-primary, 0.1);
+        background: $color-surface-hover;
         transform: translateY(-1px);
       }
 
@@ -515,7 +515,7 @@
     justify-content: space-between;
     align-items: center;
     padding: $spacing-sm;
-    background: rgba($color-primary, 0.03);
+    background: $color-surface;
     border-radius: $border-radius-xs;
     border-left: 3px solid $color-primary;
 
@@ -571,12 +571,12 @@
         transform: rotate(calc(var(--percentage) * 3.6deg));
         
         &.completed-statistiques {
-          background: $color-success;
+          background: $color-primary;
           z-index: 4;
         }
         
         &.in-progress-statistiques {
-          background: $color-primary;
+          background: $color-accent;
           z-index: 3;
         }
         
@@ -598,7 +598,7 @@
         transform: translate(-50%, -50%);
         width: 70px;
         height: 70px;
-        background: $color-white;
+        background: $color-background-alt;
         border-radius: 50%;
         @include flex-center;
         flex-direction: column;
@@ -665,9 +665,9 @@
           min-height: 5px;
 
           &.episodes-statistiques {
-            background: $color-accent;
+            background: $color-secondary;
             &:hover { 
-              background: darken($color-accent, 10%); 
+              background: $color-secondary-dark; 
               transform: scaleY(1.05);
             }
           }
@@ -675,15 +675,15 @@
           &.sequences-statistiques {
             background: $color-primary;
             &:hover { 
-              background: darken($color-primary, 10%); 
+              background: $color-primary-dark; 
               transform: scaleY(1.05);
             }
           }
           
           &.scenes-statistiques {
-            background: $color-success;
+            background: $color-accent;
             &:hover { 
-              background: darken($color-success, 10%); 
+              background: $color-accent-dark; 
               transform: scaleY(1.05);
             }
           }
@@ -712,9 +712,9 @@
         border-radius: 50%;
         display: inline-block;
 
-        &.episodes-statistiques { background: $color-accent; }
+        &.episodes-statistiques { background: $color-secondary; }
         &.sequences-statistiques { background: $color-primary; }
-        &.scenes-statistiques { background: $color-success; }
+        &.scenes-statistiques { background: $color-accent; }
       }
     }
   }
@@ -733,13 +733,13 @@
     align-items: center;
     gap: $spacing-md;
     padding: $spacing-md;
-    background: rgba($color-primary, 0.03);
+    background: $color-surface;
     border-radius: $border-radius;
     border: 1px solid $color-border;
     transition: $transition-fast;
 
     &:hover {
-      background: rgba($color-primary, 0.08);
+      background: $color-surface-hover;
       transform: translateX(4px);
     }
 
@@ -748,7 +748,7 @@
       width: 32px;
       height: 32px;
       background: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
       border-radius: 50%;
       @include typography-p2;
       font-weight: $font-weight-bold;
@@ -794,7 +794,7 @@
         position: absolute;
         width: 36px;
         height: 36px;
-        background: $color-white;
+        background: $color-background-alt;
         border-radius: 50%;
       }
 
@@ -851,7 +851,7 @@
 
         .distribution-fill-statistiques {
           height: 100%;
-          background: linear-gradient(90deg, $color-accent 0%, $color-accent-light 100%);
+          background: linear-gradient(90deg, $color-secondary 0%, $color-secondary-dark 100%);
           border-radius: $border-radius-pill;
           transition: width 0.8s $ease-out-cinema;
         }
@@ -872,7 +872,7 @@
 // TABLEAU DÉTAIL PROJETS
 // =============================================
 .projects-table-section-statistiques {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   padding: $spacing-lg;
   box-shadow: $shadow-md;
@@ -900,10 +900,10 @@
     .projects-table-statistiques {
       width: 100%;
       border-collapse: collapse;
-      background: $color-white;
+      background: $color-background-alt;
 
       thead {
-        background: rgba($color-primary, 0.05);
+        background: $color-surface;
         border-bottom: 2px solid $color-border;
 
         tr th {
@@ -926,7 +926,7 @@
           transition: $transition-fast;
 
           &:hover {
-            background: rgba($color-primary, 0.03);
+            background: $color-surface;
           }
 
           &:last-child {
@@ -978,8 +978,8 @@
             font-weight: $font-weight-medium;
 
             &.completed-statistiques {
-              background: rgba($color-success, 0.1);
-              color: $color-success;
+              background: rgba($color-primary, 0.1);
+              color: $color-primary;
             }
           }
         }
@@ -1022,11 +1022,11 @@
             width: 32px;
             height: 32px;
             background: $color-primary;
-            color: $color-white;
+            color: $color-text-light;
             border-radius: 50%;
             @include typography-p4;
             font-weight: $font-weight-bold;
-            border: 2px solid $color-white;
+            border: 2px solid $color-background-alt;
             box-shadow: $shadow;
           }
 
@@ -1054,7 +1054,7 @@
   @include flex-center;
   gap: $gap-md;
   padding: $spacing-xl;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-md;
   margin-bottom: $spacing-lg;
@@ -1083,7 +1083,7 @@
 .no-data-statistiques {
   @include flex-center;
   padding: $spacing-xl;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-md;
   @include typography-p2;
@@ -1240,3 +1240,7 @@
 .kpi-grid-statistiques {
   display: none;
 }
+
+
+
+

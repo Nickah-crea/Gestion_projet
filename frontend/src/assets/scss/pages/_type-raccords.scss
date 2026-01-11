@@ -75,10 +75,10 @@
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: linear-gradient(135deg, $color-primary, lighten($color-primary, 15%));
+    background: linear-gradient(135deg, $color-primary, $color-primary-light);
     border-radius: $border-radius-sm;
     border: 1px solid rgba($color-primary, 0.2);
-    color: $color-white;
+    color: $color-text-light;
 
     .stat-number-type-raccord {
       @include typography-playfair-h3;
@@ -122,7 +122,7 @@
       padding: 0 $padding-xs 0 ($padding-xs + 28px);
       border: 2px solid $color-border;
       border-radius: $border-radius-xs;
-      background: $color-white;
+      background: $color-background-alt;
       font-size: $font-size-p4;
       color: $color-text-primary;
       transition: $transition-fast;
@@ -152,7 +152,7 @@
     width: 100%;
     height: 38px;
     padding: 0 $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border: 2px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -167,7 +167,7 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
       transform: translateY(-1px);
@@ -185,11 +185,11 @@
     &:first-child {
       background: $color-primary;
       border-color: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
 
       &:hover {
-        background: darken($color-primary, 10%);
-        border-color: darken($color-primary, 10%);
+        background: $color-primary-dark;
+        border-color: $color-primary-dark;
       }
     }
   }
@@ -202,7 +202,7 @@
 
   .common-type-item-type-raccord {
     padding: $padding-xs $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     cursor: pointer;
@@ -212,7 +212,7 @@
     align-items: center;
 
     &:hover {
-      background: rgba($color-primary, 0.05);
+      background: $color-surface-hover;
       border-color: $color-primary;
       transform: translateX(4px);
     }
@@ -222,7 +222,7 @@
       color: $color-primary;
       font-weight: $font-weight-bold;
       font-size: $font-size-p5;
-      background: rgba($color-primary, 0.1);
+      background: $color-surface;
       padding: 2px 6px;
       border-radius: $border-radius-xs;
     }
@@ -279,7 +279,7 @@
 // CONTAINER DES TYPES
 // =============================================
 .types-container-type-raccord {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-xl;
   overflow: hidden;
@@ -290,7 +290,7 @@
   justify-content: space-between;
   align-items: center;
   padding: $spacing-lg;
-  background: linear-gradient(135deg, $color-background-alt, lighten($color-background-alt, 5%));
+  background: linear-gradient(135deg, $color-background, lighten($color-background, 5%));
   border-bottom: 1px solid $color-border;
 
   @media (max-width: $breakpoint-md) {
@@ -321,7 +321,7 @@
     background: $color-primary;
     border: none;
     border-radius: $border-radius-xs;
-    color: $color-white;
+    color: $color-text-light;
     font-size: $font-size-p4;
     font-weight: $font-weight-semibold;
     cursor: pointer;
@@ -332,7 +332,7 @@
     white-space: nowrap;
 
     &:hover {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
       transform: translateY(-2px);
       box-shadow: $shadow-hover;
     }
@@ -355,7 +355,7 @@
 .empty-state-type-raccord {
   text-align: center;
   padding: $spacing-xl * 2;
-  background: $color-white;
+  background: $color-background-alt;
 
   i {
     font-size: 48px;
@@ -397,7 +397,7 @@
 }
 
 .type-card-type-raccord {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   border: 1px solid $color-border;
   overflow: hidden;
@@ -418,7 +418,7 @@
   justify-content: space-between;
   align-items: center;
   padding: $padding-md;
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
 }
 
@@ -430,7 +430,7 @@
   .code-badge-type-raccord {
     padding: 4px 10px;
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     font-weight: $font-weight-bold;
@@ -453,19 +453,19 @@
 
 // Classes de couleur pour les codes
 .type-primary .code-badge-type-raccord {
-  background: linear-gradient(135deg, $color-primary, lighten($color-primary, 15%));
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
 }
 
 .type-secondary .code-badge-type-raccord {
-  background: linear-gradient(135deg, $color-accent, lighten($color-accent, 15%));
+  background: linear-gradient(135deg, $color-secondary, $color-secondary-dark);
 }
 
 .type-tertiary .code-badge-type-raccord {
-  background: linear-gradient(135deg, $color-tertiary, lighten($color-tertiary, 15%));
+  background: linear-gradient(135deg, $color-tertiary, $color-tertiary-light);
 }
 
 .type-quaternary .code-badge-type-raccord {
-  background: linear-gradient(135deg, $color-text-primary, lighten($color-text-primary, 15%));
+  background: linear-gradient(135deg, $color-text-primary, $color-text-secondary);
 }
 
 .type-default .code-badge-type-raccord {
@@ -486,7 +486,7 @@
     align-items: center;
     justify-content: center;
     transition: $transition-fast;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
 
     &:hover {
@@ -494,13 +494,13 @@
     }
 
     &.edit {
-      color: $color-warning;
-      border-color: rgba($color-warning, 0.3);
+      color: $color-accent;
+      border-color: rgba($color-accent, 0.3);
 
       &:hover {
-        background: $color-warning;
-        color: $color-white;
-        border-color: $color-warning;
+        background: $color-accent;
+        color: $color-text-light;
+        border-color: $color-accent;
       }
     }
 
@@ -510,7 +510,7 @@
 
       &:hover {
         background: $color-error;
-        color: $color-white;
+        color: $color-text-light;
         border-color: $color-error;
       }
     }
@@ -563,7 +563,7 @@
 }
 
 .modal-content-type-raccord {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-xl;
   max-width: 600px;
@@ -590,7 +590,7 @@
   align-items: center;
   padding: $spacing-lg;
   border-bottom: 1px solid $color-border;
-  background: linear-gradient(135deg, $color-background-alt, $color-white);
+  background: linear-gradient(135deg, $color-background, $color-background-alt);
 
   h3 {
     @include typography-playfair-h4;
@@ -674,7 +674,7 @@
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
-    background: $color-white;
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
@@ -772,7 +772,7 @@
     color: $color-text-secondary;
 
     &:hover:not(:disabled) {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -780,10 +780,10 @@
 
   .submit-btn-type-raccord {
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -856,10 +856,10 @@
 
     &.confirm-danger {
       background: $color-error;
-      color: $color-white;
+      color: $color-text-light;
 
       &:hover:not(:disabled) {
-        background: darken($color-error, 10%);
+        background: $color-secondary-dark;
       }
     }
 
@@ -888,7 +888,7 @@
 
 .notification-type-raccord {
   position: relative;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-lg;
   padding: $padding-md;
@@ -919,18 +919,18 @@
 }
 
 .notification-success {
-  border-left-color: $color-success;
-  background: rgba($color-success, 0.05);
+  border-left-color: $color-primary;
+  background: $color-pastel-gold;
 }
 
 .notification-error {
   border-left-color: $color-error;
-  background: rgba($color-error, 0.05);
+  background: $color-pastel-wine;
 }
 
 .notification-warning {
-  border-left-color: $color-warning;
-  background: rgba($color-warning, 0.05);
+  border-left-color: $color-accent;
+  background: rgba($color-accent, 0.05);
 }
 
 .notification-info {
@@ -945,7 +945,7 @@
 }
 
 .notification-success .notification-icon-type-raccord {
-  color: $color-success;
+  color: $color-primary;
 }
 
 .notification-error .notification-icon-type-raccord {
@@ -953,7 +953,7 @@
 }
 
 .notification-warning .notification-icon-type-raccord {
-  color: $color-warning;
+  color: $color-accent;
 }
 
 .notification-info .notification-icon-type-raccord {
@@ -1004,7 +1004,7 @@
   animation: progressBar-type-raccord linear forwards;
 
   .notification-success & {
-    background: $color-success;
+    background: $color-primary;
   }
 
   .notification-error & {
@@ -1012,7 +1012,7 @@
   }
 
   .notification-warning & {
-    background: $color-warning;
+    background: $color-accent;
   }
 
   .notification-info & {
@@ -1129,4 +1129,6 @@
     animation: none;
   }
 }
+
+
 

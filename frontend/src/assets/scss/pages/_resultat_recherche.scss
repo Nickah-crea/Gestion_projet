@@ -47,16 +47,16 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   border-radius: $border-radius-xs;
   padding: $padding-sm;
   box-shadow: $shadow-hover;
+}
 
-  .section-title-resultat-recherche {
-    @include typography-p4;
-    color: $color-text-primary;
-    margin-bottom: $gap-sm;
-    font-size: calc(#{$font-size-p4} + 1px);
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-  }
+.section-title-resultat-recherche {
+  @include typography-p4;
+  color: $color-text-primary;
+  margin-bottom: $gap-sm;
+  font-size: calc(#{$font-size-p4} + 1px);
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
 }
 
 // =============================================
@@ -187,23 +187,23 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   letter-spacing: 0.5px;
 
   &.type-scene {
-    background: rgba($color-info, 0.2);
-    color: $color-info;
+    background: rgba($color-scene, 0.2);
+    color: $color-scene;
   }
 
   &.type-personnage {
-    background: rgba($color-success, 0.2);
-    color: $color-success;
+    background: rgba($color-character, 0.2);
+    color: $color-character;
   }
 
   &.type-lieu {
-    background: rgba($color-warning, 0.2);
-    color: $color-warning;
+    background: rgba($color-location, 0.2);
+    color: $color-location;
   }
 
   &.type-plateau {
-    background: rgba($color-primary, 0.2);
-    color: $color-primary;
+    background: rgba($color-set, 0.2);
+    color: $color-set;
   }
 }
 
@@ -218,7 +218,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .quick-action-btn-resultat-recherche {
   padding: $gap-sm;
-  background: $color-white;
+  background: $color-background-alt;
   border: 1px solid $color-border;
   border-radius: $border-radius-xs;
   font-size: $font-size-p5;
@@ -231,7 +231,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   gap: $gap-xs;
 
   &:hover:not(:disabled) {
-    background: rgba($color-primary, 0.1);
+    background: $color-surface-hover;
     border-color: $color-primary;
     color: $color-primary;
     transform: translateY(-1px);
@@ -281,7 +281,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     transition: $transition-fast;
 
     &:hover {
-      color: darken($color-primary, 10%);
+      color: $color-primary-dark;
       text-decoration: underline;
     }
   }
@@ -301,7 +301,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   justify-content: space-between;
   align-items: center;
   padding: $spacing-md;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   border-left: 4px solid $color-primary;
@@ -320,7 +320,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   align-items: center;
   gap: $gap-sm;
   padding: $gap-xs $padding-sm;
-  background: rgba($color-primary, 0.1);
+  background: $color-surface;
   border-radius: $border-radius-pill;
   border: 1px solid rgba($color-primary, 0.2);
 
@@ -387,7 +387,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
     &:hover:not(:disabled) {
       background: $color-info;
-      color: $color-white;
+      color: $color-text-light;
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -400,7 +400,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
     &:hover:not(:disabled) {
       background: $color-error;
-      color: $color-white;
+      color: $color-text-light;
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -413,7 +413,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
     &:hover:not(:disabled) {
       background: $color-success;
-      color: $color-white;
+      color: $color-text-light;
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -438,7 +438,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 // CARTES INDIVIDUELLES (500px) - EXCEPTION POUR LES DIALOGUES
 // =============================================
 .section-card-resultat-recherche {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -471,7 +471,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   justify-content: space-between;
   align-items: center;
   padding: $spacing-lg;
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
 
   @media (max-width: $breakpoint-md) {
@@ -547,7 +547,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   flex-direction: column;
   gap: $gap-xs;
   padding: $padding-sm;
-  background: $color-background-alt;
+  background: $color-background;
   border-radius: $border-radius-xs;
   border: 1px solid $color-border;
 
@@ -584,27 +584,27 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   // Statuts disponibles
   &.status-planifie {
     background: linear-gradient(135deg, $color-info, darken($color-info, 10%));
-    color: $color-white;
+    color: $color-text-light;
   }
 
   &.status-confirme {
-    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
-    color: $color-white;
+    background: linear-gradient(135deg, $color-success, $color-success);
+    color: $color-text-light;
   }
 
   &.status-en_cours {
-    background: linear-gradient(135deg, $color-warning, darken($color-warning, 10%));
-    color: $color-white;
+    background: linear-gradient(135deg, $color-warning, $color-accent-dark);
+    color: $color-text-light;
   }
 
   &.status-termine {
-    background: linear-gradient(135deg, $color-primary, darken($color-primary, 10%));
-    color: $color-white;
+    background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+    color: $color-text-light;
   }
 
   &.status-annule {
-    background: linear-gradient(135deg, $color-error, darken($color-error, 10%));
-    color: $color-white;
+    background: linear-gradient(135deg, $color-error, $color-secondary-dark);
+    color: $color-text-light;
   }
 }
 
@@ -622,7 +622,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   align-items: center;
   gap: $gap-sm;
   padding: $padding-sm;
-  background: $color-background-alt;
+  background: $color-background;
   border-radius: $border-radius-xs;
   border: 1px solid $color-border;
 
@@ -656,7 +656,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .personnage-detailed-item-resultat-recherche {
   padding: $padding-sm;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-xs;
   border: 1px solid $color-border;
   transition: $transition-fast;
@@ -703,7 +703,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   gap: $gap-sm;
   margin-bottom: $spacing-md;
   padding: $padding-sm;
-  background: $color-background-alt;
+  background: $color-background;
   border-radius: $border-radius-xs;
 
   .stat-item-resultat-recherche {
@@ -721,7 +721,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   gap: $spacing-sm;
   margin-bottom: $spacing-md;
   padding: $padding-sm;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-xs;
   border: 1px solid $color-border;
 }
@@ -744,7 +744,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   border-radius: $border-radius-xs;
   font-size: $font-size-p4;
   color: $color-text-primary;
-  background: $color-white;
+  background: $color-background-alt;
   cursor: pointer;
 
   &:focus {
@@ -773,19 +773,19 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     padding: $gap-xs $padding-sm $gap-xs (
       $padding-md + $padding-xs
     );
-  border: 1px solid $color-border;
-  border-radius: $border-radius-pill;
-  font-size: $font-size-p4;
-  color: $color-text-primary;
-  background: $color-white;
-  transition: $transition-fast;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-pill;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
 
-  &:focus {
-    outline: none;
-    border-color: $color-primary;
-    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
   }
-}
 }
 
 // STYLES SPÉCIAUX POUR LES DIALOGUES EN LARGEUR COMPLÈTE
@@ -801,7 +801,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .dialogue-item-resultat-recherche {
   padding: $spacing-md;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   border: 1px solid $color-border;
   transition: $transition-fast;
@@ -854,7 +854,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     line-height: 1.6;
     margin-bottom: $spacing-md;
     padding: $spacing-md;
-    background: linear-gradient(135deg, rgba($color-primary, 0.05), rgba($color-primary, 0.02));
+    background: $color-pastel-gold;
     border-radius: $border-radius-sm;
     border-left: 4px solid $color-primary;
     box-shadow: $shadow-inset;
@@ -909,7 +909,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .dialogue-complet-item-resultat-recherche {
   padding: $spacing-lg;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   border: 1px solid $color-border;
   transition: $transition-fast;
@@ -950,7 +950,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     line-height: 1.6;
     margin-bottom: $spacing-md;
     padding: $spacing-md;
-    background: linear-gradient(135deg, rgba($color-info, 0.05), rgba($color-info, 0.02));
+    background: rgba($color-info, 0.05);
     border-radius: $border-radius-sm;
     border-left: 4px solid $color-info;
     font-style: italic;
@@ -978,7 +978,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 .empty-state-resultat-recherche {
   text-align: center;
   padding: $spacing-xl;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   margin: $spacing-md 0;
@@ -1020,7 +1020,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   background: $color-primary;
   border: none;
   border-radius: $border-radius-xs;
-  color: $color-white;
+  color: $color-text-light;
   font-size: $font-size-p4;
   font-weight: $font-weight-semibold;
   cursor: pointer;
@@ -1030,7 +1030,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   gap: $gap-xs;
 
   &:hover {
-    background: darken($color-primary, 10%);
+    background: $color-primary-dark;
     transform: translateY(-1px);
     box-shadow: $shadow-hover;
   }
@@ -1126,12 +1126,10 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-
   .quick-action-btn-resultat-recherche,
   .export-buttons-resultat-recherche button,
   .dialogue-item-resultat-recherche,
   .dialogue-complet-item-resultat-recherche,
-  .scene-planning-item-resultat-recherche,
   .personnage-detailed-item-resultat-recherche {
     transition: none;
 
@@ -1159,7 +1157,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 }
 
 .modal-content-resultat-recherche {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-xl;
   width: 90%;
@@ -1227,7 +1225,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   display: flex;
   justify-content: flex-end;
   gap: $gap-md;
-  background: $color-background-alt;
+  background: $color-background;
   border-radius: 0 0 $border-radius-sm $border-radius-sm;
 }
 
@@ -1250,7 +1248,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   display: flex;
   flex-wrap: wrap;
   gap: $gap-xs;
-  background: $color-white;
+  background: $color-background-alt;
 
   &:focus-within {
     border-color: $color-primary;
@@ -1285,7 +1283,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   align-items: center;
 
   &:hover {
-    color: darken($color-primary, 10%);
+    color: $color-primary-dark;
   }
 }
 
@@ -1360,7 +1358,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   }
 
   &:hover {
-    background: $color-background-alt;
+    background: $color-background;
   }
 }
 
@@ -1378,7 +1376,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .cancel-btn-resultat-recherche {
   padding: $gap-sm $spacing-md;
-  background: $color-white;
+  background: $color-background-alt;
   border: 1px solid $color-border;
   border-radius: $border-radius-xs;
   color: $color-text-secondary;
@@ -1387,7 +1385,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   transition: $transition-fast;
 
   &:hover:not(:disabled) {
-    background: $color-background-alt;
+    background: $color-background;
     color: $color-text-primary;
   }
 
@@ -1402,7 +1400,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   background: $color-primary;
   border: none;
   border-radius: $border-radius-xs;
-  color: $color-white;
+  color: $color-text-light;
   cursor: pointer;
   font-weight: $font-weight-medium;
   display: flex;
@@ -1411,7 +1409,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   transition: $transition-fast;
 
   &:hover:not(:disabled) {
-    background: darken($color-primary, 10%);
+    background: $color-primary-dark;
     transform: translateY(-1px);
     box-shadow: $shadow-md;
   }
@@ -1422,3 +1420,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     background: $color-text-muted;
   }
 }
+
+
+
+

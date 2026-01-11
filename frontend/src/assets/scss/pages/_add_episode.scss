@@ -1,4 +1,3 @@
-
 @import '../base/variables';
 
 .app-wrapper-global-add-episode {
@@ -20,38 +19,37 @@
   box-sizing: border-box;
   z-index: $z-index-sticky;
   overflow-y: auto;
-  border-right: 2px solid $color-border;
+  border-right: 2px solid $color-border; // Changé: bordure dorée
 
   .sidebar-header-add-episode {
     margin-bottom: $spacing-md;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid $color-border; // Changé: bordure dorée
     padding-bottom: $spacing-sm;
-
 
     .sidebar-title-add-episode {
       @include typography-playfair-h4;
-      color: $color-text-primary;
+      color: $color-text-primary; // Changé: brun foncé
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle-add-episode {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-muted; // Changé: taupe
       margin: 0;
     }
   }
 
   .sidebar-section-add-episode {
     margin-bottom: $spacing-md;
-    background: $color-background-alt;
+    background: $color-background-alt; // Changé: blanc
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
     .section-title-add-episode {
       @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-primary; // Changé: brun foncé
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
@@ -70,11 +68,11 @@
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
-    background: $color-white;
-    border: 1px solid $color-border;
+    background: $color-background-alt; // Changé: blanc
+    border: 1px solid $color-border; // Changé: bordure dorée
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Changé: brun
     cursor: pointer;
     transition: $transition-fast;
     display: flex;
@@ -84,19 +82,19 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
-      color: $color-primary;
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary; // Changé: doré
+      color: $color-primary; // Changé: doré
     }
 
     &.active {
-      background: $color-primary;
-      border-color: $color-primary;
-      color: $color-white;
+      background: $color-primary; // Changé: doré
+      border-color: $color-primary; // Changé: doré
+      color: $color-text-light; // Changé: blanc
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary;
+      outline: 2px solid $color-primary; // Changé: doré
       outline-offset: 1px;
     }
   }
@@ -114,7 +112,7 @@
 
     label {
       @include typography-p4;
-      color: $color-text-secondary;
+      color: $color-text-secondary; // Changé: brun
       font-weight: $font-weight-medium;
     }
   }
@@ -123,17 +121,17 @@
     width: 100%;
     height: 34px;
     padding: 0 $padding-xs;
-    background: $color-white;
-    border: 1px solid $color-border;
+    background: $color-background-alt; // Changé: blanc
+    border: 1px solid $color-border; // Changé: bordure dorée
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     cursor: pointer;
     box-sizing: border-box;
     
     &:focus {
       outline: none;
-      border-color: $color-primary;
+      border-color: $color-primary; // Changé: doré
     }
   }
 
@@ -148,20 +146,20 @@
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: $color-white;
+    background: $color-background-alt; // Changé: blanc
     border-radius: $border-radius-xs;
-    border: 1px solid $color-border;
+    border: 1px solid $color-border; // Changé: bordure dorée
 
     .stat-number-add-episode {
       @include typography-playfair-h4;
-      color: $color-primary;
+      color: $color-primary; // Changé: doré
       font-size: calc(#{$font-size-h4} - 4px);
       font-weight: $font-weight-bold;
     }
 
     .stat-label-add-episode {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-muted; // Changé: taupe
       text-align: center;
     }
   }
@@ -187,7 +185,7 @@
 // SYSTÈME D'ONGlets
 // =============================================
 .tabs-container-add-episode {
-  background: $color-white;
+  background: $color-background-alt; // Changé: blanc
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -196,8 +194,8 @@
 
 .tabs-header-add-episode {
   display: flex;
-  background: $color-background-alt;
-  border-bottom: 1px solid $color-border;
+  background: $color-background-alt; // Changé: blanc
+  border-bottom: 1px solid $color-border; // Changé: bordure dorée
   position: relative;
 }
 
@@ -207,7 +205,7 @@
   background: transparent;
   border: none;
   @include typography-p3;
-  color: $color-text-secondary;
+  color: $color-text-secondary; // Changé: brun
   cursor: pointer;
   transition: $transition-fast;
   display: flex;
@@ -218,17 +216,17 @@
   z-index: 2;
 
   &:hover {
-    color: $color-primary;
-    background: rgba($color-primary, 0.05);
+    color: $color-primary; // Changé: doré
+    background: rgba($color-primary, 0.05); // Changé: doré subtil
   }
 
   &.active {
-    color: $color-primary;
+    color: $color-primary; // Changé: doré
     font-weight: $font-weight-semibold;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-primary;
+    outline: 2px solid $color-primary; // Changé: doré
     outline-offset: -2px;
   }
 }
@@ -237,7 +235,7 @@
   position: absolute;
   bottom: 0;
   height: 3px;
-  background: $color-primary;
+  background: $color-primary; // Changé: doré
   transition: transform $transition;
   z-index: 1;
 }
@@ -280,11 +278,11 @@
   align-items: center;
   margin-bottom: $spacing-lg;
   padding-bottom: $spacing-md;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid $color-border; // Changé: bordure dorée
 
   h3 {
     @include typography-playfair-h3;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     font-size: calc(#{$font-size-h3} - 4px);
     display: flex;
     align-items: center;
@@ -295,10 +293,10 @@
   .back-btn-add-episode {
     padding: $gap-xs $padding-sm;
     background: transparent;
-    border: 1px solid $color-border;
+    border: 1px solid $color-border; // Changé: bordure dorée
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Changé: brun
     cursor: pointer;
     transition: $transition-fast;
     display: flex;
@@ -306,9 +304,9 @@
     gap: $gap-xs;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
-      color: $color-primary;
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary; // Changé: doré
+      color: $color-primary; // Changé: doré
     }
   }
 }
@@ -337,7 +335,7 @@
 
   label {
     @include typography-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     font-weight: $font-weight-semibold;
     display: flex;
     align-items: center;
@@ -345,7 +343,7 @@
 
     &::after {
       content: '*';
-      color: $color-error;
+      color: $color-error; // Changé: rouge bordeaux
       margin-left: 2px;
     }
 
@@ -359,27 +357,27 @@
   .form-textarea-add-episode {
     width: 100%;
     padding: $gap-sm $padding-sm;
-    border: 1px solid $color-border;
+    border: 1px solid $color-border; // Changé: bordure dorée
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-primary;
-    background: $color-white;
+    color: $color-text-primary; // Changé: brun foncé
+    background: $color-background-alt; // Changé: blanc
     transition: $transition-fast;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
-      border-color: $color-primary;
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      border-color: $color-primary; // Changé: doré
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1); // Changé: doré
     }
 
     &:hover {
-      border-color: darken($color-border, 10%);
+      border-color: rgba($color-primary, 0.5); // Changé: doré
     }
 
     &:disabled {
-      background: $color-background;
-      color: $color-text-muted;
+      background: $color-background; // Changé: champagne beige
+      color: $color-text-muted; // Changé: taupe
       cursor: not-allowed;
     }
   }
@@ -388,8 +386,8 @@
     height: 42px;
     
     &.error-input {
-      border-color: $color-error;
-      background: rgba($color-error, 0.05);
+      border-color: $color-error; // Changé: rouge bordeaux
+      background: rgba($color-error, 0.05); // Changé: rouge bordeaux subtil
     }
   }
 
@@ -416,24 +414,24 @@
     width: 100%;
     height: 42px;
     padding: 0 $padding-sm;
-    border: 1px solid $color-border;
+    border: 1px solid $color-border; // Changé: bordure dorée
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-primary;
-    background: $color-white;
+    color: $color-text-primary; // Changé: brun foncé
+    background: $color-background-alt; // Changé: blanc
     transition: $transition-fast;
     box-sizing: border-box;
     padding-right: 40px;
 
     &:focus {
       outline: none;
-      border-color: $color-primary;
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      border-color: $color-primary; // Changé: doré
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1); // Changé: doré
     }
 
     &:disabled {
-      background: $color-background;
-      color: $color-text-muted;
+      background: $color-background; // Changé: champagne beige
+      color: $color-text-muted; // Changé: taupe
       cursor: not-allowed;
     }
   }
@@ -445,10 +443,10 @@
     transform: translateY(-50%);
     width: 24px;
     height: 24px;
-    background: rgba($color-error, 0.1);
-    border: 1px solid $color-error;
+    background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
+    border: 1px solid $color-error; // Changé: rouge bordeaux
     border-radius: 50%;
-    color: $color-error;
+    color: $color-error; // Changé: rouge bordeaux
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -457,8 +455,8 @@
     transition: $transition-fast;
 
     &:hover {
-      background: $color-error;
-      color: $color-white;
+      background: $color-error; // Changé: rouge bordeaux
+      color: $color-text-light; // Changé: blanc
     }
   }
 
@@ -467,8 +465,8 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: $color-white;
-    border: 1px solid $color-border;
+    background: $color-background-alt; // Changé: blanc
+    border: 1px solid $color-border; // Changé: bordure dorée
     border-radius: $border-radius-xs;
     box-shadow: $shadow-md;
     z-index: $z-index-dropdown;
@@ -479,13 +477,13 @@
   .suggestion-item-add-episode {
     padding: $gap-sm $padding-sm;
     font-size: $font-size-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     cursor: pointer;
     transition: $transition-fast;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid $color-border; // Changé: bordure dorée
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
     }
 
     &:last-child {
@@ -496,7 +494,7 @@
   .no-results-add-episode {
     padding: $gap-sm $padding-sm;
     text-align: center;
-    color: $color-text-muted;
+    color: $color-text-muted; // Changé: taupe
     font-style: italic;
     display: flex;
     align-items: center;
@@ -510,14 +508,14 @@
 // =============================================
 .error-text-add-episode {
   @include typography-p4;
-  color: $color-error;
+  color: $color-error; // Changé: rouge bordeaux
   margin-top: $gap-xs;
   display: block;
 }
 
 .info-text-add-episode {
   @include typography-p4;
-  color: $color-text-muted;
+  color: $color-text-muted; // Changé: taupe
   margin-top: $gap-xs;
   display: block;
   font-style: italic;
@@ -525,31 +523,31 @@
 
 .suggestion-text-add-episode {
   @include typography-p4;
-  color: $color-text-muted;
+  color: $color-text-muted; // Changé: taupe
   margin-top: $gap-xs;
   display: block;
   
   .suggestion-btn-add-episode {
     background: transparent;
     border: none;
-    color: $color-primary;
+    color: $color-primary; // Changé: doré
     cursor: pointer;
     text-decoration: underline;
     font-size: $font-size-p4;
     margin-left: $gap-xs;
     
     &:hover {
-      color: darken($color-primary, 10%);
+      color: darken($color-primary, 10%); // Changé: doré plus foncé
     }
   }
 }
 
 .error-message-add-episode {
   padding: $padding-sm;
-  background: rgba($color-error, 0.1);
-  border: 1px solid $color-error;
+  background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
+  border: 1px solid $color-error; // Changé: rouge bordeaux
   border-radius: $border-radius-xs;
-  color: $color-error;
+  color: $color-error; // Changé: rouge bordeaux
   font-size: $font-size-p4;
   font-weight: $font-weight-medium;
   display: flex;
@@ -566,7 +564,7 @@
   justify-content: flex-end;
   margin-top: $spacing-lg;
   padding-top: $spacing-sm;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid $color-border; // Changé: bordure dorée
 
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
@@ -593,7 +591,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary;
+      outline: 2px solid $color-primary; // Changé: doré
       outline-offset: 1px;
     }
 
@@ -606,22 +604,22 @@
 
   .cancel-btn-add-episode {
     background: transparent;
-    border: 1px solid $color-border;
-    color: $color-text-secondary;
+    border: 1px solid $color-border; // Changé: bordure dorée
+    color: $color-text-secondary; // Changé: brun
 
     &:hover:not(:disabled) {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
-      color: $color-primary;
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary; // Changé: doré
+      color: $color-primary; // Changé: doré
     }
   }
 
   .submit-btn-add-episode {
-    background: $color-primary;
-    color: $color-white;
+    background: $color-primary; // Changé: doré
+    color: $color-text-light; // Changé: blanc
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: darken($color-primary, 10%); // Changé: doré plus foncé
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -648,11 +646,11 @@
   align-items: center;
   margin-bottom: $spacing-lg;
   padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid $color-border; // Changé: bordure dorée
 
   h3 {
     @include typography-playfair-h4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     margin: 0;
     display: flex;
     align-items: center;
@@ -674,7 +672,7 @@
 
     label {
       @include typography-p4;
-      color: $color-text-secondary;
+      color: $color-text-secondary; // Changé: brun
       font-weight: $font-weight-medium;
     }
   }
@@ -688,17 +686,17 @@
       width: 300px;
       height: 42px;
       padding: 0 $padding-md 0 ($padding-md + $padding-xs);
-      border: 1px solid $color-border;
+      border: 1px solid $color-border; // Changé: bordure dorée
       border-radius: $border-radius-xs;
-      background: $color-white;
+      background: $color-background-alt; // Changé: blanc
       font-size: $font-size-p3;
-      color: $color-text-primary;
+      color: $color-text-primary; // Changé: brun foncé
       transition: $transition-fast;
 
       &:focus {
         outline: none;
-        border-color: $color-primary;
-        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+        border-color: $color-primary; // Changé: doré
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1); // Changé: doré
       }
 
       @media (max-width: $breakpoint-sm) {
@@ -709,7 +707,7 @@
     .search-icon-add-episode {
       position: absolute;
       left: $padding-sm;
-      color: $color-primary;
+      color: $color-primary; // Changé: doré
       font-size: $font-size-p3;
     }
   }
@@ -725,26 +723,26 @@
 .episodes-table-add-episode {
   width: 100%;
   border-collapse: collapse;
-  background: $color-white;
+  background: $color-background-alt; // Changé: blanc
   border-radius: $border-radius-xs;
   overflow: hidden;
   box-shadow: $shadow;
 
   th {
     @include typography-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     font-weight: $font-weight-semibold;
     text-align: left;
     padding: $padding-sm;
-    border-bottom: 2px solid $color-border;
-    background: $color-background-alt;
+    border-bottom: 2px solid $color-border; // Changé: bordure dorée
+    background: $color-background-alt; // Changé: blanc
   }
 
   td {
     @include typography-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     padding: $padding-sm;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid $color-border; // Changé: bordure dorée
     vertical-align: middle;
   }
 
@@ -752,7 +750,7 @@
     transition: $transition-fast;
 
     &:hover {
-      background: rgba($color-primary, 0.05);
+      background: rgba($color-primary, 0.05); // Changé: doré très subtil
     }
   }
 }
@@ -768,27 +766,27 @@
   font-weight: $font-weight-medium;
   
   &.status-planifie-add-episode {
-    background: rgba($color-info, 0.1);
-    color: $color-info;
-    border: 1px solid rgba($color-info, 0.3);
+    background: rgba($color-info, 0.1); // Changé: bleu subtil
+    color: $color-info; // Changé: bleu
+    border: 1px solid rgba($color-info, 0.3); // Changé: bleu
   }
   
   &.status-en-cours-add-episode {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    border: 1px solid rgba($color-primary, 0.3);
+    background: rgba($color-primary, 0.1); // Changé: doré subtil
+    color: $color-primary; // Changé: doré
+    border: 1px solid rgba($color-primary, 0.3); // Changé: doré
   }
   
   &.status-termine-add-episode {
-    background: rgba($color-success, 0.1);
-    color: $color-success;
-    border: 1px solid rgba($color-success, 0.3);
+    background: rgba($color-success, 0.1); // Changé: doré subtil
+    color: $color-success; // Changé: doré
+    border: 1px solid rgba($color-success, 0.3); // Changé: doré
   }
   
   &.status-annule-add-episode {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
-    border: 1px solid rgba($color-error, 0.3);
+    background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
+    color: $color-error; // Changé: rouge bordeaux
+    border: 1px solid rgba($color-error, 0.3); // Changé: rouge bordeaux
   }
 }
 
@@ -797,7 +795,7 @@
   display: flex;
   align-items: center;
   gap: $gap-xs;
-  color: $color-success;
+  color: $color-success; // Changé: doré
   font-weight: $font-weight-medium;
 }
 
@@ -806,7 +804,7 @@
   display: flex;
   align-items: center;
   gap: $gap-xs;
-  color: $color-text-muted;
+  color: $color-text-muted; // Changé: taupe
   font-style: italic;
 }
 
@@ -833,22 +831,22 @@
   }
 
   .btn-view-add-episode {
-    background: rgba($color-info, 0.1);
-    color: $color-info;
+    background: rgba($color-info, 0.1); // Changé: bleu subtil
+    color: $color-info; // Changé: bleu
 
     &:hover {
-      background: $color-info;
-      color: $color-white;
+      background: $color-info; // Changé: bleu
+      color: $color-text-light; // Changé: blanc
     }
   }
 
   .btn-edit-add-episode {
-    background: rgba($color-warning, 0.1);
-    color: $color-warning;
+    background: rgba($color-accent, 0.1); // Changé: orange subtil (remplace warning)
+    color: $color-accent; // Changé: orange
 
     &:hover {
-      background: $color-warning;
-      color: $color-white;
+      background: $color-accent; // Changé: orange
+      color: $color-text-light; // Changé: blanc
     }
   }
 }
@@ -871,7 +869,7 @@
 }
 
 .modal-content-add-episode {
-  background: $color-white;
+  background: $color-background-alt; // Changé: blanc
   border-radius: $border-radius-lg;
   box-shadow: $shadow-xl;
   max-width: 600px;
@@ -897,11 +895,11 @@
   justify-content: space-between;
   align-items: center;
   padding: $spacing-lg;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid $color-border; // Changé: bordure dorée
   
   h3 {
     @include typography-playfair-h4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     margin: 0;
     display: flex;
     align-items: center;
@@ -913,15 +911,15 @@
   background: transparent;
   border: none;
   font-size: $font-size-h4;
-  color: $color-text-muted;
+  color: $color-text-muted; // Changé: taupe
   cursor: pointer;
   padding: $gap-xs;
   border-radius: $border-radius-xs;
   transition: $transition-fast;
   
   &:hover {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
+    background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
+    color: $color-error; // Changé: rouge bordeaux
   }
 }
 
@@ -946,19 +944,19 @@
   
   .detail-label-add-episode {
     @include typography-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     font-weight: $font-weight-semibold;
     min-width: 120px;
   }
   
   .detail-value-add-episode {
     @include typography-p4;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Changé: brun
     flex: 1;
     
     &.no-realisateur,
     &.no-scenariste {
-      color: $color-text-muted;
+      color: $color-text-muted; // Changé: taupe
       font-style: italic;
     }
   }
@@ -967,7 +965,7 @@
 .detail-synopsis-add-episode {
   h4 {
     @include typography-playfair-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Changé: brun foncé
     margin-bottom: $gap-md;
     display: flex;
     align-items: center;
@@ -977,19 +975,19 @@
 
 .synopsis-content-add-episode {
   @include typography-p4;
-  color: $color-text-secondary;
+  color: $color-text-secondary; // Changé: brun
   line-height: $line-height-base;
   padding: $padding-sm;
-  background: $color-background-alt;
+  background: $color-background-alt; // Changé: blanc
   border-radius: $border-radius-xs;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Changé: bordure dorée
   max-height: 200px;
   overflow-y: auto;
 }
 
 .modal-footer-add-episode {
   padding: $spacing-lg;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid $color-border; // Changé: bordure dorée
   display: flex;
   gap: $gap-sm;
   justify-content: flex-end;
@@ -1014,34 +1012,34 @@
   }
   
   .btn-edit-modal-add-episode {
-    background: $color-primary;
-    color: $color-white;
+    background: $color-primary; // Changé: doré
+    color: $color-text-light; // Changé: blanc
     
     &:hover {
-      background: darken($color-primary, 10%);
+      background: darken($color-primary, 10%); // Changé: doré plus foncé
     }
   }
   
   .btn-details-modal-add-episode {
-    background: rgba($color-info, 0.1);
-    color: $color-info;
-    border: 1px solid rgba($color-info, 0.3);
+    background: rgba($color-info, 0.1); // Changé: bleu subtil
+    color: $color-info; // Changé: bleu
+    border: 1px solid rgba($color-info, 0.3); // Changé: bleu
     
     &:hover {
-      background: $color-info;
-      color: $color-white;
+      background: $color-info; // Changé: bleu
+      color: $color-text-light; // Changé: blanc
     }
   }
   
   .btn-close-modal-add-episode {
     background: transparent;
-    border: 1px solid $color-border;
-    color: $color-text-secondary;
+    border: 1px solid $color-border; // Changé: bordure dorée
+    color: $color-text-secondary; // Changé: brun
     
     &:hover {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
-      color: $color-primary;
+      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary; // Changé: doré
+      color: $color-primary; // Changé: doré
     }
   }
 }
@@ -1053,20 +1051,20 @@
 .empty-state-add-episode {
   text-align: center;
   padding: $spacing-xl;
-  background: $color-white;
+  background: $color-background-alt; // Changé: blanc
   border-radius: $border-radius-xs;
   box-shadow: $shadow;
   margin: $spacing-md 0;
 
   i {
     font-size: 48px;
-    color: $color-primary;
+    color: $color-primary; // Changé: doré
     margin-bottom: $gap-sm;
   }
 
   div {
     @include typography-p3;
-    color: $color-text-muted;
+    color: $color-text-muted; // Changé: taupe
     max-width: 400px;
     margin: 0 auto;
   }
@@ -1187,3 +1185,5 @@
     animation: none;
   }
 }
+
+

@@ -68,7 +68,7 @@
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -81,7 +81,7 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -103,7 +103,7 @@
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
 
@@ -170,7 +170,7 @@
 // SYSTÈME D'ONGlets
 // =============================================
 .tabs-container-scene-comedien {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -179,7 +179,7 @@
 
 .tabs-header-scene-comedien {
   display: flex;
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
   position: relative;
 }
@@ -202,7 +202,7 @@
 
   &:hover {
     color: $color-primary;
-    background: rgba($color-primary, 0.05);
+    background: $color-surface;
   }
 
   &.active {
@@ -321,7 +321,7 @@
   border-radius: $border-radius-xs;
   font-size: $font-size-p4;
   color: $color-text-secondary;
-  background: $color-background-alt;
+  background: $color-background;
   display: flex;
   align-items: center;
   gap: $gap-sm;
@@ -342,7 +342,7 @@
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
-    background: $color-white;
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
@@ -358,7 +358,7 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     box-shadow: $shadow-md;
@@ -376,11 +376,11 @@
     border-bottom: 1px solid $color-border;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
     }
 
     &.selected {
-      background: rgba($color-primary, 0.2);
+      background: $color-surface;
       border-left: 3px solid $color-primary;
     }
 
@@ -407,11 +407,11 @@
 
       &.statut-planifie {
         background: rgba($color-warning, 0.2);
-        color: darken($color-warning, 20%);
+        color: $color-accent-dark;
       }
       &.statut-confirme {
         background: rgba($color-info, 0.2);
-        color: darken($color-info, 20%);
+        color: $color-info;
       }
       &.statut-en_cours {
         background: rgba($color-primary, 0.2);
@@ -419,7 +419,7 @@
       }
       &.statut-termine {
         background: rgba($color-success, 0.2);
-        color: darken($color-success, 20%);
+        color: $color-primary-dark;
       }
     }
   }
@@ -477,10 +477,10 @@
     gap: $gap-xs;
     min-width: 160px;
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -556,7 +556,7 @@
       padding: 0 $padding-md 0 ($padding-md + $padding-xs);
       border: 1px solid $color-border;
       border-radius: $border-radius-pill;
-      background: $color-white;
+      background: $color-background-alt;
       font-size: $font-size-p3;
       color: $color-text-primary;
       transition: $transition-fast;
@@ -591,7 +591,7 @@
 }
 
 .comedien-group-scene-comedien {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -599,7 +599,7 @@
 
 .comedien-header-scene-comedien {
   padding: $spacing-md;
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
 
   .comedien-info-scene-comedien {
@@ -619,7 +619,7 @@
     .scene-count-scene-comedien {
       @include typography-p4;
       color: $color-text-muted;
-      background: $color-white;
+      background: $color-background-alt;
       padding: $gap-xs $padding-sm;
       border-radius: $border-radius-pill;
       border: 1px solid $color-border;
@@ -639,7 +639,7 @@
 }
 
 .scene-card-scene-comedien {
-  background: $color-white;
+  background: $color-background-alt;
   border: 1px solid $color-border;
   border-radius: $border-radius-xs;
   padding: $spacing-sm;
@@ -687,11 +687,11 @@
 
     &.statut-planifie {
       background: rgba($color-warning, 0.2);
-      color: darken($color-warning, 20%);
+      color: $color-accent-dark;
     }
     &.statut-confirme {
       background: rgba($color-info, 0.2);
-      color: darken($color-info, 20%);
+      color: $color-info;
     }
     &.statut-en_cours {
       background: rgba($color-primary, 0.2);
@@ -699,7 +699,7 @@
     }
     &.statut-termine {
       background: rgba($color-success, 0.2);
-      color: darken($color-success, 20%);
+      color: $color-primary-dark;
     }
     &.statut-reporte {
       background: rgba($color-error, 0.2);
@@ -744,7 +744,7 @@
 
     &:hover {
       background: $color-error;
-      color: $color-white;
+      color: $color-text-light;
       transform: scale(1.1);
     }
   }
@@ -757,7 +757,7 @@
 .empty-state-scene-comedien {
   text-align: center;
   padding: $spacing-xl;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-xs;
   box-shadow: $shadow;
   margin: $spacing-md 0;
@@ -876,3 +876,5 @@
     animation: none;
   }
 }
+
+

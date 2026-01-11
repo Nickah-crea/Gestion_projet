@@ -1,67 +1,60 @@
-// _right-sidebar.scss
+// =============================================
+// _right-sidebar.scss - MODIFIÉ AVEC NOUVELLE PALETTE
+// =============================================
+
+// _right-sidebar.scss – Version corrigée avec position droite
 @import '../base/variables';
 
-.right-sidebar {
+sidebar {
   position: fixed;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 60px; // Largeur quand fermé
-  background: $color-white;
-  border-left: 1px solid rgba($color-primary, 0.1);
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
+  right: 10px; // ← 10px de distance du bord
+  top: 10px;   // ← 10px du haut aussi pour correspondance
+  height: calc(100vh - 20px); // Ajuster la hauteur
+  width: 60px; // Fermée
+  background: $color-background-alt; // Changé: blanc
+  border: 1px solid $color-border; // Changé: bordure dorée
+  box-shadow: $shadow-md;
   z-index: $z-index-fixed;
   transition: all $transition-slow ease;
   display: flex;
   flex-direction: column;
+  border-radius: $border-radius-sm; // Optionnel pour le design
   
-  @include respond-to($breakpoint-lg) {
-    width: 60px;
+  &.open {
+    width: 280px;
+    // Pas de changement de position right car déjà à 10px
+    
+    // Quand SceneTools est aussi ouverte
+    .scene-tools-sidebar.open ~ & {
+      z-index: 900; // Légèrement en dessous
+    }
+  }
+  
+  // Responsive
+  @media (max-width: 1200px) {
+    right: 8px;
+    top: 8px;
+    height: calc(100vh - 16px);
     
     &.open {
       width: 250px;
     }
   }
   
-  @include respond-to($breakpoint-md) {
+  @media (max-width: 768px) {
+    right: 5px;
+    top: 5px;
+    height: calc(100vh - 10px);
     width: 50px;
     
     &.open {
       width: 250px;
-    }
-  }
-  
-  // QUAND OUVERT
-  &.open {
-    width: 280px;
-    
-    @include respond-to($breakpoint-lg) {
-      width: 250px;
+      z-index: $z-index-modal;
     }
     
-    .sidebar-content {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .sidebar-btn,
-    .export-option {
-      justify-content: flex-start;
-      text-align: left;
-      
-      span {
-        display: inline;
-      }
-    }
-    
-    .export-options,
-    .quick-links {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .sidebar-section-title {
-      display: block;
+    // Sur mobile, cacher si SceneTools est ouverte
+    .scene-tools-sidebar.open ~ & {
+      display: none;
     }
   }
 }
@@ -71,8 +64,8 @@
   width: 100%;
   height: 50px;
   min-height: 50px;
-  background: $color-primary;
-  color: $color-white;
+  background: $color-primary; // Changé: doré
+  color: $color-text-light; // Changé: blanc
   border: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
@@ -83,7 +76,7 @@
   transition: $transition;
   
   &:hover {
-    background: darken($color-primary, 10%);
+    background: darken($color-primary, 10%); // Doré plus foncé
   }
   
   i {
@@ -102,10 +95,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: $spacing-xs; // Réduit l'espace entre les éléments
   
   .right-sidebar.open & {
     padding: $spacing-md;
     align-items: stretch;
+    gap: $spacing-sm; // Un peu plus d'espace quand ouvert
   }
   
   @include respond-to($breakpoint-md) {
@@ -122,27 +117,28 @@
   width: 40px;
   height: 40px;
   padding: 0;
-  margin-bottom: $gap-sm;
-  border: 1px solid rgba($color-primary, 0.2);
-  border-radius: 50%;
-  background: rgba($color-primary, 0.05);
-  color: $color-text-primary;
+  margin-bottom: 4px; // Réduit l'espace entre les boutons
+  border: 1px solid $color-border; // Changé: bordure dorée
+  border-radius: $border-radius-xs;
+  background: $color-background-alt; // Changé: blanc
+  color: $color-text-primary; // Changé: brun foncé
   font-size: $font-size-p2;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: $transition;
+  transition: $transition-fast;
   display: flex;
   align-items: center;
   justify-content: center;
   
   &:hover {
-    background: rgba($color-primary, 0.1);
-    border-color: $color-primary;
-    transform: scale(1.1);
+    background: rgba($color-primary, 0.1); // Changé: doré subtil
+    border-color: $color-primary; // Changé: doré
+    color: $color-primary; // Changé: doré
+    transform: scale(1.05);
   }
   
   i {
-    color: $color-primary;
+    color: $color-primary; // Changé: doré
     font-size: $font-size-p1;
   }
   
@@ -154,11 +150,12 @@
   .right-sidebar.open & {
     width: 100%;
     height: auto;
+    min-height: 40px;
     padding: $spacing-sm $spacing-md;
-    border-radius: $border-radius-sm;
+    border-radius: $border-radius-xs;
     justify-content: flex-start;
     text-align: left;
-    margin-bottom: $gap-xs;
+    margin-bottom: 4px; // Réduit l'espace entre les boutons
     
     &:hover {
       transform: translateX(-2px);
@@ -173,13 +170,14 @@
     
     span {
       display: inline;
+      @include typography-p4;
     }
   }
 }
 
 // SECTION EXPORT
 .export-section {
-  margin: $spacing-md 0;
+  margin: $spacing-xs 0; // Réduit l'espace autour
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -187,16 +185,16 @@
   
   .right-sidebar.open & {
     align-items: stretch;
-    margin: $spacing-lg 0;
+    margin: $spacing-sm 0; // Réduit l'espace autour
   }
 }
 
 .sidebar-section-title {
-  @include typography-h4;
+  @include typography-playfair-p4;
   margin-bottom: $spacing-sm;
-  color: $color-text-primary;
+  color: $color-text-primary; // Changé: brun foncé
   padding-bottom: $gap-xs;
-  border-bottom: 1px solid rgba($color-primary, 0.1);
+  border-bottom: 1px solid $color-border; // Changé: bordure dorée
   display: none;
   
   .right-sidebar.open & {
@@ -221,27 +219,28 @@
   width: 40px;
   height: 40px;
   padding: 0;
-  margin-bottom: $gap-sm;
-  border: 1px solid rgba($color-accent, 0.3);
-  border-radius: 50%;
-  background: rgba($color-accent, 0.1);
-  color: $color-text-primary;
+  margin-bottom: 4px; // Réduit l'espace entre les boutons
+  border: 1px solid $color-border; // Changé: bordure dorée
+  border-radius: $border-radius-xs;
+  background: $color-background-alt; // Changé: blanc
+  color: $color-text-primary; // Changé: brun foncé
   font-size: $font-size-p2;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: $transition;
+  transition: $transition-fast;
   display: flex;
   align-items: center;
   justify-content: center;
   
   &:hover {
-    background: rgba($color-accent, 0.2);
-    border-color: $color-accent;
-    transform: scale(1.1);
+    background: rgba($color-accent, 0.1); // Changé: orange subtil
+    border-color: $color-accent; // Changé: orange
+    color: $color-accent; // Changé: orange
+    transform: scale(1.05);
   }
   
   i {
-    color: $color-accent;
+    color: $color-accent; // Changé: orange
     font-size: $font-size-p1;
   }
   
@@ -253,11 +252,12 @@
   .right-sidebar.open & {
     width: 100%;
     height: auto;
+    min-height: 40px;
     padding: $spacing-sm $spacing-md;
-    border-radius: $border-radius-sm;
+    border-radius: $border-radius-xs;
     justify-content: flex-start;
     text-align: left;
-    margin-bottom: 0;
+    margin-bottom: 2px; // Réduit encore plus l'espace
     
     &:hover {
       transform: translateX(-2px);
@@ -272,13 +272,14 @@
     
     span {
       display: inline;
+      @include typography-p4;
     }
   }
 }
 
 // SECTION LIENS RAPIDES
 .quick-links-section {
-  margin: $spacing-md 0;
+  margin: $spacing-xs 0; // Réduit l'espace autour
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -286,7 +287,7 @@
   
   .right-sidebar.open & {
     align-items: stretch;
-    margin: $spacing-lg 0;
+    margin: $spacing-sm 0; // Réduit l'espace autour
   }
 }
 
@@ -316,14 +317,20 @@
       transform: translateY(-50%);
       margin-left: $gap-sm;
       padding: $gap-xs $gap-sm;
-      background: $color-text-primary;
-      color: $color-white;
+      background: $color-text-primary; // Changé: brun foncé
+      color: $color-text-light; // Changé: blanc
       font-size: $font-size-p3;
       white-space: nowrap;
-      border-radius: $border-radius-sm;
+      border-radius: $border-radius-xs;
       z-index: $z-index-tooltip;
       pointer-events: none;
       box-shadow: $shadow;
+      
+      @include respond-to($breakpoint-md) {
+        font-size: $font-size-p4;
+        padding: 4px 8px;
+        margin-left: $gap-xs;
+      }
     }
   }
 }
@@ -379,17 +386,136 @@
       }
     }
     
-    // Réduire les tooltips
-    &:not(.open) {
-      .sidebar-btn,
-      .export-option {
-        &:hover::after {
-          font-size: $font-size-p4;
-          padding: 4px 8px;
-          margin-left: $gap-xs;
-        }
-      }
+    // Ajustement du décalage pour mobile
+    &.open ~ *:not(.scene-tools-sidebar) {
+      margin-right: 5px;
     }
   }
 }
+
+// =============================================
+// SIDEBAR OUTILS SCÈNE - Style intégré
+// =============================================
+// =============================================
+// SIDEBAR OUTILS SCÈNE - Version côte à côte
+// =============================================
+scene-tools-sidebar {
+  position: fixed;
+  top: 10px; // ← Même distance que RightSidebar
+  height: calc(100vh - 20px); // Même hauteur
+  width: 350px;
+  background: $color-background-alt; // Changé: blanc
+  border: 1px solid $color-border; // Changé: bordure dorée
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: $z-index-fixed + 10;
+  transform: translateX(100%);
+  transition: transform $transition-slow ease;
+  display: flex;
+  flex-direction: column;
+  border-radius: $border-radius-sm; // Optionnel
+  
+  &.open {
+    transform: translateX(0);
+  }
+  
+  // QUAND RightSidebar est FERMÉE
+  &.open.without-right-sidebar {
+    right: 10px; // ← Même distance que RightSidebar
+  }
+  
+  // QUAND RightSidebar est OUVERTE
+  &.open.with-right-sidebar {
+    right: calc(280px + 20px); // ← 280px (sidebar ouverte) + 20px espace
+  }
+  
+  // Responsive
+  @media (max-width: 1200px) {
+    width: 320px;
+    top: 8px;
+    height: calc(100vh - 16px);
+    
+    &.open.with-right-sidebar {
+      right: calc(250px + 15px); // 250px + 15px espace
+    }
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 350px;
+    right: 5px !important;
+    top: 5px;
+    height: calc(100vh - 10px);
+    z-index: $z-index-modal + 100;
+    
+    &.open {
+      right: 5px !important;
+      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+
+// =============================================
+// RESPONSIVE - Gestion des deux sidebars
+// =============================================
+@include respond-to($breakpoint-lg) {
+  .scene-tools-sidebar {
+    width: 300px;
+    
+    &.with-right-sidebar-open {
+      right: 250px;
+    }
+    
+    &.with-right-sidebar-closed {
+      right: 60px;
+      left: 50px;
+    }
+  }
+}
+
+@include respond-to($breakpoint-md) {
+  .scene-tools-sidebar {
+    width: 100%;
+    max-width: 350px;
+    
+    &.with-right-sidebar-open {
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: $z-index-modal; // Au-dessus de tout
+    }
+    
+    &.with-right-sidebar-closed {
+      right: 0;
+      top: 0;
+      height: 100vh;
+      z-index: $z-index-modal;
+    }
+    
+    &.open {
+      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+      
+      // Sur mobile, la sidebar outils prend tout l'espace
+      & ~ .ecran-travail-ecran-travail {
+        margin-right: 0 !important;
+      }
+    }
+  }
+  
+  // Sur mobile, la sidebar droite se met en overlay quand les outils sont ouverts
+  .scene-tools-sidebar.open ~ .right-sidebar {
+    z-index: $z-index-fixed - 10;
+  }
+}
+
+@include respond-to($breakpoint-sm) {
+  .scene-tools-sidebar {
+    max-width: 100%;
+    
+    .sidebar-content {
+      padding: $spacing-md;
+    }
+  }
+}
+
 

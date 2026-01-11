@@ -1,19 +1,9 @@
-// _login.scss - Interface de connexion VDFI
 @import '../base/variables';
-
-// Variables charte VDFI
-$vdfi-primary: #E97C11;
-$vdfi-accent: #E01F5A;
-$vdfi-accent-light: #E1DC49;
-$vdfi-accent-dark: #751613;
-$vdfi-text: #261213;
-$vdfi-background: #F5FAF5;
-$vdfi-white: #FFFFFF; 
 
 // Styles de base
 .app-wrapper-co-conn {
   min-height: 100vh;
-  background: $vdfi-background;
+  background: $color-background;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -32,7 +22,7 @@ $vdfi-white: #FFFFFF;
 .split-screen-container {
   display: flex;
   height: 100%;
-  background: $vdfi-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   overflow: hidden;
   box-shadow: $shadow-lg;
@@ -77,14 +67,14 @@ $vdfi-white: #FFFFFF;
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba($vdfi-text, 0.8);
-      color: $vdfi-white;
+      background: rgba($color-text-primary, 0.8);
+      color: $color-text-light;
       padding: $padding-lg;
       
       .overlay-content {
         .overlay-title {
           @include typography-playfair-h4;
-          color: $vdfi-white;
+          color: $color-text-light;
           font-weight: $font-weight-bold;
           margin-bottom: 8px;
           text-transform: uppercase;
@@ -93,7 +83,7 @@ $vdfi-white: #FFFFFF;
         .overlay-text {
           @include typography-p3;
           font-family: $font-family-primary;
-          color: rgba($vdfi-white, 0.9);
+          color: rgba($color-text-light, 0.9);
           margin-bottom: 16px;
           line-height: 1.4;
         }
@@ -109,13 +99,13 @@ $vdfi-white: #FFFFFF;
             
             i {
               font-size: 14px;
-              color: $vdfi-primary;
+              color: $color-primary;
             }
             
             span {
               @include typography-p4;
               font-family: $font-family-primary;
-              color: $vdfi-white;
+              color: $color-text-light;
               font-weight: $font-weight-medium;
             }
           }
@@ -155,18 +145,18 @@ $vdfi-white: #FFFFFF;
     
     .logo-icon {
       font-size: 32px;
-      color: $vdfi-primary;
+      color: $color-primary;
       margin-bottom: 8px; // RÉDUIT: 10px → 8px
     }
     
     .logo-text {
       @include typography-playfair-h2;
-      color: $vdfi-text;
+      color: $color-text-primary;
       font-weight: $font-weight-black;
       margin-bottom: 4px;
       letter-spacing: 1px;
       
-      background: linear-gradient(135deg, $vdfi-primary 0%, $vdfi-accent 100%);
+      background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -175,7 +165,7 @@ $vdfi-white: #FFFFFF;
     .logo-subtitle {
       @include typography-p2;
       font-family: $font-family-primary;
-      color: lighten($vdfi-text, 30%);
+      color: $color-text-muted;
     }
   }
 }
@@ -193,12 +183,12 @@ $vdfi-white: #FFFFFF;
   }
   
   &::-webkit-scrollbar-track {
-    background: rgba($vdfi-primary, 0.1);
+    background: rgba($color-primary, 0.1);
     border-radius: 2px;
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba($vdfi-primary, 0.3);
+    background: rgba($color-primary, 0.3);
     border-radius: 2px;
   }
 }
@@ -220,7 +210,7 @@ $vdfi-white: #FFFFFF;
         left: 16px;
         top: 50%;
         transform: translateY(-50%);
-        color: $vdfi-primary;
+        color: $color-primary;
         font-size: 16px;
         z-index: 1;
       }
@@ -265,28 +255,28 @@ $vdfi-white: #FFFFFF;
 .cinema-input {
   width: 100%;
   padding: 12px 12px 12px 44px; // RÉDUIT: 14px → 12px (-2px)
-  border: 1px solid rgba($vdfi-primary, 0.2);
+  border: 1px solid $color-border;
   border-radius: $border-radius;
-  background: rgba($vdfi-background, 0.5);
+  background: rgba($color-background, 0.5);
   font-family: $font-family-primary;
   font-size: 14px;
-  color: $vdfi-text;
+  color: $color-text-primary;
   transition: $transition-fast;
   
   &::placeholder {
-    color: lighten($vdfi-text, 40%);
+    color: $color-text-muted;
     font-size: 13px;
   }
   
   &:focus {
     outline: none;
-    border-color: $vdfi-primary;
-    box-shadow: 0 0 0 3px rgba($vdfi-primary, 0.1);
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-pastel-gold;
   }
   
   &.error {
-    border-color: $vdfi-accent;
-    background: rgba($vdfi-accent, 0.05);
+    border-color: $color-error;
+    background: rgba($color-error, 0.05);
   }
 }
 
@@ -294,7 +284,7 @@ $vdfi-white: #FFFFFF;
 .cinema-select {
   appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23E97C11' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23E67E22' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;
   padding-right: 40px;
@@ -304,12 +294,12 @@ $vdfi-white: #FFFFFF;
     font-size: 15px;
     height: 46px; // RÉDUIT: 48px → 46px (-2px)
     border-radius: $border-radius;
-    border: 2px solid rgba($vdfi-primary, 0.3);
-    background-color: rgba($vdfi-primary, 0.05);
+    border: 2px solid rgba($color-primary, 0.3);
+    background-color: rgba($color-primary, 0.05);
     
     &:focus {
-      border-color: $vdfi-primary;
-      background-color: rgba($vdfi-primary, 0.1);
+      border-color: $color-primary;
+      background-color: rgba($color-primary, 0.1);
     }
   }
 }
@@ -342,19 +332,19 @@ $vdfi-white: #FFFFFF;
     }
     
     &.fa-times {
-      color: $vdfi-accent;
+      color: $color-error;
     }
   }
   
   .email-error-cinema {
     @include typography-p3;
-    color: $vdfi-accent;
+    color: $color-error;
   }
 }
 
 .password-hint-cinema {
   @include typography-p3;
-  color: lighten($vdfi-text, 30%);
+  color: $color-text-muted;
   margin-top: 6px; // RÉDUIT: 8px → 6px (-2px)
   padding-left: 44px;
 }
@@ -369,21 +359,21 @@ $vdfi-white: #FFFFFF;
 
 .forgot-link-cinema {
   @include typography-p2;
-  color: $vdfi-primary;
+  color: $color-primary;
   text-decoration: none;
   font-weight: $font-weight-medium;
   transition: $transition-fast;
   
   &:hover {
-    color: $vdfi-accent;
+    color: $color-accent;
     text-decoration: underline;
   }
 }
 
 // Messages d'erreur
 .error-message-cinema {
-  background: rgba($vdfi-accent, 0.08);
-  border-left: 2px solid $vdfi-accent;
+  background: rgba($color-error, 0.08);
+  border-left: 2px solid $color-error;
   padding: 12px; // RÉDUIT: 16px → 12px (-4px)
   border-radius: $border-radius-xs;
   margin-bottom: 12px; // RÉDUIT: 16px → 12px (-4px)
@@ -392,20 +382,20 @@ $vdfi-white: #FFFFFF;
   gap: 10px; // RÉDUIT: 12px → 10px (-2px)
   
   i {
-    color: $vdfi-accent;
+    color: $color-error;
     font-size: 16px;
   }
   
   @include typography-p2;
-  color: $vdfi-accent-dark;
+  color: $color-secondary-dark;
 }
 
 // Bouton principal
 .premier-btn {
   width: 100%;
   border: none;
-  background: $vdfi-primary;
-  color: $vdfi-white;
+  background: $color-primary;
+  color: $color-text-light;
   font-family: $font-family-primary;
   font-weight: $font-weight-semibold;
   font-size: 16px;
@@ -416,9 +406,9 @@ $vdfi-white: #FFFFFF;
   transition: $transition;
   
   &:hover:not(:disabled) {
-    background: darken($vdfi-primary, 8%);
+    background: $color-primary-dark;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba($vdfi-primary, 0.3);
+    box-shadow: $shadow-primary;
   }
   
   &:active:not(:disabled) {
@@ -452,7 +442,7 @@ $vdfi-white: #FFFFFF;
   .film-frame {
     width: 8px;
     height: 12px;
-    background: $vdfi-white;
+    background: $color-text-light;
     animation: filmRoll 1.2s infinite ease-in-out;
     
     &:nth-child(1) {
@@ -481,23 +471,23 @@ $vdfi-white: #FFFFFF;
   text-align: center;
   margin-top: 16px; // RÉDUIT: 20px → 16px (-4px)
   padding-top: 16px; // RÉDUIT: 20px → 16px (-4px)
-  border-top: 1px solid rgba($vdfi-primary, 0.1);
+  border-top: 1px solid rgba($color-primary, 0.1);
   flex-shrink: 0;
   
   .link-content {
     @include typography-p2;
-    color: lighten($vdfi-text, 30%);
+    color: $color-text-muted;
   }
   
   .switch-link {
-    color: $vdfi-primary;
+    color: $color-primary;
     text-decoration: none;
     font-weight: $font-weight-semibold;
     margin-left: 8px;
     transition: $transition-fast;
     
     &:hover {
-      color: $vdfi-accent;
+      color: $color-accent;
       text-decoration: underline;
     }
   }
@@ -736,3 +726,6 @@ $vdfi-white: #FFFFFF;
     margin-top: 8px; // RÉDUIT: 12px → 8px (-4px)
   }
 }
+
+
+

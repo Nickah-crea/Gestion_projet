@@ -72,7 +72,7 @@
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -85,7 +85,7 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -93,7 +93,7 @@
     &.active {
       background: $color-primary;
       border-color: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
     }
 
     &:focus-visible {
@@ -113,7 +113,7 @@
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
 
@@ -153,7 +153,7 @@
     width: 100%;
     height: 34px;
     padding: 0 $padding-xs;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -178,7 +178,7 @@
       padding: 0 $padding-xs 0 ($padding-xs + 20px);
       border: 1px solid $color-border;
       border-radius: $border-radius-xs;
-      background: $color-white;
+      background: $color-background-alt;
       font-size: $font-size-p4;
       color: $color-text-primary;
       transition: $transition-fast;
@@ -242,7 +242,7 @@
 // SYSTÈME D'ONGLETS
 // =============================================
 .tabs-container-status {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -251,7 +251,7 @@
 
 .tabs-header-status {
   display: flex;
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
   position: relative;
   overflow-x: auto;
@@ -290,7 +290,7 @@
 
   &:hover {
     color: $color-primary;
-    background: rgba($color-primary, 0.05);
+    background: $color-surface;
   }
 
   &.active {
@@ -304,7 +304,7 @@
   }
 
   .tab-count-status {
-    background: rgba($color-primary, 0.1);
+    background: $color-surface;
     color: $color-primary;
     padding: 2px 6px;
     border-radius: $border-radius-pill;
@@ -381,7 +381,7 @@
     background: $color-primary;
     border: none;
     border-radius: $border-radius-xs;
-    color: $color-white;
+    color: $color-text-light;
     font-size: $font-size-p4;
     font-weight: $font-weight-semibold;
     cursor: pointer;
@@ -391,7 +391,7 @@
     gap: $gap-xs;
 
     &:hover {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -415,7 +415,7 @@
   .empty-state-status {
     text-align: center;
     padding: $spacing-xl;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     box-shadow: $shadow;
     margin: $spacing-md 0;
@@ -455,7 +455,7 @@
 }
 
 .statut-card-status {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   border: 1px solid $color-border;
   overflow: hidden;
@@ -469,7 +469,7 @@
 
   &.inactive {
     opacity: 0.7;
-    background: $color-background-alt;
+    background: $color-background;
   }
 
   .statut-card-header-status {
@@ -477,7 +477,7 @@
     justify-content: space-between;
     align-items: center;
     padding: $padding-sm;
-    background: $color-background-alt;
+    background: $color-background;
     border-bottom: 1px solid $color-border;
   }
 
@@ -489,7 +489,7 @@
     .code-badge-status {
       padding: 2px 8px;
       background: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
       border-radius: $border-radius-xs;
       font-size: $font-size-p5;
       font-weight: $font-weight-bold;
@@ -503,8 +503,8 @@
       font-weight: $font-weight-semibold;
 
       &.active {
-        background: rgba($color-success, 0.2);
-        color: darken($color-success, 20%);
+        background: rgba($color-primary, 0.2);
+        color: $color-primary-dark;
       }
 
       &.inactive {
@@ -535,11 +535,11 @@
 
       &.edit {
         background: rgba($color-warning, 0.1);
-        color: $color-warning;
+        color: $color-accent;
 
         &:hover {
-          background: $color-warning;
-          color: $color-white;
+          background: $color-accent;
+          color: $color-text-light;
         }
       }
 
@@ -549,7 +549,7 @@
 
         &:hover {
           background: $color-info;
-          color: $color-white;
+          color: $color-text-light;
         }
       }
 
@@ -559,7 +559,7 @@
 
         &:hover {
           background: $color-error;
-          color: $color-white;
+          color: $color-text-light;
         }
       }
 
@@ -609,7 +609,7 @@
 
 // Classes de couleur pour les codes de statut
 .status-success .code-badge-status {
-  background: $color-success !important;
+  background: $color-primary !important;
 }
 
 .status-error .code-badge-status {
@@ -646,7 +646,7 @@
 }
 
 .modal-content-status {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-xl;
   max-width: 600px;
@@ -760,7 +760,7 @@
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
-    background: $color-white;
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
@@ -910,7 +910,7 @@
     color: $color-text-secondary;
 
     &:hover:not(:disabled) {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -918,10 +918,10 @@
 
   .submit-btn-status {
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -1045,7 +1045,7 @@
 
 .notification-status {
   position: relative;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-lg;
   padding: $padding-md;
@@ -1076,18 +1076,18 @@
 }
 
 .notification-success {
-  border-left-color: $color-success;
-  background: rgba($color-success, 0.05);
+  border-left-color: $color-primary;
+  background: $color-pastel-gold;
 }
 
 .notification-error {
   border-left-color: $color-error;
-  background: rgba($color-error, 0.05);
+  background: $color-pastel-wine;
 }
 
 .notification-warning {
   border-left-color: $color-warning;
-  background: rgba($color-warning, 0.05);
+  background: rgba($color-accent, 0.05);
 }
 
 .notification-info {
@@ -1102,7 +1102,7 @@
 }
 
 .notification-success .notification-icon-status {
-  color: $color-success;
+  color: $color-primary;
 }
 
 .notification-error .notification-icon-status {
@@ -1162,7 +1162,7 @@
   animation: progressBar-status linear forwards;
   
   .notification-success & {
-    background: $color-success;
+    background: $color-primary;
   }
   
   .notification-error & {
@@ -1280,25 +1280,25 @@
   
   &.confirm-warning {
     background: $color-warning;
-    color: $color-white;
+    color: $color-text-light;
     
     &:hover:not(:disabled) {
-      background: darken($color-warning, 10%);
+      background: $color-accent-dark;
     }
   }
   
   &.confirm-danger {
     background: $color-error;
-    color: $color-white;
+    color: $color-text-light;
     
     &:hover:not(:disabled) {
-      background: darken($color-error, 10%);
+      background: $color-secondary-dark;
     }
   }
   
   &.confirm-info {
     background: $color-info;
-    color: $color-white;
+    color: $color-text-light;
     
     &:hover:not(:disabled) {
       background: darken($color-info, 10%);
@@ -1306,11 +1306,11 @@
   }
   
   &.confirm-success {
-    background: $color-success;
-    color: $color-white;
+    background: $color-primary;
+    color: $color-text-light;
     
     &:hover:not(:disabled) {
-      background: darken($color-success, 10%);
+      background: $color-primary-dark;
     }
   }
   
@@ -1320,3 +1320,5 @@
     transform: none;
   }
 }
+
+

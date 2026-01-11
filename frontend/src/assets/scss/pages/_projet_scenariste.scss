@@ -26,7 +26,6 @@
   overflow-y: auto;
   border-right: 1px solid $color-border;
 
-
   .sidebar-header-projet-scenariste {
     margin-bottom: $spacing-md;
     border-bottom: 1px solid $color-border;
@@ -74,7 +73,7 @@
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -87,7 +86,7 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -95,7 +94,7 @@
     &.active {
       background: $color-primary;
       border-color: $color-primary;
-      color: $color-white;
+      color: $color-text-light;
     }
 
     &:focus-visible {
@@ -105,13 +104,13 @@
     
     // BOUTON "NOUVEL ÉPISODE" EN ORANGE
     &.nouvel-episode-btn {
-      background: $color-primary;
-      border-color: $color-primary;
-      color: $color-white;
+      background: $color-accent;
+      border-color: $color-accent;
+      color: $color-text-light;
       font-weight: $font-weight-semibold;
       
       i {
-        color: $color-white;
+        color: $color-text-light;
       }
     }
   }
@@ -138,7 +137,7 @@
     width: 100%;
     height: 34px;
     padding: 0 $padding-xs;
-    background: $color-white;
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -163,7 +162,7 @@
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: $color-white;
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
 
@@ -225,7 +224,7 @@
 // DÉTAILS DU PROJET AMÉLIORÉS
 // =============================================
 .project-details-spiral-Scenariste {
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-lg;
   margin: $margin-xl 0 $margin-lg 0; 
@@ -241,6 +240,7 @@
     left: 0;
     right: 0;
     height: 4px;
+    background: linear-gradient(135deg, $color-primary, $color-accent);
   }
 }
 
@@ -291,19 +291,19 @@
   }
   &.statut-termine { 
     background: rgba($color-success, 0.2); 
-    color: $color-success; 
+    color: darken($color-success, 10%); 
   }
   &.statut-attente { 
     background: rgba($color-warning, 0.2); 
-    color: $color-warning; 
+    color: darken($color-warning, 10%); 
   }
   &.statut-annule { 
     background: rgba($color-error, 0.2); 
-    color: $color-error; 
+    color: darken($color-error, 10%); 
   }
   &.statut-planifie { 
     background: rgba($color-accent, 0.2); 
-    color: $color-accent; 
+    color: darken($color-accent, 10%); 
   }
 }
 
@@ -353,7 +353,7 @@
 }
 
 .project-synopsis-spiral-Scenariste {
-  background: $color-background-alt;
+  background: $color-surface;
   border-radius: $border-radius;
   padding: $padding-lg;
   position: relative;
@@ -380,7 +380,7 @@
     right: 0;
     bottom: 0;
     border-radius: $border-radius;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 2px rgba($color-text-primary, 0.05);
     pointer-events: none;
   }
   
@@ -447,7 +447,7 @@
 
 // Les styles des cartes d'épisodes sont maintenant appliqués via la classe movie-card-Scenariste
 .episode-card-projet-scenariste {
-  background: linear-gradient(135deg, $color-white, $color-background-alt);
+  background: linear-gradient(135deg, $color-background-alt, $color-surface);
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -463,7 +463,7 @@
     justify-content: space-between;
     align-items: center;
     padding: $spacing-md;
-    background: linear-gradient(135deg, $color-background-alt, $color-surface);
+    background: linear-gradient(135deg, $color-surface, $color-surface-hover);
     border-bottom: 1px solid $color-border;
     
     .episode-statut-projet-scenariste {
@@ -490,7 +490,7 @@
         border-radius: $border-radius-xs;
         
         &:hover {
-          color: $color-white;
+          color: $color-text-light;
           transform: scale(1.2);
         }
       }
@@ -562,24 +562,24 @@
         transition: $transition-fast;
         
         &.details-btn-projet-scenariste {
-          background: $color-background-alt;
+          background: $color-surface;
           color: $color-text-muted;
           border: 1px solid $color-border;
           
           &:hover {
-            background: rgba($color-primary, 0.1);
+            background: $color-surface-hover;
             border-color: $color-primary;
             color: $color-primary;
           }
         }
         
         &.add-sequence-btn-projet-scenariste {
-          background: $color-primary-dark;
-          color: $color-white;
+          background: $color-accent;
+          color: $color-text-light;
           border: none;
           
           &:hover {
-            background: darken($color-primary-dark, 10%);
+            background: $color-accent-dark;
           }
         }
       }
@@ -725,13 +725,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba($color-black, 0.5);
+  background: rgba($color-text-primary, 0.5);
   backdrop-filter: blur(4px);
 }
 
 .modal-content-confirm-Scenariste {
   position: relative;
-  background: $color-white;
+  background: $color-background-alt;
   border-radius: $border-radius-lg;
   width: 100%;
   max-width: 500px;
@@ -860,24 +860,24 @@
   }
   
   .cancel-confirm-btn-Scenariste {
-    background: $color-background;
+    background: $color-surface;
     color: $color-text-secondary;
     border: 1px solid $color-border;
     
     &:hover:not(:disabled) {
-      background: rgba($color-text-muted, 0.1);
+      background: $color-surface-hover;
       color: $color-text-primary;
     }
   }
   
   .delete-confirm-btn-Scenariste {
     background: $color-error;
-    color: $color-white;
+    color: $color-text-light;
     
     &:hover:not(:disabled) {
       background: darken($color-error, 10%);
       transform: translateY(-1px);
-      box-shadow: $shadow;
+      box-shadow: $shadow-primary;
     }
   }
 }
@@ -904,7 +904,7 @@
   right: $spacing-lg;
   padding: $padding-sm $padding-md;
   border-radius: $border-radius-xs;
-  color: $color-white;
+  color: $color-text-light;
   z-index: $z-index-modal + 20;
   animation: slideInRight 0.3s ease-out;
   max-width: 400px;
@@ -915,8 +915,8 @@
   cursor: pointer;
 
   &.success {
-    background: linear-gradient(135deg, $color-success, darken($color-success, 10%));
-    border-left: 4px solid darken($color-success, 20%);
+    background: linear-gradient(135deg, $color-success, $color-primary-dark);
+    border-left: 4px solid $color-primary-dark;
   }
 
   &.error {
@@ -932,7 +932,7 @@
     margin-left: auto;
     background: transparent;
     border: none;
-    color: $color-white;
+    color: $color-text-light;
     cursor: pointer;
     padding: 0;
     display: flex;
@@ -973,7 +973,7 @@
   z-index: $z-index-modal;
   
   .modal-content-Scenariste {
-    background: $color-white;
+    background: $color-background-alt;
     padding: $padding-xl;
     border-radius: $border-radius-lg;
     box-shadow: $shadow-xl;
@@ -1056,7 +1056,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba($color-text-primary, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1065,7 +1065,7 @@
 }
 
 .access-denied-content {
-  background: white;
+  background: $color-background-alt;
   padding: 3rem;
   border-radius: 15px;
   text-align: center;
@@ -1156,7 +1156,7 @@
   
   &:hover {
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
   }
 }
 
@@ -1201,12 +1201,12 @@
   
   &:hover {
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
     transform: translateY(-2px);
     box-shadow: $shadow-lg;
     
     i {
-      color: $color-white;
+      color: $color-text-light;
     }
   }
   
@@ -1237,3 +1237,7 @@
     }
   }
 }
+
+
+
+

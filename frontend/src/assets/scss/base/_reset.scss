@@ -18,21 +18,32 @@ body {
   background-color: $color-background;
   color: $color-text-primary;
   font-weight: $font-weight-regular;
+  overflow-x: hidden;
 }
 
 // Reset des liens
 a {
-  color: inherit;
+  color: $color-primary;
   text-decoration: none;
+  transition: color $transition-fast;
   
   &:hover {
-    color: $color-primary;
+    color: $color-primary-dark;
+    text-decoration: underline;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+    border-radius: $border-radius-xs;
   }
 }
 
 // Reset des listes
 ul, ol {
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 // Reset des boutons
@@ -42,23 +53,67 @@ button {
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
   
-  &:focus {
+  &:focus-visible {
     outline: 2px solid $color-primary;
     outline-offset: 2px;
+    border-radius: $border-radius-xs;
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 }
 
-// Reset des inputs
+// Reset des inputs et formulaires
 input, textarea, select {
   font-family: inherit;
   font-size: inherit;
-  border: none;
+  color: $color-text-primary;
+  background-color: $color-background-alt;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $padding-xs $padding-sm;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
   
   &:focus {
-    outline: 2px solid $color-primary;
-    outline-offset: 2px;
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
   }
+  
+  &:disabled {
+    background-color: $color-surface;
+    color: $color-text-muted;
+    cursor: not-allowed;
+  }
+  
+  &::placeholder {
+    color: $color-text-muted;
+    opacity: 0.7;
+  }
+}
+
+// Champ texte spécifique
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: $line-height-base;
+}
+
+// Sélecteur spécifique
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%235C3F34' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $padding-sm center;
+  background-size: 16px;
+  padding-right: $padding-xl;
 }
 
 // Images responsives
@@ -66,6 +121,222 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
+  border-radius: $border-radius-xs;
 }
 
+// Tables
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: $padding-sm;
+  border-bottom: 1px solid $color-border;
+}
+
+th {
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  background-color: $color-surface;
+}
+
+tr:hover {
+  background-color: $color-surface-hover;
+}
+
+// Heading reset
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  margin-bottom: $gap-sm;
+}
+
+h1 {
+  @include typography-h1;
+}
+
+h2 {
+  @include typography-h2;
+}
+
+h3 {
+  @include typography-h3;
+}
+
+h4 {
+  @include typography-h4;
+}
+
+// Paragraphes
+p {
+  margin-bottom: $gap-md;
+  line-height: $line-height-base;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Code et pré
+code, pre {
+  font-family: $font-family-hauora;
+  background-color: $color-surface;
+  border-radius: $border-radius-xs;
+  padding: $gap-xs $gap-sm;
+  font-size: $font-size-p5;
+  color: $color-text-primary;
+}
+
+pre {
+  padding: $padding-sm;
+  overflow-x: auto;
+  margin: $gap-md 0;
+  
+  code {
+    padding: 0;
+    background: none;
+  }
+}
+
+// Blockquote
+blockquote {
+  border-left: 3px solid $color-primary;
+  padding-left: $padding-md;
+  margin: $gap-md 0;
+  font-style: italic;
+  color: $color-text-secondary;
+  
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Horizontal rule
+hr {
+  border: none;
+  height: 1px;
+  background-color: $color-border;
+  margin: $gap-lg 0;
+}
+
+// Figures
+figure {
+  margin: $gap-lg 0;
+  
+  figcaption {
+    text-align: center;
+    font-size: $font-size-p4;
+    color: $color-text-muted;
+    margin-top: $gap-xs;
+    font-style: italic;
+  }
+}
+
+// Fieldset et legend
+fieldset {
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  padding: $padding-md;
+  margin-bottom: $gap-md;
+}
+
+legend {
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  padding: 0 $gap-sm;
+}
+
+// Labels
+label {
+  display: block;
+  margin-bottom: $gap-xs;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+}
+
+// Messages et alertes
+[role="alert"],
+[role="status"] {
+  padding: $padding-sm;
+  border-radius: $border-radius-xs;
+  margin: $gap-md 0;
+  border-left: 3px solid $color-primary;
+  background-color: $color-surface;
+  
+  &[role="alert"] {
+    border-left-color: $color-error;
+    background-color: rgba($color-error, 0.05);
+    color: $color-error;
+  }
+  
+  &[role="status"] {
+    border-left-color: $color-primary;
+    background-color: $color-surface;
+    color: $color-text-primary;
+  }
+}
+
+// Visually hidden
+.sr-only {
+  @include sr-only;
+}
+
+// Focus visible pour tous les éléments interactifs
+*:focus-visible {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+  border-radius: $border-radius-xs;
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $color-surface;
+  border-radius: $border-radius-pill;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba($color-primary, 0.3);
+  border-radius: $border-radius-pill;
+  
+  &:hover {
+    background: rgba($color-primary, 0.5);
+  }
+}
+
+// Print styles
+@media print {
+  body {
+    background-color: white;
+    color: black;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+  
+  button, input, textarea, select {
+    border: 1px solid black;
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
