@@ -715,7 +715,7 @@ body, html {
 }
 
 .movie-card-Scenariste {
-  background: $color-cool-light; // Changé: blanc
+  background: $color-background; // Changé: blanc
   border-radius: $border-radius-xs;
   box-shadow: $shadow;
   overflow: hidden;
@@ -1539,7 +1539,7 @@ nav.fixed-bottom,
 
   // Couleurs par type de carte
   &.stat-projects {
-    background: $color-primary-dark;
+    background: $color-primary-light;
   }
 
   &.stat-scenes {
