@@ -1,22 +1,25 @@
 <template>
   <div class="app-wrapper-global">
-    
-     <LeftSidebar
+    <!-- Sidebar gauche -->
+    <LeftSidebar
+      class="creation-sidebar-crea-comedien left-sidebar-ecran-travail"
+      :open="leftSidebarOpen"
       :projet-title="store.projetTitle"
       :projet-synopsis="store.projetSynopsis"
       :status-color="store.statusColor"
       :projet-status="store.projetStatus"
       :episodes-count="store.episodes.length"
       :total-sequences="store.totalSequences"
-      :episodes="episodes"                
-      :sequences="sequences"              
-      :scenes="scenes"                    
+      :episodes="episodes"
+      :sequences="sequences"
+      :scenes="scenes"
       :current-episode="currentEpisode"
       :current-sequence="currentSequence"
       :current-scene="currentScene"
       :sequence-comment-count="sequenceCommentCount"
       :scene-comment-count="getSceneCommentCount(currentScene?.idScene)"
       :user-permissions="userPermissions"
+      :sidebar-selection="sidebarSelection" 
       @edit-project="startEditProject"
       @delete-project="confirmDeleteProject"
       @edit-episode="startEditEpisode"
@@ -26,19 +29,21 @@
       @edit-scene="startEditScene"
       @delete-scene="deleteScene"
       @view-sequence-comments="toggleSequenceCommentSection"
-      @select-scene="selectScene"
-      @select-episode="selectEpisodeFromSidebar"     
-      @select-sequence="selectSequenceFromSidebar"   
-      
+      @add-episode="goToAddEpisode"
+      @add-sequence="goToAddSequence"
+      @add-scene="addScene"
+      @select-item="handleSidebarSelection" 
+      @toggle-left="toggleLeftSidebar"
     />
     
-    <!-- Sidebar droite AVEC TOGGLE FONCTIONNEL -->
+    <!-- Sidebar droite -->
     <RightSidebar
       :open="sidebarOpen"
       :current-episode="currentEpisode"
       :current-sequence="currentSequence"
       :episodes="episodes"
       :user-permissions="userPermissions"
+      :is-scene-mode="sidebarSelection.type === 'scene'"
       @toggle="toggleSidebar"
       @go-to-calendrier="goToCalendrierTournage"
       @export-scenes-only="exportScenesOnlyPDF"
@@ -52,20 +57,87 @@
       @add-comedien="goToAddComedien"
       @add-personnage="goToAddPersonnage"
     />
+
+    <!-- Sidebar outils scènes (uniquement pour les scènes) -->
+    <SceneToolsSidebar
+      v-if="sidebarSelection.type === 'scene' && currentScene"
+      :class="{
+        'open': true,
+        'without-right-sidebar': !sidebarOpen,
+        'with-right-sidebar': sidebarOpen
+      }"
+      :scene="currentScene"
+      :projet-id="projetId"
+      :episode-id="currentEpisode?.idEpisode"
+      :sequence-id="currentSequence?.idSequence"
+      :user-permissions="userPermissions"
+      :comment-count="getSceneCommentCount(currentScene.idScene)"
+      :photo-count="getPhotoCount(currentScene.idScene)"
+      :raccord-count="getRaccordCount(currentScene.idScene)"
+      :right-sidebar-open="sidebarOpen"
+      @close="closeSceneToolsSidebar"
+      @tournage-updated="onTournageUpdated"
+      @replanification-appliquee="onReplanificationDansScene"
+      @raccords-updated="onRaccordsUpdated"
+      @raccord-created="onRaccordCreated"
+      @add-dialogue="startAddDialogue"
+      @add-lieu="openAddLieuModal"
+      @export-scene-pdf="exportScenePDF"
+      @export-raccords-images="exportRaccordsByScene"
+      @toggle-comments="toggleSceneCommentSection"
+      @open-email="openEmailModal"
+      ref="sceneToolsSidebar"
+    />
     
-    <!-- Contenu principal AVEC AJUSTEMENT DES MARGES -->
-    <div class="ecran-travail-ecran-travail" :class="{ 'sidebar-open': sidebarOpen }">
-      <!-- Header avec titre de l'épisode -->
+    <!-- Contenu principal -->
+    <div 
+      class="ecran-travail-ecran-travail" 
+      :class="{ 
+        'scene-tools-open': sidebarSelection.type === 'scene' && currentScene,
+        'right-sidebar-open': sidebarOpen
+      }"
+    >
+      
+      <!-- Header commun -->
       <header class="header-ecran-travail">
-        <div class="navigation-ecran-travail">
-          <!-- Groupe de DROITE : Précédent/Suivant + Calendrier -->
-          <div class="navigation-right-section">
-            <!-- Navigation par épisode/séquence -->
-            <button class="nav-btn-ecran-travail" @click="goToPrevPage" :disabled="!hasPrev || isLoading">Précédent</button>
-            <button class="nav-btn-ecran-travail" @click="goToNextPage" :disabled="!hasNext || isLoading">Suivant</button>
+        <!-- Navigation fixe en haut -->
+        <div class="fixed-top-navigation">
+          <div class="fixed-nav-container">
+            <div class="nav-left-section">
+              <button 
+                v-if="showNavButtons" 
+                class="nav-btn-fixed-left" 
+                @click="goToPrevPage" 
+                :disabled="!hasPrev || isLoading"
+              >
+                <i class="fas fa-chevron-left"></i> Précédent
+              </button>
+            </div>
             
-            <!-- Navigation par scène (visible seulement si une scène est sélectionnée) -->
-            <div v-if="currentScene" class="scene-navigation-buttons">
+            <div class="nav-center-section">
+              <span v-if="currentEpisode || currentSequence || currentScene" class="current-context">
+                {{ getCurrentContext() }}
+              </span>
+            </div>
+            
+            <div class="nav-right-section">
+              <button 
+                v-if="showNavButtons" 
+                class="nav-btn-fixed-right" 
+                @click="goToNextPage" 
+                :disabled="!hasNext || isLoading"
+              >
+                Suivant <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Navigation scène (reste en dessous) -->
+        <div class="navigation-ecran-travail">
+          <div class="navigation-right-section">
+            <!-- Boutons navigation scène -->
+            <div v-if="sidebarSelection.type === 'scene'" class="scene-navigation-buttons">
               <button 
                 class="nav-btn-ecran-travail scene-nav-btn"
                 @click="goToPrevScene"
@@ -85,493 +157,580 @@
             </div>
           </div>
         </div>
+      </header>
 
-        <!-- Section Export dans la navbar -->
-        <div class="export-container" v-if="currentSequence">
-          <div class="export-dropdown">
-            <button class="export-main-btn">
-              <i class="fas fa-file-export"></i> Exporter en PDF
-              <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="export-dropdown-content">
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportScenesOnlyPDF"
-                title="Exporter les scènes en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Scènes PDF
+      <!-- ==================== CONTENU DYNAMIQUE ==================== -->
+      
+      <!-- 1. VUE PROJET -->
+      <div v-if="sidebarSelection.type === 'project'" class="main-content-view">
+        <div class="project-view">
+          <div class="project-header-view">
+            <h1 class="project-title-view">{{ store.projetTitle }}</h1>
+            <div class="project-status-badge" :style="{ backgroundColor: store.statusColor }">
+              {{ store.projetStatus }}
+            </div>
+          </div>
+          
+          <div class="project-details-view">
+            <div class="detail-section">
+              <h3><i class="fas fa-align-left"></i> Synopsis</h3>
+              <p class="synopsis-text">{{ store.projetSynopsis || 'Aucun synopsis disponible.' }}</p>
+            </div>
+            
+            <div class="project-stats-view">
+              <div class="stat-card">
+                <i class="fas fa-tv stat-icon"></i>
+                <div class="stat-content">
+                  <span class="stat-number">{{ store.episodes.length }}</span>
+                  <span class="stat-label">Épisodes</span>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <i class="fas fa-list-ol stat-icon"></i>
+                <div class="stat-content">
+                  <span class="stat-number">{{ store.totalSequences }}</span>
+                  <span class="stat-label">Séquences</span>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <i class="fas fa-film stat-icon"></i>
+                <div class="stat-content">
+                  <span class="stat-number">{{ totalScenes }}</span>
+                  <span class="stat-label">Scènes</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Dans la section project-actions-view -->
+            <div class="project-actions-view">
+              <button class="action-btn-primary" @click="startEditProjectModal">
+                <i class="fas fa-pen"></i> Modifier le projet
               </button>
-
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportSequenceDialoguesPDF"
-                title="Exporter tous les dialogues de la séquence en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Dialogues PDF
+              <button v-if="userPermissions.canCreateEpisode" class="action-btn-secondary" @click="goToAddEpisode">
+                <i class="fas fa-plus"></i> Ajouter un épisode
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              <button 
-                v-if="currentSequence" 
-                class="export-option" 
-                @click="exportSequenceCompletePDF"
-                title="Exporter la séquence complète en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Séquence PDF
+      <!-- 2. VUE ÉPISODE -->
+      <div v-else-if="sidebarSelection.type === 'episode'" class="main-content-view">
+        <div class="episode-view" v-if="currentEpisode">
+          <div class="episode-header-view">
+            <div class="episode-header-left">
+              <h1 class="episode-title-view">
+                Épisode {{ currentEpisode.ordre }} : {{ currentEpisode.titre }}
+              </h1>
+              <div class="episode-status-badge">
+                {{ currentEpisode.statutNom || 'Non défini' }}
+              </div>
+            </div>
+            
+            <div class="episode-header-actions">
+              <button v-if="userPermissions.canEditEpisode" class="edit-btn" @click="startEditEpisode">
+                <i class="fas fa-pen"></i> Modifier
               </button>
-
-              <button 
-                v-if="currentEpisode" 
-                class="export-option" 
-                @click="exportEpisodeWithSequencePDF"
-                title="Exporter l'épisode avec séquence en PDF"
-              >
-                <i class="fas fa-file-pdf"></i> Épisode PDF
+              <button v-if="userPermissions.canCreateEpisode" class="delete-btn" @click="confirmDeleteEpisode">
+                <i class="fas fa-trash"></i> Supprimer
               </button>
-
-              <!-- Sélecteur de comédien pour l'export -->
-              <div class="comedien-selector-ecran-travail" v-if="comediens.length">
-                <label for="comedien-select">Exporter les raccords pour :</label>
-                <select id="comedien-select" v-model="selectedComedien" class="select-ecran-travail">
-                  <option value="">Sélectionner un comédien</option>
-                  <option v-for="comedien in comediens" :key="comedien.id" :value="comedien.id">
-                    {{ comedien.nom }}
-                  </option>
-                </select>
-                
-                <button 
-                  @click="exportRaccordsByComedien(selectedComedien)" 
-                  :disabled="!selectedComedien"
-                  class="export-btn-ecran-travail"
+              <button v-if="userPermissions.canCreateSequence" class="add-btn" @click="goToAddSequence">
+                <i class="fas fa-plus"></i> Ajouter une séquence
+              </button>
+            </div>
+          </div>
+          
+          <div class="episode-content-view">
+            <div class="detail-section">
+              <h3><i class="fas fa-info-circle"></i> Informations</h3>
+              <div class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-label">Titre :</span>
+                  <span class="detail-value">{{ currentEpisode.titre }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Ordre :</span>
+                  <span class="detail-value">Épisode {{ currentEpisode.ordre }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Statut :</span>
+                  <span class="detail-value">{{ currentEpisode.statutNom || 'Non défini' }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div v-if="currentEpisode.synopsis" class="detail-section">
+              <h3><i class="fas fa-align-left"></i> Synopsis</h3>
+              <p class="synopsis-text">{{ currentEpisode.synopsis }}</p>
+            </div>
+            
+            <div v-if="currentEpisode.realisateur || currentEpisode.scenariste" class="detail-section">
+              <h3><i class="fas fa-users"></i> Équipe</h3>
+              <div class="team-grid">
+                <div v-if="currentEpisode.realisateur" class="team-member">
+                  <i class="fas fa-video"></i>
+                  <div class="team-member-info">
+                    <span class="team-role">Réalisateur</span>
+                    <span class="team-name">{{ currentEpisode.realisateur.nom }}</span>
+                  </div>
+                </div>
+                <div v-if="currentEpisode.scenariste" class="team-member">
+                  <i class="fas fa-pen"></i>
+                  <div class="team-member-info">
+                    <span class="team-role">Scénariste</span>
+                    <span class="team-name">{{ currentEpisode.scenariste.nom }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="detail-section">
+              <h3><i class="fas fa-list-ol"></i> Séquences ({{ sequences.length }})</h3>
+              <div v-if="sequences.length > 0" class="sequences-list">
+                <div 
+                  v-for="sequence in sequences" 
+                  :key="sequence.idSequence"
+                  class="sequence-card"
+                  :class="{ 'active': sidebarSelection.id === sequence.idSequence }"
+                  @click="handleSidebarSelection({ type: 'sequence', id: sequence.idSequence })"
                 >
-                  <i class="fas fa-file-pdf"></i> Export Raccords Comédien
+                  <div class="sequence-card-header">
+                    <i class="fas fa-list-ol"></i>
+                    <span class="sequence-order">Séquence {{ sequence.ordre }}</span>
+                    <span class="sequence-title">{{ sequence.titre }}</span>
+                  </div>
+                  <div class="sequence-card-footer">
+                    <span class="scene-count">
+                      <i class="fas fa-film"></i> {{ sequence.scenes?.length || 0 }} scène(s)
+                    </span>
+                    <span class="sequence-status">{{ sequence.statutNom || 'Non défini' }}</span>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="empty-state">
+                <p>Aucune séquence dans cet épisode.</p>
+                <button v-if="userPermissions.canCreateSequence" class="add-btn" @click="goToAddSequence">
+                  <i class="fas fa-plus"></i> Créer la première séquence
                 </button>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <h2 class="episode-title-ecran-travail"> Épisode {{ currentEpisode?.ordre }} : </h2><br>     
-
-        <div class="title-episode-ecran-travail">
-          <label> {{ currentEpisode?.titre || 'Chargement...' }} </label><br>
+      <!-- 3. VUE SÉQUENCE -->
+      <div v-else-if="sidebarSelection.type === 'sequence'" class="main-content-view">
+        <div class="sequence-view" v-if="currentSequence">
+          <div class="sequence-header-view">
+            <div class="sequence-header-left">
+              <h1 class="sequence-title-view">
+                Séquence {{ currentSequence.ordre }} : {{ currentSequence.titre }}
+                <span class="comment-badge" @click="toggleSequenceCommentSection">
+                  <i class="fas fa-comments"></i> {{ sequenceCommentCount }}
+                </span>
+              </h1>
+              <div class="sequence-status-badge">
+                {{ currentSequence.statutNom || 'Non défini' }}
+              </div>
+            </div>
+            
+            <div class="sequence-header-actions">
+              <button v-if="userPermissions.canCreateSequence" class="edit-btn" @click="startEditSequence(currentSequence)">
+                <i class="fas fa-pen"></i> Modifier
+              </button>
+              <button v-if="userPermissions.canCreateSequence" class="delete-btn" @click="deleteSequence(currentSequence.idSequence)">
+                <i class="fas fa-trash"></i> Supprimer
+              </button>
+              <button v-if="userPermissions.canCreateScene" class="add-btn" @click="goToAddScene">
+                <i class="fas fa-plus"></i> Ajouter une scène
+              </button>
+              <button class="comments-btn" @click="toggleSequenceCommentSection">
+                <i class="fas fa-comments"></i> Commentaires
+              </button>
+            </div>
+          </div>
+          
+          <div class="sequence-content-view">
+            <div class="detail-section">
+              <h3><i class="fas fa-info-circle"></i> Informations</h3>
+              <div class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-label">Titre :</span>
+                  <span class="detail-value">{{ currentSequence.titre }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Ordre :</span>
+                  <span class="detail-value">Séquence {{ currentSequence.ordre }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Statut :</span>
+                  <span class="detail-value">{{ currentSequence.statutNom || 'Non défini' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Épisode :</span>
+                  <span class="detail-value">Épisode {{ currentEpisode?.ordre }} - {{ currentEpisode?.titre }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div v-if="currentSequence.synopsis" class="detail-section">
+              <h3><i class="fas fa-align-left"></i> Synopsis</h3>
+              <p class="synopsis-text">{{ currentSequence.synopsis }}</p>
+            </div>
+            
+            <div class="detail-section">
+              <h3><i class="fas fa-film"></i> Scènes ({{ scenes.length }})</h3>
+              <div v-if="scenes.length > 0" class="scenes-list">
+                <div 
+                  v-for="scene in scenes" 
+                  :key="scene.idScene"
+                  class="scene-card"
+                  :class="{ 'active': sidebarSelection.id === scene.idScene }"
+                  @click="handleSidebarSelection({ type: 'scene', id: scene.idScene })"
+                >
+                  <div class="scene-card-header">
+                    <i class="fas fa-film"></i>
+                    <span class="scene-order">Scène {{ scene.ordre }}</span>
+                    <span class="scene-title">{{ scene.titre }}</span>
+                  </div>
+                  <div class="scene-card-body">
+                    <p v-if="scene.synopsis" class="scene-synopsis">{{ scene.synopsis }}</p>
+                  </div>
+                  <div class="scene-card-footer">
+                    <span class="scene-status">{{ scene.statutNom || 'Non défini' }}</span>
+                    <span class="dialogue-count">
+                      <i class="fas fa-comment"></i> {{ scene.dialogues?.length || 0 }} dialogue(s)
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="empty-state">
+                <p>Aucune scène dans cette séquence.</p>
+                <button v-if="userPermissions.canCreateScene" class="add-btn" @click="goToAddScene">
+                  <i class="fas fa-plus"></i> Créer la première scène
+                </button>
+              </div>
+            </div>
+            
+            <!-- Section commentaires de séquence -->
+            <div v-if="showSequenceCommentSection" class="detail-section comment-section">
+              <h3><i class="fas fa-comments"></i> Commentaires</h3>
+              <div class="add-comment">
+                <textarea v-model="newSequenceComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
+                <button @click="addSequenceComment" class="add-comment-btn">
+                  <i class="fas fa-plus-circle"></i> Ajouter
+                </button>
+              </div>
+              
+              <div class="comments-list">
+                <div v-for="comment in sequenceComments" :key="comment.id" class="comment-item">
+                  <div class="comment-header">
+                    <span class="comment-author">{{ comment.utilisateurNom }}</span>
+                    <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+                  </div>
+                  <div class="comment-content">
+                    {{ comment.contenu }}
+                  </div>
+                  <div class="comment-actions" v-if="comment.utilisateurId === user.id">
+                    <button @click="deleteSequenceComment(comment.id)" class="delete-comment-btn">
+                      <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        
-        <div class="syno-episode-ecran-travail">
-          <label><strong>Statut :</strong> {{ currentEpisode?.statutNom || 'Chargement...' }} </label>
-        </div>
-      </header>
+      </div>
 
-      <!-- Navigation par numéros d'épisodes -->
-      <div class="episode-navigation-ecran-travail">
-        <span
-          v-for="episode in episodes"
-          :key="episode.idEpisode"
-          class="episode-number-ecran-travail"
-          :class="{ 
-            'active-ecran-travail': episode.idEpisode === currentEpisode?.idEpisode, 
-            'new-episode-ecran-travail': episode.idEpisode === newlyCreatedEpisodeId 
-          }"
-          @click="selectEpisode(episode.idEpisode)"
-        >
-          Ep {{ episode.ordre }}
-          <span v-if="episode.idEpisode === newlyCreatedEpisodeId" class="blinking-icon-ecran-travail">✨</span>
-        </span>
+      <!-- 4. VUE SCÈNE -->
+      <div v-else-if="sidebarSelection.type === 'scene'" class="main-content-view">
+        <div class="scene-view" v-if="currentScene">
+          <div class="scene-header-view">
+            <div class="scene-header-left">
+              <h1 class="scene-title-view">
+                Scène {{ currentScene.ordre }} : {{ currentScene.titre }}
+              </h1>
+              <div class="scene-status-badge">
+                {{ currentScene.statutNom || 'Non défini' }}
+              </div>
+            </div>
+            
+            <div class="scene-header-actions">
+              <button class="back-btn" @click="handleSidebarSelection({ type: 'sequence', id: currentSequence?.idSequence })" title="Retour à la séquence">
+                <i class="fas fa-arrow-left"></i> Retour
+              </button>
+              <button v-if="userPermissions.canCreateScene" class="edit-btn" @click="startEditScene(currentScene)">
+                <i class="fas fa-pen"></i> Modifier
+              </button>
+              <button v-if="userPermissions.canCreateScene" class="delete-btn" @click="deleteScene(currentScene.idScene)">
+                <i class="fas fa-trash"></i> Supprimer
+              </button>
+              <button v-if="userPermissions.canCreateDialogue" class="add-btn" @click="startAddDialogue(currentScene)">
+                <i class="fas fa-plus"></i> Ajouter un dialogue
+              </button>
+              <button class="comments-btn" @click="toggleSceneCommentSection(currentScene)">
+                <i class="fas fa-comments"></i> Commentaires ({{ getSceneCommentCount(currentScene.idScene) }})
+              </button>
+            </div>
+          </div>
+          
+          <div class="scene-content-view">
+            <div class="detail-section">
+              <h3><i class="fas fa-info-circle"></i> Informations</h3>
+              <div class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-label">Titre :</span>
+                  <span class="detail-value">{{ currentScene.titre }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Ordre :</span>
+                  <span class="detail-value">Scène {{ currentScene.ordre }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Statut :</span>
+                  <span class="detail-value">{{ currentScene.statutNom || 'Non défini' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Séquence :</span>
+                  <span class="detail-value">Séquence {{ currentSequence?.ordre }} - {{ currentSequence?.titre }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Épisode :</span>
+                  <span class="detail-value">Épisode {{ currentEpisode?.ordre }} - {{ currentEpisode?.titre }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div v-if="currentScene.synopsis" class="detail-section">
+              <h3><i class="fas fa-align-left"></i> Synopsis</h3>
+              <p class="synopsis-text">{{ currentScene.synopsis }}</p>
+            </div>
+            
+            <div v-if="currentScene.lieuNom || currentScene.lieuPlateau" class="detail-section">
+              <h3><i class="fas fa-map-marker-alt"></i> Lieu</h3>
+              <div class="location-info">
+                <span v-if="currentScene.lieuNom">{{ currentScene.lieuNom }}</span>
+                <span v-if="currentScene.lieuPlateau"> - {{ currentScene.lieuPlateau }}</span>
+              </div>
+              <p v-if="currentScene.descriptionUtilisation" class="location-description">
+                {{ currentScene.descriptionUtilisation }}
+              </p>
+            </div>
+            
+            <!-- Section Dialogues -->
+            <div class="detail-section">
+              <div class="section-header">
+                <h3><i class="fas fa-comments"></i> Dialogues ({{ currentScene.dialogues?.length || 0 }})</h3>
+                <button v-if="userPermissions.canCreateDialogue" class="add-btn-sm" @click="startAddDialogue(currentScene)">
+                  <i class="fas fa-plus"></i> Nouveau dialogue
+                </button>
+              </div>
+              
+              <div v-if="currentScene.dialogues?.length" class="dialogues-list">
+                <div v-for="dialogue in currentScene.dialogues" :key="dialogue.id" class="dialogue-item">
+                  <div class="dialogue-header">
+                    <span class="dialogue-character">
+                      <strong>{{ dialogue.personnageNom || 'Narrateur' }} :</strong>
+                    </span>
+                    <span class="dialogue-order">#{{ dialogue.ordre }}</span>
+                  </div>
+                  <div class="dialogue-content" @mouseup="openHighlightModal(dialogue, $event)">
+                    {{ dialogue.texte }}
+                    
+                    <!-- Surlignages -->
+                    <template v-if="dialogueHighlights[dialogue.id]">
+                      <span 
+                        v-for="highlight in dialogueHighlights[dialogue.id]" 
+                        :key="highlight.id"
+                        class="text-highlight"
+                        :style="{ backgroundColor: highlight.couleur.valeurHex }"
+                        :title="`Surligné par ${highlight.utilisateurNom}`"
+                      >
+                        {{ highlight.texteSurligne }}
+                      </span>
+                    </template>
+                  </div>
+                  
+                  <div v-if="dialogue.observation" class="dialogue-observation">
+                    <i class="fas fa-sticky-note"></i> {{ dialogue.observation }}
+                  </div>
+                  
+                  <div class="dialogue-actions">
+                    <button v-if="userPermissions.canCreateDialogue" class="action-icon edit-icon" @click="startEditDialogue(dialogue)" title="Modifier">
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button v-if="userPermissions.canCreateDialogue" class="action-icon delete-icon" @click="deleteDialogue(dialogue.id)" title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="action-icon comment-icon" @click="toggleDialogueCommentSection(dialogue)" title="Commentaires">
+                      <i class="fas fa-comment"></i> {{ getDialogueCommentCount(dialogue.id) }}
+                    </button>
+                    <button v-if="userPermissions.canCreateDialogue" class="action-icon highlight-icon" @click="openHighlightModal(dialogue, $event)" title="Surligner">
+                      <i class="fas fa-highlighter"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="empty-state">
+                <p>Aucun dialogue dans cette scène.</p>
+                <button v-if="userPermissions.canCreateDialogue" class="add-btn" @click="startAddDialogue(currentScene)">
+                  <i class="fas fa-plus"></i> Ajouter le premier dialogue
+                </button>
+              </div>
+              
+              <!-- Formulaire d'ajout de dialogue -->
+              <div v-if="showAddDialogueSection && selectedSceneForDialogue?.idScene === currentScene.idScene" class="add-dialogue-form">
+                <h4><i class="fas fa-plus-circle"></i> Ajouter un dialogue</h4>
+                
+                <div class="form-group">
+                  <label>Personnage</label>
+                  <select v-model="newDialogueData.personnageId" class="form-select">
+                    <option :value="null">Narration (sans personnage)</option>
+                    <option 
+                      v-for="personnage in personnages" 
+                      :key="personnage.id" 
+                      :value="personnage.id"
+                    >
+                      {{ personnage.nom }}
+                    </option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label>Texte du dialogue *</label>
+                  <textarea 
+                    v-model="newDialogueData.texte" 
+                    rows="3" 
+                    class="form-textarea"
+                    placeholder="Entrez le texte du dialogue..."
+                    required
+                  ></textarea>
+                </div>
+                
+                <div class="form-group">
+                  <label>Observation</label>
+                  <textarea 
+                    v-model="newDialogueData.observation" 
+                    rows="2" 
+                    class="form-textarea"
+                    placeholder="Notes ou observations (optionnel)"
+                  ></textarea>
+                </div>
+                
+                <div class="form-actions">
+                  <button 
+                    @click="createDialogueDirect(currentScene.idScene)" 
+                    class="save-btn"
+                    :disabled="!newDialogueData.texte.trim()"
+                  >
+                    <i class="fas fa-save"></i> Ajouter le dialogue
+                  </button>
+                  <button 
+                    @click="cancelAddDialogue" 
+                    class="cancel-btn"
+                  >
+                    <i class="fas fa-times"></i> Annuler
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Section commentaires scène -->
+            <div v-if="showSceneCommentModal && selectedSceneForComments?.idScene === currentScene.idScene" class="detail-section comment-section">
+              <h3><i class="fas fa-comments"></i> Commentaires de la scène</h3>
+              <div class="add-comment">
+                <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
+                <button @click="addSceneComment" class="add-comment-btn">
+                  <i class="fas fa-plus-circle"></i> Ajouter
+                </button>
+              </div>
+              
+              <div class="comments-list">
+                <div v-for="comment in sceneComments" :key="comment.id" class="comment-item">
+                  <div class="comment-header">
+                    <span class="comment-author">{{ comment.utilisateurNom }}</span>
+                    <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+                  </div>
+                  <div class="comment-content">
+                    {{ comment.contenu }}
+                  </div>
+                  <div class="comment-actions" v-if="comment.utilisateurId === user.id">
+                    <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn">
+                      <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Indicateur de chargement -->
-      <div v-if="isLoading" class="loading-ecran-travail">Chargement en cours...</div>
+      <div v-if="isLoading" class="loading-view">
+        <div class="spinner"></div>
+        <p>Chargement en cours...</p>
+      </div>
 
       <!-- Message d'erreur -->
-      <div v-if="error && !isLoading" class="error-message-ecran-travail">
-        {{ error }}
-        <button class="retry-btn-ecran-travail" @click="retryFetch">Réessayer</button>
+      <div v-if="error && !isLoading" class="error-view">
+        <p>{{ error }}</p>
+        <button class="retry-btn" @click="retryFetch">Réessayer</button>
       </div>
 
-      <!-- Liens de création - Masquer ceux non autorisés -->
-      <div class="liens-ecran-travail">
-        <button 
-          v-if="episodes.length === 0 || userPermissions.canEditEpisode" 
-          class="add-scene-btn-ecran-travail" 
-          @click="goToAddEpisode"
-        >
-          <i class="fas fa-plus-circle" style="color: #21294F;"></i> Episode
-        </button>     
-        <button v-if="userPermissions.canCreateSequence" class="add-scene-btn-ecran-travail" @click="goToAddSequence">
-          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Séquence
-        </button>
-        <button v-if="userPermissions.canCreateLieu" class="add-scene-btn-ecran-travail" @click="goToAddLieu">
-          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Lieu
-        </button>
-        <button v-if="userPermissions.canCreatePlateau" class="add-scene-btn-ecran-travail" @click="goToAddPlateau">
-          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Plateau
-        </button>
-        <button v-if="userPermissions.canCreateComedien" class="add-scene-btn-ecran-travail" @click="goToAddComedien">
-          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Comedien
-        </button>
-        <button v-if="userPermissions.canCreatePersonnage" class="add-scene-btn-ecran-travail" @click="goToAddPersonnage">
-          <i class="fas fa-plus-circle " style="color: #21294F;"></i> Personnage
-        </button>
-      </div>
-
-      <div class="sequences-title-ecran-travail">
-        <h2>Les séquences :</h2>
-      </div>
-
-      <div class="sequence-navigation-container-ecran-travail">
-        <!-- Navigation par numéros de séquences -->
-        <div v-if="currentEpisode && !isLoading" class="sequence-navigation-ecran-travail">
-          <span
-            v-for="(sequence, index) in sequences"
-            :key="sequence.idSequence"
-            class="sequence-number-ecran-travail"
-            :class="{ 
-              'active-ecran-travail': sequence.idSequence === currentSequence?.idSequence, 
-              'new-sequence-ecran-travail': sequence.idSequence === newlyCreatedSequenceId 
-            }"
-            @click="selectSequence(sequence.idSequence)"
-          >
-            <span v-if="index > 0"></span>
-            Seq {{ sequence.ordre }}
-            <span v-if="sequence.idSequence === newlyCreatedSequenceId" class="blinking-icon-ecran-travail">✨</span>
-          </span>
-        </div>
-      </div>
-
-      <!-- NOUVELLE SECTION : Navigation par scènes -->
-      <div v-if="currentSequence && scenes.length > 0" class="scene-navigation-ecran-travail">
-        <h3>Navigation par scènes :</h3>
-        <div class="scene-numbers-container">
-          <span
-            v-for="scene in scenes"
-            :key="scene.idScene"
-            class="scene-number-ecran-travail"
-            :class="{ 
-              'active-ecran-travail': currentScene?.idScene === scene.idScene,
-              'new-scene-ecran-travail': scene.idScene === newlyCreatedSceneId
-            }"
-            @click="selectScene(scene.idScene)"
-            :title="`Scène ${scene.ordre}: ${scene.titre}`"
-          >
-            Sc{{ scene.ordre }}
-            <span v-if="scene.idScene === newlyCreatedSceneId" class="blinking-icon-ecran-travail">✨</span>
-          </span>
-        </div>
-      </div>
-
-      <!-- ==================== CONTENU PRINCIPAL ==================== -->
-      
-      <!-- 1. Vue de la SÉQUENCE (par défaut, quand aucune scène n'est sélectionnée) -->
-      <main v-if="currentSequence && !currentScene && !isLoading" class="sequence-page-ecran-travail">
-        <div class="sequence-header-ecran-travail">
-          <h2 class="sequence-title-ecran-travail">
-            Séquence 0{{ currentSequence.ordre }} : {{ currentSequence.titre }}
-            <span class="comment-icon-ecran-travail" @click="toggleSequenceCommentSection">
-              <i class="fas fa-comments " style="color: #21294F;"></i>{{ sequenceCommentCount }}
-            </span>
-          </h2>
-          
-          <!-- AJOUT ICI : Boutons d'actions pour la séquence -->
-          <div class="sequence-actions-ecran-travail">
-            <button class="add-scene-btn-ecran-travail" @click="goToAddScene">
-              <i class="fas fa-plus-circle" style="color: #21294F;"></i> Ajouter une scène
-            </button>
-            <button 
-              v-if="userPermissions.canCreateSequence" 
-              class="edit-sequence-btn-ecran-travail" 
-              @click="startEditSequence(currentSequence)"
-              title="Modifier la séquence"
-            >
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-          </div>
-        </div>
-        
-        <p class="sequence-info-ecran-travail"><strong>Statut:</strong> {{ currentSequence.statutNom || 'Non défini' }}</p>
-        
-        <!-- Section scènes -->
-        <div class="scenes-section-ecran-travail">
-          <div class="section-header-ecran-travail">
-            <h3>Scènes ({{ scenes.length }})</h3>
-            <!-- Bouton également en haut de la liste pour plus de visibilité -->
-            <button class="add-scene-btn-ecran-travail" @click="goToAddScene">
-              <i class="fas fa-plus-circle" style="color: #21294F;"></i> Nouvelle scène
-            </button>
-          </div>
-          
-          <!-- Liste des scènes -->
-          <div class="scenes-list-ecran-travail">
-            <!-- ... reste du code pour les cartes de scène ... -->
-          </div>
-          
-          <!-- Message si pas de scènes -->
-          <div v-if="scenes.length === 0" class="no-scenes-message">
-            <p>Aucune scène dans cette séquence.</p>
-            <button class="add-first-scene-btn-ecran-travail" @click="goToAddScene">
-              <i class="fas fa-plus-circle"></i> Créer la première scène
-            </button>
-          </div>
-        </div>
-      </main>
-      <!-- 2. Vue d'une SCÈNE SPÉCIFIQUE (quand une scène est sélectionnée) -->
-      <main v-else-if="currentScene && !isLoading" class="scene-page-ecran-travail">
-        <div class="scene-page-header">
-          <div class="scene-header-left">
-            <h2 class="scene-page-title-ecran-travail">
-              Scène {{ currentScene.ordre }}: {{ currentScene.titre }}
-              <button class="back-to-sequence-btn" @click="clearSelectedScene" title="Retour à la séquence">
-                <i class="fas fa-arrow-left"></i> Retour à la séquence
-              </button>
-              <button class="add-another-scene-btn" @click="goToAddScene" title="Ajouter une nouvelle scène">
-                <i class="fas fa-plus-circle"></i> Nouvelle scène
-              </button>
-            </h2>
-            <p class="scene-page-info-ecran-travail">
-              <strong>Statut:</strong> {{ currentScene.statutNom || 'Non défini' }}
-              <span v-if="currentScene.synopsis">
-                | <strong>Synopsis:</strong> {{ currentScene.synopsis }}
-              </span>
-            </p>
-          </div>
-          
-          <div class="scene-header-actions">
-            <button class="add-dialogue-btn-ecran-travail" @click="startAddDialogue(currentScene)">
-              <i class="fas fa-comment-medical"></i> Ajouter un dialogue
-            </button>
-            <button class="edit-scene-btn-ecran-travail" @click="startEditScene(currentScene)">
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            <button class="delete-scene-btn-ecran-travail" @click="deleteScene(currentScene.idScene)">
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-        
-        <!-- Section commentaires scène -->
-        <div class="scene-comments-section-ecran-travail">
-          <div class="comments-header">
-            <h3><i class="fas fa-comments"></i> Commentaires ({{ getSceneCommentCount(currentScene.idScene) }})</h3>
-            <button class="toggle-comments-btn" @click="toggleSceneCommentSection(currentScene)">
-              {{ showSceneCommentModal ? 'Masquer' : 'Afficher' }}
-            </button>
-          </div>
-          
-          <div v-if="showSceneCommentModal && selectedSceneForComments?.idScene === currentScene.idScene" class="comment-section-ecran-travail">
-            <div class="add-comment-ecran-travail">
-              <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-              <button @click="addSceneComment" class="add-comment-btn-ecran-travail"><i class="fas fa-plus-circle"></i> Ajouter</button>
-            </div>
-
-            <div class="comments-list-ecran-travail">
-              <div v-for="comment in sceneComments" :key="comment.id" class="comment-item-ecran-travail">
-                <div class="comment-header-ecran-travail">
-                  <span class="comment-author-ecran-travail">{{ comment.utilisateurNom }}</span>
-                  <span class="comment-date-ecran-travail">{{ formatDate(comment.creeLe) }}</span>
-                </div>
-                <div class="comment-content-ecran-travail">
-                  {{ comment.contenu }}
-                </div>
-                <div class="comment-actions-ecran-travail" v-if="comment.utilisateurId === user.id">
-                  <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn-ecran-travail"><i class="fas fa-trash icon-ecran-travail"></i>Supprimer</button>
-                </div>
-              </div>
-            </div>
-            <button @click="closeSceneCommentModal" class="close-comments-btn-ecran-travail">Fermer</button>
-          </div>
-        </div>
-        
-        <!-- Section Tournage -->
-        <SceneTournageSection 
-          :scene="currentScene"
-          :projet-id="projetId"
-          :user-permissions="userPermissions"
-          @tournage-updated="onTournageUpdated"
-          @replanification-appliquee="onReplanificationDansScene"
-        />
-        
-        <!-- Section Dialogues complète -->
-        <div class="scene-dialogues-section-ecran-travail">
-          <div class="dialogues-header">
-            <h3><i class="fas fa-comments"></i> Dialogues ({{ currentScene.dialogues?.length || 0 }})</h3>
-            <button class="add-dialogue-btn-ecran-travail" @click="startAddDialogue(currentScene)">
-              <i class="fas fa-plus"></i> Nouveau dialogue
-            </button>
-          </div>
-          
-          <div class="dialogues-ecran-travail" v-if="currentScene.dialogues?.length">
-            <ul class="dialogues-list-ecran-travail">
-              <li v-for="dialogue in currentScene.dialogues" :key="dialogue.id" class="dialogue-item-ecran-travail">
-                <div 
-                  class="dialogue-text-ecran-travail" 
-                  @mouseup="openHighlightModal(dialogue, $event)"
-                  :data-dialogue-id="dialogue.id"
-                >
-                  <strong>{{ dialogue.personnageNom || 'Narrateur' }}:</strong> 
-                  <span class="dialogue-content-ecran-travail">{{ dialogue.texte }}</span>
-                  
-                  <!-- Afficher les surlignages -->
-                  <template v-if="dialogueHighlights[dialogue.id]">
-                    <span 
-                      v-for="highlight in dialogueHighlights[dialogue.id]" 
-                      :key="highlight.id"
-                      class="text-highlight-ecran-travail"
-                      :style="{ backgroundColor: highlight.couleur.valeurHex }"
-                      :title="`Surligné par ${highlight.utilisateurNom}`"
-                    >
-                      {{ highlight.texteSurligne }}
-                    </span>
-                  </template>
-                </div>
-                
-                <span v-if="dialogue.observation" class="dialogue-observation-ecran-travail">
-                  {{ dialogue.observation }}
-                </span>
-                
-                <div class="dialogue-actions-ecran-travail">
-                  <span v-if="userPermissions.canCreateDialogue" class="icon-edit-ecran-travail" @click="startEditDialogue(dialogue)">
-                    <i class="fas fa-pen" style="color: #17a2b8;"></i>
-                  </span>
-                  <span v-if="userPermissions.canCreateDialogue" class="icon-delete-ecran-travail" @click="deleteDialogue(dialogue.id)">
-                    <i class="fas fa-trash" style="color: #dc3545;"></i>
-                  </span>
-                  <span class="comment-icon-ecran-travail" @click="toggleDialogueCommentSection(dialogue)">
-                    <i class="fas fa-comment" style="color: #21294F;"></i> 
-                    {{ getDialogueCommentCount(dialogue.id) }}
-                  </span>
-                  <span v-if="userPermissions.canCreateDialogue" class="highlight-icon-ecran-travail" @click="openHighlightModal(dialogue, $event)" title="Surligner">
-                    <i class="fas fa-highlighter" style="color: #ffeb3b;"></i>
-                  </span>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div v-else class="no-dialogues-ecran-travail">
-            <p>Aucun dialogue dans cette scène.</p>
-          </div>
-          
-          <!-- Formulaire d'ajout de dialogue -->
-          <div class="add-dialogue-direct-ecran-travail" v-if="showAddDialogueSection && selectedSceneForDialogue?.idScene === currentScene.idScene">
-            <div class="dialogue-creation-form-ecran-travail">
-              <h4><i class="fas fa-plus-circle"></i> Ajouter un dialogue</h4>
-              
-              <div class="form-group-creation-ecran-travail">
-                <label>Personnage</label>
-                <select v-model="newDialogueData.personnageId" class="form-select-ecran-travail">
-                  <option :value="null">Narration (sans personnage)</option>
-                  <option 
-                    v-for="personnage in personnages" 
-                    :key="personnage.id" 
-                    :value="personnage.id"
-                  >
-                    {{ personnage.nom }}
-                  </option>
-                </select>
-                <small class="text-muted" v-if="personnages.length === 0">
-                  Aucun personnage créé pour ce projet. 
-                  <a href="#" @click.prevent="goToAddPersonnage" style="color: #21294F;">
-                    Créer un premier personnage
-                  </a>
-                </small>
-              </div>
-              
-              <div class="form-group-creation-ecran-travail">
-                <label>Texte du dialogue *</label>
-                <textarea 
-                  v-model="newDialogueData.texte" 
-                  rows="3" 
-                  class="form-textarea-ecran-travail"
-                  placeholder="Entrez le texte du dialogue..."
-                  required
-                ></textarea>
-              </div>
-              
-              <div class="form-group-creation-ecran-travail">
-                <label>Observation</label>
-                <textarea 
-                  v-model="newDialogueData.observation" 
-                  rows="2" 
-                  class="form-textarea-ecran-travail"
-                  placeholder="Notes ou observations (optionnel)"
-                ></textarea>
-              </div>
-              
-              <div class="dialogue-creation-actions-ecran-travail">
-                <button 
-                  @click="createDialogueDirect(currentScene.idScene)" 
-                  class="save-btn-ecran-travail"
-                  :disabled="!newDialogueData.texte.trim()"
-                >
-                  <i class="fas fa-save"></i> Ajouter le dialogue
-                </button>
-                <button 
-                  @click="cancelAddDialogue" 
-                  class="cancel-btn-ecran-travail"
-                >
-                  <i class="fas fa-times"></i> Annuler
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Section outils de scène -->
-        <div class="scene-tools-section-ecran-travail">
-          <h3><i class="fas fa-tools"></i> Outils</h3>
-          <div class="scene-tools-grid">
-            <RaccordsPhotosComponent 
-              :scene-id="currentScene.idScene"
-              :scene-info="currentScene"
-              @raccords-updated="onRaccordsUpdated"
-            />
-
-            <RaccordSceneComponent 
-              :projet-id="projetId"
-              :episode-id="currentEpisode?.idEpisode"
-              :sequence-id="currentSequence?.idSequence"
-              :scene-source-id="currentScene.idScene"  
-              @raccord-created="onRaccordCreated"
-            />
-            
-            <button 
-              class="export-scene-full-btn-ecran-travail" 
-              @click="exportScenePDF(currentScene)"
-              title="Exporter cette scène complète en PDF"
-            >
-              <i class="fas fa-file-pdf"></i> Exporter Scène PDF
-            </button>
-            
-            <button 
-              class="export-raccords-scene-btn-ecran-travail"
-              @click="exportRaccordsByScene(currentScene.idScene)"
-              title="Exporter les raccords avec images"
-            >
-              <i class="fas fa-file-pdf"></i> Raccords avec Images
-            </button>
-            
-            <button 
-              class="open-add-lieu-btn"
-              @click="openAddLieuModal(currentScene)"
-              title="Ajouter un lieu/plateau"
-            >
-              <i class="fas fa-map-marker-alt"></i> Ajouter Lieu/Plateau
-            </button>
-          </div>
-        </div>
-      </main>
-      
-      <div v-else-if="!isLoading" class="no-data-ecran-travail">
-        <p>Aucune séquence disponible pour cet épisode.</p>
+      <!-- Message si aucun contenu -->
+      <div v-if="!sidebarSelection.type && !isLoading && !error" class="empty-view">
+        <i class="fas fa-info-circle"></i>
+        <p>Sélectionnez un élément dans la sidebar pour afficher ses détails</p>
       </div>
 
       <!-- ==================== MODALES ==================== -->
       
       <!-- Modale pour surlignage -->
-      <div v-if="showHighlightModal" class="modal-overlay-ecran-travail" @click="closeHighlightModal">
-        <div class="modal-content-ecran-travail" @click.stop>
-          <!-- ... contenu de la modale de surlignage ... -->
+      <div v-if="showHighlightModal" class="modal-overlay" @click="closeHighlightModal">
+        <div class="modal-content" @click.stop>
+          <div class="modal-header">
+            <h3>Surligner du texte</h3>
+            <button @click="closeHighlightModal" class="close-btn"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Texte sélectionné :</strong> "{{ selectedText }}"</p>
+            <div class="color-picker">
+              <label>Couleur :</label>
+              <div class="color-options">
+                <div 
+                  v-for="color in availableColors" 
+                  :key="color.id"
+                  class="color-option"
+                  :style="{ backgroundColor: color.valeurHex }"
+                  :class="{ 'selected': selectedColor?.id === color.id }"
+                  @click="selectedColor = color"
+                  :title="color.nom"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button @click="closeHighlightModal" class="btn-secondary">Annuler</button>
+            <button @click="applyHighlight" class="btn-primary" :disabled="!selectedColor">Surligner</button>
+          </div>
         </div>
       </div>
+
+      <!-- Modale pour éditer le projet -->
+      <ModalEditProject
+        :show="showEditProjectModal"
+        :editing-project="editingProject"
+        :genres="genres"
+        :statuts="statutsProjet"
+        :error="editProjectError"
+        :loading="editProjectLoading"
+        @close="closeEditProjectModal"
+        @save="saveEditedProject"
+      />
 
       <!-- Modale pour éditer l'épisode -->
       <ModalEditEpisode
@@ -621,27 +780,29 @@
       />
 
       <!-- Modale pour commentaires de dialogue -->
-      <div v-if="showDialogueCommentModal" class="modal-overlay-ecran-travail">
-        <div class="modal-content-ecran-travail">
-          <div class="modal-header-ecran-travail">
+      <div v-if="showDialogueCommentModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
             <h3>Commentaires du dialogue</h3>
-            <button @click="closeDialogueCommentModal" class="close-btn-ecran-travail"><i class="fas fa-times"></i></button>
+            <button @click="closeDialogueCommentModal" class="close-btn"><i class="fas fa-times"></i></button>
           </div>
-          <div class="add-comment-ecran-travail">
-            <textarea v-model="newDialogueComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-            <button @click="addDialogueComment" class="add-comment-btn-ecran-travail">Ajouter</button>
-          </div>
-          <div class="comments-list-ecran-travail">
-            <div v-for="comment in dialogueComments" :key="comment.id" class="comment-item-ecran-travail">
-              <div class="comment-header-ecran-travail">
-                <span class="comment-author-ecran-travail">{{ comment.utilisateurNom }}</span>
-                <span class="comment-date-ecran-travail">{{ formatDate(comment.creeLe) }}</span>
-              </div>
-              <div class="comment-content-ecran-travail">
-                {{ comment.contenu }}
-              </div>
-              <div class="comment-actions-ecran-travail" v-if="comment.utilisateurId === user.id">
-                <button @click="deleteDialogueComment(comment.id)" class="delete-comment-btn-ecran-travail">Supprimer</button>
+          <div class="modal-body">
+            <div class="add-comment">
+              <textarea v-model="newDialogueComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
+              <button @click="addDialogueComment" class="add-comment-btn">Ajouter</button>
+            </div>
+            <div class="comments-list">
+              <div v-for="comment in dialogueComments" :key="comment.id" class="comment-item">
+                <div class="comment-header">
+                  <span class="comment-author">{{ comment.utilisateurNom }}</span>
+                  <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+                </div>
+                <div class="comment-content">
+                  {{ comment.contenu }}
+                </div>
+                <div class="comment-actions" v-if="comment.utilisateurId === user.id">
+                  <button @click="deleteDialogueComment(comment.id)" class="delete-comment-btn">Supprimer</button>
+                </div>
               </div>
             </div>
           </div>
@@ -694,10 +855,11 @@ import ModalEditEpisode from './ModalEditEpisode.vue'
 import ModalEditSequence from './ModalEditSequence.vue'
 import ModalEditScene from './ModalEditScene.vue'
 import ModalEditDialogue from './ModalEditDialogue.vue'
+import ModalEditProject from './ModalEditProject.vue'
 import ModalAddLieu from './ModalAddLieu.vue'
 import LeftSidebar from './sidebar/LeftSidebar.vue';
 import RightSidebar from './sidebar/RightSidebar.vue';
-import jsPDF from 'jspdf';
+import SceneToolsSidebar from './sidebar/SceneToolsSidebar.vue';
 
 // Importez les fonctions d'export depuis vos nouveaux fichiers
 import { 
@@ -728,6 +890,8 @@ defineOptions({
     ModalEditScene,
     ModalEditDialogue,
     ModalAddLieu,
+    SceneToolsSidebar,
+    ModalEditProject,
   }
 })
 
@@ -739,13 +903,13 @@ const comediens = ref([]);
 const selectedComedien = ref(null);
 
 // État de la sidebar droite
-const sidebarOpen = ref(false);
+const sidebarOpen = ref(true);
 
-// État des menus déroulants de la sidebar gauche
-const projectDropdownOpen = ref(true);
-const episodeDropdownOpen = ref(false);
-const sequenceDropdownOpen = ref(false);
-const sceneDropdownOpen = ref(false);
+// État de la sélection dans la sidebar
+const sidebarSelection = ref({
+  type: 'project', // 'project', 'episode', 'sequence', 'scene'
+  id: null
+});
 
 // Variables pour la navigation par scènes
 const newlyCreatedSceneId = ref(null);
@@ -794,65 +958,28 @@ const onRaccordCreated = () => {
   }
 };
 
-// Méthodes pour la sidebar gauche
-const toggleProjectDropdown = () => {
-  projectDropdownOpen.value = !projectDropdownOpen.value;
-};
-
-const toggleEpisodeDropdown = () => {
-  episodeDropdownOpen.value = !episodeDropdownOpen.value;
-};
-
-const toggleSequenceDropdown = () => {
-  sequenceDropdownOpen.value = !sequenceDropdownOpen.value;
-};
-
-const toggleSceneDropdown = () => {
-  sceneDropdownOpen.value = !sceneDropdownOpen.value;
-};
-
-// NOUVELLE : Sélectionner une scène pour la sidebar
-const selectSceneForSidebar = (scene) => {
-  store.currentScene = scene;
-  store.currentSceneIndex = store.scenes.findIndex(s => s.idScene === scene.idScene);
-  sceneDropdownOpen.value = true;
-};
-
-// Méthodes pour l'édition/suppression du projet
-const startEditProject = () => {
-  router.push(`/projet/${store.projetInfos.id}/edit`);
-};
-
-const confirmDeleteProject = async () => {
-  if (confirm(`Êtes-vous sûr de vouloir supprimer le projet "${store.projetTitle}" ? Cette action est irréversible.`)) {
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.id) {
-        alert('Utilisateur non connecté');
-        return;
-      }
-
-      await axios.delete(`/api/projets/${store.projetInfos.id}`, {
-        headers: {
-          'X-User-Id': user.id
-        }
-      });
-
-      router.push('/projets');
-      alert('Projet supprimé avec succès!');
-      
-    } catch (error) {
-      console.error('Erreur lors de la suppression du projet:', error);
-      alert('Erreur lors de la suppression du projet: ' + (error.response?.data?.message || error.message));
-    }
+watch(() => sidebarSelection.value.type, (newType) => {
+  // Fermer automatiquement quand on passe en mode scène
+  if (newType === 'scene') {
+    sidebarOpen.value = false;
+  } 
+  // Ouvrir automatiquement pour les autres sections (sauf si déjà ouvert)
+  else if (!sidebarOpen.value) {
+    sidebarOpen.value = true;
   }
-};
+}, { immediate: true });
+
 
 // Méthode pour toggle la sidebar droite
 const toggleSidebar = () => {
-  sidebarOpen.value = !sidebarOpen.value;
-  console.log('Sidebar ouverte:', sidebarOpen.value);
+  // Si on est dans une scène, basculer entre sidebar droite et outils scène
+  if (sidebarSelection.value.type === 'scene' && currentScene.value) {
+    sidebarOpen.value = !sidebarOpen.value;
+  } else {
+    sidebarOpen.value = !sidebarOpen.value;
+  }
 };
+
 
 // Variables réactives pour validation ordre
 const existingOrders = ref([]);
@@ -867,7 +994,7 @@ const sequenceComments = ref([]);
 const sequenceCommentCount = ref(0);
 
 const showSceneCommentModal = ref(false);
-const selectedSceneForComments = ref(null); // Changé de selectedScene à selectedSceneForComments
+const selectedSceneForComments = ref(null);
 const newSceneComment = ref('');
 const sceneComments = ref([]);
 const sceneCommentCounts = ref({});
@@ -892,6 +1019,21 @@ const addLieuLoading = ref(false);
 
 // Dans les données réactives
 const personnages = ref([]);
+
+// Données pour l'édition du projet
+const showEditProjectModal = ref(false);
+const editingProject = ref({
+  id: null,
+  titre: '',
+  synopsis: '',
+  genreId: null,
+  statutId: null,
+  dateFin: ''
+});
+const statutsProjet = ref([]);
+const genres = ref([]);
+const editProjectError = ref('');
+const editProjectLoading = ref(false);
 
 // Données pour l'édition des épisodes
 const showEditEpisodeModal = ref(false);
@@ -960,15 +1102,227 @@ const newDialogueData = ref({
   ordre: 1
 });
 
+// Méthodes pour charger les données
+const loadGenres = async () => {
+  try {
+    const response = await axios.get('/api/genres');
+    genres.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des genres:', error);
+    genres.value = [];
+  }
+};
+
+const loadStatutsProjet = async () => {
+  try {
+    const response = await axios.get('/api/statuts-projet');
+    statutsProjet.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des statuts projet:', error);
+    statutsProjet.value = [];
+  }
+};
+
+// Méthode pour ouvrir la modale
+const startEditProjectModal = () => {
+  if (!store.projetInfos) return;
+  
+  editingProject.value = {
+    id: store.projetInfos.id,
+    titre: store.projetTitle || '',
+    synopsis: store.projetSynopsis || '',
+    genreId: store.projetInfos.genreId || null,
+    statutId: getStatutProjetIdByNom(store.projetStatus),
+    dateFin: store.projetInfos.dateFin || ''
+  };
+  
+  editProjectError.value = '';
+  showEditProjectModal.value = true;
+};
+
+// Helper pour obtenir l'ID du statut
+const getStatutProjetIdByNom = (statutNom) => {
+  const statut = statutsProjet.value.find(s => s.nomStatutsProjet === statutNom);
+  return statut ? statut.idStatutProjet : null;
+};
+
+// Méthode pour sauvegarder
+const saveEditedProject = async (projectData) => {
+  editProjectLoading.value = true;
+  editProjectError.value = '';
+
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      editProjectError.value = 'Utilisateur non connecté';
+      return;
+    }
+
+    const url = `/api/projets/${projectData.id}`;
+    const updateData = {
+      titre: projectData.titre,
+      synopsis: projectData.synopsis || '',
+      genreId: projectData.genreId,
+      statutId: projectData.statutId,
+      dateFin: projectData.dateFin || null
+    };
+    
+    const response = await axios.put(url, updateData, {
+      headers: {
+        'X-User-Id': user.id
+      }
+    });
+    
+    if (response.status === 200) {
+      // Mettre à jour le store
+      store.projetTitle = projectData.titre;
+      store.projetSynopsis = projectData.synopsis || '';
+      store.projetStatus = getStatutProjetNomById(projectData.statutId);
+      store.projetInfos = { ...store.projetInfos, ...updateData };
+      
+      closeEditProjectModal();
+    }
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du projet:', error);
+    editProjectError.value = error.response?.data?.message || 'Erreur lors de la mise à jour du projet';
+  } finally {
+    editProjectLoading.value = false;
+  }
+};
+
+// Helper pour obtenir le nom du statut
+const getStatutProjetNomById = (statutId) => {
+  const statut = statutsProjet.value.find(s => s.idStatutProjet === statutId);
+  return statut ? statut.nomStatutsProjet : '';
+};
+
+// Méthode pour fermer la modale
+const closeEditProjectModal = () => {
+  showEditProjectModal.value = false;
+  editingProject.value = { id: null, titre: '', synopsis: '', genreId: null, statutId: null, dateFin: '' };
+  editProjectError.value = '';
+};
+
+
 // Propriétés calculées
 const episodes = computed(() => store.episodes);
 const sequences = computed(() => store.sequences);
-const scenes = computed(() => store.scenes); // NOUVEAU
-const currentScene = computed(() => store.currentScene); // NOUVEAU
+const scenes = computed(() => store.scenes);
+const currentScene = computed(() => store.currentScene);
+const currentEpisode = computed(() => store.currentEpisode);
+const currentSequence = computed(() => store.currentSequence);
+const error = computed(() => store.error);
+const isLoading = computed(() => store.isLoading);
+const hasNext = computed(() => store.hasNext);
+const hasPrev = computed(() => store.hasPrev);
+
+// Calcul du nombre total de scènes
+const totalScenes = computed(() => {
+  return store.episodes.reduce((total, episode) => {
+    return total + (episode.nombreScenes || 0);
+  }, 0);
+});
 
 // Propriétés calculées pour la navigation
 const hasNextScene = computed(() => store.hasNextScene);
 const hasPrevScene = computed(() => store.hasPrevScene);
+
+const leftSidebarOpen = ref(true);
+
+const getCurrentContext = () => {
+  if (currentScene.value) {
+    return `Épisode ${currentEpisode.value?.ordre} • Séquence ${currentSequence.value?.ordre} • Scène ${currentScene.value.ordre}`;
+  }
+  if (currentSequence.value) {
+    return `Épisode ${currentEpisode.value?.ordre} • Séquence ${currentSequence.value.ordre}`;
+  }
+  if (currentEpisode.value) {
+    return `Épisode ${currentEpisode.value.ordre}`;
+  }
+  return 'Vue Projet';
+};
+
+
+// Méthodes de toggle
+const toggleLeftSidebar = () => {
+  leftSidebarOpen.value = !leftSidebarOpen.value;
+};
+
+// Ajouter ces méthodes
+const closeSceneToolsSidebar = () => {
+  // Optionnel : on pourrait réduire la sidebar plutôt que la fermer
+  console.log('Fermer sidebar outils scène');
+};
+
+// Méthodes pour compter les photos et raccords
+const getPhotoCount = (sceneId) => {
+  // À implémenter selon votre API
+  return 0;
+};
+
+const getRaccordCount = (sceneId) => {
+  // À implémenter selon votre API
+  return 0;
+};
+
+// Calcul pour afficher ou non les boutons de navigation
+const showNavButtons = computed(() => {
+  return sidebarSelection.value.type !== 'project';
+});
+
+// Gestion de la sélection depuis la sidebar
+const handleSidebarSelection = async ({ type, id }) => {
+  console.log('Sélection sidebar:', type, id);
+  
+  // Mettre à jour la sélection locale
+  sidebarSelection.value = { type, id };
+  
+  // Mettre à jour le store si nécessaire
+  if (type === 'episode' && id) {
+    await store.selectEpisodeById(id);
+  } else if (type === 'sequence' && id) {
+    await store.selectSequenceById(id);
+  } else if (type === 'scene' && id) {
+    await store.selectSceneById(id);
+  }
+  
+  // Mettre à jour l'URL pour garder l'état
+  updateRouteForSelection();
+};
+
+// Mettre à jour l'URL selon la sélection
+const updateRouteForSelection = () => {
+  const query = {};
+  
+  if (sidebarSelection.value.type === 'episode' && sidebarSelection.value.id) {
+    query.episodeId = sidebarSelection.value.id;
+    delete query.sequenceId;
+    delete query.sceneId;
+  } else if (sidebarSelection.value.type === 'sequence' && sidebarSelection.value.id) {
+    query.sequenceId = sidebarSelection.value.id;
+    delete query.sceneId;
+    // Garder l'épisode parent si disponible
+    if (store.currentEpisode?.idEpisode) {
+      query.episodeId = store.currentEpisode.idEpisode;
+    }
+  } else if (sidebarSelection.value.type === 'scene' && sidebarSelection.value.id) {
+    query.sceneId = sidebarSelection.value.id;
+    // Garder l'épisode et la séquence parents si disponibles
+    if (store.currentEpisode?.idEpisode) {
+      query.episodeId = store.currentEpisode.idEpisode;
+    }
+    if (store.currentSequence?.idSequence) {
+      query.sequenceId = store.currentSequence.idSequence;
+    }
+  } else {
+    // Vue projet - vider les query params
+    delete query.episodeId;
+    delete query.sequenceId;
+    delete query.sceneId;
+  }
+  
+  router.push({ query });
+};
 
 onMounted(async () => {
   const projetIdLocal = route.params.idProjet || '1';
@@ -978,35 +1332,45 @@ onMounted(async () => {
   await loadAvailableColors();
   
   await store.fetchEpisodes(projetIdLocal);
+  
+  // Initialiser la sélection depuis l'URL
+  await initializeSelectionFromRoute();
+  
   if (store.currentSequence) {
     await loadSequenceCommentCount();
     await loadSceneCommentCounts();
     await loadDialogueCommentCounts();
     await loadAvailableLieux();
   }
+  
   await Promise.all([
     loadStatutsEpisode(),
     loadStatutsSequence(),
-    loadStatutsScene()
+    loadStatutsScene(),
+    loadGenres(),
+    loadStatutsProjet(),
   ]);
+  
   await loadPersonnages();
-
-  const episodeId = route.query.episodeId;
-  const sequenceId = route.query.sequenceId;
-  const sceneId = route.query.sceneId; // NOUVEAU
-
-  if (episodeId) {
-    await store.selectEpisodeById(episodeId);
-  }
-
-  if (sequenceId) {
-    await store.selectSequenceById(sequenceId);
-  }
-
-  if (sceneId) { // NOUVEAU
-    await store.selectSceneById(sceneId);
-  }
 });
+
+// Initialiser la sélection depuis les paramètres de route
+const initializeSelectionFromRoute = async () => {
+  const { episodeId, sequenceId, sceneId } = route.query;
+  
+  if (sceneId) {
+    sidebarSelection.value = { type: 'scene', id: parseInt(sceneId) };
+    await store.selectSceneById(sceneId);
+  } else if (sequenceId) {
+    sidebarSelection.value = { type: 'sequence', id: parseInt(sequenceId) };
+    await store.selectSequenceById(sequenceId);
+  } else if (episodeId) {
+    sidebarSelection.value = { type: 'episode', id: parseInt(episodeId) };
+    await store.selectEpisodeById(episodeId);
+  } else {
+    sidebarSelection.value = { type: 'project', id: null };
+  }
+};
 
 const checkUserPermissions = async (episodeId) => {
     if (!user.value) return;
@@ -1039,7 +1403,6 @@ const checkUserPermissions = async (episodeId) => {
     }
 };
 
-
 watch(() => store.currentEpisode, async (newEpisode) => {
     if (newEpisode) {
         await checkUserPermissions(newEpisode.idEpisode);
@@ -1051,6 +1414,34 @@ watch(() => store.currentEpisode, async (newEpisode) => {
             console.log('Scénariste:', newEpisode.scenariste.nom);
         }
     }
+});
+
+// Watch pour les changements de route
+watch(
+  () => route.query,
+  async (newQuery) => {
+    await initializeSelectionFromRoute();
+  },
+  { immediate: true, deep: true }
+);
+
+// Watch pour mettre à jour la sélection quand le store change
+watch(() => store.currentScene, (newScene) => {
+  if (newScene && sidebarSelection.value.type === 'scene') {
+    sidebarSelection.value.id = newScene.idScene;
+  }
+});
+
+watch(() => store.currentSequence, (newSequence) => {
+  if (newSequence && sidebarSelection.value.type === 'sequence') {
+    sidebarSelection.value.id = newSequence.idSequence;
+  }
+});
+
+watch(() => store.currentEpisode, (newEpisode) => {
+  if (newEpisode && sidebarSelection.value.type === 'episode') {
+    sidebarSelection.value.id = newEpisode.idEpisode;
+  }
 });
 
 const loadPersonnages = async () => {
@@ -1125,258 +1516,6 @@ const closeHighlightModal = () => {
   selectedColor.value = null;
 };
 
-
-onMounted(async () => {
-  projetId.value = route.params.idProjet;
-  
-  if (!projetId.value) {
-    console.error('ID du projet non trouvé dans les params de route !');
-    const pathSegments = route.path.split('/');
-    const projetIndex = pathSegments.indexOf('projet');
-    if (projetIndex !== -1 && pathSegments[projetIndex + 1]) {
-      projetId.value = pathSegments[projetIndex + 1];
-    }
-    
-    if (!projetId.value) {
-      console.error('ID du projet non trouvable dans l\'URL !');
-      return;
-    }
-  }
-
-  await store.fetchEpisodes(projetId.value);
-  
-  if (store.currentSequence) {
-    await loadSequenceCommentCount();
-    await loadSceneCommentCounts();
-    await loadDialogueCommentCounts();
-    await loadAvailableLieux();
-  }
-  
-  await Promise.all([
-    loadStatutsEpisode(),
-    loadStatutsSequence(),
-    loadStatutsScene()
-  ]);
-  
-  await loadPersonnages();
-
-  const episodeId = route.query.episodeId;
-  const sequenceId = route.query.sequenceId;
-  const sceneId = route.query.sceneId; // NOUVEAU
-
-  if (episodeId) {
-    await store.selectEpisodeById(episodeId);
-  }
-
-  if (sequenceId) {
-    await store.selectSequenceById(sequenceId);
-  }
-
-  if (sceneId) { // NOUVEAU
-    await store.selectSceneById(sceneId);
-  }
-
-});
-
-// Watchers
-watch(
-  () => route.query.episodeId,
-  async (newId) => {
-    if (newId) {
-      await store.selectEpisodeById(newId);
-    }
-  },
-  { immediate: true }
-);
-
-watch(() => route.params.idProjet, async (newProjetId) => {
-  if (newProjetId) {
-    projetId.value = newProjetId;
-    await loadAvailableLieux();
-  }
-});
-
-watch(() => store.currentSequence, async (newSequence) => {
-  if (newSequence) {
-    await loadSequenceCommentCount();
-    await loadSceneCommentCounts();
-    await loadDialogueCommentCounts();
-  }
-});
-
-// NOUVEAU : Watcher pour les scènes
-watch(() => store.scenes, (newScenes) => {
-  console.log('Scènes mises à jour:', newScenes.length);
-});
-
-// NOUVEAU : Watcher pour la scène actuelle
-watch(() => store.currentScene, (newScene) => {
-  if (newScene) {
-    console.log('Scène actuelle changée:', newScene.titre);
-    // Mettre à jour l'URL avec l'ID de la scène
-    if (route.query.sceneId !== newScene.idScene.toString()) {
-      router.push({ 
-        query: { 
-          ...route.query, 
-          sceneId: newScene.idScene 
-        } 
-      });
-    }
-  }
-});
-
-// Watcher pour les changements de paramètres de route
-watch(
-  () => route.params.idProjet,
-  async (newProjetId) => {
-    if (newProjetId && newProjetId !== projetId.value) {
-      projetId.value = newProjetId;
-      await store.fetchEpisodes(projetId.value);
-      await loadAvailableLieux();
-    }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => route.query,
-  async (newQuery) => {
-    if (newQuery.episodeId && newQuery.episodeId !== store.currentEpisode?.idEpisode) {
-      await store.selectEpisodeById(newQuery.episodeId);
-    }
-    
-    if (newQuery.sequenceId && newQuery.sequenceId !== store.currentSequence?.idSequence) {
-      await store.selectSequenceById(newQuery.sequenceId);
-    }
-    
-    // NOUVEAU : Gestion du paramètre sceneId
-    if (newQuery.sceneId && newQuery.sceneId !== store.currentScene?.idScene) {
-      await store.selectSceneById(newQuery.sceneId);
-    }
-  },
-  { immediate: true, deep: true }
-);
-
-// Watcher pour recharger les personnages quand le projet change
-watch(
-  () => projetId.value,
-  async (newProjetId) => {
-    if (newProjetId) {
-      await loadPersonnages();
-    }
-  },
-  { immediate: true }
-);
-
-// Charger les statuts
-const loadStatutsEpisode = async () => {
-  try {
-    const response = await axios.get('/api/statuts-episode');
-    statutsEpisode.value = response.data;
-  } catch (error) {
-    console.error('Erreur lors du chargement des statuts d\'épisode:', error);
-  }
-};
-
-const loadStatutsSequence = async () => {
-  try {
-    const response = await axios.get('/api/statuts-sequence');
-    statutsSequence.value = response.data;
-  } catch (error) {
-    console.error('Erreur lors du chargement des statuts de séquence:', error);
-  }
-};
-
-const loadStatutsScene = async () => {
-  try {
-    const response = await axios.get('/api/statuts-scene');
-    statutsScene.value = response.data;
-  } catch (error) {
-    console.error('Erreur lors du chargement des statuts de scène:', error);
-  }
-};
-
-// Charger les lieux et plateaux disponibles
-const loadAvailableLieux = async () => {
-  try {
-    if (route.params.idProjet) {
-      projetId.value = route.params.idProjet;
-    }
-    else if (store.projetId) {
-      projetId.value = store.projetId;
-    }
-    else if (store.currentEpisode?.idEpisode) {
-      try {
-        const episodeResponse = await axios.get(`/api/episodes/${store.currentEpisode.idEpisode}`);
-        projetId.value = episodeResponse.data.projetId;
-      } catch (error) {
-        console.warn('Impossible de récupérer l\'ID du projet depuis l\'épisode:', error);
-      }
-    }
-
-    if (!projetId.value) {
-      console.error('Impossible de déterminer l\'ID du projet');
-      availableLieux.value = [];
-      return;
-    }
-
-    const response = await axios.get(`/api/lieux/projets/${projetId.value}`);
-    availableLieux.value = response.data;
-  } catch (error) {
-    console.error('Erreur lors du chargement des lieux:', error);
-    availableLieux.value = [];
-  }
-};
-
-const loadAvailablePlateaux = async () => {
-  if (!selectedLieuId.value) {
-    availablePlateaux.value = [];
-    return;
-  }
-  
-  try {
-    const response = await axios.get(`/api/scene-lieux/lieux/${selectedLieuId.value}/plateaux`);
-    availablePlateaux.value = response.data;
-  } catch (error) {
-    console.error('Erreur lors du chargement des plateaux:', error);
-    availablePlateaux.value = [];
-  }
-};
-
-// Helpers
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-const getStatuts = (type) => {
-  if (type === 'episode') return statutsEpisode.value;
-  if (type === 'sequence') return statutsSequence.value;
-  if (type === 'scene') return statutsScene.value;
-  return [];
-};
-
-const getNomField = (type) => `nomStatuts${capitalize(type)}`;
-
-const getIdField = (type) => {
-  if (type === 'episode') return 'idStatutEpisode';
-  return 'id';
-};
-
-const getStatutIdByNom = (type, nom) => {
-  const statuts = getStatuts(type);
-  const nomField = getNomField(type);
-  const statut = statuts.find(s => s[nomField] === nom);
-  const idField = getIdField(type);
-  return statut ? statut[idField] : null;
-};
-
-const getStatutNomById = (type, id) => {
-  const statuts = getStatuts(type);
-  const idField = getIdField(type);
-  const nomField = getNomField(type);
-  const statut = statuts.find(s => s[idField] === id);
-  return statut ? statut[nomField] : '';
-};
-
-// Charger les couleurs disponibles
 const loadAvailableColors = async () => {
   try {
     const response = await axios.get('/api/couleurs');
@@ -1406,7 +1545,6 @@ const openHighlightModal = async (dialogue, event) => {
     alert('Veuillez sélectionner du texte à surligner.');
   }
 };
-
 
 const startAddDialogue = (scene) => {
   if (!userPermissions.value.canCreateDialogue) {
@@ -1586,18 +1724,9 @@ const confirmDeleteEpisode = async () => {
 
     await store.fetchEpisodes(projetId.value);
     
-    if (store.episodes.length > 0) {
-      await store.selectEpisodeById(store.episodes[0].idEpisode);
-      router.push({
-        path: route.path,
-        query: { 
-          ...route.query,
-          episodeId: store.episodes[0].idEpisode 
-        }
-      });
-    } else {
-      router.push(`/projet/${projetId.value}`);
-    }
+    // Retourner à la vue projet
+    sidebarSelection.value = { type: 'project', id: null };
+    router.push({ query: {} });
     
     alert('Épisode supprimé avec succès! Les ordres ont été recalculés automatiquement.');
     
@@ -1629,7 +1758,6 @@ const startEditSequence = (sequence) => {
   editSequenceError.value = '';
   showEditSequenceModal.value = true;
 };
-
 
 const saveEditedSequence = async () => {
   editSequenceLoading.value = true;
@@ -1682,6 +1810,7 @@ const startEditScene = (scene) => {
   editSceneError.value = '';
   showEditSceneModal.value = true;
 };
+
 const saveEditedScene = async () => {
   editSceneLoading.value = true;
   editSceneError.value = '';
@@ -1840,49 +1969,17 @@ const closeEditDialogueModal = () => {
   suggestedOrder.value = null;
 };
 
-// NOUVELLE MÉTHODE : Retour à la vue séquence (désélectionner la scène)
-const clearSelectedScene = () => {
-  store.currentScene = null;
-  store.currentSceneIndex = 0;
-  router.push({ 
-    query: { 
-      ...route.query,
-      sceneId: undefined 
-    } 
-  });
-};
-
-// Modifiez la méthode selectScene pour gérer la désélection
-const selectScene = async (sceneId) => {
-  try {
-    // Si on clique sur la scène déjà sélectionnée, on retourne à la vue séquence
-    if (store.currentScene && store.currentScene.idScene === parseInt(sceneId)) {
-      clearSelectedScene();
-    } else {
-      await store.selectSceneById(sceneId);
-      router.push({ 
-        query: { 
-          ...route.query, 
-          sceneId 
-        } 
-      });
-    }
-  } catch (error) {
-    console.error('Erreur lors de la sélection de la scène:', error);
-  }
-};
-
 const goToNextScene = async () => {
   if (store.currentScene && store.currentSceneIndex < store.scenes.length - 1) {
     const nextIndex = store.currentSceneIndex + 1;
-    await selectScene(store.scenes[nextIndex].idScene);
+    await handleSidebarSelection({ type: 'scene', id: store.scenes[nextIndex].idScene });
   }
 };
 
 const goToPrevScene = async () => {
   if (store.currentScene && store.currentSceneIndex > 0) {
     const prevIndex = store.currentSceneIndex - 1;
-    await selectScene(store.scenes[prevIndex].idScene);
+    await handleSidebarSelection({ type: 'scene', id: store.scenes[prevIndex].idScene });
   }
 };
 
@@ -1892,16 +1989,11 @@ const goToPrevPage = () => store.goToPrevPage();
 const retryFetch = () => store.fetchEpisodes(projetId.value);
 
 const selectEpisode = async (episodeId) => {
-  try {
-    await store.selectEpisodeById(episodeId);
-    router.push({ query: { ...route.query, episodeId } });
-  } catch (error) {
-    console.error('Erreur lors de la sélection de l\'épisode:', error);
-  }
+  await handleSidebarSelection({ type: 'episode', id: episodeId });
 };
 
 const selectSequence = async (sequenceId) => {
-  await store.selectSequenceById(sequenceId);
+  await handleSidebarSelection({ type: 'sequence', id: sequenceId });
   newlyCreatedSequenceId.value = null;
 };
 
@@ -1943,9 +2035,9 @@ const goToAddSequence = async () => {
 
 const goToAddScene = () => {
   if (!userPermissions.value.canCreateScene) {
-        alert('Vous n\'êtes pas autorisé à créer des scènes pour cette séquence.');
-        return;
-    }
+    alert('Vous n\'êtes pas autorisé à créer des scènes pour cette séquence.');
+    return;
+  }
   
   const currentUrl = window.location.pathname + window.location.search;
   localStorage.setItem('lastEcranTravailUrl', currentUrl);
@@ -1958,8 +2050,11 @@ const goToAddScene = () => {
   });
 };
 
+const addScene = () => {
+  goToAddScene();
+};
+
 const goToAddComedien = () => {
-  
   const projetIdToUse = projetId.value || store.projetId || route.params.idProjet;
   
   if (!projetIdToUse) {
@@ -2112,6 +2207,114 @@ const removeLieuFromScene = async (sceneLieuId) => {
       alert('Erreur lors de la suppression du lieu/plateau');
     }
   }
+};
+
+// Charger les statuts
+const loadStatutsEpisode = async () => {
+  try {
+    const response = await axios.get('/api/statuts-episode');
+    statutsEpisode.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des statuts d\'épisode:', error);
+  }
+};
+
+const loadStatutsSequence = async () => {
+  try {
+    const response = await axios.get('/api/statuts-sequence');
+    statutsSequence.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des statuts de séquence:', error);
+  }
+};
+
+const loadStatutsScene = async () => {
+  try {
+    const response = await axios.get('/api/statuts-scene');
+    statutsScene.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des statuts de scène:', error);
+  }
+};
+
+// Charger les lieux et plateaux disponibles
+const loadAvailableLieux = async () => {
+  try {
+    if (route.params.idProjet) {
+      projetId.value = route.params.idProjet;
+    }
+    else if (store.projetId) {
+      projetId.value = store.projetId;
+    }
+    else if (store.currentEpisode?.idEpisode) {
+      try {
+        const episodeResponse = await axios.get(`/api/episodes/${store.currentEpisode.idEpisode}`);
+        projetId.value = episodeResponse.data.projetId;
+      } catch (error) {
+        console.warn('Impossible de récupérer l\'ID du projet depuis l\'épisode:', error);
+      }
+    }
+
+    if (!projetId.value) {
+      console.error('Impossible de déterminer l\'ID du projet');
+      availableLieux.value = [];
+      return;
+    }
+
+    const response = await axios.get(`/api/lieux/projets/${projetId.value}`);
+    availableLieux.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des lieux:', error);
+    availableLieux.value = [];
+  }
+};
+
+const loadAvailablePlateaux = async () => {
+  if (!selectedLieuId.value) {
+    availablePlateaux.value = [];
+    return;
+  }
+  
+  try {
+    const response = await axios.get(`/api/scene-lieux/lieux/${selectedLieuId.value}/plateaux`);
+    availablePlateaux.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des plateaux:', error);
+    availablePlateaux.value = [];
+  }
+};
+
+// Helpers
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+const getStatuts = (type) => {
+  if (type === 'episode') return statutsEpisode.value;
+  if (type === 'sequence') return statutsSequence.value;
+  if (type === 'scene') return statutsScene.value;
+  return [];
+};
+
+const getNomField = (type) => `nomStatuts${capitalize(type)}`;
+
+const getIdField = (type) => {
+  if (type === 'episode') return 'idStatutEpisode';
+  return 'id';
+};
+
+const getStatutIdByNom = (type, nom) => {
+  const statuts = getStatuts(type);
+  const nomField = getNomField(type);
+  const statut = statuts.find(s => s[nomField] === nom);
+  const idField = getIdField(type);
+  return statut ? statut[idField] : null;
+};
+
+const getStatutNomById = (type, id) => {
+  const statuts = getStatuts(type);
+  const idField = getIdField(type);
+  const nomField = getNomField(type);
+  const statut = statuts.find(s => s[idField] === id);
+  return statut ? statut[nomField] : '';
 };
 
 // Méthodes pour les commentaires
@@ -2324,7 +2527,6 @@ const deleteDialogueComment = async (commentId) => {
   }
 };
 
-
 const deleteSequence = async (sequenceId) => {
   if (!userPermissions.value.canCreateSequence) {
     alert('Vous n\'êtes pas autorisé à supprimer des séquences pour cet épisode.');
@@ -2335,6 +2537,9 @@ const deleteSequence = async (sequenceId) => {
     try {
       await axios.delete(`/api/sequences/${sequenceId}`);
       await store.fetchSequences(store.currentEpisode.idEpisode);
+      // Retourner à la vue épisode
+      sidebarSelection.value = { type: 'episode', id: store.currentEpisode.idEpisode };
+      updateRouteForSelection();
       alert('Séquence supprimée avec succès! Les ordres ont été recalculés.');
     } catch (error) {
       console.error('Erreur lors de la suppression de la séquence:', error);
@@ -2560,606 +2765,59 @@ const loadComediens = async () => {
   }
 };
 
-const selectEpisodeFromSidebar = async (episodeId) => {
-  try {
-    await store.selectEpisodeById(episodeId);
-    router.push({ 
-      query: { 
-        ...route.query, 
-        episodeId,
-        sceneId: undefined,  // Réinitialiser la scène quand on change d'épisode
-        sequenceId: undefined // Réinitialiser la séquence
-      } 
-    });
-  } catch (error) {
-    console.error('Erreur lors de la sélection de l\'épisode depuis sidebar:', error);
+const startEditProject = () => {
+  router.push(`/projet/${store.projetInfos.id}/edit`);
+};
+
+const confirmDeleteProject = async () => {
+  if (confirm(`Êtes-vous sûr de vouloir supprimer le projet "${store.projetTitle}" ? Cette action est irréversible.`)) {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        alert('Utilisateur non connecté');
+        return;
+      }
+
+      await axios.delete(`/api/projets/${store.projetInfos.id}`, {
+        headers: {
+          'X-User-Id': user.id
+        }
+      });
+
+      router.push('/projets');
+      alert('Projet supprimé avec succès!');
+      
+    } catch (error) {
+      console.error('Erreur lors de la suppression du projet:', error);
+      alert('Erreur lors de la suppression du projet: ' + (error.response?.data?.message || error.message));
+    }
   }
 };
 
-const selectSequenceFromSidebar = async (sequenceId) => {
-  try {
-    await store.selectSequenceById(sequenceId);
-    router.push({ 
-      query: { 
-        ...route.query, 
-        sequenceId,
-        sceneId: undefined  // Réinitialiser la scène quand on change de séquence
-      } 
-    });
-  } catch (error) {
-    console.error('Erreur lors de la sélection de la séquence depuis sidebar:', error);
-  }
+const openRaccordsPhotosModal = (scene) => {
+  // Ouvrir modale ou autre action pour les raccords photos
+  console.log('Ouvrir raccords photos pour:', scene);
 };
 
-// Propriétés calculées
-const currentEpisode = computed(() => store.currentEpisode);
-const currentSequence = computed(() => store.currentSequence);
-const error = computed(() => store.error);
-const isLoading = computed(() => store.isLoading);
-const hasNext = computed(() => store.hasNext);
-const hasPrev = computed(() => store.hasPrev);
+const openCreateRaccordModal = (scene) => {
+  // Ouvrir modale pour créer un raccord
+  console.log('Créer raccord pour:', scene);
+};
+
+const goToSequenceFromTools = (sequenceId) => {
+  handleSidebarSelection({ type: 'sequence', id: sequenceId });
+};
+
+const goToEpisodeFromTools = (episodeId) => {
+  handleSidebarSelection({ type: 'episode', id: episodeId });
+};
+
+const goToProjectFromTools = (projetId) => {
+  handleSidebarSelection({ type: 'project', id: null });
+};
 
 </script>
 
-
-<style scoped>
-/* ==================== STYLES POUR LA VUE SCÈNE ==================== */
-
-/* Page de scène */
-.scene-page-ecran-travail {
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  margin-top: 20px;
-}
-
-.scene-page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 20px;
-}
-
-.scene-header-left {
-  flex: 1;
-}
-
-.scene-page-title-ecran-travail {
-  color: #21294F;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.scene-page-info-ecran-travail {
-  color: #666;
-  font-size: 14px;
-}
-
-.scene-header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.back-to-sequence-btn {
-  background: none;
-  border: 1px solid #ddd;
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  color: #666;
-  font-size: 14px;
-  transition: all 0.3s;
-}
-
-.back-to-sequence-btn:hover {
-  background-color: #f8f9fa;
-  border-color: #21294F;
-  color: #21294F;
-}
-
-/* Section commentaires scène */
-.scene-comments-section-ecran-travail {
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-.comments-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.toggle-comments-btn {
-  background: none;
-  border: 1px solid #ddd;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-/* Section dialogues */
-.scene-dialogues-section-ecran-travail {
-  margin: 20px 0;
-}
-
-.dialogues-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.no-dialogues-ecran-travail {
-  text-align: center;
-  padding: 40px;
-  color: #999;
-  font-style: italic;
-  background-color: #fafafa;
-  border-radius: 8px;
-  border: 2px dashed #eee;
-}
-
-/* Section outils */
-.scene-tools-section-ecran-travail {
-  margin-top: 30px;
-  padding: 20px;
-  background-color: #f5f7ff;
-  border-radius: 8px;
-  border: 1px solid #e0e5ff;
-}
-
-.scene-tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-  margin-top: 15px;
-}
-
-.scene-tools-grid > * {
-  min-height: 50px;
-}
-
-.export-scene-full-btn-ecran-travail,
-.export-raccords-scene-btn-ecran-travail,
-.open-add-lieu-btn {
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  background: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s;
-  font-weight: 500;
-}
-
-.export-scene-full-btn-ecran-travail:hover {
-  background-color: #21294F;
-  color: white;
-  border-color: #21294F;
-}
-
-.export-raccords-scene-btn-ecran-travail:hover {
-  background-color: #28a745;
-  color: white;
-  border-color: #28a745;
-}
-
-.open-add-lieu-btn:hover {
-  background-color: #17a2b8;
-  color: white;
-  border-color: #17a2b8;
-}
-
-/* ==================== STYLES POUR LA VUE SÉQUENCE ==================== */
-
-/* Carte de scène dans la vue séquence */
-.scene-card-ecran-travail {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.scene-card-ecran-travail:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border-color: #21294F;
-}
-
-.scene-header-ecran-travail {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 15px;
-}
-
-.scene-synopsis-ecran-travail {
-  color: #666;
-  font-size: 14px;
-  margin-left: 10px;
-}
-
-/* Aperçu des dialogues */
-.dialogues-preview-ecran-travail {
-  margin: 15px 0;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  border-left: 4px solid #21294F;
-}
-
-.dialogues-preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.view-all-dialogues-btn {
-  background: none;
-  border: none;
-  color: #21294F;
-  cursor: pointer;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.dialogues-preview-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.dialogue-preview-item {
-  padding: 8px 0;
-  border-bottom: 1px dashed #eee;
-  font-size: 13px;
-  color: #555;
-}
-
-.dialogue-preview-item:last-child {
-  border-bottom: none;
-}
-
-.more-dialogues {
-  font-style: italic;
-  color: #999;
-  font-size: 12px;
-  text-align: center;
-  padding: 10px;
-}
-
-/* Bouton voir la scène */
-.view-scene-btn-ecran-travail {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  background-color: #21294F;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  text-align: center;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-.view-scene-btn-ecran-travail:hover {
-  background-color: #1a2140;
-}
-
-/* Boutons d'actions */
-.edit-scene-btn-ecran-travail,
-.delete-scene-btn-ecran-travail {
-  padding: 8px 15px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  background: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-}
-
-.edit-scene-btn-ecran-travail:hover {
-  background-color: #17a2b8;
-  color: white;
-  border-color: #17a2b8;
-}
-
-.delete-scene-btn-ecran-travail:hover {
-  background-color: #dc3545;
-  color: white;
-  border-color: #dc3545;
-}
-
-/* ==================== STYLES COMMUNS ==================== */
-
-/* Navigation par scènes */
-.scene-navigation-ecran-travail {
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-}
-
-.scene-navigation-ecran-travail h3 {
-  margin-bottom: 10px;
-  color: #21294F;
-  font-size: 16px;
-}
-
-.scene-numbers-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.scene-number-ecran-travail {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 45px;
-  height: 35px;
-  padding: 0 10px;
-  background-color: #e9ecef;
-  color: #495057;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
-}
-
-.scene-number-ecran-travail:hover {
-  background-color: #dee2e6;
-  transform: translateY(-2px);
-}
-
-.scene-number-ecran-travail.active-ecran-travail {
-  background-color: #21294F;
-  color: white;
-  border-color: #21294F;
-  box-shadow: 0 2px 4px rgba(33, 41, 79, 0.2);
-}
-
-.scene-number-ecran-travail.new-scene-ecran-travail {
-  background-color: #e3f2fd;
-  border: 1px dashed #1976d2;
-}
-
-/* Navigation par scène dans le header */
-.scene-navigation-buttons {
-  display: flex;
-  gap: 10px;
-  margin-left: 10px;
-}
-
-.scene-nav-btn {
-  font-size: 12px !important;
-  padding: 6px 10px !important;
-  background-color: #e9ecef !important;
-  color: #495057 !important;
-  border: 1px solid #ced4da !important;
-}
-
-.scene-nav-btn:hover:not(:disabled) {
-  background-color: #dee2e6 !important;
-}
-
-/* Animation pour l'icône clignotante */
-.blinking-icon-ecran-travail {
-  animation: blink 1.5s infinite;
-  margin-left: 4px;
-  font-size: 10px;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-/* Ajustement pour la sidebar des scènes */
-.scenes-list-mini {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.scene-item-mini {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  margin: 4px 0;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  border: 1px solid #e9ecef;
-}
-
-.scene-item-mini:hover {
-  background-color: #e9ecef;
-}
-
-.scene-item-mini.selected {
-  background-color: #21294F;
-  color: white;
-  border-color: #21294F;
-}
-
-.scene-item-mini span {
-  font-size: 14px;
-}
-
-.scene-item-mini i {
-  font-size: 12px;
-}
-
-/* Styles pour le header de la séquence */
-.sequence-header-ecran-travail {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 15px;
-}
-
-.sequence-actions-ecran-travail {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.add-scene-btn-ecran-travail {
-  background-color: #21294F;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.3s;
-}
-
-.add-scene-btn-ecran-travail:hover {
-  background-color: #1a2140;
-}
-
-.add-scene-btn-ecran-travail i {
-  font-size: 16px;
-}
-
-.edit-sequence-btn-ecran-travail {
-  background: none;
-  border: 1px solid #ddd;
-  padding: 10px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #666;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s;
-}
-
-.edit-sequence-btn-ecran-travail:hover {
-  background-color: #17a2b8;
-  color: white;
-  border-color: #17a2b8;
-}
-
-/* Message si pas de scènes */
-.no-scenes-message {
-  text-align: center;
-  padding: 40px;
-  background-color: #fafafa;
-  border-radius: 8px;
-  border: 2px dashed #eee;
-  margin: 20px 0;
-}
-
-.no-scenes-message p {
-  color: #999;
-  margin-bottom: 20px;
-  font-style: italic;
-}
-
-.add-first-scene-btn-ecran-travail {
-  background-color: #21294F;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  transition: background-color 0.3s;
-}
-
-.add-first-scene-btn-ecran-travail:hover {
-  background-color: #1a2140;
-}
-
-/* Ajustement du titre de séquence */
-.sequence-title-ecran-travail {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.comment-icon-ecran-travail {
-  cursor: pointer;
-  font-size: 16px;
-}
-
-
-.ecran-travail-ecran-travail {
-  margin-left: 300px; /* Largeur sidebar gauche */
-  margin-right: 60px; /* Espace pour le bouton toggle (45px + marge) */
-  transition: margin-right 0.3s ease;
-  padding: 20px;
-  min-height: 100vh;
-  background-color: #f8f9fa;
-}
-
-/* Quand la sidebar droite est ouverte */
-.ecran-travail-ecran-travail.sidebar-open {
-  margin-right: 120px; /* Largeur sidebar droite ouverte */
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-  .ecran-travail-ecran-travail {
-    margin-left: 250px;
-  }
-}
-
-@media (max-width: 768px) {
-  .ecran-travail-ecran-travail {
-    margin-left: 0;
-    margin-right: 60px;
-    padding: 15px;
-  }
-  
-  .ecran-travail-ecran-travail.sidebar-open {
-    margin-right: 100px;
-  }
-}
-
-
-</style>
 
 
 
