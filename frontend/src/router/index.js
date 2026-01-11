@@ -248,6 +248,11 @@ const routes = [
     component: () => import('../components/ModalEditDialogue.vue')
   },
   {
+    path: '/modal-edit-projet',
+    name: 'modal-edit-projet',
+    component: () => import('../components/ModalEditProject.vue')
+  },
+  {
     path: '/modal-add-episode',
     name: 'modal-add-episode',
     component: () => import('../components/ModalEditEpisode.vue')
@@ -286,6 +291,22 @@ const routes = [
     path: '/activities',
     name: 'activities',
     component: () => import('../components/Activities.vue')
+  },
+
+  {
+    path: '/sidebar/left',
+    name: 'left-sidebar',
+    component: () => import('../components/sidebar/LeftSidebar.vue')
+  },
+  {
+    path: '/sidebar/right',
+    name: 'right-sidebar',
+    component: () => import('../components/sidebar/RightSidebar.vue')
+  },
+  {
+    path: '/sidebar/tools',
+    name: 'right-tools',
+    component: () => import('../components/sidebar/SceneToolsSidebar.vue')
   },
 ]
 
