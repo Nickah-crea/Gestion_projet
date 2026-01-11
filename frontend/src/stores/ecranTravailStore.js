@@ -19,24 +19,61 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
     lastViewedEpisodeId: null,
     lastViewedSequenceId: null,
     lastViewedSceneId: null, // Ajouté pour mémoriser la dernière scène vue
+    
+    // NOUVEAU : État pour la sélection dans la sidebar
+    sidebarSelection: {
+      type: 'project', // 'project', 'episode', 'sequence', 'scene'
+      id: null
+    }
   }),
 
   actions: {
+    // NOUVEAU : Méthode pour mettre à jour la sélection
+    updateSidebarSelection(type, id) {
+      this.sidebarSelection.type = type;
+      this.sidebarSelection.id = id;
+      
+      // Sauvegarder la position pour restauration
+      if (type === 'episode' && id) {
+        this.lastViewedEpisodeId = id;
+        this.lastViewedSequenceId = null;
+        this.lastViewedSceneId = null;
+      } else if (type === 'sequence' && id) {
+        this.lastViewedSequenceId = id;
+        this.lastViewedSceneId = null;
+      } else if (type === 'scene' && id) {
+        this.lastViewedSceneId = id;
+      }
+    },
+
+    // NOUVEAU : Restaurer la sélection depuis l'état sauvegardé
+    restoreSelection() {
+      if (this.lastViewedSceneId) {
+        return { type: 'scene', id: this.lastViewedSceneId };
+      } else if (this.lastViewedSequenceId) {
+        return { type: 'sequence', id: this.lastViewedSequenceId };
+      } else if (this.lastViewedEpisodeId) {
+        return { type: 'episode', id: this.lastViewedEpisodeId };
+      }
+      return { type: 'project', id: null };
+    },
+
     saveCurrentPosition() {
       this.lastViewedEpisodeId = this.currentEpisode ? this.currentEpisode.idEpisode : null;
       this.lastViewedSequenceId = this.currentSequence ? this.currentSequence.idSequence : null;
-      this.lastViewedSceneId = this.currentScene ? this.currentScene.idScene : null; // Ajouté
+      this.lastViewedSceneId = this.currentScene ? this.currentScene.idScene : null;
     },
 
     async restorePosition() {
-      if (this.lastViewedEpisodeId) {
-        await this.selectEpisodeById(this.lastViewedEpisodeId);
-      }
-      if (this.lastViewedSequenceId) {
-        await this.selectSequenceById(this.lastViewedSequenceId);
-      }
-      if (this.lastViewedSceneId) {
-        await this.selectSceneById(this.lastViewedSceneId); // Ajouté
+      const selection = this.restoreSelection();
+      this.sidebarSelection = selection;
+      
+      if (selection.type === 'episode' && selection.id) {
+        await this.selectEpisodeById(selection.id);
+      } else if (selection.type === 'sequence' && selection.id) {
+        await this.selectSequenceById(selection.id);
+      } else if (selection.type === 'scene' && selection.id) {
+        await this.selectSceneById(selection.id);
       }
     },
 
@@ -91,8 +128,8 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
           this.currentEpisode = null;
           this.sequences = [];
           this.currentSequence = null;
-          this.scenes = []; // Ajouté
-          this.currentScene = null; // Ajouté
+          this.scenes = [];
+          this.currentScene = null;
           this.currentEpisodeIndex = 0;
           return;
         }
@@ -113,8 +150,8 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
         this.currentEpisode = null;
         this.sequences = [];
         this.currentSequence = null;
-        this.scenes = []; // Ajouté
-        this.currentScene = null; // Ajouté
+        this.scenes = [];
+        this.currentScene = null;
         this.currentEpisodeIndex = 0;
       } finally {
         this.isLoading = false;
@@ -131,8 +168,8 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
           console.log('Aucune séquence trouvée pour cet épisode.');
           this.sequences = [];
           this.currentSequence = null;
-          this.scenes = []; // Ajouté
-          this.currentScene = null; // Ajouté
+          this.scenes = [];
+          this.currentScene = null;
           return;
         }
         this.sequences = response.data;
@@ -150,8 +187,8 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
         console.error('Erreur lors du chargement des séquences:', error.response?.data || error.message);
         this.sequences = [];
         this.currentSequence = null;
-        this.scenes = []; // Ajouté
-        this.currentScene = null; // Ajouté
+        this.scenes = [];
+        this.currentScene = null;
       } finally {
         this.isLoading = false;
       }
@@ -192,8 +229,8 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
         console.error('Erreur lors du chargement des détails de la séquence:', error.response?.data || error.message);
         this.error = `Erreur lors du chargement des détails de la séquence: ${error.message}`;
         this.currentSequence = null;
-        this.scenes = []; // Ajouté
-        this.currentScene = null; // Ajouté
+        this.scenes = [];
+        this.currentScene = null;
       } finally {
         this.isLoading = false;
       }
@@ -209,9 +246,12 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
         this.currentEpisode = this.episodes[index];
         this.sequences = [];
         this.currentSequence = null;
-        this.scenes = []; // Ajouté
-        this.currentScene = null; // Ajouté
+        this.scenes = [];
+        this.currentScene = null;
         await this.fetchSequences(this.currentEpisode.idEpisode);
+        
+        // Mettre à jour la sélection
+        this.updateSidebarSelection('episode', episodeId);
       } else {
         this.error = 'Épisode non trouvé.';
       }
@@ -222,17 +262,22 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
       if (this.currentSequence) {
         await this.fetchSequences(this.currentSequence.episodeId, false);
         this.currentSequenceIndex = this.sequences.findIndex(s => s.idSequence === parseInt(sequenceId));
+        
+        // Mettre à jour la sélection
+        this.updateSidebarSelection('sequence', sequenceId);
       } else {
         this.error = 'Séquence non trouvée.';
       }
     },
 
-    // NOUVELLE ACTION : Sélectionner une scène par son ID
     async selectSceneById(sceneId) {
       const index = this.scenes.findIndex(s => s.idScene === parseInt(sceneId));
       if (index !== -1) {
         this.currentSceneIndex = index;
         this.currentScene = this.scenes[index];
+        
+        // Mettre à jour la sélection
+        this.updateSidebarSelection('scene', sceneId);
       } else {
         this.error = 'Scène non trouvée.';
       }
@@ -247,6 +292,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
         if (this.currentScene && this.currentSceneIndex < this.scenes.length - 1) {
           this.currentSceneIndex++;
           this.currentScene = this.scenes[this.currentSceneIndex];
+          this.updateSidebarSelection('scene', this.currentScene.idScene);
           return;
         }
         
@@ -280,6 +326,8 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
                 await this.fetchSequences(this.currentSequence.episodeId, false);
               }
             }
+            
+            this.updateSidebarSelection('sequence', this.currentSequence.idSequence);
             return;
           } else if (response.status === 204) {
             console.log('No more sequences in episode, going to next episode');
@@ -292,11 +340,13 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
           this.currentEpisode = this.episodes[this.currentEpisodeIndex];
           this.currentSequence = null;
           this.currentSequenceIndex = 0;
-          this.scenes = []; // Ajouté
-          this.currentScene = null; // Ajouté
-          this.currentSceneIndex = 0; // Ajouté
+          this.scenes = [];
+          this.currentScene = null;
+          this.currentSceneIndex = 0;
           console.log(`Navigating to next episode: ${this.currentEpisode.titre}`);
           await this.fetchSequences(this.currentEpisode.idEpisode);
+          
+          this.updateSidebarSelection('episode', this.currentEpisode.idEpisode);
         } else {
           this.error = 'Fin du projet.';
         }
@@ -317,6 +367,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
         if (this.currentScene && this.currentSceneIndex > 0) {
           this.currentSceneIndex--;
           this.currentScene = this.scenes[this.currentSceneIndex];
+          this.updateSidebarSelection('scene', this.currentScene.idScene);
           return;
         }
         
@@ -350,6 +401,8 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
                 await this.fetchSequences(this.currentSequence.episodeId, false);
               }
             }
+            
+            this.updateSidebarSelection('sequence', this.currentSequence.idSequence);
             return;
           } else if (response.status === 204) {
             console.log('No previous sequences');
@@ -363,9 +416,9 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
           this.currentEpisode = this.episodes[this.currentEpisodeIndex];
           this.currentSequence = null;
           this.currentSequenceIndex = 0;
-          this.scenes = []; // Ajouté
-          this.currentScene = null; // Ajouté
-          this.currentSceneIndex = 0; // Ajouté
+          this.scenes = [];
+          this.currentScene = null;
+          this.currentSceneIndex = 0;
           console.log(`Navigating to previous episode: ${this.currentEpisode.titre}`);
           await this.fetchSequences(this.currentEpisode.idEpisode);
           
@@ -381,18 +434,21 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
               this.currentSceneIndex = this.scenes.length - 1;
             }
           }
+          
+          this.updateSidebarSelection('episode', this.currentEpisode.idEpisode);
           return;
         }
         
         // If no episodes or at the first episode with no sequences, reset to initial state
         this.currentEpisode = null;
         this.currentSequence = null;
-        this.currentScene = null; // Ajouté
+        this.currentScene = null;
         this.currentEpisodeIndex = 0;
         this.currentSequenceIndex = 0;
-        this.currentSceneIndex = 0; // Ajouté
+        this.currentSceneIndex = 0;
         this.sequences = [];
-        this.scenes = []; // Ajouté
+        this.scenes = [];
+        this.updateSidebarSelection('project', null);
         this.error = 'Début du projet.';
       } catch (error) {
         console.error('Erreur lors de la navigation précédente:', error.response?.data || error.message);
@@ -402,7 +458,6 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
       }
     },
 
-    // NOUVELLE ACTION : Naviguer directement vers une scène spécifique
     async goToScene(sceneId) {
       try {
         // Si la scène fait partie des scènes actuelles
@@ -410,6 +465,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
         if (sceneIndex !== -1) {
           this.currentSceneIndex = sceneIndex;
           this.currentScene = this.scenes[sceneIndex];
+          this.updateSidebarSelection('scene', sceneId);
           return;
         }
         
@@ -426,6 +482,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
           if (newSceneIndex !== -1) {
             this.currentSceneIndex = newSceneIndex;
             this.currentScene = this.scenes[newSceneIndex];
+            this.updateSidebarSelection('scene', sceneId);
           }
         }
       } catch (error) {
@@ -437,7 +494,6 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
 
   getters: {
     hasNext: (state) => {
-      // Vérifier s'il y a une scène suivante, une séquence suivante ou un épisode suivant
       if (state.currentScene && state.currentSceneIndex < state.scenes.length - 1) {
         return true;
       }
@@ -446,7 +502,6 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
     },
     
     hasPrev: (state) => {
-      // Vérifier s'il y a une scène précédente, une séquence précédente ou un épisode précédent
       if (state.currentScene && state.currentSceneIndex > 0) {
         return true;
       }
@@ -455,23 +510,25 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
     
     getBackUrl: (state) => {
       let url = `/projet/${state.projetId}/ecran-travail`;
-      if (state.lastViewedEpisodeId) {
-        url += `?episodeId=${state.lastViewedEpisodeId}`;
-        if (state.lastViewedSequenceId) {
-          url += `&sequenceId=${state.lastViewedSequenceId}`;
+      
+      // Utiliser la sélection courante plutôt que la dernière vue
+      if (state.sidebarSelection.type === 'episode' && state.sidebarSelection.id) {
+        url += `?episodeId=${state.sidebarSelection.id}`;
+      } else if (state.sidebarSelection.type === 'sequence' && state.sidebarSelection.id) {
+        url += `?sequenceId=${state.sidebarSelection.id}`;
+        if (state.currentEpisode?.idEpisode) {
+          url += `&episodeId=${state.currentEpisode.idEpisode}`;
         }
-        if (state.lastViewedSceneId) { // Ajouté
-          url += `&sceneId=${state.lastViewedSceneId}`;
+      } else if (state.sidebarSelection.type === 'scene' && state.sidebarSelection.id) {
+        url += `?sceneId=${state.sidebarSelection.id}`;
+        if (state.currentEpisode?.idEpisode) {
+          url += `&episodeId=${state.currentEpisode.idEpisode}`;
         }
-      } else if (state.currentEpisode) {
-        url += `?episodeId=${state.currentEpisode.idEpisode}`;
-        if (state.currentSequence) {
+        if (state.currentSequence?.idSequence) {
           url += `&sequenceId=${state.currentSequence.idSequence}`;
         }
-        if (state.currentScene) { // Ajouté
-          url += `&sceneId=${state.currentScene.idScene}`;
-        }
       }
+      
       return url;
     },
 
@@ -482,7 +539,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
     projetStatus: (state) => state.projetInfos?.statutNom  || 'Non défini',
     projetSynopsis: (state) => state.projetInfos?.synopsis || '',
     statusColor: (state) => {
-      const status = state.projetInfos?.statutNom ?.toLowerCase();
+      const status = state.projetInfos?.statutNom?.toLowerCase();
       switch (status) {
         case 'en cours': return '#ffc107';
         case 'terminé': return '#28a745';
@@ -498,14 +555,19 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
       }, 0);
     },
 
-    // NOUVEAU GETTER : Vérifier s'il y a une scène suivante dans la séquence actuelle
+    totalScenes: (state) => {
+      return state.episodes.reduce((total, episode) => {
+        return total + (episode.nombreScenes || 0);
+      }, 0);
+    },
+
     hasNextScene: (state) => {
       return state.currentScene && state.currentSceneIndex < state.scenes.length - 1;
     },
 
-    // NOUVEAU GETTER : Vérifier s'il y a une scène précédente dans la séquence actuelle
     hasPrevScene: (state) => {
       return state.currentScene && state.currentSceneIndex > 0;
     }
   },
 });
+
