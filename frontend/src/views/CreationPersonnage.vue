@@ -76,7 +76,7 @@
           </div>
           <div class="stat-item-crea-personnage">
             <span class="stat-number-crea-personnage">{{ getPersonnagesAvecComedien }}</span>
-            <span class="stat-label-crea-personnage">Avec comédien</span>
+            <span class="stat-label-crea-personnage">Avec comédien assigné</span>
           </div>
         </div>
       </div>
@@ -274,7 +274,6 @@
                   
                   <div class="search-section-crea-personnage">
                     <div class="search-group-crea-personnage">
-                      <label for="personnageSearch">Rechercher un personnage</label>
                       <div class="search-input-container-crea-personnage">
                         <i class="fas fa-search search-icon-crea-personnage"></i>
                         <input
@@ -282,7 +281,7 @@
                           id="personnageSearch"
                           v-model="personnageSearch"
                           @input="filterPersonnages"
-                          placeholder="Rechercher par nom, projet ou comédien..."
+                          placeholder=" Rechercher par nom, projet ou comédien..."
                           class="search-input-large-crea-personnage"
                         />
                       </div>
@@ -346,7 +345,7 @@
                             <button @click="editPersonnage(personnage)" class="btn-edit-crea-personnage" title="Modifier">
                               <i class="fas fa-marker"></i>
                             </button>
-                            <button @click="deletePersonnage(personnage.id)" class="btn-delete-crea-personnage" title="Supprimer">
+                            <button @click="confirmDeletePersonnage(personnage.id)" class="btn-delete-crea-personnage" title="Supprimer">
                               <i class="fas fa-trash"></i>
                             </button>
                           </div>
@@ -423,8 +422,51 @@
             <i class="fas fa-times"></i> Fermer
           </button>
         </div>
-      </div>
+      </div>    
     </div>
+        <!-- Modal de confirmation de suppression -->
+          <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+            <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+            <div class="modal-content-confirm-Scenariste">
+              <div class="modal-header-confirm-Scenariste">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+                <button @click="closeDeleteModal" class="close-modal-btn-Scenariste">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              
+              <div class="modal-body-confirm-Scenariste">
+                <div class="warning-icon-Scenariste">
+                  <i class="fas fa-trash"></i>
+                </div>
+                <p class="warning-text-Scenariste">
+                  Êtes-vous sûr de vouloir supprimer le personnage <strong>"{{ characterToDelete?.nom }}"</strong> ?
+                </p>
+                <p class="warning-subtext-Scenariste">
+                  Cette action est irréversible. Toutes les associations de ce personnage avec des scènes seront également supprimées.
+                </p>
+              </div>
+              
+              <div class="modal-footer-confirm-Scenariste">
+                <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
+                  <i class="fas fa-times"></i> Annuler
+                </button>
+                <button @click="executeDeleteCharacter" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+                  <span v-if="isDeleting"><i class="fas fa-spinner fa-spin"></i> Suppression...</span>
+                  <span v-else><i class="fas fa-trash"></i> Supprimer définitivement</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notification de succès/erreur -->
+          <div v-if="notification.show" :class="['message-crea-profile', notification.type]" @click="hideNotification">
+            <i :class="notification.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
+            {{ notification.message }}
+            <button class="notification-close-crea-profile" @click.stop="hideNotification">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
   </div>
 </template>
 
@@ -465,7 +507,19 @@ export default {
       
       // Modal de détails
       showDetailsModal: false,
-      selectedPersonnage: null
+      selectedPersonnage: null,
+
+      showDeleteModal: false,
+      characterToDelete: null,
+      isDeleting: false,
+      
+      // Notification
+      notification: {
+        show: false,
+        message: '',
+        type: 'success'
+      },
+      notificationTimeout: null
     };
   },
   computed: {
@@ -621,7 +675,6 @@ export default {
       try {
         if (this.isEditing) {
           await axios.put(`/api/personnages/${this.editingId}`, this.formData);
-          alert('Personnage modifié avec succès');
         } else {
           await axios.post('/api/personnages', this.formData);
           alert('Personnage créé avec succès');
@@ -663,20 +716,62 @@ export default {
       this.closeDetailsModal();
     },
 
-    async deletePersonnage(id) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer ce personnage ?')) {
-        return;
-      }
+      confirmDeletePersonnage(id) {
+    const character = this.personnages.find(p => p.id === id);
+    if (!character) return;
+    
+    this.characterToDelete = character;
+    this.showDeleteModal = true;
+  },
 
-      try {
-        await axios.delete(`/api/personnages/${id}`);
-        alert('Personnage supprimé avec succès');
-        await this.loadPersonnages();
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-        alert('Erreur lors de la suppression');
-      }
-    },
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+    this.characterToDelete = null;
+    this.isDeleting = false;
+  },
+
+  async executeDeleteCharacter() {
+    if (!this.characterToDelete) return;
+    
+    this.isDeleting = true;
+    
+    try {
+      await axios.delete(`/api/personnages/${this.characterToDelete.id}`);
+    
+      // Recharger la liste
+      await this.loadPersonnages();
+      this.closeDeleteModal();
+    } catch (error) {
+      console.error('Erreur lors de la suppression du personnage:', error);
+      this.showNotification('Erreur lors de la suppression du personnage', 'error');
+      this.isDeleting = false;
+    }
+  },
+
+    showNotification(message, type = 'success') {
+    this.notification = {
+      show: true,
+      message: message,
+      type: type
+    };
+    
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+    
+    this.notificationTimeout = setTimeout(() => {
+      this.hideNotification();
+    }, 5000);
+  },
+
+  hideNotification() {
+    this.notification.show = false;
+    this.notification.message = '';
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+      this.notificationTimeout = null;
+    }
+  },
 
     // Modal de détails
     openDetailsModal(personnage) {

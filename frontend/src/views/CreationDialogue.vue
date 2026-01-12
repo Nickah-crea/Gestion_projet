@@ -322,7 +322,6 @@
                   
                   <div class="search-section-crea-dialogue">
                     <div class="search-group-crea-dialogue">
-                      <label for="dialogueSearch">Rechercher un dialogue</label>
                       <div class="search-input-container-crea-dialogue">
                         <i class="fas fa-search search-icon-crea-dialogue"></i>
                         <input
@@ -355,7 +354,7 @@
 
                 <div v-else class="dialogues-container-crea-dialogue">
                   <div class="dialogues-grid-crea-dialogue">
-                    <div v-for="dialogue in filteredDialogues" :key="dialogue.id" class="dialogue-card-crea-dialogue">
+                    <!-- <div v-for="dialogue in filteredDialogues" :key="dialogue.id" class="dialogue-card-crea-dialogue">
                       <div class="dialogue-header-crea-dialogue">
                         <div class="dialogue-info-crea-dialogue">
                           <h4 class="dialogue-title-crea-dialogue">
@@ -397,7 +396,130 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
+
+                     <div v-for="sceneGroup in groupedDialogues" :key="sceneGroup.sceneId" class="scene-group-crea-dialogue">
+      <!-- En-tête de la scène -->
+      <div class="scene-group-header-crea-dialogue">
+        <div class="scene-header-left-crea-dialogue">
+          <h4 class="scene-group-title-crea-dialogue">
+            <i class="fas fa-film"></i>
+            {{ sceneGroup.sceneTitre }}
+          </h4>
+          <div class="scene-stats-crea-dialogue">
+            <span class="total-dialogues-crea-dialogue">
+              <i class="fas fa-comments"></i> {{ sceneGroup.dialogues.length }}
+            </span>
+            <span class="order-range-crea-dialogue" v-if="sceneGroup.dialogues.length > 0">
+              <i class="fas fa-sort-numeric-down"></i> 
+              {{ getOrderRange(sceneGroup.dialogues) }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="scene-header-right-crea-dialogue">
+          <button 
+            v-if="hasMoreDialogues(sceneGroup.dialogues, sceneGroup.sceneId)"
+            @click="toggleSceneExpansion(sceneGroup.sceneId)"
+            class="expand-scene-btn-crea-dialogue"
+          >
+            <i class="fas fa-chevron-down"></i>
+            Voir {{ getRemainingCount(sceneGroup.dialogues, sceneGroup.sceneId) }} de plus
+          </button>
+          
+          <button 
+            v-else-if="isSceneExpanded(sceneGroup.sceneId)"
+            @click="toggleSceneExpansion(sceneGroup.sceneId)"
+            class="collapse-scene-btn-crea-dialogue"
+          >
+            <i class="fas fa-chevron-up"></i>
+            Réduire
+          </button>
+        </div>
+      </div>
+      
+      <!-- Dialogues de la scène -->
+      <div class="dialogues-list-in-scene-crea-dialogue">
+        <div 
+          v-for="dialogue in getVisibleDialogues(sceneGroup.dialogues, sceneGroup.sceneId)" 
+          :key="dialogue.id" 
+          class="dialogue-card-crea-dialogue"
+        >
+          <!-- Indicateur d'ordre -->
+          <div class="dialogue-order-indicator-crea-dialogue">
+            {{ dialogue.ordre }}
+          </div>
+          
+          <div class="dialogue-header-crea-dialogue">
+            <div class="dialogue-info-crea-dialogue">
+              <h4 class="dialogue-title-crea-dialogue">
+                <i class="fas fa-user" v-if="dialogue.personnageNom"></i>
+                <i class="fas fa-book" v-else></i>
+                {{ dialogue.personnageNom || 'Narration' }}
+              </h4>
+            </div>
+            <div class="dialogue-actions-crea-dialogue">
+              <button @click="openDialogueComments(dialogue)" class="btn-comment-crea-dialogue" title="Commentaires">
+                <i class="fas fa-comment"></i>
+                {{ dialogue.commentCount || 0 }}
+              </button>
+              <button @click="editDialogue(dialogue)" class="btn-edit-crea-dialogue" title="Modifier">
+                <i class="fas fa-marker"></i>
+              </button>
+              <button @click="deleteDialogue(dialogue.id)" class="btn-delete-crea-dialogue" title="Supprimer">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="dialogue-content-crea-dialogue">
+            <div class="dialogue-text-crea-dialogue">
+              {{ dialogue.texte }}
+            </div>
+            <div class="dialogue-meta-crea-dialogue">
+              <div v-if="dialogue.observation" class="meta-item-crea-dialogue">
+                <i class="fas fa-sticky-note"></i>
+                <span class="observation-text-crea-dialogue">{{ dialogue.observation }}</span>
+              </div>
+              <div class="meta-item-crea-dialogue">
+                <i class="fas fa-calendar"></i>
+                <span>{{ formatDate(dialogue.creeLe) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bouton "Voir plus" en bas de la scène -->
+        <div 
+          v-if="hasMoreDialogues(sceneGroup.dialogues, sceneGroup.sceneId)" 
+          class="scene-footer-crea-dialogue"
+        >
+          <button 
+            @click="toggleSceneExpansion(sceneGroup.sceneId)"
+            class="see-more-btn-crea-dialogue"
+          >
+            <i class="fas fa-chevron-down"></i>
+            Voir {{ getRemainingCount(sceneGroup.dialogues, sceneGroup.sceneId) }} dialogue{{ getRemainingCount(sceneGroup.dialogues, sceneGroup.sceneId) > 1 ? 's' : '' }} supplémentaires
+          </button>
+        </div>
+        
+        <!-- Bouton "Réduire" quand tout est visible -->
+        <div 
+          v-if="isSceneExpanded(sceneGroup.sceneId) && sceneGroup.dialogues.length > visibleDialoguesPerScene" 
+          class="scene-footer-crea-dialogue"
+        >
+          <button 
+            @click="toggleSceneExpansion(sceneGroup.sceneId)"
+            class="see-less-btn-crea-dialogue"
+          >
+            <i class="fas fa-chevron-up"></i>
+            Réduire la liste
+          </button>
+        </div>
+      </div>
+    </div>
+                
+
                   </div>
                 </div>
               </div>
@@ -520,10 +642,53 @@ export default {
       filteredScenes: [],
       filteredPersonnages: [],
       filteredFilterScenes: [],
-      filteredFilterPersonnages: []
+      filteredFilterPersonnages: [],
+
+       visibleDialoguesPerScene: 3, // Nombre de dialogues visibles par défaut
+       expandedScenes: new Set(),
     };
   },
   computed: {
+
+     groupedDialogues() {
+    const dialoguesByScene = {};
+    
+    // Filtrer d'abord les dialogues selon les critères de recherche
+    const filtered = this.dialogues.filter(dialogue => {
+      const matchesSearch = dialogue.texte.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchesScene = !this.filterSceneId || dialogue.sceneId === parseInt(this.filterSceneId);
+      const matchesPersonnage = !this.filterPersonnageId || 
+        (this.filterPersonnageId === 'null' && !dialogue.personnageId) || 
+        dialogue.personnageId === parseInt(this.filterPersonnageId);
+      return matchesSearch && matchesScene && matchesPersonnage;
+    });
+    
+    // Trier les dialogues par ordre
+    filtered.sort((a, b) => {
+      // D'abord par scène, puis par ordre
+      if (a.sceneId !== b.sceneId) {
+        return a.sceneId - b.sceneId;
+      }
+      return a.ordre - b.ordre;
+    });
+    
+    // Grouper par scène
+    filtered.forEach(dialogue => {
+      const sceneId = dialogue.sceneId;
+      if (!dialoguesByScene[sceneId]) {
+        dialoguesByScene[sceneId] = {
+          sceneId: sceneId,
+          sceneTitre: dialogue.sceneTitre,
+          dialogues: []
+        };
+      }
+      dialoguesByScene[sceneId].dialogues.push(dialogue);
+    });
+    
+    // Convertir en tableau pour l'affichage
+    return Object.values(dialoguesByScene);
+  },
+  
     getTabIndicatorStyle() {
       const tabWidth = 100 / 2;
       const translateX = this.activeTab === 'form' ? 0 : 100;
@@ -972,7 +1137,40 @@ export default {
     getPersonnageName(id) {
       const personnage = this.personnages.find(p => p.id === parseInt(id));
       return personnage ? personnage.nom : '';
+    },
+    toggleSceneExpansion(sceneId) {
+      if (this.expandedScenes.has(sceneId)) {
+        this.expandedScenes.delete(sceneId);
+      } else {
+        this.expandedScenes.add(sceneId);
+      }
+    },
+     isSceneExpanded(sceneId) {
+    return this.expandedScenes.has(sceneId);
+  }, 
+  getVisibleDialogues(sceneDialogues, sceneId) {
+    if (this.isSceneExpanded(sceneId)) {
+      return sceneDialogues;
     }
+    return sceneDialogues.slice(0, this.visibleDialoguesPerScene);
+  },
+  
+  hasMoreDialogues(sceneDialogues, sceneId) {
+    return sceneDialogues.length > this.visibleDialoguesPerScene && 
+           !this.isSceneExpanded(sceneId);
+  },
+  getRemainingCount(sceneDialogues, sceneId) {
+    return sceneDialogues.length - this.visibleDialoguesPerScene;
+  },
+  getOrderRange(dialogues) {
+    if (dialogues.length === 0) return 'Aucun';
+    
+    const orders = dialogues.map(d => d.ordre).sort((a, b) => a - b);
+    const min = orders[0];
+    const max = orders[orders.length - 1];
+    
+    return min === max ? `Ordre ${min}` : `Ordres ${min}-${max}`;
+  },
   }
 };
 </script>

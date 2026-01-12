@@ -883,9 +883,6 @@ async executeDeleteComedian() {
   try {
     await axios.delete(`/api/comediens/${this.comedianToDelete.id}`);
     
-    // Afficher notification de succès
-    this.showNotification('Comédien supprimé avec succès', 'success');
-    
     // Recharger la liste
     await this.loadComediens();
     this.closeDeleteModal();

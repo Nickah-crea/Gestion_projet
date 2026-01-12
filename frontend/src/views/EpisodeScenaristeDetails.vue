@@ -456,6 +456,7 @@ export default {
       suggestedOrder: null, 
       existingOrders: [],
       originalOrder: null,
+      
       showDeleteModal: false,
       sequenceToDelete: null,
       isDeleting: false,
