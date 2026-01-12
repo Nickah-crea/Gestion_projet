@@ -199,8 +199,7 @@ position: fixed;
 // SYSTÈME D'ONGlets
 // =============================================
 .tabs-container-add-sequence {
-  background: $color-background-alt; // Changé: blanc
-  border-radius: $border-radius-sm;
+  background: $color-background-alt;  border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
   margin-bottom: $spacing-lg;
