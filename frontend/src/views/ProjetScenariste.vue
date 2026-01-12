@@ -133,7 +133,10 @@
       <!-- Grille des épisodes -->
       <div class="episodes-section-projet-scenariste">
             <div class="section-header-projet-scenariste">
-                <h3>Liste des épisodes du projet</h3>
+                <h3>
+                   <i class="fas fa-list-ol"></i>
+                  Épisodes du projet
+                </h3>
                     <div class="episodes-count">
                       <span class="count-text">{{ filteredEpisodes.length }} épisode(s)</span>
                     </div>
