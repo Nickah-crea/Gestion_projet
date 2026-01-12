@@ -277,20 +277,45 @@ export default {
       }
     },
     
-    async loadEpisode() {
-      try {
-        const response = await axios.get(`/api/episodes/${this.episodeId}`, {
-          headers: {
-            'X-User-Id': this.user.id
-          }
-        });
-        this.episode = response.data;
-        this.form.episodeId = this.episodeId;
-      } catch (error) {
-        console.error('Erreur lors du chargement de l\'épisode:', error);
-        this.errorMessage = 'Erreur lors du chargement de l\'épisode.';
+async loadEpisode() {
+  try {
+    const response = await axios.get(`/api/episodes/${this.episodeId}`, {
+      headers: {
+        'X-User-Id': this.user.id
       }
-    },
+    });
+    this.episode = response.data;
+    this.form.episodeId = this.episodeId;
+    
+    if (this.episode.projetId && !this.episode.projetTitre) {
+      await this.loadProjetDetails();
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement de l\'épisode:', error);
+    this.errorMessage = 'Erreur lors du chargement de l\'épisode.';
+  }
+},
+
+async loadProjetDetails() {
+  try {
+    if (!this.episode?.projetId) return;
+    
+    const response = await axios.get(`/api/projets/${this.episode.projetId}`, {
+      headers: {
+        'X-User-Id': this.user.id
+      }
+    });
+    
+    // Fusionnez les détails du projet avec les données de l'épisode
+    this.episode = {
+      ...this.episode,
+      projetTitre: response.data.titre,
+      projetDetails: response.data
+    };
+  } catch (error) {
+    console.error('Erreur lors du chargement du projet:', error);
+  }
+},
     
     async loadStatutsSequence() {
       try {
