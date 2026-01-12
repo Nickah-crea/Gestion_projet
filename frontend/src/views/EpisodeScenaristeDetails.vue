@@ -26,7 +26,7 @@
             class="sidebar-btn-projet-scenariste "
           >
             <i class="fas fa-arrow-left"></i>
-            Retour aux épisodes
+            Retour
           </button>
         </div>
       </div>
