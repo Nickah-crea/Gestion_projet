@@ -714,9 +714,9 @@ body, html {
 }
 
 .movie-card-Scenariste {
-  background: $color-background;
+  background: $color-background-light;
   border-radius: $border-radius-xs;
-  box-shadow: $shadow;
+  box-shadow: $shadow-lg;
   overflow: hidden;
   transition: $transition;
   position: relative;
