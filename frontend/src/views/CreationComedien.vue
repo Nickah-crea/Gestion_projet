@@ -304,7 +304,6 @@
                   
                   <div class="search-section-crea-comedien">
                     <div class="search-group-crea-comedien">
-                      <label for="comedienSearch">Rechercher un comédien</label>
                       <div class="search-input-container-crea-comedien">
                         <i class="fas fa-search search-icon-crea-comedien"></i>
                         <input
@@ -312,7 +311,7 @@
                           id="comedienSearch"
                           v-model="comedienSearch"
                           @input="filterComediens"
-                          placeholder="Rechercher par nom, email ou projet..."
+                          placeholder=" Rechercher par nom, email ou projet..."
                           class="search-input-large-crea-comedien"
                         />
                       </div>
@@ -391,9 +390,9 @@
                             <!-- <button @click="goToSceneComedien(comedien.id)" class="btn-link-crea-comedien" title="Lier à une scène">
                               <i class="fas fa-link"></i>
                             </button> -->
-                            <button @click="deleteComedien(comedien.id)" class="btn-delete-crea-comedien" title="Supprimer">
-                              <i class="fas fa-trash"></i>
-                            </button>
+                              <button @click="confirmDeleteComedien(comedien.id)" class="btn-delete-crea-comedien" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                              </button>
                           </div>
                         </td>
                       </tr>
@@ -502,6 +501,50 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+      <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+      <div class="modal-content-confirm-Scenariste">
+        <div class="modal-header-confirm-Scenariste">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+          <button @click="closeDeleteModal" class="close-modal-btn-Scenariste">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body-confirm-Scenariste">
+          <div class="warning-icon-Scenariste">
+            <i class="fas fa-trash"></i>
+          </div>
+          <p class="warning-text-Scenariste">
+            Êtes-vous sûr de vouloir supprimer le comédien <strong>"{{ comedianToDelete?.nom }}"</strong> ?
+          </p>
+          <p class="warning-subtext-Scenariste">
+            Cette action est irréversible. Toutes les disponibilités et associations de ce comédien seront également supprimées.
+          </p>
+        </div>
+        
+        <div class="modal-footer-confirm-Scenariste">
+          <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button @click="executeDeleteComedian" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+            <span v-if="isDeleting"><i class="fas fa-spinner fa-spin"></i> Suppression...</span>
+            <span v-else><i class="fas fa-trash"></i> Supprimer définitivement</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+            <!-- Notification de succès/erreur -->
+        <div v-if="notification.show" :class="['message-crea-profile', notification.type]" @click="hideNotification">
+          <i :class="notification.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
+          {{ notification.message }}
+          <button class="notification-close-crea-profile" @click.stop="hideNotification">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
   </div>
 </template>
 
@@ -542,7 +585,20 @@ export default {
       
       // Modal de détails
       showDetailsModal: false,
-      selectedComedien: null
+      selectedComedien: null,
+
+       showDeleteModal: false,
+        comedianToDelete: null,
+        isDeleting: false,
+        deleteError: '',
+
+        // Notification
+          notification: {
+            show: false,
+            message: '',
+            type: 'success' // 'success' ou 'error'
+          },
+          notificationTimeout: null
     };
   },
   computed: {
@@ -802,6 +858,69 @@ async forceRefresh() {
   this.filterComediens();
 },
 
+// Modal de confirmation de suppression
+confirmDeleteComedien(id) {
+  const comedian = this.comediens.find(c => c.id === id);
+  if (!comedian) return;
+  
+  this.comedianToDelete = comedian;
+  this.showDeleteModal = true;
+  this.deleteError = '';
+},
+
+closeDeleteModal() {
+  this.showDeleteModal = false;
+  this.comedianToDelete = null;
+  this.isDeleting = false;
+  this.deleteError = '';
+},
+
+async executeDeleteComedian() {
+  if (!this.comedianToDelete) return;
+  
+  this.isDeleting = true;
+  
+  try {
+    await axios.delete(`/api/comediens/${this.comedianToDelete.id}`);
+    
+    // Afficher notification de succès
+    this.showNotification('Comédien supprimé avec succès', 'success');
+    
+    // Recharger la liste
+    await this.loadComediens();
+    this.closeDeleteModal();
+  } catch (error) {
+    console.error('Erreur lors de la suppression du comédien:', error);
+    this.showNotification('Erreur lors de la suppression du comédien', 'error');
+    this.isDeleting = false;
+  }
+},
+
+showNotification(message, type = 'success') {
+  this.notification = {
+    show: true,
+    message: message,
+    type: type
+  };
+  
+  if (this.notificationTimeout) {
+    clearTimeout(this.notificationTimeout);
+  }
+  
+  this.notificationTimeout = setTimeout(() => {
+    this.hideNotification();
+  }, 5000);
+},
+
+hideNotification() {
+  this.notification.show = false;
+  this.notification.message = '';
+  if (this.notificationTimeout) {
+    clearTimeout(this.notificationTimeout);
+    this.notificationTimeout = null;
+  }
+},
+
 editComedien(comedien) {
   // S'assurer qu'il n'y a pas de doublons de dates
   const uniqueDisponibilites = [];
@@ -840,20 +959,6 @@ editComedien(comedien) {
   this.activeTab = 'form';
   this.closeDetailsModal();
 },
-    async deleteComedien(id) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer ce comédien ?')) {
-        return;
-      }
-
-      try {
-        await axios.delete(`/api/comediens/${id}`);
-        alert('Comédien supprimé avec succès');
-        await this.loadComediens();
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-        alert('Erreur lors de la suppression');
-      }
-    },
 
     // Modal de détails
     openDetailsModal(comedien) {

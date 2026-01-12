@@ -574,9 +574,6 @@ export default {
       this.orderError = '';
       await this.loadEpisodes();
       
-      // Notification de succès pour la modification
-      this.showNotification('Épisode modifié avec succès !', 'success');
-      
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l épisode:', error);
       
@@ -696,9 +693,6 @@ closeEditModal() {
       
       await this.loadEpisodes();
       this.closeDeleteModal();
-      
-      // Notification de succès
-      this.showNotification('Épisode supprimé avec succès !', 'success');
       
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'épisode:', error);

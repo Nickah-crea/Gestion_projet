@@ -807,7 +807,6 @@ export default {
         this.newComment = '';
         await this.loadComments();
         await this.loadCommentCount();
-        this.showNotification('Commentaire ajouté avec succès!', 'success');
       } catch (error) {
         console.error('Erreur lors de l\'ajout du commentaire:', error);
         this.showNotification('Erreur lors de l\'ajout du commentaire', 'error');
@@ -821,7 +820,6 @@ export default {
         });
         await this.loadComments();
         await this.loadCommentCount();
-        this.showNotification('Commentaire supprimé avec succès!', 'success');
       } catch (error) {
         console.error('Erreur lors de la suppression du commentaire:', error);
         this.showNotification('Erreur lors de la suppression du commentaire', 'error');
@@ -863,7 +861,6 @@ export default {
         this.newSceneComment = '';
         await this.loadSceneComments(this.selectedScene.idScene);
         await this.loadScenes();
-        this.showNotification('Commentaire ajouté avec succès!', 'success');
       } catch (error) {
         console.error('Erreur lors de l\'ajout du commentaire:', error);
         this.showNotification('Erreur lors de l\'ajout du commentaire', 'error');
@@ -877,7 +874,6 @@ export default {
         });
         await this.loadSceneComments(this.selectedScene.idScene);
         await this.loadScenes();
-        this.showNotification('Commentaire supprimé avec succès!', 'success');
       } catch (error) {
         console.error('Erreur lors de la suppression du commentaire:', error);
         this.showNotification('Erreur lors de la suppression du commentaire', 'error');
@@ -1005,7 +1001,6 @@ export default {
         this.editError = '';
         this.orderError = '';
         await this.loadScenes();
-        this.showNotification('Scène modifiée avec succès!', 'success');
       } catch (error) {
         console.error('Erreur lors de la mise à jour de la scène:', error);
         
@@ -1075,7 +1070,6 @@ export default {
         
         await this.loadScenes();
         this.closeDeleteModal();
-        this.showNotification('Scène supprimée avec succès!', 'success');
       } catch (error) {
         console.error('Erreur lors de la suppression de la scène:', error);
         this.showNotification('Erreur lors de la suppression de la scène', 'error');

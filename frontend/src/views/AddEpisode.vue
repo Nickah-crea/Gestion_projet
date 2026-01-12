@@ -339,10 +339,10 @@
                         <td>{{ episode.projetTitre }}</td>
                         <td>#{{ episode.ordre }}</td>
                         <td>
-                          <span v-if="episode.realisateurNom" class="realisateur-assigne-add-episode">
-                            <i class="fas fa-user"></i>
-                            {{ episode.realisateurNom }}
-                          </span>
+                           <span v-if="episode.realisateur && episode.realisateur.nom" class="realisateur-assigne-add-episode">
+                              <i class="fas fa-user"></i>
+                              {{ episode.realisateur.nom }}
+                            </span>
                           <span v-else class="no-realisateur-add-episode">
                             <i class="fas fa-user-slash"></i>
                             Non assigné
@@ -410,7 +410,10 @@
               
               <div class="detail-row-add-episode">
                 <span class="detail-label-add-episode">Réalisateur :</span>
-                <span class="detail-value-add-episode" v-if="selectedEpisode.realisateurNom">
+                <span class="detail-value-add-episode" v-if="selectedEpisode.realisateur && selectedEpisode.realisateur.nom">
+                  <i class="fas fa-user"></i> {{ selectedEpisode.realisateur.nom }}
+                </span>
+                <span class="detail-value-add-episode" v-else-if="selectedEpisode.realisateurNom">
                   <i class="fas fa-user"></i> {{ selectedEpisode.realisateurNom }}
                 </span>
                 <span class="detail-value-add-episode no-realisateur" v-else>
@@ -418,16 +421,18 @@
                 </span>
               </div>
 
-              <div class="detail-row-add-episode">
+                        <div class="detail-row-add-episode">
                 <span class="detail-label-add-episode">Scénariste :</span>
-                <span class="detail-value-add-episode" v-if="selectedEpisode.scenaristeNom">
+                <span class="detail-value-add-episode" v-if="selectedEpisode.scenariste && selectedEpisode.scenariste.nom">
+                  <i class="fas fa-user-edit"></i> {{ selectedEpisode.scenariste.nom }}
+                </span>
+                <span class="detail-value-add-episode" v-else-if="selectedEpisode.scenaristeNom">
                   <i class="fas fa-user-edit"></i> {{ selectedEpisode.scenaristeNom }}
                 </span>
                 <span class="detail-value-add-episode no-scenariste" v-else>
                   <i class="fas fa-user-slash"></i> Non assigné
                 </span>
               </div>
-              
               <div class="detail-row-add-episode">
                 <span class="detail-label-add-episode">Statut :</span>
                 <span class="detail-value-add-episode">

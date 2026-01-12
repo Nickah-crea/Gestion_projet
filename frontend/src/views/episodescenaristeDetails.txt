@@ -23,10 +23,10 @@
           </button>
           <button 
             @click="goBack" 
-            class="sidebar-btn-projet-scenariste "
+            class="sidebar-btn-projet-scenariste"
           >
             <i class="fas fa-arrow-left"></i>
-            Retour
+            Retour aux épisodes
           </button>
         </div>
       </div>
@@ -107,7 +107,120 @@
 
         <!-- Contenu principal -->
         <main v-else>
-          <!-- Détails de l'épisode avec design amélioré -->
+
+          <transition name="slide-fade">
+             <div v-if="showAddSequenceForm" class="add-sequence-slide-container">
+                <div class="add-sequence-container">
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+      <div class="sequence-header">
+        <button @click="goBack" class="back-btn">← Retour</button>
+        <h2>Ajouter une nouvelle séquence</h2>
+      </div>
+
+      <!-- Formulaire d'ajout de séquence -->
+      <div class="add-sequence-form">
+        <form @submit.prevent="submitForm">
+          <div class="form-group">
+            <label for="titre">Titre de la séquence</label>
+            <input
+              id="titre"
+              v-model="formData.titre"
+              type="text"
+              required
+              placeholder="Entrez le titre de la séquence"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="ordre">Ordre dans l'épisode</label>
+            <input
+              id="ordre"
+              v-model="formData.ordre"
+              type="number"
+              min="1"
+              required
+              placeholder="Numéro d'ordre"
+              :class="{ 'error-input': ordreError }"
+              @blur="validateOrdre"
+            />
+            <span v-if="ordreError" class="error-text">{{ ordreError }}</span>
+            <span v-if="suggestedOrdre" class="suggestion-text">
+              Suggestion: Le prochain ordre disponible est {{ suggestedOrdre }}
+               <button type="button" @click="useSuggestedOrder" class="suggestion-btn">
+                Utiliser cette valeur
+            </button>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="synopsis">Synopsis</label>
+            <textarea
+              id="synopsis"
+              v-model="formData.synopsis"
+              required
+              rows="5"
+              placeholder="Décrivez le contenu de cette séquence"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="episode">Épisode lié</label>
+            <input
+              id="episode"
+              :value="episode.titre"
+              type="text"
+              disabled
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="statut">Statut *</label>
+            <select
+              id="statut"
+              v-model="formData.statutId"
+              required
+            >
+              <option value="" disabled>Sélectionnez un statut</option>
+              <option 
+                v-for="statut in statutsSequence" 
+                :key="statut.id" 
+                :value="statut.id"
+              >
+                {{ statut.nomStatutsSequence }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="submit-btn"
+              :disabled="loading || ordreError !== ''"
+            >
+              {{ loading ? 'Création en cours...' : 'Créer la séquence' }}
+            </button>
+            <button 
+              type="button" 
+              @click="goBack" 
+              class="cancel-btn"
+            >
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+             </div>
+          </transition>
+           <div :class="{ 'blur-content': showAddSequenceForm }">
+             <main v-if="!showAddSequenceForm && !accessDenied">
+           
+
+          <!-- Détails de l'épisode -->
           <div class="project-details-spiral-Scenariste">
             <div class="project-info-spiral-Scenariste">
               <div class="project-main-content-Scenariste">
@@ -121,11 +234,11 @@
                   </span>
                 </div>
                  <div class="project-meta-spiral-Scenariste"> 
-                  <!-- <div class="meta-item-spiral-Scenariste">
+                 <!-- <div class="meta-item-spiral-Scenariste">
                     <i class="fas fa-list-ol"></i>
                     <span class="meta-label">Ordre:</span>
                     <span class="meta-value">{{ episode.ordre }}</span>
-                  </div> -->
+                  </div>  -->
                 
                   <div class="meta-item-spiral-Scenariste">
                     <i class="fas fa-calendar-alt"></i>
@@ -178,7 +291,8 @@
               </div>
             </div>
           </div>
-
+        </main>
+      </div>
           <!-- Section Commentaires -->
           <div v-if="showCommentSection" class="comment-section">
             <div class="comment-header">
@@ -284,93 +398,93 @@
             </div>
           </div>
 
-        <!-- Modale pour modifier la séquence -->
-        <div v-if="showEditModal" class="edit-project-modal-Scenariste">
-          <div class="modal-content-Scenariste">
-            <div class="modal-header-Scenariste">
-              <h3><i class="fas fa-edit"></i> Modifier la Séquence</h3>
-              <button @click="closeEditModal" class="close-modal-btn-Scenariste">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-            
-            <div class="modal-body-Scenariste">
-              <!-- Message d'erreur général -->
-              <div v-if="editError" class="error-message-Scenariste">
-                {{ editError }}
+          <!-- Modale pour modifier la séquence -->
+          <div v-if="showEditModal" class="edit-project-modal-Scenariste">
+            <div class="modal-content-Scenariste">
+              <div class="modal-header-Scenariste">
+                <h3><i class="fas fa-edit"></i> Modifier la Séquence</h3>
+                <button @click="closeEditModal" class="close-modal-btn-Scenariste">
+                  <i class="fas fa-times"></i>
+                </button>
               </div>
               
-              <div class="form-rows-container-Scenariste">
-                <!-- Ligne 1 : Titre + Ordre -->
-                <div class="form-row-Scenariste">
-                  <div class="form-group-Scenariste">
-                    <label>Titre de la séquence:</label>
-                    <input v-model="editingSequence.titre" type="text" class="form-input-Scenariste" required>
+              <div class="modal-body-Scenariste">
+                <!-- Message d'erreur général -->
+                <div v-if="editError" class="error-message-Scenariste">
+                  {{ editError }}
+                </div>
+                
+                <div class="form-rows-container-Scenariste">
+                  <!-- Ligne 1 : Titre + Ordre -->
+                  <div class="form-row-Scenariste">
+                    <div class="form-group-Scenariste">
+                      <label>Titre de la séquence:</label>
+                      <input v-model="editingSequence.titre" type="text" class="form-input-Scenariste" required>
+                    </div>
+                    
+                    <div class="form-group-Scenariste">
+                      <label>Ordre dans l'épisode:</label>
+                      <input 
+                        v-model="editingSequence.ordre" 
+                        type="number" 
+                        class="form-input-Scenariste"
+                        :class="{ 'error-input': orderError }"
+                        @blur="validateOrder"
+                        required
+                      >
+                      <!-- Message d'erreur pour l'ordre -->
+                      <div v-if="orderError" class="order-error">
+                        {{ orderError }}
+                      </div>
+                      <!-- Suggestion d'ordre -->
+                      <div v-if="suggestedOrder && !editingSequence.ordre" class="suggestion-text">
+                        Suggestion: Le prochain ordre disponible est {{ suggestedOrder }}
+                        <button type="button" @click="useSuggestedOrder" class="suggestion-btn-projet-scenariste">
+                          Utiliser cette valeur
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div class="form-group-Scenariste">
-                    <label>Ordre dans l'épisode:</label>
-                    <input 
-                      v-model="editingSequence.ordre" 
-                      type="number" 
-                      class="form-input-Scenariste"
-                      :class="{ 'error-input': orderError }"
-                      @blur="validateOrder"
-                      required
-                    >
-                    <!-- Message d'erreur pour l'ordre -->
-                    <div v-if="orderError" class="order-error">
-                      {{ orderError }}
-                    </div>
-                    <!-- Suggestion d'ordre -->
-                    <div v-if="suggestedOrder && !editingSequence.ordre" class="suggestion-text">
-                      Suggestion: Le prochain ordre disponible est {{ suggestedOrder }}
-                      <button type="button" @click="useSuggestedOrder" class="suggestion-btn-projet-scenariste">
-                        Utiliser cette valeur
-                      </button>
+                  <!-- Ligne 2 : Statut -->
+                  <div class="form-row-Scenariste">
+                    <div class="form-group-Scenariste form-full-width-Scenariste">
+                      <label>Statut:</label>
+                      <select v-model="editingSequence.statutId" class="form-select-Scenariste" required>
+                        <option value="">Sélectionnez un statut</option>
+                        <option v-for="statut in statutsSequence" :key="statut.id" :value="statut.id">
+                          {{ statut.nomStatutsSequence }}
+                        </option>
+                      </select>
                     </div>
                   </div>
-                </div>
-                
-                <!-- Ligne 2 : Statut -->
-                <div class="form-row-Scenariste">
-                  <div class="form-group-Scenariste form-full-width-Scenariste">
-                    <label>Statut:</label>
-                    <select v-model="editingSequence.statutId" class="form-select-Scenariste" required>
-                      <option value="">Sélectionnez un statut</option>
-                      <option v-for="statut in statutsSequence" :key="statut.id" :value="statut.id">
-                        {{ statut.nomStatutsSequence }}
-                      </option>
-                    </select>
+                  
+                  <!-- Ligne 3 : Synopsis -->
+                  <div class="form-row-Scenariste">
+                    <div class="form-group-Scenariste form-full-width-Scenariste">
+                      <label>Synopsis:</label>
+                      <textarea v-model="editingSequence.synopsis" class="form-textarea-Scenariste" rows="4" required></textarea>
+                    </div>
+                  </div>
+                  
+                  <!-- Ligne 4 : Épisode (lecture seule) -->
+                  <div class="form-row-Scenariste">
+                    <div class="form-group-Scenariste form-full-width-Scenariste">
+                      <label>Épisode parent:</label>
+                      <input :value="episode.titre" type="text" class="form-input-Scenariste" disabled>
+                    </div>
                   </div>
                 </div>
                 
-                <!-- Ligne 3 : Synopsis -->
-                <div class="form-row-Scenariste">
-                  <div class="form-group-Scenariste form-full-width-Scenariste">
-                    <label>Synopsis:</label>
-                    <textarea v-model="editingSequence.synopsis" class="form-textarea-Scenariste" rows="4" required></textarea>
-                  </div>
+                <div class="modal-footer-Scenariste">
+                  <button @click="closeEditModal" class="cancel-btn-Scenariste">Annuler</button>
+                  <button type="submit" @click="saveEditedSequence" class="save-btn-Scenariste" :disabled="orderError !== ''">
+                    <i class="fas fa-save"></i> Sauvegarder
+                  </button>
                 </div>
-                
-                <!-- Ligne 4 : Épisode (lecture seule) -->
-                <div class="form-row-Scenariste">
-                  <div class="form-group-Scenariste form-full-width-Scenariste">
-                    <label>Épisode parent:</label>
-                    <input :value="episode.titre" type="text" class="form-input-Scenariste" disabled>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="modal-footer-Scenariste">
-                <button @click="closeEditModal" class="cancel-btn-Scenariste">Annuler</button>
-                <button type="submit" @click="saveEditedSequence" class="save-btn-Scenariste" :disabled="orderError !== ''">
-                  <i class="fas fa-save"></i> Sauvegarder
-                </button>
               </div>
             </div>
           </div>
-        </div>
         </main>
       </div>
     </div>
@@ -465,7 +579,14 @@ export default {
         message: '',
         type: 'success'
       },
-      notificationTimeout: null
+      notificationTimeout: null,
+       showAddSequenceForm: false,
+      newSequenceData: {
+        titre: '',
+        ordre: null,
+        synopsis: '',
+        statutId: null
+      },
     };
   },
   computed: {
@@ -576,6 +697,57 @@ export default {
         console.error('Erreur lors du chargement des statuts:', error);
       }
     },
+
+     goToAddSequence() {
+      this.showAddSequenceForm = true;
+      this.calculateSuggestedOrdre();
+    },
+    
+    closeAddSequence() {
+      this.showAddSequenceForm = false;
+      this.resetSequenceForm();
+    },
+    
+    async submitSequenceForm() {
+      // Copiez la logique de submitForm de AddSequence.vue
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const response = await axios.post(`/api/sequences/episodes/${this.episode.idEpisode}`, this.newSequenceData, {
+          headers: { 'X-User-Id': user.id }
+        });
+        
+        alert('Séquence créée avec succès!');
+        this.closeAddSequence();
+        await this.loadSequences(); // Recharger la liste
+      } catch (error) {
+        console.error('Erreur:', error);
+      }
+    },
+    
+    resetSequenceForm() {
+      this.newSequenceData = {
+        titre: '',
+        ordre: null,
+        synopsis: '',
+        statutId: null
+      };
+    },
+    
+    async calculateSuggestedOrdre() {
+      try {
+        const response = await axios.get(`/api/sequences/episodes/${this.episode.idEpisode}`);
+        const existingOrders = response.data.map(s => s.ordre);
+        
+        if (existingOrders.length === 0) {
+          this.newSequenceData.ordre = 1;
+        } else {
+          const maxOrder = Math.max(...existingOrders);
+          this.newSequenceData.ordre = maxOrder + 1;
+        }
+      } catch (error) {
+        console.error('Erreur:', error);
+      }
+    },
     async loadComments() {
       try {
         const response = await axios.get(`/api/commentaires/episode/${this.$route.params.id}`);
@@ -625,7 +797,7 @@ export default {
           await axios.delete(`/api/commentaires/${commentId}`);
           await this.loadComments();
           await this.loadCommentCount();
-    
+          // this.showNotification('Commentaire supprimé avec succès!', 'success');
         } catch (error) {
           console.error('Erreur lors de la suppression du commentaire:', error);
           this.showNotification('Erreur lors de la suppression du commentaire', 'error');
@@ -730,6 +902,7 @@ export default {
         this.editError = '';
         this.orderError = '';
         await this.loadSequences();
+        this.showNotification('Séquence modifiée avec succès!', 'success');
       } catch (error) {
         console.error('Erreur lors de la mise à jour de la séquence:', error);
         
@@ -783,6 +956,7 @@ export default {
         await axios.delete(`/api/sequences/${this.sequenceToDelete.idSequence}`);
         await this.loadSequences();
         this.closeDeleteModal();
+        this.showNotification('Séquence supprimée avec succès!', 'success');
       } catch (error) {
         console.error('Erreur lors de la suppression de la séquence:', error);
         this.showNotification('Erreur lors de la suppression de la séquence', 'error');
