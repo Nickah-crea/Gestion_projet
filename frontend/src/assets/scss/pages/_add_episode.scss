@@ -9,17 +9,28 @@
 // SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
 .creation-sidebar-add-episode {
-  position: fixed;
+position: fixed;
+  top: 60px; // 50px de marge en haut
   left: 0;
-  top: 80px;
   width: 280px;
-  height: calc(100vh - 80px);
-  background: transparent;
-  padding: $spacing-md;
-  box-sizing: border-box;
-  z-index: $z-index-sticky;
+  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  border-right: 2px solid $color-border; // Changé: bordure dorée
+  padding: $padding-lg;
+  background: rgba($color-border, 0.1);
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
+
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
 
   .sidebar-header-add-episode {
     margin-bottom: $spacing-md;
@@ -88,8 +99,7 @@
     }
 
     &.active {
-      background: $color-primary; // Changé: doré
-      border-color: $color-primary; // Changé: doré
+       background:$color-tertiary-dark;// Changé: brun foncé
       color: $color-text-light; // Changé: blanc
     }
 
