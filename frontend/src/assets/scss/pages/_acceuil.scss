@@ -740,6 +740,7 @@ body, html {
   align-items: flex-start;
   padding-bottom: $padding-sm;
   margin-bottom: $padding-sm;
+  border-bottom: 1px solid $color-border;
 }
 
 .statut-badge-Scenariste {
@@ -749,6 +750,7 @@ body, html {
   font-weight: $font-weight-bold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+
 }
 
 // Classes de statut avec les couleurs du thème
@@ -915,7 +917,7 @@ body, html {
   box-shadow: $shadow-xl;
   width: 90%;
   max-width: 800px;
-  height: 520px;
+  height: 550px;
 }
 
 .modal-header-Scenariste {

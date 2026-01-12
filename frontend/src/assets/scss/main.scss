@@ -17,7 +17,6 @@
 @import 'components/sidebar';
 
 
-
 // Layouts
 @import 'layouts/header';
 @import 'layouts/footer';
@@ -50,4 +49,6 @@
 
 @import 'pages/projet_scenariste';
 @import 'pages/add_episode';
-
+@import 'pages/episode_scenariste_details';
+@import 'pages/add_sequence';
+@import 'pages/sequence_scenariste_details';
