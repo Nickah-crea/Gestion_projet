@@ -16,7 +16,7 @@
           <div class="sidebar-actions-projet-scenariste">
             <button 
               @click="goToAddScene" 
-              class="sidebar-btn-projet-scenariste nouvelle-sequence-btn"
+              class="sidebar-btn-projet-scenariste nouvelle-scene-btn"
             >
               <i class="fas fa-plus"></i>
               Nouvelle scène
