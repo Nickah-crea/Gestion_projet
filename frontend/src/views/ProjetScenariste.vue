@@ -23,7 +23,7 @@
                   class="sidebar-btn-projet-scenariste"
                 >
                   <i class="fas fa-arrow-left"></i>
-                  Retour aux projets
+                  Retour
                 </button>
               </div>
             </div>
