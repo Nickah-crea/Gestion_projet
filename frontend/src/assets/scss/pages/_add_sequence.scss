@@ -1,0 +1,637 @@
+@import '../base/variables';
+
+.app-wrapper-global-add-sequence {
+  display: flex;
+  min-height: 100vh;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE FIXE À GAUCHE
+// =============================================
+.creation-sidebar-add-sequence {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  width: 280px;
+  height: calc(100vh - 80px);
+  background: transparent;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  z-index: $z-index-sticky;
+  overflow-y: auto;
+  border-right: 2px solid $color-border;
+
+  .sidebar-header-add-sequence {
+    margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
+
+    .sidebar-title-add-sequence {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-add-sequence {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-add-sequence {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-add-sequence {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  .sidebar-actions-add-sequence {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-add-sequence {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    font-weight: $font-weight-semibold;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .filter-group-add-sequence {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-add-sequence {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .episode-info-add-sequence {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $gap-xs $padding-xs;
+    background: rgba($color-primary, 0.05);
+    border: 1px solid rgba($color-primary, 0.2);
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+    
+    span {
+      flex: 1;
+      @include text-truncate;
+    }
+  }
+
+  .stats-add-sequence {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-add-sequence {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-white;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-add-sequence {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-add-sequence {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL À DROITE
+// =============================================
+.creation-body-add-sequence {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-add-sequence {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// =============================================
+// SYSTÈME D'ONGlets
+// =============================================
+.tabs-container-add-sequence {
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-add-sequence {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-add-sequence {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-add-sequence {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-add-sequence {
+  position: relative;
+}
+
+.tab-pane-add-sequence {
+  padding: $spacing-lg;
+  animation: fadeInUp-add-sequence 0.3s ease-out;
+}
+
+@keyframes fadeInUp-add-sequence {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION/MODIFICATION
+// =============================================
+.form-container-add-sequence {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+// EN-TÊTE DU FORMULAIRE
+.tab-pane-add-sequence .form-header-add-sequence {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+
+  .back-btn-add-sequence {
+    padding: $gap-xs $padding-sm;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}
+
+.sequence-form-add-sequence {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-add-sequence {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-add-sequence {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
+  }
+
+  .form-input-add-sequence,
+  .form-select-add-sequence,
+  .form-textarea-add-sequence {
+    width: 100%;
+    padding: $gap-sm $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+
+    &:hover {
+      border-color: darken($color-border, 10%);
+    }
+
+    &:disabled {
+      background: $color-background;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  .form-input-add-sequence {
+    height: 42px;
+    
+    &.error-input {
+      border-color: $color-error;
+      background: rgba($color-error, 0.05);
+    }
+  }
+
+  .form-select-add-sequence {
+    height: 42px;
+    cursor: pointer;
+  }
+
+  .form-textarea-add-sequence {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+    line-height: $line-height-base;
+  }
+}
+
+// =============================================
+// AFFICHAGE DE L'ÉPISODE PARENT
+// =============================================
+.episode-display-add-sequence {
+  .episode-display-content-add-sequence {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $gap-sm $padding-sm;
+    background: rgba($color-primary, 0.05);
+    border: 1px solid rgba($color-primary, 0.2);
+    border-radius: $border-radius-xs;
+    min-height: 42px;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+    
+    span {
+      flex: 1;
+      font-size: $font-size-p4;
+      color: $color-text-primary;
+    }
+  }
+}
+
+// =============================================
+// MESSAGES D'ERREUR ET SUGGESTIONS
+// =============================================
+.error-text-add-sequence {
+  @include typography-p4;
+  color: $color-error;
+  margin-top: $gap-xs;
+  display: block;
+}
+
+.info-text-add-sequence {
+  @include typography-p4;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  display: block;
+  font-style: italic;
+}
+
+.suggestion-text-add-sequence {
+  @include typography-p4;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  display: block;
+  
+  .suggestion-btn-add-sequence {
+    background: transparent;
+    border: none;
+    color: $color-primary;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: $font-size-p4;
+    margin-left: $gap-xs;
+    
+    &:hover {
+      color: darken($color-primary, 10%);
+    }
+  }
+}
+
+.error-message-add-sequence {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-add-sequence {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .cancel-btn-add-sequence,
+  .submit-btn-add-sequence {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .cancel-btn-add-sequence {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn-add-sequence {
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-add-sequence {
+    width: 250px;
+  }
+  
+  .creation-body-add-sequence {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-add-sequence {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .creation-body-add-sequence {
+    margin-left: 0;
+  }
+  
+  .tabs-header-add-sequence {
+    flex-direction: column;
+  }
+
+  .tab-btn-add-sequence {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-add-sequence {
+    display: none;
+  }
+
+  .tab-pane-add-sequence {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-add-sequence {
+    padding: $spacing-sm;
+  }
+  
+  .form-header-add-sequence {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-add-sequence,
+  .form-input-add-sequence,
+  .submit-btn-add-sequence,
+  .cancel-btn-add-sequence,
+  .tab-btn-add-sequence,
+  .tab-indicator-add-sequence {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .tab-pane-add-sequence {
+    animation: none;
+  }
+}
