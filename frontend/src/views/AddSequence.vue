@@ -305,8 +305,7 @@ async loadProjetDetails() {
         'X-User-Id': this.user.id
       }
     });
-    
-    // Fusionnez les détails du projet avec les données de l'épisode
+  
     this.episode = {
       ...this.episode,
       projetTitre: response.data.titre,
