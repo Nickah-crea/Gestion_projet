@@ -8,7 +8,7 @@ body, html {
   overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;
-  background: $color-background-alt; // Changé: champagne beige
+  background: $color-background; // Changé: champagne beige
 }
 
 .app-wrapper-global {
@@ -714,7 +714,7 @@ body, html {
 }
 
 .movie-card-Scenariste {
-  background: $color-background; // Changé: blanc
+  background: $color-background;
   border-radius: $border-radius-xs;
   box-shadow: $shadow;
   overflow: hidden;
@@ -3931,11 +3931,12 @@ nav.fixed-bottom,
   transition: padding-right $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
   
   .sidebar-right-fixed-Scenariste.visible ~ & {
-    @media (min-width: $breakpoint-lg + 1) {
-      padding-right: 300px; // Compenser la sidebar
+    @media (min-width: calc(#{$breakpoint-lg} + 1px)) {
+      padding-right: 300px;
     }
   }
 }
+
 
 // =============================================
 // FORMULAIRES - GESTION DES CHAMPS IMPAIRES

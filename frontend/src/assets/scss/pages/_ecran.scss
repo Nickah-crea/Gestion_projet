@@ -2,15 +2,6 @@
 @import '../base/variables';
 
 // =============================================
-// WRAPPER GLOBAL
-// =============================================
-.app-wrapper-global {
-  display: flex;
-  min-height: 100vh;
-  background: $color-background;
-}
-
-// =============================================
 // ÉCRAN DE TRAVAIL PRINCIPAL
 // =============================================
 // =============================================
@@ -130,7 +121,7 @@
 // HEADER - Ajusté pour être plus proche
 // =============================================
 .header-ecran-travail {
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
   padding: $spacing-md $spacing-lg;
   box-shadow: $shadow;
@@ -138,7 +129,8 @@
   top: 0;
   z-index: $z-index-sticky;
   transition: padding-left $transition-slow ease;
-  
+  width: 800px;
+
   // Quand sidebar fermée, réduire le padding gauche
   .left-sidebar-compact.closed ~ .ecran-travail-ecran-travail & {
     padding-left: $spacing-md; // Réduit pour être plus proche
@@ -181,7 +173,7 @@
 // HEADER DE NAVIGATION
 // =============================================
 .header-ecran-travail {
-  background: $color-background-alt;
+  background: $color-tertiary-dark;
   border-bottom: 1px solid $color-border;
   padding: $spacing-md $spacing-lg;
   box-shadow: $shadow;
@@ -204,7 +196,7 @@
 
 .nav-btn-ecran-travail {
   padding: $gap-sm $spacing-md;
-  background: $color-background-alt;
+  background: $color-background;
   border: 1px solid $color-border;
   border-radius: $border-radius-xs;
   color: $color-text-secondary;
@@ -2708,6 +2700,7 @@
   // CAS SPÉCIAL : Si les deux sont ouverts (ne devrait pas arriver mais géré)
   &.with-right-sidebar-open.with-scene-tools-open {
     margin-right: 370px; // On priorise les outils scène
+    margin-left: 50px;
   }
   
   @include respond-to($breakpoint-lg) {

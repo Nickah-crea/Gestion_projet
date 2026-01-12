@@ -16,7 +16,7 @@
   align-items: center;
   transition: $transition;
   z-index: $z-index-fixed;
-  background: $color-background-dark;
+  background: $color-background-alt;
   &.collapsed {
     height: 70px;
     padding: 0 $padding-md;
