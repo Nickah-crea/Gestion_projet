@@ -12,20 +12,33 @@
 // =============================================
 .creation-sidebar-crea-comedien {
   position: fixed;
+  top: 60px; // 50px de marge en haut
   left: 0;
-  top: 80px;
   width: 280px;
-  height: calc(100vh - 80px);
-  background: $color-background;
-  padding: $spacing-md;
-  box-sizing: border-box;
-  z-index: $z-index-sticky;
+  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  border-right: 1px solid $color-border;
-  box-shadow: $shadow-md;
+  padding: $padding-lg;
+  background: rgba($color-border, 0.1);
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
+
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
+
 
   .sidebar-header-crea-comedien {
     margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
 
     .sidebar-title-crea-comedien {
       @include typography-playfair-h4;
@@ -88,8 +101,7 @@
     }
 
     &.active {
-      background: $color-primary;
-      border-color: $color-primary;
+      background:$color-tertiary-dark;
       color: $color-text-light;
     }
 
@@ -759,7 +771,7 @@
       height: 42px;
       padding: 0 $padding-md 0 ($padding-md + $padding-xs);
       border: 1px solid $color-border;
-      border-radius: $border-radius-pill;
+      border-radius: $border-radius-xs;
       background: $color-background-alt;
       font-size: $font-size-p3;
       color: $color-text-primary;
@@ -1453,5 +1465,3 @@
     }
   }
 }
-
-
