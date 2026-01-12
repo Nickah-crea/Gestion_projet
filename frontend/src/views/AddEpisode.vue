@@ -28,6 +28,10 @@
             <i class="fas fa-list"></i>
             Voir la liste
           </button>
+          <button @click="goBack" class="sidebar-btn-add-episode">
+                  <i class="fas fa-arrow-left"></i>
+                  Retour
+          </button>
         </div>
       </div>
 
@@ -534,7 +538,7 @@ export default {
     
     getActiveEpisodesCount() {
       return this.userEpisodes.filter(ep => 
-        ['en-cours', 'en-production', 'post-production'].includes(
+        ['en-tournage', 'en-production', 'post-production'].includes(
           ep.statutNom?.toLowerCase().replace(/\s+/g, '-')
         )
       ).length;
