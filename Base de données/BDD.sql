@@ -1087,187 +1087,294 @@ COMMENT ON TABLE historique_planning IS 'Historique des replanifications de tour
 COMMENT ON COLUMN historique_planning.type_planning IS 'Type de planning: SCENE_TOURNAGE ou PLANNING_TOURNAGE';
 COMMENT ON COLUMN historique_planning.raison_replanification IS 'Raison de la replanification';
 
--- Créer une table simple pour le suivi d'écriture
-CREATE TABLE suivi_ecriture (
-    id_suivi BIGSERIAL PRIMARY KEY,
-    id_utilisateur BIGINT NOT NULL REFERENCES utilisateurs(id_utilisateur) ON DELETE CASCADE,
-    duree_minutes INTEGER NOT NULL,
-    date_session DATE NOT NULL,
-    heure_session TIME NOT NULL,
-    periode_journee VARCHAR(20) CHECK (periode_journee IN ('matin', 'apres_midi', 'soir', 'nuit')),
-    cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- -- Créer une table simple pour le suivi d'écriture
+-- CREATE TABLE suivi_ecriture (
+--     id_suivi BIGSERIAL PRIMARY KEY,
+--     id_utilisateur BIGINT NOT NULL REFERENCES utilisateurs(id_utilisateur) ON DELETE CASCADE,
+--     duree_minutes INTEGER NOT NULL,
+--     date_session DATE NOT NULL,
+--     heure_session TIME NOT NULL,
+--     periode_journee VARCHAR(20) CHECK (periode_journee IN ('matin', 'apres_midi', 'soir', 'nuit')),
+--     cree_le TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
 
 
--- Supprimez l'ancienne fonction si elle existe
-DROP FUNCTION IF EXISTS get_periode_journee(TIME);
+-- -- Supprimez l'ancienne fonction si elle existe
+-- DROP FUNCTION IF EXISTS get_periode_journee(TIME);
 
--- Créez la fonction avec le bon type
-CREATE OR REPLACE FUNCTION get_periode_journee(heure TIME WITH TIME ZONE)
-RETURNS VARCHAR(20) AS $$
-DECLARE
-    heure_int INTEGER;
-BEGIN
-    heure_int := EXTRACT(HOUR FROM heure);
+-- -- Créez la fonction avec le bon type
+-- CREATE OR REPLACE FUNCTION get_periode_journee(heure TIME WITH TIME ZONE)
+-- RETURNS VARCHAR(20) AS $$
+-- DECLARE
+--     heure_int INTEGER;
+-- BEGIN
+--     heure_int := EXTRACT(HOUR FROM heure);
     
-    IF heure_int >= 6 AND heure_int < 12 THEN
-        RETURN 'matin';
-    ELSIF heure_int >= 12 AND heure_int < 18 THEN
-        RETURN 'apres_midi';
-    ELSIF heure_int >= 18 AND heure_int < 22 THEN
-        RETURN 'soir';
-    ELSE
-        RETURN 'nuit';
-    END IF;
-END;
-$$ LANGUAGE plpgsql;
+--     IF heure_int >= 6 AND heure_int < 12 THEN
+--         RETURN 'matin';
+--     ELSIF heure_int >= 12 AND heure_int < 18 THEN
+--         RETURN 'apres_midi';
+--     ELSIF heure_int >= 18 AND heure_int < 22 THEN
+--         RETURN 'soir';
+--     ELSE
+--         RETURN 'nuit';
+--     END IF;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
--- Testez la fonction
-SELECT get_periode_journee(CURRENT_TIME);
-SELECT get_periode_journee('08:30'::TIME);
-SELECT get_periode_journee('14:45'::TIME);
-SELECT get_periode_journee('20:15'::TIME);
-SELECT get_periode_journee('23:30'::TIME);
+-- -- Testez la fonction
+-- SELECT get_periode_journee(CURRENT_TIME);
+-- SELECT get_periode_journee('08:30'::TIME);
+-- SELECT get_periode_journee('14:45'::TIME);
+-- SELECT get_periode_journee('20:15'::TIME);
+-- SELECT get_periode_journee('23:30'::TIME);
 
 
 
--- Procédure pour enregistrer automatiquement une session quand un utilisateur se connecte
-CREATE OR REPLACE PROCEDURE enregistrer_session_connexion(
-    p_id_utilisateur BIGINT,
-    p_duree_minutes INTEGER DEFAULT 15
-)
-LANGUAGE plpgsql
-AS $$
-DECLARE
-    v_heure_session TIME := CURRENT_TIME;
-    v_periode VARCHAR(20);
-BEGIN
-    -- Déterminer la période
-    v_periode := get_periode_journee(v_heure_session);
+-- -- Procédure pour enregistrer automatiquement une session quand un utilisateur se connecte
+-- CREATE OR REPLACE PROCEDURE enregistrer_session_connexion(
+--     p_id_utilisateur BIGINT,
+--     p_duree_minutes INTEGER DEFAULT 15
+-- )
+-- LANGUAGE plpgsql
+-- AS $$
+-- DECLARE
+--     v_heure_session TIME := CURRENT_TIME;
+--     v_periode VARCHAR(20);
+-- BEGIN
+--     -- Déterminer la période
+--     v_periode := get_periode_journee(v_heure_session);
     
-    -- Enregistrer la session
-    INSERT INTO suivi_ecriture 
-    (id_utilisateur, duree_minutes, date_session, heure_session, periode_journee)
-    VALUES 
-    (p_id_utilisateur, p_duree_minutes, CURRENT_DATE, v_heure_session, v_periode);
+--     -- Enregistrer la session
+--     INSERT INTO suivi_ecriture 
+--     (id_utilisateur, duree_minutes, date_session, heure_session, periode_journee)
+--     VALUES 
+--     (p_id_utilisateur, p_duree_minutes, CURRENT_DATE, v_heure_session, v_periode);
     
-    RAISE NOTICE 'Session enregistrée pour utilisateur %: % minutes le % à % (période: %)', 
-        p_id_utilisateur, p_duree_minutes, CURRENT_DATE, v_heure_session, v_periode;
-END;
-$$;
+--     RAISE NOTICE 'Session enregistrée pour utilisateur %: % minutes le % à % (période: %)', 
+--         p_id_utilisateur, p_duree_minutes, CURRENT_DATE, v_heure_session, v_periode;
+-- END;
+-- $$;
 
-CREATE OR REPLACE FUNCTION enregistrer_session_auto()
-RETURNS TRIGGER AS $$
-DECLARE
-    v_id_episode BIGINT;
-    v_id_scenariste BIGINT;
-    v_id_utilisateur BIGINT;
-BEGIN
-    -- Pour scenes : Trouver episode via sequence
-    IF TG_TABLE_NAME = 'scenes' THEN
-        SELECT id_episode INTO v_id_episode 
-        FROM sequences WHERE id_sequence = NEW.id_sequence;
-    ELSIF TG_TABLE_NAME = 'dialogues' THEN
-        SELECT seq.id_episode INTO v_id_episode 
-        FROM scenes s JOIN sequences seq ON s.id_sequence = seq.id_sequence 
-        WHERE s.id_scene = NEW.id_scene;
-    END IF;
+-- CREATE OR REPLACE FUNCTION enregistrer_session_auto()
+-- RETURNS TRIGGER AS $$
+-- DECLARE
+--     v_id_episode BIGINT;
+--     v_id_scenariste BIGINT;
+--     v_id_utilisateur BIGINT;
+-- BEGIN
+--     -- Pour scenes : Trouver episode via sequence
+--     IF TG_TABLE_NAME = 'scenes' THEN
+--         SELECT id_episode INTO v_id_episode 
+--         FROM sequences WHERE id_sequence = NEW.id_sequence;
+--     ELSIF TG_TABLE_NAME = 'dialogues' THEN
+--         SELECT seq.id_episode INTO v_id_episode 
+--         FROM scenes s JOIN sequences seq ON s.id_sequence = seq.id_sequence 
+--         WHERE s.id_scene = NEW.id_scene;
+--     END IF;
 
-    -- Trouver un scenariste associé à l'épisode (prendre le premier pour simplicité)
-    SELECT id_scenariste INTO v_id_scenariste 
-    FROM episode_scenaristes WHERE id_episode = v_id_episode LIMIT 1;
+--     -- Trouver un scenariste associé à l'épisode (prendre le premier pour simplicité)
+--     SELECT id_scenariste INTO v_id_scenariste 
+--     FROM episode_scenaristes WHERE id_episode = v_id_episode LIMIT 1;
 
-    -- Trouver id_utilisateur
-    SELECT id_utilisateur INTO v_id_utilisateur 
-    FROM scenaristes WHERE id_scenariste = v_id_scenariste;
+--     -- Trouver id_utilisateur
+--     SELECT id_utilisateur INTO v_id_utilisateur 
+--     FROM scenaristes WHERE id_scenariste = v_id_scenariste;
 
-    IF v_id_utilisateur IS NOT NULL THEN
-        -- Enregistrer session (10-30 min aléatoire)
-        CALL enregistrer_session_connexion(v_id_utilisateur, (FLOOR(RANDOM() * 21) + 10)::INTEGER);
-    END IF;
+--     IF v_id_utilisateur IS NOT NULL THEN
+--         -- Enregistrer session (10-30 min aléatoire)
+--         CALL enregistrer_session_connexion(v_id_utilisateur, (FLOOR(RANDOM() * 21) + 10)::INTEGER);
+--     END IF;
 
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_session_scene
-AFTER INSERT OR UPDATE ON scenes
-FOR EACH ROW EXECUTE FUNCTION enregistrer_session_auto();
+-- CREATE TRIGGER trigger_session_scene
+-- AFTER INSERT OR UPDATE ON scenes
+-- FOR EACH ROW EXECUTE FUNCTION enregistrer_session_auto();
 
-CREATE TRIGGER trigger_session_dialogue
-AFTER INSERT OR UPDATE ON dialogues
-FOR EACH ROW EXECUTE FUNCTION enregistrer_session_auto();
+-- CREATE TRIGGER trigger_session_dialogue
+-- AFTER INSERT OR UPDATE ON dialogues
+-- FOR EACH ROW EXECUTE FUNCTION enregistrer_session_auto();
 
--- Vérifiez le résultat
+-- -- Vérifiez le résultat
+-- SELECT 
+--     id_suivi,
+--     date_session,
+--     heure_session,
+--     periode_journee,
+--     duree_minutes
+-- FROM suivi_ecriture 
+-- WHERE id_utilisateur = 4
+-- ORDER BY date_session DESC, heure_session DESC;
+
+
+
+-- -- Script de correction pour la base de données
+-- -- Exécutez CE SCRIPT EN PREMIER avant de redémarrer l'application
+
+-- -- 1. Créer les scénaristes manquants pour les utilisateurs SCENARISTE
+-- INSERT INTO scenaristes (id_utilisateur, specialite, biographie)
+-- SELECT 
+--     u.id_utilisateur,
+--     'Général',
+--     'Scénariste'
+-- FROM utilisateurs u
+-- WHERE u.role = 'SCENARISTE'
+-- AND u.id_utilisateur NOT IN (SELECT id_utilisateur FROM scenaristes);
+
+-- -- 2. Créer les réalisateurs manquants pour les utilisateurs REALISATEUR
+-- INSERT INTO realisateurs (id_utilisateur, specialite, biographie)
+-- SELECT 
+--     u.id_utilisateur,
+--     'Général',
+--     'Réalisateur'
+-- FROM utilisateurs u
+-- WHERE u.role = 'REALISATEUR'
+-- AND u.id_utilisateur NOT IN (SELECT id_utilisateur FROM realisateurs);
+
+-- -- 3. Créer un trigger pour automatiser la création future
+-- CREATE OR REPLACE FUNCTION create_scenariste_realsateur_on_user_insert()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--     IF NEW.role = 'SCENARISTE' THEN
+--         INSERT INTO scenaristes (id_utilisateur, specialite, biographie)
+--         VALUES (NEW.id_utilisateur, 'Général', 'Nouveau scénariste');
+--     ELSIF NEW.role = 'REALISATEUR' THEN
+--         INSERT INTO realisateurs (id_utilisateur, specialite, biographie)
+--         VALUES (NEW.id_utilisateur, 'Général', 'Nouveau réalisateur');
+--     END IF;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
+-- -- Supprimer le trigger existant s'il existe
+-- DROP TRIGGER IF EXISTS trigger_create_scenariste_realsateur ON utilisateurs;
+
+-- -- Créer le nouveau trigger
+-- CREATE TRIGGER trigger_create_scenariste_realsateur
+-- AFTER INSERT ON utilisateurs
+-- FOR EACH ROW EXECUTE FUNCTION create_scenariste_realsateur_on_user_insert();
+
+-- -- 4. Vérification
+-- SELECT 
+--     u.id_utilisateur,
+--     u.nom,
+--     u.role,
+--     CASE 
+--         WHEN u.role = 'SCENARISTE' AND s.id_scenariste IS NULL THEN 'MANQUANT'
+--         WHEN u.role = 'REALISATEUR' AND r.id_realisateur IS NULL THEN 'MANQUANT'
+--         ELSE 'OK'
+--     END as statut
+-- FROM utilisateurs u
+-- LEFT JOIN scenaristes s ON u.id_utilisateur = s.id_utilisateur
+-- LEFT JOIN realisateurs r ON u.id_utilisateur = r.id_utilisateur
+-- WHERE u.role IN ('SCENARISTE', 'REALISATEUR');
+*
+
+--  -- Supprimez les anciennes contraintes
+ALTER TABLE sequences DROP CONSTRAINT sequences_id_episode_fkey;
+ALTER TABLE scenes DROP CONSTRAINT scenes_id_sequence_fkey;
+ALTER TABLE dialogues DROP CONSTRAINT dialogues_id_scene_fkey;
+ALTER TABLE raccords DROP CONSTRAINT raccords_scene_source_id_fkey;
+ALTER TABLE raccords DROP CONSTRAINT raccords_scene_cible_id_fkey;
+ALTER TABLE scene_plateau DROP CONSTRAINT scene_plateau_id_scene_fkey;
+ALTER TABLE planning_tournage DROP CONSTRAINT IF EXISTS planning_tournage_id_scene_fkey;
+
+
+ALTER TABLE sequences 
+ADD CONSTRAINT sequences_id_episode_fkey 
+FOREIGN KEY (id_episode) REFERENCES episodes(id_episode) 
+ON DELETE CASCADE;
+
+ALTER TABLE scenes 
+ADD CONSTRAINT scenes_id_sequence_fkey 
+FOREIGN KEY (id_sequence) REFERENCES sequences(id_sequence) 
+ON DELETE CASCADE;
+
+ALTER TABLE comedien_scene 
+DROP CONSTRAINT IF EXISTS comedien_scene_id_scene_fkey;
+
+ALTER TABLE comedien_scene 
+ADD CONSTRAINT comedien_scene_id_scene_fkey 
+FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+ALTER TABLE dialogues 
+ADD CONSTRAINT dialogues_id_scene_fkey 
+FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+ALTER TABLE scene_lieu 
+DROP CONSTRAINT IF EXISTS scene_lieu_id_scene_fkey;
+
+ALTER TABLE scene_lieu 
+ADD CONSTRAINT scene_lieu_id_scene_fkey 
+FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+ALTER TABLE scene_statuts 
+DROP CONSTRAINT IF EXISTS scene_statuts_id_scene_fkey;
+
+ALTER TABLE scene_statuts 
+ADD CONSTRAINT scene_statuts_id_scene_fkey 
+FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+ALTER TABLE scene_commentaires 
+DROP CONSTRAINT IF EXISTS scene_commentaires_id_scene_fkey;
+
+ALTER TABLE scene_commentaires 
+ADD CONSTRAINT scene_commentaires_id_scene_fkey 
+FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+
+ALTER TABLE planning_tournage 
+ADD CONSTRAINT planning_tournage_id_scene_fkey 
+FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+ALTER TABLE scene_tournage 
+DROP CONSTRAINT IF EXISTS scene_tournage_id_scene_fkey;
+
+ALTER TABLE scene_tournage 
+ADD CONSTRAINT scene_tournage_id_scene_fkey 
+FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+
+ALTER TABLE raccords 
+ADD CONSTRAINT raccords_scene_source_id_fkey 
+FOREIGN KEY (scene_source_id) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+ALTER TABLE raccords 
+ADD CONSTRAINT raccords_scene_cible_id_fkey 
+FOREIGN KEY (scene_cible_id) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+ALTER TABLE scene_plateau 
+ADD CONSTRAINT scene_plateau_id_scene_fkey 
+FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+
 SELECT 
-    id_suivi,
-    date_session,
-    heure_session,
-    periode_journee,
-    duree_minutes
-FROM suivi_ecriture 
-WHERE id_utilisateur = 4
-ORDER BY date_session DESC, heure_session DESC;
-
-
-
--- Script de correction pour la base de données
--- Exécutez CE SCRIPT EN PREMIER avant de redémarrer l'application
-
--- 1. Créer les scénaristes manquants pour les utilisateurs SCENARISTE
-INSERT INTO scenaristes (id_utilisateur, specialite, biographie)
-SELECT 
-    u.id_utilisateur,
-    'Général',
-    'Scénariste'
-FROM utilisateurs u
-WHERE u.role = 'SCENARISTE'
-AND u.id_utilisateur NOT IN (SELECT id_utilisateur FROM scenaristes);
-
--- 2. Créer les réalisateurs manquants pour les utilisateurs REALISATEUR
-INSERT INTO realisateurs (id_utilisateur, specialite, biographie)
-SELECT 
-    u.id_utilisateur,
-    'Général',
-    'Réalisateur'
-FROM utilisateurs u
-WHERE u.role = 'REALISATEUR'
-AND u.id_utilisateur NOT IN (SELECT id_utilisateur FROM realisateurs);
-
--- 3. Créer un trigger pour automatiser la création future
-CREATE OR REPLACE FUNCTION create_scenariste_realsateur_on_user_insert()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.role = 'SCENARISTE' THEN
-        INSERT INTO scenaristes (id_utilisateur, specialite, biographie)
-        VALUES (NEW.id_utilisateur, 'Général', 'Nouveau scénariste');
-    ELSIF NEW.role = 'REALISATEUR' THEN
-        INSERT INTO realisateurs (id_utilisateur, specialite, biographie)
-        VALUES (NEW.id_utilisateur, 'Général', 'Nouveau réalisateur');
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Supprimer le trigger existant s'il existe
-DROP TRIGGER IF EXISTS trigger_create_scenariste_realsateur ON utilisateurs;
-
--- Créer le nouveau trigger
-CREATE TRIGGER trigger_create_scenariste_realsateur
-AFTER INSERT ON utilisateurs
-FOR EACH ROW EXECUTE FUNCTION create_scenariste_realsateur_on_user_insert();
-
--- 4. Vérification
-SELECT 
-    u.id_utilisateur,
-    u.nom,
-    u.role,
-    CASE 
-        WHEN u.role = 'SCENARISTE' AND s.id_scenariste IS NULL THEN 'MANQUANT'
-        WHEN u.role = 'REALISATEUR' AND r.id_realisateur IS NULL THEN 'MANQUANT'
-        ELSE 'OK'
-    END as statut
-FROM utilisateurs u
-LEFT JOIN scenaristes s ON u.id_utilisateur = s.id_utilisateur
-LEFT JOIN realisateurs r ON u.id_utilisateur = r.id_utilisateur
-WHERE u.role IN ('SCENARISTE', 'REALISATEUR');
+    tc.table_name, 
+    kcu.column_name, 
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name,
+    rc.delete_rule
+FROM 
+    information_schema.table_constraints AS tc 
+    JOIN information_schema.key_column_usage AS kcu
+      ON tc.constraint_name = kcu.constraint_name
+    JOIN information_schema.constraint_column_usage AS ccu
+      ON ccu.constraint_name = tc.constraint_name
+    JOIN information_schema.referential_constraints AS rc
+      ON rc.constraint_name = tc.constraint_name
+WHERE 
+    tc.constraint_type = 'FOREIGN KEY' 
+    AND ccu.table_name = 'scenes';
