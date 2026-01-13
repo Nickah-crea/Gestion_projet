@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfilService {
@@ -240,24 +243,41 @@ public class ProfilService {
         dto.setCreeLe(utilisateur.getCreeLe());
         dto.setModifieLe(utilisateur.getModifieLe());
         
-
-        if ("SCENARISTE".equals(utilisateur.getRole())) {
-            Scenariste scenariste = scenaristeRepository.findByUtilisateurId(utilisateur.getId())
-                    .orElse(null);
-            if (scenariste != null) {
-                dto.setSpecialite(scenariste.getSpecialite());
-                dto.setBiographie(scenariste.getBiographie());
+        // Initialiser à null par défaut
+        dto.setSpecialite(null);
+        dto.setBiographie(null);
+        
+        try {
+            if ("SCENARISTE".equals(utilisateur.getRole())) {
+                // Utiliser la méthode qui existe dans le repository
+                Optional<Scenariste> scenaristeOpt = scenaristeRepository.findByUtilisateurId(utilisateur.getId());
+                
+                if (scenaristeOpt.isPresent()) {
+                    Scenariste scenariste = scenaristeOpt.get();
+                    dto.setSpecialite(scenariste.getSpecialite());
+                    dto.setBiographie(scenariste.getBiographie());
+                }
+                
+            } else if ("REALISATEUR".equals(utilisateur.getRole())) {
+                // Utiliser la méthode qui existe dans le repository
+                Optional<Realisateur> realisateurOpt = realisateurRepository.findByUtilisateurId(utilisateur.getId());
+                
+                if (realisateurOpt.isPresent()) {
+                    Realisateur realisateur = realisateurOpt.get();
+                    dto.setSpecialite(realisateur.getSpecialite());
+                    dto.setBiographie(realisateur.getBiographie());
+                }
             }
-        } else if ("REALISATEUR".equals(utilisateur.getRole())) {
-            Realisateur realisateur = realisateurRepository.findByUtilisateurId(utilisateur.getId())
-                    .orElse(null);
-            if (realisateur != null) {
-                dto.setSpecialite(realisateur.getSpecialite());
-                dto.setBiographie(realisateur.getBiographie());
-            }
+        } catch (Exception e) {
+            System.err.println("❌ [PROFIL] Erreur dans convertToProfilDTO pour l'utilisateur " + utilisateur.getId() + ": " + e.getMessage());
+            e.printStackTrace();
+            // Initialiser avec des valeurs par défaut pour éviter l'erreur
+            dto.setSpecialite("Non spécifié");
+            dto.setBiographie("Information non disponible");
         }
         
         return dto;
     }
 }
+
 
