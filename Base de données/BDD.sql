@@ -1276,11 +1276,20 @@ COMMENT ON COLUMN historique_planning.raison_replanification IS 'Raison de la re
 --  -- Supprimez les anciennes contraintes
 ALTER TABLE sequences DROP CONSTRAINT sequences_id_episode_fkey;
 ALTER TABLE scenes DROP CONSTRAINT scenes_id_sequence_fkey;
-ALTER TABLE dialogues DROP CONSTRAINT dialogues_id_scene_fkey;
 ALTER TABLE raccords DROP CONSTRAINT raccords_scene_source_id_fkey;
 ALTER TABLE raccords DROP CONSTRAINT raccords_scene_cible_id_fkey;
 ALTER TABLE scene_plateau DROP CONSTRAINT scene_plateau_id_scene_fkey;
 ALTER TABLE planning_tournage DROP CONSTRAINT IF EXISTS planning_tournage_id_scene_fkey;
+
+ALTER TABLE dialogues DROP CONSTRAINT IF EXISTS dialogues_id_scene_fkey;
+
+ALTER TABLE dialogues 
+DROP CONSTRAINT IF EXISTS dialogues_id_personnage_fkey;
+
+ALTER TABLE dialogue_commentaires 
+DROP CONSTRAINT IF EXISTS dialogue_commentaires_id_dialogue_fkey;
+
+
 
 
 ALTER TABLE sequences 
@@ -1304,6 +1313,25 @@ ON DELETE CASCADE;
 ALTER TABLE dialogues 
 ADD CONSTRAINT dialogues_id_scene_fkey 
 FOREIGN KEY (id_scene) REFERENCES scenes(id_scene) 
+ON DELETE CASCADE;
+
+ALTER TABLE dialogues 
+ADD CONSTRAINT dialogues_id_personnage_fkey 
+FOREIGN KEY (id_personnage) REFERENCES personnages(id_personnage) 
+ON DELETE SET NULL;
+
+ALTER TABLE dialogue_commentaires 
+ADD CONSTRAINT dialogue_commentaires_id_dialogue_fkey 
+FOREIGN KEY (id_dialogue) REFERENCES dialogues(id_dialogue) 
+ON DELETE CASCADE;
+
+
+ALTER TABLE dialogue_surlignages 
+DROP CONSTRAINT IF EXISTS fk_dialogue;
+
+ALTER TABLE dialogue_surlignages 
+ADD CONSTRAINT fk_dialogue 
+FOREIGN KEY (dialogue_id) REFERENCES dialogues(id_dialogue) 
 ON DELETE CASCADE;
 
 ALTER TABLE scene_lieu 
@@ -1378,3 +1406,26 @@ FROM
 WHERE 
     tc.constraint_type = 'FOREIGN KEY' 
     AND ccu.table_name = 'scenes';
+
+
+CREATE TABLE password_reset_tokens (
+    id BIGSERIAL PRIMARY KEY,  -- BIGSERIAL au lieu de BIGINT AUTO_INCREMENT
+    email VARCHAR(255) NOT NULL,
+    code VARCHAR(6) NOT NULL,
+    reset_token VARCHAR(255) UNIQUE,
+    expiry_date TIMESTAMP NOT NULL,  -- TIMESTAMP au lieu de DATETIME
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    used BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- Créer les index
+CREATE INDEX idx_password_reset_tokens_email_code ON password_reset_tokens(email, code);
+CREATE INDEX idx_password_reset_tokens_reset_token ON password_reset_tokens(reset_token);
+CREATE INDEX idx_password_reset_tokens_expiry_date ON password_reset_tokens(expiry_date);
+
+SELECT conname, contype 
+FROM pg_constraint 
+WHERE conrelid = 'dialogues'::regclass 
+AND contype = 'u';
+
+ALTER TABLE scenaristes ADD CONSTRAINT unique_scenariste_utilisateur UNIQUE (id_utilisateur);
