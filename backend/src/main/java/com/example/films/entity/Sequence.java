@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "sequences")
@@ -37,4 +38,7 @@ public class Sequence {
     @UpdateTimestamp
     @Column(name = "modifie_le")
     private LocalDateTime modifieLe;
+
+    @OneToMany(mappedBy = "sequence", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Scene> scenes;
 }

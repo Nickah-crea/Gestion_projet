@@ -47,6 +47,9 @@ public class Episode {
     @OneToMany(mappedBy = "episode", cascade = CascadeType.ALL)
     private List<EpisodeStatut> statuts;
 
+    @OneToMany(mappedBy = "episode", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sequence> sequences;
+
     @Transient
     private String statutNom;
 }

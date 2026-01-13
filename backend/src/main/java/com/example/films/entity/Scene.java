@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "scenes")
@@ -38,4 +39,6 @@ public class Scene {
     @Column(name = "modifie_le")
     private LocalDateTime modifieLe;
 
+    @OneToMany(mappedBy = "scene", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Dialogue> dialogues;
 }
