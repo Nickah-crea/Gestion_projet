@@ -16,6 +16,7 @@ public interface ScenaristeRepository extends JpaRepository<Scenariste, Long> {
     List<Scenariste> findAllWithUtilisateur();
     
     Optional<Scenariste> findByUtilisateurId(Long utilisateurId);
+    
     @Query("SELECT s FROM Scenariste s WHERE s.utilisateur.id = :utilisateurId ORDER BY s.id DESC")
     List<Scenariste> findAllByUtilisateurId(@Param("utilisateurId") Long utilisateurId);
 

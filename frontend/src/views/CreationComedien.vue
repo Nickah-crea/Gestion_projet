@@ -124,13 +124,6 @@
                     <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
                     {{ isEditing ? 'Modifier le comédien' : 'Créer un nouveau comédien' }}
                   </h3>
-                  <button 
-                    v-if="isEditing"
-                    @click="goToForm"
-                    class="back-btn-crea-comedien"
-                  >
-                    <i class="fas fa-plus"></i> Nouveau comédien
-                  </button>
                 </div>
 
                 <form @submit.prevent="submitForm" class="comedien-form-crea-comedien" enctype="multipart/form-data">
