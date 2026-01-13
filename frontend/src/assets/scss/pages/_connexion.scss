@@ -729,3 +729,16 @@
 
 
 
+/* Ajouter cette classe dans le style scoped de Connexion.vue */
+.forgot-password-link {
+  color: #ff6b00;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+  color: #ff8c00;
+  text-decoration: underline;
+}
+

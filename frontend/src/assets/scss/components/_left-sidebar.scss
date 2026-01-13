@@ -6,21 +6,21 @@
   top: 0;
   width: 280px;
   height: 100vh;
-  background: $color-background; // Changé: champagne beige
-  border-right: 1px solid $color-border; // Changé: bordure dorée
-  box-shadow: $shadow-md;
+  background: $color-background-alt;
+  border-right: 1px solid $color-border;
+  box-shadow: $shadow-lg;
   z-index: $z-index-fixed;
   transition: all $transition-slow ease;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: $spacing-md;
+  padding: $padding-lg;
   box-sizing: border-box;
   
   // QUAND FERMÉ
   &.closed {
     width: 80px;
-    padding: $spacing-sm;
+    padding: $padding-md;
     
     // Pousser le contenu à droite
     & ~ * {
@@ -35,7 +35,7 @@
     
     .category-header {
       justify-content: center;
-      padding: $spacing-xs;
+      padding: $padding-xs;
       margin-bottom: $gap-sm;
       
       .category-info {
@@ -44,6 +44,7 @@
         i {
           margin: 0;
           font-size: $font-size-p2;
+          color: $color-primary;
         }
         
         span {
@@ -62,12 +63,15 @@
     
     .nav-item {
       justify-content: center;
-      padding: $spacing-xs;
+      padding: $padding-xs;
       margin-bottom: $gap-xs;
+      border-radius: $border-radius-xs;
+      border: 1px solid transparent;
       
       i {
         margin: 0;
         font-size: $font-size-p2;
+        color: $color-primary;
       }
       
       .item-text,
@@ -81,6 +85,7 @@
         right: 4px;
         width: 6px;
         height: 6px;
+        background: $color-accent;
       }
     }
   }
@@ -100,15 +105,15 @@
   }
 }
 
-// BOUTON TOGGLE EN HAUT
+// BOUTON TOGGLE EN HAUT - Style ProjetScenariste
 .sidebar-toggle {
   width: 100%;
   height: 50px;
   min-height: 50px;
-  background: $color-primary; // Changé: doré
-  color: $color-text-light; // Changé: blanc
+  background: linear-gradient(135deg, $color-tertiary-dark 0%, $color-primary 100%);
+  color: $color-text-light;
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba($color-primary-dark, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,14 +121,17 @@
   cursor: pointer;
   transition: $transition;
   margin-bottom: $spacing-md;
-  border-radius: $border-radius-xs;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-primary;
   
   &:hover {
-    background: darken($color-primary, 10%); // Doré plus foncé
+    background: linear-gradient(135deg, $color-primary 0%, $color-tertiary-dark 100%);
+    transform: translateY(-2px);
   }
   
   i {
     transition: transform $transition;
+    color: $color-text-light;
   }
   
   .left-sidebar-compact.closed & i {
@@ -131,53 +139,60 @@
   }
 }
 
-// EN-TÊTE DU PROJET
+// EN-TÊTE DU PROJET - Style ProjetScenariste
 .sidebar-header {
-  margin-bottom: $spacing-md;
-  padding-bottom: $spacing-md;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
   
   .project-header {
     display: flex;
     align-items: center;
     gap: $gap-sm;
     cursor: pointer;
-    padding: $spacing-sm;
-    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    border-radius: $border-radius-sm;
     transition: $transition-fast;
+    background: rgba($color-primary, 0.05);
     
     &:hover {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      background: rgba($color-primary, 0.1);
+      transform: translateY(-1px);
     }
     
     i.fa-project-diagram {
-      font-size: $font-size-p1;
-      color: $color-primary; // Changé: doré
+      font-size: $font-size-h4;
+      color: $color-primary;
     }
     
     .project-info {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: $gap-xs;
       
       .project-title {
-        @include typography-playfair-p4;
-        color: $color-text-primary; // Changé: brun foncé
+        @include typography-playfair-h4;
+        color: $color-text-primary;
         margin: 0;
-        font-size: calc(#{$font-size-p4} + 1px);
+        font-weight: $font-weight-semibold;
       }
       
       .project-status {
         @include typography-p4;
-        font-size: $font-size-p5;
+        font-size: $font-size-p4;
         font-weight: $font-weight-medium;
+        color: $color-text-muted;
+        
+        &.statut-en-cours { color: $color-primary; }
+        &.statut-termine { color: $color-success; }
+        &.statut-attente { color: $color-warning; }
       }
     }
     
     .dropdown-icon {
       transition: transform $transition;
-      color: $color-text-muted; // Changé: taupe
+      color: $color-text-muted;
       
       &.rotated {
         transform: rotate(180deg);
@@ -186,51 +201,51 @@
   }
   
   .project-details {
-    padding: $spacing-sm;
-    background: $color-background-alt; // Changé: blanc
-    border-radius: $border-radius-xs;
-    border: 1px solid $color-border; // Changé: bordure dorée
+    padding: $padding-md;
+    background: $color-surface;
+    border-radius: $border-radius-sm;
+    border: 1px solid $color-border;
     margin-top: $gap-sm;
+    box-shadow: $shadow;
     
     .synopsis {
-      @include typography-p4;
-      color: $color-text-secondary; // Changé: brun
-      margin: 0 0 $gap-sm 0;
-      font-style: italic;
-      line-height: 1.4;
+      @include typography-p3;
+      color: $color-text-secondary;
+      margin: 0 0 $margin-sm 0;
+      line-height: 1.5;
     }
     
     .project-stats {
       display: flex;
-      gap: $gap-md;
-      margin-bottom: $gap-sm;
+      gap: $gap-lg;
+      margin-bottom: $margin-sm;
       
       span {
         @include typography-p4;
-        color: $color-text-muted; // Changé: taupe
-        font-size: $font-size-p5;
+        color: $color-text-muted;
+        font-size: $font-size-p4;
         display: flex;
         align-items: center;
         gap: $gap-xs;
         
         i {
-          color: $color-primary; // Changé: doré
+          color: $color-primary;
         }
       }
     }
     
     .project-actions {
       display: flex;
-      gap: $gap-xs;
+      gap: $gap-sm;
       justify-content: flex-end;
       
       .icon-btn {
-        width: 32px;
-        height: 32px;
-        border: 1px solid $color-border; // Changé: bordure dorée
-        background: $color-background-alt; // Changé: blanc
+        width: 36px;
+        height: 36px;
+        border: 1px solid $color-border;
+        background: $color-surface;
         border-radius: $border-radius-xs;
-        color: $color-text-secondary; // Changé: brun
+        color: $color-text-secondary;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -238,27 +253,28 @@
         transition: $transition-fast;
         
         &:hover {
-          background: rgba($color-primary, 0.1); // Changé: doré subtil
-          border-color: $color-primary; // Changé: doré
-          color: $color-primary; // Changé: doré
+          background: rgba($color-primary, 0.1);
+          border-color: $color-primary;
+          color: $color-primary;
+          transform: scale(1.05);
         }
         
         &.delete:hover {
-          background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-          border-color: $color-error; // Changé: rouge bordeaux
-          color: $color-error; // Changé: rouge bordeaux
+          background: rgba($color-error, 0.1);
+          border-color: $color-error;
+          color: $color-error;
         }
       }
     }
   }
 }
 
-// NAVIGATION COMPACTE
+// NAVIGATION COMPACTE - Style ProjetScenariste
 .compact-nav {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $spacing-md;
 }
 
 .nav-category {
@@ -266,17 +282,19 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: $spacing-xs $spacing-sm;
-    background: $color-background-alt; // Changé: blanc
-    border: 1px solid $color-border; // Changé: bordure dorée
-    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-sm;
     cursor: pointer;
     transition: $transition-fast;
-    margin-bottom: $gap-xs;
+    margin-bottom: $gap-sm;
+    box-shadow: $shadow;
     
     &:hover {
-      border-color: $color-primary; // Changé: doré
-      background: rgba($color-primary, 0.05); // Changé: doré très subtil
+      border-color: $color-primary;
+      background: rgba($color-primary, 0.05);
+      transform: translateY(-1px);
     }
     
     .category-info {
@@ -285,23 +303,23 @@
       gap: $gap-sm;
       
       i {
-        color: $color-primary; // Changé: doré
-        font-size: $font-size-p2;
-        width: 20px;
+        color: $color-primary;
+        font-size: $font-size-p1;
+        width: 24px;
         text-align: center;
       }
       
       span {
-        @include typography-p4;
-        color: $color-text-primary; // Changé: brun foncé
-        font-weight: $font-weight-medium;
+        @include typography-playfair-p4;
+        color: $color-text-primary;
+        font-weight: $font-weight-semibold;
       }
       
       .item-count {
-        background: $color-primary; // Changé: doré
-        color: $color-text-light; // Changé: blanc
-        font-size: $font-size-p5;
-        padding: 2px 6px;
+        background: $color-primary;
+        color: $color-text-light;
+        font-size: $font-size-p4;
+        padding: $gap-xs $padding-xs;
         border-radius: $border-radius-pill;
         font-weight: $font-weight-semibold;
       }
@@ -309,8 +327,8 @@
     
     .dropdown-icon {
       transition: transform $transition;
-      color: $color-text-muted; // Changé: taupe
-      font-size: $font-size-p3;
+      color: $color-text-muted;
+      font-size: $font-size-p2;
       
       &.rotated {
         transform: rotate(180deg);
@@ -319,18 +337,20 @@
   }
   
   .category-items {
-    padding-left: $spacing-sm;
+    padding-left: $spacing-md;
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
   }
   
   .empty-state {
-    @include typography-p4;
-    color: $color-text-muted; // Changé: taupe
+    @include typography-p3;
+    color: $color-text-muted;
     text-align: center;
-    padding: $spacing-sm;
+    padding: $padding-md;
     font-style: italic;
+    background: rgba($color-border, 0.1);
+    border-radius: $border-radius-sm;
   }
 }
 
@@ -338,43 +358,48 @@
   display: flex;
   align-items: center;
   gap: $gap-sm;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius-xs;
+  padding: $padding-sm;
+  border-radius: $border-radius-sm;
   cursor: pointer;
   transition: $transition-fast;
   position: relative;
+  border: 1px solid transparent;
   
   &:hover {
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
+    background: rgba($color-primary, 0.1);
+    border-color: rgba($color-primary, 0.3);
+    transform: translateX(2px);
   }
   
   &.active {
-    background: rgba($color-primary, 0.15); // Changé: doré plus visible
-    border-left: 3px solid $color-primary; // Changé: doré
+    background: rgba($color-primary, 0.15);
+    border-left: 3px solid $color-primary;
     font-weight: $font-weight-semibold;
+    box-shadow: $shadow;
   }
   
   &.current {
-    background: rgba($color-scene, 0.1); // Gardé orange (scène)
+    background: rgba($color-scene, 0.1);
+    border-color: rgba($color-scene, 0.3);
   }
   
   i {
-    color: $color-primary; // Changé: doré
-    font-size: $font-size-p3;
-    width: 16px;
+    color: $color-primary;
+    font-size: $font-size-p1;
+    width: 20px;
     text-align: center;
   }
   
   .item-text {
-    @include typography-p4;
-    color: $color-text-primary; // Changé: brun foncé
+    @include typography-p3;
+    color: $color-text-primary;
     font-weight: $font-weight-medium;
     min-width: 80px;
   }
   
   .item-title {
-    @include typography-p4;
-    color: $color-text-secondary; // Changé: brun
+    @include typography-p3;
+    color: $color-text-secondary;
     flex: 1;
     white-space: nowrap;
     overflow: hidden;
@@ -382,46 +407,51 @@
   }
   
   .has-details-indicator {
-    width: 8px;
-    height: 8px;
-    background: $color-accent; // Changé: orange
+    width: 10px;
+    height: 10px;
+    background: $color-accent;
     border-radius: 50%;
+    box-shadow: 0 0 5px rgba($color-accent, 0.5);
   }
 }
 
-// ACTIONS GLOBALES
+// ACTIONS GLOBALES - Style ProjetScenariste
 .sidebar-footer {
-  margin-top: $spacing-md;
-  padding-top: $spacing-md;
-  border-top: 1px solid $color-border; // Changé: bordure dorée
+  margin-top: $margin-lg;
+  padding-top: $padding-md;
+  border-top: 1px solid $color-border;
   display: flex;
   flex-direction: column;
-  gap: $gap-xs;
+  gap: $gap-sm;
   
   .action-btn {
     width: 100%;
-    height: 36px;
-    padding: 0 $padding-sm;
-    background: $color-background-alt; // Changé: blanc
-    border: 1px solid $color-border; // Changé: bordure dorée
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    color: $color-text-secondary; // Changé: brun
+    height: 40px;
+    padding: 0 $padding-lg;
+    background: linear-gradient(135deg, $color-primary 0%, $color-tertiary-dark 100%);
+    border: none;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-p3;
+    color: $color-text-light;
     cursor: pointer;
     transition: $transition-fast;
     display: flex;
     align-items: center;
-    gap: $gap-xs;
+    justify-content: center;
+    gap: $gap-sm;
     box-sizing: border-box;
+    font-weight: $font-weight-semibold;
+    box-shadow: $shadow-primary;
     
     &:hover {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
-      border-color: $color-primary; // Changé: doré
-      color: $color-primary; // Changé: doré
+      background: linear-gradient(135deg, $color-tertiary-dark 0%, $color-primary 100%);
+      transform: translateY(-2px);
+      box-shadow: $shadow-lg;
     }
     
     i {
-      color: $color-primary; // Changé: doré
+      color: $color-text-light;
+      font-size: $font-size-p2;
     }
   }
 }
@@ -431,18 +461,18 @@
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: $gap-xs;
-  padding-top: $spacing-sm;
-  border-top: 1px solid $color-border; // Changé: bordure dorée
+  gap: $gap-sm;
+  padding-top: $padding-md;
+  border-top: 1px solid $color-border;
   
   .icon-btn-closed {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     padding: 0;
-    background: $color-background-alt; // Changé: blanc
-    border: 1px solid $color-border; // Changé: bordure dorée
-    border-radius: $border-radius-xs;
-    color: $color-text-secondary; // Changé: brun
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-sm;
+    color: $color-text-secondary;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -450,14 +480,15 @@
     transition: $transition-fast;
     
     &:hover {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
-      border-color: $color-primary; // Changé: doré
-      color: $color-primary; // Changé: doré
-      transform: scale(1.05);
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+      transform: scale(1.1);
+      box-shadow: $shadow;
     }
     
     i {
-      font-size: $font-size-p2;
+      font-size: $font-size-p1;
     }
   }
 }
@@ -473,18 +504,19 @@
       content: attr(title);
       position: absolute;
       left: 100%;
-      top: 60px;
+      top: 50%;
       transform: translateY(-50%);
-      margin-left: $gap-sm;
-      padding: $gap-xs $gap-sm;
-      background: $color-text-primary; // Changé: brun foncé
-      color: $color-text-light; // Changé: blanc
+      margin-left: $gap-md;
+      padding: $padding-xs $padding-sm;
+      background: $color-tertiary-dark;
+      color: $color-text-light;
       font-size: $font-size-p3;
       white-space: nowrap;
       border-radius: $border-radius-xs;
       z-index: $z-index-tooltip;
       pointer-events: none;
-      box-shadow: $shadow;
+      box-shadow: $shadow-lg;
+      border: 1px solid rgba($color-primary, 0.2);
     }
   }
 }
@@ -499,10 +531,10 @@
     }
     
     &.closed {
-      width: 50px;
+      width: 60px;
       
       & ~ * {
-        margin-left: 50px;
+        margin-left: 60px;
       }
     }
   }
@@ -517,10 +549,10 @@
     }
     
     &.closed {
-      width: 45px;
+      width: 50px;
       
       & ~ * {
-        margin-left: 45px;
+        margin-left: 50px;
       }
     }
     
@@ -531,26 +563,25 @@
   }
 }
 
-// SUPPRIMEZ ou CORRIGEZ cette partie problématique :
 @include respond-to($breakpoint-sm) {
   .left-sidebar-compact {
-    width: 45px; // Gardez la même largeur que sur tablette
+    width: 50px;
     
     &.closed {
-      width: 45px;
-      height: 100vh; // Gardez la hauteur complète
-      flex-direction: column; // Restez en colonne
+      width: 50px;
+      height: 100vh;
+      flex-direction: column;
       align-items: center;
-      padding: $spacing-sm;
+      padding: $padding-md;
       
       & ~ * {
-        margin-left: 45px;
+        margin-left: 50px;
       }
       
       .sidebar-toggle {
         width: 100%;
         height: 50px;
-        margin: 0 0 $spacing-md 0;
+        margin: 0 0 $margin-md 0;
       }
       
       .compact-nav {
@@ -565,15 +596,15 @@
       .quick-actions-closed {
         flex-direction: column;
         margin-top: auto;
-        padding-top: $spacing-sm;
-        border-top: 1px solid $color-border; // Changé: bordure dorée
+        padding-top: $padding-md;
+        border-top: 1px solid $color-border;
       }
     }
     
     &:not(.closed) {
-      width: 220px; // Ou 100% si vous voulez qu'elle prenne toute la largeur
+      width: 220px;
       position: fixed;
-      z-index: $z-index-modal + 1; // Au-dessus du contenu
+      z-index: $z-index-modal + 1;
       
       & ~ * {
         margin-left: 220px;
@@ -587,5 +618,4 @@
     }
   }
 }
-
 

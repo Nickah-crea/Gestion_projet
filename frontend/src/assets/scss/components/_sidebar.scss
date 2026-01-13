@@ -1,575 +1,115 @@
-// _sidebar.scss
 @import '../base/variables';
 
-// =============================================
-// SIDEBAR GAUCHE FIXE - STATISTIQUES & ACTIVITÉS
-// =============================================
+// Gestion du positionnement pour l'écran de travail
+.right-sidebar {
+  transition: all 0.3s ease;
+  z-index: 999;
+  
+  // Quand SceneTools est ouverte, s'assurer que RightSidebar reste visible
+  .scene-tools-sidebar.open.with-right-sidebar ~ & {
+    right: 0;
+    z-index: 998;
+  }
+  
+  // Sur mobile, cacher RightSidebar quand SceneTools est ouverte
+  @media (max-width: 768px) {
+    .scene-tools-sidebar.open ~ & {
+      display: none;
+    }
+  }
+}
 
-.sidebar-left-fixed-Scenariste {
+// Adaptation espace pour sidebar droite ouverte
+.right-sidebar {
+  &.open ~ .ecran-travail-ecran-travail {
+    margin-right: 300px !important; // 280px sidebar + 20px espace
+    
+    @media (max-width: $breakpoint-lg) {
+      margin-right: 270px !important; // 250px sidebar + 20px espace
+    }
+    
+    @media (max-width: $breakpoint-md) {
+      margin-right: 240px !important; // 220px sidebar + 20px espace
+    }
+    
+    @media (max-width: $breakpoint-sm) {
+      margin-right: 0 !important;
+    }
+  }
+}
+
+// Right Sidebar - Comportement intelligent
+.right-sidebar {
   position: fixed;
-  top: 60px; // 50px de marge en haut
-  left: 0;
-  width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
-  z-index: $z-index-fixed - 1;
-  overflow-y: auto;
-  padding: $padding-lg;
-  background: $color-primary-light; 
-  box-sizing: border-box;
-  border: none !important;
-  box-shadow: $shadow-accent;
-  border-radius: 20px;
-
-  @media (max-width: 1400px) {
-    width: 240px;
-    padding: $padding-md;
-  }
-  
-  @media (max-width: $breakpoint-lg) {
-    display: none;
-  }
-}
-
-// Styles des divs à l'intérieur de la sidebar (sans fond sauf si nécessaire)
-.personal-stats-compact-Scenariste,
-.recent-activity-compact-Scenariste,
-.personal-stat-card-compact-Scenariste {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;  
-}
-
-// Exception: les cartes peuvent avoir un léger fond pour la lisibilité
-.personal-stat-card-compact-Scenariste {
-  background: rgba($color-background-alt, 0.9) !important; // Changé: blanc
-  border: 1px solid rgba($color-border, 0.3) !important; // Changé: bordure dorée
-  border-radius: $border-radius;
-  padding: $padding-md;
-  box-shadow: $shadow !important;
-}
-
-// =============================================
-// STATISTIQUES PERSONNELLES COMPACTES (SIDEBAR)
-// =============================================
-
-.personal-stats-compact-Scenariste {
-  margin-bottom: $margin-sm;
-  padding-bottom: $margin-sm;
-  border-bottom: 1px solid rgba($color-border, 0.3); // Changé: bordure dorée
-}
-
-.section-title-compact-Scenariste {
-  font-size: $font-size-p1;
-  color: $color-text-primary; // Changé: brun foncé
-  margin-bottom: $margin-lg;
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  font-weight: $font-weight-semibold;
-  @include typography-playfair-h4;
-  
-  i {
-    color: $color-primary; // Changé: doré
-    font-size: $font-size-p1;
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
-    padding: $padding-xs;
-    border-radius: $border-radius-sm;
-  }
-}
-
-.personal-stats-grid-compact-Scenariste {
+  right: 0;
+  top: 60px;
+  bottom: 0;
+  width: 60px;
+  border-left: 1px solid $color-border;
+  box-shadow: $shadow-md;
+  z-index: $z-index-fixed - 10;
+  transition: all $transition-slow ease;
   display: flex;
   flex-direction: column;
-  gap: $gap-md;
-}
-
-.stat-header-compact-Scenariste {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  margin-bottom: $margin-sm;
   
-  i {
-    font-size: $font-size-p1;
-    color: $color-primary; // Changé: doré
-    width: 32px;
-    height: 32px;
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
-    border-radius: $border-radius-sm;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  h4 {
-    font-size: $font-size-p3;
-    color: $color-text-primary; // Changé: brun foncé
-    margin: 0;
-    font-weight: $font-weight-semibold;
-    @include typography-cinzel-h4;
-  }
-}
-
-.stat-content-compact-Scenariste {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $gap-md;
-}
-
-.stat-value-compact-Scenariste {
-  font-size: $font-size-h4;
-  font-weight: $font-weight-black;
-  color: $color-primary; // Changé: doré
-  line-height: 1;
-  @include typography-cinzel-h4;
-}
-
-.progress-ring-compact-Scenariste {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  
-  svg {
-    transform: rotate(-90deg);
-  }
-  
-  circle:nth-child(1) {
-    fill: none;
-    stroke: rgba($color-border, 0.3); // Changé: bordure dorée
-    stroke-width: 3;
-  }
-  
-  circle:nth-child(2) {
-    fill: none;
-    stroke: $color-success; // Changé: doré
-    stroke-width: 3;
-    stroke-linecap: round;
-    transition: stroke-dasharray 1s ease;
-  }
-}
-
-// =============================================
-// ACTIVITÉS RÉCENTES COMPACTES (SIDEBAR)
-// =============================================
-
-.recent-activity-compact-Scenariste {
-  margin-top: $margin-lg;
-}
-
-.activity-header-compact-Scenariste {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $margin-md;
-  
-  .activity-title-compact-Scenariste {
-    font-size: $font-size-p1;
-    color: $color-text-primary; // Changé: brun foncé
-    margin: 0;
-    font-weight: $font-weight-semibold;
-    @include typography-playfair-h4;
-  }
-}
-
-.view-all-btn-compact-Scenariste {
-  background: none;
-  border: none;
-  color: $color-primary; // Changé: doré
-  font-size: $font-size-p3;
-  cursor: pointer;
-  padding: $padding-xs;
-  border-radius: $border-radius-sm;
-  transition: $transition-fast;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &:hover {
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
-    transform: translateX(2px);
-  }
-  
-  i {
-    font-size: $font-size-p2;
-  }
-}
-
-.activity-timeline-compact-Scenariste {
-  position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: $color-border; // Changé: bordure dorée
-  }
-}
-
-.activity-item-compact-Scenariste {
-  display: flex;
-  align-items: flex-start;
-  gap: $gap-md;
-  margin-bottom: $margin-md;
-  position: relative;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.activity-icon-compact-Scenariste {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-p4;
-  flex-shrink: 0;
-  z-index: 1;
-  position: relative;
-  
-  // Couleurs par type d'activité
-  &.type-create {
-    background: rgba($color-success, 0.1); // Changé: doré subtil
-    color: $color-success; // Changé: doré
-    border: 2px solid $color-success; // Changé: doré
-  }
-  
-  &.type-edit {
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
-    color: $color-primary; // Changé: doré
-    border: 2px solid $color-primary; // Changé: doré
-  }
-  
-  &.type-comment {
-    background: rgba($color-accent, 0.1); // Changé: orange subtil
-    color: $color-accent; // Changé: orange
-    border: 2px solid $color-accent; // Changé: orange
-  }
-  
-  &.type-status {
-    background: rgba($color-warning, 0.1); // Changé: orange subtil
-    color: $color-warning; // Changé: orange
-    border: 2px solid $color-warning; // Changé: orange
-  }
-  
-  &.type-collaboration {
-    background: rgba($color-info, 0.1); // Changé: bleu subtil
-    color: $color-info; // Changé: bleu
-    border: 2px solid $color-info; // Changé: bleu
-  }
-}
-
-.activity-content-compact-Scenariste {
-  flex: 1;
-  padding-bottom: $padding-sm;
-}
-
-.activity-text-compact-Scenariste {
-  font-size: $font-size-p4;
-  color: $color-text-primary; // Changé: brun foncé
-  line-height: 1.4;
-  margin-bottom: $gap-xs;
-}
-
-.activity-time-compact-Scenariste {
-  font-size: $font-size-p5;
-  color: $color-text-muted; // Changé: taupe
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  &::before {
-    content: '🕒';
-    font-size: $font-size-p4;
-  }
-}
-
-.no-activities-compact-Scenariste {
-  text-align: center;
-  padding: $padding-lg 0;
-  color: $color-text-muted; // Changé: taupe
-  
-  i {
-    font-size: 1.5rem;
-    margin-bottom: $gap-sm;
-    opacity: 0.3;
-  }
-  
-  p {
-    font-size: $font-size-p4;
-    margin: 0;
-  }
-}
-
-// =============================================
-// RESPONSIVE POUR LA SIDEBAR GAUCHE
-// =============================================
-
-@media (max-width: 1400px) {
-  .sidebar-left-fixed-Scenariste {
-    padding: $padding-md;
-  }
-  
-  .personal-stat-card-compact-Scenariste {
-    padding: $padding-sm;
-  }
-  
-  .stat-header-compact-Scenariste {
-    i {
-      width: 28px;
-      height: 28px;
-      font-size: $font-size-p3;
-    }
+  &.open {
+    width: 210px;
     
-    h4 {
-      font-size: $font-size-p4;
+    // Quand la sidebar droite est ouverte ET on est en mode scène
+    // On montre un indicateur pour basculer vers les outils scène
+    .scene-mode-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $spacing-sm;
+      background: rgba($color-scene, 0.1);
+      border: 1px solid rgba($color-scene, 0.3);
+      border-radius: $border-radius-xs;
+      margin: $spacing-sm;
+      cursor: pointer;
+      transition: $transition-fast;
+      
+      &:hover {
+        background: rgba($color-scene, 0.2);
+        border-color: $color-scene;
+      }
+      
+      .indicator-text {
+        @include typography-p4;
+        color: $color-scene;
+        font-weight: $font-weight-medium;
+        display: flex;
+        align-items: center;
+        gap: $gap-xs;
+        
+        i {
+          color: $color-scene;
+        }
+      }
+      
+      .switch-btn {
+        background: $color-scene;
+        color: $color-text-light;
+        border: none;
+        border-radius: $border-radius-xs;
+        padding: $gap-xs $spacing-sm;
+        font-size: $font-size-p5;
+        cursor: pointer;
+        transition: $transition-fast;
+        
+        &:hover {
+          background: darken($color-scene, 10%);
+          transform: translateX(2px);
+        }
+      }
     }
   }
   
-  .stat-value-compact-Scenariste {
-    font-size: $font-size-p1;
-  }
-  
-  .progress-ring-compact-Scenariste {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-@media (max-width: $breakpoint-lg) {
-  .sidebar-left-fixed-Scenariste {
-    display: none;
-  }
-}
-
-// =============================================
-// SCROLLBAR PERSONNALISÉE POUR LA SIDEBAR
-// =============================================
-
-.sidebar-left-fixed-Scenariste {
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: rgba($color-border, 0.1); // Changé: bordure dorée
-    border-radius: $border-radius-pill;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba($color-primary, 0.3); // Changé: doré
-    border-radius: $border-radius-pill;
-    
-    &:hover {
-      background: rgba($color-primary, 0.5); // Changé: doré
-    }
-  }
-}
-
-// =============================================
-// SIDEBAR DROITE FIXE - STATISTIQUES & ACTIVITÉS
-// =============================================
-
-.sidebar-right-fixed-Scenariste {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 280px;
-  height: 100vh;
-  background: $color-background-alt; // Changé: blanc
-  border-left: 1px solid $color-border; // Changé: bordure dorée
-  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
-  z-index: $z-index-fixed - 1;
-  overflow-y: auto;
-  padding: $padding-lg;
-  transform: translateX(100%);
-  transition: transform $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
-  box-sizing: border-box;
-  
-  // S'assurer que la sidebar est visible
-  &.visible {
-    transform: translateX(0);
-  }
-  
-  @media (max-width: 1400px) {
-    width: 240px;
-    padding: $padding-md;
-  }
-  
-  @media (max-width: $breakpoint-lg) {
-    display: none; // Cacher sur les petits écrans
-  }
-}
-
-// S'assurer que le contenu principal n'est pas caché par la sidebar
-.app-wrapper-global {
-  padding-right: 0 !important;
-  transition: margin-right $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
-  
-  .sidebar-right-fixed-Scenariste.visible ~ & {
-    margin-right: 280px;
-    
-    @media (max-width: 1400px) {
-      margin-right: 240px;
-    }
-  }
-}
-
-// =============================================
-// BOUTON TOGGLE POUR AFFICHER/MASQUER LA SIDEBAR
-// =============================================
-
-.sidebar-toggle-btn-Scenariste {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  background: $color-primary; // Changé: doré
-  color: $color-text-light; // Changé: blanc
-  border: none;
-  border-radius: $border-radius;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-p2;
-  z-index: $z-index-fixed;
-  box-shadow: $shadow;
-  transition: $transition;
-  
-  &:hover {
-    background: $color-primary-dark; // Changé: doré foncé
-    transform: scale(1.05);
-  }
-  
-  @media (max-width: $breakpoint-lg) {
-    display: none; // Cacher le bouton toggle sur mobile
-  }
-}
-
-// =============================================
-// RESPONSIVE POUR LA SIDEBAR DROITE
-// =============================================
-
-@media (max-width: 1400px) {
-  .sidebar-right-fixed-Scenariste {
-    padding: $padding-md;
-  }
-  
-  .personal-stat-card-compact-Scenariste {
-    padding: $padding-sm;
-  }
-  
-  .stat-header-compact-Scenariste {
-    i {
-      width: 28px;
-      height: 28px;
-      font-size: $font-size-p3;
-    }
-    
-    h4 {
-      font-size: $font-size-p4;
-    }
-  }
-  
-  .stat-value-compact-Scenariste {
-    font-size: $font-size-p1;
-  }
-  
-  .progress-ring-compact-Scenariste {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-@media (max-width: $breakpoint-lg) {
-  .sidebar-right-fixed-Scenariste {
-    display: none;
-  }
-  
-  .app-wrapper-global {
-    margin-right: 0 !important;
-  }
-}
-
-// =============================================
-// ANIMATIONS POUR LA SIDEBAR
-// =============================================
-
-@keyframes slideInRight {
-  from {
+  // Cacher la sidebar droite quand on est en mode scène
+  &.hidden-in-scene-mode {
     transform: translateX(100%);
     opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
-.sidebar-right-fixed-Scenariste {
-  animation: slideInRight 0.3s ease-out forwards;
-  
-  &.closing {
-    animation: slideOutRight 0.3s ease-out forwards;
-  }
-}
-
-// =============================================
-// SCROLLBAR PERSONNALISÉE POUR LA SIDEBAR DROITE
-// =============================================
-
-.sidebar-right-fixed-Scenariste {
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: rgba($color-border, 0.1); // Changé: bordure dorée
-    border-radius: $border-radius-pill;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba($color-primary, 0.3); // Changé: doré
-    border-radius: $border-radius-pill;
-    
-    &:hover {
-      background: rgba($color-primary, 0.5); // Changé: doré
-    }
-  }
-}
-
-// =============================================
-// AJUSTEMENTS POUR LE CONTENU PRINCIPAL
-// =============================================
-
-.main-content-scenariste-Scenariste {
-  transition: padding-right $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
-  
-  .sidebar-right-fixed-Scenariste.visible ~ & {
-    @media (min-width: calc(#{$breakpoint-lg} + 1px)) {
-      padding-right: 300px;
-    }
+    pointer-events: none;
   }
 }
 

@@ -308,6 +308,11 @@ const routes = [
     name: 'right-tools',
     component: () => import('../components/sidebar/SceneToolsSidebar.vue')
   },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('../views/ForgotPassword.vue')
+  },
 ]
 
 

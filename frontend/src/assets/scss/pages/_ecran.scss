@@ -1,9 +1,10 @@
-// _ecran-travail.scss – Version cohérente avec crea-comedien
+// _ecran-travail.scss – Version nettoyée (sans styles right sidebar)
 @import '../base/variables';
 
 // =============================================
 // ÉCRAN DE TRAVAIL PRINCIPAL
 // =============================================
+
 // =============================================
 // GESTION DES DEUX SIDEBARS COTÉ À COTÉ
 // =============================================
@@ -40,28 +41,6 @@
     }
   }
 }
-
-// =============================================
-// STYLE POUR LA RIGHT SIDEBAR QUAND SCENETOOLS EST OUVERTE
-// =============================================
-.right-sidebar {
-  transition: all 0.3s ease;
-  z-index: 999;
-  
-  // Quand SceneTools est ouverte, s'assurer que RightSidebar reste visible
-  .scene-tools-sidebar.open.with-right-sidebar ~ & {
-    right: 0; // Reste à sa position normale
-    z-index: 998; // Légèrement en dessous
-  }
-  
-  // Sur mobile, cacher RightSidebar quand SceneTools est ouverte
-  @media (max-width: 768px) {
-    .scene-tools-sidebar.open ~ & {
-      display: none;
-    }
-  }
-}
-
 
 .ecran-travail-ecran-travail {
   flex: 1;
@@ -121,7 +100,6 @@
 // HEADER - Ajusté pour être plus proche
 // =============================================
 .header-ecran-travail {
-  background: $color-background;
   border-bottom: 1px solid $color-border;
   padding: $spacing-md $spacing-lg;
   box-shadow: $shadow;
@@ -167,72 +145,6 @@
       padding-left: $spacing-xs;
     }
   }
-}
-
-// =============================================
-// HEADER DE NAVIGATION
-// =============================================
-.header-ecran-travail {
-  background: $color-tertiary-dark;
-  border-bottom: 1px solid $color-border;
-  padding: $spacing-md $spacing-lg;
-  box-shadow: $shadow;
-  position: sticky;
-  top: 0;
-  z-index: $z-index-sticky;
-}
-
-.navigation-ecran-travail {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navigation-right-section {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-}
-
-.nav-btn-ecran-travail {
-  padding: $gap-sm $spacing-md;
-  background: $color-background;
-  border: 1px solid $color-border;
-  border-radius: $border-radius-xs;
-  color: $color-text-secondary;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: $transition-fast;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-
-  &:hover:not(:disabled) {
-    background: rgba($color-primary, 0.1);
-    border-color: $color-primary;
-    color: $color-primary;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  i {
-    font-size: $font-size-p3;
-  }
-}
-
-.scene-navigation-buttons {
-  display: flex;
-  gap: $gap-xs;
-  border-left: 1px solid $color-border;
-  padding-left: $spacing-sm;
-}
-
-.scene-nav-btn {
-  min-width: 140px;
 }
 
 // =============================================
@@ -2499,179 +2411,230 @@
   }
 }
 
-// =============================================
-// NAVIGATION FIXE EN HAUT
-// =============================================
-.fixed-top-navigation {
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: $color-background-alt;
-  border-bottom: 1px solid $color-border;
-  box-shadow: $shadow-primary;
-  z-index: $z-index-sticky + 10;
-  padding: $spacing-sm $spacing-lg;
-  margin-bottom: $spacing-md;
-}
-
-.fixed-nav-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.nav-left-section {
-  flex: 0 0 120px;
-}
-
-.nav-center-section {
-  flex: 1;
-  text-align: center;
-}
-
-.nav-right-section {
-  flex: 0 0 120px;
-  text-align: right;
-}
-
-.current-context {
-  @include typography-p4;
-  color: $color-text-secondary;
-  font-weight: $font-weight-medium;
-  display: inline-block;
-  padding: $gap-xs $spacing-md;
-  background: $color-surface;
-  border-radius: $border-radius-pill;
-  border: 1px solid $color-border;
-}
-
-.nav-btn-fixed-left,
-.nav-btn-fixed-right {
-  padding: $gap-sm $spacing-md;
-  border: none;
-  border-radius: $border-radius-xs;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition-fast;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  min-width: 100px;
-  white-space: nowrap;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: $shadow-primary;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.nav-btn-fixed-left {
-  background: linear-gradient(135deg, $color-info, darken($color-info, 10%));
-  color: $color-text-light;
-  
-  &:hover:not(:disabled) {
-    background: linear-gradient(135deg, darken($color-info, 10%), darken($color-info, 20%));
-  }
-}
-
-.nav-btn-fixed-right {
-  background: linear-gradient(135deg, $color-success, $color-primary-dark);
-  color: $color-text-light;
-  margin-left: auto;
-  
-  &:hover:not(:disabled) {
-    background: linear-gradient(135deg, $color-primary-dark, darken($color-primary-dark, 10%));
-  }
-}
-
-// =============================================
-// ADAPTATION ESPACE POUR SIDEBAR DROITE OUVERTE
-// =============================================
-.right-sidebar {
-  &.open ~ .ecran-travail-ecran-travail {
-    margin-right: 300px !important; // 280px sidebar + 20px espace
-    
-    @media (max-width: $breakpoint-lg) {
-      margin-right: 270px !important; // 250px sidebar + 20px espace
-    }
-    
-    @media (max-width: $breakpoint-md) {
-      margin-right: 240px !important; // 220px sidebar + 20px espace
-    }
-    
-    @media (max-width: $breakpoint-sm) {
-      margin-right: 0 !important;
-    }
-  }
-}
 
 // =============================================
 // HEADER - Ajusté pour la navigation fixe
 // =============================================
 .header-ecran-travail {
-  background: $color-background-alt;
+  background: $color-background;
   border-bottom: 1px solid $color-border;
-  padding: 0;
-  box-shadow: $shadow-primary;
+  padding: $spacing-xs $spacing-lg;
+  box-shadow: $shadow;
   position: sticky;
   top: 0;
   z-index: $z-index-sticky;
-  
-  .navigation-ecran-travail {
-    padding: $spacing-sm $spacing-lg;
-    border-top: 1px solid $color-border;
-  }
+  height: 60px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 8px;
 }
 
-// RESPONSIVE
-@include respond-to($breakpoint-md) {
-  .fixed-top-navigation {
-    padding: $spacing-xs $spacing-sm;
+.unified-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: $spacing-md;
+  
+  // Tous les boutons sur la même ligne
+  .nav-prev-global,
+  .nav-next-global,
+  .scene-navigation-buttons,
+  .current-context-container {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
   }
   
-  .nav-btn-fixed-left,
-  .nav-btn-fixed-right {
-    min-width: 80px;
-    padding: $gap-xs $spacing-sm;
-    font-size: $font-size-p5;
+  // Boutons globaux (plus grands)
+  .nav-prev-global,
+  .nav-next-global {
+    min-width: 120px;
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-p3;
+    font-weight: $font-weight-semibold;
     
     i {
-      font-size: $font-size-p4;
+      font-size: $font-size-p2;
     }
   }
   
-  .current-context {
-    font-size: $font-size-p5;
-    padding: $gap-xs $spacing-sm;
+  .nav-prev-global {
+    justify-content: flex-start;
+  }
+  
+  .nav-next-global {
+    justify-content: flex-end;
+  }
+  
+  // Boutons de navigation scène
+  .scene-navigation-buttons {
+    display: flex;
+    gap: $spacing-xs;
+    
+    .scene-nav-btn {
+      min-width: 110px;
+      padding: $spacing-xs $spacing-sm;
+      font-size: $font-size-p4;
+      
+      i {
+        font-size: $font-size-p3;
+      }
+    }
+  }
+  
+  // Contexte actuel (centre)
+  .current-context-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    
+    .current-context {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+      padding: $spacing-xs $spacing-md;
+      background: $color-surface;
+      border-radius: $border-radius-pill;
+      border: 1px solid $color-border;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+    }
   }
 }
 
-@include respond-to($breakpoint-sm) {
-  .fixed-nav-container {
-    flex-direction: column;
+// Supprimer l'ancienne navigation fixe en haut
+.fixed-top-navigation {
+  display: none;
+}
+
+// Supprimer l'ancien style de navigation-ecran-travail
+.navigation-ecran-travail:not(.unified-navigation) {
+  display: none;
+}
+
+// Style des boutons (version légère sans background)
+.nav-btn-ecran-travail {
+  padding: $spacing-xs $spacing-md;
+  background: transparent;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  color: $color-text-secondary;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  height: 36px;
+
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+    color: $color-primary;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: rgba($color-text-muted, 0.1);
+  }
+
+  i {
+    font-size: $font-size-p3;
+  }
+}
+
+// =============================================
+// RESPONSIVE NAVIGATION UNIFIÉE
+// =============================================
+
+@media (max-width: $breakpoint-lg) {
+  .unified-navigation {
+    gap: $spacing-sm;
+    
+    .nav-prev-global,
+    .nav-next-global {
+      min-width: 100px;
+      padding: $spacing-xs $spacing-sm;
+      font-size: $font-size-p4;
+    }
+    
+    .scene-navigation-buttons .scene-nav-btn {
+      min-width: 90px;
+      padding: $gap-xs $spacing-xs;
+      font-size: $font-size-p5;
+    }
+    
+    .current-context-container .current-context {
+      font-size: $font-size-p5;
+      padding: $gap-xs $spacing-sm;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .header-ecran-travail {
+    padding: $spacing-xs $spacing-md;
+    height: 50px;
+  }
+  
+  .unified-navigation {
     gap: $spacing-xs;
+    
+    .nav-prev-global,
+    .nav-next-global {
+      min-width: 80px;
+      padding: $gap-xs $spacing-xs;
+      font-size: $font-size-p5;
+      
+      span {
+        display: none;
+      }
+      
+      i {
+        font-size: $font-size-p4;
+      }
+    }
+    
+    .scene-navigation-buttons {
+      .scene-nav-btn {
+        min-width: 70px;
+        
+        span {
+          display: none;
+        }
+        
+        i {
+          font-size: $font-size-p4;
+        }
+      }
+    }
+    
+    .current-context-container .current-context {
+      font-size: $font-size-p5;
+      padding: $gap-xs;
+      max-width: 180px;
+    }
   }
-  
-  .nav-left-section,
-  .nav-center-section,
-  .nav-right-section {
-    flex: 1;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .current-context {
-    display: block;
-    margin: $spacing-xs 0;
+}
+
+@media (max-width: $breakpoint-sm) {
+  .unified-navigation {
+    .current-context-container .current-context {
+      max-width: 140px;
+      font-size: 11px;
+    }
+    
+    .scene-navigation-buttons {
+      display: none; // Cacher les boutons scène sur mobile très petit
+    }
   }
 }
 
@@ -2725,7 +2688,6 @@
 // HEADER - Adapté à la nouvelle logique
 // =============================================
 .header-ecran-travail {
-  background: $color-background-alt;
   border-bottom: 1px solid $color-border;
   padding: 0;
   box-shadow: $shadow-primary;
@@ -2762,155 +2724,6 @@
     .with-right-sidebar-open &,
     .with-scene-tools-open & {
       margin-right: 0 !important;
-    }
-  }
-}
-
-// =============================================
-// RIGHT SIDEBAR - Comportement intelligent
-// =============================================
-.right-sidebar {
-  position: fixed;
-  right: 0;
-  top: 60px;
-  bottom: 0;
-  width: 60px;
-  background: $color-background-alt;
-  border-left: 1px solid $color-border;
-  box-shadow: $shadow-md;
-  z-index: $z-index-fixed - 10;
-  transition: all $transition-slow ease;
-  display: flex;
-  flex-direction: column;
-  
-  &.open {
-    width: 280px;
-    
-    // Quand la sidebar droite est ouverte ET on est en mode scène
-    // On montre un indicateur pour basculer vers les outils scène
-    .scene-mode-indicator {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: $spacing-sm;
-      background: rgba($color-scene, 0.1);
-      border: 1px solid rgba($color-scene, 0.3);
-      border-radius: $border-radius-xs;
-      margin: $spacing-sm;
-      cursor: pointer;
-      transition: $transition-fast;
-      
-      &:hover {
-        background: rgba($color-scene, 0.2);
-        border-color: $color-scene;
-      }
-      
-      .indicator-text {
-        @include typography-p4;
-        color: $color-scene;
-        font-weight: $font-weight-medium;
-        display: flex;
-        align-items: center;
-        gap: $gap-xs;
-        
-        i {
-          color: $color-scene;
-        }
-      }
-      
-      .switch-btn {
-        background: $color-scene;
-        color: $color-text-light;
-        border: none;
-        border-radius: $border-radius-xs;
-        padding: $gap-xs $spacing-sm;
-        font-size: $font-size-p5;
-        cursor: pointer;
-        transition: $transition-fast;
-        
-        &:hover {
-          background: darken($color-scene, 10%);
-          transform: translateX(2px);
-        }
-      }
-    }
-  }
-  
-  // Cacher la sidebar droite quand on est en mode scène
-  &.hidden-in-scene-mode {
-    transform: translateX(100%);
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
-// =============================================
-// SCENE TOOLS SIDEBAR - Comportement amélioré
-// =============================================
-.scene-tools-sidebar {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 350px;
-  height: 100vh;
-  background: $color-background-alt;
-  border-left: 1px solid $color-border;
-  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.1);
-  z-index: $z-index-fixed - 20;
-  transform: translateX(100%);
-  transition: transform $transition-slow;
-  display: flex;
-  flex-direction: column;
-
-  &.open {
-    transform: translateX(0);
-    
-    // Indicateur pour revenir à la sidebar droite
-    .back-to-right-sidebar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: $spacing-sm $spacing-md;
-      background: rgba($color-primary, 0.1);
-      border: 1px solid rgba($color-primary, 0.3);
-      border-radius: $border-radius-xs;
-      margin: $spacing-sm $spacing-lg;
-      cursor: pointer;
-      transition: $transition-fast;
-      
-      &:hover {
-        background: rgba($color-primary, 0.2);
-        border-color: $color-primary;
-      }
-      
-      .back-text {
-        @include typography-p4;
-        color: $color-primary;
-        font-weight: $font-weight-medium;
-        display: flex;
-        align-items: center;
-        gap: $gap-xs;
-        
-        i {
-          color: $color-primary;
-        }
-      }
-      
-      .switch-btn {
-        background: $color-primary;
-        color: $color-text-light;
-        border: none;
-        border-radius: $border-radius-xs;
-        padding: $gap-xs $spacing-sm;
-        font-size: $font-size-p5;
-        cursor: pointer;
-        transition: $transition-fast;
-        
-        &:hover {
-          background: $color-primary-dark;
-          transform: translateX(-2px);
-        }
-      }
     }
   }
 }

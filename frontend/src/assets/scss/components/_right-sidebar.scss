@@ -1,37 +1,30 @@
-// =============================================
-// _right-sidebar.scss - MODIFIÉ AVEC NOUVELLE PALETTE
-// =============================================
-
-// _right-sidebar.scss – Version corrigée avec position droite
 @import '../base/variables';
 
-sidebar {
+.right-sidebar {
   position: fixed;
-  right: 10px; // ← 10px de distance du bord
-  top: 10px;   // ← 10px du haut aussi pour correspondance
-  height: calc(100vh - 20px); // Ajuster la hauteur
+  right: 10px;
+  top: 0;  
+  height: 100vh; 
   width: 60px; // Fermée
-  background: $color-background-alt; // Changé: blanc
-  border: 1px solid $color-border; // Changé: bordure dorée
-  box-shadow: $shadow-md;
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-lg;
   z-index: $z-index-fixed;
   transition: all $transition-slow ease;
   display: flex;
   flex-direction: column;
-  border-radius: $border-radius-sm; // Optionnel pour le design
+  border-radius: $border-radius-lg;
   
   &.open {
     width: 280px;
-    // Pas de changement de position right car déjà à 10px
     
-    // Quand SceneTools est aussi ouverte
     .scene-tools-sidebar.open ~ & {
-      z-index: 900; // Légèrement en dessous
+      z-index: 900;
     }
   }
   
   // Responsive
-  @media (max-width: 1200px) {
+  @include respond-to($breakpoint-lg) {
     right: 8px;
     top: 8px;
     height: calc(100vh - 16px);
@@ -41,7 +34,7 @@ sidebar {
     }
   }
   
-  @media (max-width: 768px) {
+  @include respond-to($breakpoint-md) {
     right: 5px;
     top: 5px;
     height: calc(100vh - 10px);
@@ -52,35 +45,38 @@ sidebar {
       z-index: $z-index-modal;
     }
     
-    // Sur mobile, cacher si SceneTools est ouverte
     .scene-tools-sidebar.open ~ & {
       display: none;
     }
   }
 }
 
-// BOUTON TOGGLE - Toujours en haut
+// BOUTON TOGGLE - Style ProjetScenariste
 .sidebar-toggle {
   width: 100%;
   height: 50px;
   min-height: 50px;
-  background: $color-primary; // Changé: doré
-  color: $color-text-light; // Changé: blanc
+  background: linear-gradient(135deg, $color-primary 0%, $color-tertiary-dark 100%);
+  color: $color-text-light;
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba($color-primary-dark, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: $font-size-p1;
   cursor: pointer;
   transition: $transition;
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
+  box-shadow: $shadow-primary;
   
   &:hover {
-    background: darken($color-primary, 10%); // Doré plus foncé
+    background: linear-gradient(135deg, $color-tertiary-dark 0%, $color-primary 100%);
+    transform: translateY(-1px);
   }
   
   i {
     transition: transform $transition;
+    color: $color-text-light;
   }
   
   .right-sidebar.open & i {
@@ -90,38 +86,39 @@ sidebar {
 
 .sidebar-content {
   flex: 1;
-  padding: $spacing-sm;
+  padding: $spacing-md;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $spacing-xs; // Réduit l'espace entre les éléments
+  gap: $spacing-sm;
+  background: $color-background-alt;
   
   .right-sidebar.open & {
-    padding: $spacing-md;
+    padding: $spacing-lg;
     align-items: stretch;
-    gap: $spacing-sm; // Un peu plus d'espace quand ouvert
+    gap: $spacing-md;
   }
   
   @include respond-to($breakpoint-md) {
-    padding: $spacing-xs;
+    padding: $spacing-sm;
     
     .right-sidebar.open & {
-      padding: $spacing-sm;
+      padding: $spacing-md;
     }
   }
 }
 
-// BOUTONS PRINCIPAUX (mode fermé)
+// BOUTONS PRINCIPAUX (mode fermé) - Style ProjetScenariste
 .sidebar-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  margin-bottom: 4px; // Réduit l'espace entre les boutons
-  border: 1px solid $color-border; // Changé: bordure dorée
-  border-radius: $border-radius-xs;
-  background: $color-background-alt; // Changé: blanc
-  color: $color-text-primary; // Changé: brun foncé
+  margin-bottom: $gap-xs;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  background: $color-surface;
+  color: $color-text-secondary;
   font-size: $font-size-p2;
   font-weight: $font-weight-medium;
   cursor: pointer;
@@ -129,16 +126,18 @@ sidebar {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: $shadow;
   
   &:hover {
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
-    border-color: $color-primary; // Changé: doré
-    color: $color-primary; // Changé: doré
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+    color: $color-primary;
     transform: scale(1.05);
+    box-shadow: $shadow-md;
   }
   
   i {
-    color: $color-primary; // Changé: doré
+    color: $color-primary;
     font-size: $font-size-p1;
   }
   
@@ -150,34 +149,43 @@ sidebar {
   .right-sidebar.open & {
     width: 100%;
     height: auto;
-    min-height: 40px;
-    padding: $spacing-sm $spacing-md;
-    border-radius: $border-radius-xs;
+    min-height: 44px;
+    padding: $padding-md;
+    border-radius: $border-radius-sm;
     justify-content: flex-start;
     text-align: left;
-    margin-bottom: 4px; // Réduit l'espace entre les boutons
+    margin-bottom: $gap-sm;
+    background: $color-surface;
+    color: $color-text-secondary;
+    box-shadow: $shadow;
     
     &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
       transform: translateX(-2px);
     }
     
     i {
+      color: $color-primary;
       font-size: $font-size-p2;
-      width: 20px;
+      width: 24px;
       text-align: center;
-      margin-right: $gap-sm;
+      margin-right: $gap-md;
     }
     
     span {
       display: inline;
-      @include typography-p4;
+      @include typography-p3;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
     }
   }
 }
 
-// SECTION EXPORT
+// SECTION EXPORT - Style ProjetScenariste
 .export-section {
-  margin: $spacing-xs 0; // Réduit l'espace autour
+  margin: $spacing-md 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -185,16 +193,16 @@ sidebar {
   
   .right-sidebar.open & {
     align-items: stretch;
-    margin: $spacing-sm 0; // Réduit l'espace autour
+    margin: $spacing-lg 0;
   }
 }
 
 .sidebar-section-title {
-  @include typography-playfair-p4;
-  margin-bottom: $spacing-sm;
-  color: $color-text-primary; // Changé: brun foncé
-  padding-bottom: $gap-xs;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  @include typography-playfair-h4;
+  margin-bottom: $spacing-md;
+  color: $color-text-primary;
+  padding-bottom: $gap-sm;
+  border-bottom: 1px solid $color-border;
   display: none;
   
   .right-sidebar.open & {
@@ -202,7 +210,7 @@ sidebar {
   }
 }
 
-// BOUTONS EXPORT
+// BOUTONS EXPORT - Style ProjetScenariste
 .export-options {
   display: flex;
   flex-direction: column;
@@ -211,19 +219,19 @@ sidebar {
   
   .right-sidebar.open & {
     align-items: stretch;
-    gap: $gap-xs;
+    gap: $gap-sm;
   }
 }
 
 .export-option {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  margin-bottom: 4px; // Réduit l'espace entre les boutons
-  border: 1px solid $color-border; // Changé: bordure dorée
-  border-radius: $border-radius-xs;
-  background: $color-background-alt; // Changé: blanc
-  color: $color-text-primary; // Changé: brun foncé
+  margin-bottom: $gap-xs;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  background: $color-surface;
+  color: $color-text-secondary;
   font-size: $font-size-p2;
   font-weight: $font-weight-medium;
   cursor: pointer;
@@ -231,16 +239,18 @@ sidebar {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: $shadow;
   
   &:hover {
-    background: rgba($color-accent, 0.1); // Changé: orange subtil
-    border-color: $color-accent; // Changé: orange
-    color: $color-accent; // Changé: orange
+    background: rgba($color-accent, 0.1);
+    border-color: $color-accent;
+    color: $color-accent;
     transform: scale(1.05);
+    box-shadow: $shadow-md;
   }
   
   i {
-    color: $color-accent; // Changé: orange
+    color: $color-accent;
     font-size: $font-size-p1;
   }
   
@@ -252,34 +262,42 @@ sidebar {
   .right-sidebar.open & {
     width: 100%;
     height: auto;
-    min-height: 40px;
-    padding: $spacing-sm $spacing-md;
-    border-radius: $border-radius-xs;
+    min-height: 44px;
+    padding: $padding-md;
+    border-radius: $border-radius-sm;
     justify-content: flex-start;
     text-align: left;
-    margin-bottom: 2px; // Réduit encore plus l'espace
+    margin-bottom: $gap-xs;
+    background: $color-surface;
+    color: $color-text-secondary;
     
     &:hover {
+      background: rgba($color-accent, 0.1);
+      border-color: $color-accent;
+      color: $color-accent;
       transform: translateX(-2px);
     }
     
     i {
+      color: $color-accent;
       font-size: $font-size-p2;
-      width: 20px;
+      width: 24px;
       text-align: center;
-      margin-right: $gap-sm;
+      margin-right: $gap-md;
     }
     
     span {
       display: inline;
-      @include typography-p4;
+      @include typography-p3;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
     }
   }
 }
 
-// SECTION LIENS RAPIDES
+// SECTION LIENS RAPIDES - Style ProjetScenariste
 .quick-links-section {
-  margin: $spacing-xs 0; // Réduit l'espace autour
+  margin: $spacing-md 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -287,7 +305,7 @@ sidebar {
   
   .right-sidebar.open & {
     align-items: stretch;
-    margin: $spacing-sm 0; // Réduit l'espace autour
+    margin: $spacing-lg 0;
   }
 }
 
@@ -299,11 +317,11 @@ sidebar {
   
   .right-sidebar.open & {
     align-items: stretch;
-    gap: $gap-xs;
+    gap: $gap-sm;
   }
 }
 
-// TOOLTIPS pour le mode fermé
+// TOOLTIPS pour le mode fermé - Style ProjetScenariste
 .right-sidebar:not(.open) {
   .sidebar-btn,
   .export-option {
@@ -315,16 +333,17 @@ sidebar {
       left: 100%;
       top: 50%;
       transform: translateY(-50%);
-      margin-left: $gap-sm;
-      padding: $gap-xs $gap-sm;
-      background: $color-text-primary; // Changé: brun foncé
-      color: $color-text-light; // Changé: blanc
+      margin-left: $gap-md;
+      padding: $padding-xs $padding-sm;
+      background: $color-tertiary-dark;
+      color: $color-text-light;
       font-size: $font-size-p3;
       white-space: nowrap;
       border-radius: $border-radius-xs;
       z-index: $z-index-tooltip;
       pointer-events: none;
-      box-shadow: $shadow;
+      box-shadow: $shadow-lg;
+      border: 1px solid rgba($color-primary, 0.2);
       
       @include respond-to($breakpoint-md) {
         font-size: $font-size-p4;
@@ -351,8 +370,8 @@ sidebar {
     
     .sidebar-btn,
     .export-option {
-      width: 35px;
-      height: 35px;
+      width: 40px;
+      height: 40px;
       
       i {
         font-size: $font-size-p2;
@@ -377,8 +396,8 @@ sidebar {
     
     .sidebar-btn,
     .export-option {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       margin-bottom: $gap-xs;
       
       i {
@@ -386,7 +405,6 @@ sidebar {
       }
     }
     
-    // Ajustement du décalage pour mobile
     &.open ~ *:not(.scene-tools-sidebar) {
       margin-right: 5px;
     }
@@ -394,128 +412,8 @@ sidebar {
 }
 
 // =============================================
-// SIDEBAR OUTILS SCÈNE - Style intégré
+// SIDEBAR OUTILS SCÈNE - Version côte à côte (déjà dans _tools.scss)
 // =============================================
-// =============================================
-// SIDEBAR OUTILS SCÈNE - Version côte à côte
-// =============================================
-scene-tools-sidebar {
-  position: fixed;
-  top: 10px; // ← Même distance que RightSidebar
-  height: calc(100vh - 20px); // Même hauteur
-  width: 350px;
-  background: $color-background-alt; // Changé: blanc
-  border: 1px solid $color-border; // Changé: bordure dorée
-  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.1);
-  z-index: $z-index-fixed + 10;
-  transform: translateX(100%);
-  transition: transform $transition-slow ease;
-  display: flex;
-  flex-direction: column;
-  border-radius: $border-radius-sm; // Optionnel
-  
-  &.open {
-    transform: translateX(0);
-  }
-  
-  // QUAND RightSidebar est FERMÉE
-  &.open.without-right-sidebar {
-    right: 10px; // ← Même distance que RightSidebar
-  }
-  
-  // QUAND RightSidebar est OUVERTE
-  &.open.with-right-sidebar {
-    right: calc(280px + 20px); // ← 280px (sidebar ouverte) + 20px espace
-  }
-  
-  // Responsive
-  @media (max-width: 1200px) {
-    width: 320px;
-    top: 8px;
-    height: calc(100vh - 16px);
-    
-    &.open.with-right-sidebar {
-      right: calc(250px + 15px); // 250px + 15px espace
-    }
-  }
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    max-width: 350px;
-    right: 5px !important;
-    top: 5px;
-    height: calc(100vh - 10px);
-    z-index: $z-index-modal + 100;
-    
-    &.open {
-      right: 5px !important;
-      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
-    }
-  }
-}
-
-
-// =============================================
-// RESPONSIVE - Gestion des deux sidebars
-// =============================================
-@include respond-to($breakpoint-lg) {
-  .scene-tools-sidebar {
-    width: 300px;
-    
-    &.with-right-sidebar-open {
-      right: 250px;
-    }
-    
-    &.with-right-sidebar-closed {
-      right: 60px;
-      left: 50px;
-    }
-  }
-}
-
-@include respond-to($breakpoint-md) {
-  .scene-tools-sidebar {
-    width: 100%;
-    max-width: 350px;
-    
-    &.with-right-sidebar-open {
-      right: 0;
-      top: 0;
-      height: 100vh;
-      z-index: $z-index-modal; // Au-dessus de tout
-    }
-    
-    &.with-right-sidebar-closed {
-      right: 0;
-      top: 0;
-      height: 100vh;
-      z-index: $z-index-modal;
-    }
-    
-    &.open {
-      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
-      
-      // Sur mobile, la sidebar outils prend tout l'espace
-      & ~ .ecran-travail-ecran-travail {
-        margin-right: 0 !important;
-      }
-    }
-  }
-  
-  // Sur mobile, la sidebar droite se met en overlay quand les outils sont ouverts
-  .scene-tools-sidebar.open ~ .right-sidebar {
-    z-index: $z-index-fixed - 10;
-  }
-}
-
-@include respond-to($breakpoint-sm) {
-  .scene-tools-sidebar {
-    max-width: 100%;
-    
-    .sidebar-content {
-      padding: $spacing-md;
-    }
-  }
-}
+// Les styles spécifiques pour scene-tools-sidebar sont dans _tools.scss
 
 
