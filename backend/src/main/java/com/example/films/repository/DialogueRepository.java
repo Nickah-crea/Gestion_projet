@@ -33,4 +33,15 @@ public interface DialogueRepository extends JpaRepository<Dialogue, Long> {
 
     long countByPersonnageId(Long personnageId);
     
+    @Query("SELECT COUNT(d) > 0 FROM Dialogue d WHERE d.scene.id = :sceneId AND d.ordre = :ordre")
+    boolean existsBySceneIdAndOrdre(@Param("sceneId") Long sceneId, @Param("ordre") Integer ordre);
+    
+    @Query("SELECT COUNT(d) > 0 FROM Dialogue d WHERE d.scene.id = :sceneId AND d.ordre = :ordre AND d.id != :dialogueId")
+    boolean existsBySceneIdAndOrdreAndIdNot(
+        @Param("sceneId") Long sceneId, 
+        @Param("ordre") Integer ordre, 
+        @Param("dialogueId") Long dialogueId
+    );
+
+    
 }

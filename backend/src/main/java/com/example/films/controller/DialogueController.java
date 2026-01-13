@@ -4,8 +4,12 @@ import com.example.films.dto.CreateDialogueDTO;
 import com.example.films.dto.DialogueDTO;
 import com.example.films.service.AuthorizationService;
 import com.example.films.service.DialogueService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,25 +48,37 @@ public class DialogueController {
     }
     
     @PostMapping
-    public ResponseEntity<DialogueDTO> createDialogue(@RequestBody CreateDialogueDTO createDialogueDTO,
-                                                    @RequestHeader("X-User-Id") Long userId) {
+    public ResponseEntity<?> createDialogue(@RequestBody @Valid CreateDialogueDTO createDialogueDTO,
+                                        @RequestHeader("X-User-Id") Long userId,
+                                        BindingResult bindingResult) {
         try {
+            if (bindingResult.hasErrors()) {
+                return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            }
+            
             if (!authorizationService.hasAccessToDialogueCreation(userId, createDialogueDTO.getSceneId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             
             DialogueDTO createdDialogue = dialogueService.createDialogue(createDialogueDTO);
             return new ResponseEntity<>(createdDialogue, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<DialogueDTO> updateDialogue(@PathVariable Long id,
-                                                    @RequestBody CreateDialogueDTO updateDialogueDTO,
-                                                    @RequestHeader("X-User-Id") Long userId) {
+    public ResponseEntity<?> updateDialogue(@PathVariable Long id,
+                                        @RequestBody @Valid CreateDialogueDTO updateDialogueDTO,
+                                        @RequestHeader("X-User-Id") Long userId,
+                                        BindingResult bindingResult) {
         try {
+            if (bindingResult.hasErrors()) {
+                return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            }
+            
             // Récupérer le dialogue pour obtenir la scène parente
             DialogueDTO existingDialogue = dialogueService.getDialogueById(id);
             if (!authorizationService.hasAccessToDialogueCreation(userId, existingDialogue.getSceneId())) {
@@ -72,10 +88,10 @@ public class DialogueController {
             DialogueDTO updatedDialogue = dialogueService.updateDialogue(id, updateDialogueDTO);
             return ResponseEntity.ok(updatedDialogue);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    
+        
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDialogue(@PathVariable Long id,
                                             @RequestHeader("X-User-Id") Long userId) {

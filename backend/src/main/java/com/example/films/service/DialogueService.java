@@ -49,7 +49,12 @@ public class DialogueService {
             ordre = (maxOrdre != null) ? maxOrdre + 1 : 1;
         }
         
-       
+        // VÉRIFIER SI L'ORDRE EXISTE DÉJÀ
+        boolean ordreExiste = dialogueRepository.existsBySceneIdAndOrdre(createDialogueDTO.getSceneId(), ordre);
+        if (ordreExiste) {
+            throw new RuntimeException("L'ordre " + ordre + " existe déjà dans cette scène");
+        }
+        
         Dialogue dialogue = new Dialogue();
         dialogue.setScene(scene);
         dialogue.setPersonnage(personnage);
@@ -88,7 +93,7 @@ public class DialogueService {
                 .collect(Collectors.toList());
     }
     
-    @Transactional
+  @Transactional
     public DialogueDTO updateDialogue(Long id, CreateDialogueDTO updateDialogueDTO) {
         Dialogue dialogue = dialogueRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Dialogue non trouvé"));
@@ -104,16 +109,29 @@ public class DialogueService {
                     .orElseThrow(() -> new RuntimeException("Personnage non trouvé"));
         }
         
+        // VÉRIFIER SI L'ORDRE A CHANGÉ ET S'IL EXISTE DÉJÀ (pour un autre dialogue)
+        Integer nouvelOrdre = updateDialogueDTO.getOrdre();
+        if (!dialogue.getOrdre().equals(nouvelOrdre)) {
+            boolean ordreExiste = dialogueRepository.existsBySceneIdAndOrdreAndIdNot(
+                    updateDialogueDTO.getSceneId(), 
+                    nouvelOrdre, 
+                    id
+            );
+            if (ordreExiste) {
+                throw new RuntimeException("L'ordre " + nouvelOrdre + " existe déjà dans cette scène");
+            }
+        }
+        
         dialogue.setScene(scene);
         dialogue.setPersonnage(personnage);
         dialogue.setTexte(updateDialogueDTO.getTexte());
-        dialogue.setOrdre(updateDialogueDTO.getOrdre());
+        dialogue.setOrdre(nouvelOrdre);
         dialogue.setObservation(updateDialogueDTO.getObservation());
         
         Dialogue updatedDialogue = dialogueRepository.save(dialogue);
         return convertToDTO(updatedDialogue);
     }
-    
+        
     @Transactional
     public void deleteDialogue(Long id) {
         Dialogue dialogue = dialogueRepository.findById(id)

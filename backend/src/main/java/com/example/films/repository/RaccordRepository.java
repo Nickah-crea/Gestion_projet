@@ -4,6 +4,7 @@ import com.example.films.entity.Raccord;
 import com.example.films.entity.Scene;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -183,6 +184,7 @@ public interface RaccordRepository extends JpaRepository<Raccord, Long> {
               "LEFT JOIN FETCH r.comedien " +
               "WHERE eps.projet.id = :projetId OR epc.projet.id = :projetId")
        List<Raccord> findByProjetId(@Param("projetId") Long projetId);
+
 
 }
 
