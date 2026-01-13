@@ -124,13 +124,6 @@
                     <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ isEditing ? 'Modifier le personnage' : 'Créer un nouveau personnage' }}
                   </h3>
-                  <button 
-                    v-if="isEditing"
-                    @click="resetForm"
-                    class="back-btn-crea-personnage"
-                  >
-                    <i class="fas fa-plus"></i> Nouveau personnage
-                  </button>
                 </div>
 
                 <form @submit.prevent="submitForm" class="personnage-form-crea-personnage">
