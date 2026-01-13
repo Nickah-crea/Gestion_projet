@@ -96,9 +96,11 @@
                   </div>
                   
                   <div class="form-options-cinema">
-                    <a href="#" class="forgot-link-cinema">Mot de passe oublié?</a>
-                  </div>
-                  
+                      <router-link to="/forgot-password" class="forgot-password-link">
+                        Mot de passe oublié ?
+                      </router-link>
+                    </div>
+
                   <div v-if="loginError" class="error-message-cinema">
                     <i class="fas fa-exclamation-circle"></i>
                     {{ loginError }}
