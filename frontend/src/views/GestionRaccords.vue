@@ -560,7 +560,7 @@ export default {
       selectedScene: '',
       editingRaccord: null,
       selectedImage: null,
-      currentUserId: 1,
+      currentUserId: null,
       personnages: [],
       comediens: [],
       selectedPersonnage: '',
@@ -570,6 +570,13 @@ export default {
       episodesParProjet: [],
       sequencesParEpisode: [],
       scenesParSequence: [],
+       permissions: {
+        canCreateRaccord: false,
+        canEditRaccord: false,
+        canDeleteRaccord: false,
+        canViewRaccords: false,
+        canViewScenes: false
+      },
       formData: {
         projetId: '',
         episodeId: '',
@@ -584,18 +591,19 @@ export default {
         personnageId: '',
         comedienId: ''
       },
-      previewImages: []
+      previewImages: [],
+      user: null
     };
   },
   computed: {
-    getTabIndicatorStyle() {
-      const tabWidth = 100 / 2;
-      const translateX = this.activeTab === 'form' ? 0 : 100;
-      return {
-        transform: `translateX(${translateX}%)`,
-        width: `${tabWidth}%`
-      };
-    },
+  getTabIndicatorStyle() {
+        const tabWidth = 100 / 2;
+        const translateX = this.activeTab === 'form' ? 0 : 100;
+        return {
+          transform: `translateX(${translateX}%)`,
+          width: `${tabWidth}%`
+        };
+      },
     getRaccordsCritiques() {
       return this.raccords.filter(r => r.estCritique).length;
     },
@@ -604,7 +612,18 @@ export default {
     },
     groupesRaccords() {
       return this.grouperRaccordsParScene(this.raccords);
-    }
+    },
+      // Liste filtrée des projets accessibles
+    accessibleProjets() {
+      if (!this.user) return [];
+      if (this.user.role === 'ADMIN') return this.projets;
+      
+      // Pour les réalisateurs et scénaristes, filtrer les projets accessibles
+      return this.projets.filter(projet => 
+        this.permissions.canViewScenes || 
+        this.userProjetIds.includes(projet.id)
+      );
+    },
   },
   watch: {
     selectedScene() {
@@ -615,44 +634,207 @@ export default {
     },
     selectedComedien() {
       this.loadRaccords();
+    },
+     'formData.projetId'(newVal) {
+      if (newVal) {
+        this.checkProjectAccess(newVal);
+      }
+    },
+    'formData.episodeId'(newVal) {
+      if (newVal) {
+        this.checkEpisodeAccess(newVal);
+      }
     }
   },
   async mounted() {
+    await this.loadUserData();
+    await this.initializePermissions();
     await this.loadInitialData();
     await this.loadRaccords();
   },
   methods: {
+
+      async loadUserData() {
+      try {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          this.user = JSON.parse(userStr);
+          this.currentUserId = this.user.id;
+          
+          if (!this.user || !this.user.id) {
+            this.$router.push('/');
+          }
+        } else {
+          this.$router.push('/');
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des données utilisateur:', error);
+        this.$router.push('/');
+      }
+    },
+      // Initialiser les permissions
+    async initializePermissions() {
+      try {
+        // Récupérer les permissions générales de l'utilisateur
+        const role = this.user?.role;
+        
+        // Permissions par défaut basées sur le rôle
+        if (role === 'ADMIN') {
+          this.permissions = {
+            canCreateRaccord: true,
+            canEditRaccord: true,
+            canDeleteRaccord: true,
+            canViewRaccords: true,
+            canViewScenes: true
+          };
+        } else if (role === 'REALISATEUR') {
+          this.permissions = {
+            // canCreateRaccord: true,
+            // canEditRaccord: true,
+            // canDeleteRaccord: true,
+            canViewRaccords: true,
+            canViewScenes: true
+          };
+        } else if (role === 'SCENARISTE') {
+          this.permissions = {
+            canCreateRaccord: true,
+            canEditRaccord: false,
+            canDeleteRaccord: false,
+            canViewRaccords: true,
+            canViewScenes: true
+          };
+        } else {
+          this.permissions = {
+            canCreateRaccord: false,
+            canEditRaccord: false,
+            canDeleteRaccord: false,
+            canViewRaccords: false,
+            canViewScenes: false
+          };
+        }
+        
+        // Charger les projets accessibles
+        await this.loadUserProjects();
+        
+      } catch (error) {
+        console.error('Erreur lors de l\'initialisation des permissions:', error);
+      }
+    },
+
+        async loadUserProjects() {
+      try {
+        if (this.user?.role === 'ADMIN') {
+          // Admin a accès à tous les projets
+          const response = await axios.get('/api/projets');
+          this.userProjetIds = response.data.map(p => p.id);
+        } else {
+          // Pour les autres rôles, récupérer les projets via les épisodes
+          const episodesResponse = await axios.get(`/api/episodes/utilisateur/${this.currentUserId}`);
+          this.userProjetIds = [...new Set(episodesResponse.data.map(ep => ep.projetId))];
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des projets utilisateur:', error);
+        this.userProjetIds = [];
+      }
+    },
+     // Vérifier l'accès au projet
+    async checkProjectAccess(projetId) {
+      try {
+        const hasAccess = await axios.get(`/api/projets/${projetId}/access-check`, {
+          headers: { 'X-User-Id': this.currentUserId }
+        });
+        
+        if (!hasAccess.data) {
+          this.showAccessError(`Vous n'avez pas accès à ce projet.`);
+          this.formData.projetId = '';
+          this.episodesParProjet = [];
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error('Erreur lors de la vérification de l\'accès au projet:', error);
+        this.showAccessError(`Erreur de vérification d'accès au projet.`);
+        return false;
+      }
+    },
+        // Vérifier l'accès à l'épisode
+    async checkEpisodeAccess(episodeId) {
+      try {
+        const hasAccess = await axios.get(`/api/episodes/${episodeId}/access-check`, {
+          headers: { 'X-User-Id': this.currentUserId }
+        });
+        
+        if (!hasAccess.data) {
+          this.showAccessError(`Vous n'avez pas accès à cet épisode.`);
+          this.formData.episodeId = '';
+          this.sequencesParEpisode = [];
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error('Erreur lors de la vérification de l\'accès à l\'épisode:', error);
+        this.showAccessError(`Erreur de vérification d'accès à l'épisode.`);
+        return false;
+      }
+    },
     // Navigation entre onglets
-    goToForm() {
+   goToForm() {
+      if (!this.permissions.canCreateRaccord) {
+        this.showAccessError('Vous n\'avez pas les permissions pour créer un raccord.');
+        return;
+      }
       this.activeTab = 'form';
       this.resetForm();
     },
+
     goToList() {
+      if (!this.permissions.canViewRaccords) {
+        this.showAccessError('Vous n\'avez pas les permissions pour voir les raccords.');
+        return;
+      }
       this.activeTab = 'list';
       this.loadRaccords();
     },
 
-    async loadInitialData() {
+   async loadInitialData() {
       try {
-        const [projetsRes, scenesRes, typesRes, statutsRes, personnagesRes, comediensRes] = await Promise.all([
-          axios.get('/api/projets'),
-          axios.get('/api/scenes'),
+        // Charger seulement les projets accessibles
+        const projetsRes = await axios.get('/api/projets');
+        this.projets = this.filterAccessibleData(projetsRes.data, 'projets');
+        
+        // Charger les scènes avec vérification d'accès
+        const scenesRes = await axios.get('/api/scenes');
+        this.scenes = this.filterAccessibleData(scenesRes.data, 'scenes');
+        
+        // Charger les autres données
+        const [typesRes, statutsRes, personnagesRes, comediensRes] = await Promise.all([
           axios.get('/api/raccords/types'),
           axios.get('/api/raccords/statuts'),
           axios.get('/api/personnages'),
           axios.get('/api/comediens')
         ]);
-
-        this.projets = projetsRes.data;
-        this.scenes = scenesRes.data;
+        
         this.typesRaccord = typesRes.data;
         this.statutsRaccord = statutsRes.data;
         this.personnages = personnagesRes.data;
         this.comediens = comediensRes.data;
+        
       } catch (error) {
         console.error('Erreur lors du chargement des données:', error);
       }
     },
+
+     filterAccessibleData(data, dataType) {
+      if (!this.user) return [];
+      if (this.user.role === 'ADMIN') return data;
+      
+      if (dataType === 'projets') {
+        return data.filter(projet => this.userProjetIds.includes(projet.id));
+      }
+      
+      return data;
+    },
+    
 
     async chargerEpisodesParProjet() {
       if (!this.formData.projetId) {
@@ -663,6 +845,11 @@ export default {
         this.formData.sceneCibleId = '';
         return;
       }
+      
+      // Vérifier l'accès au projet
+      const hasAccess = await this.checkProjectAccess(this.formData.projetId);
+      if (!hasAccess) return;
+      
       try {
         const response = await axios.get(`/api/episodes/projet/${this.formData.projetId}`, {
           headers: { 'X-User-Id': this.currentUserId }
@@ -674,7 +861,7 @@ export default {
       }
     },
 
-    async chargerSequencesParEpisode() {
+ async chargerSequencesParEpisode() {
       if (!this.formData.episodeId) {
         this.sequencesParEpisode = [];
         this.formData.sequenceId = '';
@@ -682,6 +869,11 @@ export default {
         this.formData.sceneCibleId = '';
         return;
       }
+      
+      // Vérifier l'accès à l'épisode
+      const hasAccess = await this.checkEpisodeAccess(this.formData.episodeId);
+      if (!hasAccess) return;
+      
       try {
         const response = await axios.get(`/api/sequences/episodes/${this.formData.episodeId}`, {
           headers: { 'X-User-Id': this.currentUserId }
@@ -693,13 +885,14 @@ export default {
       }
     },
 
-    async chargerScenesParSequence() {
+  async chargerScenesParSequence() {
       if (!this.formData.sequenceId) {
         this.scenesParSequence = [];
         this.formData.sceneSourceId = '';
         this.formData.sceneCibleId = '';
         return;
       }
+      
       try {
         const response = await axios.get(`/api/scenes/sequences/${this.formData.sequenceId}`);
         this.scenesParSequence = response.data;
@@ -709,11 +902,19 @@ export default {
       }
     },
 
-    async loadRaccords() {
+     async loadRaccords() {
+      if (!this.permissions.canViewRaccords) {
+        this.showAccessError('Vous n\'avez pas les permissions pour voir les raccords.');
+        return;
+      }
+      
       this.loadingRaccords = true;
       try {
         let url = '/api/raccords';
         const params = new URLSearchParams();
+        
+        // Ajouter l'ID utilisateur pour filtrer les raccords accessibles
+        params.append('userId', this.currentUserId);
         
         if (this.selectedScene) {
           params.append('sceneId', this.selectedScene);
@@ -740,6 +941,7 @@ export default {
         this.loadingRaccords = false;
       }
     },
+    
 
     async chargerDonneesPlanningPourRaccords() {
       try {
@@ -801,10 +1003,31 @@ export default {
     },
 
     async submitForm() {
+      if (this.editingRaccord && !this.permissions.canEditRaccord) {
+        this.showAccessError('Vous n\'avez pas les permissions pour modifier un raccord.');
+        return;
+      }
+      
+      if (!this.editingRaccord && !this.permissions.canCreateRaccord) {
+        this.showAccessError('Vous n\'avez pas les permissions pour créer un raccord.');
+        return;
+      }
+      
       this.loading = true;
       try {
         if (!this.formData.sceneSourceId || !this.formData.sceneCibleId || !this.formData.typeRaccordId) {
           alert('Veuillez remplir tous les champs obligatoires');
+          this.loading = false;
+          return;
+        }
+        
+        // Vérifier l'accès aux scènes
+        const hasAccessToScenes = await this.checkSceneAccess(
+          this.formData.sceneSourceId, 
+          this.formData.sceneCibleId
+        );
+        
+        if (!hasAccessToScenes) {
           this.loading = false;
           return;
         }
@@ -816,6 +1039,9 @@ export default {
         }
 
         const formData = new FormData();
+        
+        // Ajouter l'ID utilisateur pour vérification côté serveur
+        formData.append('userId', this.currentUserId.toString());
         
         if (this.editingRaccord) {
           formData.append('sceneSourceId', this.formData.sceneSourceId.toString());
@@ -852,11 +1078,17 @@ export default {
         let response;
         if (this.editingRaccord) {
           response = await axios.put(`/api/raccords/${this.editingRaccord.id}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 
+              'Content-Type': 'multipart/form-data',
+              'X-User-Id': this.currentUserId
+            }
           });
         } else {
           response = await axios.post('/api/raccords', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 
+              'Content-Type': 'multipart/form-data',
+              'X-User-Id': this.currentUserId
+            }
           });
         }
 
@@ -868,10 +1100,47 @@ export default {
         
       } catch (error) {
         console.error('Erreur détaillée lors de la sauvegarde:', error);
-        console.error('Response error:', error.response?.data);
-        this.error = 'Erreur lors de la sauvegarde du raccord: ' + (error.response?.data?.message || error.message);
+        
+        if (error.response?.status === 403) {
+          this.showAccessError('Vous n\'avez pas les permissions pour effectuer cette action.');
+        } else if (error.response?.status === 401) {
+          this.showAccessError('Session expirée. Veuillez vous reconnecter.');
+        } else {
+          this.error = 'Erreur lors de la sauvegarde du raccord: ' + (error.response?.data?.message || error.message);
+        }
       } finally {
         this.loading = false;
+      }
+    },
+
+     // Vérifier l'accès aux scènes
+    async checkSceneAccess(sceneSourceId, sceneCibleId) {
+      try {
+        // Vérifier l'accès à la scène source
+        const sourceAccess = await axios.get(`/api/scenes/${sceneSourceId}/access-check`, {
+          headers: { 'X-User-Id': this.currentUserId }
+        });
+        
+        if (!sourceAccess.data) {
+          this.showAccessError('Vous n\'avez pas accès à la scène source.');
+          return false;
+        }
+        
+        // Vérifier l'accès à la scène cible
+        const cibleAccess = await axios.get(`/api/scenes/${sceneCibleId}/access-check`, {
+          headers: { 'X-User-Id': this.currentUserId }
+        });
+        
+        if (!cibleAccess.data) {
+          this.showAccessError('Vous n\'avez pas accès à la scène cible.');
+          return false;
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('Erreur lors de la vérification de l\'accès aux scènes:', error);
+        this.showAccessError('Erreur de vérification d\'accès aux scènes.');
+        return false;
       }
     },
 
@@ -895,6 +1164,15 @@ export default {
     },
 
     async editRaccord(raccord) {
+      if (!this.permissions.canEditRaccord) {
+        this.showAccessError('Vous n\'avez pas les permissions pour modifier un raccord.');
+        return;
+      }
+      
+      // Vérifier l'accès aux scènes du raccord
+      const hasAccess = await this.checkSceneAccess(raccord.sceneSourceId, raccord.sceneCibleId);
+      if (!hasAccess) return;
+      
       this.editingRaccord = raccord;
       
       try {
@@ -1019,17 +1297,36 @@ export default {
       }
     },
 
-    async deleteRaccord(id) {
+ async deleteRaccord(id) {
+      if (!this.permissions.canDeleteRaccord) {
+        this.showAccessError('Vous n\'avez pas les permissions pour supprimer un raccord.');
+        return;
+      }
+      
       if (confirm('Êtes-vous sûr de vouloir supprimer ce raccord ?')) {
         try {
-          await axios.delete(`/api/raccords/${id}`);
+          await axios.delete(`/api/raccords/${id}`, {
+            headers: { 'X-User-Id': this.currentUserId }
+          });
           await this.loadRaccords();
         } catch (error) {
           console.error('Erreur lors de la suppression:', error);
-          alert('Erreur lors de la suppression du raccord');
+          
+          if (error.response?.status === 403) {
+            this.showAccessError('Vous n\'avez pas les permissions pour supprimer ce raccord.');
+          } else {
+            alert('Erreur lors de la suppression du raccord');
+          }
         }
       }
     },
+
+     // Afficher les erreurs d'accès
+    showAccessError(message) {
+      alert(message);
+      this.error = message;
+    },
+    
 
     grouperRaccordsParScene(raccords) {
       const groupes = {};
@@ -1076,7 +1373,7 @@ export default {
     },
 
     resetForm() {
-      this.formData = {
+       this.formData = {
         projetId: '',
         episodeId: '',
         sequenceId: '',
