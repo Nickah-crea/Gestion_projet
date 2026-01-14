@@ -240,7 +240,7 @@
                   <!-- Ligne 3 : Ordre + Observation -->
                   <div class="form-row-crea-dialogue">
                     <div class="form-group-crea-dialogue">
-                      <label for="ordre">Ordre *</label>
+                      <label for="ordre">Ordre</label>
                       <input 
                         id="ordre"
                         v-model="formData.ordre" 
@@ -368,7 +368,7 @@
                           <div class="dialogue-header-crea-dialogue">
                             <div class="dialogue-info-crea-dialogue">
                               <h4 class="dialogue-title-crea-dialogue">
-                                <i class="fas fa-comment"></i>
+                                <!-- <i class="fas fa-comments"></i> -->
                                 {{ dialogue.personnageNom || dialogue.personnage?.nom || 'Narration' }}
                                 <!-- <span class="dialogue-order-crea-dialogue">#{{ dialogue.ordre }}</span> : --> :
                                  <span class="dialogue-texte-crea-dialogue">{{ dialogue.texte }} </span> 
