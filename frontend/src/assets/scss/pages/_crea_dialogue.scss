@@ -6,7 +6,7 @@
 }
 
 // =============================================
-// SIDEBAR LATÉRALE
+// SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
 .creation-sidebar-crea-dialogue {
   position: fixed;
@@ -34,6 +34,8 @@
 
   .sidebar-header-crea-dialogue {
     margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
 
     .sidebar-title-crea-dialogue {
       @include typography-playfair-h4;
@@ -81,6 +83,7 @@
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
     color: $color-text-secondary;
     cursor: pointer;
     transition: $transition-fast;
@@ -96,7 +99,7 @@
     }
 
     &.active {
-      background:$color-tertiary-dark;
+      background: $color-tertiary-dark;
       color: $color-text-light;
     }
 
@@ -121,6 +124,24 @@
       @include typography-p4;
       color: $color-text-secondary;
       font-weight: $font-weight-medium;
+    }
+  }
+
+  .filter-select-crea-dialogue {
+    width: 100%;
+    height: 34px;
+    padding: 0 $padding-xs;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
     }
   }
 
@@ -155,7 +176,7 @@
 }
 
 // =============================================
-// CONTENU PRINCIPAL
+// CONTENU PRINCIPAL À DROITE
 // =============================================
 .creation-body-crea-dialogue {
   flex: 1;
@@ -300,25 +321,25 @@
     gap: $gap-sm;
     margin: 0;
   }
-}
 
-.back-btn-crea-dialogue {
-  padding: $gap-sm $spacing-md;
-  background: $color-success;
-  border: none;
-  border-radius: $border-radius-xs;
-  @include typography-p4;
-  color: $color-text-light;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition-fast;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
+  .back-btn-crea-dialogue {
+    padding: $gap-xs $padding-sm;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
 
-  &:hover {
-    background: darken($color-success, 10%);
-    transform: translateY(-1px);
+    &:hover {
+      background: $color-surface-hover;
+      border-color: $color-primary;
+      color: $color-primary;
+    }
   }
 }
 
@@ -361,10 +382,37 @@
       color: $color-error;
       margin-left: 2px;
     }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
   }
 
   &.full-width {
     grid-column: 1 / -1;
+  }
+
+  .form-input-crea-dialogue {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+
+    &:hover {
+      border-color: $color-border-dark;
+    }
   }
 }
 
@@ -540,6 +588,11 @@
   padding-top: $spacing-sm;
   border-top: 1px solid $color-border;
 
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .cancel-btn-crea-dialogue,
   .submit-btn-crea-dialogue {
     padding: $gap-sm $spacing-md;
     border: none;
@@ -552,7 +605,38 @@
     align-items: center;
     justify-content: center;
     gap: $gap-xs;
-    min-width: 160px;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .cancel-btn-crea-dialogue {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: $color-surface-hover;
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn-crea-dialogue {
     background: $color-primary;
     color: $color-text-light;
 
@@ -562,34 +646,8 @@
       box-shadow: $shadow-hover;
     }
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary;
-      outline-offset: 1px;
-    }
-  }
-
-  .cancel-btn-crea-dialogue {
-    padding: $gap-sm $spacing-md;
-    background: $color-error;
-    border: none;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    color: $color-text-light;
-
-    &:hover {
-      background: $color-secondary-dark;
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
   }
 }
@@ -651,7 +709,7 @@
       height: 42px;
       padding: 0 $padding-md 0 ($padding-md + $padding-xs);
       border: 1px solid $color-border;
-      border-radius: $border-radius-pill;
+      border-radius: $border-radius-xs;
       background: $color-background-alt;
       font-size: $font-size-p3;
       color: $color-text-primary;
@@ -716,7 +774,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: $spacing-sm;
-  padding-bottom: $spacing-sm;
+  padding-bottom: $spacing-xs;
   border-bottom: 1px solid $color-border;
 
   .dialogue-info-crea-dialogue {
@@ -733,6 +791,16 @@
       align-items: center;
       gap: $gap-xs;
     }
+
+    .dialogue-texte-crea-dialogue {
+      @include typography-p3;
+      color: $color-text-secondary;
+       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+
 
     .scene-badge-crea-dialogue {
       @include typography-p4;
@@ -1071,11 +1139,11 @@
 
 .btn-close-modal-crea-dialogue {
   padding: $gap-sm $spacing-md;
-  background: $color-error;
-  border: none;
+  background: transparent;
+  border: 1px solid $color-border;
   border-radius: $border-radius-xs;
   @include typography-p4;
-  color: $color-text-light;
+  color: $color-text-secondary;
   font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: $transition-fast;
@@ -1084,7 +1152,154 @@
   gap: $gap-xs;
 
   &:hover {
-    background: $color-secondary-dark;
+    background: $color-surface-hover;
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+}
+
+// =============================================
+// GROUPES DE SCÈNES
+// =============================================
+.scene-group-crea-dialogue {
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-md;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-hover;
+  }
+}
+
+.scene-group-header-crea-dialogue {
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 2px solid rgba($color-primary, 0.3);
+
+  .scene-group-title-crea-dialogue {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+
+    i {
+      color: $color-accent;
+    }
+
+    .scene-dialogue-count-crea-dialogue {
+      @include typography-p3;
+      color: $color-text-muted;
+      font-weight: $font-weight-regular;
+      margin-left: $gap-xs;
+    }
+  }
+}
+
+.scene-dialogues-container-crea-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.dialogues-list-in-scene-crea-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+// Styles spécifiques pour les dialogues dans un groupe
+.scene-group-crea-dialogue .dialogue-card-crea-dialogue {
+  background: $color-background;
+  border: 1px solid rgba($color-border, 0.7);
+  // border-left: 3px solid $color-primary;
+  padding: $spacing-sm;
+  margin-left: $spacing-xs;
+  transition: $transition-fast;
+  position: relative;
+
+  &:hover {
+    border-color: $color-primary;
+    transform: translateX(4px);
+  }
+
+  .dialogue-title-crea-dialogue {
+    .dialogue-order-crea-dialogue {
+      @include typography-p4;
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
+      padding: 2px 6px;
+      border-radius: $border-radius-xs;
+      margin-left: $gap-xs;
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  .dialogue-text-crea-dialogue {
+    background: rgba($color-background-alt, 0.5);
+    padding: $padding-sm;
+    border-radius: $border-radius-xs;
+    border-left: 2px solid rgba($color-primary, 0.3);
+  }
+}
+
+// =============================================
+// BOUTONS "VOIR PLUS/VOIR MOINS"
+// =============================================
+.see-more-container-crea-dialogue,
+.see-less-container-crea-dialogue {
+  text-align: center;
+  margin-top: $spacing-sm;
+  padding-top: $spacing-sm;
+  border-top: 1px dashed $color-border;
+}
+
+.see-more-btn-crea-dialogue,
+.see-less-btn-crea-dialogue {
+  padding: $gap-sm $spacing-md;
+  background: rgba($color-primary, 0.1);
+  border: 1px solid $color-primary;
+  border-radius: $border-radius-pill;
+  @include typography-p4;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-text-light;
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i {
+    font-size: $font-size-p4;
+    transition: $transition-fast;
+  }
+}
+
+.see-less-btn-crea-dialogue {
+  background: rgba($color-accent, 0.1);
+  border-color: $color-accent;
+  color: $color-accent;
+
+  &:hover {
+    background: $color-accent;
+    color: $color-text-light;
   }
 }
 
@@ -1095,7 +1310,7 @@
   .creation-sidebar-crea-dialogue {
     width: 250px;
   }
-  
+
   .creation-body-crea-dialogue {
     margin-left: 250px;
   }
@@ -1107,11 +1322,11 @@
     width: 100%;
     height: auto;
   }
-  
+
   .creation-body-crea-dialogue {
     margin-left: 0;
   }
-  
+
   .tabs-header-crea-dialogue {
     flex-direction: column;
   }
@@ -1134,13 +1349,90 @@
   .creation-main-content-crea-dialogue {
     padding: $spacing-sm;
   }
-  
+
   .dialogues-grid-crea-dialogue {
     grid-template-columns: 1fr;
   }
-  
+
   .form-actions-crea-dialogue {
     flex-direction: column;
+  }
+
+  .scene-group-crea-dialogue {
+    padding: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
+
+  .scene-group-header-crea-dialogue {
+    .scene-group-title-crea-dialogue {
+      font-size: calc(#{$font-size-h4} - 2px);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $gap-xs;
+
+      .scene-dialogue-count-crea-dialogue {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .scene-group-crea-dialogue .dialogue-card-crea-dialogue {
+    margin-left: 0;
+    padding: $padding-sm;
+  }
+
+  .see-more-btn-crea-dialogue,
+  .see-less-btn-crea-dialogue {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// Animation pour l'expansion des dialogues
+.dialogues-list-in-scene-crea-dialogue {
+  .dialogue-card-crea-dialogue {
+    animation: fadeInUp-crea-dialogue 0.3s ease-out;
+    animation-fill-mode: both;
+
+    @for $i from 1 through 20 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.05}s;
+      }
+    }
+  }
+}
+
+@keyframes fadeInUp-crea-dialogue {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Amélioration de l'indicateur de progression
+.scene-group-crea-dialogue {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 40px;
+    bottom: 40px;
+    width: 2px;
+    background: linear-gradient(to bottom,
+      rgba($color-primary, 0.3) 0%,
+      rgba($color-primary, 0.6) 50%,
+      rgba($color-primary, 0.3) 100%);
+    border-radius: $border-radius-pill;
+
+    @media (max-width: $breakpoint-md) {
+      display: none;
+    }
   }
 }
 
@@ -1156,299 +1448,199 @@
   .btn-edit-crea-dialogue,
   .btn-delete-crea-dialogue {
     transition: none;
-    
+
     &:hover {
       transform: none;
     }
   }
-  
+
   .loading-state-crea-dialogue i {
     animation: none;
   }
-  
+
   .tab-pane-crea-dialogue {
     animation: none;
   }
 }
 
+
 // =============================================
-// GROUPEMENT PAR SCÈNE
+// MODALE DE CONFIRMATION DE SUPPRESSION
 // =============================================
 
-.scene-group-crea-dialogue {
-  background: $color-background-alt;
-  border: 1px solid $color-border;
-  border-radius: $border-radius-sm;
+.delete-confirmation-modal-crea-dialogue {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $z-index-modal + 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: $spacing-md;
-  margin-bottom: $spacing-lg;
-  box-shadow: $shadow-md;
-  
-  &:hover {
-    border-color: $color-primary;
-    box-shadow: $shadow-hover;
-  }
 }
-// =============================================
-// PAGINATION PAR SCÈNE
-// =============================================
 
-.scene-group-header-crea-dialogue {
+.modal-content-confirm-crea-dialogue {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 500px;
+  width: 100%;
+  z-index: $z-index-modal + 20;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.modal-header-confirm-crea-dialogue {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $spacing-md;
-  padding-bottom: $spacing-sm;
-  border-bottom: 2px solid $color-primary;
-  flex-wrap: wrap;
-  gap: $spacing-sm;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
   
-  .scene-header-left-crea-dialogue {
-    flex: 1;
-    min-width: 250px;
-    
-    .scene-group-title-crea-dialogue {
-      @include typography-playfair-h4;
-      color: $color-text-primary;
-      margin: 0 0 $gap-sm 0;
-      display: flex;
-      align-items: center;
-      gap: $gap-sm;
-      
-      i {
-        color: $color-primary;
-        font-size: $font-size-h4;
-      }
-    }
-    
-    .scene-stats-crea-dialogue {
-      display: flex;
-      gap: $spacing-md;
-      align-items: center;
-      
-      .total-dialogues-crea-dialogue,
-      .order-range-crea-dialogue {
-        @include typography-p4;
-        display: flex;
-        align-items: center;
-        gap: $gap-xs;
-        padding: 4px 12px;
-        border-radius: $border-radius-xs;
-        font-weight: $font-weight-medium;
-      }
-      
-      .total-dialogues-crea-dialogue {
-        background: rgba($color-primary, 0.1);
-        color: $color-primary;
-        
-        i {
-          color: $color-primary;
-        }
-      }
-      
-      .order-range-crea-dialogue {
-        background: rgba($color-tertiary, 0.1);
-        color: $color-tertiary-dark;
-        
-        i {
-          color: $color-tertiary;
-        }
-      }
-    }
-  }
-  
-  .scene-header-right-crea-dialogue {
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-error;
+    margin: 0;
     display: flex;
-    gap: $spacing-sm;
     align-items: center;
-    
-    @media (max-width: $breakpoint-sm) {
-      width: 100%;
-      justify-content: flex-end;
-    }
+    gap: $gap-sm;
   }
 }
 
-.expand-scene-btn-crea-dialogue,
-.collapse-scene-btn-crea-dialogue {
-  @include typography-p4;
-  background: rgba($color-primary, 0.08);
-  border: 1px solid rgba($color-primary, 0.2);
-  color: $color-primary;
-  padding: 8px 16px;
+.close-modal-btn-crea-dialogue {
+  background: transparent;
+  border: none;
+  font-size: $font-size-p1;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
   border-radius: $border-radius-xs;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+}
+
+.modal-body-confirm-crea-dialogue {
+  padding: $spacing-lg;
+  text-align: center;
+}
+
+.warning-icon-crea-dialogue {
+  font-size: 48px;
+  color: $color-error;
+  margin-bottom: $spacing-md;
+}
+
+.warning-text-crea-dialogue {
+  @include typography-p1;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  font-weight: $font-weight-semibold;
+}
+
+.dialogue-preview-crea-dialogue {
+  background: rgba($color-background, 0.5);
+  border-radius: $border-radius-xs;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+  text-align: left;
+  border-left: 3px solid $color-error;
+  
+  p {
+    @include typography-p3;
+    color: $color-text-secondary;
+    margin-bottom: $gap-sm;
+    
+    strong {
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+  
+  .dialogue-text-preview {
+    @include typography-p3;
+    color: $color-text-muted;
+    font-style: italic;
+    background: rgba($color-background-alt, 0.7);
+    padding: $padding-sm;
+    border-radius: $border-radius-xs;
+    margin-top: $gap-sm;
+    max-height: 100px;
+    overflow-y: auto;
+  }
+}
+
+.warning-subtext-crea-dialogue {
+  @include typography-p3;
+  color: $color-text-muted;
+  margin-top: $spacing-md;
+}
+
+.modal-footer-confirm-crea-dialogue {
+  padding: $spacing-lg;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.cancel-confirm-btn-crea-dialogue,
+.delete-confirm-btn-crea-dialogue {
+  padding: $gap-sm $spacing-md;
+  border: none;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: $transition-fast;
   display: flex;
   align-items: center;
-  gap: $gap-sm;
-  font-weight: $font-weight-semibold;
-  
-  &:hover {
-    background: rgba($color-primary, 0.15);
-    border-color: $color-primary;
-    transform: translateY(-1px);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.collapse-scene-btn-crea-dialogue {
-  background: rgba($color-tertiary, 0.08);
-  border-color: rgba($color-tertiary, 0.2);
-  color: $color-tertiary-dark;
-  
-  &:hover {
-    background: rgba($color-tertiary, 0.15);
-    border-color: $color-tertiary;
-  }
-}
-
-.dialogue-order-indicator-crea-dialogue {
-  position: absolute;
-  left: -12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, $color-primary, $color-primary-dark);
-  color: $color-text-light;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-bold;
-  box-shadow: $shadow-primary;
-  z-index: 1;
-  border: 2px solid $color-background-alt;
-}
-
-.dialogues-list-in-scene-crea-dialogue {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  padding-left: $spacing-lg;
+  gap: $gap-xs;
+  min-width: 150px;
   
-  .dialogue-card-crea-dialogue {
-    position: relative;
-    background: $color-background-alt;
-    border: 1px solid rgba($color-border, 0.6);
-    border-left: 4px solid $color-primary;
-    border-radius: $border-radius-xs;
-    padding: $spacing-md;
-    transition: $transition-fast;
-    box-shadow: $shadow;
-    
-    &:hover {
-      border-color: $color-primary;
-      border-left-width: 6px;
-      box-shadow: $shadow-hover;
-      transform: translateX(2px);
-      
-      .dialogue-order-indicator-crea-dialogue {
-        transform: translateY(-50%) scale(1.1);
-      }
-    }
-    
-    &:nth-child(even) {
-      background: rgba($color-primary, 0.02);
-    }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
   
-  .observation-text-crea-dialogue {
-    font-style: italic;
-    color: $color-text-muted;
-    background: rgba($color-tertiary, 0.05);
-    padding: 4px 8px;
-    border-radius: $border-radius-xs;
-    display: inline-block;
-    margin-top: 4px;
+  @media (max-width: $breakpoint-sm) {
+    min-width: auto;
+    width: 100%;
   }
 }
 
-.scene-footer-crea-dialogue {
-  margin-top: $spacing-md;
-  padding-top: $spacing-md;
-  border-top: 1px dashed $color-border;
-  text-align: center;
+.cancel-confirm-btn-crea-dialogue {
+  background: transparent;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
   
-  .see-more-btn-crea-dialogue,
-  .see-less-btn-crea-dialogue {
-    @include typography-p4;
-    background: transparent;
-    border: 2px solid $color-primary;
-    color: $color-primary;
-    padding: 10px 24px;
-    border-radius: $border-radius-pill;
-    cursor: pointer;
-    transition: all $transition;
-    display: inline-flex;
-    align-items: center;
-    gap: $gap-sm;
-    font-weight: $font-weight-semibold;
-    
-    &:hover {
-      background: $color-primary;
-      color: $color-text-light;
-      transform: translateY(-2px);
-      box-shadow: $shadow-hover;
-    }
-    
-    &:active {
-      transform: translateY(0);
-    }
-  }
-  
-  .see-less-btn-crea-dialogue {
-    border-color: $color-tertiary;
-    color: $color-tertiary-dark;
-    
-    &:hover {
-      background: $color-tertiary;
-      color: $color-text-light;
-    }
+  &:hover:not(:disabled) {
+    background: $color-surface-hover;
+    border-color: $color-text-muted;
+    color: $color-text-primary;
   }
 }
 
-// Animation pour l'expansion
-.dialogues-list-in-scene-crea-dialogue {
-  .dialogue-card-crea-dialogue {
-    animation: fadeInUp-crea-dialogue 0.3s ease-out;
+.delete-confirm-btn-crea-dialogue {
+  background: $color-error;
+  color: $color-text-light;
+  
+  &:hover:not(:disabled) {
+    background: darken($color-error, 10%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
   }
-}
-
-@keyframes fadeInUp-crea-dialogue {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
+  
+  &:active:not(:disabled) {
     transform: translateY(0);
-  }
-}
-
-// Indicateur visuel pour les dialogues cachés
-.scene-group-crea-dialogue {
-  position: relative;
-  
-  &.has-hidden-dialogues::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40px;
-    background: linear-gradient(to top, rgba($color-background-alt, 1), rgba($color-background-alt, 0));
-    pointer-events: none;
-    border-radius: 0 0 $border-radius-sm $border-radius-sm;
-    z-index: 1;
-  }
-  
-  &.expanded::before {
-    display: none;
   }
 }
