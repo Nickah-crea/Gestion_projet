@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,8 @@ public class RaccordService {
     private final PersonnageRepository personnageRepository;
     private final ComedienRepository comedienRepository;
     private final SceneTournageRepository sceneTournageRepository;
+    private final AuthorizationService authorizationService;
+    private final SequenceRepository sequenceRepository;
     
     private final String uploadDir = "assets/raccords/";
     
@@ -406,6 +409,65 @@ public class RaccordService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<RaccordDTO> getRaccordsByUser(Long userId) {
+        // Récupérer l'utilisateur
+        Utilisateur utilisateur = utilisateurRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        
+        List<Raccord> raccords;
+        
+        if ("ADMIN".equals(utilisateur.getRole())) {
+            // Admin a accès à tous les raccords
+            raccords = raccordRepository.findAllWithDetails();
+        } else if ("REALISATEUR".equals(utilisateur.getRole())) {
+            // Réalisateur a accès aux raccords de ses épisodes
+            raccords = raccordRepository.findByRealisateurId(utilisateur.getId());
+        } else if ("SCENARISTE".equals(utilisateur.getRole())) {
+            // Scénariste a accès aux raccords de ses épisodes
+            raccords = raccordRepository.findByScenaristeId(utilisateur.getId());
+        } else {
+            // Autres rôles n'ont pas d'accès par défaut
+            raccords = Collections.emptyList();
+        }
+        
+        return raccords.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasAccessToRaccord(Long userId, Long raccordId) {
+        try {
+            Raccord raccord = raccordRepository.findByIdWithDetails(raccordId)
+                    .orElseThrow(() -> new RuntimeException("Raccord non trouvé"));
+            
+            Utilisateur utilisateur = utilisateurRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+            
+            if ("ADMIN".equals(utilisateur.getRole())) {
+                return true;
+            }
+            
+            // Vérifier si l'utilisateur a accès à l'épisode de la scène source
+            Long episodeId = getEpisodeIdFromScene(raccord.getSceneSource().getId());
+            return authorizationService.hasAccessToEpisode(userId, episodeId);
+            
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Long getEpisodeIdFromScene(Long sceneId) {
+        Scene scene = sceneRepository.findById(sceneId)
+                .orElseThrow(() -> new RuntimeException("Scène non trouvée"));
+        
+        Sequence sequence = sequenceRepository.findById(scene.getSequence().getId())
+                .orElseThrow(() -> new RuntimeException("Séquence non trouvée"));
+        
+        return sequence.getEpisode().getId();
     }
     
 }

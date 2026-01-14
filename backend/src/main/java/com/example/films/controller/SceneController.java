@@ -124,4 +124,15 @@ public class SceneController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/{id}/access-check")
+    public ResponseEntity<Boolean> checkSceneAccess(@PathVariable Long id,
+                                                    @RequestHeader("X-User-Id") Long userId) {
+        try {
+            boolean hasAccess = authorizationService.hasAccessToScene(userId, id);
+            return ResponseEntity.ok(hasAccess);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

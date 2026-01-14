@@ -96,15 +96,24 @@ public class DialogueController {
     public ResponseEntity<Void> deleteDialogue(@PathVariable Long id,
                                             @RequestHeader("X-User-Id") Long userId) {
         try {
-            DialogueDTO existingDialogue = dialogueService.getDialogueById(id);
+            // D'abord vérifier si le dialogue existe et récupérer la scène
+            DialogueDTO existingDialogue = null;
+            try {
+                existingDialogue = dialogueService.getDialogueById(id);
+            } catch (RuntimeException e) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            // Vérifier l'autorisation
             if (!authorizationService.hasAccessToDialogueCreation(userId, existingDialogue.getSceneId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             
+            // Supprimer le dialogue
             dialogueService.deleteDialogue(id);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     

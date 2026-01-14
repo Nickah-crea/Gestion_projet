@@ -3,6 +3,7 @@ package com.example.films.controller;
 import com.example.films.dto.CreateProjetDTO;
 import com.example.films.dto.ProjetDTO;
 import com.example.films.service.ProjetService;
+import com.example.films.service.AuthorizationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,11 @@ import java.util.List;
 @RequestMapping("/projets")
 public class ProjetController {
     private final ProjetService projetService;
+    private final AuthorizationService authorizationService;
 
-    public ProjetController(ProjetService projetService) {
+    public ProjetController(ProjetService projetService, AuthorizationService authorizationService) {
         this.projetService = projetService;
+        this.authorizationService = authorizationService;
     }
 
     @GetMapping
@@ -60,6 +63,16 @@ public class ProjetController {
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/{id}/access-check")
+    public ResponseEntity<Boolean> checkProjectAccess(@PathVariable Long id,
+                                                    @RequestHeader("X-User-Id") Long userId) {
+        try {
+            boolean hasAccess = authorizationService.hasAccessToProjet(userId, id);
+            return ResponseEntity.ok(hasAccess);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }

@@ -185,6 +185,38 @@ public interface RaccordRepository extends JpaRepository<Raccord, Long> {
               "WHERE eps.projet.id = :projetId OR epc.projet.id = :projetId")
        List<Raccord> findByProjetId(@Param("projetId") Long projetId);
 
+              @Query("SELECT r FROM Raccord r " +
+              "LEFT JOIN FETCH r.sceneSource ss " +
+              "LEFT JOIN FETCH ss.sequence seq " +
+              "LEFT JOIN FETCH seq.episode e " +
+              "LEFT JOIN FETCH r.sceneCible sc " +
+              "LEFT JOIN FETCH sc.sequence seqc " +
+              "LEFT JOIN FETCH seqc.episode ec " +
+              "LEFT JOIN FETCH r.typeRaccord " +
+              "LEFT JOIN FETCH r.statutRaccord " +
+              "LEFT JOIN FETCH r.images " +
+              "LEFT JOIN FETCH r.personnage " +
+              "LEFT JOIN FETCH r.comedien " +
+              "WHERE e.id IN (SELECT er.episode.id FROM EpisodeRealisateur er WHERE er.realisateur.utilisateur.id = :userId) " +
+              "OR ec.id IN (SELECT er.episode.id FROM EpisodeRealisateur er WHERE er.realisateur.utilisateur.id = :userId)")
+       List<Raccord> findByRealisateurId(@Param("userId") Long userId);
+
+       @Query("SELECT r FROM Raccord r " +
+              "LEFT JOIN FETCH r.sceneSource ss " +
+              "LEFT JOIN FETCH ss.sequence seq " +
+              "LEFT JOIN FETCH seq.episode e " +
+              "LEFT JOIN FETCH r.sceneCible sc " +
+              "LEFT JOIN FETCH sc.sequence seqc " +
+              "LEFT JOIN FETCH seqc.episode ec " +
+              "LEFT JOIN FETCH r.typeRaccord " +
+              "LEFT JOIN FETCH r.statutRaccord " +
+              "LEFT JOIN FETCH r.images " +
+              "LEFT JOIN FETCH r.personnage " +
+              "LEFT JOIN FETCH r.comedien " +
+              "WHERE e.id IN (SELECT es.episode.id FROM EpisodeScenariste es WHERE es.scenariste.utilisateur.id = :userId) " +
+              "OR ec.id IN (SELECT es.episode.id FROM EpisodeScenariste es WHERE es.scenariste.utilisateur.id = :userId)")
+       List<Raccord> findByScenaristeId(@Param("userId") Long userId);
+
 
 }
 

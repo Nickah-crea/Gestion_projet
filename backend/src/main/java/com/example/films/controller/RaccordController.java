@@ -1,6 +1,7 @@
 package com.example.films.controller;
 
 import com.example.films.dto.*;
+import com.example.films.service.AuthorizationService;
 import com.example.films.service.RaccordService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Arrays;
 
 @RestController
@@ -20,9 +22,11 @@ import java.util.Arrays;
 public class RaccordController {
     
     private final RaccordService raccordService;
+    private final AuthorizationService authorizationService;
     
-    public RaccordController(RaccordService raccordService) {
+    public RaccordController(RaccordService raccordService, AuthorizationService authorizationService) {
         this.raccordService = raccordService;
+        this.authorizationService = authorizationService;
     }
     
     @GetMapping
@@ -87,6 +91,7 @@ public class RaccordController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createRaccord(
+            @RequestHeader("X-User-Id") Long userId,
             @RequestParam("sceneSourceId") Long sceneSourceId,
             @RequestParam("sceneCibleId") Long sceneCibleId,
             @RequestParam("typeRaccordId") Long typeRaccordId,
@@ -98,6 +103,13 @@ public class RaccordController {
             @RequestParam(value = "images", required = false) MultipartFile[] images) {
         
         try {
+            
+            // Vérifier l'accès aux scènes
+            if (!authorizationService.hasAccessToScene(userId, sceneSourceId) || 
+                !authorizationService.hasAccessToScene(userId, sceneCibleId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Accès non autorisé");
+            }
+
             CreateRaccordDTO createRaccordDTO = new CreateRaccordDTO();
             createRaccordDTO.setSceneSourceId(sceneSourceId);
             createRaccordDTO.setSceneCibleId(sceneCibleId);
@@ -111,9 +123,11 @@ public class RaccordController {
             if (images != null && images.length > 0) {
                 createRaccordDTO.setImages(Arrays.asList(images));
             }
+
             
             RaccordDTO createdRaccord = raccordService.createRaccord(createRaccordDTO);
             return new ResponseEntity<>(createdRaccord, HttpStatus.CREATED);
+            
             
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -126,6 +140,7 @@ public class RaccordController {
  
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateRaccord(
+            @RequestHeader("X-User-Id") Long userId,
             @PathVariable Long id,
             @RequestParam(value = "sceneSourceId", required = false) Long sceneSourceId,
             @RequestParam(value = "sceneCibleId", required = false) Long sceneCibleId,
@@ -150,6 +165,10 @@ public class RaccordController {
             
             if (images != null && images.length > 0) {
                 updateRaccordDTO.setImages(Arrays.asList(images));
+            }     
+            // Vérifier l'accès au raccord
+            if (!raccordService.hasAccessToRaccord(userId, id)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Accès non autorisé");
             }
             
             RaccordDTO updatedRaccord = raccordService.updateRaccord(id, updateRaccordDTO);
@@ -164,7 +183,11 @@ public class RaccordController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRaccord(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRaccord( @RequestHeader("X-User-Id") Long userId, @PathVariable Long id) {
+         // Vérifier l'accès au raccord
+        if (!raccordService.hasAccessToRaccord(userId, id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             raccordService.deleteRaccord(id);
             return ResponseEntity.noContent().build();
@@ -200,6 +223,61 @@ public class RaccordController {
         try {
             List<StatutRaccord> statuts = raccordService.getAllStatutsRaccord();
             return ResponseEntity.ok(statuts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/scene/{sceneId}/access-check")
+    public ResponseEntity<Boolean> checkSceneAccess(@PathVariable Long sceneId,
+                                                    @RequestHeader("X-User-Id") Long userId) {
+        try {
+            boolean hasAccess = authorizationService.hasAccessToScene(userId, sceneId);
+            return ResponseEntity.ok(hasAccess);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/projet/{projetId}/access-check")
+    public ResponseEntity<Boolean> checkProjectAccess(@PathVariable Long projetId,
+                                                    @RequestHeader("X-User-Id") Long userId) {
+        try {
+            boolean hasAccess = authorizationService.hasAccessToProjet(userId, projetId);
+            return ResponseEntity.ok(hasAccess);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/filtered")
+    public ResponseEntity<List<RaccordDTO>> getFilteredRaccords(
+            @RequestParam(required = false) Long sceneId,
+            @RequestParam(required = false) Long personnageId,
+            @RequestParam(required = false) Long comedienId,
+            @RequestParam Long userId) {
+        try {
+            // Filtrer les raccords accessibles à l'utilisateur
+            List<RaccordDTO> raccords = raccordService.getRaccordsByUser(userId);
+            
+            // Appliquer les filtres supplémentaires
+            if (sceneId != null) {
+                raccords = raccords.stream()
+                    .filter(r -> r.getSceneSourceId().equals(sceneId) || r.getSceneCibleId().equals(sceneId))
+                    .collect(Collectors.toList());
+            }
+            if (personnageId != null) {
+                raccords = raccords.stream()
+                    .filter(r -> personnageId.equals(r.getPersonnageId()))
+                    .collect(Collectors.toList());
+            }
+            if (comedienId != null) {
+                raccords = raccords.stream()
+                    .filter(r -> comedienId.equals(r.getComedienId()))
+                    .collect(Collectors.toList());
+            }
+            
+            return ResponseEntity.ok(raccords);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
