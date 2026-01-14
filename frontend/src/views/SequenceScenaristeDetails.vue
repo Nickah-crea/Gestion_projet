@@ -1162,8 +1162,7 @@ export default {
         this.selectedPlateauId = null;
         this.lieuDescription = '';
         this.plateauxDisponibles = [];
-        
-        this.showNotification('Lieu et plateau ajoutés avec succès à la scène!', 'success');
+      
       } catch (error) {
         console.error('Erreur lors de l\'ajout du lieu:', error);
         let errorMessage = 'Erreur lors de l\'ajout du lieu';

@@ -139,20 +139,13 @@
                     <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ isEditing ? 'Modifier le lieu' : 'Créer un nouveau lieu' }}
                   </h3>
-                  <button 
-                    v-if="isEditing"
-                    @click="goToForm"
-                    class="back-btn-crea-lieu"
-                  >
-                    <i class="fas fa-plus"></i> Nouveau lieu
-                  </button>
                 </div>
 
                 <form @submit.prevent="submitForm" class="lieu-form-crea-lieu">
                   <!-- Ligne 1 : Projet + Nom du lieu -->
                   <div class="form-row-crea-lieu">
                     <div class="form-group-crea-lieu">
-                      <label for="projetSearch">Projet *</label>
+                      <label for="projetSearch">Projet</label>
                       <div class="search-container-crea-lieu">
                         <input
                           type="text"
@@ -185,11 +178,11 @@
                     </div>
 
                     <div class="form-group-crea-lieu">
-                      <label for="nomLieu">Nom du lieu *</label>
+                      <label for="nomLieu">Nom du lieu</label>
                       <input 
-                        id="nomLieu"
-                        v-model="formData.nomLieu" 
                         type="text" 
+                        id="nomLieu"
+                        v-model="formData.nomLieu"
                         required 
                         placeholder="Ex: Appartement principal, Rue de Paris..."
                         class="search-input-crea-lieu"
@@ -200,7 +193,7 @@
                   <!-- Ligne 2 : Type de lieu -->
                   <div class="form-row-crea-lieu">
                     <div class="form-group-crea-lieu">
-                      <label for="typeLieu">Type de lieu *</label>
+                      <label for="typeLieu">Type de lieu</label>
                       <select 
                         id="typeLieu"
                         v-model="formData.typeLieu" 
@@ -317,9 +310,9 @@
                           <button @click="editLieu(lieu)" class="btn-edit-crea-lieu" title="Modifier">
                             <i class="fas fa-marker"></i>
                           </button>
-                          <button @click="deleteLieu(lieu.id)" class="btn-delete-crea-lieu" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                          </button>
+                        <button @click="confirmDeleteLieu(lieu.id)" class="btn-delete-crea-lieu" title="Supprimer">
+                          <i class="fas fa-trash"></i>
+                        </button>
                         </div>
                       </div>
                       
@@ -340,7 +333,7 @@
                         </div>
                         
                         <!-- Liste des scènes utilisant ce lieu -->
-                        <div v-if="lieu.scenes && lieu.scenes.length" class="scenes-section-crea-lieu">
+                        <!-- <div v-if="lieu.scenes && lieu.scenes.length" class="scenes-section-crea-lieu">
                           <h5 class="scenes-title-crea-lieu">
                             <i class="fas fa-film"></i>
                             Scènes utilisant ce lieu:
@@ -351,7 +344,7 @@
                               <span class="scene-usage-crea-lieu">({{ scene.descriptionUtilisation }})</span>
                             </div>
                           </div>
-                        </div>
+                        </div> -->
                       </div>
                     </div>
                   </div>
@@ -406,14 +399,42 @@
             </div>
           </div>
         </div>
-        
-        <div class="modal-footer-crea-lieu">
-          <button type="button" @click="showScenesModal = false" class="btn-close-modal-crea-lieu">
-            <i class="fas fa-times"></i> Fermer
-          </button>
-        </div>
       </div>
     </div>
+<!-- Modale de confirmation de suppression -->
+<div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+  <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+  <div class="modal-content-confirm-Scenariste">
+    <div class="modal-header-confirm-Scenariste">
+      <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+      <button @click="closeDeleteModal" class="close-modal-btn-delete-Scenariste">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body-confirm-Scenariste">
+      <div class="warning-icon-Scenariste">
+        <i class="fas fa-trash"></i>
+      </div>
+      <p class="warning-text-Scenariste">
+        Êtes-vous sûr de vouloir supprimer le lieu <strong>"{{ lieuToDelete?.nomLieu }}"</strong> ?
+      </p>
+      <p class="warning-subtext-Scenariste">
+        Cette action est irréversible. Toutes les scènes utilisant ce lieu seront affectées.
+      </p>
+    </div>
+    
+    <div class="modal-footer-confirm-Scenariste">
+      <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
+        <i class="fas fa-times"></i> Annuler
+      </button>
+      <button @click="executeDeleteLieu" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+        <span v-if="isDeleting"><i class="fas fa-spinner fa-spin"></i> Suppression...</span>
+        <span v-else><i class="fas fa-trash"></i> Supprimer définitivement</span>
+      </button>
+    </div>
+  </div>
+</div>
   </div>
 </template>
 
@@ -461,7 +482,11 @@ export default {
       showProjetSuggestions: false,
       showFilterProjetSuggestions: false,
       filteredProjets: [],
-      filteredFilterProjets: []
+      filteredFilterProjets: [], 
+
+       showDeleteModal: false,
+      lieuToDelete: null,
+      isDeleting: false,
     };
   },
   computed: {
@@ -606,10 +631,8 @@ export default {
         
         if (this.isEditing) {
           await axios.put(`/api/lieux/${this.editingId}`, payload, config);
-          alert('Lieu modifié avec succès!');
         } else {
           await axios.post('/api/lieux', payload, config);
-          alert('Lieu créé avec succès!');
         }
         
         this.resetForm();
@@ -640,37 +663,99 @@ export default {
       this.editingId = lieu.id;
       this.activeTab = 'form';
     },
-    async deleteLieu(lieuId) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?')) {
+
+  // Modal de confirmation de suppression
+  confirmDeleteLieu(lieuId) {
+    const lieu = this.lieux.find(l => l.id === lieuId);
+    if (!lieu) return;
+    
+    this.lieuToDelete = lieu;
+    this.showDeleteModal = true;
+    this.isDeleting = false;
+  },
+  
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+    this.lieuToDelete = null;
+    this.isDeleting = false;
+  },
+  
+  async executeDeleteLieu() {
+    if (!this.lieuToDelete) return;
+    
+    this.isDeleting = true;
+    
+    try {
+      if (!this.user || !this.user.id) {
+        alert('Erreur: Utilisateur non connecté');
         return;
       }
+
+      const config = {
+        headers: {
+          'X-User-Id': this.user.id
+        }
+      };
+
+      await axios.delete(`/api/lieux/${this.lieuToDelete.id}`, config);
       
-      try {
-        if (!this.user || !this.user.id) {
-          alert('Erreur: Utilisateur non connecté');
-          return;
-        }
-
-        const config = {
-          headers: {
-            'X-User-Id': this.user.id
-          }
-        };
-
-        await axios.delete(`/api/lieux/${lieuId}`, config);
-        await this.loadLieux();
-        alert('Lieu supprimé avec succès!');
-      } catch (error) {
-        console.error('Erreur lors de la suppression du lieu:', error);
-        const errorMessage = error.response?.data?.message || error.message;
-        
-        if (error.response?.status === 403) {
-          alert('Erreur: Vous n\'avez pas les permissions nécessaires pour supprimer ce lieu');
-        } else {
-          alert('Erreur: ' + errorMessage);
-        }
+      // Recharger la liste
+      await this.loadLieux();
+      this.closeDeleteModal();
+      
+    } catch (error) {
+      console.error('Erreur lors de la suppression du lieu:', error);
+      const errorMessage = error.response?.data?.message || error.message;
+      
+      if (error.response?.status === 403) {
+        this.showErrorMessage('Vous n\'avez pas les permissions nécessaires pour supprimer ce lieu');
+      } else {
+        this.showErrorMessage('Erreur: ' + errorMessage);
       }
-    },
+      this.isDeleting = false;
+    }
+  },
+  
+  // Méthodes d'affichage de messages (optionnelles mais recommandées)
+  showSuccessMessage(message) {
+    // Vous pouvez implémenter un système de notification comme dans CreationComedien.vue
+    alert(message); // Temporairement
+  },
+  
+  showErrorMessage(message) {
+    alert(message); // Temporairement
+  },
+    // async deleteLieu(lieuId) {
+    //   if (!confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?')) {
+    //     return;
+    //   }
+      
+    //   try {
+    //     if (!this.user || !this.user.id) {
+    //       alert('Erreur: Utilisateur non connecté');
+    //       return;
+    //     }
+
+    //     const config = {
+    //       headers: {
+    //         'X-User-Id': this.user.id
+    //       }
+    //     };
+
+    //     await axios.delete(`/api/lieux/${lieuId}`, config);
+    //     await this.loadLieux();
+    //     alert('Lieu supprimé avec succès!');
+    //   } catch (error) {
+    //     console.error('Erreur lors de la suppression du lieu:', error);
+    //     const errorMessage = error.response?.data?.message || error.message;
+        
+    //     if (error.response?.status === 403) {
+    //       alert('Erreur: Vous n\'avez pas les permissions nécessaires pour supprimer ce lieu');
+    //     } else {
+    //       alert('Erreur: ' + errorMessage);
+    //     }
+    //   }
+    // },
     resetForm() {
       this.formData = {
         projetId: '',

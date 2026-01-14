@@ -185,7 +185,7 @@
                     </div>
 
                     <div class="form-group-crea-plateau">
-                      <label for="nom">Nom du plateau *</label>
+                      <label for="nom">Nom du plateau</label>
                       <input 
                         id="nom"
                         v-model="formData.nom" 

@@ -1,5 +1,6 @@
 <template>
   <div class="app-wrapper-global">
+
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-crea-dialogue">
       <div class="sidebar-header-crea-dialogue">
@@ -49,7 +50,7 @@
               <div v-if="showFilterSceneSuggestions && filteredFilterScenes.length" class="suggestions-dropdown-crea-dialogue">
                 <div
                   v-for="scene in filteredFilterScenes"
-                  :key="scene.idScene"
+                  :key="scene.id"
                   @mousedown="selectFilterScene(scene)"
                   class="suggestion-item-crea-dialogue"
                 >
@@ -118,13 +119,6 @@
     <!-- Contenu principal à droite -->
     <div class="creation-body-crea-dialogue">
       <div class="creation-main-content-crea-dialogue">
-        
-        <!-- En-tête principal -->
-        <!-- <div class="main-header-crea-dialogue">
-          <h1 class="page-title-crea-dialogue"><i class="fas fa-comments"></i> Gestion des Dialogues</h1>
-          <p class="page-subtitle-crea-dialogue">Créez, modifiez et gérez l'ensemble des dialogues de vos scènes</p>
-        </div> -->
-
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-dialogue">
           <div class="tabs-header-crea-dialogue">
@@ -157,13 +151,6 @@
                     <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
                     {{ isEditing ? 'Modifier le dialogue' : 'Créer un nouveau dialogue' }}
                   </h3>
-                  <button 
-                    v-if="isEditing"
-                    @click="goToForm"
-                    class="back-btn-crea-dialogue"
-                  >
-                    <i class="fas fa-plus"></i> Nouveau dialogue
-                  </button>
                 </div>
 
                 <form @submit.prevent="submitForm" class="dialogue-form-crea-dialogue">
@@ -186,13 +173,13 @@
                         <div v-if="showSceneSuggestions && filteredScenes.length" class="suggestions-dropdown-crea-dialogue">
                           <div
                             v-for="scene in filteredScenes"
-                            :key="scene.idScene"
+                            :key="scene.id"
                             @mousedown="selectScene(scene)"
                             class="suggestion-item-crea-dialogue"
                           >
                             <div class="scene-option-info-crea-dialogue">
                               <div class="scene-title-crea-dialogue">{{ scene.titre }}</div>
-                              <div class="scene-details-crea-dialogue">{{ scene.sequenceTitre }}</div>
+                              <div class="scene-details-crea-dialogue">{{ scene.sequenceTitre || scene.sequence?.titre || '' }}</div>
                             </div>
                           </div>
                         </div>
@@ -224,7 +211,7 @@
                           >
                             <div class="scene-option-info-crea-dialogue">
                               <div class="scene-title-crea-dialogue">{{ personnage.nom }}</div>
-                              <div class="scene-details-crea-dialogue">{{ personnage.projetTitre }}</div>
+                              <div class="scene-details-crea-dialogue">{{ personnage.projetTitre || personnage.projet?.titre || '' }}</div>
                             </div>
                           </div>
                         </div>
@@ -318,7 +305,7 @@
               <!-- Liste des dialogues -->
               <div class="dialogues-list-crea-dialogue">
                 <div class="list-header-crea-dialogue">
-                  <h3><i class="fas fa-comments"></i> Liste des dialogues ({{ filteredDialogues.length }})</h3>
+                  <h3><i class="fas fa-comments"></i> Liste des dialogues ({{ totalDialoguesCount }})</h3>
                   
                   <div class="search-section-crea-dialogue">
                     <div class="search-group-crea-dialogue">
@@ -328,7 +315,7 @@
                           type="text"
                           id="dialogueSearch"
                           v-model="searchTerm"
-                          placeholder="Rechercher par texte..."
+                          placeholder=" Rechercher par texte..."
                           class="search-input-large-crea-dialogue"
                         />
                       </div>
@@ -341,185 +328,101 @@
                   <h3>Chargement des dialogues...</h3>
                 </div>
                 
-                <div v-else-if="filteredDialogues.length === 0" class="empty-state-crea-dialogue">
+                <div v-else-if="groupedDialogues.length === 0" class="empty-state-crea-dialogue">
                   <i class="fas fa-comments"></i>
                   <h3>Aucun dialogue trouvé</h3>
                   <div v-if="searchTerm || filterSceneId || filterPersonnageId">
                     <p>Aucun dialogue ne correspond à vos critères de recherche.</p>
+                    <button @click="clearFilters" class="clear-filters-btn-crea-dialogue">
+                      <i class="fas fa-times"></i> Effacer les filtres
+                    </button>
                   </div>
                   <div v-else>
                     <p>Aucun dialogue créé pour le moment.</p>
+                    <button @click="goToForm" class="create-first-btn-crea-dialogue">
+                      <i class="fas fa-plus"></i> Créer votre premier dialogue
+                    </button>
                   </div>
                 </div>
 
                 <div v-else class="dialogues-container-crea-dialogue">
-                  <div class="dialogues-grid-crea-dialogue">
-                    <!-- <div v-for="dialogue in filteredDialogues" :key="dialogue.id" class="dialogue-card-crea-dialogue">
-                      <div class="dialogue-header-crea-dialogue">
-                        <div class="dialogue-info-crea-dialogue">
-                          <h4 class="dialogue-title-crea-dialogue">
-                            <i class="fas fa-comment"></i>
-                            {{ dialogue.personnageNom || 'Narration' }}
-                          </h4>
-                          <span class="scene-badge-crea-dialogue">{{ dialogue.sceneTitre }}</span>
-                        </div>
-                        <div class="dialogue-actions-crea-dialogue">
-                          <button @click="openDialogueComments(dialogue)" class="btn-comment-crea-dialogue" title="Commentaires">
-                            <i class="fas fa-comment"></i>
-                            {{ dialogue.commentCount || 0 }}
-                          </button>
-                          <button @click="editDialogue(dialogue)" class="btn-edit-crea-dialogue" title="Modifier">
-                            <i class="fas fa-marker"></i>
-                          </button>
-                          <button @click="deleteDialogue(dialogue.id)" class="btn-delete-crea-dialogue" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                          </button>
+                  
+                  <!-- Groupes de dialogues par scène -->
+                  <div v-for="sceneGroup in groupedDialogues" :key="sceneGroup.sceneId" class="scene-group-crea-dialogue">
+                    <div class="scene-group-header-crea-dialogue">
+                      <h4 class="scene-group-title-crea-dialogue">
+                        <i class="fas fa-film"></i>
+                        {{ sceneGroup.sceneTitre || 'Scène sans titre' }}
+                        <span class="scene-dialogue-count-crea-dialogue">
+                          ({{ sceneGroup.dialogues.length }} dialogue{{ sceneGroup.dialogues.length > 1 ? 's' : '' }})
+                        </span>
+                      </h4>
+                    </div>
+                    
+                    <div class="scene-dialogues-container-crea-dialogue">
+                      <!-- Dialogues visibles (limités par visibleCount) -->
+                      <div class="dialogues-list-in-scene-crea-dialogue">
+                        <div v-for="dialogue in getVisibleDialogues(sceneGroup)" 
+                             :key="dialogue.id" 
+                             class="dialogue-card-crea-dialogue">
+                          <div class="dialogue-header-crea-dialogue">
+                            <div class="dialogue-info-crea-dialogue">
+                              <h4 class="dialogue-title-crea-dialogue">
+                                <i class="fas fa-comment"></i>
+                                {{ dialogue.personnageNom || dialogue.personnage?.nom || 'Narration' }}
+                                <!-- <span class="dialogue-order-crea-dialogue">#{{ dialogue.ordre }}</span> : --> :
+                                 <span class="dialogue-texte-crea-dialogue">{{ dialogue.texte }} </span> 
+                              </h4>
+                            </div>
+                            <div class="dialogue-actions-crea-dialogue">
+                              <button @click="openDialogueComments(dialogue)" class="btn-comment-crea-dialogue" title="Commentaires">
+                                <i class="fas fa-comment"></i>
+                                {{ dialogue.commentCount || 0 }}
+                              </button>
+                              <button @click="editDialogue(dialogue)" class="btn-edit-crea-dialogue" title="Modifier">
+                                <i class="fas fa-marker"></i>
+                              </button>
+                              <button @click="confirmDeleteDialogue(dialogue)" class="btn-delete-crea-dialogue" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div class="dialogue-content-crea-dialogue">
+                           
+                            <div class="dialogue-meta-crea-dialogue">
+                              <div v-if="dialogue.observation" class="meta-item-crea-dialogue">
+                                <i class="fas fa-sticky-note"></i>
+                                <span>{{ dialogue.observation }}</span>
+                              </div>
+                              <!-- <div class="meta-item-crea-dialogue">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ formatDate(dialogue.creeLe || dialogue.createdAt) }}</span>
+                              </div> -->
+                            </div>
+                          </div>
                         </div>
                       </div>
                       
-                      <div class="dialogue-content-crea-dialogue">
-                        <div class="dialogue-text-crea-dialogue">
-                          {{ dialogue.texte }}
-                        </div>
-                        <div class="dialogue-meta-crea-dialogue">
-                          <div class="meta-item-crea-dialogue">
-                            <i class="fas fa-sort-numeric-down"></i>
-                            <span>Ordre: {{ dialogue.ordre }}</span>
-                          </div>
-                          <div v-if="dialogue.observation" class="meta-item-crea-dialogue">
-                            <i class="fas fa-sticky-note"></i>
-                            <span>{{ dialogue.observation }}</span>
-                          </div>
-                          <div class="meta-item-crea-dialogue">
-                            <i class="fas fa-calendar"></i>
-                            <span>{{ formatDate(dialogue.creeLe) }}</span>
-                          </div>
-                        </div>
+                      <!-- Bouton "Voir plus" si plus de dialogues que visibleCount -->
+                      <div v-if="sceneGroup.dialogues.length > getVisibleCount(sceneGroup.sceneId)" 
+                           class="see-more-container-crea-dialogue">
+                        <button @click="showMoreDialogues(sceneGroup.sceneId)" class="see-more-btn-crea-dialogue">
+                          <i class="fas fa-chevron-down"></i>
+                          Voir plus ({{ sceneGroup.dialogues.length - getVisibleCount(sceneGroup.sceneId) }} restant{{ sceneGroup.dialogues.length - getVisibleCount(sceneGroup.sceneId) > 1 ? 's' : '' }})
+                        </button>
                       </div>
-                    </div> -->
-
-                     <div v-for="sceneGroup in groupedDialogues" :key="sceneGroup.sceneId" class="scene-group-crea-dialogue">
-      <!-- En-tête de la scène -->
-      <div class="scene-group-header-crea-dialogue">
-        <div class="scene-header-left-crea-dialogue">
-          <h4 class="scene-group-title-crea-dialogue">
-            <i class="fas fa-film"></i>
-            {{ sceneGroup.sceneTitre }}
-          </h4>
-          <div class="scene-stats-crea-dialogue">
-            <span class="total-dialogues-crea-dialogue">
-              <i class="fas fa-comments"></i> {{ sceneGroup.dialogues.length }}
-            </span>
-            <span class="order-range-crea-dialogue" v-if="sceneGroup.dialogues.length > 0">
-              <i class="fas fa-sort-numeric-down"></i> 
-              {{ getOrderRange(sceneGroup.dialogues) }}
-            </span>
-          </div>
-        </div>
-        
-        <div class="scene-header-right-crea-dialogue">
-          <button 
-            v-if="hasMoreDialogues(sceneGroup.dialogues, sceneGroup.sceneId)"
-            @click="toggleSceneExpansion(sceneGroup.sceneId)"
-            class="expand-scene-btn-crea-dialogue"
-          >
-            <i class="fas fa-chevron-down"></i>
-            Voir {{ getRemainingCount(sceneGroup.dialogues, sceneGroup.sceneId) }} de plus
-          </button>
-          
-          <button 
-            v-else-if="isSceneExpanded(sceneGroup.sceneId)"
-            @click="toggleSceneExpansion(sceneGroup.sceneId)"
-            class="collapse-scene-btn-crea-dialogue"
-          >
-            <i class="fas fa-chevron-up"></i>
-            Réduire
-          </button>
-        </div>
-      </div>
-      
-      <!-- Dialogues de la scène -->
-      <div class="dialogues-list-in-scene-crea-dialogue">
-        <div 
-          v-for="dialogue in getVisibleDialogues(sceneGroup.dialogues, sceneGroup.sceneId)" 
-          :key="dialogue.id" 
-          class="dialogue-card-crea-dialogue"
-        >
-          <!-- Indicateur d'ordre -->
-          <div class="dialogue-order-indicator-crea-dialogue">
-            {{ dialogue.ordre }}
-          </div>
-          
-          <div class="dialogue-header-crea-dialogue">
-            <div class="dialogue-info-crea-dialogue">
-              <h4 class="dialogue-title-crea-dialogue">
-                <i class="fas fa-user" v-if="dialogue.personnageNom"></i>
-                <i class="fas fa-book" v-else></i>
-                {{ dialogue.personnageNom || 'Narration' }}
-              </h4>
-            </div>
-            <div class="dialogue-actions-crea-dialogue">
-              <button @click="openDialogueComments(dialogue)" class="btn-comment-crea-dialogue" title="Commentaires">
-                <i class="fas fa-comment"></i>
-                {{ dialogue.commentCount || 0 }}
-              </button>
-              <button @click="editDialogue(dialogue)" class="btn-edit-crea-dialogue" title="Modifier">
-                <i class="fas fa-marker"></i>
-              </button>
-              <button @click="deleteDialogue(dialogue.id)" class="btn-delete-crea-dialogue" title="Supprimer">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          </div>
-          
-          <div class="dialogue-content-crea-dialogue">
-            <div class="dialogue-text-crea-dialogue">
-              {{ dialogue.texte }}
-            </div>
-            <div class="dialogue-meta-crea-dialogue">
-              <div v-if="dialogue.observation" class="meta-item-crea-dialogue">
-                <i class="fas fa-sticky-note"></i>
-                <span class="observation-text-crea-dialogue">{{ dialogue.observation }}</span>
-              </div>
-              <div class="meta-item-crea-dialogue">
-                <i class="fas fa-calendar"></i>
-                <span>{{ formatDate(dialogue.creeLe) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Bouton "Voir plus" en bas de la scène -->
-        <div 
-          v-if="hasMoreDialogues(sceneGroup.dialogues, sceneGroup.sceneId)" 
-          class="scene-footer-crea-dialogue"
-        >
-          <button 
-            @click="toggleSceneExpansion(sceneGroup.sceneId)"
-            class="see-more-btn-crea-dialogue"
-          >
-            <i class="fas fa-chevron-down"></i>
-            Voir {{ getRemainingCount(sceneGroup.dialogues, sceneGroup.sceneId) }} dialogue{{ getRemainingCount(sceneGroup.dialogues, sceneGroup.sceneId) > 1 ? 's' : '' }} supplémentaires
-          </button>
-        </div>
-        
-        <!-- Bouton "Réduire" quand tout est visible -->
-        <div 
-          v-if="isSceneExpanded(sceneGroup.sceneId) && sceneGroup.dialogues.length > visibleDialoguesPerScene" 
-          class="scene-footer-crea-dialogue"
-        >
-          <button 
-            @click="toggleSceneExpansion(sceneGroup.sceneId)"
-            class="see-less-btn-crea-dialogue"
-          >
-            <i class="fas fa-chevron-up"></i>
-            Réduire la liste
-          </button>
-        </div>
-      </div>
-    </div>
-                
-
+                      
+                      <!-- Bouton "Voir moins" si tous les dialogues sont visibles -->
+                      <div v-if="getVisibleCount(sceneGroup.sceneId) > defaultVisibleCount && 
+                                 getVisibleCount(sceneGroup.sceneId) >= sceneGroup.dialogues.length" 
+                           class="see-less-container-crea-dialogue">
+                        <button @click="showLessDialogues(sceneGroup.sceneId)" class="see-less-btn-crea-dialogue">
+                          <i class="fas fa-chevron-up"></i>
+                          Voir moins
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -535,7 +438,7 @@
         <div class="modal-header-crea-dialogue">
           <h3>
             <i class="fas fa-comments"></i>
-            Commentaires - {{ selectedDialogue.personnageNom || 'Narration' }}
+            Commentaires - {{ selectedDialogue.personnageNom || selectedDialogue.personnage?.nom || 'Narration' }}
           </h3>
           <button @click="showDialogueCommentModal = false" class="modal-close-btn-crea-dialogue">
             <i class="fas fa-times"></i>
@@ -555,13 +458,13 @@
           <div class="comments-list-crea-dialogue">
             <div v-for="comment in dialogueComments" :key="comment.id" class="comment-item-crea-dialogue">
               <div class="comment-header-crea-dialogue">
-                <span class="comment-author-crea-dialogue">{{ comment.utilisateurNom }}</span>
-                <span class="comment-date-crea-dialogue">{{ formatDate(comment.creeLe) }}</span>
+                <span class="comment-author-crea-dialogue">{{ comment.utilisateurNom || comment.user?.name || 'Utilisateur' }}</span>
+                <span class="comment-date-crea-dialogue">{{ formatDate(comment.creeLe || comment.createdAt) }}</span>
               </div>
               <div class="comment-content-crea-dialogue">
-                {{ comment.contenu }}
+                {{ comment.contenu || comment.content }}
               </div>
-              <div class="comment-actions-crea-dialogue" v-if="comment.utilisateurId === user.id">
+              <div class="comment-actions-crea-dialogue" v-if="comment.utilisateurId === user.id || comment.userId === user.id">
                 <button @click="deleteDialogueComment(comment.id)" class="delete-comment-btn-crea-dialogue">
                   <i class="fas fa-trash"></i> Supprimer
                 </button>
@@ -582,447 +485,606 @@
         </div>
       </div>
     </div>
+
+     <!-- Modal de confirmation de suppression -->
+      <div v-if="showDeleteModal" class="delete-confirmation-modal-crea-dialogue">
+        <div class="modal-overlay-crea-dialogue" @click="closeDeleteModal"></div>
+        <div class="modal-content-confirm-crea-dialogue">
+          <div class="modal-header-confirm-crea-dialogue">
+            <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+            <button @click="closeDeleteModal" class="close-modal-btn-crea-dialogue">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="modal-body-confirm-crea-dialogue">
+            <div class="warning-icon-crea-dialogue">
+              <i class="fas fa-trash"></i>
+            </div>
+            <p class="warning-text-crea-dialogue">
+              Êtes-vous sûr de vouloir supprimer ce dialogue ?
+            </p>
+            <p class="warning-subtext-crea-dialogue">
+              Cette action est irréversible. Tous les commentaires associés à ce dialogue seront également supprimés.
+            </p>
+          </div>
+          
+          <div class="modal-footer-confirm-crea-dialogue">
+            <button @click="closeDeleteModal" class="cancel-confirm-btn-crea-dialogue">
+              <i class="fas fa-times"></i> Annuler
+            </button>
+            <button @click="executeDeleteDialogue" class="delete-confirm-btn-crea-dialogue" :disabled="isDeleting">
+              <span v-if="isDeleting"><i class="fas fa-spinner fa-spin"></i> Suppression...</span>
+              <span v-else><i class="fas fa-trash"></i> Supprimer définitivement</span>
+            </button>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
   name: 'CreationDialogue',
-  data() {
-    return {
-      user: JSON.parse(localStorage.getItem('user')) || null,
-      activeTab: 'form',
-      formData: {
-        sceneId: '',
-        personnageId: null,
-        texte: '',
-        ordre: 1,
-        observation: ''
-      },
-      isEditing: false,
-      editingId: null,
-      isSubmitting: false,
-      loading: true,
-      error: '',
-      
-      // Données pour les listes
-      scenes: [],
-      personnages: [],
-      dialogues: [],
-      filteredDialogues: [],
-      
-      // Filtres et recherche
-      searchTerm: '',
-      filterSceneId: '',
-      filterPersonnageId: '',
-      
-      // Commentaires
-      showDialogueCommentModal: false,
-      dialogueComments: [],
-      newDialogueComment: '',
-      selectedDialogue: {},
-      
-      // Gestion des ordres
-      existingOrders: [], 
-      suggestedOrder: null,
-      orderError: '',
-      originalOrder: null,
-      
-      // Zones de liste modifiable
-      sceneSearch: '',
-      personnageSearch: '',
-      filterSceneSearch: '',
-      filterPersonnageSearch: '',
-      showSceneSuggestions: false,
-      showPersonnageSuggestions: false,
-      showFilterSceneSuggestions: false,
-      showFilterPersonnageSuggestions: false,
-      filteredScenes: [],
-      filteredPersonnages: [],
-      filteredFilterScenes: [],
-      filteredFilterPersonnages: [],
-
-       visibleDialoguesPerScene: 3, // Nombre de dialogues visibles par défaut
-       expandedScenes: new Set(),
-    };
-  },
-  computed: {
-
-     groupedDialogues() {
-    const dialoguesByScene = {};
-    
-    // Filtrer d'abord les dialogues selon les critères de recherche
-    const filtered = this.dialogues.filter(dialogue => {
-      const matchesSearch = dialogue.texte.toLowerCase().includes(this.searchTerm.toLowerCase());
-      const matchesScene = !this.filterSceneId || dialogue.sceneId === parseInt(this.filterSceneId);
-      const matchesPersonnage = !this.filterPersonnageId || 
-        (this.filterPersonnageId === 'null' && !dialogue.personnageId) || 
-        dialogue.personnageId === parseInt(this.filterPersonnageId);
-      return matchesSearch && matchesScene && matchesPersonnage;
-    });
-    
-    // Trier les dialogues par ordre
-    filtered.sort((a, b) => {
-      // D'abord par scène, puis par ordre
-      if (a.sceneId !== b.sceneId) {
-        return a.sceneId - b.sceneId;
-      }
-      return a.ordre - b.ordre;
-    });
-    
-    // Grouper par scène
-    filtered.forEach(dialogue => {
-      const sceneId = dialogue.sceneId;
-      if (!dialoguesByScene[sceneId]) {
-        dialoguesByScene[sceneId] = {
-          sceneId: sceneId,
-          sceneTitre: dialogue.sceneTitre,
-          dialogues: []
-        };
-      }
-      dialoguesByScene[sceneId].dialogues.push(dialogue);
-    });
-    
-    // Convertir en tableau pour l'affichage
-    return Object.values(dialoguesByScene);
-  },
   
-    getTabIndicatorStyle() {
+  setup() {
+    // Variables réactives
+    const user = ref(JSON.parse(localStorage.getItem('user')) || null);
+    const activeTab = ref('form');
+    const formData = ref({
+      sceneId: '',
+      personnageId: null,
+      texte: '',
+      ordre: 1,
+      observation: ''
+    });
+    const isEditing = ref(false);
+    const editingId = ref(null);
+    const isSubmitting = ref(false);
+    const loading = ref(true);
+    const error = ref('');
+    
+    // Données pour les listes
+    const scenes = ref([]);
+    const personnages = ref([]);
+    const dialogues = ref([]);
+    
+    // Filtres et recherche
+    const searchTerm = ref('');
+    const filterSceneId = ref('');
+    const filterPersonnageId = ref('');
+    
+    // Gestion de l'affichage par scène
+    const visibleDialoguesCount = ref({}); // { sceneId: count }
+    const defaultVisibleCount = ref(5); // Nombre de dialogues visibles par défaut
+    
+    // Commentaires
+    const showDialogueCommentModal = ref(false);
+    const dialogueComments = ref([]);
+    const newDialogueComment = ref('');
+    const selectedDialogue = ref({});
+    
+    // Gestion des ordres
+    const existingOrders = ref([]);
+    const suggestedOrder = ref(null);
+    const orderError = ref('');
+    const originalOrder = ref(null);
+    
+    // Zones de liste modifiable
+    const sceneSearch = ref('');
+    const personnageSearch = ref('');
+    const filterSceneSearch = ref('');
+    const filterPersonnageSearch = ref('');
+    const showSceneSuggestions = ref(false);
+    const showPersonnageSuggestions = ref(false);
+    const showFilterSceneSuggestions = ref(false);
+    const showFilterPersonnageSuggestions = ref(false);
+    const filteredScenes = ref([]);
+    const filteredPersonnages = ref([]);
+    const filteredFilterScenes = ref([]);
+    const filteredFilterPersonnages = ref([]);
+
+    const showDeleteModal = ref(false);
+    const dialogueToDelete = ref(null);
+    const isDeleting = ref(false);
+    
+    // Debug
+    const debugMode = ref(true); 
+        
+    // Computed properties
+    const getTabIndicatorStyle = computed(() => {
       const tabWidth = 100 / 2;
-      const translateX = this.activeTab === 'form' ? 0 : 100;
+      const translateX = activeTab.value === 'form' ? 0 : 100;
       return {
         transform: `translateX(${translateX}%)`,
         width: `${tabWidth}%`
       };
-    },
-    getDialoguesNarration() {
-      return this.dialogues.filter(d => !d.personnageId).length;
-    },
-    getDialoguesAvecPersonnage() {
-      return this.dialogues.filter(d => d.personnageId).length;
-    },
-    filteredDialogues() {
-      return this.dialogues.filter(dialogue => {
-        const matchesSearch = dialogue.texte.toLowerCase().includes(this.searchTerm.toLowerCase());
-        const matchesScene = !this.filterSceneId || dialogue.sceneId === parseInt(this.filterSceneId);
-        const matchesPersonnage = !this.filterPersonnageId || 
-          (this.filterPersonnageId === 'null' && !dialogue.personnageId) || 
-          dialogue.personnageId === parseInt(this.filterPersonnageId);
-        return matchesSearch && matchesScene && matchesPersonnage;
+    });
+    
+    const getDialoguesNarration = computed(() => {
+      return dialogues.value.filter(d => !d.personnageId && !d.personnage).length;
+    });
+    
+    const getDialoguesAvecPersonnage = computed(() => {
+      return dialogues.value.filter(d => d.personnageId || d.personnage).length;
+    });
+    
+    const totalDialoguesCount = computed(() => {
+      return filteredDialogues.value.length;
+    });
+    
+    const filteredDialogues = computed(() => {
+      console.log('Filtering dialogues:', {
+        total: dialogues.value.length,
+        searchTerm: searchTerm.value,
+        filterSceneId: filterSceneId.value,
+        filterPersonnageId: filterPersonnageId.value
       });
-    }
-  },
-  async created() {
-    axios.interceptors.request.use(
-      (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+      
+      return dialogues.value.filter(dialogue => {
+        // Recherche par texte
+        const matchesSearch = !searchTerm.value || 
+          (dialogue.texte && dialogue.texte.toLowerCase().includes(searchTerm.value.toLowerCase()));
+        
+        // Filtre par scène
+        const matchesScene = !filterSceneId.value || 
+          dialogue.sceneId === parseInt(filterSceneId.value) || 
+          (dialogue.scene && dialogue.scene.id === parseInt(filterSceneId.value));
+        
+        // Filtre par personnage
+        let matchesPersonnage = true;
+        if (filterPersonnageId.value) {
+          if (filterPersonnageId.value === 'null') {
+            matchesPersonnage = !dialogue.personnageId && !dialogue.personnage;
+          } else {
+            const personnageId = parseInt(filterPersonnageId.value);
+            matchesPersonnage = dialogue.personnageId === personnageId || 
+              (dialogue.personnage && dialogue.personnage.id === personnageId);
+          }
         }
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-
-    await this.loadScenes();
-    await this.loadPersonnages();
-    await this.loadDialogues();
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  watch: {
-    'formData.sceneId': function(newSceneId) {
-      if (newSceneId) {
-        this.loadExistingOrders();
-      } else {
-        this.existingOrders = [];
-        this.suggestedOrder = null;
-        this.orderError = '';
-      }
-    },
-    scenes: {
-      handler(newVal) {
-        this.filteredScenes = [...newVal];
-        this.filteredFilterScenes = [...newVal];
-      },
-      deep: true
-    },
-    personnages: {
-      handler(newVal) {
-        this.filteredPersonnages = [...newVal];
-        this.filteredFilterPersonnages = [...newVal];
-      },
-      deep: true
-    }
-  },
-  beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
-  },
-  methods: {
-    // Navigation entre onglets
-    goToForm() {
-      this.activeTab = 'form';
-      this.resetForm();
-    },
-    goToList() {
-      this.activeTab = 'list';
-      this.loadDialogues();
-    },
-    handleClickOutside(event) {
+        
+        const matches = matchesSearch && matchesScene && matchesPersonnage;
+        if (matches) {
+          console.log('Dialogue matches:', dialogue);
+        }
+        return matches;
+      });
+    });
+    
+    const groupedDialogues = computed(() => {
+      console.log('Grouping dialogues:', filteredDialogues.value);
+      
+      // Grouper les dialogues par scène
+      const grouped = {};
+      
+      filteredDialogues.value.forEach(dialogue => {
+        // Extraire l'ID de la scène
+        let sceneId;
+        let sceneTitre;
+        
+        if (dialogue.sceneId) {
+          sceneId = dialogue.sceneId;
+          sceneTitre = dialogue.sceneTitre;
+        } else if (dialogue.scene) {
+          sceneId = dialogue.scene.id;
+          sceneTitre = dialogue.scene.titre;
+        } else {
+          console.warn('Dialogue sans scène:', dialogue);
+          return; // Skip les dialogues sans scène
+        }
+        
+        if (!grouped[sceneId]) {
+          grouped[sceneId] = {
+            sceneId: sceneId,
+            sceneTitre: sceneTitre || dialogue.scene?.titre || `Scène ${sceneId}`,
+            dialogues: []
+          };
+        }
+        grouped[sceneId].dialogues.push(dialogue);
+      });
+      
+      // Trier les dialogues dans chaque scène par ordre
+      Object.values(grouped).forEach(group => {
+        group.dialogues.sort((a, b) => {
+          const orderA = a.ordre || 999;
+          const orderB = b.ordre || 999;
+          return orderA - orderB;
+        });
+      });
+      
+      // Convertir en tableau et trier par titre de scène
+      const result = Object.values(grouped).sort((a, b) => 
+        (a.sceneTitre || '').localeCompare(b.sceneTitre || '')
+      );
+      
+      console.log('Grouped result:', result);
+      return result;
+    });
+    
+    // Methods
+    const goToForm = () => {
+      activeTab.value = 'form';
+      resetForm();
+    };
+    
+    const goToList = () => {
+      activeTab.value = 'list';
+      loadDialogues();
+    };
+    
+    const clearFilters = () => {
+      searchTerm.value = '';
+      filterSceneId.value = '';
+      filterPersonnageId.value = '';
+      filterSceneSearch.value = '';
+      filterPersonnageSearch.value = '';
+    };
+    
+    const handleClickOutside = (event) => {
       if (!event.target.closest('.search-container-crea-dialogue')) {
-        this.showSceneSuggestions = false;
-        this.showPersonnageSuggestions = false;
-        this.showFilterSceneSuggestions = false;
-        this.showFilterPersonnageSuggestions = false;
+        showSceneSuggestions.value = false;
+        showPersonnageSuggestions.value = false;
+        showFilterSceneSuggestions.value = false;
+        showFilterPersonnageSuggestions.value = false;
       }
-    },
-    async loadScenes() {
+    };
+    
+    const loadScenes = async () => {
       try {
         const response = await axios.get('/api/scenes');
-        this.scenes = response.data;
+        console.log('Scenes loaded:', response.data);
+        scenes.value = response.data;
       } catch (error) {
         console.error('Erreur lors du chargement des scènes:', error);
-        alert('Erreur lors du chargement des scènes');
+        alert('Erreur lors du chargement des scènes: ' + error.message);
       }
-    },
-    async loadPersonnages() {
+    };
+    
+    const loadPersonnages = async () => {
       try {
         const response = await axios.get('/api/personnages');
-        this.personnages = response.data;
+        console.log('Personnages loaded:', response.data);
+        personnages.value = response.data;
       } catch (error) {
         console.error('Erreur lors du chargement des personnages:', error);
-        alert('Erreur lors du chargement des personnages');
+        alert('Erreur lors du chargement des personnages: ' + error.message);
       }
-    },
-    async loadDialogues() {
-      this.loading = true;
+    };
+    
+    const loadDialogues = async () => {
+      loading.value = true;
       try {
+        console.log('Loading dialogues...');
         const response = await axios.get('/api/dialogues');
-        this.dialogues = response.data;
-        await this.loadCommentCounts();
+        console.log('Dialogues loaded:', response.data);
+        dialogues.value = response.data;
+        
+        // Debug: Afficher le premier dialogue pour vérifier la structure
+        if (dialogues.value.length > 0) {
+          console.log('First dialogue structure:', dialogues.value[0]);
+        }
+        
+        await loadCommentCounts();
+        // Réinitialiser les compteurs visibles
+        visibleDialoguesCount.value = {};
       } catch (error) {
         console.error('Erreur lors du chargement des dialogues:', error);
-        this.error = 'Erreur lors du chargement des dialogues: ' + (error.response?.data?.message || error.message);
+        error.value = 'Erreur lors du chargement des dialogues: ' + (error.response?.data?.message || error.message);
+        alert('Erreur: ' + error.value);
       } finally {
-        this.loading = false;
+        loading.value = false;
       }
-    },
-    async loadExistingOrders() {
-      if (!this.formData.sceneId) return;
+    };
+    
+    const loadExistingOrders = async () => {
+      if (!formData.value.sceneId) return;
       
       try {
-        const response = await axios.get(`/api/dialogues/scene/${this.formData.sceneId}`);
-        this.existingOrders = response.data.map(dialogue => dialogue.ordre);
-        this.calculateSuggestedOrder();
+        const response = await axios.get(`/api/dialogues/scene/${formData.value.sceneId}`);
+        existingOrders.value = response.data.map(dialogue => dialogue.ordre);
+        calculateSuggestedOrder();
       } catch (error) {
         console.error('Erreur lors du chargement des ordres existants:', error);
       }
-    },
-    calculateSuggestedOrder() {
-      if (this.existingOrders.length === 0) {
-        this.suggestedOrder = 1;
+    };
+    
+    const calculateSuggestedOrder = () => {
+      if (existingOrders.value.length === 0) {
+        suggestedOrder.value = 1;
       } else {
-        const maxOrder = Math.max(...this.existingOrders);
-        this.suggestedOrder = maxOrder + 1;
+        const maxOrder = Math.max(...existingOrders.value);
+        suggestedOrder.value = maxOrder + 1;
       }
       
-      if (!this.isEditing) {
-        this.formData.ordre = this.suggestedOrder;
+      if (!isEditing.value) {
+        formData.value.ordre = suggestedOrder.value;
       }
-    },
-    validateOrder() {
-      if (!this.formData.ordre) {
-        this.orderError = 'L\'ordre est requis';
+    };
+    
+    const validateOrder = () => {
+      if (!formData.value.ordre) {
+        orderError.value = 'L\'ordre est requis';
         return;
       }
       
-      if (this.formData.ordre < 1) {
-        this.orderError = 'L\'ordre doit être un nombre positif';
+      if (formData.value.ordre < 1) {
+        orderError.value = 'L\'ordre doit être un nombre positif';
         return;
       }
       
-      if (this.existingOrders.includes(this.formData.ordre) && 
-          (!this.isEditing || this.formData.ordre !== this.originalOrder)) {
-        this.orderError = `L'ordre ${this.formData.ordre} existe déjà dans cette scène`;
+      if (existingOrders.value.includes(formData.value.ordre) && 
+          (!isEditing.value || formData.value.ordre !== originalOrder.value)) {
+        orderError.value = `L'ordre ${formData.value.ordre} existe déjà dans cette scène`;
         return;
       }
       
-      this.orderError = '';
-    },
-    useSuggestedOrder() {
-      this.formData.ordre = this.suggestedOrder;
-      this.validateOrder();
-    },
-    async submitForm() {
-      this.validateOrder();
-      
-      if (this.orderError) {
-        alert('Veuillez corriger les erreurs avant de soumettre');
+      orderError.value = '';
+    };
+    
+    const useSuggestedOrder = () => {
+      formData.value.ordre = suggestedOrder.value;
+      validateOrder();
+    };
+    
+    const submitForm = async () => {
+      // Valider les champs obligatoires
+      if (!formData.value.sceneId) {
+        alert('Veuillez sélectionner une scène');
         return;
       }
       
-      this.isSubmitting = true;
+      if (!formData.value.texte || formData.value.texte.trim() === '') {
+        alert('Le texte du dialogue est obligatoire');
+        return;
+      }
+      
+      if (!formData.value.ordre || formData.value.ordre < 1) {
+        alert('L\'ordre doit être un nombre positif');
+        return;
+      }
+      
+      validateOrder();
+      
+      if (orderError.value) {
+        alert(orderError.value);
+        return;
+      }
+      
+      isSubmitting.value = true;
+      error.value = '';
+      
       try {
         const payload = {
-          ...this.formData,
-          sceneId: parseInt(this.formData.sceneId),
-          personnageId: this.formData.personnageId ? parseInt(this.formData.personnageId) : null,
-          ordre: parseInt(this.formData.ordre)
+          sceneId: parseInt(formData.value.sceneId),
+          personnageId: formData.value.personnageId ? parseInt(formData.value.personnageId) : null,
+          texte: formData.value.texte.trim(),
+          ordre: parseInt(formData.value.ordre),
+          observation: formData.value.observation ? formData.value.observation.trim() : null
         };
         
-        if (this.isEditing) {
-          await axios.put(`/api/dialogues/${this.editingId}`, payload);
-          alert('Dialogue modifié avec succès!');
+        console.log('Submitting dialogue:', payload);
+        
+        if (isEditing.value) {
+          const response = await axios.put(`/api/dialogues/${editingId.value}`, payload, {
+            headers: {
+              'X-User-Id': user.value.id
+            }
+          });
+          console.log('Update response:', response.data);
         } else {
-          await axios.post('/api/dialogues', payload);
-          alert('Dialogue créé avec succès!');
+          const response = await axios.post('/api/dialogues', payload, {
+            headers: {
+              'X-User-Id': user.value.id
+            }
+          });
+          console.log('Create response:', response.data);
         }
         
-        this.resetForm();
-        await this.loadDialogues();
-        this.activeTab = 'list';
+        resetForm();
+        await loadDialogues();
+        activeTab.value = 'list';
       } catch (error) {
         console.error('Erreur lors de la sauvegarde du dialogue:', error);
+        console.error('Error details:', error.response);
         
-        if (error.response?.status === 400 && 
-            error.response?.data?.message?.includes('ordre') &&
-            error.response?.data?.message?.includes('existe')) {
-          this.orderError = 'Cet ordre existe déjà dans la scène';
-          alert('Erreur de validation: ' + this.orderError);
-          await this.loadExistingOrders();
+        if (error.response?.status === 400) {
+          const errorMessage = error.response?.data?.message || error.response?.data || 'Erreur de validation';
+          error.value = errorMessage;
+          alert('Erreur: ' + errorMessage);
+          
+          // Recharger les ordres existants si erreur d'ordre
+          if (errorMessage.includes('ordre') || errorMessage.includes('existe')) {
+            await loadExistingOrders();
+          }
         } else {
-          this.error = 'Erreur: ' + (error.response?.data?.message || error.message);
+          error.value = 'Erreur: ' + (error.response?.data?.message || error.message);
+          alert('Erreur lors de l\'opération: ' + error.value);
         }
       } finally {
-        this.isSubmitting = false;
+        isSubmitting.value = false;
       }
-    }, 
-    editDialogue(dialogue) {
-      this.formData = {
-        sceneId: dialogue.sceneId.toString(),
-        personnageId: dialogue.personnageId ? dialogue.personnageId.toString() : null,
+    };
+    
+    const editDialogue = (dialogue) => {
+      console.log('Editing dialogue:', dialogue);
+      
+      formData.value = {
+        sceneId: (dialogue.sceneId || dialogue.scene?.id || '').toString(),
+        personnageId: (dialogue.personnageId || dialogue.personnage?.id) ? 
+          (dialogue.personnageId || dialogue.personnage.id).toString() : null,
         texte: dialogue.texte,
         ordre: dialogue.ordre,
         observation: dialogue.observation || ''
       };
-      this.isEditing = true;
-      this.editingId = dialogue.id;
-      this.originalOrder = dialogue.ordre;
+      isEditing.value = true;
+      editingId.value = dialogue.id;
+      originalOrder.value = dialogue.ordre;
       
-      this.sceneSearch = this.getSceneName(dialogue.sceneId);
-      if (dialogue.personnageId) {
-        this.personnageSearch = this.getPersonnageName(dialogue.personnageId);
+      sceneSearch.value = getSceneName(dialogue.sceneId || dialogue.scene?.id);
+      if (dialogue.personnageId || dialogue.personnage) {
+        personnageSearch.value = getPersonnageName(dialogue.personnageId || dialogue.personnage?.id);
       } else {
-        this.personnageSearch = '';
+        personnageSearch.value = '';
       }
       
-      this.loadExistingOrders();
-      this.activeTab = 'form';
-    },
-    async deleteDialogue(dialogueId) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer ce dialogue ?')) {
-        return;
+      loadExistingOrders();
+      activeTab.value = 'form';
+    };
+
+
+    const confirmDeleteDialogue = (dialogue) => {
+      dialogueToDelete.value = dialogue;
+      showDeleteModal.value = true;
+    };
+
+    const closeDeleteModal = () => {
+      showDeleteModal.value = false;
+      dialogueToDelete.value = null;
+      isDeleting.value = false;
+    };
+
+const executeDeleteDialogue = async () => {
+  if (!dialogueToDelete.value) return;
+  
+  isDeleting.value = true;
+  
+  try {
+    // Ajoutez l'en-tête X-User-Id
+    await axios.delete(`/api/dialogues/${dialogueToDelete.value.id}`, {
+      headers: {
+        'X-User-Id': user.value.id
       }
-      
-      try {
-        await axios.delete(`/api/dialogues/${dialogueId}`);
-        await this.loadDialogues();
-        alert('Dialogue supprimé avec succès!');
-      } catch (error) {
-        console.error('Erreur lors de la suppression du dialogue:', error);
-        alert('Erreur: ' + (error.response?.data?.message || error.message));
-      }
-    },
-    resetForm() {
-      this.formData = {
+    });
+    
+    await loadDialogues();
+    closeDeleteModal();
+    
+    // Notification de succès
+    if (typeof showNotification === 'function') {
+      showNotification('Dialogue supprimé avec succès', 'success');
+    }
+  } catch (error) {
+    console.error('Erreur lors de la suppression du dialogue:', error);
+    
+    // Affichez plus de détails sur l'erreur
+    if (error.response?.data) {
+      console.error('Détails de l\'erreur:', error.response.data);
+    }
+    
+    // Notification d'erreur
+    if (typeof showNotification === 'function') {
+      showNotification('Erreur lors de la suppression du dialogue', 'error');
+    } else {
+      alert('Erreur lors de la suppression du dialogue: ' + (error.response?.data?.message || error.message));
+    }
+    isDeleting.value = false;
+  }
+};
+        
+    
+    const resetForm = () => {
+      formData.value = {
         sceneId: '',
         personnageId: null,
         texte: '',
         ordre: 1,
         observation: ''
       };
-      this.sceneSearch = '';
-      this.personnageSearch = '';
-      this.isEditing = false;
-      this.editingId = null;
-      this.originalOrder = null;
-      this.existingOrders = [];
-      this.suggestedOrder = null;
-      this.orderError = '';
-      this.showSceneSuggestions = false;
-      this.showPersonnageSuggestions = false;
-      this.error = '';
-    },
-    formatDate(dateString) {
-      if (!dateString) return '';
-      return new Date(dateString).toLocaleDateString('fr-FR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    },
-    async openDialogueComments(dialogue) {
-      this.selectedDialogue = dialogue;
-      await this.loadDialogueComments(dialogue.id);
-      this.showDialogueCommentModal = true;
-    },
-    async loadDialogueComments(dialogueId) {
+      sceneSearch.value = '';
+      personnageSearch.value = '';
+      isEditing.value = false;
+      editingId.value = null;
+      originalOrder.value = null;
+      existingOrders.value = [];
+      suggestedOrder.value = null;
+      orderError.value = '';
+      showSceneSuggestions.value = false;
+      showPersonnageSuggestions.value = false;
+      error.value = '';
+    };
+    
+    const formatDate = (dateString) => {
+      if (!dateString) return 'Date inconnue';
+      try {
+        return new Date(dateString).toLocaleDateString('fr-FR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch (e) {
+        return 'Date invalide';
+      }
+    };
+    
+    const openDialogueComments = async (dialogue) => {
+      selectedDialogue.value = dialogue;
+      await loadDialogueComments(dialogue.id);
+      showDialogueCommentModal.value = true;
+    };
+    
+    const loadDialogueComments = async (dialogueId) => {
       try {
         const response = await axios.get(`/api/dialogues/commentaires/dialogue/${dialogueId}`);
-        this.dialogueComments = response.data;
+        dialogueComments.value = response.data;
       } catch (error) {
         console.error('Erreur lors du chargement des commentaires de dialogue:', error);
-        this.dialogueComments = [];
-        alert('Erreur lors du chargement des commentaires');
+        dialogueComments.value = [];
+        // Ne pas alerter si c'est juste qu'il n'y a pas de commentaires
+        if (error.response?.status !== 404) {
+          alert('Erreur lors du chargement des commentaires: ' + error.message);
+        }
       }
-    },
-    async addDialogueComment() {
-      if (!this.newDialogueComment.trim()) {
+    };
+    
+    const addDialogueComment = async () => {
+      if (!newDialogueComment.value.trim()) {
         alert('Le commentaire ne peut pas être vide');
         return;
       }
       
       try {
         await axios.post('/api/dialogues/commentaires', {
-          contenu: this.newDialogueComment,
-          dialogueId: this.selectedDialogue.id
+          contenu: newDialogueComment.value,
+          dialogueId: selectedDialogue.value.id
         }, {
           headers: {
-            'X-User-Id': this.user.id
+            'X-User-Id': user.value.id
           }
         });
         
-        this.newDialogueComment = '';
-        await this.loadDialogueComments(this.selectedDialogue.id);
-        await this.loadDialogues();
+        newDialogueComment.value = '';
+        await loadDialogueComments(selectedDialogue.value.id);
+        await loadDialogues();
         alert('Commentaire ajouté avec succès!');
       } catch (error) {
         console.error('Erreur lors de l\'ajout du commentaire:', error);
         alert('Erreur lors de l\'ajout du commentaire: ' + (error.response?.data?.message || error.message));
       }
-    },
-    async deleteDialogueComment(commentId) {
+    };
+    
+    const deleteDialogueComment = async (commentId) => {
       if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')) {
         return;
       }
       
       try {
         await axios.delete(`/api/dialogues/commentaires/${commentId}`);
-        await this.loadDialogueComments(this.selectedDialogue.id);
-        await this.loadDialogues();
+        await loadDialogueComments(selectedDialogue.value.id);
+        await loadDialogues();
         alert('Commentaire supprimé avec succès!');
       } catch (error) {
         console.error('Erreur lors de la suppression du commentaire:', error);
         alert('Erreur lors de la suppression du commentaire: ' + (error.response?.data?.message || error.message));
       }
-    },
-    async loadCommentCounts() {
-      for (let dialogue of this.dialogues) {
+    };
+    
+    const loadCommentCounts = async () => {
+      for (let dialogue of dialogues.value) {
         try {
           const response = await axios.get(`/api/dialogues/commentaires/dialogue/${dialogue.id}/count`);
           dialogue.commentCount = response.data;
@@ -1031,147 +1093,317 @@ export default {
           dialogue.commentCount = 0;
         }
       }
-    },
+    };
+    
     // Méthodes pour les zones de liste modifiable
-    filterScenes() {
-      const searchTerm = this.sceneSearch.toLowerCase();
+    const filterScenes = () => {
+      const searchTerm = sceneSearch.value.toLowerCase();
       if (!searchTerm) {
-        this.filteredScenes = [...this.scenes];
+        filteredScenes.value = [...scenes.value];
         return;
       }
-      this.filteredScenes = this.scenes.filter(scene => 
+      filteredScenes.value = scenes.value.filter(scene => 
         scene.titre.toLowerCase().includes(searchTerm) || 
-        scene.sequenceTitre.toLowerCase().includes(searchTerm)
+        (scene.sequenceTitre && scene.sequenceTitre.toLowerCase().includes(searchTerm)) ||
+        (scene.sequence && scene.sequence.titre && scene.sequence.titre.toLowerCase().includes(searchTerm))
       );
-    },
-    filterPersonnages() {
-      const searchTerm = this.personnageSearch.toLowerCase();
+    };
+    
+    const filterPersonnages = () => {
+      const searchTerm = personnageSearch.value.toLowerCase();
       if (!searchTerm) {
-        this.filteredPersonnages = [...this.personnages];
+        filteredPersonnages.value = [...personnages.value];
         return;
       }
-      this.filteredPersonnages = this.personnages.filter(personnage => 
+      filteredPersonnages.value = personnages.value.filter(personnage => 
         personnage.nom.toLowerCase().includes(searchTerm) || 
-        personnage.projetTitre.toLowerCase().includes(searchTerm)
+        (personnage.projetTitre && personnage.projetTitre.toLowerCase().includes(searchTerm)) ||
+        (personnage.projet && personnage.projet.titre && personnage.projet.titre.toLowerCase().includes(searchTerm))
       );
-    },
-    filterFilterScenes() {
-      const searchTerm = this.filterSceneSearch.toLowerCase();
+    };
+    
+    const filterFilterScenes = () => {
+      const searchTerm = filterSceneSearch.value.toLowerCase();
       if (!searchTerm) {
-        this.filteredFilterScenes = [...this.scenes];
+        filteredFilterScenes.value = [...scenes.value];
         return;
       }
-      this.filteredFilterScenes = this.scenes.filter(scene => 
+      filteredFilterScenes.value = scenes.value.filter(scene => 
         scene.titre.toLowerCase().includes(searchTerm)
       );
-    },
-    filterFilterPersonnages() {
-      const searchTerm = this.filterPersonnageSearch.toLowerCase();
+    };
+    
+    const filterFilterPersonnages = () => {
+      const searchTerm = filterPersonnageSearch.value.toLowerCase();
       if (!searchTerm) {
-        this.filteredFilterPersonnages = [...this.personnages];
+        filteredFilterPersonnages.value = [...personnages.value];
         return;
       }
-      this.filteredFilterPersonnages = this.personnages.filter(personnage => 
+      filteredFilterPersonnages.value = personnages.value.filter(personnage => 
         personnage.nom.toLowerCase().includes(searchTerm)
       );
-    },
-    selectScene(scene) {
-      this.formData.sceneId = scene.idScene;
-      this.sceneSearch = scene.titre;
-      this.showSceneSuggestions = false;
-    },
-    selectPersonnage(personnage) {
-      this.formData.personnageId = personnage.id;
-      this.personnageSearch = personnage.nom;
-      this.showPersonnageSuggestions = false;
-    },
-    selectFilterScene(scene) {
-      this.filterSceneId = scene.idScene;
-      this.filterSceneSearch = scene.titre;
-      this.showFilterSceneSuggestions = false;
-    },
-    selectFilterPersonnage(personnageId) {
-      this.filterPersonnageId = personnageId;
+    };
+    
+    const selectScene = (scene) => {
+      formData.value.sceneId = scene.id || scene.idScene;
+      sceneSearch.value = scene.titre;
+      showSceneSuggestions.value = false;
+    };
+    
+    const selectPersonnage = (personnage) => {
+      formData.value.personnageId = personnage.id;
+      personnageSearch.value = personnage.nom;
+      showPersonnageSuggestions.value = false;
+    };
+    
+    const selectFilterScene = (scene) => {
+      filterSceneId.value = scene.id || scene.idScene;
+      filterSceneSearch.value = scene.titre;
+      showFilterSceneSuggestions.value = false;
+    };
+    
+    const selectFilterPersonnage = (personnageId) => {
+      filterPersonnageId.value = personnageId;
       if (personnageId === 'null') {
-        this.filterPersonnageSearch = 'Narration';
+        filterPersonnageSearch.value = 'Narration';
       } else {
-        const personnage = this.personnages.find(p => p.id === parseInt(personnageId));
-        this.filterPersonnageSearch = personnage ? personnage.nom : '';
+        const personnage = personnages.value.find(p => p.id === parseInt(personnageId));
+        filterPersonnageSearch.value = personnage ? personnage.nom : '';
       }
-      this.showFilterPersonnageSuggestions = false;
-    },
-    clearFilterScene() {
-      this.filterSceneId = '';
-      this.filterSceneSearch = '';
-      this.showFilterSceneSuggestions = false;
-    },
-    clearFilterPersonnage() {
-      this.filterPersonnageId = '';
-      this.filterPersonnageSearch = '';
-      this.showFilterPersonnageSuggestions = false;
-    },
-    hideSceneSuggestions() {
+      showFilterPersonnageSuggestions.value = false;
+    };
+    
+    const clearFilterScene = () => {
+      filterSceneId.value = '';
+      filterSceneSearch.value = '';
+      showFilterSceneSuggestions.value = false;
+    };
+    
+    const clearFilterPersonnage = () => {
+      filterPersonnageId.value = '';
+      filterPersonnageSearch.value = '';
+      showFilterPersonnageSuggestions.value = false;
+    };
+    
+    const hideSceneSuggestions = () => {
       setTimeout(() => {
-        this.showSceneSuggestions = false;
+        showSceneSuggestions.value = false;
       }, 200);
-    },
-    hidePersonnageSuggestions() {
+    };
+    
+    const hidePersonnageSuggestions = () => {
       setTimeout(() => {
-        this.showPersonnageSuggestions = false;
+        showPersonnageSuggestions.value = false;
       }, 200);
-    },
-    hideFilterSceneSuggestions() {
+    };
+    
+    const hideFilterSceneSuggestions = () => {
       setTimeout(() => {
-        this.showFilterSceneSuggestions = false;
+        showFilterSceneSuggestions.value = false;
       }, 200);
-    },
-    hideFilterPersonnageSuggestions() {
+    };
+    
+    const hideFilterPersonnageSuggestions = () => {
       setTimeout(() => {
-        this.showFilterPersonnageSuggestions = false;
+        showFilterPersonnageSuggestions.value = false;
       }, 200);
-    },
-    getSceneName(id) {
-      const scene = this.scenes.find(s => s.idScene === parseInt(id));
+    };
+    
+    const getSceneName = (id) => {
+      if (!id) return '';
+      const scene = scenes.value.find(s => s.id === parseInt(id) || s.idScene === parseInt(id));
       return scene ? scene.titre : '';
-    },
-    getPersonnageName(id) {
-      const personnage = this.personnages.find(p => p.id === parseInt(id));
+    };
+    
+    const getPersonnageName = (id) => {
+      if (!id) return '';
+      const personnage = personnages.value.find(p => p.id === parseInt(id));
       return personnage ? personnage.nom : '';
-    },
-    toggleSceneExpansion(sceneId) {
-      if (this.expandedScenes.has(sceneId)) {
-        this.expandedScenes.delete(sceneId);
+    };
+    
+    // Méthodes pour gérer l'affichage des dialogues
+    const getVisibleCount = (sceneId) => {
+      return visibleDialoguesCount.value[sceneId] || defaultVisibleCount.value;
+    };
+    
+    const getVisibleDialogues = (sceneGroup) => {
+      const visibleCount = getVisibleCount(sceneGroup.sceneId);
+      return sceneGroup.dialogues.slice(0, visibleCount);
+    };
+    
+    const showMoreDialogues = (sceneId) => {
+      const currentCount = getVisibleCount(sceneId);
+      // Utilisation correcte pour Vue 3 Composition API
+      visibleDialoguesCount.value = {
+        ...visibleDialoguesCount.value,
+        [sceneId]: currentCount + defaultVisibleCount.value
+      };
+    };
+    
+    const showLessDialogues = (sceneId) => {
+      visibleDialoguesCount.value = {
+        ...visibleDialoguesCount.value,
+        [sceneId]: defaultVisibleCount.value
+      };
+    };
+    
+    // Initialisation
+    onMounted(async () => {
+      // Configuration de l'intercepteur axios
+      axios.interceptors.request.use(
+        (config) => {
+          const token = localStorage.getItem('token');
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+          return config;
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      );
+
+      await loadScenes();
+      await loadPersonnages();
+      await loadDialogues();
+      document.addEventListener('click', handleClickOutside);
+    });
+    
+    // Nettoyage
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', handleClickOutside);
+    });
+    
+    // Watchers
+    watch(() => formData.value.sceneId, (newSceneId) => {
+      if (newSceneId) {
+        loadExistingOrders();
       } else {
-        this.expandedScenes.add(sceneId);
+        existingOrders.value = [];
+        suggestedOrder.value = null;
+        orderError.value = '';
       }
-    },
-     isSceneExpanded(sceneId) {
-    return this.expandedScenes.has(sceneId);
-  }, 
-  getVisibleDialogues(sceneDialogues, sceneId) {
-    if (this.isSceneExpanded(sceneId)) {
-      return sceneDialogues;
-    }
-    return sceneDialogues.slice(0, this.visibleDialoguesPerScene);
-  },
-  
-  hasMoreDialogues(sceneDialogues, sceneId) {
-    return sceneDialogues.length > this.visibleDialoguesPerScene && 
-           !this.isSceneExpanded(sceneId);
-  },
-  getRemainingCount(sceneDialogues, sceneId) {
-    return sceneDialogues.length - this.visibleDialoguesPerScene;
-  },
-  getOrderRange(dialogues) {
-    if (dialogues.length === 0) return 'Aucun';
+    });
     
-    const orders = dialogues.map(d => d.ordre).sort((a, b) => a - b);
-    const min = orders[0];
-    const max = orders[orders.length - 1];
+    watch(() => scenes.value, (newVal) => {
+      filteredScenes.value = [...newVal];
+      filteredFilterScenes.value = [...newVal];
+    }, { deep: true });
     
-    return min === max ? `Ordre ${min}` : `Ordres ${min}-${max}`;
-  },
+    watch(() => personnages.value, (newVal) => {
+      filteredPersonnages.value = [...newVal];
+      filteredFilterPersonnages.value = [...newVal];
+    }, { deep: true });
+    
+    watch(searchTerm, (newVal) => {
+      console.log('Search term changed:', newVal);
+    });
+    
+    watch(filterSceneId, (newVal) => {
+      console.log('Scene filter changed:', newVal);
+    });
+    
+    watch(filterPersonnageId, (newVal) => {
+      console.log('Personnage filter changed:', newVal);
+    });
+    
+    return {
+      //variables
+      user,
+      activeTab,
+      formData,
+      isEditing,
+      editingId,
+      isSubmitting,
+      loading,
+      error,
+      scenes,
+      personnages,
+      dialogues,
+      searchTerm,
+      filterSceneId,
+      filterPersonnageId,
+      visibleDialoguesCount,
+      defaultVisibleCount,
+      showDialogueCommentModal,
+      dialogueComments,
+      newDialogueComment,
+      selectedDialogue,
+      existingOrders,
+      suggestedOrder,
+      orderError,
+      originalOrder,
+      sceneSearch,
+      personnageSearch,
+      filterSceneSearch,
+      filterPersonnageSearch,
+      showSceneSuggestions,
+      showPersonnageSuggestions,
+      showFilterSceneSuggestions,
+      showFilterPersonnageSuggestions,
+      filteredScenes,
+      filteredPersonnages,
+      filteredFilterScenes,
+      filteredFilterPersonnages,
+      debugMode,
+      showDeleteModal,
+      dialogueToDelete,
+      isDeleting,
+      
+      // Computed
+      getTabIndicatorStyle,
+      getDialoguesNarration,
+      getDialoguesAvecPersonnage,
+      totalDialoguesCount,
+      filteredDialogues,
+      groupedDialogues,
+      
+      // Methods
+      goToForm,
+      goToList,
+      clearFilters,
+      handleClickOutside,
+      loadScenes,
+      loadPersonnages,
+      loadDialogues,
+      loadExistingOrders,
+      calculateSuggestedOrder,
+      validateOrder,
+      useSuggestedOrder,
+      submitForm,
+      editDialogue,
+      resetForm,
+      formatDate,
+      openDialogueComments,
+      loadDialogueComments,
+      addDialogueComment,
+      deleteDialogueComment,
+      loadCommentCounts,
+      filterScenes,
+      filterPersonnages,
+      filterFilterScenes,
+      filterFilterPersonnages,
+      selectScene,
+      selectPersonnage,
+      selectFilterScene,
+      selectFilterPersonnage,
+      clearFilterScene,
+      clearFilterPersonnage,
+      hideSceneSuggestions,
+      hidePersonnageSuggestions,
+      hideFilterSceneSuggestions,
+      hideFilterPersonnageSuggestions,
+      getSceneName,
+      getPersonnageName,
+      getVisibleCount,
+      getVisibleDialogues,
+      showMoreDialogues,
+      showLessDialogues,
+      confirmDeleteDialogue,
+      closeDeleteModal,
+      executeDeleteDialogue,
+      deleteDialogue: executeDeleteDialogue
+    };
   }
 };
 </script>
-

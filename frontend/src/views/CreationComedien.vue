@@ -130,7 +130,7 @@
                   <!-- Ligne 1 : Nom + Âge -->
                   <div class="form-row-crea-comedien">
                     <div class="form-group-crea-comedien">
-                      <label for="nom">Nom du comédien *</label>
+                      <label for="nom">Nom du comédien</label>
                       <input
                         type="text"
                         id="nom"
@@ -156,7 +156,7 @@
                   <!-- Ligne 2 : Email + Projet -->
                   <div class="form-row-crea-comedien">
                     <div class="form-group-crea-comedien">
-                      <label for="email">Email *</label>
+                      <label for="email">Email</label>
                       <input
                         type="email"
                         id="email"
@@ -169,7 +169,7 @@
 
                     <!-- Sélection du projet avec recherche -->
                     <div class="form-group-crea-comedien">
-                      <label for="projetSearch">Projet *</label>
+                      <label for="projetSearch">Projet</label>
                       <div class="search-container-crea-comedien">
                         <input
                           type="text"
