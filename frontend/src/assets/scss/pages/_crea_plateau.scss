@@ -1,10 +1,9 @@
-// _creation-plateau.scss – Style identique aux autres composants
+// _crea_plateau.scss – Modifié pour cohérence avec _crea_lieu.scss
 @import '../base/variables';
 
 .app-wrapper-global-crea-plateau {
   display: flex;
   min-height: 100vh;
-
 }
 
 // =============================================
@@ -12,26 +11,38 @@
 // =============================================
 .creation-sidebar-crea-plateau {
   position: fixed;
+  top: 60px; /* Modifié de 80px à 60px pour cohérence */
   left: 0;
-  top: 80px;
   width: 280px;
-  height: calc(100vh - 80px);
-  background: $color-background;
-  padding: $spacing-md;
-  box-sizing: border-box;
-  z-index: $z-index-sticky;
+  height: calc(100vh - 50px); /* Modifié pour cohérence */
+  z-index: $z-index-fixed - 1; /* Modifié pour cohérence */
   overflow-y: auto;
-  border-right: 1px solid $color-border;
-  box-shadow: $shadow-md;
+  padding: $padding-lg; /* Modifié de $spacing-md à $padding-lg */
+  background: rgba($color-border, 0.1); /* Ajouté pour cohérence */
+  box-sizing: border-box;
+  border: none !important; /* Ajouté pour cohérence */
+  box-shadow: $shadow-accent; /* Modifié de $shadow-md à $shadow-accent */
+  border-radius: 20px; /* Ajouté pour cohérence */
+
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none; /* Ajouté pour cohérence */
+  }
 
   .sidebar-header-crea-plateau {
     margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm; /* Ajouté pour cohérence */
 
     .sidebar-title-crea-plateau {
       @include typography-playfair-h4;
       color: $color-text-primary;
-      margin: 0 0 $gap-xs 0;
-      font-size: calc(#{$font-size-h4} - 2px);
+      margin: 0 0 $gap-xs 0; /* Ajouté pour cohérence */
+      font-size: calc(#{$font-size-h4} - 2px); /* Ajouté pour cohérence */
     }
 
     .sidebar-subtitle-crea-plateau {
@@ -45,8 +56,8 @@
     margin-bottom: $spacing-md;
     background: $color-background-alt;
     border-radius: $border-radius-xs;
-    padding: $padding-sm;
-    box-shadow: $shadow-hover;
+    padding: $padding-sm; /* Modifié de $padding-sm (identique) */
+    box-shadow: $shadow-hover; /* Ajouté pour cohérence */
 
     .section-title-crea-plateau {
       @include typography-p4;
@@ -73,6 +84,7 @@
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
+    font-weight: $font-weight-semibold; /* Ajouté pour cohérence */
     color: $color-text-secondary;
     cursor: pointer;
     transition: $transition-fast;
@@ -88,9 +100,8 @@
     }
 
     &.active {
-      background: $color-primary;
-      border-color: $color-primary;
-      color: $color-text-light;
+      background: $color-tertiary-dark; /* Modifié de $color-primary à $color-tertiary-dark */
+      color: $color-text-light; /* Modifié pour cohérence */
     }
 
     &:focus-visible {
@@ -173,7 +184,7 @@
   flex: 1;
   margin-left: 280px;
   min-height: 100vh;
-  background: none;
+  background: none; /* Ajouté pour cohérence */
 }
 
 .creation-main-content-crea-plateau {
@@ -378,6 +389,33 @@
   &.full-width {
     grid-column: 1 / -1;
   }
+  
+  // Ajoutez ce style pour les champs de formulaire standards comme dans _crea_lieu.scss
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  select {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+
+    &:hover {
+      border-color: $color-border-dark;
+    }
+  }
 }
 
 // =============================================
@@ -520,6 +558,10 @@
   padding-top: $spacing-sm;
   border-top: 1px solid $color-border;
 
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column; /* Ajouté pour cohérence */
+  }
+
   .submit-btn-crea-plateau {
     padding: $gap-sm $spacing-md;
     border: none;
@@ -535,6 +577,11 @@
     min-width: 160px;
     background: $color-primary;
     color: $color-text-light;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto; /* Ajouté pour cohérence */
+      width: 100%; /* Ajouté pour cohérence */
+    }
 
     &:hover:not(:disabled) {
       background: $color-primary-dark;
@@ -556,8 +603,8 @@
 
   .cancel-btn-crea-plateau {
     padding: $gap-sm $spacing-md;
-    background: $color-error;
-    border: none;
+    background: transparent; /* Modifié de $color-error à transparent */
+    border: 1px solid $color-border; /* Ajouté pour cohérence */
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     font-weight: $font-weight-semibold;
@@ -566,10 +613,12 @@
     display: flex;
     align-items: center;
     gap: $gap-xs;
-    color: $color-text-light;
+    color: $color-text-secondary; /* Modifié pour cohérence */
 
     &:hover {
-      background: $color-secondary-dark;
+      background: $color-surface-hover; /* Modifié pour cohérence */
+      border-color: $color-primary; /* Ajouté pour cohérence */
+      color: $color-primary; /* Ajouté pour cohérence */
     }
   }
 }
@@ -631,7 +680,7 @@
       height: 42px;
       padding: 0 $padding-md 0 ($padding-md + $padding-xs);
       border: 1px solid $color-border;
-      border-radius: $border-radius-pill;
+      border-radius: $border-radius-xs; /* Modifié de $border-radius-pill à $border-radius-xs */
       background: $color-background-alt;
       font-size: $font-size-p3;
       color: $color-text-primary;
@@ -764,7 +813,10 @@
     align-items: center;
     justify-content: center;
     transition: $transition-fast;
-    font-size: $font-size-p4;
+
+    &:hover {
+      transform: scale(1.1); /* Ajouté pour cohérence */
+    }
   }
 
   .btn-edit-crea-plateau {
@@ -804,16 +856,13 @@
   @include typography-p4;
   color: $color-text-secondary;
   display: flex;
-  align-items: flex-start;
+  align-items: center; /* Modifié de flex-start à center pour cohérence */
   gap: $gap-xs;
-  line-height: 1.4;
 
   i {
     color: $color-primary;
     width: 14px;
     text-align: center;
-    margin-top: 2px;
-    flex-shrink: 0;
   }
 
   strong {
@@ -913,10 +962,6 @@
   .plateaux-grid-crea-plateau {
     grid-template-columns: 1fr;
   }
-  
-  .form-actions-crea-plateau {
-    flex-direction: column;
-  }
 }
 
 // Amélioration de l'accessibilité
@@ -924,6 +969,7 @@
   .sidebar-btn-crea-plateau,
   .search-input-crea-plateau,
   .submit-btn-crea-plateau,
+  .cancel-btn-crea-plateau, /* Ajouté pour cohérence */
   .tab-btn-crea-plateau,
   .tab-indicator-crea-plateau,
   .plateau-card-crea-plateau,
@@ -944,6 +990,3 @@
     animation: none;
   }
 }
-
-
-
