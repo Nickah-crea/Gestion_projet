@@ -101,12 +101,6 @@
     <div class="creation-body-crea-plateau">
       <div class="creation-main-content-crea-plateau">
         
-        <!-- En-tête principal -->
-        <!-- <div class="main-header-crea-plateau">
-          <h1 class="page-title-crea-plateau"><i class="fas fa-video"></i> Gestion des Plateaux</h1>
-          <p class="page-subtitle-crea-plateau">Créez, modifiez et gérez l'ensemble des plateaux de tournage</p>
-        </div> -->
-
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-plateau">
           <div class="tabs-header-crea-plateau">
@@ -282,14 +276,13 @@
                   
                   <div class="search-section-crea-plateau">
                     <div class="search-group-crea-plateau">
-                      <label for="plateauSearch">Rechercher un plateau</label>
                       <div class="search-input-container-crea-plateau">
                         <i class="fas fa-search search-icon-crea-plateau"></i>
                         <input
                           type="text"
                           id="plateauSearch"
                           v-model="searchTerm"
-                          placeholder="Rechercher par nom..."
+                          placeholder=" Rechercher par nom..."
                           class="search-input-large-crea-plateau"
                         />
                       </div>
@@ -330,7 +323,7 @@
                           <button @click="editPlateau(plateau)" class="btn-edit-crea-plateau" title="Modifier">
                             <i class="fas fa-marker"></i>
                           </button>
-                          <button @click="deletePlateau(plateau.id)" class="btn-delete-crea-plateau" title="Supprimer">
+                          <button @click="confirmDeletePlateau(plateau)" class="btn-delete-crea-plateau" title="Supprimer">
                             <i class="fas fa-trash"></i>
                           </button>
                         </div>
@@ -374,6 +367,41 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+      <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+      <div class="modal-content-confirm-Scenariste">
+        <div class="modal-header-confirm-Scenariste">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+          <button @click="closeDeleteModal" class="close-modal-btn-delete-Scenariste">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body-confirm-Scenariste">
+          <div class="warning-icon-Scenariste">
+            <i class="fas fa-trash"></i>
+          </div>
+          <p class="warning-text-Scenariste">
+            Êtes-vous sûr de vouloir supprimer le plateau <strong>"{{ plateauToDelete?.nom }}"</strong> ?
+          </p>
+          <p class="warning-subtext-Scenariste">
+            Cette action est irréversible. Le plateau sera définitivement supprimé de la base de données.
+          </p>
+        </div>
+        
+        <div class="modal-footer-confirm-Scenariste">
+          <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button @click="executeDeletePlateau" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+            <span v-if="isDeleting"><i class="fas fa-spinner fa-spin"></i> Suppression...</span>
+            <span v-else><i class="fas fa-trash"></i> Supprimer définitivement</span>
+          </button>
         </div>
       </div>
     </div>
@@ -421,7 +449,20 @@ export default {
       showLieuSuggestions: false,
       showFilterLieuSuggestions: false,
       filteredLieux: [],
-      filteredFilterLieux: []
+      filteredFilterLieux: [],
+
+      // Modal de suppression
+      showDeleteModal: false,
+      plateauToDelete: null,
+      isDeleting: false,
+
+      // Notification
+      notification: {
+        show: false,
+        message: '',
+        type: 'success' // 'success' ou 'error'
+      },
+      notificationTimeout: null
     };
   },
   computed: {
@@ -511,7 +552,10 @@ export default {
     },
     async loadLieux() {
       try {
-        const response = await axios.get('/api/lieux');
+        const user = JSON.parse(localStorage.getItem('user'));
+        const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+        
+        const response = await axios.get('/api/lieux', { headers });
         this.lieux = response.data;
       } catch (error) {
         console.error('Erreur lors du chargement des lieux:', error);
@@ -520,7 +564,10 @@ export default {
     },
     async loadScenes() {
       try {
-        const response = await axios.get('/api/scenes');
+        const user = JSON.parse(localStorage.getItem('user'));
+        const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+        
+        const response = await axios.get('/api/scenes', { headers });
         this.scenes = response.data;
       } catch (error) {
         console.error('Erreur lors du chargement des scènes:', error);
@@ -530,7 +577,10 @@ export default {
     async loadPlateaux() {
       this.loading = true;
       try {
-        const response = await axios.get('/api/plateaux');
+        const user = JSON.parse(localStorage.getItem('user'));
+        const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+        
+        const response = await axios.get('/api/plateaux', { headers });
         this.plateaux = response.data;
       } catch (error) {
         console.error('Erreur lors du chargement des plateaux:', error);
@@ -542,18 +592,24 @@ export default {
     async submitForm() {
       this.isSubmitting = true;
       try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+          throw new Error('Utilisateur non connecté');
+        }
+
         const payload = {
           ...this.formData,
           lieuId: parseInt(this.formData.lieuId),
           sceneId: this.formData.sceneId ? parseInt(this.formData.sceneId) : null
         };
         
+        const headers = { 'X-User-Id': user.id };
+
         if (this.isEditing) {
-          await axios.put(`/api/plateaux/${this.editingId}`, payload);
-          alert('Plateau modifié avec succès!');
+          await axios.put(`/api/plateaux/${this.editingId}`, payload, { headers });
         } else {
-          await axios.post('/api/plateaux', payload);
-          alert('Plateau créé avec succès!');
+          await axios.post('/api/plateaux', payload, { headers });
+          this.showNotification('Plateau créé avec succès!', 'success');
         }
         
         this.resetForm();
@@ -562,6 +618,7 @@ export default {
       } catch (error) {
         console.error('Erreur lors de la sauvegarde du plateau:', error);
         this.error = 'Erreur: ' + (error.response?.data?.message || error.message);
+        this.showNotification('Erreur lors de la sauvegarde du plateau', 'error');
       } finally {
         this.isSubmitting = false;
       }
@@ -579,20 +636,41 @@ export default {
       this.editingId = plateau.id;
       this.activeTab = 'form';
     },
-    async deletePlateau(plateauId) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer ce plateau ?')) {
-        return;
-      }
+    
+    // Modal de confirmation de suppression
+    confirmDeletePlateau(plateau) {
+      this.plateauToDelete = plateau;
+      this.showDeleteModal = true;
+    },
+    
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+      this.plateauToDelete = null;
+      this.isDeleting = false;
+    },
+    
+    async executeDeletePlateau() {
+      if (!this.plateauToDelete) return;
+      
+      this.isDeleting = true;
       
       try {
-        await axios.delete(`/api/plateaux/${plateauId}`);
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+          throw new Error('Utilisateur non connecté');
+        }
+
+        const headers = { 'X-User-Id': user.id };
+        await axios.delete(`/api/plateaux/${this.plateauToDelete.id}`, { headers });
         await this.loadPlateaux();
-        alert('Plateau supprimé avec succès!');
+        this.closeDeleteModal();
       } catch (error) {
         console.error('Erreur lors de la suppression du plateau:', error);
-        alert('Erreur: ' + (error.response?.data?.message || error.message));
+        this.showNotification('Erreur lors de la suppression du plateau', 'error');
+        this.isDeleting = false;
       }
     },
+
     resetForm() {
       this.formData = {
         lieuId: '',
@@ -683,8 +761,33 @@ export default {
     getLieuName(id) {
       const lieu = this.lieux.find(l => l.id === parseInt(id));
       return lieu ? `${lieu.nomLieu} - ${lieu.projetTitre}` : '';
+    },
+
+    // Notification
+    showNotification(message, type = 'success') {
+      this.notification = {
+        show: true,
+        message: message,
+        type: type
+      };
+      
+      if (this.notificationTimeout) {
+        clearTimeout(this.notificationTimeout);
+      }
+      
+      this.notificationTimeout = setTimeout(() => {
+        this.hideNotification();
+      }, 5000);
+    },
+
+    hideNotification() {
+      this.notification.show = false;
+      this.notification.message = '';
+      if (this.notificationTimeout) {
+        clearTimeout(this.notificationTimeout);
+        this.notificationTimeout = null;
+      }
     }
   }
 };
 </script>
-
