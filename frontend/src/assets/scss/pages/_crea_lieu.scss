@@ -1,4 +1,4 @@
-// _creation-lieu.scss – Style identique à _creation-dialogue.scss
+// _crea_lieu.scss – Style identique à _crea_comedien.scss
 @import '../base/variables';
 
 .app-wrapper-global-crea-lieu {
@@ -11,20 +11,32 @@
 // =============================================
 .creation-sidebar-crea-lieu {
   position: fixed;
+  top: 60px;
   left: 0;
-  top: 80px;
   width: 280px;
-  height: calc(100vh - 80px);
-  background: $color-background;
-  padding: $spacing-md;
-  box-sizing: border-box;
-  z-index: $z-index-sticky;
+  height: calc(100vh - 50px);
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  border-right: 1px solid $color-border;
-  box-shadow: $shadow-md;
+  padding: $padding-lg;
+  background: rgba($color-border, 0.1);
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
+
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
 
   .sidebar-header-crea-lieu {
     margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
 
     .sidebar-title-crea-lieu {
       @include typography-playfair-h4;
@@ -72,6 +84,7 @@
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
     color: $color-text-secondary;
     cursor: pointer;
     transition: $transition-fast;
@@ -87,8 +100,7 @@
     }
 
     &.active {
-      background: $color-primary;
-      border-color: $color-primary;
+      background: $color-tertiary-dark;
       color: $color-text-light;
     }
 
@@ -313,26 +325,6 @@
   }
 }
 
-.back-btn-crea-lieu {
-  padding: $gap-sm $spacing-md;
-  background: $color-success;
-  border: none;
-  border-radius: $border-radius-xs;
-  @include typography-p4;
-  color: $color-text-light;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition-fast;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-
-  &:hover {
-    background: darken($color-success, 10%);
-    transform: translateY(-1px);
-  }
-}
-
 .lieu-form-crea-lieu {
   display: flex;
   flex-direction: column;
@@ -367,6 +359,57 @@
       content: '*';
       color: $color-error;
       margin-left: 2px;
+    }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
+  }
+
+  // Ajoutez ce style pour les champs de formulaire standards
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  select {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+
+    &:hover {
+      border-color: $color-border-dark;
+    }
+  }
+
+  // Style spécifique pour le champ de recherche (garder le style existant)
+  .search-input-crea-lieu {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
     }
   }
 }
@@ -487,6 +530,11 @@
   padding-top: $spacing-sm;
   border-top: 1px solid $color-border;
 
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .cancel-btn-crea-lieu,
   .submit-btn-crea-lieu {
     padding: $gap-sm $spacing-md;
     border: none;
@@ -499,7 +547,38 @@
     align-items: center;
     justify-content: center;
     gap: $gap-xs;
-    min-width: 160px;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .cancel-btn-crea-lieu {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: $color-surface-hover;
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn-crea-lieu {
     background: $color-primary;
     color: $color-text-light;
 
@@ -509,34 +588,8 @@
       box-shadow: $shadow-hover;
     }
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary;
-      outline-offset: 1px;
-    }
-  }
-
-  .cancel-btn-crea-lieu {
-    padding: $gap-sm $spacing-md;
-    background: $color-error;
-    border: none;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    color: $color-text-light;
-
-    &:hover {
-      background: $color-secondary-dark;
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
   }
 }
@@ -598,7 +651,7 @@
       height: 42px;
       padding: 0 $padding-md 0 ($padding-md + $padding-xs);
       border: 1px solid $color-border;
-      border-radius: $border-radius-pill;
+      border-radius: $border-radius-xs;
       background: $color-background-alt;
       font-size: $font-size-p3;
       color: $color-text-primary;
@@ -732,7 +785,10 @@
     align-items: center;
     justify-content: center;
     transition: $transition-fast;
-    font-size: $font-size-p4;
+
+    &:hover {
+      transform: scale(1.1);
+    }
   }
 
   .btn-scenes-crea-lieu {
@@ -883,7 +939,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba($color-text-primary, 0.5);
+  background: rgba($color-text-primary, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -893,22 +949,31 @@
 
 .modal-content-crea-lieu {
   background: $color-background-alt;
-  border-radius: $border-radius-sm;
-  box-shadow: $shadow-lg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
   max-width: 600px;
   width: 100%;
-  max-height: 80vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn-crea-lieu 0.3s ease-out;
+}
+
+@keyframes modalSlideIn-crea-lieu {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-header-crea-lieu {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-md;
-  background: $color-background;
+  padding: $spacing-lg;
   border-bottom: 1px solid $color-border;
 
   h3 {
@@ -917,14 +982,14 @@
     margin: 0;
     display: flex;
     align-items: center;
-    gap: $gap-xs;
+    gap: $gap-sm;
   }
 }
 
 .modal-close-btn-crea-lieu {
-  background: none;
+  background: transparent;
   border: none;
-  font-size: $font-size-p3;
+  font-size: $font-size-h4;
   color: $color-text-muted;
   cursor: pointer;
   padding: $gap-xs;
@@ -938,9 +1003,7 @@
 }
 
 .modal-body-crea-lieu {
-  padding: $spacing-md;
-  flex: 1;
-  overflow-y: auto;
+  padding: $spacing-lg;
 }
 
 .no-scenes-crea-lieu {
@@ -997,28 +1060,31 @@
 }
 
 .modal-footer-crea-lieu {
-  padding: $spacing-md;
-  background: $color-background;
+  padding: $spacing-lg;
   border-top: 1px solid $color-border;
-  text-align: right;
-}
-
-.btn-close-modal-crea-lieu {
-  padding: $gap-sm $spacing-md;
-  background: $color-error;
-  border: none;
-  border-radius: $border-radius-xs;
-  @include typography-p4;
-  color: $color-text-light;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition-fast;
   display: flex;
-  align-items: center;
-  gap: $gap-xs;
+  gap: $gap-sm;
+  justify-content: flex-end;
 
-  &:hover {
-    background: $color-secondary-dark;
+  .btn-close-modal-crea-lieu {
+    padding: $gap-sm $spacing-md;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    color: $color-text-secondary;
+
+    &:hover {
+      background: $color-surface-hover;
+      border-color: $color-primary;
+      color: $color-primary;
+    }
   }
 }
 
@@ -1072,10 +1138,6 @@
   .lieux-grid-crea-lieu {
     grid-template-columns: 1fr;
   }
-  
-  .form-actions-crea-lieu {
-    flex-direction: column;
-  }
 }
 
 // Amélioration de l'accessibilité
@@ -1083,6 +1145,7 @@
   .sidebar-btn-crea-lieu,
   .search-input-crea-lieu,
   .submit-btn-crea-lieu,
+  .cancel-btn-crea-lieu,
   .tab-btn-crea-lieu,
   .tab-indicator-crea-lieu,
   .lieu-card-crea-lieu,
@@ -1100,7 +1163,8 @@
     animation: none;
   }
   
-  .tab-pane-crea-lieu {
+  .tab-pane-crea-lieu,
+  .modal-content-crea-lieu {
     animation: none;
   }
 }
