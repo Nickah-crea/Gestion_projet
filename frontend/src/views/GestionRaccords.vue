@@ -689,17 +689,17 @@ export default {
           };
         } else if (role === 'REALISATEUR') {
           this.permissions = {
-            // canCreateRaccord: true,
-            // canEditRaccord: true,
-            // canDeleteRaccord: true,
+            canCreateRaccord: false,
+            canEditRaccord: false,
+            canDeleteRaccord: false,
             canViewRaccords: true,
             canViewScenes: true
           };
         } else if (role === 'SCENARISTE') {
           this.permissions = {
             canCreateRaccord: true,
-            canEditRaccord: false,
-            canDeleteRaccord: false,
+            canEditRaccord: true,
+            canDeleteRaccord: true,
             canViewRaccords: true,
             canViewScenes: true
           };
