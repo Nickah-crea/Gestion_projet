@@ -1187,8 +1187,6 @@ export default {
         await this.loadRaccords();
         this.activeTab = 'list';
         
-        alert(this.editingRaccord ? 'Raccord modifié avec succès!' : 'Raccord créé avec succès!');
-        
       } catch (error) {
         console.error('Erreur détaillée lors de la sauvegarde:', error);
         
