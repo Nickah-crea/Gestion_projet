@@ -1,0 +1,273 @@
+// assets/scss/components/_ecran-travail.scss
+@import '../base/variables';
+
+.main-content-view {
+  padding: $padding-xl;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// Navigation fixe en haut
+.fixed-top-navigation {
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  padding: $padding-sm $padding-xl;
+  
+  .fixed-nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .current-context {
+    @include typography-playfair-p4;
+    color: $color-text-muted;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Boutons de navigation
+.nav-btn-fixed-left,
+.nav-btn-fixed-right {
+  @include btn-cinema-primary;
+  padding: $padding-sm $padding-lg;
+  
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// Navigation scène
+.scene-navigation-buttons {
+  display: flex;
+  gap: $gap-sm;
+  margin-left: auto;
+  
+  .scene-nav-btn {
+    @include btn-cinema-accent;
+    padding: $padding-xs $padding-md;
+    font-size: $font-size-p4;
+  }
+}
+
+// Views principales
+.project-view,
+.episode-view,
+.sequence-view,
+.scene-view {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  padding: $padding-xl;
+  box-shadow: $shadow-md;
+  margin-top: $margin-lg;
+  
+  .project-header-view,
+  .episode-header-view,
+  .sequence-header-view,
+  .scene-header-view {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $margin-xl;
+    padding-bottom: $margin-lg;
+    border-bottom: 2px solid $color-border;
+  }
+}
+
+// Titres avec Playfair Display
+.project-title-view {
+  @include typography-playfair-h1;
+  margin-bottom: $margin-xs;
+}
+
+.episode-title-view,
+.sequence-title-view,
+.scene-title-view {
+  @include typography-playfair-h2;
+  margin-bottom: $margin-xs;
+}
+
+// Badges de statut
+.project-status-badge,
+.episode-status-badge,
+.sequence-status-badge,
+.scene-status-badge {
+  display: inline-block;
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-pill;
+  @include typography-hauora-p4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  // Adaptez la couleur selon le contexte
+  background: $color-pastel-gold;
+  color: $color-text-primary;
+}
+
+// Sections de contenu
+.detail-section {
+  margin-bottom: $margin-xl;
+  
+  h3 {
+    @include typography-playfair-h3;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin-bottom: $margin-lg;
+    color: $color-text-primary;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p1;
+    }
+  }
+}
+
+// Grilles de détails
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $gap-lg;
+  margin-top: $margin-md;
+  
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+    
+    .detail-label {
+      @include typography-hauora-p4;
+      color: $color-text-muted;
+      font-weight: $font-weight-medium;
+    }
+    
+    .detail-value {
+      @include typography-hauora-p2;
+      color: $color-text-secondary;
+    }
+  }
+}
+
+// Cartes pour les listes
+.sequences-list,
+.scenes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $gap-lg;
+  margin-top: $margin-md;
+}
+
+.sequence-card,
+.scene-card {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  cursor: pointer;
+  transition: $transition;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+    border-color: $color-primary;
+  }
+  
+  &.active {
+    border-color: $color-primary;
+    background: $color-pastel-gold;
+  }
+  
+  .sequence-card-header,
+  .scene-card-header {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin-bottom: $margin-sm;
+    
+    i {
+      color: $color-sequence; // Utilisez vos variables catégories
+    }
+    
+    .sequence-order,
+    .scene-order {
+      @include typography-hauora-p4;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+    
+    .sequence-title,
+    .scene-title {
+      @include typography-hauora-p2;
+      color: $color-text-secondary;
+      @include text-truncate;
+    }
+  }
+}
+
+// États vides
+.empty-state {
+  text-align: center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+  
+  .add-btn {
+    @include btn-cinema-primary;
+    margin-top: $margin-md;
+  }
+}
+
+// Commentaires
+.comment-section {
+  .add-comment {
+    margin-bottom: $margin-lg;
+    
+    textarea {
+      width: 100%;
+      padding: $padding-md;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-sm;
+      resize: vertical;
+      @include typography-hauora-p2;
+      margin-bottom: $margin-sm;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+    }
+    
+    .add-comment-btn {
+      @include btn-cinema-primary;
+    }
+  }
+  
+  .comments-list {
+    .comment-item {
+      background: $color-white;
+      border-radius: $border-radius-sm;
+      padding: $padding-md;
+      margin-bottom: $margin-sm;
+      
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: $margin-xs;
+        
+        .comment-author {
+          @include typography-hauora-p4;
+          font-weight: $font-weight-semibold;
+          color: $color-text-primary;
+        }
+        
+        .comment-date {
+          @include typography-hauora-p5;
+          color: $color-text-muted;
+        }
+      }
+    }
+  }
+}
+
+

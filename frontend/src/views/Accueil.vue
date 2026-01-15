@@ -135,7 +135,6 @@
 
 <script>
 import axios from 'axios';
-import '../assets/css/scenariste_acceuil.css';
 
 export default {
   name: 'ScenaristeAccueilView',
