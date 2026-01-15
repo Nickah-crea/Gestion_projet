@@ -13,10 +13,10 @@
 .creation-sidebar-crea-profile {
   position: fixed;
   left: 0;
-  top: 80px;
+  top: 60px;
   width: 280px;
-  height: calc(100vh - 80px);
-  background: $color-background;
+  height: 100vh;
+  background: $color-cool-light;
   padding: $spacing-md;
   box-sizing: border-box;
   z-index: $z-index-sticky;
@@ -130,7 +130,7 @@
 
   .quick-info-crea-profile {
     display: flex;
-    flex-direction: column;
+    flex-direction:column;
     gap: $gap-sm;
   }
 
@@ -232,6 +232,138 @@
   }
 }
 
+// =============================================
+// SECTION PRINCIPALE PROFIL (IMAGE + INFOS)
+// =============================================
+.profile-main-section-crea-profile {
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  padding: $spacing-lg;
+  animation: fadeInUp-crea-profile 0.3s ease-out;
+}
+
+.profile-header-container-crea-profile {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: $spacing-xl;
+  align-items: start;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+// =============================================
+// SECTION PHOTO (CÔTÉ GAUCHE)
+// =============================================
+.profile-photo-section-crea-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.photo-wrapper-large-crea-profile {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  border: 3px solid $color-border;
+  background: $color-surface;
+  box-shadow: $shadow-md;
+
+  .profile-photo-large-crea-profile {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .profile-photo-large-crea-profile {
+    transform: scale(1.05);
+  }
+}
+
+.photo-overlay-large-crea-profile {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba($color-text-primary, 0.8), transparent);
+  padding: $spacing-lg;
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  .photo-wrapper-large-crea-profile:hover & {
+    opacity: 1;
+  }
+}
+
+.upload-label-large-crea-profile {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  color: $color-text-light;
+  cursor: pointer;
+  padding: $gap-sm $padding-md;
+  border-radius: $border-radius-xs;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: background 0.3s;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  i {
+    font-size: $font-size-p3;
+  }
+}
+
+.photo-delete-action-crea-profile {
+  width: 100%;
+  text-align: center;
+}
+
+.delete-photo-btn-crea-profile {
+  padding: $gap-xs $padding-sm;
+  background: transparent;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    background: rgba($color-error, 0.1);
+    border-color: $color-error;
+    color: $color-error;
+  }
+}
+
+// =============================================
+// SECTION INFORMATIONS (CÔTÉ DROIT)
+// =============================================
+.profile-info-section-crea-profile {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
 .section-header-crea-profile {
   display: flex;
   justify-content: space-between;
@@ -326,75 +458,8 @@
 }
 
 // =============================================
-// PHOTO DE PROFIL
+// PHOTO DE PROFIL - ACTIONS
 // =============================================
-.photo-container-crea-profile {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: $spacing-lg;
-  align-items: start;
-
-  @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.photo-wrapper-crea-profile {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  border-radius: $border-radius-sm;
-  overflow: hidden;
-  border: 3px solid $color-border;
-  background: $color-surface;
-
-  .profile-photo-crea-profile {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  &:hover .profile-photo-crea-profile {
-    transform: scale(1.05);
-  }
-}
-
-.photo-overlay-crea-profile {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba($color-text-primary, 0.8), transparent);
-  padding: $spacing-md;
-  display: flex;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-
-  .photo-wrapper-crea-profile:hover & {
-    opacity: 1;
-  }
-}
-
-.upload-label-crea-profile {
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  color: $color-text-light;
-  cursor: pointer;
-  padding: $gap-xs $padding-sm;
-  border-radius: $border-radius-xs;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  transition: background 0.3s;
-  font-size: $font-size-p4;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-}
-
 .photo-info-crea-profile {
   p {
     @include typography-p4;
@@ -411,9 +476,7 @@
 .photo-actions-crea-profile {
   display: flex;
   gap: $gap-sm;
-  margin-top: $spacing-md;
-  padding-top: $spacing-md;
-  border-top: 1px solid $color-border;
+  width: 100%;
 
   .upload-confirm-btn-crea-profile,
   .cancel-photo-btn-crea-profile {
@@ -426,8 +489,9 @@
     transition: $transition-fast;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: $gap-xs;
-    min-width: 140px;
+    flex: 1;
 
     &:disabled {
       opacity: 0.6;
@@ -707,7 +771,8 @@
     margin-left: 0;
   }
 
-  .profile-section-crea-profile {
+  .profile-section-crea-profile,
+  .profile-main-section-crea-profile {
     padding: $spacing-md;
   }
 
@@ -722,14 +787,9 @@
     }
   }
 
-  .photo-container-crea-profile {
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
-  }
-
-  .photo-wrapper-crea-profile {
-    width: 150px;
-    height: 150px;
+  .photo-wrapper-large-crea-profile {
+    width: 250px;
+    height: 250px;
     margin: 0 auto;
   }
 }
@@ -757,6 +817,11 @@
     }
   }
 
+  .photo-wrapper-large-crea-profile {
+    width: 200px;
+    height: 200px;
+  }
+
   .message-crea-profile {
     left: $spacing-sm;
     right: $spacing-sm;
@@ -770,16 +835,34 @@
       flex-direction: column;
     }
   }
+
+  .photo-wrapper-large-crea-profile {
+    width: 180px;
+    height: 180px;
+  }
+
+  .photo-overlay-large-crea-profile {
+    padding: $spacing-md;
+  }
+
+  .upload-label-large-crea-profile {
+    padding: $gap-xs $padding-sm;
+    font-size: $font-size-p4 - 1px;
+  }
 }
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
   .profile-section-crea-profile,
+  .profile-main-section-crea-profile,
   .message-crea-profile,
   .sidebar-btn-crea-profile,
   .edit-section-btn-crea-profile,
   .save-section-btn-crea-profile,
-  .cancel-section-btn-crea-profile {
+  .cancel-section-btn-crea-profile,
+  .photo-wrapper-large-crea-profile,
+  .profile-photo-large-crea-profile,
+  .photo-overlay-large-crea-profile {
     animation: none;
     transition: none;
 
@@ -787,11 +870,5 @@
       transform: none;
     }
   }
-
-  .profile-photo-crea-profile,
-  .photo-overlay-crea-profile {
-    transition: none;
-  }
 }
-
 
