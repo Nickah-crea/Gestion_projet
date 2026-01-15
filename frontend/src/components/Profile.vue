@@ -20,14 +20,6 @@
             Informations
           </button>
           <button 
-            @click="scrollToSection('photo')" 
-            class="sidebar-btn-crea-profile"
-            :class="{ active: activeSection === 'photo' }"
-          >
-            <i class="fas fa-camera"></i>
-            Photo
-          </button>
-          <button 
             @click="scrollToSection('security')" 
             class="sidebar-btn-crea-profile"
             :class="{ active: activeSection === 'security' }"
@@ -86,153 +78,156 @@
         <!-- Contenu principal -->
         <div class="profile-content-crea-profile">
           
-          <!-- Section Photo de profil -->
-          <div id="photo-section" class="profile-section-crea-profile" ref="photoSection">
-            <div class="section-header-crea-profile">
-              <h3><i class="fas fa-camera"></i> Photo de profil</h3>
-              <button 
-                v-if="!previewPhoto && hasProfilePhoto" 
-                @click="deletePhoto"
-                class="delete-section-btn-crea-profile"
-              >
-                <i class="fas fa-trash"></i> Supprimer
-              </button>
-            </div>
-            
-            <div class="photo-container-crea-profile">
-              <div class="photo-wrapper-crea-profile">
-                <img 
-                  :src="profilePhotoUrl" 
-                  alt="Photo de profil" 
-                  class="profile-photo-crea-profile"
-                  @error="handleImageError"
-                >
-                <div class="photo-overlay-crea-profile">
-                  <label for="photo-upload" class="upload-label-crea-profile">
-                    <i class="fas fa-camera"></i>
-                    <span>Changer la photo</span>
-                  </label>
-                  <input 
-                    type="file" 
-                    id="photo-upload" 
-                    accept="image/*" 
-                    @change="handlePhotoUpload"
-                    hidden
+          <!-- Section Profil avec image et informations côte à côte -->
+          <div id="profile-section" class="profile-main-section-crea-profile" ref="profileSection">
+            <!-- Conteneur pour image et infos -->
+            <div class="profile-header-container-crea-profile">
+              <!-- Photo de profil à gauche -->
+              <div class="profile-photo-section-crea-profile">
+                <div class="photo-wrapper-large-crea-profile">
+                  <img 
+                    :src="profilePhotoUrl" 
+                    alt="Photo de profil" 
+                    class="profile-photo-large-crea-profile"
+                    @error="handleImageError"
                   >
+                  <div class="photo-overlay-large-crea-profile">
+                    <label for="photo-upload" class="upload-label-large-crea-profile">
+                      <i class="fas fa-camera"></i>
+                      <span>Changer la photo</span>
+                    </label>
+                    <input 
+                      type="file" 
+                      id="photo-upload" 
+                      accept="image/*" 
+                      @change="handlePhotoUpload"
+                      hidden
+                    >
+                  </div>
+                </div>
+                
+                <!-- Boutons d'action pour la photo -->
+                <div v-if="previewPhoto" class="photo-actions-crea-profile">
+                  <button 
+                    @click="uploadPhoto"
+                    class="upload-confirm-btn-crea-profile"
+                    :disabled="loading"
+                  >
+                    <i v-if="loading" class="fas fa-spinner fa-spin"></i>
+                    <i v-else class="fas fa-upload"></i>
+                    {{ loading ? 'Upload en cours...' : 'Uploader la photo' }}
+                  </button>
+                  
+                  <button 
+                    @click="removeSelectedPhoto"
+                    class="cancel-photo-btn-crea-profile"
+                  >
+                    <i class="fas fa-times"></i> Annuler
+                  </button>
+                </div>
+                
+                <div v-if="!previewPhoto && hasProfilePhoto" class="photo-delete-action-crea-profile">
+                  <button 
+                    @click="deletePhoto"
+                    class="delete-photo-btn-crea-profile"
+                  >
+                    <i class="fas fa-trash"></i> Supprimer la photo
+                  </button>
+                </div>
+                
+                <!-- Informations techniques -->
+                <div class="photo-info-crea-profile">
+                  <p><strong>Formats acceptés :</strong> JPEG, PNG, GIF</p>
+                  <p><strong>Taille maximum :</strong> 5 MB</p>
+                  <p><strong>Dimensions recommandées :</strong> 300x300 px</p>
                 </div>
               </div>
-              
-              <div class="photo-info-crea-profile">
-                <p><strong>Formats acceptés :</strong> JPEG, PNG, GIF</p>
-                <p><strong>Taille maximum :</strong> 5 MB</p>
-                <p><strong>Dimensions recommandées :</strong> 200x200 px</p>
-              </div>
-            </div>
-            
-            <!-- Boutons d'action pour la photo -->
-            <div v-if="previewPhoto" class="photo-actions-crea-profile">
-              <button 
-                @click="uploadPhoto"
-                class="upload-confirm-btn-crea-profile"
-                :disabled="loading"
-              >
-                <i v-if="loading" class="fas fa-spinner fa-spin"></i>
-                <i v-else class="fas fa-upload"></i>
-                {{ loading ? 'Upload en cours...' : 'Uploader la photo' }}
-              </button>
-              
-              <button 
-                @click="removeSelectedPhoto"
-                class="cancel-photo-btn-crea-profile"
-              >
-                <i class="fas fa-times"></i> Annuler
-              </button>
-            </div>
-          </div>
 
-          <!-- Section Informations personnelles -->
-          <div id="profile-section" class="profile-section-crea-profile" ref="profileSection">
-            <div class="section-header-crea-profile">
-              <h3><i class="fas fa-user"></i> Informations personnelles</h3>
-              <button 
-                v-if="!isEditing" 
-                @click="enableEditing"
-                class="edit-section-btn-crea-profile"
-              >
-                <i class="fas fa-edit"></i> Modifier
-              </button>
-              <div v-else class="edit-actions-crea-profile">
-                <button @click="saveChanges" class="save-section-btn-crea-profile" :disabled="loading">
-                  <i v-if="loading" class="fas fa-spinner fa-spin"></i>
-                  <i v-else class="fas fa-save"></i>
-                  Enregistrer
-                </button>
-                <button @click="cancelEditing" class="cancel-section-btn-crea-profile">
-                  <i class="fas fa-times"></i> Annuler
-                </button>
-              </div>
-            </div>
-            
-            <div class="profile-form-crea-profile">
-              <div class="form-grid-crea-profile">
-                <div class="form-group-crea-profile">
-                  <label for="nom">Nom complet *</label>
-                  <input 
-                    type="text" 
-                    id="nom" 
-                    v-model="formData.nom"
-                    :disabled="!isEditing"
-                    placeholder="Votre nom complet"
-                    class="form-input-crea-profile"
+              <!-- Informations personnelles à droite -->
+              <div class="profile-info-section-crea-profile">
+                <div class="section-header-crea-profile">
+                  <h3><i class="fas fa-user"></i> Informations personnelles</h3>
+                  <button 
+                    v-if="!isEditing" 
+                    @click="enableEditing"
+                    class="edit-section-btn-crea-profile"
                   >
+                    <i class="fas fa-edit"></i> Modifier
+                  </button>
+                  <div v-else class="edit-actions-crea-profile">
+                    <button @click="saveChanges" class="save-section-btn-crea-profile" :disabled="loading">
+                      <i v-if="loading" class="fas fa-spinner fa-spin"></i>
+                      <i v-else class="fas fa-save"></i>
+                      Enregistrer
+                    </button>
+                    <button @click="cancelEditing" class="cancel-section-btn-crea-profile">
+                      <i class="fas fa-times"></i> Annuler
+                    </button>
+                  </div>
                 </div>
+                
+                <div class="profile-form-crea-profile">
+                  <div class="form-grid-crea-profile">
+                    <div class="form-group-crea-profile">
+                      <label for="nom">Nom complet *</label>
+                      <input 
+                        type="text" 
+                        id="nom" 
+                        v-model="formData.nom"
+                        :disabled="!isEditing"
+                        placeholder="Votre nom complet"
+                        class="form-input-crea-profile"
+                      >
+                    </div>
 
-                <div class="form-group-crea-profile">
-                  <label for="email">Email *</label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    v-model="formData.email"
-                    :disabled="!isEditing"
-                    placeholder="votre@email.com"
-                    class="form-input-crea-profile"
-                  >
-                </div>
+                    <div class="form-group-crea-profile">
+                      <label for="email">Email *</label>
+                      <input 
+                        type="email" 
+                        id="email" 
+                        v-model="formData.email"
+                        :disabled="!isEditing"
+                        placeholder="votre@email.com"
+                        class="form-input-crea-profile"
+                      >
+                    </div>
 
-                <div class="form-group-crea-profile">
-                  <label for="role">Rôle</label>
-                  <input 
-                    type="text" 
-                    id="role" 
-                    v-model="formData.role"
-                    disabled
-                    class="form-input-crea-profile"
-                  >
-                </div>
+                    <div class="form-group-crea-profile">
+                      <label for="role">Rôle</label>
+                      <input 
+                        type="text" 
+                        id="role" 
+                        v-model="formData.role"
+                        disabled
+                        class="form-input-crea-profile"
+                      >
+                    </div>
 
-                <!-- Champs spécifiques selon le rôle -->
-                <div v-if="user.role === 'SCENARISTE' || user.role === 'REALISATEUR'" class="form-group-crea-profile">
-                  <label for="specialite">Spécialité</label>
-                  <input 
-                    type="text" 
-                    id="specialite" 
-                    v-model="formData.specialite"
-                    :disabled="!isEditing"
-                    placeholder="Votre spécialité"
-                    class="form-input-crea-profile"
-                  >
-                </div>
+                    <!-- Champs spécifiques selon le rôle -->
+                    <div v-if="user.role === 'SCENARISTE' || user.role === 'REALISATEUR'" class="form-group-crea-profile">
+                      <label for="specialite">Spécialité</label>
+                      <input 
+                        type="text" 
+                        id="specialite" 
+                        v-model="formData.specialite"
+                        :disabled="!isEditing"
+                        placeholder="Votre spécialité"
+                        class="form-input-crea-profile"
+                      >
+                    </div>
 
-                <div v-if="user.role === 'SCENARISTE' || user.role === 'REALISATEUR'" class="form-group-crea-profile full-width">
-                  <label for="biographie">Biographie</label>
-                  <textarea 
-                    id="biographie" 
-                    v-model="formData.biographie"
-                    :disabled="!isEditing"
-                    rows="4"
-                    placeholder="Décrivez votre parcours et expérience..."
-                    class="form-textarea-crea-profile"
-                  ></textarea>
+                    <div v-if="user.role === 'SCENARISTE' || user.role === 'REALISATEUR'" class="form-group-crea-profile full-width">
+                      <label for="biographie">Biographie</label>
+                      <textarea 
+                        id="biographie" 
+                        v-model="formData.biographie"
+                        :disabled="!isEditing"
+                        rows="5"
+                        placeholder="Décrivez votre parcours et expérience..."
+                        class="form-textarea-crea-profile"
+                      ></textarea>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -478,7 +473,7 @@ export default {
     },
 
     handleScroll() {
-      const sections = ['photo', 'profile', 'security'];
+      const sections = ['profile', 'security'];
       for (const section of sections) {
         const element = this.$refs[`${section}Section`];
         if (element) {
@@ -833,4 +828,5 @@ export default {
   }
 };
 </script>
+
 
