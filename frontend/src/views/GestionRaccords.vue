@@ -90,12 +90,6 @@
     <div class="creation-body-crea-raccord">
       <div class="creation-main-content-crea-raccord">
         
-        <!-- En-tête principal -->
-        <!-- <div class="main-header-crea-raccord">
-          <h1 class="page-title-crea-raccord"><i class="fas fa-link"></i> Gestion des Raccords</h1>
-          <p class="page-subtitle-crea-raccord">Créez et gérez les raccords de continuité entre vos scènes</p>
-        </div> -->
-
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-raccord">
           <div class="tabs-header-crea-raccord">
@@ -139,7 +133,12 @@
 
                 <form @submit.prevent="submitForm" class="raccord-form-crea-raccord">
                   <!-- Hiérarchie Projet -> Épisode -> Séquence -->
-                  <div class="form-row-crea-raccord">
+                  <div class="form-section-title-crea-raccord">
+                    <i class="fas fa-sitemap"></i>
+                    Hiérarchie du projet
+                  </div>
+
+                  <div class="form-row-hierarchy-crea-raccord">
                     <div class="form-group-crea-raccord">
                       <label for="projetId">Projet *</label>
                       <select 
@@ -155,9 +154,7 @@
                         </option>
                       </select>
                     </div>
-                  </div>
 
-                  <div class="form-row-crea-raccord">
                     <div class="form-group-crea-raccord">
                       <label for="episodeId">Épisode *</label>
                       <select 
@@ -174,9 +171,7 @@
                         </option>
                       </select>
                     </div>
-                  </div>
 
-                  <div class="form-row-crea-raccord">
                     <div class="form-group-crea-raccord">
                       <label for="sequenceId">Séquence *</label>
                       <select 
@@ -196,48 +191,61 @@
                   </div>
 
                   <!-- Scènes Source et Cible -->
-                  <div class="form-row-crea-raccord">
-                    <div class="form-group-crea-raccord">
-                      <label for="sceneSourceId">Scène Source *</label>
-                      <select 
-                        id="sceneSourceId"
-                        v-model="formData.sceneSourceId" 
-                        :disabled="!formData.sequenceId" 
-                        required
-                        class="search-input-crea-raccord"
-                      >
-                        <option value="">Sélectionner une scène source</option>
-                        <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
-                          Scène {{ scene.ordre }}: {{ scene.titre }}
-                        </option>
-                      </select>
-                    </div>
-
-                    <div class="form-group-crea-raccord">
-                      <label for="sceneCibleId">Scène Cible *</label>
-                      <select 
-                        id="sceneCibleId"
-                        v-model="formData.sceneCibleId" 
-                        :disabled="!formData.sequenceId" 
-                        required
-                        class="search-input-crea-raccord"
-                      >
-                        <option value="">Sélectionner une scène cible</option>
-                        <option v-if="formData.sceneSourceId" :value="formData.sceneSourceId">
-                          🔄 Même scène (continuité de tournage)
-                        </option>
-                        <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
-                          Scène {{ scene.ordre }}: {{ scene.titre }}
-                        </option>
-                      </select>
-                      <small v-if="formData.sceneSourceId && formData.sceneCibleId === formData.sceneSourceId" class="same-scene-note-crea-raccord">
-                        ⚠️ Raccord pour continuité dans la même scène (ex: tournage sur plusieurs jours)
-                      </small>
-                    </div>
+                  <div class="form-section-title-crea-raccord">
+                    <i class="fas fa-exchange-alt"></i>
+                    Scènes de raccordement
                   </div>
-                  
+
+                  <div class="scene-hierarchy-section-crea-raccord">
+                    <div class="form-row-dual-crea-raccord">
+                      <div class="form-group-crea-raccord">
+                        <label for="sceneSourceId">Scène Source *</label>
+                        <select 
+                          id="sceneSourceId"
+                          v-model="formData.sceneSourceId" 
+                          :disabled="!formData.sequenceId" 
+                          required
+                          class="search-input-crea-raccord"
+                        >
+                          <option value="">Sélectionner une scène source</option>
+                          <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
+                            Scène {{ scene.ordre }}: {{ scene.titre }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <div class="form-group-crea-raccord">
+                        <label for="sceneCibleId">Scène Cible *</label>
+                        <select 
+                          id="sceneCibleId"
+                          v-model="formData.sceneCibleId" 
+                          :disabled="!formData.sequenceId" 
+                          required
+                          class="search-input-crea-raccord"
+                        >
+                          <option value="">Sélectionner une scène cible</option>
+                          <option v-if="formData.sceneSourceId" :value="formData.sceneSourceId">
+                            🔄 Même scène (continuité de tournage)
+                          </option>
+                          <option v-for="scene in scenesParSequence" :key="scene.idScene" :value="scene.idScene">
+                            Scène {{ scene.ordre }}: {{ scene.titre }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <small v-if="formData.sceneSourceId && formData.sceneCibleId === formData.sceneSourceId" class="same-scene-note-crea-raccord">
+                      ⚠️ Raccord pour continuité dans la même scène (ex: tournage sur plusieurs jours)
+                    </small>
+                  </div>
+
                   <!-- Personnage et Comédien -->
-                  <div class="form-row-crea-raccord">
+                  <div class="form-section-title-crea-raccord">
+                    <i class="fas fa-users"></i>
+                    Personnage et comédien
+                  </div>
+
+                  <div class="form-row-dual-crea-raccord">
                     <div class="form-group-crea-raccord">
                       <label for="personnageId">Personnage</label>
                       <select 
@@ -269,7 +277,12 @@
                   </div>
 
                   <!-- Type et Statut -->
-                  <div class="form-row-crea-raccord">
+                  <div class="form-section-title-crea-raccord">
+                    <i class="fas fa-cog"></i>
+                    Configuration du raccord
+                  </div>
+
+                  <div class="form-row-dual-crea-raccord">
                     <div class="form-group-crea-raccord">
                       <label for="typeRaccordId">Type de Raccord *</label>
                       <select 
@@ -300,21 +313,26 @@
                   </div>
 
                   <!-- Description -->
-                  <div class="form-row-crea-raccord">
-                    <div class="form-group-crea-raccord full-width">
-                      <label for="description">Description</label>
+                  <div class="form-section-title-crea-raccord">
+                    <i class="fas fa-align-left"></i>
+                    Description
+                  </div>
+
+                  <div class="form-row-full-crea-raccord">
+                    <div class="form-group-crea-raccord">
+                      <label for="description">Description du raccord</label>
                       <textarea 
                         id="description"
                         v-model="formData.description" 
                         rows="3" 
-                        placeholder="Description du raccord..."
+                        placeholder="Décrivez les détails du raccord..."
                         class="form-textarea-crea-raccord"
                       ></textarea>
                     </div>
                   </div>
 
                   <!-- Checkbox critique -->
-                  <div class="form-row-crea-raccord">
+                  <div class="form-row-full-crea-raccord">
                     <div class="form-group-crea-raccord checkbox-group-crea-raccord">
                       <label>
                         <input type="checkbox" v-model="formData.estCritique">
@@ -324,9 +342,14 @@
                   </div>
 
                   <!-- Images de référence -->
-                  <div class="form-row-crea-raccord">
-                    <div class="form-group-crea-raccord full-width">
-                      <label for="images">Images de référence</label>
+                  <div class="form-section-title-crea-raccord">
+                    <i class="fas fa-images"></i>
+                    Images de référence
+                  </div>
+
+                  <div class="form-row-full-crea-raccord">
+                    <div class="form-group-crea-raccord">
+                      <label for="images">Télécharger des images</label>
                       <input 
                         id="images"
                         type="file" 
@@ -380,14 +403,13 @@
                   
                   <div class="search-section-crea-raccord">
                     <div class="search-group-crea-raccord">
-                      <label for="raccordSearch">Rechercher un raccord</label>
                       <div class="search-input-container-crea-raccord">
                         <i class="fas fa-search search-icon-crea-raccord"></i>
                         <input
                           type="text"
                           id="raccordSearch"
                           v-model="searchTerm"
-                          placeholder="Rechercher par description..."
+                          placeholder=" Rechercher par description..."
                           class="search-input-large-crea-raccord"
                         />
                       </div>
@@ -433,7 +455,13 @@
                               <i class="fas fa-link"></i>
                               {{ raccord.typeRaccordNom }}
                             </h5>
-                            <span :class="`status-badge-crea-raccord status-${raccord.statutRaccordNom.toLowerCase()}`">
+                            <span 
+                              :class="[
+                                'raccord-statut-badge-crea-raccord',
+                                `status-${getStatutSlug(raccord.statutRaccordNom)}-crea-raccord`
+                              ]"
+                            >
+                              <i :class="getStatutIcon(raccord.statutRaccordNom)"></i>
                               {{ raccord.statutRaccordNom }}
                             </span>
                           </div>
@@ -540,6 +568,63 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal d'erreur d'accès -->
+    <div v-if="showAccessErrorModal" class="access-error-modal-crea-raccord" @click="closeAccessErrorModal">
+      <div class="access-error-content-crea-raccord" @click.stop>
+        <div class="access-error-header-crea-raccord">
+          <h3>
+            <i class="fas fa-exclamation-triangle"></i>
+            Erreur d'accès
+          </h3>
+          <button @click="closeAccessErrorModal" class="access-error-close-crea-raccord">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="access-error-body-crea-raccord">
+          <p>{{ accessErrorMessage }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression (identique à ProjetScenariste.vue) -->
+      <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+        <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+        <div class="modal-content-confirm-Scenariste">
+          <div class="modal-header-confirm-Scenariste">
+            <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+            <button @click="closeDeleteModal" class="close-modal-btn-Scenariste">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="modal-body-confirm-Scenariste">
+            <div class="warning-icon-Scenariste">
+              <i class="fas fa-trash"></i>
+            </div>
+            <p class="warning-text-Scenariste">
+              Êtes-vous sûr de vouloir supprimer le raccord <strong>"{{ raccordToDelete?.description || raccordToDelete?.typeRaccordNom || 'cet élément' }}"</strong> ?
+            </p>
+            <p class="warning-subtext-Scenariste">
+              Cette action est irréversible. Toutes les images associées à ce raccord seront également supprimées.
+            </p>
+            <div v-if="deleteError" class="error-message-Scenariste">
+              {{ deleteError }}
+            </div>
+          </div>
+          
+          <div class="modal-footer-confirm-Scenariste">
+            <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
+              <i class="fas fa-times"></i> Annuler
+            </button>
+            <button @click="executeDeleteRaccord" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+              <span v-if="isDeleting">Suppression...</span>
+              <span v-else>Supprimer définitivement</span>
+            </button>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -592,7 +677,13 @@ export default {
         comedienId: ''
       },
       previewImages: [],
-      user: null
+      user: null,
+      showAccessErrorModal: false,
+      accessErrorMessage: '',
+      showDeleteModal: false,
+      raccordToDelete: null,
+      isDeleting: false,
+      deleteError: '',
     };
   },
   computed: {
@@ -1297,29 +1388,75 @@ export default {
       }
     },
 
- async deleteRaccord(id) {
-      if (!this.permissions.canDeleteRaccord) {
-        this.showAccessError('Vous n\'avez pas les permissions pour supprimer un raccord.');
+   async deleteRaccord(id) {
+    if (!this.permissions.canDeleteRaccord) {
+      this.showAccessError('Vous n\'avez pas les permissions pour supprimer un raccord.');
+      return;
+    }
+    
+    // Trouver le raccord à supprimer pour afficher ses infos
+    const raccord = this.raccords.find(r => r.id === id);
+    if (!raccord) return;
+    
+    this.raccordToDelete = raccord;
+    this.showDeleteModal = true;
+    this.deleteError = '';
+  },
+  
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+    this.raccordToDelete = null;
+    this.isDeleting = false;
+    this.deleteError = '';
+  },
+  
+  async executeDeleteRaccord() {
+    if (!this.raccordToDelete) return;
+    
+    this.isDeleting = true;
+    this.deleteError = '';
+    
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        this.deleteError = 'Utilisateur non connecté';
+        this.isDeleting = false;
         return;
       }
-      
-      if (confirm('Êtes-vous sûr de vouloir supprimer ce raccord ?')) {
-        try {
-          await axios.delete(`/api/raccords/${id}`, {
-            headers: { 'X-User-Id': this.currentUserId }
-          });
-          await this.loadRaccords();
-        } catch (error) {
-          console.error('Erreur lors de la suppression:', error);
-          
-          if (error.response?.status === 403) {
-            this.showAccessError('Vous n\'avez pas les permissions pour supprimer ce raccord.');
-          } else {
-            alert('Erreur lors de la suppression du raccord');
-          }
+
+      await axios.delete(`/api/raccords/${this.raccordToDelete.id}`, {
+        headers: {
+          'X-User-Id': user.id
         }
+      });
+      
+      await this.loadRaccords();
+      this.closeDeleteModal();
+      
+      // Optionnel: Afficher une notification de succès
+      // this.showSuccessNotification('Raccord supprimé avec succès!');
+      
+    } catch (error) {
+      console.error('Erreur lors de la suppression du raccord:', error);
+      
+      let errorMessage = 'Erreur lors de la suppression du raccord';
+      
+      if (error.response) {
+        if (error.response.status === 403) {
+          errorMessage = 'Suppression refusée. Vous n\'avez pas les droits nécessaires pour supprimer ce raccord.';
+        } else if (error.response.status === 401) {
+          errorMessage = 'Session expirée. Veuillez vous reconnecter.';
+        } else {
+          errorMessage = error.response.data?.message || `Erreur serveur (${error.response.status})`;
+        }
+      } else if (error.request) {
+        errorMessage = 'Pas de réponse du serveur. Vérifiez votre connexion.';
       }
-    },
+      
+      this.deleteError = errorMessage;
+      this.isDeleting = false;
+    }
+  },
 
      // Afficher les erreurs d'accès
     showAccessError(message) {
@@ -1371,6 +1508,51 @@ export default {
     showImageModal(image) {
       this.selectedImage = image;
     },
+
+    showAccessError(message) {
+    this.accessErrorMessage = message;
+    this.showAccessErrorModal = true;
+  },
+  
+  closeAccessErrorModal() {
+    this.showAccessErrorModal = false;
+    this.accessErrorMessage = '';
+  },
+
+  getStatutSlug(statutNom) {
+  if (!statutNom) return 'en-attente';
+  
+  const statut = statutNom.toLowerCase();
+  if (statut.includes('actif') || statut.includes('en cours')) {
+    return 'actif';
+  } else if (statut.includes('résolu') || statut.includes('résolution')) {
+    return 'résolu';
+  } else if (statut.includes('terminé') || statut.includes('complet')) {
+    return 'termine';
+  } else if (statut.includes('critique')) {
+    return 'critique';
+  } else {
+    return 'en-attente';
+  }
+},
+
+// Méthode pour obtenir l'icône du statut
+getStatutIcon(statutNom) {
+  if (!statutNom) return 'fas fa-clock';
+  
+  const statut = statutNom.toLowerCase();
+  if (statut.includes('actif') || statut.includes('en cours')) {
+    return 'fas fa-play-circle';
+  } else if (statut.includes('résolu') || statut.includes('résolution')) {
+    return 'fas fa-check-circle';
+  } else if (statut.includes('terminé') || statut.includes('complet')) {
+    return 'fas fa-check-circle';
+  } else if (statut.includes('critique')) {
+    return 'fas fa-exclamation-triangle';
+  } else {
+    return 'fas fa-clock';
+  }
+},
 
     resetForm() {
        this.formData = {
