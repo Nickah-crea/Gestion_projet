@@ -560,12 +560,6 @@
           <img :src="`/api/raccords/image/${selectedImage.cheminFichier}`" :alt="selectedImage.descriptionImage">
           <p class="image-description-crea-raccord">{{ selectedImage.descriptionImage }}</p>
         </div>
-        
-        <div class="modal-footer-crea-raccord">
-          <button type="button" @click="selectedImage = null" class="btn-close-modal-crea-raccord">
-            <i class="fas fa-times"></i> Fermer
-          </button>
-        </div>
       </div>
     </div>
 
