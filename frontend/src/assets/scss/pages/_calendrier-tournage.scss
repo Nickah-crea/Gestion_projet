@@ -1,574 +1,1004 @@
+// _calendrier-tournage.scss
 @import '../base/variables';
 
-// =============================================
-// STYLES ADMIN - GESTION DES UTILISATEURS
-// =============================================
-
-.utilisateurs-container {
-  padding: $spacing-xl;
-  max-width: 1400px;
-  margin: 0 auto;
+.app-wrapper-global {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background: $color-background;
+  height: 100vh;
+  overflow: hidden;
 }
 
-// Header
-.utilisateurs-header {
+.calendrier-tournage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: none;
+  margin-left: 140px;
+  margin-right: 140px;
+  padding: $spacing-lg;
+}
+
+// =============================================
+// EN-TÊTE DU CALENDRIER
+// =============================================
+.calendrier-header {
   margin-bottom: $spacing-xl;
-  text-align: center;
   
-  h1 {
-    @include typography-h1;
+  h2 {
+    @include typography-playfair-h2;
     color: $color-text-primary;
-    margin-bottom: $gap-md;
-  }
-  
-  p {
-    @include typography-p1;
-    color: $color-text-muted;
-    margin: 0;
+    margin-bottom: $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: $gap-md;
   }
 }
 
-// Barre d'actions
-.actions-bar {
-  @include flex-between;
-  margin-bottom: $spacing-lg;
-  gap: $gap-xl;
+.filters {
+  display: flex;
+  gap: $spacing-md;
   flex-wrap: wrap;
+  align-items: center;
+  padding: $padding-md;
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
   
-  @include respond-to($breakpoint-md) {
-    flex-wrap: nowrap;
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  select,
+  input[type="date"] {
+    padding: $padding-sm $padding-md;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    min-width: 200px;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+    
+    @media (max-width: $breakpoint-md) {
+      min-width: 100%;
+    }
+  }
+  
+  .btn-secondary {
+    @include btn-cinema-accent;
+    min-width: auto;
+    padding: $padding-sm $padding-lg;
+    background: transparent;
+    border: 1px solid $color-border-dark;
+    color: $color-text-secondary;
+    
+    &:hover {
+      background: rgba($color-text-secondary, 0.1);
+      color: $color-text-primary;
+    }
   }
 }
 
-.btn-add {
-  background: linear-gradient(135deg, $color-primary, $color-accent);
-  color: $color-text-light;
-  border: none;
-  padding: $padding-sm $padding-lg;
-  border-radius: $border-radius-pill;
-  font-weight: $font-weight-semibold;
+// =============================================
+// VUE CALENDRIER
+// =============================================
+.calendrier-view {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+// =============================================
+// NAVIGATION DU MOIS
+// =============================================
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-lg;
+  background: linear-gradient(135deg, $color-primary-light 0%, $color-background 100%);
+  border-bottom: 1px solid $color-border;
+  
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin: 0;
+    text-transform: capitalize;
+  }
+  
+  button {
+    @include btn-cinema-primary;
+    padding: $padding-xs $padding-md;
+    background: transparent;
+    border: 1px solid $color-border-dark;
+    color: $color-text-primary;
+    font-size: $font-size-p2;
+    
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}
+
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: $color-background;
+  border-bottom: 2px solid $color-border;
+  
+  .week-day {
+    @include typography-p3;
+    padding: $padding-md;
+    text-align: center;
+    font-weight: $font-weight-semibold;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// =============================================
+// JOURS DU CALENDRIER
+// =============================================
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  min-height: 600px;
+  
+  @media (max-width: $breakpoint-lg) {
+    min-height: 400px;
+  }
+}
+
+.calendar-day {
+  border: 1px solid $color-border;
+  padding: $padding-sm;
+  background: $color-white;
+  transition: $transition-fast;
+  position: relative;
   cursor: pointer;
-  @include flex-center;
-  gap: $gap-sm;
-  transition: $transition;
-  white-space: nowrap;
+  min-height: 120px;
   
   &:hover {
-    transform: translateY(-2px);
+    background: rgba($color-primary, 0.05);
+    transform: translateY(-1px);
+    z-index: 1;
     box-shadow: $shadow-hover;
   }
   
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-}
-
-.search-bar {
-  position: relative;
-  flex: 1;
-  min-width: 250px;
-}
-
-.search-input {
-  width: 100%;
-  padding: $padding-sm $padding-xl $padding-sm $padding-lg;
-  border: $border-width solid $color-border-dark;
-  border-radius: $border-radius-pill;
-  font-size: $font-size-p1;
-  background: $color-background-alt;
-  transition: $transition;
-  
-  &:focus {
-    outline: none;
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px $color-pastel-gold;
-  }
-  
-  &::placeholder {
+  &.other-month {
+    background: $color-background;
     color: $color-text-muted;
   }
-}
-
-.search-icon {
-  position: absolute;
-  right: $padding-md;
-  top: 50%;
-  transform: translateY(-50%);
-  color: $color-text-muted;
-}
-
-// Conteneur du tableau
-.table-container {
-  background: $color-background-alt;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow;
-  overflow: hidden;
-  margin-bottom: $spacing-xl;
-}
-
-// Tableau
-.utilisateurs-table {
-  width: 100%;
-  border-collapse: collapse;
   
-  th {
-    background: $color-primary-light;
-    padding: $padding-lg;
-    text-align: left;
+  &.has-tournages {
+    background: rgba($color-primary-light, 0.3);
+  }
+  
+  &.has-alertes-critiques {
+    background: rgba($color-error, 0.1);
+    border: 2px solid rgba($color-error, 0.3);
+    
+    .day-header {
+      color: $color-error;
+    }
+  }
+  
+  .day-header {
+    @include typography-p4;
     font-weight: $font-weight-semibold;
+    text-align: center;
+    margin-bottom: $gap-sm;
+    padding-bottom: $gap-xs;
+    border-bottom: 1px solid rgba($color-border, 0.5);
     color: $color-text-primary;
-    border-bottom: 2px solid $color-border;
-    @include typography-p1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// TOURNAGES DANS LES JOURS
+// =============================================
+.tournages-list {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  max-height: 80px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
   }
   
-  td {
-    padding: $padding-lg;
-    border-bottom: 1px solid $color-border;
-    @include typography-p1;
-  }
-  
-  tr:last-child td {
-    border-bottom: none;
-  }
-  
-  tr:hover {
-    background: $color-surface-hover;
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-border-dark, 0.3);
+    border-radius: 2px;
   }
 }
 
-// Nom d'utilisateur avec avatar
-.user-name {
-  @include flex-center;
-  gap: $gap-lg;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, $color-primary, $color-accent);
-  border-radius: 50%;
-  @include flex-center;
-  color: $color-text-light;
-  flex-shrink: 0;
-}
-
-// Badges de rôle
-.role-badge {
-  padding: $gap-xs $gap-lg;
-  border-radius: $border-radius-pill;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.role-admin {
-  background: rgba($color-warning, 0.15);
-  color: darken($color-warning, 20%);
-}
-
-.role-scenariste {
-  background: rgba($color-accent, 0.15);
-  color: darken($color-accent, 30%);
-}
-
-.role-realisateur {
-  background: rgba($color-primary, 0.15);
-  color: darken($color-primary, 30%);
-}
-
-// Actions
-.actions {
-  @include flex-center;
-  gap: $gap-sm;
-}
-
-.btn-edit, .btn-delete {
-  padding: $padding-xs;
-  border: none;
-  border-radius: $border-radius-sm;
+.tournage-item {
+  @include typography-p4;
+  padding: $gap-xs $gap-sm;
+  border-radius: $border-radius-xs;
+  margin-bottom: 1px;
+  transition: $transition-fast;
   cursor: pointer;
-  transition: $transition;
-  @include flex-center;
-  width: 32px;
-  height: 32px;
+  position: relative;
+  overflow: hidden;
   
   &:hover {
-    transform: translateY(-1px);
+    transform: translateX(2px);
+  }
+  
+  &.statut-planifie {
+    @include pastel-gold;
+    border-left: 3px solid $color-primary;
+  }
+  
+  &.statut-confirme {
+    background: rgba($color-success, 0.1);
+    border-left: 3px solid $color-success;
+    color: darken($color-success, 20%);
+  }
+  
+  &.statut-en_cours {
+    background: rgba($color-accent, 0.1);
+    border-left: 3px solid $color-accent;
+    color: darken($color-accent, 20%);
+  }
+  
+  &.statut-termine {
+    background: rgba($color-info, 0.1);
+    border-left: 3px solid $color-info;
+    color: darken($color-info, 20%);
+  }
+  
+  &.statut-reporte {
+    background: rgba($color-error, 0.1);
+    border-left: 3px solid $color-error;
+    color: darken($color-error, 20%);
+  }
+  
+  .tournage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2px;
+  }
+  
+  .tournage-time {
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-p5;
+    color: $color-text-secondary;
+  }
+  
+  .tournage-actions-small {
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    transition: $transition-fast;
+  }
+  
+  &:hover .tournage-actions-small {
+    opacity: 1;
+  }
+  
+  .btn-details-small,
+  .btn-edit-small,
+  .btn-delete-small {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: none;
+    border-radius: 2px;
+    font-size: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: $transition-fast;
+    
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+  
+  .btn-details-small {
+    background: rgba($color-info, 0.2);
+    color: $color-info;
+    
+    &:hover {
+      background: $color-info;
+      color: $color-white;
+    }
+  }
+  
+  .btn-edit-small {
+    background: rgba($color-warning, 0.2);
+    color: $color-warning;
+    
+    &:hover {
+      background: $color-warning;
+      color: $color-white;
+    }
+  }
+  
+  .btn-delete-small {
+    background: rgba($color-error, 0.2);
+    color: $color-error;
+    
+    &:hover {
+      background: $color-error;
+      color: $color-white;
+    }
+  }
+  
+  .tournage-title {
+    font-weight: $font-weight-medium;
+    font-size: $font-size-p5;
+    @include text-truncate;
   }
 }
 
-.btn-edit {
-  background: $color-primary;
-  color: $color-text-light;
+// =============================================
+// ALERTES RACCORDS CRITIQUES
+// =============================================
+.alertes-section {
+  background: rgba($color-error, 0.05);
+  border: 1px solid rgba($color-error, 0.2);
+  border-radius: $border-radius;
+  margin: $spacing-md;
+  overflow: hidden;
   
-  &:hover {
-    background: $color-primary-dark;
+  .alertes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $padding-md;
+    background: rgba($color-error, 0.1);
+    border-bottom: 1px solid rgba($color-error, 0.2);
+    
+    h3 {
+      @include typography-playfair-p4;
+      color: $color-error;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+    }
+    
+    .badge-danger {
+      background: $color-error;
+      color: $color-white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: $font-size-p5;
+      font-weight: $font-weight-bold;
+    }
+    
+    .btn-toggle {
+      @include typography-p4;
+      background: transparent;
+      border: 1px solid rgba($color-error, 0.3);
+      color: $color-error;
+      padding: $gap-xs $padding-sm;
+      border-radius: $border-radius-xs;
+      cursor: pointer;
+      transition: $transition-fast;
+      
+      &:hover {
+        background: rgba($color-error, 0.1);
+      }
+    }
+  }
+  
+  .alertes-list {
+    padding: $padding-md;
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+  }
+  
+  .alerte-item {
+    display: flex;
+    align-items: flex-start;
+    gap: $gap-md;
+    padding: $padding-sm;
+    background: rgba($color-error, 0.08);
+    border: 1px solid rgba($color-error, 0.15);
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-error, 0.12);
+      transform: translateX(3px);
+    }
+    
+    .alerte-icon {
+      font-size: $font-size-p1;
+      flex-shrink: 0;
+    }
+    
+    .alerte-content {
+      flex: 1;
+    }
+    
+    .alerte-title {
+      @include typography-p4;
+      font-weight: $font-weight-semibold;
+      color: $color-error;
+      margin-bottom: $gap-xs;
+    }
+    
+    .alerte-date {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin-bottom: $gap-xs;
+    }
+    
+    .alerte-scenes {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-style: italic;
+    }
   }
 }
 
-.btn-delete {
-  background: $color-error;
-  color: $color-text-light;
-  
-  &:hover {
-    background: $color-secondary-dark;
-  }
+// Alertes dans les jours
+.alertes-list-day {
+  margin-top: $gap-xs;
 }
 
-// État vide
-.no-data {
+.alerte-item-day {
+  @include typography-p4;
+  background: rgba($color-error, 0.15);
+  color: $color-error;
+  padding: 1px 3px;
+  border-radius: 2px;
   text-align: center;
-  padding: $spacing-xl * 2 $spacing-md;
-  color: $color-text-muted;
+  cursor: pointer;
+  margin-bottom: 1px;
+  @include text-truncate;
   
-  i {
-    font-size: 3rem;
-    margin-bottom: $margin-lg;
-    opacity: 0.3;
-  }
-  
-  p {
-    @include typography-p1;
-    margin: 0;
+  &:hover {
+    background: rgba($color-error, 0.25);
   }
 }
 
-// Modals
+.alerte-indicator {
+  color: $color-error;
+  font-size: $font-size-p5;
+  cursor: pointer;
+  animation: pulse 2s infinite;
+  
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+// =============================================
+// MODALS
+// =============================================
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba($color-text-primary, 0.5);
-  @include flex-center;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: $z-index-modal;
   padding: $spacing-md;
+  animation: fadeIn $duration-normal $ease-out-cinema;
 }
 
 .modal-content {
   background: $color-background-alt;
   border-radius: $border-radius-lg;
-  width: 90%;
-  max-width: 500px;
+  box-shadow: $shadow-xl;
+  animation: slideUp $duration-cinematic $ease-out-cinema;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: $shadow-lg;
-  
-  &.delete-modal {
-    max-width: 400px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .modal-header {
-  @include flex-between;
-  padding: $padding-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-lg;
   border-bottom: 1px solid $color-border;
   
-  h2 {
-    @include typography-h2;
-    margin: 0;
+  h3 {
+    @include typography-playfair-h4;
     color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
   }
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: $color-text-muted;
-  padding: $padding-xs;
-  border-radius: $border-radius-sm;
   
-  &:hover {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
+  .close-btn {
+    background: transparent;
+    border: none;
+    font-size: $font-size-p1;
+    color: $color-text-muted;
+    cursor: pointer;
+    padding: $gap-xs;
+    border-radius: $border-radius-xs;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+    }
   }
 }
 
-// Formulaire
-.user-form {
-  padding: $padding-xl;
+// Modal Planning
+.planning-modal {
+  width: 90%;
+  max-width: 800px;
+}
+
+.planning-form {
+  padding: $padding-lg;
+}
+
+.form-row {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+  
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
 }
 
 .form-group {
-  margin-bottom: $margin-lg;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   
   label {
-    display: block;
-    margin-bottom: $gap-sm;
+    @include typography-p4;
     font-weight: $font-weight-semibold;
     color: $color-text-primary;
-    @include typography-p1;
-  }
-  
-  .hint {
-    font-weight: $font-weight-regular;
-    color: $color-text-muted;
-    font-size: $font-size-p2;
-  }
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: $padding-md;
-  border: $border-width solid $color-border-dark;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p1;
-  transition: $transition;
-  box-sizing: border-box;
-  font-family: $font-family-primary;
-  
-  &:focus {
-    outline: none;
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px $color-pastel-gold;
-  }
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 80px;
-  font-family: $font-family-primary;
-}
-
-// Actions du formulaire
-.form-actions {
-  @include flex-center;
-  gap: $gap-lg;
-  justify-content: flex-end;
-  margin-top: $spacing-lg;
-  
-  @include respond-to($breakpoint-sm) {
-    justify-content: flex-end;
-  }
-}
-
-.btn-cancel, .btn-submit, .btn-delete-confirm {
-  padding: $padding-sm $padding-lg;
-  border: none;
-  border-radius: $border-radius-pill;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  @include flex-center;
-  gap: $gap-sm;
-  min-width: 100px;
-  
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-}
-
-.btn-cancel {
-  background: $color-text-muted;
-  color: $color-text-light;
-  
-  &:hover:not(:disabled) {
-    background: darken($color-text-muted, 10%);
-  }
-}
-
-.btn-submit {
-  background: linear-gradient(135deg, $color-primary, $color-accent);
-  color: $color-text-light;
-  
-  &:hover:not(:disabled) {
-    box-shadow: $shadow-hover;
-  }
-}
-
-.btn-delete-confirm {
-  background: $color-error;
-  color: $color-text-light;
-  
-  &:hover:not(:disabled) {
-    background: $color-secondary-dark;
-  }
-}
-
-.loading {
-  @include flex-center;
-  gap: $gap-sm;
-}
-
-// Modal de suppression
-.modal-body {
-  padding: $padding-xl;
-  text-align: center;
-}
-
-.warning-icon {
-  font-size: 3rem;
-  color: $color-warning;
-  margin-bottom: $margin-lg;
-}
-
-.warning-text {
-  color: $color-error;
-  font-weight: $font-weight-semibold;
-  @include typography-p1;
-}
-
-// Toast
-.toast {
-  position: fixed;
-  top: $spacing-lg;
-  right: $spacing-lg;
-  padding: $padding-md $padding-lg;
-  border-radius: $border-radius;
-  color: $color-text-light;
-  @include flex-center;
-  gap: $gap-lg;
-  z-index: $z-index-toast;
-  animation: slideInRight $duration-normal ease;
-  box-shadow: $shadow-lg;
-  
-  &.success {
-    background: $color-success;
-  }
-  
-  &.error {
-    background: $color-error;
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-// Responsive
-@media (max-width: $breakpoint-md) {
-  .utilisateurs-container {
-    padding: $spacing-md;
-  }
-  
-  .actions-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .search-bar {
-    min-width: auto;
-  }
-  
-  .utilisateurs-table {
-    font-size: $font-size-p2;
+    margin-bottom: $gap-xs;
     
-    th, td {
-      padding: $padding-md;
+    &::after {
+      content: ' *';
+      color: $color-error;
     }
   }
   
-  .actions {
-    flex-direction: column;
+  .form-select,
+  .form-input,
+  .form-textarea {
+    padding: $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+    
+    &:disabled {
+      background: $color-background;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+  
+  .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: $line-height-base;
+  }
+  
+  .field-info,
+  .text-info {
+    @include typography-p4;
+    color: $color-text-muted;
+    margin-top: $gap-xs;
+    display: flex;
+    align-items: center;
     gap: $gap-xs;
+    
+    i {
+      color: $color-info;
+    }
+  }
+}
+
+// Messages d'erreur
+.error-message {
+  padding: $padding-md;
+  background: rgba($color-error, 0.1);
+  border: 1px solid rgba($color-error, 0.3);
+  border-radius: $border-radius-xs;
+  margin: $spacing-md 0;
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-md;
+  
+  i {
+    color: $color-error;
+    font-size: $font-size-p2;
+    flex-shrink: 0;
+  }
+  
+  .error-content {
+    flex: 1;
+  }
+  
+  .error-text {
+    @include typography-p4;
+    color: $color-error;
+    white-space: pre-wrap;
+    margin: 0;
+    font-family: inherit;
+  }
+  
+  &.conflict-warning {
+    background: rgba($color-warning, 0.1);
+    border-color: rgba($color-warning, 0.3);
+    
+    i, .conflict-title, .error-text {
+      color: $color-warning;
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+  
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+  }
+  
+  .btn {
+    padding: $padding-sm $padding-lg;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+  }
+  
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid $color-border-dark;
+    color: $color-text-secondary;
+    
+    &:hover:not(:disabled) {
+      background: rgba($color-text-secondary, 0.1);
+      border-color: $color-text-secondary;
+      color: $color-text-primary;
+    }
+  }
+  
+  .btn-primary {
+    background: $color-primary;
+    color: $color-white;
+    
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      box-shadow: $shadow-hover;
+    }
+  }
+  
+  .btn-danger {
+    background: $color-error;
+    color: $color-white;
+    
+    &:hover:not(:disabled) {
+      background: darken($color-error, 10%);
+    }
+  }
+}
+
+// Modal Détails
+.details-modal {
+  width: 90%;
+  max-width: 600px;
+}
+
+.details-content {
+  padding: $padding-lg;
+}
+
+.detail-section {
+  margin-bottom: $spacing-lg;
+  
+  h4 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $spacing-sm;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: $spacing-sm;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-sm;
+  
+  strong {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    min-width: 100px;
+  }
+  
+  span {
+    @include typography-p4;
+    color: $color-text-secondary;
+    flex: 1;
+  }
+  
+  .statut-badge {
+    @include typography-p4;
+    padding: 2px 8px;
+    border-radius: $border-radius-pill;
+    font-weight: $font-weight-medium;
+    
+    &.statut-planifie {
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
+      border: 1px solid rgba($color-primary, 0.3);
+    }
+    
+    &.statut-confirme {
+      background: rgba($color-success, 0.1);
+      color: $color-success;
+      border: 1px solid rgba($color-success, 0.3);
+    }
+    
+    &.statut-en_cours {
+      background: rgba($color-accent, 0.1);
+      color: $color-accent;
+      border: 1px solid rgba($color-accent, 0.3);
+    }
+    
+    &.statut-termine {
+      background: rgba($color-info, 0.1);
+      color: $color-info;
+      border: 1px solid rgba($color-info, 0.3);
+    }
+    
+    &.statut-reporte {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+      border: 1px solid rgba($color-error, 0.3);
+    }
+  }
+}
+
+.notes-content {
+  padding: $padding-md;
+  background: $color-background;
+  border-radius: $border-radius-xs;
+  border-left: 3px solid $color-primary;
+  @include typography-p4;
+  color: $color-text-secondary;
+  line-height: $line-height-base;
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .calendar-day {
+    min-height: 100px;
+    padding: $padding-xs;
+  }
+  
+  .tournage-item {
+    .tournage-actions-small {
+      opacity: 1;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .calendar-days {
+    grid-template-columns: repeat(7, 1fr);
+    min-height: 300px;
+  }
+  
+  .calendar-day {
+    min-height: 80px;
+    
+    .day-header {
+      font-size: $font-size-p5;
+    }
+  }
+  
+  .tournage-item {
+    .tournage-time,
+    .tournage-title {
+      font-size: $font-size-p5;
+    }
   }
   
   .modal-content {
     width: 95%;
-    margin: $spacing-sm;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-    
-    button {
-      width: 100%;
-    }
+    max-height: 95vh;
   }
 }
 
-// Styles spécifiques pour les écrans très petits
 @media (max-width: $breakpoint-sm) {
-  .utilisateurs-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
+  .calendar-nav {
+    padding: $padding-md;
+    flex-direction: column;
+    gap: $gap-md;
+  }
+  
+  .week-days .week-day {
+    padding: $padding-sm;
+    font-size: $font-size-p5;
+  }
+  
+  .calendar-days {
+    min-height: auto;
+  }
+  
+  .calendar-day {
+    min-height: 60px;
     
-    th, td {
-      min-width: 120px;
+    .tournages-list {
+      display: none;
+    }
+    
+    &.has-tournages::after {
+      content: '•';
+      color: $color-primary;
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      font-size: 12px;
     }
   }
-  
-  .user-name {
-    flex-direction: column;
-    gap: $gap-sm;
-    text-align: center;
+}
+
+// =============================================
+// ANIMATIONS SPÉCIFIQUES
+// =============================================
+@keyframes fadeInUp-add-episode {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-// États de chargement
-.skeleton-loading {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-  
-  &::before {
-    content: '';
-    display: block;
-    width: 100%;
-    height: 1em;
-    background: transparent;
-  }
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-// Améliorations d'accessibilité
+// =============================================
+// ACCESSIBILITÉ
+// =============================================
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  .calendar-day,
+  .tournage-item,
+  .alerte-item,
+  .btn,
+  .modal-overlay,
+  .modal-content {
+    transition: none;
+    animation: none;
+  }
+  
+  .tournage-item:hover .tournage-actions-small {
+    opacity: 1;
+  }
+  
+  .alerte-indicator {
+    animation: none;
   }
 }
 
-// Focus visible pour l'accessibilité
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
+// Focus visible pour accessibilité
+:focus-visible {
   outline: 2px solid $color-primary;
   outline-offset: 2px;
 }
 
-// High contrast mode support
+// High contrast mode
 @media (prefers-contrast: high) {
-  .role-badge {
-    border: 1px solid currentColor;
+  .calendar-day {
+    border: 2px solid $color-text-primary;
   }
   
-  .utilisateurs-table tr:hover {
-    background: rgba($color-text-primary, 0.1);
+  .tournage-item {
+    border-left-width: 4px;
+  }
+  
+  .error-message {
+    border-width: 2px;
   }
 }
-
