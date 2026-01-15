@@ -281,6 +281,8 @@ const existingRaccords = ref([])
 const selectedRaccord = ref(null)
 const previewImages = ref([])
 
+const currentUserId = ref(null)
+
 // Nouveau raccord - MÊME STRUCTURE QUE GestionRaccords.vue
 const newRaccord = ref({
   typeId: null,
@@ -296,7 +298,39 @@ const canAddRaccord = computed(() => {
 })
 
 // Méthodes
+const checkAccessBeforeOpen = async () => {
+  try {
+    const userStr = localStorage.getItem('user')
+    if (!userStr) {
+      alert('Vous devez être connecté')
+      return false
+    }
+    
+    const user = JSON.parse(userStr)
+    
+    // Vérifier l'accès à la scène
+    const response = await axios.get(`/api/raccords/scene/${props.sceneId}/access-check`, {
+      headers: { 'X-User-Id': user.id }
+    })
+    
+    if (response.data) {
+      return true
+    } else {
+      alert('Vous n\'avez pas accès à cette scène')
+      return false
+    }
+  } catch (error) {
+    console.error('Erreur de vérification d\'accès:', error)
+    alert('Erreur de vérification d\'accès')
+    return false
+  }
+}
+
 const openRaccordsModal = async () => {
+  // Vérifier l'accès avant d'ouvrir
+  const hasAccess = await checkAccessBeforeOpen()
+  if (!hasAccess) return
+  
   showModal.value = true
   await loadData()
 }
@@ -462,6 +496,15 @@ const addRaccord = async () => {
 
   loading.value = true
   try {
+    // Récupérer l'utilisateur connecté
+    const userStr = localStorage.getItem('user')
+    if (!userStr) {
+      throw new Error('Utilisateur non connecté')
+    }
+    
+    const user = JSON.parse(userStr)
+    const userId = user.id
+    
     const formData = new FormData()
     
     // Ajouter les champs du raccord
@@ -481,7 +524,8 @@ const addRaccord = async () => {
 
     const response = await axios.post('/api/raccords', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'X-User-Id': userId  // ← AJOUTER CET EN-TÊTE
       }
     })
 
@@ -493,7 +537,21 @@ const addRaccord = async () => {
     }
   } catch (error) {
     console.error('Erreur détaillée lors de la sauvegarde:', error)
-    alert('Erreur lors de la sauvegarde des raccords: ' + (error.response?.data?.message || error.message))
+    
+    // Message d'erreur plus informatif
+    if (error.response?.status === 400) {
+      if (error.response.data === "Accès non autorisé") {
+        alert('Erreur: Vous n\'avez pas accès à cette scène.')
+      } else if (error.response.data.includes("Un raccord de ce type existe déjà")) {
+        alert('Erreur: Un raccord de ce type existe déjà pour cette scène.')
+      } else {
+        alert('Erreur 400: ' + (error.response.data || 'Données invalides'))
+      }
+    } else if (error.response?.status === 403) {
+      alert('Erreur: Accès refusé. Vérifiez vos permissions.')
+    } else {
+      alert('Erreur lors de la sauvegarde des raccords: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     loading.value = false
   }
@@ -510,13 +568,31 @@ const deleteRaccord = async (raccordId) => {
   }
 
   try {
-    await axios.delete(`/api/raccords/${raccordId}`)
+    // Récupérer l'utilisateur connecté
+    const userStr = localStorage.getItem('user')
+    if (!userStr) {
+      throw new Error('Utilisateur non connecté')
+    }
+    
+    const user = JSON.parse(userStr)
+    const userId = user.id
+    
+    await axios.delete(`/api/raccords/${raccordId}`, {
+      headers: {
+        'X-User-Id': userId  // ← AJOUTER CET EN-TÊTE
+      }
+    })
     await loadExistingRaccords()
     emit('raccords-updated')
     alert('Raccord supprimé avec succès!')
   } catch (error) {
     console.error('Erreur lors de la suppression du raccord:', error)
-    alert('Erreur lors de la suppression du raccord')
+    
+    if (error.response?.status === 403) {
+      alert('Erreur: Vous n\'avez pas les permissions pour supprimer ce raccord.')
+    } else {
+      alert('Erreur lors de la suppression du raccord')
+    }
   }
 }
 
@@ -568,6 +644,11 @@ const formatDate = (dateString) => {
 
 // Initialisation
 onMounted(() => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    const user = JSON.parse(userStr)
+    currentUserId.value = user.id
+  }
   loadTypesRaccord()
   loadStatutsRaccord()
 })
