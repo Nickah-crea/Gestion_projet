@@ -1,125 +1,216 @@
 <template>
   <div class="app-wrapper-global">
-  <div class="calendrier-tournage">
-    <div class="calendrier-header">
-      <h2>📅 Calendrier de Tournage</h2>
-      <div class="filters">
-        <select v-model="filtreProjet" @change="chargerTournages">
-          <option value="">Tous les projets</option>
-          <option v-for="projet in projets" :key="projet.id" :value="projet.id">
-            {{ projet.titre }}
-          </option>
-        </select>
-        <select v-model="filtreStatut" @change="chargerTournages">
-          <option value="">Tous les statuts</option>
-          <option value="planifie">Planifié</option>
-          <option value="confirme">Confirmé</option>
-          <option value="en_cours">En cours</option>
-          <option value="termine">Terminé</option>
-          <option value="reporte">Reporté</option>
-        </select>
-        <input type="date" v-model="filtreDate" @change="chargerTournages">
-        <button @click="reinitialiserFiltres" class="btn btn-secondary">
-          <i class="fas fa-times"></i> Réinitialiser
-        </button>
+    <!-- Sidebar latérale fixe à gauche -->
+    <div class="calendar-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title"> 
+          <i class="fas fa-calendar-alt"></i>
+          Calendrier de Tournage</h2>
+        <p class="sidebar-subtitle">Gérez vos plannings et alertes</p>
+      </div>
+
+      <!-- Section Actions Rapides -->
+      <div class="sidebar-section">
+        <h3 class="section-title"><i class="fas fa-bolt"></i> Actions Rapides</h3>
+        <div class="sidebar-actions">
+          <button 
+            @click="ouvrirModalPlanning(today)" 
+            class="sidebar-btn"
+          >
+            <i class="fas fa-plus"></i>
+            Ajouter un tournage
+          </button>
+         <!-- <button 
+            @click="showAlertesRaccords = !showAlertesRaccords" 
+            class="sidebar-btn"
+            :class="{ active: showAlertesRaccords }"
+          >
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ showAlertesRaccords ? 'Masquer' : 'Voir' }} alertes
+           </button> -->
+          <button @click="reinitialiserFiltres" class="sidebar-btn">
+            <i class="fas fa-times"></i>
+            Réinitialiser filtres
+          </button>
+        </div>
+      </div>
+
+      <!-- Section Filtres -->
+      <div class="sidebar-section">
+        <h3 class="section-title"><i class="fas fa-filter"></i> Filtres</h3>
+        <div class="filter-group">
+          <div class="filter-item">
+            <label for="projetFilter">Projet</label>
+            <select 
+              id="projetFilter" 
+              v-model="filtreProjet" 
+              @change="chargerTournages"
+              class="filter-select"
+            >
+              <option value="">Tous les projets</option>
+              <option v-for="projet in projets" :key="projet.id" :value="projet.id">
+                {{ projet.titre }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="filter-item">
+            <label for="statutFilter">Statut</label>
+            <select 
+              id="statutFilter" 
+              v-model="filtreStatut" 
+              @change="chargerTournages"
+              class="filter-select"
+            >
+              <option value="">Tous les statuts</option>
+              <option value="planifie">Planifié</option>
+              <option value="confirme">Confirmé</option>
+              <option value="en_cours">En cours</option>
+              <option value="termine">Terminé</option>
+              <option value="reporte">Reporté</option>
+            </select>
+          </div>
+
+          <div class="filter-item">
+            <label for="dateFilter">Date spécifique</label>
+            <input 
+              type="date" 
+              id="dateFilter"
+              v-model="filtreDate" 
+              @change="chargerTournages"
+              class="filter-input"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Statistiques -->
+      <div class="sidebar-section">
+        <h3 class="section-title"><i class="fas fa-chart-bar"></i> Statistiques</h3>
+        <div class="stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ tournages.length }}</span>
+            <span class="stat-label">Tournages ce mois</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ getTournagesEnCoursCount }}</span>
+            <span class="stat-label">En cours</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ alertesRaccordsCritiques.length }}</span>
+            <span class="stat-label">Alertes critiques</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Alertes Raccords Critiques -->
+      <div class="sidebar-section alertes-section" v-if="showAlertesRaccords && alertesRaccordsCritiques.length > 0">
+        <h3 class="section-title">
+          <i class="fas fa-exclamation-triangle"></i> 
+          Alertes Raccords
+          <span class="badge-danger">{{ alertesRaccordsCritiques.length }}</span>
+        </h3>
+        <div class="alertes-list-sidebar">
+          <div v-for="alerte in alertesRaccordsCritiques.slice(0, 3)" 
+              :key="alerte.raccordId" 
+              class="alerte-item-sidebar"
+              @click="ouvrirDetailsAlerte(alerte)">
+            <div class="alerte-icon">🚨</div>
+            <div class="alerte-content">
+              <div class="alerte-title">{{ alerte.getTitreAlerte() }}</div>
+              <div class="alerte-date">{{ formatDateAlerte(alerte.getDateAlerte()) }}</div>
+            </div>
+          </div>
+          <button 
+            v-if="alertesRaccordsCritiques.length > 3"
+            @click="$router.push('/gestion-raccords')"
+            class="voir-plus-btn"
+          >
+            Voir toutes les alertes ({{ alertesRaccordsCritiques.length }})
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="calendrier-view">
-      <div class="calendar-grid">
-        <div class="calendar-header">
+    <!-- Contenu principal à droite -->
+    <div class="calendar-body">
+      <div class="calendar-main-content">
+        <!-- Navigation du mois -->
+        <div class="calendar-nav-container">
           <div class="calendar-nav">
-            <button @click="moisPrecedent">←</button>
-            <h3>{{ moisCourant }}</h3>
-            <button @click="moisSuivant">→</button>
-          </div>
-          <div class="week-days">
-            <div v-for="day in joursSemaine" :key="day" class="week-day">{{ day }}</div>
-          </div>
-        </div>
-
-        <!-- Section Alertes Raccords Critiques -->
-        <div class="alertes-section" v-if="showAlertesRaccords && alertesRaccordsCritiques.length > 0">
-          <div class="alertes-header">
-            <h3>
-              <i class="fas fa-exclamation-triangle"></i>
-              Alertes Raccords Critiques
-              <span class="badge badge-danger">{{ alertesRaccordsCritiques.length }}</span>
-            </h3>
-            <button @click="showAlertesRaccords = !showAlertesRaccords" class="btn-toggle">
-              {{ showAlertesRaccords ? 'Masquer' : 'Afficher' }}
+            <button @click="moisPrecedent" class="nav-btn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <h3 class="current-month">{{ moisCourant }}</h3>
+            <button @click="moisSuivant" class="nav-btn">
+              <i class="fas fa-chevron-right"></i>
             </button>
           </div>
-          <div class="alertes-list">
-            <div v-for="alerte in alertesRaccordsCritiques" 
-                :key="alerte.raccordId" 
-                class="alerte-item critique"
-                @click="ouvrirDetailsAlerte(alerte)">
-              <div class="alerte-icon">🚨</div>
-              <div class="alerte-content">
-                <div class="alerte-title">{{ alerte.getTitreAlerte() }}</div>
-                <div class="alerte-date">{{ formatDateDetails(alerte.getDateAlerte()) }}</div>
-                <div class="alerte-scenes">{{ alerte.sceneSourceTitre }} → {{ alerte.sceneCibleTitre }}</div>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div class="calendar-days">
-                <div v-for="day in joursCalendrier" :key="day.date" 
-          :class="['calendar-day', { 
-            'other-month': !day.isCurrentMonth, 
-            'has-tournages': day.tournages.length > 0,
-            'has-alertes-critiques': getAlertesPourDate(day.date).length > 0
-          }]"
-          @click="ouvrirModalPlanning(day.date)">
-        
-        <div class="day-header">
-          {{ day.day }}
-          <span v-if="getAlertesPourDate(day.date).length > 0" 
-                class="alerte-indicator"
-                title="Raccord(s) critique(s)"
-                @click.stop="ouvrirDetailsAlerte(getAlertesPourDate(day.date)[0])">
-            🚨
-          </span>
-        </div>
-            <div class="tournages-list">
-              <div v-for="tournage in day.tournages" :key="tournage.id"
-                   :class="`tournage-item statut-${tournage.statutTournage}`">
-                <div class="tournage-header">
-                  <div class="tournage-time">{{ formatHeure(tournage.heureDebut) }} - {{ formatHeure(tournage.heureFin) }}</div>
-                  <div class="tournage-actions-small">
-                    <button @click.stop="ouvrirDetailsTournage(tournage)" class="btn-details-small" title="Voir les détails">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                    <button @click.stop="ouvrirModificationTournage(tournage)" class="btn-edit-small" title="Modifier">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button @click.stop="supprimerTournageDirect(tournage)" class="btn-delete-small" title="Supprimer">
-                      <i class="fas fa-trash"></i>
-                    </button>
+        <!-- Grille du calendrier -->
+        <div class="calendar-view">
+          <div class="calendar-grid">
+            <div class="week-days">
+              <div v-for="day in joursSemaine" :key="day" class="week-day">{{ day }}</div>
+            </div>
+            
+            <div class="calendar-days">
+              <div v-for="day in joursCalendrier" :key="day.date" 
+                :class="['calendar-day', { 
+                  'other-month': !day.isCurrentMonth, 
+                  'has-tournages': day.tournages.length > 0,
+                  'has-alertes-critiques': getAlertesPourDate(day.date).length > 0
+                }]"
+                @click="ouvrirModalPlanning(day.date)">
+                
+                <div class="day-header">
+                  {{ day.day }}
+                  <span v-if="getAlertesPourDate(day.date).length > 0" 
+                        class="alerte-indicator"
+                        title="Raccord(s) critique(s)"
+                        @click.stop="ouvrirDetailsAlerte(getAlertesPourDate(day.date)[0])">
+                    🚨
+                  </span>
+                </div>
+                
+                <div class="tournages-list">
+                  <div v-for="tournage in day.tournages" :key="tournage.id"
+                      :class="`tournage-item statut-${tournage.statutTournage}`">
+                    <div class="tournage-header">
+                      <div class="tournage-time">{{ formatHeure(tournage.heureDebut) }}</div>
+                      <div class="tournage-actions-small">
+                        <button @click.stop="ouvrirDetailsTournage(tournage)" class="btn-details-small" title="Voir les détails">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button @click.stop="ouvrirModificationTournage(tournage)" class="btn-edit-small" title="Modifier">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button @click.stop="supprimerTournageDirect(tournage)" class="btn-delete-small" title="Supprimer">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="tournage-title">{{ tournage.sceneTitre }}</div>
                   </div>
                 </div>
-                <div class="tournage-title">{{ tournage.sceneTitre }}</div>
-              </div>
-            </div>
 
-            <!-- Alertes raccords critiques -->
-              <div v-if="getAlertesPourDate(day.date).length > 0" 
-                  class="alertes-list-day">
-                <div v-for="alerte in getAlertesPourDate(day.date)" 
-                    :key="alerte.raccordId"
-                    class="alerte-item-day critique"
-                    @click.stop="ouvrirDetailsAlerte(alerte)"
-                    :title="alerte.getDescriptionComplete()">
-                  🚨 Raccord Critique
+                <!-- Alertes raccords critiques -->
+                <div v-if="getAlertesPourDate(day.date).length > 0" 
+                    class="alertes-list-day">
+                  <div v-for="alerte in getAlertesPourDate(day.date)" 
+                      :key="alerte.raccordId"
+                      class="alerte-item-day critique"
+                      @click.stop="ouvrirDetailsAlerte(alerte)"
+                      :title="alerte.getDescriptionComplete()">
+                    🚨 Raccord Critique
+                  </div>
                 </div>
               </div>
-
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
     <!-- Modal de création/modification de planning -->
     <div v-if="showPlanningModal" class="modal-overlay" @click="fermerModalPlanning">
@@ -534,6 +625,12 @@ export default {
         currentDate.setDate(currentDate.getDate() + 1);
       }
       return days;
+    },
+    getTournagesEnCoursCount() {
+      return this.tournages.filter(t => t.statutTournage === 'en_cours').length;
+    },
+    today() {
+      return this.formatDateForAPI(new Date());
     }
   },
   methods: {
@@ -1057,6 +1154,12 @@ async soumettrePlanning() {
       if (result.isConfirmed) {
         this.$router.push('/gestion-raccords');
       }
+    });
+  },
+  formatDateAlerte(dateString) {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'short'
     });
   },
 
