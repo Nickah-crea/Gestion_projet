@@ -106,7 +106,6 @@
 
 <script>
 import axios from 'axios';
-import '../assets/css/projet.css';
 
 export default {
   name: 'AddProjectView',
