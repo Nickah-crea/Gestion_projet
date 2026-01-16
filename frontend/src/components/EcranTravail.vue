@@ -228,6 +228,9 @@
             <div class="episode-header-left-screen-work">
               <h1 class="episode-title-view-screen-work">
                 Épisode {{ currentEpisode.ordre }} : {{ currentEpisode.titre }}
+              <span class="comment-badge-screen-work" @click="toggleEpisodeCommentSection">
+                <i class="fas fa-comments"></i> {{ getEpisodeCommentCount(currentEpisode.idEpisode) }}
+              </span>
               </h1>
               <div class="episode-status-badge-screen-work">
                 {{ currentEpisode.statutNom || 'Non défini' }}
@@ -321,6 +324,34 @@
                 </button>
               </div>
             </div>
+
+              <!-- Section commentaires d'épisode -->
+              <div v-if="showEpisodeCommentSection" class="detail-section-screen-work comment-section-screen-work">
+                <h3><i class="fas fa-comments"></i> Commentaires de l'épisode</h3>
+                <div class="add-comment-screen-work">
+                  <textarea v-model="newEpisodeComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
+                  <button @click="addEpisodeComment" class="add-comment-btn-screen-work">
+                    <i class="fas fa-plus-circle"></i> Ajouter
+                  </button>
+                </div>
+                
+                <div class="comments-list-screen-work">
+                  <div v-for="comment in episodeComments" :key="comment.id" class="comment-item-screen-work">
+                    <div class="comment-header-screen-work">
+                      <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
+                      <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
+                    </div>
+                    <div class="comment-content-screen-work">
+                      {{ comment.contenu }}
+                    </div>
+                    <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
+                      <button @click="deleteEpisodeComment(comment.id)" class="delete-comment-btn-screen-work">
+                        <i class="fas fa-trash"></i> Supprimer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
       </div>
@@ -1135,6 +1166,11 @@ const newDialogueData = ref({
   ordre: 1
 });
 
+const showEpisodeCommentSection = ref(false);
+const newEpisodeComment = ref('');
+const episodeComments = ref([]);
+const episodeCommentCounts = ref({});
+
 // Méthodes pour charger les données
 const loadGenres = async () => {
   try {
@@ -1376,6 +1412,11 @@ onMounted(async () => {
     await loadAvailableLieux();
   }
   
+  // Charger les commentaires d'épisode si un épisode est sélectionné
+  if (store.currentEpisode) {
+    await loadEpisodeCommentCounts();
+  }
+  
   await Promise.all([
     loadStatutsEpisode(),
     loadStatutsSequence(),
@@ -1439,6 +1480,7 @@ const checkUserPermissions = async (episodeId) => {
 watch(() => store.currentEpisode, async (newEpisode) => {
     if (newEpisode) {
         await checkUserPermissions(newEpisode.idEpisode);
+        await loadEpisodeCommentCounts();
         
         if (newEpisode.realisateur) {
             console.log('Réalisateur:', newEpisode.realisateur.nom);
@@ -2348,6 +2390,75 @@ const getStatutNomById = (type, id) => {
   const nomField = getNomField(type);
   const statut = statuts.find(s => s[idField] === id);
   return statut ? statut[nomField] : '';
+};
+
+// Méthodes pour les commentaires d'épisode
+const toggleEpisodeCommentSection = async () => {
+  showEpisodeCommentSection.value = !showEpisodeCommentSection.value;
+  if (showEpisodeCommentSection.value) {
+    await loadEpisodeComments();
+    await loadEpisodeCommentCounts();
+  }
+};
+
+const loadEpisodeComments = async () => {
+  try {
+    const response = await axios.get(`/api/commentaires/episode/${store.currentEpisode.idEpisode}`);
+    episodeComments.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement des commentaires d\'épisode:', error);
+  }
+};
+
+const getEpisodeCommentCount = (episodeId) => {
+  return episodeCommentCounts.value[episodeId] || 0;
+};
+
+const loadEpisodeCommentCounts = async () => {
+  if (store.currentEpisode) {
+    try {
+       const response = await axios.get(`/api/commentaires/episode/${store.currentEpisode.idEpisode}/count`); 
+      episodeCommentCounts.value[store.currentEpisode.idEpisode] = response.data;
+    } catch (error) {
+      console.error('Erreur lors du chargement du nombre de commentaires pour l\'épisode:', error);
+      episodeCommentCounts.value[store.currentEpisode.idEpisode] = 0;
+    }
+  }
+};
+
+const addEpisodeComment = async () => {
+  if (!newEpisodeComment.value.trim() || !store.currentEpisode) return;
+  
+  try {
+   
+    await axios.post('/api/commentaires', { 
+      contenu: newEpisodeComment.value,
+      episodeId: store.currentEpisode.idEpisode
+    }, {
+      headers: {
+        'X-User-Id': user.value.id
+      }
+    });
+    
+    newEpisodeComment.value = '';
+    await loadEpisodeComments();
+    await loadEpisodeCommentCounts();
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout du commentaire:', error);
+    alert('Erreur lors de l\'ajout du commentaire');
+  }
+};
+
+const deleteEpisodeComment = async (commentId) => {
+  if (confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')) {
+    try {
+      await axios.delete(`/api/commentaires/${commentId}`);
+      await loadEpisodeComments();
+      await loadEpisodeCommentCounts();
+    } catch (error) {
+      console.error('Erreur lors de la suppression du commentaire:', error);
+    }
+  }
 };
 
 // Méthodes pour les commentaires
