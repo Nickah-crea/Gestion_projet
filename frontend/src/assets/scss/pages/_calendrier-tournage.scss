@@ -8,13 +8,12 @@
 }
 
 .calendar-sidebar {
- 
 
  position: fixed;
-  top: 60px; // 50px de marge en haut
+  top: 60px;
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px);
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
@@ -39,10 +38,13 @@
     padding-bottom: $spacing-sm;
 
     .sidebar-title {
-      @include typography-playfair-h4;
-      color: $color-text-primary; 
+     @include typography-playfair-h4;
+      color: $color-text-primary;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
     }
 
     .sidebar-subtitle {
@@ -59,12 +61,27 @@
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
-    &.alertes-section {
-      background: rgba($color-error, 0.05);
-      border: 1px solid rgba($color-error, 0.2);
+  .section-title {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
       
-      .section-title {
-        color: $color-error;
+      // i {
+      //   color: $color-primary;
+      // }
+      
+      .badge-danger {
+        background: $color-error;
+        color: $color-text-light;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: $font-size-p5;
+        font-weight: $font-weight-bold;
+        margin-left: auto;
       }
     }
 
@@ -89,12 +106,12 @@
   }
 
   .sidebar-actions {
-    display: flex;
+     display: flex;
     flex-direction: column;
     gap: $gap-xs;
   }
 
-  .sidebar-btn {
+  .sidebar-btn-add-tournage {
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
@@ -107,24 +124,37 @@
     transition: $transition-fast;
     display: flex;
     align-items: center;
-    font-weight: $font-weight-semibold;
     gap: $gap-xs;
     box-sizing: border-box;
+    font-weight: $font-weight-semibold;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
 
     &.active {
       background: $color-primary;
+      border-color: $color-primary;
       color: $color-text-light;
+    
     }
 
     &:focus-visible {
       outline: 2px solid $color-primary;
       outline-offset: 1px;
+    }
+
+    &.nouveau-tournage-btn {
+        background:$color-tertiary-dark;
+        // border-color: $color-primary;
+        color: $color-white;
+        font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-text-light;
+      }
     }
   }
 
@@ -256,6 +286,7 @@
     cursor: pointer;
     transition: $transition-fast;
     text-align: center;
+    margin-top: $gap-xs;
     
     &:hover {
       background: rgba($color-primary, 0.1);
