@@ -486,9 +486,9 @@ export default {
           break;
         case 'SCENARISTE':
         case 'REALISATEUR':
+        case 'UTILISATEUR':
           route = '/scenariste';
           break;
-        case 'UTILISATEUR':
         default:
           route = '/accueil';
       }
