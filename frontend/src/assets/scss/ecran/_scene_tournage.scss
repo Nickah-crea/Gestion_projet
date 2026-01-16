@@ -1,0 +1,757 @@
+// _scene_tournage.scss – Style pour la section tournage d'une scène
+@import '../base/variables';
+
+// =============================================
+// SECTION TOURNAGE
+// =============================================
+.tournage-section {
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  padding: $padding-xl;
+  box-shadow: $shadow;
+  border: 1px solid rgba($color-border, 0.2);
+  margin-bottom: $margin-xl;
+}
+
+// ────────────────────────────────────────────────
+// En-tête de section
+// ────────────────────────────────────────────────
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  flex-wrap: wrap;
+  gap: $gap-md;
+  
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    flex: 1;
+    min-width: 0;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+// Indicateur de statut
+.statut-indicator {
+  @include typography-p4;
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: $gap-sm;
+  
+  &.statut-planifie {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+    border: 1px solid rgba($color-info, 0.3);
+  }
+  
+  &.statut-confirme {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.3);
+  }
+  
+  &.statut-en_cours {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+    border: 1px solid rgba($color-warning, 0.3);
+  }
+  
+  &.statut-termine {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border: 1px solid rgba($color-primary, 0.3);
+  }
+  
+  &.statut-reporte {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    border: 1px solid rgba($color-error, 0.3);
+  }
+}
+
+// ────────────────────────────────────────────────
+// Actions tournage
+// ────────────────────────────────────────────────
+.tournage-actions {
+  display: flex;
+  gap: $gap-sm;
+  flex-wrap: wrap;
+  
+  button {
+    padding: $padding-xs $padding-sm;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid $color-border;
+    background: $color-background;
+    white-space: nowrap;
+    
+    i {
+      font-size: 0.9em;
+    }
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  
+  // Boutons spécifiques
+  .btn-planifier {
+    background: $color-primary;
+    color: $color-text-light;
+    border-color: $color-primary;
+    
+    &:hover {
+      background: $color-primary-dark;
+      border-color: $color-primary-dark;
+    }
+  }
+  
+  .btn-confirmer {
+    background: $color-success;
+    color: $color-text-light;
+    border-color: $color-success;
+    
+    &:hover {
+      background: darken($color-success, 10%);
+      border-color: darken($color-success, 10%);
+    }
+  }
+  
+  .btn-commencer {
+    background: $color-warning;
+    color: $color-text-light;
+    border-color: $color-warning;
+    
+    &:hover {
+      background: darken($color-warning, 10%);
+      border-color: darken($color-warning, 10%);
+    }
+  }
+  
+  .btn-terminer {
+    background: $color-primary;
+    color: $color-text-light;
+    border-color: $color-primary;
+    
+    &:hover {
+      background: $color-primary-dark;
+      border-color: $color-primary-dark;
+    }
+  }
+  
+  .btn-reporter {
+    background: $color-error;
+    color: $color-text-light;
+    border-color: $color-error;
+    
+    &:hover {
+      background: darken($color-error, 10%);
+      border-color: darken($color-error, 10%);
+    }
+  }
+  
+  .btn-modifier {
+    color: $color-info;
+    border-color: rgba($color-info, 0.3);
+    
+    &:hover {
+      background: rgba($color-info, 0.1);
+    }
+  }
+  
+  .btn-supprimer {
+    color: $color-error;
+    border-color: rgba($color-error, 0.3);
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Informations tournage
+// ────────────────────────────────────────────────
+.tournage-info {
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  padding: $padding-lg;
+  border: 1px solid rgba($color-border, 0.1);
+  margin-bottom: $margin-lg;
+}
+
+.tournage-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $gap-lg;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  padding: $padding-sm;
+  background: rgba($color-background-alt, 0.5);
+  border-radius: $border-radius-xs;
+  border: 1px solid rgba($color-border, 0.1);
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.03);
+  }
+  
+  strong {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    i {
+      color: $color-primary;
+      font-size: 0.9em;
+    }
+  }
+  
+  span {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  // Cas spécial pour les notes
+  &.notes {
+    grid-column: 1 / -1;
+    padding: $padding-md;
+    
+    span {
+      @include typography-p3;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+      line-height: 1.5;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// État vide
+// ────────────────────────────────────────────────
+.no-tournage {
+  text-align: center;
+  padding: $padding-xl;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 2px dashed rgba($color-border, 0.5);
+  margin-bottom: $margin-lg;
+  
+  .no-data-message {
+    @include typography-p2;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-sm;
+    margin: 0;
+    
+    i {
+      color: $color-info;
+      font-size: $font-size-p2;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Historique
+// ────────────────────────────────────────────────
+.historique-toggle {
+  margin-bottom: $margin-md;
+  text-align: center;
+  
+  .btn-historique {
+    @include typography-p3;
+    color: $color-text-secondary;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    padding: $padding-xs $padding-md;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: inline-flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &:hover {
+      background: rgba($color-accent, 0.1);
+      color: $color-accent;
+      border-color: $color-accent;
+    }
+    
+    &.active {
+      background: rgba($color-accent, 0.1);
+      color: $color-accent;
+      border-color: $color-accent;
+    }
+    
+    i {
+      font-size: 0.9em;
+    }
+  }
+}
+
+.historique-section {
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  padding: $padding-lg;
+  border: 1px solid rgba($color-border, 0.2);
+  margin-top: $margin-md;
+  
+  h5 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-accent;
+    }
+  }
+}
+
+.historique-list {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+}
+
+.historique-item {
+  background: rgba($color-background-alt, 0.5);
+  border-radius: $border-radius-xs;
+  padding: $padding-md;
+  border: 1px solid rgba($color-border, 0.1);
+  border-left: 4px solid $color-accent;
+  
+  .historique-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $gap-sm;
+    
+    strong {
+      @include typography-p3;
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+    }
+    
+    .historique-statut {
+      @include typography-p4;
+      color: $color-text-muted;
+      background: rgba($color-border, 0.2);
+      padding: 2px 8px;
+      border-radius: $border-radius-xs;
+    }
+  }
+  
+  p {
+    @include typography-p3;
+    color: $color-text-secondary;
+    margin: 0 0 $gap-xs 0;
+    
+    strong {
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+    
+    &.historique-date {
+      color: $color-text-muted;
+      font-size: $font-size-p4;
+      text-align: right;
+      margin-top: $gap-xs;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Modal
+// ────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-text-primary, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $padding-lg;
+}
+
+.modal-content {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: $shadow-xl;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-xl;
+  border-bottom: 1px solid $color-border;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+  
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    font-size: $font-size-p2;
+    cursor: pointer;
+    padding: $gap-xs;
+    border-radius: $border-radius-xs;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Formulaire tournage
+// ────────────────────────────────────────────────
+.tournage-form {
+  padding: $padding-xl;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $gap-lg;
+  margin-bottom: $margin-lg;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+  
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+      display: inline;
+    }
+    
+    &:not([for*="*"])::after {
+      content: '';
+      display: none;
+    }
+  }
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: $padding-md;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p3;
+  color: $color-text-primary;
+  background: $color-background;
+  transition: $transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+  
+  &:disabled {
+    background: rgba($color-border, 0.1);
+    color: $color-text-muted;
+    cursor: not-allowed;
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  
+  &::placeholder {
+    color: $color-text-muted;
+  }
+}
+
+.field-info {
+  @include typography-p4;
+  color: $color-info;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  
+  i {
+    font-size: 0.8em;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Message d'erreur
+// ────────────────────────────────────────────────
+.error-message {
+  @include typography-p3;
+  color: $color-error;
+  background: rgba($color-error, 0.1);
+  padding: $padding-md;
+  border-radius: $border-radius-sm;
+  border-left: 4px solid $color-error;
+  margin-bottom: $margin-lg;
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-sm;
+  
+  i {
+    margin-top: 2px;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Actions modal
+// ────────────────────────────────────────────────
+.modal-actions {
+  display: flex;
+  gap: $gap-md;
+  justify-content: flex-end;
+  padding-top: $margin-lg;
+  border-top: 1px solid $color-border;
+  
+  .btn {
+    padding: $padding-md $padding-xl;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p3;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-sm;
+    border: none;
+    min-width: 120px;
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    &.btn-secondary {
+      background: $color-surface;
+      color: $color-text-secondary;
+      border: 1px solid $color-border;
+      
+      &:hover:not(:disabled) {
+        background: $color-surface-hover;
+        color: $color-text-primary;
+      }
+    }
+    
+    &.btn-primary {
+      background: $color-primary;
+      color: $color-text-light;
+      
+      &:hover:not(:disabled) {
+        background: $color-primary-dark;
+        transform: translateY(-1px);
+        box-shadow: $shadow;
+      }
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Responsive
+// ────────────────────────────────────────────────
+@media (max-width: $breakpoint-lg) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .tournage-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .tournage-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    max-width: 95%;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .tournage-section {
+    padding: $padding-lg;
+  }
+  
+  .tournage-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .historique-item .historique-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+  
+  .modal-header {
+    padding: $padding-lg;
+  }
+  
+  .tournage-form {
+    padding: $padding-lg;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .tournage-section {
+    padding: $padding-md;
+  }
+  
+  .tournage-info {
+    padding: $padding-md;
+  }
+  
+  .detail-item {
+    padding: $padding-sm;
+  }
+  
+  .modal-overlay {
+    padding: $padding-md;
+  }
+  
+  .modal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+    
+    .close-btn {
+      align-self: flex-end;
+      margin-top: -40px;
+    }
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .tournage-actions button,
+  .detail-item,
+  .btn-historique,
+  .modal-content,
+  .close-btn,
+  .modal-actions .btn {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+

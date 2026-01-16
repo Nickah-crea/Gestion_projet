@@ -21,6 +21,15 @@
 @import 'components/nav-suiv-pred';
 @import 'components/modal-projet';
 
+//ecran
+@import 'ecran/header';
+@import 'ecran/projet';
+@import 'ecran/episode';
+@import 'ecran/sequence';
+@import 'ecran/scene';
+@import 'ecran/scene_tournage';
+@import 'ecran/scene_tools_sidebar';
+
 // Layouts
 @import 'layouts/header';
 @import 'layouts/footer';

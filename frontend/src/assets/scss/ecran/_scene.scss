@@ -1,0 +1,859 @@
+// _scene.scss – Style pour la vue scène cohérent avec le reste
+@import '../base/variables';
+
+// =============================================
+// VUE SCÈNE PRINCIPALE
+// =============================================
+.scene-view-screen-work {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $padding-lg;
+}
+
+// ────────────────────────────────────────────────
+// En-tête de la scène
+// ────────────────────────────────────────────────
+.scene-header-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $margin-xl;
+  padding-bottom: $padding-lg;
+  position: relative;
+  border-bottom: 1px solid rgba($color-border, 0.3);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $color-info, transparent);
+    opacity: 0.5;
+  }
+}
+
+.scene-header-left-screen-work {
+  flex: 1;
+}
+
+.scene-title-view-screen-work {
+  @include typography-playfair-h2;
+  color: $color-text-primary;
+  margin: 0 0 $margin-sm 0;
+  font-size: calc(#{$font-size-h2} - 4px);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.scene-status-badge-screen-work {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba($color-info, 0.1);
+  color: $color-info;
+  border: 1px solid rgba($color-info, 0.3);
+}
+
+.scene-header-actions-screen-work {
+  display: flex;
+  gap: $gap-sm;
+  align-items: center;
+  flex-wrap: wrap;
+  
+  button {
+    padding: $padding-xs $padding-sm;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid $color-border;
+    background: $color-background;
+    
+    i {
+      font-size: 0.9em;
+    }
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  .back-btn-screen-work {
+    color: $color-text-secondary;
+    
+    &:hover {
+      background: rgba($color-border, 0.2);
+      border-color: $color-border-dark;
+    }
+  }
+  
+  .edit-btn-screen-work {
+    color: $color-info;
+    
+    &:hover {
+      background: rgba($color-info, 0.1);
+      border-color: $color-info;
+    }
+  }
+  
+  .delete-btn-screen-work {
+    color: $color-error;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      border-color: $color-error;
+    }
+  }
+  
+  .add-btn-screen-work {
+    background: $color-info;
+    color: $color-text-light;
+    border-color: $color-info;
+    
+    &:hover {
+      background: darken($color-info, 10%);
+      border-color: darken($color-info, 10%);
+    }
+  }
+  
+  .comments-btn-screen-work {
+    color: $color-accent;
+    
+    &:hover {
+      background: rgba($color-accent, 0.1);
+      border-color: $color-accent;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Section planning de tournage
+// ────────────────────────────────────────────────
+.scene-planning-section-screen-work {
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  padding: $padding-xl;
+  box-shadow: $shadow;
+  border: 1px solid rgba($color-border, 0.2);
+  margin-bottom: $margin-xl;
+  
+  .section-header-screen-work {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $margin-lg;
+    
+    h3 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+      
+      i {
+        color: $color-primary;
+      }
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Contenu de la scène
+// ────────────────────────────────────────────────
+.scene-content-view-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: $margin-xl;
+}
+
+// ────────────────────────────────────────────────
+// Section détails (grille d'informations)
+// ────────────────────────────────────────────────
+.detail-section-screen-work {
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  padding: $padding-xl;
+  box-shadow: $shadow;
+  border: 1px solid rgba($color-border, 0.2);
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-lg 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-info;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+.details-grid-screen-work {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $gap-lg;
+}
+
+.detail-item-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-md;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: $color-info;
+    background: rgba($color-info, 0.03);
+  }
+  
+  .detail-label-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    min-width: 80px;
+  }
+  
+  .detail-value-screen-work {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Synopsis
+// ────────────────────────────────────────────────
+.synopsis-text-screen-work {
+  @include typography-p2;
+  color: $color-text-secondary;
+  line-height: 1.7;
+  margin: 0;
+  padding: $padding-lg;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+}
+
+// ────────────────────────────────────────────────
+// Lieu de tournage
+// ────────────────────────────────────────────────
+.location-info-screen-work {
+  @include typography-p2;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $gap-sm;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  i {
+    color: $color-accent;
+  }
+}
+
+.location-description-screen-work {
+  @include typography-p3;
+  color: $color-text-secondary;
+  padding: $padding-md;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+  margin: 0;
+}
+
+// ────────────────────────────────────────────────
+// Dialogues
+// ────────────────────────────────────────────────
+.section-header-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+  
+  .add-btn-sm-screen-work {
+    @include btn-cinema-primary;
+    padding: $padding-xs $padding-sm;
+    font-size: $font-size-p4;
+    background: $color-accent;
+    
+    &:hover {
+      background: $color-accent-dark;
+    }
+    
+    i {
+      margin-right: $gap-xs;
+    }
+  }
+}
+
+.dialogues-list-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+}
+
+.dialogue-item-screen-work {
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  padding: $padding-lg;
+  border: 1px solid rgba($color-border, 0.2);
+  transition: $transition-fast;
+  position: relative;
+  
+  &:hover {
+    border-color: $color-accent;
+    box-shadow: $shadow;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
+    background: $color-accent;
+    border-radius: $border-radius-xs 0 0 $border-radius-xs;
+    opacity: 0.3;
+  }
+}
+
+.dialogue-header-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  
+  .dialogue-character-screen-work {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-bold;
+    
+    strong {
+      color: $color-accent;
+    }
+  }
+  
+  .dialogue-order-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    background: rgba($color-border, 0.1);
+    padding: 2px 8px;
+    border-radius: $border-radius-xs;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.dialogue-content-screen-work {
+  @include typography-p2;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: $margin-md;
+  padding: $padding-sm;
+  background: rgba($color-background-alt, 0.5);
+  border-radius: $border-radius-xs;
+  position: relative;
+  cursor: text;
+  user-select: text;
+}
+
+.text-highlight-screen-work {
+  background-color: rgba(yellow, 0.3);
+  padding: 1px 3px;
+  border-radius: 2px;
+  margin: 0 1px;
+  transition: $transition-fast;
+  
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+.dialogue-observation-screen-work {
+  @include typography-p3;
+  color: $color-text-muted;
+  font-style: italic;
+  margin-top: $margin-sm;
+  padding: $padding-sm;
+  background: rgba($color-info, 0.05);
+  border-radius: $border-radius-xs;
+  border-left: 3px solid $color-info;
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-xs;
+  
+  i {
+    color: $color-info;
+    margin-top: 2px;
+  }
+}
+
+.dialogue-actions-screen-work {
+  display: flex;
+  gap: $gap-sm;
+  margin-top: $margin-md;
+  padding-top: $padding-sm;
+  border-top: 1px solid rgba($color-border, 0.1);
+  justify-content: flex-end;
+}
+
+.action-icon-screen-work {
+  background: transparent;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: $transition-fast;
+  font-size: $font-size-p4;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+  
+  &.edit-icon-screen-work {
+    color: $color-info;
+    
+    &:hover {
+      background: rgba($color-info, 0.1);
+      border-color: $color-info;
+    }
+  }
+  
+  &.delete-icon-screen-work {
+    color: $color-error;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      border-color: $color-error;
+    }
+  }
+  
+  &.comment-icon-screen-work {
+    color: $color-accent;
+    
+    &:hover {
+      background: rgba($color-accent, 0.1);
+      border-color: $color-accent;
+    }
+  }
+  
+  &.highlight-icon-screen-work {
+    color: $color-warning;
+    
+    &:hover {
+      background: rgba($color-warning, 0.1);
+      border-color: $color-warning;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Formulaire d'ajout de dialogue
+// ────────────────────────────────────────────────
+.add-dialogue-form-screen-work {
+  background: rgba($color-background, 0.8);
+  border-radius: $border-radius;
+  padding: $padding-xl;
+  border: 2px dashed rgba($color-info, 0.3);
+  margin-top: $margin-lg;
+  
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-lg 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-info;
+    }
+  }
+}
+
+.form-group-screen-work {
+  margin-bottom: $margin-md;
+  
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-medium;
+    display: block;
+    margin-bottom: $gap-xs;
+  }
+}
+
+.form-select-screen-work,
+.form-textarea-screen-work {
+  width: 100%;
+  padding: $padding-md;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p3;
+  color: $color-text-primary;
+  background: $color-background;
+  transition: $transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-info;
+    box-shadow: 0 0 0 2px rgba($color-info, 0.1);
+  }
+}
+
+.form-textarea-screen-work {
+  resize: vertical;
+  min-height: 80px;
+  
+  &::placeholder {
+    color: $color-text-muted;
+  }
+}
+
+.form-actions-screen-work {
+  display: flex;
+  gap: $gap-md;
+  margin-top: $margin-lg;
+  
+  button {
+    flex: 1;
+    padding: $padding-md;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p3;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    border: none;
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+  
+  .save-btn-screen-work {
+    background: $color-info;
+    color: $color-text-light;
+    
+    &:hover:not(:disabled) {
+      background: darken($color-info, 10%);
+    }
+  }
+  
+  .cancel-btn-screen-work {
+    background: $color-surface;
+    color: $color-text-secondary;
+    border: 1px solid $color-border;
+    
+    &:hover {
+      background: $color-surface-hover;
+      color: $color-text-primary;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Section commentaires
+// ────────────────────────────────────────────────
+.comment-section-screen-work {
+  background: rgba($color-accent, 0.03);
+  border: 1px solid rgba($color-accent, 0.1);
+}
+
+.add-comment-screen-work {
+  margin-bottom: $margin-lg;
+  
+  textarea {
+    width: 100%;
+    padding: $padding-md;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    background: $color-background;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: $gap-sm;
+    transition: $transition-fast;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-accent;
+      box-shadow: 0 0 0 2px rgba($color-accent, 0.1);
+    }
+    
+    &::placeholder {
+      color: $color-text-muted;
+    }
+  }
+  
+  .add-comment-btn-screen-work {
+    @include btn-cinema-primary;
+    padding: $padding-sm $padding-md;
+    background: $color-accent;
+    color: $color-text-light;
+    font-size: $font-size-p3;
+    
+    &:hover {
+      background: $color-accent-dark;
+    }
+    
+    i {
+      margin-right: $gap-xs;
+    }
+  }
+}
+
+.comments-list-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+}
+
+.comment-item-screen-work {
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  padding: $padding-md;
+  border: 1px solid rgba($color-border, 0.1);
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: rgba($color-accent, 0.3);
+  }
+}
+
+.comment-header-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-sm;
+  
+  .comment-author-screen-work {
+    @include typography-p3;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .comment-date-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+  }
+}
+
+.comment-content-screen-work {
+  @include typography-p3;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  margin-bottom: $gap-sm;
+}
+
+.comment-actions-screen-work {
+  text-align: right;
+  
+  .delete-comment-btn-screen-work {
+    @include typography-p4;
+    color: $color-error;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: $border-radius-xs;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+    }
+    
+    i {
+      font-size: 0.9em;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// États vides
+// ────────────────────────────────────────────────
+.empty-state-screen-work {
+  text-align: center;
+  padding: $padding-xl;
+  background: $color-background;
+  border-radius: $border-radius;
+  border: 2px dashed rgba($color-border, 0.5);
+  
+  p {
+    @include typography-p2;
+    color: $color-text-muted;
+    margin-bottom: $margin-lg;
+  }
+  
+  .add-btn-screen-work {
+    @include btn-cinema-primary;
+    padding: $padding-sm $padding-lg;
+    background: $color-info;
+    
+    i {
+      margin-right: $gap-xs;
+    }
+    
+    &:hover {
+      background: darken($color-info, 10%);
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Responsive
+// ────────────────────────────────────────────────
+@media (max-width: $breakpoint-xl) {
+  .scene-view-screen-work {
+    padding: $padding-md;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .scene-header-view-screen-work {
+    flex-direction: column;
+    gap: $gap-md;
+    align-items: flex-start;
+  }
+  
+  .scene-header-actions-screen-work {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .details-grid-screen-work {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .section-header-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+    
+    .add-btn-sm-screen-work {
+      align-self: flex-start;
+    }
+  }
+  
+  .dialogue-actions-screen-work {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .scene-title-view-screen-work {
+    font-size: calc(#{$font-size-h3} - 2px);
+  }
+  
+  .details-grid-screen-work {
+    grid-template-columns: 1fr;
+  }
+  
+  .scene-planning-section-screen-work,
+  .detail-section-screen-work {
+    padding: $padding-lg;
+  }
+  
+  .dialogue-item-screen-work {
+    padding: $padding-md;
+  }
+  
+  .form-actions-screen-work {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .scene-view-screen-work {
+    padding: $padding-sm;
+  }
+  
+  .scene-header-actions-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .scene-planning-section-screen-work,
+  .detail-section-screen-work {
+    padding: $padding-md;
+  }
+  
+  .dialogue-header-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+  
+  .dialogue-actions-screen-work {
+    justify-content: center;
+  }
+  
+  .action-icon-screen-work {
+    flex: 1;
+    min-width: 40px;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .scene-header-actions-screen-work button,
+  .detail-item-screen-work,
+  .dialogue-item-screen-work,
+  .action-icon-screen-work,
+  .comment-item-screen-work {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}
+

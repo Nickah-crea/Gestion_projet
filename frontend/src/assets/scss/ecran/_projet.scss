@@ -1,0 +1,473 @@
+// ============================================================================
+// main-content-view-screen-work (vue projet) – style harmonisé avec crea-comedien
+// Cohérent avec ProjetScenariste / Warm Luxe 2026
+// ============================================================================
+
+@import '../base/variables';
+
+.main-content-view-screen-work {
+  padding: $padding-xl $padding-lg;
+  background: $color-background-alt;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.project-view-screen-work {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: $color-background;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  padding: $padding-xl;
+  position: relative;
+}
+
+// ────────────────────────────────────────────────
+// En-tête projet (titre + badge statut)
+// ────────────────────────────────────────────────
+.project-header-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-lg; // Réduit pour rapprocher des stats
+  padding-bottom: $padding-md;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba($color-border, 0.3);
+  }
+}
+
+.project-title-view-screen-work {
+  @include typography-playfair-h2;
+  color: $color-text-primary;
+  margin: 0;
+  font-size: calc(#{$font-size-h2} - 4px);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  flex: 1;
+}
+
+.project-status-badge-screen-work {
+  padding: 6px 16px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $color-text-light;
+  background: linear-gradient(135deg, $color-primary, darken($color-primary, 10%));
+  box-shadow: $shadow;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  min-width: 100px;
+  justify-content: center;
+  height: fit-content;
+}
+
+// ────────────────────────────────────────────────
+// Statistiques HORIZONTALES - Style project-meta-spiral-Scenariste
+// ────────────────────────────────────────────────
+.project-stats-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin: $margin-lg 0;
+  gap: $gap-md;
+  padding: 0;
+  background: transparent;
+  min-height: auto;
+}
+
+.stat-card-screen-work {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-md;
+  background: rgba($color-border, 0.1);
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  min-height: calc(#{$font-size-p4} + #{$padding-md} * 2);
+  line-height: normal;
+  border: none;
+  box-shadow: none;
+  
+  &:hover {
+    background: rgba($color-border, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-icon-screen-work {
+  color: $color-primary;
+  font-size: $font-size-p2;
+  width: 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  i {
+    font-size: 1.2em;
+  }
+}
+
+.stat-content-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.stat-number-screen-work {
+  @include typography-p1;
+  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  margin: 0;
+  font-size: $font-size-p1;
+}
+
+.stat-label-screen-work {
+  @include typography-p4;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+  margin: 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+// Responsive
+@media (max-width: $breakpoint-lg) {
+  .project-stats-view-screen-work {
+    gap: $gap-sm;
+  }
+  
+  .stat-card-screen-work {
+    padding: $padding-sm;
+    min-height: calc(#{$font-size-p4} + #{$padding-sm} * 2);
+  }
+  
+  .stat-icon-screen-work {
+    font-size: $font-size-p3;
+    width: 20px;
+  }
+  
+  .stat-number-screen-work {
+    font-size: $font-size-p2;
+  }
+  
+  .stat-label-screen-work {
+    font-size: $font-size-p4;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .project-stats-view-screen-work {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .stat-card-screen-work {
+    flex: 0 0 calc(50% - #{$gap-sm});
+    margin-bottom: $gap-sm;
+    
+    &:nth-child(3) {
+      flex: 0 0 100%;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .project-stats-view-screen-work {
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+  
+  .stat-card-screen-work {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-bottom: $gap-xs;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+
+// ────────────────────────────────────────────────
+// Section synopsis
+// ────────────────────────────────────────────────
+.detail-section-screen-work {
+  margin: $margin-xl 0;
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  box-shadow: $shadow;
+  transition: $transition;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+  }
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+
+    i {
+      color: $color-primary;
+      font-size: $font-size-h4;
+    }
+  }
+
+  .synopsis-text-screen-work {
+    @include typography-p3;
+    color: $color-text-secondary;
+    line-height: 1.7;
+    background: $color-background;
+    padding: $padding-lg;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+    margin: 0;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Responsive pour les statistiques
+// ────────────────────────────────────────────────
+@media (max-width: $breakpoint-lg) {
+  .project-stats-view-screen-work {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: $gap-sm !important;
+  }
+  
+  .stat-card-screen-work {
+    min-height: 70px !important;
+    padding: $padding-sm !important;
+  }
+  
+  .stat-icon-screen-work {
+    font-size: 1.3rem !important;
+  }
+  
+  .stat-number-screen-work {
+    font-size: calc(#{$font-size-h4} - 2px) !important;
+  }
+  
+  .stat-label-screen-work {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .project-stats-view-screen-work {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: auto auto !important;
+    gap: $gap-sm !important;
+  }
+  
+  .stat-card-screen-work {
+    &:nth-child(3) {
+      grid-column: span 2 !important;
+      max-width: 300px !important;
+      margin: 0 auto !important;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .project-stats-view-screen-work {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: repeat(3, auto) !important;
+    gap: $gap-xs !important;
+  }
+  
+  .stat-card-screen-work {
+    max-width: 100% !important;
+    min-height: 65px !important;
+    
+    &:nth-child(3) {
+      grid-column: 1 !important;
+    }
+  }
+  
+  .stat-icon-screen-work {
+    font-size: 1.2rem !important;
+  }
+  
+  .stat-number-screen-work {
+    font-size: calc(#{$font-size-h4} - 4px) !important;
+  }
+  
+  .stat-label-screen-work {
+    font-size: 0.75rem !important;
+  }
+}
+
+
+
+// Et ce style d'urgence si rien ne fonctionne :
+.forced-horizontal {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  
+  .stat-card-screen-work {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 1 !important;
+    margin: 0 8px !important;
+    
+    &:first-child {
+      margin-left: 0 !important;
+    }
+    
+    &:last-child {
+      margin-right: 0 !important;
+    }
+  }
+}
+
+
+// ────────────────────────────────────────────────
+// Section Synopsis avec bouton de modification
+// ────────────────────────────────────────────────
+.project-details-view-screen-work {
+  margin-bottom: $margin-xl;
+  background: $color-background-alt;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.detail-section-header-screen-work {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+.edit-project-title-btn {
+  @include btn-cinema-primary;
+  padding: $padding-xs $padding-md;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  background: $color-background-light;
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.3);
+  
+  i {
+    font-size: 0.9em;
+    margin-right: $gap-xs;
+  }
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-text-light;
+    transform: translateY(-1px);
+    box-shadow: $shadow;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.detail-section-content-screen-work {
+  margin-bottom: $margin-xl;
+}
+
+.synopsis-text-screen-work {
+  @include typography-p1;
+  color: $color-text-secondary;
+  line-height: 1.68;
+  background: rgba($color-surface, 0.6);
+  padding: $padding-lg;
+  border-radius: $border-radius;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+  margin: 0;
+}
+
+// Actions supplémentaires (Ajouter un épisode)
+.project-actions-view-screen-work {
+  display: flex;
+  gap: $gap-lg;
+  flex-wrap: wrap;
+  margin-top: $margin-xl;
+  padding-top: $padding-xl;
+  border-top: 1px solid rgba($color-border, 0.35);
+  
+  .action-btn-secondary-screen-work {
+    @include btn-cinema-accent;
+    padding: $padding-md $padding-xl;
+    font-size: $font-size-p2;
+    min-width: 200px;
+    justify-content: center;
+    
+    i {
+      margin-right: $gap-sm;
+      font-size: 1.1em;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, $color-accent, $color-accent-dark);
+    }
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .detail-section-header-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .edit-project-title-btn {
+    align-self: flex-end;
+  }
+  
+  .project-actions-view-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-btn-secondary-screen-work {
+    width: 100%;
+  }
+}
+

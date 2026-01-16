@@ -1,0 +1,530 @@
+// _scene_tools_sidebar.scss – Sidebar d'outils scène à droite
+@import '../base/variables';
+
+// =============================================
+// SIDEBAR D'OUTILS SCÈNE (À DROITE)
+// =============================================
+.scene-tools-sidebar {
+  position: fixed;
+  top: 60px; // 50px de marge en haut + 10px d'espace
+  right: 0;
+  width: 280px;
+  height: calc(100vh - 60px);
+  background: rgba($color-background-alt, 0.95);
+  backdrop-filter: blur(10px);
+  border-left: 1px solid rgba($color-border, 0.3);
+  box-shadow: $shadow-lg;
+  z-index: $z-index-fixed;
+  transform: translateX(100%);
+  transition: transform $transition;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  
+  &.open {
+    transform: translateX(0);
+  }
+  
+  // Ajustements en fonction de la présence d'autres sidebars
+  &.with-right-sidebar {
+    right: 280px; // Si une autre sidebar existe à droite
+  }
+  
+  &.without-right-sidebar {
+    right: 0;
+  }
+  
+  @media (max-width: $breakpoint-xl) {
+    width: 240px;
+    
+    &.with-right-sidebar {
+      right: 240px;
+    }
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    width: 100%;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    z-index: $z-index-modal;
+    transform: translateX(100%);
+    border-left: none;
+    
+    &.open {
+      transform: translateX(0);
+    }
+    
+    &.with-right-sidebar,
+    &.without-right-sidebar {
+      right: 0;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// En-tête de la sidebar
+// ────────────────────────────────────────────────
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-lg;
+  background: linear-gradient(135deg, rgba($color-primary, 0.1), rgba($color-accent, 0.05));
+  border-bottom: 1px solid rgba($color-border, 0.3);
+  flex-shrink: 0;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+  
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    font-size: $font-size-p2;
+    cursor: pointer;
+    padding: $gap-xs;
+    border-radius: $border-radius-xs;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Contenu de la sidebar
+// ────────────────────────────────────────────────
+.sidebar-content {
+  flex: 1;
+  padding: $padding-lg;
+  overflow-y: auto;
+  
+  @media (max-width: $breakpoint-lg) {
+    padding: $padding-md;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Sections d'outils
+// ────────────────────────────────────────────────
+.tools-section {
+  background: $color-background;
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  margin-bottom: $margin-lg;
+  border: 1px solid rgba($color-border, 0.2);
+  box-shadow: $shadow;
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: rgba($color-primary, 0.3);
+    box-shadow: $shadow-md;
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  h4 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Actions rapides
+// ────────────────────────────────────────────────
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $gap-sm;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $padding-md;
+  background: rgba($color-background-alt, 0.5);
+  border: 1px solid rgba($color-border, 0.3);
+  border-radius: $border-radius-sm;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: all $transition;
+  text-align: center;
+  height: 100%;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-color: rgba($color-primary, 0.5);
+    transform: translateY(-2px);
+    box-shadow: $shadow;
+  }
+  
+  i {
+    font-size: 1.5rem;
+    margin-bottom: $gap-xs;
+    color: inherit;
+  }
+  
+  span {
+    @include typography-p4;
+    font-weight: $font-weight-medium;
+    display: block;
+    line-height: 1.2;
+  }
+  
+  .badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: $color-error;
+    color: $color-text-light;
+    font-size: $font-size-p5;
+    padding: 2px 6px;
+    border-radius: $border-radius-pill;
+    font-weight: $font-weight-bold;
+    min-width: 18px;
+    text-align: center;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Statistiques
+// ────────────────────────────────────────────────
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $gap-sm;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  padding: $padding-sm;
+  background: rgba($color-background-alt, 0.3);
+  border-radius: $border-radius-xs;
+  border: 1px solid rgba($color-border, 0.2);
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p2;
+    width: 24px;
+    text-align: center;
+  }
+  
+  .stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .stat-value {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-bold;
+    line-height: 1;
+  }
+  
+  .stat-label {
+    @include typography-p4;
+    color: $color-text-muted;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Informations
+// ────────────────────────────────────────────────
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-sm;
+  background: rgba($color-background-alt, 0.3);
+  border-radius: $border-radius-xs;
+  border: 1px solid rgba($color-border, 0.2);
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+    border-color: rgba($color-primary, 0.2);
+  }
+  
+  .info-label {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+  }
+  
+  .info-value {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    text-align: right;
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-medium;
+  color: $color-text-light;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+// ────────────────────────────────────────────────
+// Composants enfants (Raccords)
+// ────────────────────────────────────────────────
+.raccords-section,
+.raccord-creator-section {
+  margin-top: $margin-sm;
+  
+  > div {
+    background: rgba($color-background-alt, 0.5);
+    border-radius: $border-radius-sm;
+    padding: $padding-md;
+    border: 1px solid rgba($color-border, 0.2);
+  }
+}
+
+// ────────────────────────────────────────────────
+// Responsive
+// ────────────────────────────────────────────────
+@media (max-width: $breakpoint-lg) {
+  .scene-tools-sidebar {
+    .sidebar-header {
+      padding: $padding-md;
+    }
+    
+    .sidebar-content {
+      padding: $padding-md;
+    }
+    
+    .tools-section {
+      padding: $padding-md;
+      margin-bottom: $margin-md;
+    }
+    
+    .quick-actions {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+    
+    .info-value {
+      text-align: left;
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .scene-tools-sidebar {
+    .sidebar-header {
+      padding: $padding-sm;
+    }
+    
+    .sidebar-content {
+      padding: $padding-sm;
+    }
+    
+    .tools-section {
+      padding: $padding-sm;
+      margin-bottom: $margin-sm;
+    }
+    
+    .quick-actions {
+      grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .action-btn {
+      flex-direction: row;
+      justify-content: flex-start;
+      text-align: left;
+      padding: $padding-sm;
+      
+      i {
+        margin-bottom: 0;
+        margin-right: $gap-sm;
+        font-size: $font-size-p2;
+      }
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Animation d'ouverture
+// ────────────────────────────────────────────────
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.scene-tools-sidebar.open .tools-section {
+  animation: slideInRight 0.3s ease-out;
+  animation-fill-mode: both;
+  
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .scene-tools-sidebar {
+    transition: none;
+  }
+  
+  .tools-section,
+  .action-btn,
+  .info-item {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .scene-tools-sidebar.open .tools-section {
+    animation: none;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Styles pour les formulaires intégrés
+// ────────────────────────────────────────────────
+.tools-section {
+  .form-group {
+    margin-bottom: $margin-sm;
+    
+    label {
+      @include typography-p4;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+      display: block;
+      margin-bottom: $gap-xs;
+    }
+    
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: $padding-sm;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p4;
+      color: $color-text-primary;
+      background: $color-background;
+      transition: $transition-fast;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: $gap-sm;
+    margin-top: $margin-md;
+    
+    button {
+      flex: 1;
+      padding: $padding-sm;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p4;
+      font-weight: $font-weight-medium;
+      cursor: pointer;
+      transition: $transition-fast;
+      border: none;
+      
+      &.btn-primary {
+        background: $color-primary;
+        color: $color-text-light;
+        
+        &:hover {
+          background: $color-primary-dark;
+        }
+      }
+      
+      &.btn-secondary {
+        background: $color-surface;
+        color: $color-text-secondary;
+        border: 1px solid $color-border;
+        
+        &:hover {
+          background: $color-surface-hover;
+          color: $color-text-primary;
+        }
+      }
+    }
+  }
+}
+

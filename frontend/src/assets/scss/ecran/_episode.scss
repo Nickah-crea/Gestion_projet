@@ -1,0 +1,478 @@
+// _episode.scss – Style pour la vue épisode cohérent avec le reste
+@import '../base/variables';
+
+// =============================================
+// VUE ÉPISODE PRINCIPALE
+// =============================================
+.episode-view-screen-work {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $padding-lg;
+}
+
+// ────────────────────────────────────────────────
+// En-tête de l'épisode
+// ────────────────────────────────────────────────
+.episode-header-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $margin-xl;
+  padding-bottom: $padding-lg;
+  position: relative;
+  border-bottom: 1px solid rgba($color-border, 0.3);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $color-primary, transparent);
+    opacity: 0.5;
+  }
+}
+
+.episode-header-left-screen-work {
+  flex: 1;
+}
+
+.episode-title-view-screen-work {
+  @include typography-playfair-h4;
+  color: $color-text-primary;
+  margin: 0 0 $margin-sm 0;
+  font-size: calc(#{$font-size-h2} - 4px);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.episode-status-badge-screen-work {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.3);
+}
+
+.episode-header-actions-screen-work {
+  display: flex;
+  gap: $gap-sm;
+  align-items: center;
+  flex-wrap: wrap;
+  
+  button {
+    padding: $padding-xs $padding-sm;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid $color-border;
+    background: $color-background;
+    
+    i {
+      font-size: 0.9em;
+    }
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  .edit-btn-screen-work {
+    color: $color-primary;
+    
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+    }
+  }
+  
+  .delete-btn-screen-work {
+    color: $color-error;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      border-color: $color-error;
+    }
+  }
+  
+  .add-btn-screen-work {
+    background: $color-primary;
+    color: $color-text-light;
+    border-color: $color-primary;
+    
+    &:hover {
+      background: $color-primary-dark;
+      border-color: $color-primary-dark;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Contenu de l'épisode
+// ────────────────────────────────────────────────
+.episode-content-view-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: $margin-xl;
+}
+
+// ────────────────────────────────────────────────
+// Section détails (grille d'informations)
+// ────────────────────────────────────────────────
+.detail-section-screen-work {
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  padding: $padding-xl;
+  box-shadow: $shadow;
+  border: 1px solid rgba($color-border, 0.2);
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-lg 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+.details-grid-screen-work {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $gap-lg;
+}
+
+.detail-item-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-md;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.03);
+  }
+  
+  .detail-label-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    min-width: 60px;
+  }
+  
+  .detail-value-screen-work {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Synopsis
+// ────────────────────────────────────────────────
+.synopsis-text-screen-work {
+  @include typography-p2;
+  color: $color-text-secondary;
+  line-height: 1.7;
+  margin: 0;
+  padding: $padding-lg;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+}
+
+// ────────────────────────────────────────────────
+// Équipe (réalisateur, scénariste)
+// ────────────────────────────────────────────────
+.team-grid-screen-work {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $gap-md;
+}
+
+.team-member-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  padding: $padding-md;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.03);
+    transform: translateY(-2px);
+  }
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p2;
+    width: 24px;
+    text-align: center;
+  }
+  
+  .team-member-info-screen-work {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .team-role-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+  }
+  
+  .team-name-screen-work {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Liste des séquences
+// ────────────────────────────────────────────────
+.sequences-list-screen-work {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $gap-md;
+}
+
+.sequence-card-screen-work {
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  padding: $padding-lg;
+  border: 1px solid rgba($color-border, 0.2);
+  cursor: pointer;
+  transition: all $transition;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, $color-primary, $color-accent);
+    opacity: 0;
+    transition: opacity $transition;
+  }
+  
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  &.active-screen-work {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.03);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.sequence-card-header-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: $margin-md;
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p2;
+  }
+  
+  .sequence-order-screen-work {
+    @include typography-p3;
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+    background: rgba($color-primary, 0.1);
+    padding: 2px 8px;
+    border-radius: $border-radius-xs;
+  }
+  
+  .sequence-title-screen-work {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.sequence-card-footer-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $padding-md;
+  border-top: 1px solid rgba($color-border, 0.1);
+  
+  .scene-count-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    i {
+      color: $color-accent;
+    }
+  }
+  
+  .sequence-status-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    background: rgba($color-border, 0.2);
+    padding: 2px 8px;
+    border-radius: $border-radius-xs;
+    font-weight: $font-weight-medium;
+  }
+}
+
+// ────────────────────────────────────────────────
+// États vides
+// ────────────────────────────────────────────────
+.empty-state-screen-work {
+  text-align: center;
+  padding: $padding-xl;
+  background: $color-background;
+  border-radius: $border-radius;
+  border: 2px dashed rgba($color-border, 0.5);
+  
+  p {
+    @include typography-p2;
+    color: $color-text-muted;
+    margin-bottom: $margin-lg;
+  }
+  
+  .add-btn-screen-work {
+    @include btn-cinema-primary;
+    padding: $padding-sm $padding-lg;
+    
+    i {
+      margin-right: $gap-xs;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Responsive
+// ────────────────────────────────────────────────
+@media (max-width: $breakpoint-lg) {
+  .episode-view-screen-work {
+    padding: $padding-md;
+  }
+  
+  .episode-header-view-screen-work {
+    flex-direction: column;
+    gap: $gap-md;
+    align-items: flex-start;
+  }
+  
+  .episode-header-actions-screen-work {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .details-grid-screen-work {
+    grid-template-columns: 1fr;
+  }
+  
+  .sequences-list-screen-work {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .episode-title-view-screen-work {
+    font-size: calc(#{$font-size-h3} - 2px);
+  }
+  
+  .sequences-list-screen-work {
+    grid-template-columns: 1fr;
+  }
+  
+  .team-grid-screen-work {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .episode-view-screen-work {
+    padding: $padding-sm;
+  }
+  
+  .detail-section-screen-work {
+    padding: $padding-lg;
+  }
+  
+  .episode-header-actions-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .sequence-card-header-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .episode-header-actions-screen-work button,
+  .detail-item-screen-work,
+  .team-member-screen-work,
+  .sequence-card-screen-work {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
