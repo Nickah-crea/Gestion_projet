@@ -1,66 +1,99 @@
 <template>
   <div class="app-wrapper-global accueil-scenariste">
-    <!-- SIDEBAR GAUCHE - Productivité et Dernières activités -->
-    <div class="sidebar-left-fixed-Scenariste">
-      <!-- Section Productivité -->
-      <div class="personal-stats-compact-Scenariste">
-        <h3 class="section-title-compact-Scenariste">
-          <i class="fas fa-chart-line"></i> Productivité
-        </h3>
-        
-        <div class="personal-stats-grid-compact-Scenariste">
-          <div class="personal-stat-card-compact-Scenariste">
-            <div class="stat-header-compact-Scenariste">
-              <i class="fas fa-bolt"></i>
-              <h4>Productivité</h4>
+    <!-- SIDEBAR GAUCHE - Seulement pour SCENARISTE/REALISATEUR -->
+      <div class="sidebar-left-fixed-Scenariste" v-if="!isViewer">
+        <!-- Section Productivité -->
+        <div class="personal-stats-compact-Scenariste">
+          <h3 class="section-title-compact-Scenariste">
+            <i class="fas fa-chart-line"></i> Productivité
+          </h3>
+          
+          <div class="personal-stats-grid-compact-Scenariste">
+            <div class="personal-stat-card-compact-Scenariste">
+              <div class="stat-header-compact-Scenariste">
+                <i class="fas fa-bolt"></i>
+                <h4>Productivité</h4>
+              </div>
+              <div class="stat-content-compact-Scenariste">
+                <div class="stat-value-compact-Scenariste">{{ userStats.productivite || 0 }}%</div>
+                <div class="progress-ring-compact-Scenariste" :style="{ '--progress': userStats.productivite || 0 }">
+                  <svg width="50" height="50">
+                    <circle cx="25" cy="25" r="20" fill="none" stroke="#e0e0e0" stroke-width="3"/>
+                    <circle cx="25" cy="25" r="20" fill="none" stroke="#4CAF50" stroke-width="3" 
+                            :stroke-dasharray="`${(userStats.productivite || 0) * 1.26} 126`" stroke-dashoffset="0"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="stat-subtext-Scenariste">Cette semaine</div>
             </div>
-            <div class="stat-content-compact-Scenariste">
-              <div class="stat-value-compact-Scenariste">{{ userStats.productivite || 0 }}%</div>
-              <div class="progress-ring-compact-Scenariste" :style="{ '--progress': userStats.productivite || 0 }">
-                <svg width="50" height="50">
-                  <circle cx="25" cy="25" r="20" fill="none" stroke="#e0e0e0" stroke-width="3"/>
-                  <circle cx="25" cy="25" r="20" fill="none" stroke="#4CAF50" stroke-width="3" 
-                          :stroke-dasharray="`${(userStats.productivite || 0) * 1.26} 126`" stroke-dashoffset="0"/>
-                </svg>
+          </div>
+        </div>
+
+        <!-- Section Dernières activités -->
+        <div class="recent-activity-compact-Scenariste">
+          <div class="activity-header-compact-Scenariste">
+            <h3 class="activity-title-compact-Scenariste">Dernières activités</h3>
+            <button class="view-all-btn-compact-Scenariste" @click="viewAllActivities" title="Voir tout">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          
+          <div class="activity-timeline-compact-Scenariste">
+            <div v-for="activity in recentActivities" :key="activity.id" class="activity-item-compact-Scenariste">
+              <div class="activity-icon-compact-Scenariste" :class="getActivityTypeClass(activity.type)">
+                <i :class="getActivityIcon(activity.type)"></i>
+              </div>
+              <div class="activity-content-compact-Scenariste">
+                <div class="activity-text-compact-Scenariste">
+                  {{ truncateText(activity.description, 50) }}
+                </div>
+                <div class="activity-time-compact-Scenariste">
+                  {{ formatActivityTime(activity.date) }}
+                </div>
               </div>
             </div>
-            <div class="stat-subtext-Scenariste">Cette semaine</div>
+            
+            <!-- TOUJOURS afficher au moins un message -->
+            <div v-if="recentActivities.length === 0" class="no-activities-compact-Scenariste">
+              <i class="fas fa-history"></i>
+              <p>Chargement des activités...</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Section Dernières activités -->
-      <div class="recent-activity-compact-Scenariste">
-        <div class="activity-header-compact-Scenariste">
-          <h3 class="activity-title-compact-Scenariste">Dernières activités</h3>
-          <button class="view-all-btn-compact-Scenariste" @click="viewAllActivities" title="Voir tout">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-        
-        <div class="activity-timeline-compact-Scenariste">
-          <div v-for="activity in recentActivities" :key="activity.id" class="activity-item-compact-Scenariste">
-            <div class="activity-icon-compact-Scenariste" :class="getActivityTypeClass(activity.type)">
-              <i :class="getActivityIcon(activity.type)"></i>
-            </div>
-            <div class="activity-content-compact-Scenariste">
-              <div class="activity-text-compact-Scenariste">
-                {{ truncateText(activity.description, 50) }}
+      <!-- Pour les VIEWERS: sidebar différente -->
+      <div class="sidebar-left-fixed-Scenariste viewer-sidebar" v-else>
+        <!-- Section simple pour viewers -->
+        <div class="viewer-info-section">
+          <h3 class="viewer-title">
+            <i class="fas fa-eye"></i> Mode Lecture
+          </h3>
+          
+          <div class="viewer-stats">
+            <div class="viewer-stat-item">
+              <i class="fas fa-film"></i>
+              <div class="viewer-stat-content">
+                <div class="viewer-stat-value">{{ stats.projetsActifs || 0 }}</div>
+                <div class="viewer-stat-label">Projets disponibles</div>
               </div>
-              <div class="activity-time-compact-Scenariste">
-                {{ formatActivityTime(activity.date) }}
+            </div>
+            
+            <div class="viewer-stat-item">
+              <i class="fas fa-scroll"></i>
+              <div class="viewer-stat-content">
+                <div class="viewer-stat-value">{{ stats.scenesEcrites || 0 }}</div>
+                <div class="viewer-stat-label">Scènes consultables</div>
               </div>
             </div>
           </div>
           
-          <!-- TOUJOURS afficher au moins un message -->
-          <div v-if="recentActivities.length === 0" class="no-activities-compact-Scenariste">
-            <i class="fas fa-history"></i>
-            <p>Chargement des activités...</p>
+          <div class="viewer-message">
+            <p><i class="fas fa-info-circle"></i> Vous êtes en mode consultation uniquement.</p>
+            <p>Pas de modifications possibles.</p>
           </div>
         </div>
       </div>
-    </div>
 
     <!-- CONTENU PRINCIPAL -->
     <div class="main-content-container">
@@ -711,37 +744,49 @@ mounted() {
     // INITIALISATION ET NETTOYAGE
     // =============================================
     
-    initializeComponent() {
-      this.loadUser();
-      this.fetchGenres();
-      this.fetchStatuts();
-      this.fetchProjects();
-      this.loadAllStatuts();
-      
-      // Charger les statistiques après un petit délai
-      setTimeout(async () => {
-        await this.loadStats();
-        
-        // Charger d'abord les données de démo pour tester
-        console.log("🔄 Chargement des activités (démo d'abord)");
-        await this.loadRecentActivities();
-        
-        await this.loadPriorityProjects();
-        await this.loadUserStatistics();
-        await this.loadWritingStats();
-      }, 100);
-      
-      // Ajouter les écouteurs d'événements
-      document.addEventListener('click', this.handleClickOutside);
-      document.addEventListener('click', this.handleClickOutsideSearch);
-      
-      // Rafraîchir les stats toutes les 10 minutes
-      setInterval(() => {
-        if (this.user && this.user.id_utilisateur) {
-          this.loadWritingStats();
-        }
-      }, 600000);
-    },
+initializeComponent() {
+  this.loadUser();
+  this.fetchGenres();
+  this.fetchStatuts();
+  
+  // Charger les projets selon le rôle
+  if (this.isViewer) {
+    this.fetchProjectsForViewer();
+  } else {
+    this.fetchProjects();
+  }
+  
+  this.loadAllStatuts();
+  
+  // Charger les statistiques après un petit délai
+  setTimeout(async () => {
+    await this.loadStats();
+    
+    // Charger d'abord les données de démo pour tester
+    console.log("🔄 Chargement des activités (démo d'abord)");
+    await this.loadRecentActivities();
+    
+    // Pour les viewers, ne pas charger les statistiques avancées
+    if (!this.isViewer) {
+      await this.loadPriorityProjects();
+      await this.loadUserStatistics();
+      await this.loadWritingStats();
+    }
+  }, 100);
+  
+  // Ajouter les écouteurs d'événements
+  document.addEventListener('click', this.handleClickOutside);
+  document.addEventListener('click', this.handleClickOutsideSearch);
+  
+  // Rafraîchir les stats toutes les 10 minutes (seulement pour non-viewers)
+  if (!this.isViewer) {
+    setInterval(() => {
+      if (this.user && this.user.id_utilisateur) {
+        this.loadWritingStats();
+      }
+    }, 600000);
+  }
+},
     
     cleanupComponent() {
       // Arrêter le timer d'écriture
@@ -1304,39 +1349,124 @@ mounted() {
     // STATISTIQUES
     // =============================================
     
-    async loadStats() {
+ async loadStats() {
+  try {
+    console.log("🔍 DEBUG: Chargement stats générales pour userId:", this.user?.id_utilisateur);
+    console.log("👤 Rôle utilisateur:", this.user?.role);
+    console.log("📊 Mode viewer:", this.isViewer);
+    
+    const userId = this.getUserId();
+    
+    // Pour les viewers, utiliser une API différente ou calculer localement
+    if (this.isViewer) {
+      console.log("👁️ Mode VIEWER - Chargement stats simplifiées");
+      await this.loadViewerStats();
+      return;
+    }
+    
+    // Pour SCENARISTE et REALISATEUR, utiliser l'API normale
+    const response = await axios.get('/api/scenariste/stats', {
+      params: { userId: userId }
+    });
+    
+    console.log("📊 DEBUG: Réponse API stats générales:", response.data);
+    
+    if (response.data && typeof response.data === 'object') {
+      this.stats = {
+        projetsActifs: response.data.projetsActifs || 0,
+        projetsVariation: response.data.projetsVariation || 0,
+        scenesEcrites: response.data.scenesEcrites || 0,
+        scenesVariation: response.data.scenesVariation || 0,
+        collaborations: response.data.collaborations || 0,
+        realisateursActifs: response.data.realisateursActifs || 0,
+        echeancesProches: response.data.echeancesProches || 0,
+        urgentCount: response.data.urgentCount || 0,
+        tempsEcriture: response.data.tempsEcriture || '0h 00mn'
+      };
+      console.log("✅ DEBUG: stats générales mises à jour:", this.stats);
+    } else {
+      console.warn("⚠️ DEBUG: Format de réponse inattendu, calcul local");
+      this.calculateLocalStats();
+    }
+  } catch (error) {
+    console.error('❌ DEBUG: Erreur chargement stats générales:', error.response?.data || error.message);
+    this.calculateLocalStats();
+  }
+},
+
+async loadViewerStats() {
+  console.log("👁️ Calcul des statistiques pour viewer...");
+  
+  try {
+    // 1. Charger tous les projets
+    await this.fetchProjects();
+    
+    // 2. Calculer les statistiques basiques
+    const totalProjets = this.projects.length;
+    
+    // 3. Charger les scènes pour chaque projet
+    let totalScenes = 0;
+    
+    // Utiliser Promise.all pour charger les scènes en parallèle
+    const scenePromises = this.projects.map(async (project) => {
       try {
-        console.log("🔍 DEBUG: Chargement stats générales pour userId:", this.user?.id_utilisateur);
-        
-        const userId = this.getUserId();
-        const response = await axios.get('/api/scenariste/stats', {
-          params: { userId: userId }
-        });
-        
-        console.log("📊 DEBUG: Réponse API stats générales:", response.data);
-        
-        if (response.data && typeof response.data === 'object') {
-          this.stats = {
-            projetsActifs: response.data.projetsActifs || 0,
-            projetsVariation: response.data.projetsVariation || 0,
-            scenesEcrites: response.data.scenesEcrites || 0,
-            scenesVariation: response.data.scenesVariation || 0,
-            collaborations: response.data.collaborations || 0,
-            realisateursActifs: response.data.realisateursActifs || 0,
-            echeancesProches: response.data.echeancesProches || 0,
-            urgentCount: response.data.urgentCount || 0,
-            tempsEcriture: response.data.tempsEcriture || '0h 00mn'
-          };
-          console.log("✅ DEBUG: stats générales mises à jour:", this.stats);
-        } else {
-          console.warn("⚠️ DEBUG: Format de réponse inattendu, calcul local");
-          this.calculateLocalStats();
-        }
+        const response = await axios.get(`/api/scenes/projet/${project.id}`);
+        return response.data.length || 0;
       } catch (error) {
-        console.error('❌ DEBUG: Erreur chargement stats générales:', error.response?.data || error.message);
-        this.calculateLocalStats();
+        console.warn(`❌ Erreur chargement scènes projet ${project.id}:`, error.message);
+        return 0;
       }
-    },
+    });
+    
+    const sceneCounts = await Promise.all(scenePromises);
+    totalScenes = sceneCounts.reduce((sum, count) => sum + count, 0);
+    
+    // 4. Mettre à jour les stats
+    this.stats = {
+      projetsActifs: totalProjets,
+      projetsVariation: 0,
+      scenesEcrites: totalScenes,
+      scenesVariation: 0,
+      collaborations: 0,
+      realisateursActifs: 0,
+      echeancesProches: 0,
+      urgentCount: 0,
+      tempsEcriture: '0h 00mn'
+    };
+    
+    console.log("✅ Statistiques viewer:", this.stats);
+    console.log(`📊 ${totalProjets} projets, ${totalScenes} scènes`);
+    
+  } catch (error) {
+    console.error('❌ Erreur chargement stats viewer:', error);
+    // Fallback: calcul basique
+    this.calculateViewerStatsFromProjects();
+  }
+},
+
+calculateViewerStatsFromProjects() {
+  // Calcul basique à partir des projets déjà chargés
+  const totalProjets = this.projects.length;
+  
+  // Estimer le nombre de scènes (par exemple, 5 scènes par projet en moyenne)
+  const estimatedScenes = this.projects.reduce((total, p) => {
+    return total + (p.nombreScenes || 5); // Utiliser nombreScenes si disponible, sinon estimer 5
+  }, 0);
+  
+  this.stats = {
+    projetsActifs: totalProjets,
+    projetsVariation: 0,
+    scenesEcrites: estimatedScenes,
+    scenesVariation: 0,
+    collaborations: 0,
+    realisateursActifs: 0,
+    echeancesProches: 0,
+    urgentCount: 0,
+    tempsEcriture: '0h 00mn'
+  };
+  
+  console.log("📊 Statistiques estimées viewer:", this.stats);
+},
     
     calculateLocalStats() {
       const now = new Date();
@@ -1580,6 +1710,26 @@ mounted() {
       }
     },
     
+    async fetchProjectsForViewer() {
+  try {
+    const response = await axios.get('/api/projets');
+    
+    // Enrichir les projets avec plus d'informations pour les viewers
+    this.projects = response.data.map(project => ({
+      ...project,
+      // S'assurer que les propriétés nécessaires sont présentes
+      nombreScenes: project.nombreScenes || 0,
+      // Autres propriétés...
+    }));
+    
+    console.log("📋 Projets chargés pour viewer:", this.projects.length);
+    return this.projects;
+  } catch (error) {
+    console.error('Erreur lors du chargement des projets:', error);
+    this.projects = [];
+    return [];
+  }
+},
     // =============================================
     // ACTIVITÉS ET PROJETS PRIORITAIRES
     // =============================================
