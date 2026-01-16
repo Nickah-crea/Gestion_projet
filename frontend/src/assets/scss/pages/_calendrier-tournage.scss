@@ -33,18 +33,15 @@
   }
 
   .sidebar-header {
-    margin-bottom: $spacing-md;
+     margin-bottom: $spacing-md;
     border-bottom: 1px solid $color-border;
     padding-bottom: $spacing-sm;
 
     .sidebar-title {
-     @include typography-playfair-h4;
+      @include typography-playfair-h4;
       color: $color-text-primary;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
-      display: flex;
-      align-items: center;
-      gap: $gap-xs;
     }
 
     .sidebar-subtitle {
