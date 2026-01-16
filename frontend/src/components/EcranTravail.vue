@@ -2,7 +2,7 @@
   <div class="app-wrapper-global">
     <!-- Sidebar gauche -->
     <LeftSidebar
-      class="creation-sidebar-crea-comedien left-sidebar-ecran-travail"
+      class="creation-sidebar-crea-comedien-screen-work left-sidebar-ecran-travail-screen-work"
       :open="leftSidebarOpen"
       :projet-title="store.projetTitle"
       :projet-synopsis="store.projetSynopsis"
@@ -62,9 +62,9 @@
     <SceneToolsSidebar
       v-if="sidebarSelection.type === 'scene' && currentScene"
       :class="{
-        'open': true,
-        'without-right-sidebar': !sidebarOpen,
-        'with-right-sidebar': sidebarOpen
+        'open-screen-work': true,
+        'without-right-sidebar-screen-work': !sidebarOpen,
+        'with-right-sidebar-screen-work': sidebarOpen
       }"
       :scene="currentScene"
       :projet-id="projetId"
@@ -91,227 +91,232 @@
     
     <!-- Contenu principal -->
     <div 
-      class="ecran-travail-ecran-travail" 
+      class="ecran-travail-ecran-travail-screen-work" 
       :class="{ 
-        'scene-tools-open': sidebarSelection.type === 'scene' && currentScene,
-        'right-sidebar-open': sidebarOpen
+        'scene-tools-open-screen-work': sidebarSelection.type === 'scene' && currentScene,
+        'right-sidebar-open-screen-work': sidebarOpen
       }"
     >
       
-      <!-- Header commun -->
-      <header class="header-ecran-travail">
-        <!-- Navigation fixe en haut -->
-        <div class="fixed-top-navigation">
-          <div class="fixed-nav-container">
-            <div class="nav-left-section">
-              <button 
-                v-if="showNavButtons" 
-                class="nav-btn-fixed-left" 
-                @click="goToPrevPage" 
-                :disabled="!hasPrev || isLoading"
-              >
-                <i class="fas fa-chevron-left"></i> Précédent
-              </button>
+      <header class="header-ecran-travail-screen-work">
+        <!-- Navigation unique sur une même ligne -->
+        <div class="unified-navigation-screen-work">
+            <div class="nav-left-section-screen-work">
+                <!-- Navigation globale précédent/suivant -->
+                <div v-if="showNavButtons" class="global-navigation-buttons">
+                    <button 
+                        class="nav-btn-global-screen-work nav-prev-global"
+                        @click="goToPrevPage" 
+                        :disabled="!hasPrev || isLoading"
+                    >
+                        <i class="fas fa-chevron-left"></i> Précédent
+                    </button>
+                </div>
             </div>
             
-            <div class="nav-center-section">
-              <span v-if="currentEpisode || currentSequence || currentScene" class="current-context">
-                {{ getCurrentContext() }}
-              </span>
+            <div class="nav-center-section-screen-work">
+                <span v-if="currentEpisode || currentSequence || currentScene" class="current-context-screen-work">
+                    {{ getCurrentContext() }}
+                </span>
             </div>
             
-            <div class="nav-right-section">
-              <button 
-                v-if="showNavButtons" 
-                class="nav-btn-fixed-right" 
-                @click="goToNextPage" 
-                :disabled="!hasNext || isLoading"
-              >
-                Suivant <i class="fas fa-chevron-right"></i>
-              </button>
+            <div class="nav-right-section-screen-work">
+                <!-- Navigation globale suivant -->
+                <div v-if="showNavButtons" class="global-navigation-buttons">
+                    <button 
+                        class="nav-btn-global-screen-work nav-next-global"
+                        @click="goToNextPage" 
+                        :disabled="!hasNext || isLoading"
+                    >
+                        Suivant <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Navigation scène (à côté du suivant global) -->
+                <div v-if="sidebarSelection.type === 'scene'" class="scene-navigation-buttons-screen-work">
+                    <button 
+                        class="nav-btn-ecran-travail-screen-work scene-nav-btn-screen-work scene-prev-btn"
+                        @click="goToPrevScene"
+                        :disabled="!hasPrevScene || isLoading"
+                        title="Scène précédente"
+                    >
+                        <i class="fas fa-chevron-left"></i> Scène Préc.
+                    </button>
+                    <button 
+                        class="nav-btn-ecran-travail-screen-work scene-nav-btn-screen-work scene-next-btn"
+                        @click="goToNextScene"
+                        :disabled="!hasNextScene || isLoading"
+                        title="Scène suivante"
+                    >
+                        Scène Suiv. <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
-        
-        <!-- Navigation scène (reste en dessous) -->
-        <div class="navigation-ecran-travail">
-          <div class="navigation-right-section">
-            <!-- Boutons navigation scène -->
-            <div v-if="sidebarSelection.type === 'scene'" class="scene-navigation-buttons">
-              <button 
-                class="nav-btn-ecran-travail scene-nav-btn"
-                @click="goToPrevScene"
-                :disabled="!hasPrevScene || isLoading"
-                title="Scène précédente"
-              >
-                <i class="fas fa-chevron-left"></i> Scène Préc.
-              </button>
-              <button 
-                class="nav-btn-ecran-travail scene-nav-btn"
-                @click="goToNextScene"
-                :disabled="!hasNextScene || isLoading"
-                title="Scène suivante"
-              >
-                Scène Suiv. <i class="fas fa-chevron-right"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+    </header>
 
       <!-- ==================== CONTENU DYNAMIQUE ==================== -->
       
       <!-- 1. VUE PROJET -->
-      <div v-if="sidebarSelection.type === 'project'" class="main-content-view">
-        <div class="project-view">
-          <div class="project-header-view">
-            <h1 class="project-title-view">{{ store.projetTitle }}</h1>
-            <div class="project-status-badge" :style="{ backgroundColor: store.statusColor }">
+      <div v-if="sidebarSelection.type === 'project'" class="main-content-view-screen-work">
+        <div class="project-view-screen-work">
+          <div class="project-header-view-screen-work">
+            <h1 class="project-title-view-screen-work">{{ store.projetTitle }}</h1>
+            <div class="project-status-badge-screen-work" :style="{ backgroundColor: store.statusColor }">
               {{ store.projetStatus }}
             </div>
           </div>
           
-          <div class="project-details-view">
-            <div class="detail-section">
-              <h3><i class="fas fa-align-left"></i> Synopsis</h3>
-              <p class="synopsis-text">{{ store.projetSynopsis || 'Aucun synopsis disponible.' }}</p>
-            </div>
-            
-            <div class="project-stats-view">
-              <div class="stat-card">
-                <i class="fas fa-tv stat-icon"></i>
-                <div class="stat-content">
-                  <span class="stat-number">{{ store.episodes.length }}</span>
-                  <span class="stat-label">Épisodes</span>
-                </div>
+          <div class="project-stats-view-screen-work">
+              <div class="stat-card-screen-work">
+                  <div class="stat-icon-screen-work">
+                      <i class="fas fa-tv"></i>
+                  </div>
+                  <div class="stat-content-screen-work">
+                      <div class="stat-number-screen-work">{{ store.episodes.length }}</div>
+                      <div class="stat-label-screen-work">Épisodes</div>
+                  </div>
               </div>
               
-              <div class="stat-card">
-                <i class="fas fa-list-ol stat-icon"></i>
-                <div class="stat-content">
-                  <span class="stat-number">{{ store.totalSequences }}</span>
-                  <span class="stat-label">Séquences</span>
-                </div>
+              <div class="stat-card-screen-work">
+                  <div class="stat-icon-screen-work">
+                      <i class="fas fa-list"></i>
+                  </div>
+                  <div class="stat-content-screen-work">
+                      <div class="stat-number-screen-work">{{ store.totalSequences }}</div>
+                      <div class="stat-label-screen-work">Séquences</div>
+                  </div>
               </div>
               
-              <div class="stat-card">
-                <i class="fas fa-film stat-icon"></i>
-                <div class="stat-content">
-                  <span class="stat-number">{{ totalScenes }}</span>
-                  <span class="stat-label">Scènes</span>
-                </div>
+              <div class="stat-card-screen-work">
+                  <div class="stat-icon-screen-work">
+                      <i class="fas fa-film"></i>
+                  </div>
+                  <div class="stat-content-screen-work">
+                      <div class="stat-number-screen-work">{{ totalScenes }}</div>
+                      <div class="stat-label-screen-work">Scènes</div>
+                  </div>
               </div>
-            </div>
-            
-            <!-- Dans la section project-actions-view -->
-            <div class="project-actions-view">
-              <button class="action-btn-primary" @click="startEditProjectModal">
-                <i class="fas fa-pen"></i> Modifier le projet
-              </button>
-              <button v-if="userPermissions.canCreateEpisode" class="action-btn-secondary" @click="goToAddEpisode">
-                <i class="fas fa-plus"></i> Ajouter un épisode
-              </button>
-            </div>
           </div>
+
+          <div class="project-details-view-screen-work">
+            <div class="detail-section-header-screen-work">
+                <h3><i class="fas fa-align-left"></i> Synopsis</h3>
+                <button class="edit-project-title-btn" @click="startEditProjectModal">
+                    <i class="fas fa-pen"></i> Modifier le projet
+                </button>
+            </div>
+            
+            <div class="detail-section-content-screen-work">
+                <p class="synopsis-text-screen-work">{{ store.projetSynopsis || 'Aucun synopsis disponible.' }}</p>
+            </div>
+            
+            <!-- Actions supplémentaires en dessous si besoin -->
+            <div class="project-actions-view-screen-work" v-if="userPermissions.canCreateEpisode">
+                <button class="action-btn-secondary-screen-work" @click="goToAddEpisode">
+                    <i class="fas fa-plus"></i> Ajouter un épisode
+                </button>
+            </div>
+        </div>
         </div>
       </div>
 
       <!-- 2. VUE ÉPISODE -->
-      <div v-else-if="sidebarSelection.type === 'episode'" class="main-content-view">
-        <div class="episode-view" v-if="currentEpisode">
-          <div class="episode-header-view">
-            <div class="episode-header-left">
-              <h1 class="episode-title-view">
+      <div v-else-if="sidebarSelection.type === 'episode'" class="main-content-view-screen-work">
+        <div class="episode-view-screen-work" v-if="currentEpisode">
+          <div class="episode-header-view-screen-work">
+            <div class="episode-header-left-screen-work">
+              <h1 class="episode-title-view-screen-work">
                 Épisode {{ currentEpisode.ordre }} : {{ currentEpisode.titre }}
               </h1>
-              <div class="episode-status-badge">
+              <div class="episode-status-badge-screen-work">
                 {{ currentEpisode.statutNom || 'Non défini' }}
               </div>
             </div>
             
-            <div class="episode-header-actions">
-              <button v-if="userPermissions.canEditEpisode" class="edit-btn" @click="startEditEpisode">
+            <div class="episode-header-actions-screen-work">
+              <button v-if="userPermissions.canEditEpisode" class="edit-btn-screen-work" @click="startEditEpisode">
                 <i class="fas fa-pen"></i> Modifier
               </button>
-              <button v-if="userPermissions.canCreateEpisode" class="delete-btn" @click="confirmDeleteEpisode">
+              <button v-if="userPermissions.canCreateEpisode" class="delete-btn-screen-work" @click="confirmDeleteEpisode">
                 <i class="fas fa-trash"></i> Supprimer
               </button>
-              <button v-if="userPermissions.canCreateSequence" class="add-btn" @click="goToAddSequence">
+              <button v-if="userPermissions.canCreateSequence" class="add-btn-screen-work" @click="goToAddSequence">
                 <i class="fas fa-plus"></i> Ajouter une séquence
               </button>
             </div>
           </div>
           
-          <div class="episode-content-view">
-            <div class="detail-section">
+          <div class="episode-content-view-screen-work">
+            <div class="detail-section-screen-work">
               <h3><i class="fas fa-info-circle"></i> Informations</h3>
-              <div class="details-grid">
-                <div class="detail-item">
-                  <span class="detail-label">Titre :</span>
-                  <span class="detail-value">{{ currentEpisode.titre }}</span>
+              <div class="details-grid-screen-work">
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Titre :</span>
+                  <span class="detail-value-screen-work">{{ currentEpisode.titre }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Ordre :</span>
-                  <span class="detail-value">Épisode {{ currentEpisode.ordre }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Ordre :</span>
+                  <span class="detail-value-screen-work">Épisode {{ currentEpisode.ordre }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Statut :</span>
-                  <span class="detail-value">{{ currentEpisode.statutNom || 'Non défini' }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Statut :</span>
+                  <span class="detail-value-screen-work">{{ currentEpisode.statutNom || 'Non défini' }}</span>
                 </div>
               </div>
             </div>
             
-            <div v-if="currentEpisode.synopsis" class="detail-section">
+            <div v-if="currentEpisode.synopsis" class="detail-section-screen-work">
               <h3><i class="fas fa-align-left"></i> Synopsis</h3>
-              <p class="synopsis-text">{{ currentEpisode.synopsis }}</p>
+              <p class="synopsis-text-screen-work">{{ currentEpisode.synopsis }}</p>
             </div>
             
-            <div v-if="currentEpisode.realisateur || currentEpisode.scenariste" class="detail-section">
+            <div v-if="currentEpisode.realisateur || currentEpisode.scenariste" class="detail-section-screen-work">
               <h3><i class="fas fa-users"></i> Équipe</h3>
-              <div class="team-grid">
-                <div v-if="currentEpisode.realisateur" class="team-member">
+              <div class="team-grid-screen-work">
+                <div v-if="currentEpisode.realisateur" class="team-member-screen-work">
                   <i class="fas fa-video"></i>
-                  <div class="team-member-info">
-                    <span class="team-role">Réalisateur</span>
-                    <span class="team-name">{{ currentEpisode.realisateur.nom }}</span>
+                  <div class="team-member-info-screen-work">
+                    <span class="team-role-screen-work">Réalisateur</span>
+                    <span class="team-name-screen-work">{{ currentEpisode.realisateur.nom }}</span>
                   </div>
                 </div>
-                <div v-if="currentEpisode.scenariste" class="team-member">
+                <div v-if="currentEpisode.scenariste" class="team-member-screen-work">
                   <i class="fas fa-pen"></i>
-                  <div class="team-member-info">
-                    <span class="team-role">Scénariste</span>
-                    <span class="team-name">{{ currentEpisode.scenariste.nom }}</span>
+                  <div class="team-member-info-screen-work">
+                    <span class="team-role-screen-work">Scénariste</span>
+                    <span class="team-name-screen-work">{{ currentEpisode.scenariste.nom }}</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div class="detail-section">
+            <div class="detail-section-screen-work">
               <h3><i class="fas fa-list-ol"></i> Séquences ({{ sequences.length }})</h3>
-              <div v-if="sequences.length > 0" class="sequences-list">
+              <div v-if="sequences.length > 0" class="sequences-list-screen-work">
                 <div 
                   v-for="sequence in sequences" 
                   :key="sequence.idSequence"
-                  class="sequence-card"
-                  :class="{ 'active': sidebarSelection.id === sequence.idSequence }"
+                  class="sequence-card-screen-work"
+                  :class="{ 'active-screen-work': sidebarSelection.id === sequence.idSequence }"
                   @click="handleSidebarSelection({ type: 'sequence', id: sequence.idSequence })"
                 >
-                  <div class="sequence-card-header">
+                  <div class="sequence-card-header-screen-work">
                     <i class="fas fa-list-ol"></i>
-                    <span class="sequence-order">Séquence {{ sequence.ordre }}</span>
-                    <span class="sequence-title">{{ sequence.titre }}</span>
+                    <span class="sequence-order-screen-work">Séquence {{ sequence.ordre }}</span>
+                    <span class="sequence-title-screen-work">{{ sequence.titre }}</span>
                   </div>
-                  <div class="sequence-card-footer">
-                    <span class="scene-count">
+                  <div class="sequence-card-footer-screen-work">
+                    <span class="scene-count-screen-work">
                       <i class="fas fa-film"></i> {{ sequence.scenes?.length || 0 }} scène(s)
                     </span>
-                    <span class="sequence-status">{{ sequence.statutNom || 'Non défini' }}</span>
+                    <span class="sequence-status-screen-work">{{ sequence.statutNom || 'Non défini' }}</span>
                   </div>
                 </div>
               </div>
-              <div v-else class="empty-state">
+              <div v-else class="empty-state-screen-work">
                 <p>Aucune séquence dans cet épisode.</p>
-                <button v-if="userPermissions.canCreateSequence" class="add-btn" @click="goToAddSequence">
+                <button v-if="userPermissions.canCreateSequence" class="add-btn-screen-work" @click="goToAddSequence">
                   <i class="fas fa-plus"></i> Créer la première séquence
                 </button>
               </div>
@@ -321,120 +326,120 @@
       </div>
 
       <!-- 3. VUE SÉQUENCE -->
-      <div v-else-if="sidebarSelection.type === 'sequence'" class="main-content-view">
-        <div class="sequence-view" v-if="currentSequence">
-          <div class="sequence-header-view">
-            <div class="sequence-header-left">
-              <h1 class="sequence-title-view">
+      <div v-else-if="sidebarSelection.type === 'sequence'" class="main-content-view-screen-work">
+        <div class="sequence-view-screen-work" v-if="currentSequence">
+          <div class="sequence-header-view-screen-work">
+            <div class="sequence-header-left-screen-work">
+              <h1 class="sequence-title-view-screen-work">
                 Séquence {{ currentSequence.ordre }} : {{ currentSequence.titre }}
-                <span class="comment-badge" @click="toggleSequenceCommentSection">
+                <span class="comment-badge-screen-work" @click="toggleSequenceCommentSection">
                   <i class="fas fa-comments"></i> {{ sequenceCommentCount }}
                 </span>
               </h1>
-              <div class="sequence-status-badge">
+              <div class="sequence-status-badge-screen-work">
                 {{ currentSequence.statutNom || 'Non défini' }}
               </div>
             </div>
             
-            <div class="sequence-header-actions">
-              <button v-if="userPermissions.canCreateSequence" class="edit-btn" @click="startEditSequence(currentSequence)">
+            <div class="sequence-header-actions-screen-work">
+              <button v-if="userPermissions.canCreateSequence" class="edit-btn-screen-work" @click="startEditSequence(currentSequence)">
                 <i class="fas fa-pen"></i> Modifier
               </button>
-              <button v-if="userPermissions.canCreateSequence" class="delete-btn" @click="deleteSequence(currentSequence.idSequence)">
+              <button v-if="userPermissions.canCreateSequence" class="delete-btn-screen-work" @click="deleteSequence(currentSequence.idSequence)">
                 <i class="fas fa-trash"></i> Supprimer
               </button>
-              <button v-if="userPermissions.canCreateScene" class="add-btn" @click="goToAddScene">
+              <button v-if="userPermissions.canCreateScene" class="add-btn-screen-work" @click="goToAddScene">
                 <i class="fas fa-plus"></i> Ajouter une scène
               </button>
-              <button class="comments-btn" @click="toggleSequenceCommentSection">
+              <button class="comments-btn-screen-work" @click="toggleSequenceCommentSection">
                 <i class="fas fa-comments"></i> Commentaires
               </button>
             </div>
           </div>
           
-          <div class="sequence-content-view">
-            <div class="detail-section">
+          <div class="sequence-content-view-screen-work">
+            <div class="detail-section-screen-work">
               <h3><i class="fas fa-info-circle"></i> Informations</h3>
-              <div class="details-grid">
-                <div class="detail-item">
-                  <span class="detail-label">Titre :</span>
-                  <span class="detail-value">{{ currentSequence.titre }}</span>
+              <div class="details-grid-screen-work">
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Titre :</span>
+                  <span class="detail-value-screen-work">{{ currentSequence.titre }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Ordre :</span>
-                  <span class="detail-value">Séquence {{ currentSequence.ordre }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Ordre :</span>
+                  <span class="detail-value-screen-work">Séquence {{ currentSequence.ordre }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Statut :</span>
-                  <span class="detail-value">{{ currentSequence.statutNom || 'Non défini' }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Statut :</span>
+                  <span class="detail-value-screen-work">{{ currentSequence.statutNom || 'Non défini' }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Épisode :</span>
-                  <span class="detail-value">Épisode {{ currentEpisode?.ordre }} - {{ currentEpisode?.titre }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Épisode :</span>
+                  <span class="detail-value-screen-work">Épisode {{ currentEpisode?.ordre }} - {{ currentEpisode?.titre }}</span>
                 </div>
               </div>
             </div>
             
-            <div v-if="currentSequence.synopsis" class="detail-section">
+            <div v-if="currentSequence.synopsis" class="detail-section-screen-work">
               <h3><i class="fas fa-align-left"></i> Synopsis</h3>
-              <p class="synopsis-text">{{ currentSequence.synopsis }}</p>
+              <p class="synopsis-text-screen-work">{{ currentSequence.synopsis }}</p>
             </div>
             
-            <div class="detail-section">
+            <div class="detail-section-screen-work">
               <h3><i class="fas fa-film"></i> Scènes ({{ scenes.length }})</h3>
-              <div v-if="scenes.length > 0" class="scenes-list">
+              <div v-if="scenes.length > 0" class="scenes-list-screen-work">
                 <div 
                   v-for="scene in scenes" 
                   :key="scene.idScene"
-                  class="scene-card"
-                  :class="{ 'active': sidebarSelection.id === scene.idScene }"
+                  class="scene-card-screen-work"
+                  :class="{ 'active-screen-work': sidebarSelection.id === scene.idScene }"
                   @click="handleSidebarSelection({ type: 'scene', id: scene.idScene })"
                 >
-                  <div class="scene-card-header">
+                  <div class="scene-card-header-screen-work">
                     <i class="fas fa-film"></i>
-                    <span class="scene-order">Scène {{ scene.ordre }}</span>
-                    <span class="scene-title">{{ scene.titre }}</span>
+                    <span class="scene-order-screen-work">Scène {{ scene.ordre }}</span>
+                    <span class="scene-title-screen-work">{{ scene.titre }}</span>
                   </div>
-                  <div class="scene-card-body">
-                    <p v-if="scene.synopsis" class="scene-synopsis">{{ scene.synopsis }}</p>
+                  <div class="scene-card-body-screen-work">
+                    <p v-if="scene.synopsis" class="scene-synopsis-screen-work">{{ scene.synopsis }}</p>
                   </div>
-                  <div class="scene-card-footer">
-                    <span class="scene-status">{{ scene.statutNom || 'Non défini' }}</span>
-                    <span class="dialogue-count">
+                  <div class="scene-card-footer-screen-work">
+                    <span class="scene-status-screen-work">{{ scene.statutNom || 'Non défini' }}</span>
+                    <span class="dialogue-count-screen-work">
                       <i class="fas fa-comment"></i> {{ scene.dialogues?.length || 0 }} dialogue(s)
                     </span>
                   </div>
                 </div>
               </div>
-              <div v-else class="empty-state">
+              <div v-else class="empty-state-screen-work">
                 <p>Aucune scène dans cette séquence.</p>
-                <button v-if="userPermissions.canCreateScene" class="add-btn" @click="goToAddScene">
+                <button v-if="userPermissions.canCreateScene" class="add-btn-screen-work" @click="goToAddScene">
                   <i class="fas fa-plus"></i> Créer la première scène
                 </button>
               </div>
             </div>
             
             <!-- Section commentaires de séquence -->
-            <div v-if="showSequenceCommentSection" class="detail-section comment-section">
+            <div v-if="showSequenceCommentSection" class="detail-section-screen-work comment-section-screen-work">
               <h3><i class="fas fa-comments"></i> Commentaires</h3>
-              <div class="add-comment">
+              <div class="add-comment-screen-work">
                 <textarea v-model="newSequenceComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-                <button @click="addSequenceComment" class="add-comment-btn">
+                <button @click="addSequenceComment" class="add-comment-btn-screen-work">
                   <i class="fas fa-plus-circle"></i> Ajouter
                 </button>
               </div>
               
-              <div class="comments-list">
-                <div v-for="comment in sequenceComments" :key="comment.id" class="comment-item">
-                  <div class="comment-header">
-                    <span class="comment-author">{{ comment.utilisateurNom }}</span>
-                    <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+              <div class="comments-list-screen-work">
+                <div v-for="comment in sequenceComments" :key="comment.id" class="comment-item-screen-work">
+                  <div class="comment-header-screen-work">
+                    <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
+                    <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
                   </div>
-                  <div class="comment-content">
+                  <div class="comment-content-screen-work">
                     {{ comment.contenu }}
                   </div>
-                  <div class="comment-actions" v-if="comment.utilisateurId === user.id">
-                    <button @click="deleteSequenceComment(comment.id)" class="delete-comment-btn">
+                  <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
+                    <button @click="deleteSequenceComment(comment.id)" class="delete-comment-btn-screen-work">
                       <i class="fas fa-trash"></i> Supprimer
                     </button>
                   </div>
@@ -446,98 +451,125 @@
       </div>
 
       <!-- 4. VUE SCÈNE -->
-      <div v-else-if="sidebarSelection.type === 'scene'" class="main-content-view">
-        <div class="scene-view" v-if="currentScene">
-          <div class="scene-header-view">
-            <div class="scene-header-left">
-              <h1 class="scene-title-view">
+      <div v-else-if="sidebarSelection.type === 'scene'" class="main-content-view-screen-work">
+        <div class="scene-view-screen-work" v-if="currentScene">
+          <div class="scene-header-view-screen-work">
+            <div class="scene-header-left-screen-work">
+              <h1 class="scene-title-view-screen-work">
                 Scène {{ currentScene.ordre }} : {{ currentScene.titre }}
               </h1>
-              <div class="scene-status-badge">
+              <div class="scene-status-badge-screen-work">
                 {{ currentScene.statutNom || 'Non défini' }}
               </div>
             </div>
             
-            <div class="scene-header-actions">
-              <button class="back-btn" @click="handleSidebarSelection({ type: 'sequence', id: currentSequence?.idSequence })" title="Retour à la séquence">
+            <div class="scene-header-actions-screen-work">
+              <button class="back-btn-screen-work" @click="handleSidebarSelection({ type: 'sequence', id: currentSequence?.idSequence })" title="Retour à la séquence">
                 <i class="fas fa-arrow-left"></i> Retour
               </button>
-              <button v-if="userPermissions.canCreateScene" class="edit-btn" @click="startEditScene(currentScene)">
+              <button v-if="userPermissions.canCreateScene" class="edit-btn-screen-work" @click="startEditScene(currentScene)">
                 <i class="fas fa-pen"></i> Modifier
               </button>
-              <button v-if="userPermissions.canCreateScene" class="delete-btn" @click="deleteScene(currentScene.idScene)">
+              <button v-if="userPermissions.canCreateScene" class="delete-btn-screen-work" @click="deleteScene(currentScene.idScene)">
                 <i class="fas fa-trash"></i> Supprimer
               </button>
-              <button v-if="userPermissions.canCreateDialogue" class="add-btn" @click="startAddDialogue(currentScene)">
+              <button v-if="userPermissions.canCreateDialogue" class="add-btn-screen-work" @click="startAddDialogue(currentScene)">
                 <i class="fas fa-plus"></i> Ajouter un dialogue
               </button>
-              <button class="comments-btn" @click="toggleSceneCommentSection(currentScene)">
+              <button class="comments-btn-screen-work" @click="toggleSceneCommentSection(currentScene)">
                 <i class="fas fa-comments"></i> Commentaires ({{ getSceneCommentCount(currentScene.idScene) }})
               </button>
             </div>
           </div>
           
-          <div class="scene-content-view">
-            <div class="detail-section">
+             <!-- Ajouter ici la section du planning de tournage -->
+          <div class="scene-planning-section-screen-work">
+            <div class="section-header-screen-work">
+              <h3><i class="fas fa-video" style="color: #007bff;"></i> Planning de Tournage</h3>
+              <div class="section-actions-screen-work">
+                <!-- Bouton de replanification aussi accessible ici -->
+                <ReplanificationComponent 
+                  v-if="currentScene"
+                  :sceneId="currentScene.idScene"
+                  :showTriggerButton="true"
+                  :sceneInfo="currentScene"
+                  @tournage-updated="onTournageUpdated"
+                  @replanification-appliquee="onReplanificationDansScene"
+                />
+              </div>
+            </div>
+            
+            <!-- Section principale du planning -->
+            <SceneTournageSection 
+              v-if="currentScene"
+              :scene="currentScene"
+              :projet-id="currentProjet?.idProjet || projetId"
+              :user-permissions="userPermissions"
+              @tournage-updated="onTournageUpdated"
+            />
+          </div>
+          
+          <div class="scene-content-view-screen-work">
+            <div class="detail-section-screen-work">
               <h3><i class="fas fa-info-circle"></i> Informations</h3>
-              <div class="details-grid">
-                <div class="detail-item">
-                  <span class="detail-label">Titre :</span>
-                  <span class="detail-value">{{ currentScene.titre }}</span>
+              <div class="details-grid-screen-work">
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Titre :</span>
+                  <span class="detail-value-screen-work">{{ currentScene.titre }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Ordre :</span>
-                  <span class="detail-value">Scène {{ currentScene.ordre }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Ordre :</span>
+                  <span class="detail-value-screen-work">Scène {{ currentScene.ordre }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Statut :</span>
-                  <span class="detail-value">{{ currentScene.statutNom || 'Non défini' }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Statut :</span>
+                  <span class="detail-value-screen-work">{{ currentScene.statutNom || 'Non défini' }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Séquence :</span>
-                  <span class="detail-value">Séquence {{ currentSequence?.ordre }} - {{ currentSequence?.titre }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Séquence :</span>
+                  <span class="detail-value-screen-work">Séquence {{ currentSequence?.ordre }} - {{ currentSequence?.titre }}</span>
                 </div>
-                <div class="detail-item">
-                  <span class="detail-label">Épisode :</span>
-                  <span class="detail-value">Épisode {{ currentEpisode?.ordre }} - {{ currentEpisode?.titre }}</span>
+                <div class="detail-item-screen-work">
+                  <span class="detail-label-screen-work">Épisode :</span>
+                  <span class="detail-value-screen-work">Épisode {{ currentEpisode?.ordre }} - {{ currentEpisode?.titre }}</span>
                 </div>
               </div>
             </div>
             
-            <div v-if="currentScene.synopsis" class="detail-section">
+            <div v-if="currentScene.synopsis" class="detail-section-screen-work">
               <h3><i class="fas fa-align-left"></i> Synopsis</h3>
-              <p class="synopsis-text">{{ currentScene.synopsis }}</p>
+              <p class="synopsis-text-screen-work">{{ currentScene.synopsis }}</p>
             </div>
             
-            <div v-if="currentScene.lieuNom || currentScene.lieuPlateau" class="detail-section">
+            <div v-if="currentScene.lieuNom || currentScene.lieuPlateau" class="detail-section-screen-work">
               <h3><i class="fas fa-map-marker-alt"></i> Lieu</h3>
-              <div class="location-info">
+              <div class="location-info-screen-work">
                 <span v-if="currentScene.lieuNom">{{ currentScene.lieuNom }}</span>
                 <span v-if="currentScene.lieuPlateau"> - {{ currentScene.lieuPlateau }}</span>
               </div>
-              <p v-if="currentScene.descriptionUtilisation" class="location-description">
+              <p v-if="currentScene.descriptionUtilisation" class="location-description-screen-work">
                 {{ currentScene.descriptionUtilisation }}
               </p>
             </div>
             
             <!-- Section Dialogues -->
-            <div class="detail-section">
-              <div class="section-header">
+            <div class="detail-section-screen-work">
+              <div class="section-header-screen-work">
                 <h3><i class="fas fa-comments"></i> Dialogues ({{ currentScene.dialogues?.length || 0 }})</h3>
-                <button v-if="userPermissions.canCreateDialogue" class="add-btn-sm" @click="startAddDialogue(currentScene)">
+                <button v-if="userPermissions.canCreateDialogue" class="add-btn-sm-screen-work" @click="startAddDialogue(currentScene)">
                   <i class="fas fa-plus"></i> Nouveau dialogue
                 </button>
               </div>
               
-              <div v-if="currentScene.dialogues?.length" class="dialogues-list">
-                <div v-for="dialogue in currentScene.dialogues" :key="dialogue.id" class="dialogue-item">
-                  <div class="dialogue-header">
-                    <span class="dialogue-character">
+              <div v-if="currentScene.dialogues?.length" class="dialogues-list-screen-work">
+                <div v-for="dialogue in currentScene.dialogues" :key="dialogue.id" class="dialogue-item-screen-work">
+                  <div class="dialogue-header-screen-work">
+                    <span class="dialogue-character-screen-work">
                       <strong>{{ dialogue.personnageNom || 'Narrateur' }} :</strong>
                     </span>
-                    <span class="dialogue-order">#{{ dialogue.ordre }}</span>
+                    <span class="dialogue-order-screen-work">#{{ dialogue.ordre }}</span>
                   </div>
-                  <div class="dialogue-content" @mouseup="openHighlightModal(dialogue, $event)">
+                  <div class="dialogue-content-screen-work" @mouseup="openHighlightModal(dialogue, $event)">
                     {{ dialogue.texte }}
                     
                     <!-- Surlignages -->
@@ -545,7 +577,7 @@
                       <span 
                         v-for="highlight in dialogueHighlights[dialogue.id]" 
                         :key="highlight.id"
-                        class="text-highlight"
+                        class="text-highlight-screen-work"
                         :style="{ backgroundColor: highlight.couleur.valeurHex }"
                         :title="`Surligné par ${highlight.utilisateurNom}`"
                       >
@@ -554,40 +586,40 @@
                     </template>
                   </div>
                   
-                  <div v-if="dialogue.observation" class="dialogue-observation">
+                  <div v-if="dialogue.observation" class="dialogue-observation-screen-work">
                     <i class="fas fa-sticky-note"></i> {{ dialogue.observation }}
                   </div>
                   
-                  <div class="dialogue-actions">
-                    <button v-if="userPermissions.canCreateDialogue" class="action-icon edit-icon" @click="startEditDialogue(dialogue)" title="Modifier">
+                  <div class="dialogue-actions-screen-work">
+                    <button v-if="userPermissions.canCreateDialogue" class="action-icon-screen-work edit-icon-screen-work" @click="startEditDialogue(dialogue)" title="Modifier">
                       <i class="fas fa-pen"></i>
                     </button>
-                    <button v-if="userPermissions.canCreateDialogue" class="action-icon delete-icon" @click="deleteDialogue(dialogue.id)" title="Supprimer">
+                    <button v-if="userPermissions.canCreateDialogue" class="action-icon-screen-work delete-icon-screen-work" @click="deleteDialogue(dialogue.id)" title="Supprimer">
                       <i class="fas fa-trash"></i>
                     </button>
-                    <button class="action-icon comment-icon" @click="toggleDialogueCommentSection(dialogue)" title="Commentaires">
+                    <button class="action-icon-screen-work comment-icon-screen-work" @click="toggleDialogueCommentSection(dialogue)" title="Commentaires">
                       <i class="fas fa-comment"></i> {{ getDialogueCommentCount(dialogue.id) }}
                     </button>
-                    <button v-if="userPermissions.canCreateDialogue" class="action-icon highlight-icon" @click="openHighlightModal(dialogue, $event)" title="Surligner">
+                    <button v-if="userPermissions.canCreateDialogue" class="action-icon-screen-work highlight-icon-screen-work" @click="openHighlightModal(dialogue, $event)" title="Surligner">
                       <i class="fas fa-highlighter"></i>
                     </button>
                   </div>
                 </div>
               </div>
-              <div v-else class="empty-state">
+              <div v-else class="empty-state-screen-work">
                 <p>Aucun dialogue dans cette scène.</p>
-                <button v-if="userPermissions.canCreateDialogue" class="add-btn" @click="startAddDialogue(currentScene)">
+                <button v-if="userPermissions.canCreateDialogue" class="add-btn-screen-work" @click="startAddDialogue(currentScene)">
                   <i class="fas fa-plus"></i> Ajouter le premier dialogue
                 </button>
               </div>
               
               <!-- Formulaire d'ajout de dialogue -->
-              <div v-if="showAddDialogueSection && selectedSceneForDialogue?.idScene === currentScene.idScene" class="add-dialogue-form">
+              <div v-if="showAddDialogueSection && selectedSceneForDialogue?.idScene === currentScene.idScene" class="add-dialogue-form-screen-work">
                 <h4><i class="fas fa-plus-circle"></i> Ajouter un dialogue</h4>
                 
-                <div class="form-group">
+                <div class="form-group-screen-work">
                   <label>Personnage</label>
-                  <select v-model="newDialogueData.personnageId" class="form-select">
+                  <select v-model="newDialogueData.personnageId" class="form-select-screen-work">
                     <option :value="null">Narration (sans personnage)</option>
                     <option 
                       v-for="personnage in personnages" 
@@ -599,38 +631,38 @@
                   </select>
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group-screen-work">
                   <label>Texte du dialogue *</label>
                   <textarea 
                     v-model="newDialogueData.texte" 
                     rows="3" 
-                    class="form-textarea"
+                    class="form-textarea-screen-work"
                     placeholder="Entrez le texte du dialogue..."
                     required
                   ></textarea>
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group-screen-work">
                   <label>Observation</label>
                   <textarea 
                     v-model="newDialogueData.observation" 
                     rows="2" 
-                    class="form-textarea"
+                    class="form-textarea-screen-work"
                     placeholder="Notes ou observations (optionnel)"
                   ></textarea>
                 </div>
                 
-                <div class="form-actions">
+                <div class="form-actions-screen-work">
                   <button 
                     @click="createDialogueDirect(currentScene.idScene)" 
-                    class="save-btn"
+                    class="save-btn-screen-work"
                     :disabled="!newDialogueData.texte.trim()"
                   >
                     <i class="fas fa-save"></i> Ajouter le dialogue
                   </button>
                   <button 
                     @click="cancelAddDialogue" 
-                    class="cancel-btn"
+                    class="cancel-btn-screen-work"
                   >
                     <i class="fas fa-times"></i> Annuler
                   </button>
@@ -639,26 +671,26 @@
             </div>
             
             <!-- Section commentaires scène -->
-            <div v-if="showSceneCommentModal && selectedSceneForComments?.idScene === currentScene.idScene" class="detail-section comment-section">
+            <div v-if="showSceneCommentModal && selectedSceneForComments?.idScene === currentScene.idScene" class="detail-section-screen-work comment-section-screen-work">
               <h3><i class="fas fa-comments"></i> Commentaires de la scène</h3>
-              <div class="add-comment">
+              <div class="add-comment-screen-work">
                 <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-                <button @click="addSceneComment" class="add-comment-btn">
+                <button @click="addSceneComment" class="add-comment-btn-screen-work">
                   <i class="fas fa-plus-circle"></i> Ajouter
                 </button>
               </div>
               
-              <div class="comments-list">
-                <div v-for="comment in sceneComments" :key="comment.id" class="comment-item">
-                  <div class="comment-header">
-                    <span class="comment-author">{{ comment.utilisateurNom }}</span>
-                    <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+              <div class="comments-list-screen-work">
+                <div v-for="comment in sceneComments" :key="comment.id" class="comment-item-screen-work">
+                  <div class="comment-header-screen-work">
+                    <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
+                    <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
                   </div>
-                  <div class="comment-content">
+                  <div class="comment-content-screen-work">
                     {{ comment.contenu }}
                   </div>
-                  <div class="comment-actions" v-if="comment.utilisateurId === user.id">
-                    <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn">
+                  <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
+                    <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn-screen-work">
                       <i class="fas fa-trash"></i> Supprimer
                     </button>
                   </div>
@@ -670,19 +702,19 @@
       </div>
 
       <!-- Indicateur de chargement -->
-      <div v-if="isLoading" class="loading-view">
-        <div class="spinner"></div>
+      <div v-if="isLoading" class="loading-view-screen-work">
+        <div class="spinner-screen-work"></div>
         <p>Chargement en cours...</p>
       </div>
 
       <!-- Message d'erreur -->
-      <div v-if="error && !isLoading" class="error-view">
+      <div v-if="error && !isLoading" class="error-view-screen-work">
         <p>{{ error }}</p>
-        <button class="retry-btn" @click="retryFetch">Réessayer</button>
+        <button class="retry-btn-screen-work" @click="retryFetch">Réessayer</button>
       </div>
 
       <!-- Message si aucun contenu -->
-      <div v-if="!sidebarSelection.type && !isLoading && !error" class="empty-view">
+      <div v-if="!sidebarSelection.type && !isLoading && !error" class="empty-view-screen-work">
         <i class="fas fa-info-circle"></i>
         <p>Sélectionnez un élément dans la sidebar pour afficher ses détails</p>
       </div>
@@ -690,32 +722,32 @@
       <!-- ==================== MODALES ==================== -->
       
       <!-- Modale pour surlignage -->
-      <div v-if="showHighlightModal" class="modal-overlay" @click="closeHighlightModal">
-        <div class="modal-content" @click.stop>
-          <div class="modal-header">
+      <div v-if="showHighlightModal" class="modal-overlay-screen-work" @click="closeHighlightModal">
+        <div class="modal-content-screen-work" @click.stop>
+          <div class="modal-header-screen-work">
             <h3>Surligner du texte</h3>
-            <button @click="closeHighlightModal" class="close-btn"><i class="fas fa-times"></i></button>
+            <button @click="closeHighlightModal" class="close-btn-screen-work"><i class="fas fa-times"></i></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body-screen-work">
             <p><strong>Texte sélectionné :</strong> "{{ selectedText }}"</p>
-            <div class="color-picker">
+            <div class="color-picker-screen-work">
               <label>Couleur :</label>
-              <div class="color-options">
+              <div class="color-options-screen-work">
                 <div 
                   v-for="color in availableColors" 
                   :key="color.id"
-                  class="color-option"
+                  class="color-option-screen-work"
                   :style="{ backgroundColor: color.valeurHex }"
-                  :class="{ 'selected': selectedColor?.id === color.id }"
+                  :class="{ 'selected-screen-work': selectedColor?.id === color.id }"
                   @click="selectedColor = color"
                   :title="color.nom"
                 ></div>
               </div>
             </div>
           </div>
-          <div class="modal-footer">
-            <button @click="closeHighlightModal" class="btn-secondary">Annuler</button>
-            <button @click="applyHighlight" class="btn-primary" :disabled="!selectedColor">Surligner</button>
+          <div class="modal-footer-screen-work">
+            <button @click="closeHighlightModal" class="btn-secondary-screen-work">Annuler</button>
+            <button @click="applyHighlight" class="btn-primary-screen-work" :disabled="!selectedColor">Surligner</button>
           </div>
         </div>
       </div>
@@ -780,28 +812,28 @@
       />
 
       <!-- Modale pour commentaires de dialogue -->
-      <div v-if="showDialogueCommentModal" class="modal-overlay">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div v-if="showDialogueCommentModal" class="modal-overlay-screen-work">
+        <div class="modal-content-screen-work">
+          <div class="modal-header-screen-work">
             <h3>Commentaires du dialogue</h3>
-            <button @click="closeDialogueCommentModal" class="close-btn"><i class="fas fa-times"></i></button>
+            <button @click="closeDialogueCommentModal" class="close-btn-screen-work"><i class="fas fa-times"></i></button>
           </div>
-          <div class="modal-body">
-            <div class="add-comment">
+          <div class="modal-body-screen-work">
+            <div class="add-comment-screen-work">
               <textarea v-model="newDialogueComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-              <button @click="addDialogueComment" class="add-comment-btn">Ajouter</button>
+              <button @click="addDialogueComment" class="add-comment-btn-screen-work">Ajouter</button>
             </div>
-            <div class="comments-list">
-              <div v-for="comment in dialogueComments" :key="comment.id" class="comment-item">
-                <div class="comment-header">
-                  <span class="comment-author">{{ comment.utilisateurNom }}</span>
-                  <span class="comment-date">{{ formatDate(comment.creeLe) }}</span>
+            <div class="comments-list-screen-work">
+              <div v-for="comment in dialogueComments" :key="comment.id" class="comment-item-screen-work">
+                <div class="comment-header-screen-work">
+                  <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
+                  <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
                 </div>
-                <div class="comment-content">
+                <div class="comment-content-screen-work">
                   {{ comment.contenu }}
                 </div>
-                <div class="comment-actions" v-if="comment.utilisateurId === user.id">
-                  <button @click="deleteDialogueComment(comment.id)" class="delete-comment-btn">Supprimer</button>
+                <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
+                  <button @click="deleteDialogueComment(comment.id)" class="delete-comment-btn-screen-work">Supprimer</button>
                 </div>
               </div>
             </div>
@@ -841,6 +873,7 @@
     />
   </div>
 </template>
+
 
 <script setup>
 import { useEcranTravailStore } from '../stores/ecranTravailStore';
@@ -2817,6 +2850,7 @@ const goToProjectFromTools = (projetId) => {
 };
 
 </script>
+
 
 
 

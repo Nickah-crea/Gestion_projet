@@ -78,7 +78,6 @@
 
 <script>
 import axios from 'axios';
-import '../assets/css/dialogue.css';
 
 export default {
   name: 'AddDialogueScene',

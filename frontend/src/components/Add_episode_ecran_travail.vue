@@ -138,7 +138,6 @@
 
 <script>
 import axios from 'axios';
-import '../assets/css/add_episode.css';
 
 export default {
   name: 'AddEpisodeView',
