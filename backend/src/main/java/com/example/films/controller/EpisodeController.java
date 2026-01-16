@@ -66,8 +66,14 @@ public class EpisodeController {
         }
     }
     @PostMapping("/projet/{projetId}")
-    public ResponseEntity<EpisodeDTO> createEpisode(@PathVariable Long projetId, @RequestBody CreateEpisodeDTO createEpisodeDTO) {
+    public ResponseEntity<EpisodeDTO> createEpisode(@PathVariable Long projetId, 
+                                               @RequestBody CreateEpisodeDTO createEpisodeDTO,
+                                               @RequestHeader("X-User-Id") Long userId){
         try {
+            // Vérifier que l'utilisateur n'est pas un simple viewer
+            if (authorizationService.isUserViewer(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
             EpisodeDTO createdEpisode = episodeService.createEpisode(projetId, createEpisodeDTO);
             return new ResponseEntity<>(createdEpisode, HttpStatus.CREATED);
         } catch (Exception e) {
