@@ -151,5 +151,12 @@ public class AuthorizationService {
         return false;
     }
 
+    public boolean isUserViewer(Long utilisateurId) {
+        var utilisateur = utilisateurRepository.findById(utilisateurId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        
+        return "UTILISATEUR".equals(utilisateur.getRole());
+    }
+
     
 }
