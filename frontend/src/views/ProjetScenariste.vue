@@ -7,26 +7,28 @@
         <p class="sidebar-subtitle-projet-scenariste">Gérez vos projets et épisodes</p>
       </div>
 
-      <!-- Section Actions Rapides -->
-      <div class="sidebar-section-projet-scenariste">
-              <h3 class="section-title-projet-scenariste"><i class="fas fa-bolt"></i> Actions Rapides</h3>
-              <div class="sidebar-actions-projet-scenariste">
-                <button 
-                  @click="goToAddEpisode" 
-                  class="sidebar-btn-projet-scenariste nouvel-episode-btn" 
-                >
-                  <i class="fas fa-plus"></i>
-                  Nouvel épisode
-                </button>
-                <button 
-                  @click="goBack" 
-                  class="sidebar-btn-projet-scenariste"
-                >
-                  <i class="fas fa-arrow-left"></i>
-                  Retour
-                </button>
-              </div>
-            </div>
+      
+        <!-- Section Actions Rapides -->
+        <div class="sidebar-section-projet-scenariste">
+          <h3 class="section-title-projet-scenariste"><i class="fas fa-bolt"></i> Actions Rapides</h3>
+          <div class="sidebar-actions-projet-scenariste">
+            <button 
+              v-if="userRole !== 'UTILISATEUR'"
+              @click="goToAddEpisode" 
+              class="sidebar-btn-projet-scenariste nouvel-episode-btn" 
+            >
+              <i class="fas fa-plus"></i>
+              Nouvel épisode
+            </button>
+            <button 
+              @click="goBack" 
+              class="sidebar-btn-projet-scenariste"
+            >
+              <i class="fas fa-arrow-left"></i>
+              Retour
+            </button>
+          </div>
+        </div>
 
       <!-- Section Filtres -->
       <div class="sidebar-section-projet-scenariste">
@@ -155,7 +157,9 @@
                   {{ episode.statutNom }}
                 </span>
               </div>
-              <div class="movie-actions-Scenariste">
+              
+              <!-- Boutons d'actions - masqués pour UTILISATEUR -->
+              <div v-if="userRole !== 'UTILISATEUR'" class="movie-actions-Scenariste">
                 <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEditEpisode(episode)" title="Modifier">
                   <i class="fas fa-marker"></i>
                 </button>
@@ -203,18 +207,27 @@
             </button>
         </div>
 
-        <!-- Message si aucun épisode -->
-        <div v-if="filteredEpisodes.length === 0" class="no-projects-Scenariste">
-          <div class="no-projects-icon-Scenariste">
-            <i class="fas fa-list-alt"></i>
+          <!-- Message si aucun épisode -->
+          <div v-if="filteredEpisodes.length === 0" class="no-projects-Scenariste">
+            <div class="no-projects-icon-Scenariste">
+              <i class="fas fa-list-alt"></i>
+            </div>
+            <h3>Aucun épisode trouvé</h3>
+            
+            <!-- Texte conditionnel selon le rôle -->
+            <p v-if="userRole === 'UTILISATEUR'">Aucun épisode à afficher pour le moment.</p>
+            <p v-else>Commencez par créer votre premier épisode !</p>
+            
+            <!-- Bouton "Créer un épisode" - visible uniquement pour SCENARISTE, REALISATEUR, ADMIN -->
+            <button 
+              v-if="userRole !== 'UTILISATEUR'"
+              class="add-project-btn-large-Scenariste" 
+              @click="goToAddEpisode"
+            >
+              <i class="fas fa-plus-circle"></i>
+              Créer un épisode
+            </button>
           </div>
-          <h3>Aucun épisode trouvé</h3>
-          <p>Commencez par créer votre premier épisode !</p>
-          <button class="add-project-btn-large-Scenariste" @click="goToAddEpisode">
-            <i class="fas fa-plus-circle"></i>
-            Créer un épisode
-          </button>
-        </div>
 
           <!-- Modal d'édition d'épisode -->
           <div v-if="showEditModal" class="edit-project-modal-Scenariste">
@@ -386,6 +399,9 @@ export default {
     };
   },
   computed: {
+    userRole() {
+      return this.user?.role || 'UTILISATEUR';
+    },
     userInitials() {
       if (!this.user?.nom) return '';
       const names = this.user.nom.split(' ');
