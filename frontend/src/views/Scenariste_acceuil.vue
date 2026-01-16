@@ -69,7 +69,7 @@
         <div class="header-section-Scenariste">
           <div class="welcome-section-Scenariste">
             <h2>Bienvenue, {{ user?.nom }} !</h2>
-            <p>Vous êtes connecté en tant que {{ user?.role }}</p>
+            <p>Vous êtes connecté en tant que {{ isViewer ? 'Viewer' : user?.role }}</p>
           </div>
 
           <div class="search-container-right-Scenariste">
@@ -96,60 +96,66 @@
         <!-- Section Statistiques (RESTE dans le contenu principal) -->
         <div class="stats-section-Scenariste">
           <div class="stats-grid-Scenariste">
-            <!-- Carte projets actifs -->
+            <!-- Pour les viewers, afficher seulement nombre de projets -->
             <div class="stat-card-Scenariste stat-projects">
               <div class="stat-icon-Scenariste">
                 <i class="fas fa-film"></i>
               </div>
               <div class="stat-content-Scenariste">
                 <div class="stat-value-Scenariste">{{ stats.projetsActifs || 0 }}</div>
-                <div class="stat-label-Scenariste">Projets actifs</div>
-                <div class="stat-trend-Scenariste" v-if="stats.projetsVariation">
-                  <i :class="stats.projetsVariation > 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
-                  {{ Math.abs(stats.projetsVariation) }}% ce mois
-                </div>
+                <div class="stat-label-Scenariste">Projets visibles</div>
               </div>
             </div>
 
-            <!-- Carte scènes écrites -->
+            <!-- Pour les viewers, afficher seulement nombre de scènes -->
             <div class="stat-card-Scenariste stat-scenes">
               <div class="stat-icon-Scenariste">
                 <i class="fas fa-scroll"></i>
               </div>
               <div class="stat-content-Scenariste">
                 <div class="stat-value-Scenariste">{{ stats.scenesEcrites || 0 }}</div>
-                <div class="stat-label-Scenariste">Scènes écrites</div>
-                <div class="stat-trend-Scenariste" v-if="stats.scenesVariation">
-                  <i :class="stats.scenesVariation > 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
-                  {{ Math.abs(stats.scenesVariation) }}% cette semaine
-                </div>
+                <div class="stat-label-Scenariste">Scènes disponibles</div>
               </div>
             </div>
 
-            <!-- Carte collaborations -->
-            <div class="stat-card-Scenariste stat-collaborations">
-              <div class="stat-icon-Scenariste">
-                <i class="fas fa-users"></i>
-              </div>
-              <div class="stat-content-Scenariste">
-                <div class="stat-value-Scenariste">{{ stats.collaborations || 0 }}</div>
-                <div class="stat-label-Scenariste">Collaborations</div>
-                <div class="stat-subtext-Scenariste">Avec {{ stats.realisateursActifs || 0 }} réalisateurs</div>
-              </div>
-            </div>
-
-            <!-- Carte échéances -->
-            <div class="stat-card-Scenariste stat-deadlines">
-              <div class="stat-icon-Scenariste">
-                <i class="fas fa-calendar-alt"></i>
-              </div>
-              <div class="stat-content-Scenariste">
-                <div class="stat-value-Scenariste">{{ stats.echeancesProches || 0 }}</div>
-                <div class="stat-label-Scenariste">Échéances proches</div>
-                <div class="stat-warning-Scenariste" v-if="stats.echeancesProches > 0">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ stats.urgentCount || 0 }} urgentes
+            <!-- Masquer les autres cartes pour les viewers -->
+            <template v-if="!isViewer">
+              <!-- Carte collaborations (masquée pour viewer) -->
+              <div class="stat-card-Scenariste stat-collaborations">
+                <div class="stat-icon-Scenariste">
+                  <i class="fas fa-users"></i>
                 </div>
+                <div class="stat-content-Scenariste">
+                  <div class="stat-value-Scenariste">{{ stats.collaborations || 0 }}</div>
+                  <div class="stat-label-Scenariste">Collaborations</div>
+                  <div class="stat-subtext-Scenariste">Avec {{ stats.realisateursActifs || 0 }} réalisateurs</div>
+                </div>
+              </div>
+
+              <!-- Carte échéances (masquée pour viewer) -->
+              <div class="stat-card-Scenariste stat-deadlines">
+                <div class="stat-icon-Scenariste">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-content-Scenariste">
+                  <div class="stat-value-Scenariste">{{ stats.echeancesProches || 0 }}</div>
+                  <div class="stat-label-Scenariste">Échéances proches</div>
+                  <div class="stat-warning-Scenariste" v-if="stats.echeancesProches > 0">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ stats.urgentCount || 0 }} urgentes
+                  </div>
+                </div>
+              </div>
+            </template>
+            
+            <!-- Pour viewers, ajouter une carte spécifique -->
+            <div v-if="isViewer" class="stat-card-Scenariste stat-deadlines">
+              <div class="stat-icon-Scenariste">
+                <i class="fas fa-eye"></i>
+              </div>
+              <div class="stat-content-Scenariste">
+                <div class="stat-value-Scenariste">Lecture</div>
+                <div class="stat-label-Scenariste">Mode viewer</div>
               </div>
             </div>
           </div>
@@ -183,11 +189,17 @@
                 </select>
               </div>
               <!-- Bouton centré -->
-              <div class="add-project-center-Scenariste">
+             <div class="add-project-center-Scenariste" v-if="!isViewer">
                 <button class="add-project-btn-scenariste" @click="goToAddProject">
                   <i class="fas fa-plus-circle icon-Scenariste"></i> 
                   Nouveau Projet
                 </button>
+              </div>
+              <div class="add-project-center-Scenariste" v-else>
+                <!-- <button class="add-project-btn-scenariste disabled" disabled title="Non disponible en mode viewer">
+                  <i class="fas fa-eye-slash"></i> 
+                  Lecture seulement
+                </button> -->
               </div>
             </div>
           </div>
@@ -305,7 +317,7 @@
                   {{ project.statutNom }}
                 </span>
               </div>
-              <div class="movie-actions-Scenariste">
+              <div class="movie-actions-Scenariste" v-if="!isViewer">
                 <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEdit(project)" title="Modifier">
                   <i class="fas fa-marker"></i>
                 </button>
@@ -313,6 +325,9 @@
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
+              <!-- <div class="movie-actions-Scenariste" v-else>
+                <span class="viewer-badge-Scenariste">Viewer</span>
+              </div> -->
             </div>
             
             <!-- Contenu de la carte -->
@@ -333,13 +348,19 @@
               <!-- Actions en bas de carte -->
               <div class="movie-actions-bottom-Scenariste">
                 <div class="actions-top-Scenariste">
+                  <!-- Détails toujours accessible -->
                   <button class="action-btn-Scenariste accent-btn" @click="$router.push(`/projet/${project.id}`)" title="Détails">
                     <i class="fas fa-info-circle icon"></i>
                     <span>Détails</span>
                   </button>
-                  <button class="action-btn-Scenariste primary-btn" @click="$router.push(`/projet/${project.id}/ecran-travail`)" title="Écran de travail">
-                      <i class="fas fa-laptop"></i>                    
-                      <span>Écran</span>
+                  
+                  <!-- Écran de travail accessible à TOUS, mais avec paramètre viewer -->
+                  <button class="action-btn-Scenariste" 
+                          :class="isViewer ? 'viewer-btn' : 'primary-btn'" 
+                          @click="goToEcranTravail(project)" 
+                          :title="isViewer ? 'Lecture seule' : 'Écran de travail'">
+                    <i :class="isViewer ? 'fas fa-eye' : 'fas fa-laptop'"></i>                    
+                    <span>{{ isViewer ? 'Lecture' : 'Écran' }}</span>
                   </button>
                 </div>
               </div>
@@ -601,15 +622,28 @@ export default {
   },
   
   computed: {
-    userInitials() {
-      if (!this.user?.nom) return '?';
-      return this.user.nom
-        .split(' ')
-        .map(name => name.charAt(0))
-        .join('')
-        .toUpperCase()
-        .substring(0, 2);
-    },
+
+  isViewer() {
+    return this.user?.role === 'UTILISATEUR';
+  },
+   isScenariste() {
+    return this.user?.role === 'SCENARISTE';
+  },
+  
+  isRealisateur() {
+    return this.user?.role === 'REALISATEUR';
+  },
+  
+  userInitials() {
+    if (!this.user?.nom) return '?';
+    const initials = this.user.nom
+      .split(' ')
+      .map(name => name.charAt(0))
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+    return this.isViewer ? `${initials} (V)` : initials;
+  },
     
     totalResults() {
       return this.globalSearchResults.projets.length + this.globalSearchResults.autres.length;
@@ -634,17 +668,34 @@ export default {
     }
   },
   
-  mounted() {
-    this.initializeComponent();
-    
-    // Rafraîchir les activités toutes les 30 secondes
-    this.activityRefreshInterval = setInterval(() => {
-      if (this.user && this.user.id_utilisateur) {
-        console.log("🔄 Rafraîchissement automatique des activités");
-        this.loadRecentActivities();
+mounted() {
+  this.initializeComponent();
+  const userStr = localStorage.getItem('user');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      const allowedRoles = ['SCENARISTE', 'REALISATEUR', 'UTILISATEUR'];
+      
+      if (!user.role || !allowedRoles.includes(user.role)) {
+        console.log(`Rôle ${user.role} non autorisé, redirection vers /accueil`);
+        this.$router.push('/accueil');
+        return;
       }
-    }, 30000); // 30 secondes
-  },
+    } catch (error) {
+      console.error("Erreur parsing user:", error);
+      this.$router.push('/');
+      return;
+    }
+  }
+  
+  // Rafraîchir les activités toutes les 30 secondes
+  this.activityRefreshInterval = setInterval(() => {
+    if (this.user && this.user.id_utilisateur) {
+      console.log("🔄 Rafraîchissement automatique des activités");
+      this.loadRecentActivities();
+    }
+  }, 30000); // 30 secondes
+},
   
   beforeUnmount() {
     this.cleanupComponent();
@@ -767,20 +818,22 @@ export default {
             return;
           }
           
-          if (this.user.role !== 'SCENARISTE' && this.user.role !== 'REALISATEUR') {
-            this.$router.push('/accueil');
+           const allowedRoles = ['SCENARISTE', 'REALISATEUR', 'UTILISATEUR'];
+            if (!allowedRoles.includes(this.user.role)) {
+              console.log(`Rôle ${this.user.role} non autorisé, redirection vers /accueil`);
+              this.$router.push('/accueil');
+            }
+          } catch (error) {
+            console.error("Erreur parsing user:", error);
+            localStorage.removeItem('user');
+            this.$router.push('/');
           }
-        } catch (error) {
-          console.error("Erreur parsing user:", error);
-          localStorage.removeItem('user');
+        } else {
+          console.log("Pas d'utilisateur en localStorage, redirection");
           this.$router.push('/');
         }
-      } else {
-        console.log("Pas d'utilisateur en localStorage, redirection");
-        this.$router.push('/');
-      }
-    },
-    
+      },
+          
     toggleProfileMenu() {
       this.showProfileMenu = !this.showProfileMenu;
     },
@@ -1326,35 +1379,28 @@ export default {
     },
     
     async loadUserStatistics() {
+      
       try {
-        console.log("🔍 DEBUG: Chargement stats personnelles pour userId:", this.user?.id_utilisateur);
-        
-        const userId = this.getUserId();
-        console.log("🔍 DEBUG: ID utilisé pour API:", userId);
-        
-        const response = await axios.get('/api/scenariste/statistiques-personnelles', {
-          params: { userId: userId }
-        });
-        
-        console.log("📊 DEBUG: Réponse API stats:", response.data);
-        
-        const apiData = response.data;
-        this.userStats = {
-          productivite: Math.round(apiData.productivite || 0),
-          scenesModifiees7j: apiData.scenesModifiees7j || 0,
-          tendanceScenes: apiData.tendanceScenes || 0,
-          tempsTotalMinutes: apiData.tempsTotalMinutes || 0,
-          moyenneQuotidienneMinutes: apiData.moyenneQuotidienneMinutes || 0,
-          sessionMoyenneMinutes: apiData.sessionMoyenneMinutes || 0,
-          objectifs: apiData.objectifs || {
-            scenesCompletees: 0,
-            scenesCibles: 10,
-            dialoguesEcrits: 0,
-            dialoguesCibles: 50,
-            progressionScenes: 0,
-            progressionDialogues: 0
-          }
-        };
+    // Pour les viewers, charger des statistiques simplifiées
+    if (this.isViewer) {
+      this.userStats = {
+        productivite: 0,
+        scenesModifiees7j: 0,
+        tendanceScenes: 0,
+        tempsTotalMinutes: 0,
+        moyenneQuotidienneMinutes: 0,
+        sessionMoyenneMinutes: 0,
+        objectifs: {
+          scenesCompletees: 0,
+          scenesCibles: 0,
+          dialoguesEcrits: 0,
+          dialoguesCibles: 0,
+          progressionScenes: 0,
+          progressionDialogues: 0
+        }
+      };
+      return;
+    }
         
         console.log("✅ DEBUG: userStats mis à jour:", this.userStats);
         
@@ -2032,6 +2078,18 @@ export default {
     setReminder(project) {
       console.log('Définir rappel pour:', project.titre);
       alert(`Rappel défini pour "${project.titre}" dans 1 jour`);
+    },
+    // Méthode pour naviguer vers l'écran de travail
+    goToEcranTravail(project) {
+      // Pour les viewers, ajouter un paramètre 'viewer=true'
+      if (this.isViewer) {
+        this.$router.push({
+          path: `/projet/${project.id}/ecran-travail`,
+          query: { viewer: 'true' }
+        });
+      } else {
+        this.$router.push(`/projet/${project.id}/ecran-travail`);
+      }
     }
   }
 };
