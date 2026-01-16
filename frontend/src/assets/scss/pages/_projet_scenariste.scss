@@ -1248,6 +1248,33 @@
   }
 }
 
+// =============================================
+// STYLES POUR MODE LECTURE SEULE (UTILISATEUR)
+// =============================================
 
+// Style pour les cartes d'épisodes en mode lecture seule
+.movie-card-Scenariste.readonly-mode {
+  // Désactiver l'effet hover si nécessaire
+  &:hover {
+    transform: none;
+    box-shadow: $shadow-md;
+  }
+  
+  .movie-actions-Scenariste {
+    display: none !important;
+  }
+  
+  // Optionnel: rendre le texte plus discret
+  .movie-meta-Scenariste {
+    opacity: 0.8;
+  }
+}
+
+// Style pour la sidebar en mode lecture seule
+.creation-sidebar-projet-scenariste.readonly-mode {
+  .sidebar-btn-projet-scenariste.nouvel-episode-btn {
+    display: none;
+  }
+}
 
 
