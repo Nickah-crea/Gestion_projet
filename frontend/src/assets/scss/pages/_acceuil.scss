@@ -4094,5 +4094,295 @@ nav.fixed-bottom,
   }
 }
 
+// =============================================
+// STYLES SPÉCIFIQUES AUX VIEWERS
+// =============================================
 
+// Sidebar pour viewers
+.viewer-sidebar {
+  background: $color-primary-light !important;
+  border-right: 1px solid $color-border;
 
+  .viewer-info-section {
+    .viewer-title {
+      font-size: $font-size-p1;
+      color: $color-text-primary;
+      margin-bottom: $margin-lg;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+      font-weight: $font-weight-semibold;
+      @include typography-playfair-h4;
+      
+      i {
+        color: $color-accent;
+        font-size: $font-size-p1;
+        background: rgba($color-accent, 0.1);
+        padding: $padding-xs;
+        border-radius: $border-radius-sm;
+      }
+    }
+  }
+
+  .viewer-stats {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+    margin-bottom: $margin-lg;
+  }
+
+  .viewer-stat-item {
+    display: flex;
+    align-items: center;
+    gap: $gap-md;
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border-radius: $border-radius;
+    border: 1px solid $color-border;
+    box-shadow: $shadow;
+
+    i {
+      font-size: $font-size-h4;
+      color: $color-accent;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba($color-accent, 0.1);
+      border-radius: $border-radius;
+    }
+
+    .viewer-stat-content {
+      flex: 1;
+      
+      .viewer-stat-value {
+        font-size: $font-size-h4;
+        font-weight: $font-weight-black;
+        color: $color-text-primary;
+        line-height: 1;
+        margin-bottom: $gap-xs;
+        @include typography-cinzel-h4;
+      }
+      
+      .viewer-stat-label {
+        font-size: $font-size-p4;
+        color: $color-text-secondary;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+
+  .viewer-message {
+    background: rgba($color-accent, 0.05);
+    border-radius: $border-radius;
+    padding: $padding-md;
+    border-left: 3px solid $color-accent;
+    margin-top: $margin-lg;
+
+    p {
+      font-size: $font-size-p4;
+      color: $color-text-secondary;
+      margin: 0 0 $gap-xs 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      i {
+        color: $color-accent;
+        font-size: $font-size-p3;
+      }
+    }
+  }
+}
+
+// Badge viewer dans les cartes
+.viewer-badge-Scenariste {
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-bold;
+  color: $color-accent-dark;
+  background: rgba($color-accent, 0.1);
+  border: 1px solid rgba($color-accent, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// =============================================
+// BOUTON "LECTURE" POUR VIEWERS
+// =============================================
+
+// Style pour le bouton "Lecture" (remplace "Écran" pour les viewers)
+.action-btn-Scenariste.viewer-btn {
+  background: $color-accent !important;
+  border: none !important;
+  color: $color-text-light !important;
+  font-weight: $font-weight-semibold;
+  
+  &:hover {
+    background: $color-accent-dark !important;
+    border-color: $color-accent-dark !important;
+    box-shadow: 0 4px 12px rgba($color-accent, 0.3);
+    color: $color-text-light !important;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+  
+  
+  &.primary-btn {
+    background: $color-primary !important;
+    color: $color-text-light !important;
+    
+    &:hover {
+      background: $color-accent-dark !important;
+      color: $color-text-light !important;
+    }
+  }
+}
+
+// =============================================
+// BOUTON "ÉCRAN" POUR NON-VIEWERS
+// =============================================
+
+// Confirmation du style existant pour "Écran"
+.action-btn-Scenariste.primary-btn {
+   background: $color-primary; // Changé: doré
+  border: none;
+  color: $color-text-light; // Changé: blanc
+  font-weight: $font-weight-semibold;
+  
+  &:hover {
+    background: $color-primary-dark; // Changé: doré foncé
+    border-color: $color-primary-dark; // Changé: doré foncé
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3); // Changé: doré
+    color: $color-text-light; // Changé: blanc
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// =============================================
+// ADAPTATIONS RESPONSIVE POUR VIEWERS
+// =============================================
+
+@media (max-width: $breakpoint-lg) {
+  .viewer-sidebar {
+    display: none !important;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .viewer-stat-item {
+    flex-direction: column;
+    text-align: center;
+    gap: $gap-sm;
+    
+    i {
+      width: 36px;
+      height: 36px;
+      font-size: $font-size-p1;
+    }
+    
+    .viewer-stat-content {
+      .viewer-stat-value {
+        font-size: $font-size-h4;
+      }
+    }
+  }
+  
+  // Ajustement des boutons sur mobile
+  .actions-top-Scenariste {
+    .action-btn-Scenariste {
+      min-height: 44px;
+      
+      // Bouton "Lecture" spécifique sur mobile
+      &.viewer-btn,
+      &.primary-btn {
+        font-size: $font-size-p3;
+        
+        i {
+          font-size: $font-size-p2;
+        }
+      }
+    }
+  }
+}
+
+// =============================================
+// STYLES POUR LES PROJETS VIEWERS
+// =============================================
+
+// Carte de projet pour viewers (légèrement différente)
+.movie-card-Scenariste:has(.viewer-badge-Scenariste) {
+  border: 2px solid rgba($color-accent, 0.2) !important;
+  
+  &:hover {
+    border-color: $color-accent !important;
+    box-shadow: 0 8px 24px rgba($color-accent, 0.15);
+  }
+}
+
+// Désactiver les boutons d'action pour viewers
+.movie-actions-Scenariste:has(.viewer-badge-Scenariste) {
+  .action-btn-Scenariste {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+    &:hover {
+      background: transparent !important;
+      transform: none !important;
+    }
+  }
+}
+
+// =============================================
+// ANIMATIONS POUR LES VIEWERS
+// =============================================
+
+@keyframes viewer-pulse {
+  0% { 
+    box-shadow: 0 0 0 0 rgba($color-accent, 0.4);
+  }
+  70% { 
+    box-shadow: 0 0 0 10px rgba($color-accent, 0);
+  }
+  100% { 
+    box-shadow: 0 0 0 0 rgba($color-accent, 0);
+  }
+}
+
+.action-btn-Scenariste.viewer-btn {
+  animation: viewer-pulse 2s infinite;
+  
+  &:hover {
+    animation: none; // Arrêter l'animation au hover
+  }
+}
+
+// =============================================
+// BOUTONS DÉSACTIVÉS POUR VIEWERS
+// =============================================
+
+.add-project-btn-scenariste.disabled {
+  background: rgba($color-text-muted, 0.2) !important;
+  color: $color-text-muted !important;
+  border: 1px solid rgba($color-text-muted, 0.3) !important;
+  cursor: not-allowed !important;
+  
+  &:hover {
+    background: rgba($color-text-muted, 0.2) !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  i {
+    color: $color-text-muted !important;
+  }
+}
