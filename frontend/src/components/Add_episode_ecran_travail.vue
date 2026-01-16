@@ -305,10 +305,27 @@ export default {
       this.errorMessage = '';
 
       try {
-        const response = await axios.post(`/api/episodes/projet/${this.form.projetId}`, this.form);
+        // Créer l'objet episodeData au format attendu par le backend
+        const episodeData = {
+          titre: this.form.titre,
+          ordre: parseInt(this.form.ordre),
+          statutId: this.form.statutId,
+          synopsis: this.form.synopsis || '',
+          realisateurId: this.form.realisateurId || null,
+          scenaristeId: this.form.scenaristeId || null
+        };
+
+        console.log('Données envoyées:', episodeData); 
+        console.log('Projet ID:', this.form.projetId); 
+
+        const response = await axios.post(`/api/episodes/projet/${this.form.projetId}`, episodeData, {
+          headers: {
+            'X-User-Id': this.user.id 
+          }
+        });
         
         if (response.status === 201) {
-          this.newEpisodeId = response.data.idEpisode; // Stocker l'ID du nouvel épisode
+          this.newEpisodeId = response.data.idEpisode; 
           this.$router.push({
             path: `/projet/${this.form.projetId}/ecran-travail`,
             query: { episodeId: this.newEpisodeId }
@@ -316,12 +333,20 @@ export default {
         }
       } catch (error) {
         console.error('Erreur lors de la création de l\'épisode:', error);
+        console.error('Détails de l\'erreur:', error.response?.data); 
         
         // Gestion spécifique des erreurs de duplication d'ordre
         if (error.response?.status === 400 && error.response?.data?.message?.includes('ordre')) {
           this.ordreError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
+          this.errorMessage = this.ordreError;
+        } else if (error.response?.status === 400) {
+          this.errorMessage = error.response?.data?.message || 'Erreur de validation. Vérifiez les données saisies.';
+        } else if (error.response?.status === 403) {
+          this.errorMessage = 'Vous n\'avez pas les permissions nécessaires pour créer un épisode.';
+        } else if (error.response?.status === 401) {
+          this.errorMessage = 'Session expirée. Veuillez vous reconnecter.';
         } else {
-          this.errorMessage = error.response?.data?.message || 'Erreur lors de la création de l\'épisode';
+          this.errorMessage = 'Erreur lors de la création de l\'épisode. Veuillez réessayer.';
         }
       } finally {
         this.loading = false;
