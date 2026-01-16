@@ -15,7 +15,7 @@
         <div class="sidebar-actions">
           <button 
             @click="ouvrirModalPlanning(today)" 
-            class="sidebar-btn"
+            class="sidebar-btn-add-tournage nouveau-tournage-btn"
           >
             <i class="fas fa-plus"></i>
             Ajouter un tournage
@@ -28,7 +28,7 @@
             <i class="fas fa-exclamation-triangle"></i>
             {{ showAlertesRaccords ? 'Masquer' : 'Voir' }} alertes
            </button> -->
-          <button @click="reinitialiserFiltres" class="sidebar-btn">
+          <button @click="reinitialiserFiltres" class="sidebar-btn-add-tournage">
             <i class="fas fa-times"></i>
             Réinitialiser filtres
           </button>
@@ -96,10 +96,10 @@
             <span class="stat-number">{{ getTournagesEnCoursCount }}</span>
             <span class="stat-label">En cours</span>
           </div>
-          <div class="stat-item">
+          <!-- <div class="stat-item">
             <span class="stat-number">{{ alertesRaccordsCritiques.length }}</span>
             <span class="stat-label">Alertes critiques</span>
-          </div>
+          </div> -->
         </div>
       </div>
 
