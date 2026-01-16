@@ -782,7 +782,7 @@ export default {
       }
     },
     
-    async submitForm() {
+   async submitForm() {
       this.validateOrdre();
       if (this.ordreError) {
         return;
@@ -795,6 +795,7 @@ export default {
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user || !user.id) {
           this.errorMessage = 'Utilisateur non connecté';
+          this.loading = false;
           return;
         }
         
@@ -810,13 +811,15 @@ export default {
             statutId: this.form.statutId
           };
           
+          console.log('Données envoyées (MODIFICATION):', episodeData); 
+          console.log('Headers:', { 'X-User-Id': user.id });
+          
           response = await axios.put(`/api/episodes/${this.editingId}`, episodeData, {
             headers: {
               'X-User-Id': user.id
             }
           });
           
-          // alert('Épisode modifié avec succès');
         } else {
           // Pour la CRÉATION : Envoyer tous les champs
           episodeData = {
@@ -829,8 +832,14 @@ export default {
             scenaristeId: this.form.scenaristeId
           };
           
-          response = await axios.post(`/api/episodes/projet/${this.form.projetId}`, episodeData);
-          // alert('Épisode créé avec succès');
+          console.log('Données envoyées (CRÉATION):', episodeData); 
+          console.log('Headers:', { 'X-User-Id': user.id });
+          
+          response = await axios.post(`/api/episodes/projet/${this.form.projetId}`, episodeData, {
+            headers: {
+              'X-User-Id': user.id
+            }
+          });
         }
         
         if (response.status === 201 || response.status === 200) {
@@ -846,6 +855,7 @@ export default {
         }
       } catch (error) {
         console.error('Erreur lors de la création/modification de l\'épisode:', error);
+        console.error('Réponse d\'erreur:', error.response?.data); // Ajoutez cette ligne
         
         if (error.response?.status === 400) {
           if (error.response?.data?.message?.includes('ordre')) {
