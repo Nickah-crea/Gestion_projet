@@ -67,7 +67,7 @@ public class ProjetController {
     }
     @GetMapping("/{id}/access-check")
     public ResponseEntity<Boolean> checkProjectAccess(@PathVariable Long id,
-                                                    @RequestHeader("X-User-Id") Long userId) {
+                                                      @RequestHeader("X-User-Id") Long userId) {
         try {
             boolean hasAccess = authorizationService.hasAccessToProjet(userId, id);
             return ResponseEntity.ok(hasAccess);
