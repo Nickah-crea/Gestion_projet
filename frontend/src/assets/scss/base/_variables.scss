@@ -63,7 +63,7 @@ $line-height-loose: 1.7;
 // =============================================
 
 // === Primaries (Logo Core – Energetic & Positive) ===
-$color-primary:       #EDCA49;      // Golden yellow – main brand, success, highlights
+$color-primary:       #E1DC49;      // Golden yellow – main brand, success, highlights
 $color-primary-light: #F5E8B2;      // Soft champagne glow – hovers, gradients
 $color-primary-dark:  #D4A832;      // Deep gold – shadows, pressed states
 
@@ -72,8 +72,10 @@ $color-accent:        #E67E22;      // Warm orange – CTAs, active states, warn
 $color-accent-light:  #F4A05A;      // Lighter orange – subtle accents
 $color-accent-dark:   #C45F00;      // Deep burnt orange – borders, dark hovers
 
-$color-secondary:     #EC7784;      // Soft wine red – alerts, episodes, emotion
-$color-secondary-dark:#B94A55;      // Deeper wine – errors, depth
+$color-secondary:      #E01F34;      // Soft wine red – alerts, episodes, emotion
+$color-secondary-light:#EC7784;      // Deeper wine – errors, depth
+$color-secondary-dark: #B94A55;      // Deeper wine – errors, depth
+$color-secondary-black:#731613;      // Deeper wine – errors, depth
 
 $color-tertiary:      #8D695D;      // Rich brown – grounding, sequences/sets, elegance
 $color-tertiary-light:#B08E7F;      // Warm taupe – surfaces, cards
@@ -312,6 +314,14 @@ $z-index-toast: 1070;
 
 @mixin typography-p4 {
   font-size: $font-size-p4;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
+  color: $color-text-muted;
+  margin-bottom: $margin-xs;
+} 
+
+@mixin typography-p5 {
+  font-size: $font-size-p5;
   font-weight: $font-weight-regular;
   line-height: $line-height-base;
   color: $color-text-muted;
@@ -950,5 +960,98 @@ $ease-out-cinema: cubic-bezier(0.165, 0.84, 0.44, 1);
   font-size: $font-size-p5;
   font-weight: $font-weight-regular;
   line-height: 1.4;
+}
+
+
+@mixin nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  background: rgba($color-primary, 0.1);
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-xs;
+  padding: $padding-sm $padding-md;
+  color: $color-primary-light;
+  font-family: $font-family-primary;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-fast;
+  position: relative;
+  overflow: hidden;
+  min-width: 140px;
+  white-space: nowrap;
+  
+  i {
+    font-size: $font-size-p2;
+    transition: all $transition-fast;
+    color: $color-primary-light;
+  }
+  
+  span {
+    transition: color $transition-fast;
+  }
+  
+  // Effet hover
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.2);
+    border-color: rgba($color-primary, 0.4);
+    color: $color-primary;
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+    
+    i {
+      transform: scale(1.1);
+      color: $color-primary;
+    }
+    
+    span {
+      color: $color-primary;
+    }
+  }
+  
+  // État actif
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    background: rgba($color-primary, 0.15);
+  }
+  
+  // État désactivé
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  // Focus visible
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+  
+  // Effet de brillance cinéma
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba($color-primary-light, 0.1) 50%,
+      transparent 70%
+    );
+    transform: rotate(30deg);
+    transition: $transition-fast;
+    opacity: 0;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+    transform: rotate(30deg) translate(10%, 10%);
+  }
 }
 
