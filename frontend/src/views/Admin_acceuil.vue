@@ -13,7 +13,7 @@
         <input 
           type="text" 
           v-model="searchQuery" 
-          placeholder="Rechercher un projet..." 
+          placeholder=" Rechercher un projet..." 
           class="search-input"
         />
       </div>
