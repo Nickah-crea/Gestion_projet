@@ -14,9 +14,11 @@
           <i class="fas fa-bolt"></i> Actions Rapides
         </h3>
         <div class="sidebar-actions-projet-scenariste">
+          <!-- Bouton "Nouvelle séquence" seulement si pas viewer -->
           <button 
             @click="goToAddSequence" 
             class="sidebar-btn-projet-scenariste nouvelle-sequence-btn"
+            v-if="!isViewer"
           >
             <i class="fas fa-plus"></i>
             Nouvelle séquence
@@ -233,12 +235,27 @@
                     </span>
                   </div>
                   <div class="movie-actions-Scenariste">
-                    <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEditSequence(sequence)" title="Modifier">
+                    <!-- Masquer les boutons edit/delete pour les viewers -->
+                    <button 
+                      class="action-btn-Scenariste edit-btn-Scenariste" 
+                      @click.stop="startEditSequence(sequence)" 
+                      title="Modifier"
+                      v-if="!isViewer"
+                    >
                       <i class="fas fa-marker"></i>
                     </button>
-                    <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="confirmDeleteSequence(sequence.idSequence)" title="Supprimer">
+                    <button 
+                      class="action-btn-Scenariste delete-btn-Scenariste" 
+                      @click.stop="confirmDeleteSequence(sequence.idSequence)" 
+                      title="Supprimer"
+                      v-if="!isViewer"
+                    >
                       <i class="fas fa-trash"></i>
                     </button>
+                    <!-- Badge pour les viewers -->
+                    <!-- <span v-if="isViewer" class="viewer-badge">
+                      <i class="fas fa-eye"></i> Lecture seule
+                    </span> -->
                   </div>
                 </div>
                 
@@ -271,13 +288,18 @@
             </div>
 
             <!-- Message si aucune séquence -->
-            <div v-if="filteredSequences.length === 0" class="no-projects-Scenariste">
+           <div v-if="filteredSequences.length === 0" class="no-projects-Scenariste">
               <div class="no-projects-icon-Scenariste">
                 <i class="fas fa-list-alt"></i>
               </div>
               <h3>Aucune séquence trouvée</h3>
-              <p>Commencez par créer votre première séquence !</p>
-              <button class="add-project-btn-large-Scenariste" @click="goToAddSequence">
+              <p v-if="!isViewer">Commencez par créer votre première séquence !</p>
+              <p v-else>Aucune séquence disponible</p>
+              <button 
+                class="add-project-btn-large-Scenariste" 
+                @click="goToAddSequence"
+                v-if="!isViewer"
+              >
                 <i class="fas fa-plus-circle"></i>
                 Créer une séquence
               </button>
@@ -470,6 +492,25 @@ export default {
     };
   },
   computed: {
+  isViewer() {
+    return this.user?.role === 'UTILISATEUR';
+  },
+  isScenariste() {
+    return this.user?.role === 'SCENARISTE';
+  },
+  isRealisateur() {
+    return this.user?.role === 'REALISATEUR';
+  },
+  isAdmin() {
+    return this.user?.role === 'ADMIN';
+  },
+
+  canEdit() {
+    // Seuls les SCENARISTE, REALISATEUR et ADMIN peuvent éditer
+    return this.user?.role === 'SCENARISTE' || 
+           this.user?.role === 'REALISATEUR' || 
+           this.user?.role === 'ADMIN';
+  },
     filteredSequences() {
       let filtered = this.sequences;
 
@@ -506,8 +547,12 @@ export default {
     },
   },
   async created() {
-    await this.loadUserEpisodes(); 
-    await this.checkAccess(); 
+    // Pour les UTILISATEUR, ne pas vérifier les épisodes d'accès - ils peuvent tous voir
+    if (this.user.role !== 'UTILISATEUR') {
+      await this.loadUserEpisodes(); 
+      await this.checkAccess(); 
+    }
+    
     if (!this.accessDenied) {
       await this.loadEpisode();
       await this.loadSequences();
@@ -517,22 +562,27 @@ export default {
   },
   methods: {
     async loadUserEpisodes() {
-        try {
-          const response = await axios.get(`/api/episodes/utilisateur/${this.user.id}`);
-          this.userEpisodes = response.data;
-        } catch (error) {
-          console.error('Erreur lors du chargement des épisodes utilisateur:', error);
-        }
+      // Seulement pour les SCENARISTE et REALISATEUR
+      if (this.user.role === 'UTILISATEUR' || this.user.role === 'ADMIN') {
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`/api/episodes/utilisateur/${this.user.id}`);
+        this.userEpisodes = response.data;
+      } catch (error) {
+        console.error('Erreur lors du chargement des épisodes utilisateur:', error);
+      }
     },
     async checkAccess() {
-      const episodeId = parseInt(this.$route.params.id);
-      
-      // Les admins ont accès à tout
-      if (this.user.role === 'ADMIN') {
+      // Les UTILISATEUR et ADMIN ont accès à tout
+      if (this.user.role === 'UTILISATEUR' || this.user.role === 'ADMIN') {
         this.accessDenied = false;
         return;
       }
 
+      const episodeId = parseInt(this.$route.params.id);
+      
       // Vérifier si l'épisode actuel est dans la liste des épisodes accessibles
       const hasAccess = this.userEpisodes.some(ep => ep.idEpisode === episodeId);
       
