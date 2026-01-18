@@ -285,7 +285,7 @@
               <!-- Liste des épisodes -->
               <div class="episodes-list-add-episode">
                 <div class="list-header-add-episode">
-                  <h3><i class="fas fa-film"></i> Liste de mes épisodes ({{ filteredEpisodes.length }})</h3>
+                  <h3><i class="fas fa-film"></i> Liste des épisodes ({{ filteredEpisodes.length }})</h3>
                   
                   <div class="search-section-add-episode">
                     <div class="search-group-add-episode">
