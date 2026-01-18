@@ -1,36 +1,40 @@
-// _sequence.scss – Style pour la vue séquence cohérent avec le reste
+// _sequence.scss – Style pour la vue séquence ALIGNÉE AVEC VUE PROJET/ÉPISODE
 @import '../base/variables';
 
 // =============================================
-// VUE SÉQUENCE PRINCIPALE
+// VUE SÉQUENCE PRINCIPALE - STRUCTURE IDENTIQUE
 // =============================================
-.sequence-view-screen-work {
+
+// Conteneur principal identique à .project-view-screen-work
+.sequence-view-container-screen-work {
   max-width: 1200px;
   margin: 0 auto;
-  padding: $padding-lg;
+  background: $color-background;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  padding: $padding-xl;
+  position: relative;
 }
 
 // ────────────────────────────────────────────────
-// En-tête de la séquence
+// En-tête de la séquence (identique structure)
 // ────────────────────────────────────────────────
 .sequence-header-view-screen-work {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: $margin-xl;
-  padding-bottom: $padding-lg;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
   position: relative;
-  border-bottom: 1px solid rgba($color-border, 0.3);
-  
+
   &::after {
     content: '';
     position: absolute;
-    bottom: -1px;
+    bottom: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, $color-accent, transparent);
-    opacity: 0.5;
+    height: 1px;
+    background: rgba($color-border, 0.3);
   }
 }
 
@@ -41,31 +45,67 @@
 .sequence-title-view-screen-work {
   @include typography-playfair-h2;
   color: $color-text-primary;
-  margin: 0 0 $margin-sm 0;
+  margin: 0 0 $margin-xs 0;
   font-size: calc(#{$font-size-h2} - 4px);
   line-height: 1.2;
   letter-spacing: -0.3px;
   display: flex;
   align-items: center;
-  gap: $gap-sm;
   flex-wrap: wrap;
+  gap: $gap-sm;
 }
 
-.comment-badge-screen-work {
-  @include typography-p4;
+.sequence-order-badge-screen-work {
+  @include typography-p2;
   color: $color-accent;
+  font-weight: $font-weight-bold;
   background: rgba($color-accent, 0.1);
-  padding: 2px 8px;
+  padding: 4px 12px;
   border-radius: $border-radius-pill;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  
+  i {
+    font-size: 0.9em;
+  }
+}
+
+.sequence-status-badge-screen-work {
+  padding: 6px 16px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $color-text-light;
+  background: linear-gradient(135deg, $color-accent, darken($color-accent, 10%));
+  box-shadow: $shadow;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+  min-width: 100px;
+  justify-content: center;
+  height: fit-content;
+}
+
+// Badge commentaire dans l'en-tête
+.comment-badge-screen-work {
+  @include typography-p4;
+  color: $color-info;
+  background: rgba($color-info, 0.1);
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   transition: $transition-fast;
+  border: 1px solid rgba($color-info, 0.3);
   
   &:hover {
-    background: rgba($color-accent, 0.2);
+    background: rgba($color-info, 0.2);
     transform: translateY(-1px);
   }
   
@@ -74,27 +114,94 @@
   }
 }
 
-.sequence-status-badge-screen-work {
-  display: inline-block;
-  padding: 6px 16px;
-  border-radius: $border-radius-pill;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: rgba($color-accent, 0.1);
-  color: $color-accent;
-  border: 1px solid rgba($color-accent, 0.3);
+// ────────────────────────────────────────────────
+// Statistiques HORIZONTALES - Identique au projet
+// ────────────────────────────────────────────────
+.sequence-stats-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin: $margin-lg 0;
+  gap: $gap-md;
+  padding: 0;
+  background: transparent;
+  min-height: auto;
 }
 
-.sequence-header-actions-screen-work {
+// Réutilisation des styles de stat-card
+.stat-card-screen-work {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-md;
+  background: rgba($color-border, 0.1);
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  min-height: calc(#{$font-size-p4} + #{$padding-md} * 2);
+  line-height: normal;
+  border: none;
+  box-shadow: none;
+  
+  &:hover {
+    background: rgba($color-border, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-icon-screen-work {
+  color: $color-accent;
+  font-size: $font-size-p2;
+  width: 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  i {
+    font-size: 1.2em;
+  }
+}
+
+.stat-content-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.stat-number-screen-work {
+  @include typography-p1;
+  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  margin: 0;
+  font-size: $font-size-p1;
+}
+
+.stat-label-screen-work {
+  @include typography-p4;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+  margin: 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+// ────────────────────────────────────────────────
+// Barre d'actions (sous les stats)
+// ────────────────────────────────────────────────
+.sequence-actions-bar-screen-work {
   display: flex;
   gap: $gap-sm;
-  align-items: center;
+  margin: $margin-lg 0;
+  padding: $padding-md;
+  background: rgba($color-border, 0.05);
+  border-radius: $border-radius;
   flex-wrap: wrap;
   
   button {
-    padding: $padding-xs $padding-sm;
+    padding: $padding-xs $padding-md;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     font-weight: $font-weight-medium;
@@ -117,6 +224,15 @@
     
     &:active {
       transform: translateY(0);
+    }
+  }
+  
+  .details-btn-screen-work {
+    color: $color-accent;
+    
+    &:hover {
+      background: rgba($color-accent, 0.1);
+      border-color: $color-accent;
     }
   }
   
@@ -160,28 +276,27 @@
 }
 
 // ────────────────────────────────────────────────
-// Contenu de la séquence
+// Section détails séquence (structure projet)
 // ────────────────────────────────────────────────
-.sequence-content-view-screen-work {
-  display: flex;
-  flex-direction: column;
-  gap: $margin-xl;
+.sequence-details-view-screen-work {
+  margin-bottom: $margin-xl;
+  background: $color-background-alt;
+  border-radius: 8px;
+  padding: $padding-lg;
 }
 
-// ────────────────────────────────────────────────
-// Section détails (grille d'informations)
-// ────────────────────────────────────────────────
-.detail-section-screen-work {
-  background: $color-background-alt;
-  border-radius: $border-radius;
-  padding: $padding-xl;
-  box-shadow: $shadow;
-  border: 1px solid rgba($color-border, 0.2);
+.detail-section-header-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
   
-  h3 {
+  h3, h4 {
     @include typography-playfair-h4;
     color: $color-text-primary;
-    margin: 0 0 $margin-lg 0;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: $gap-sm;
@@ -193,44 +308,62 @@
   }
 }
 
-.details-grid-screen-work {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $gap-lg;
-}
-
-.detail-item-screen-work {
+// Bouton d'édition (style projet)
+.edit-sequence-btn-screen-work {
+  padding: $padding-xs $padding-md;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  background: $color-background-light;
+  color: $color-accent;
+  border: 1px solid rgba($color-accent, 0.3);
+  border-radius: $border-radius-xs;
+  cursor: pointer;
+  transition: $transition-fast;
   display: flex;
   align-items: center;
-  gap: $gap-sm;
-  padding: $padding-md;
-  background: $color-background;
-  border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-border, 0.1);
-  transition: $transition-fast;
+  gap: 6px;
+  
+  i {
+    font-size: 0.9em;
+  }
   
   &:hover {
-    border-color: $color-accent;
-    background: rgba($color-accent, 0.03);
+    background: $color-accent;
+    color: $color-text-light;
+    transform: translateY(-1px);
+    box-shadow: $shadow;
   }
   
-  .detail-label-screen-work {
-    @include typography-p4;
-    color: $color-text-muted;
-    font-weight: $font-weight-medium;
-    min-width: 70px;
+  &:active {
+    transform: translateY(0);
   }
-  
-  .detail-value-screen-work {
-    @include typography-p2;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-  }
+}
+
+.detail-section-content-screen-work {
+  margin-bottom: $margin-xl;
 }
 
 // ────────────────────────────────────────────────
 // Synopsis
 // ────────────────────────────────────────────────
+.synopsis-section-screen-work {
+  margin-bottom: $margin-lg;
+  
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-accent;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
 .synopsis-text-screen-work {
   @include typography-p2;
   color: $color-text-secondary;
@@ -245,6 +378,33 @@
 // ────────────────────────────────────────────────
 // Liste des scènes
 // ────────────────────────────────────────────────
+.scenes-section-screen-work {
+  .scenes-header-screen-work {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $margin-lg;
+    
+    h2 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+      
+      i {
+        color: $color-accent;
+      }
+    }
+    
+    .scenes-stats-screen-work {
+      @include typography-p3;
+      color: $color-text-muted;
+    }
+  }
+}
+
 .scenes-list-screen-work {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -322,6 +482,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  
+  .scene-status-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    background: rgba($color-border, 0.2);
+    padding: 2px 8px;
+    border-radius: $border-radius-xs;
+    font-weight: $font-weight-medium;
+  }
 }
 
 .scene-card-body-screen-work {
@@ -337,6 +506,19 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  
+  .scene-no-synopsis-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    
+    i {
+      font-size: 0.9em;
+    }
+  }
 }
 
 .scene-card-footer-screen-work {
@@ -345,15 +527,6 @@
   align-items: center;
   padding-top: $padding-md;
   border-top: 1px solid rgba($color-border, 0.1);
-  
-  .scene-status-screen-work {
-    @include typography-p4;
-    color: $color-text-muted;
-    background: rgba($color-border, 0.2);
-    padding: 2px 8px;
-    border-radius: $border-radius-xs;
-    font-weight: $font-weight-medium;
-  }
   
   .dialogue-count-screen-work {
     @include typography-p4;
@@ -366,125 +539,158 @@
       color: $color-info;
     }
   }
-}
-
-// ────────────────────────────────────────────────
-// Section commentaires
-// ────────────────────────────────────────────────
-.comment-section-screen-work {
-  background: rgba($color-info, 0.03);
-  border: 1px solid rgba($color-info, 0.1);
-}
-
-.add-comment-screen-work {
-  margin-bottom: $margin-lg;
   
-  textarea {
-    width: 100%;
-    padding: $padding-md;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-sm;
-    font-size: $font-size-p3;
-    color: $color-text-primary;
-    background: $color-background;
-    resize: vertical;
-    min-height: 80px;
-    margin-bottom: $gap-sm;
-    transition: $transition-fast;
-    
-    &:focus {
-      outline: none;
-      border-color: $color-info;
-      box-shadow: 0 0 0 2px rgba($color-info, 0.1);
-    }
-    
-    &::placeholder {
-      color: $color-text-muted;
-    }
-  }
-  
-  .add-comment-btn-screen-work {
-    @include btn-cinema-primary;
-    padding: $padding-sm $padding-md;
-    background: $color-info;
-    color: $color-text-light;
-    font-size: $font-size-p3;
-    
-    &:hover {
-      background: darken($color-info, 10%);
-    }
-    
-    i {
-      margin-right: $gap-xs;
-    }
-  }
-}
-
-.comments-list-screen-work {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-md;
-}
-
-.comment-item-screen-work {
-  background: $color-background;
-  border-radius: $border-radius-sm;
-  padding: $padding-md;
-  border: 1px solid rgba($color-border, 0.1);
-  transition: $transition-fast;
-  
-  &:hover {
-    border-color: rgba($color-info, 0.3);
-  }
-}
-
-.comment-header-screen-work {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $gap-sm;
-  
-  .comment-author-screen-work {
-    @include typography-p3;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-  }
-  
-  .comment-date-screen-work {
+  .view-scene-btn-screen-work {
     @include typography-p4;
-    color: $color-text-muted;
-  }
-}
-
-.comment-content-screen-work {
-  @include typography-p3;
-  color: $color-text-secondary;
-  line-height: 1.5;
-  margin-bottom: $gap-sm;
-}
-
-.comment-actions-screen-work {
-  text-align: right;
-  
-  .delete-comment-btn-screen-work {
-    @include typography-p4;
-    color: $color-error;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 2px 6px;
+    color: $color-accent;
+    background: rgba($color-accent, 0.1);
+    border: 1px solid rgba($color-accent, 0.3);
+    padding: 4px 12px;
     border-radius: $border-radius-xs;
-    display: inline-flex;
+    cursor: pointer;
+    display: flex;
     align-items: center;
     gap: 4px;
     transition: $transition-fast;
     
     &:hover {
-      background: rgba($color-error, 0.1);
+      background: rgba($color-accent, 0.2);
+      transform: translateY(-1px);
     }
     
     i {
       font-size: 0.9em;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Section Commentaires
+// ────────────────────────────────────────────────
+.comment-section-screen-work {
+  background: rgba($color-info, 0.03);
+  border: 1px solid rgba($color-info, 0.1);
+  
+  .add-comment-screen-work {
+    margin-bottom: $margin-lg;
+    
+    textarea {
+      width: 100%;
+      padding: $padding-md;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-sm;
+      font-family: inherit;
+      font-size: $font-size-p3;
+      resize: vertical;
+      min-height: 80px;
+      margin-bottom: $margin-sm;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-info;
+        box-shadow: 0 0 0 3px rgba($color-info, 0.1);
+      }
+    }
+    
+    .add-comment-btn-screen-work {
+      background: $color-info;
+      color: $color-text-light;
+      border: none;
+      padding: $padding-sm $padding-lg;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      &:hover {
+        background: darken($color-info, 10%);
+      }
+    }
+  }
+  
+  .comments-list-screen-work {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+  }
+  
+  .comment-item-screen-work {
+    background: $color-background;
+    padding: $padding-md;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-border, 0.1);
+    
+    .comment-header-screen-work {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: $margin-xs;
+      
+      .comment-author-screen-work {
+        @include typography-p4;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+      }
+      
+      .comment-date-screen-work {
+        @include typography-p4;
+        color: $color-text-muted;
+      }
+    }
+    
+    .comment-content-screen-work {
+      @include typography-p3;
+      color: $color-text-secondary;
+      line-height: 1.5;
+    }
+    
+    .comment-actions-screen-work {
+      margin-top: $margin-xs;
+      text-align: right;
+      
+      .delete-comment-btn-screen-work {
+        @include typography-p4;
+        color: $color-error;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Actions supplémentaires (style projet)
+// ────────────────────────────────────────────────
+.sequence-actions-view-screen-work {
+  display: flex;
+  gap: $gap-lg;
+  flex-wrap: wrap;
+  margin-top: $margin-xl;
+  padding-top: $padding-xl;
+  border-top: 1px solid rgba($color-border, 0.35);
+  
+  .action-btn-secondary-screen-work {
+    @include btn-cinema-accent;
+    padding: $padding-md $padding-xl;
+    font-size: $font-size-p2;
+    min-width: 200px;
+    justify-content: center;
+    
+    i {
+      margin-right: $gap-sm;
+      font-size: 1.1em;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, $color-accent, $color-accent-dark);
     }
   }
 }
@@ -499,75 +705,325 @@
   border-radius: $border-radius;
   border: 2px dashed rgba($color-border, 0.5);
   
-  p {
-    @include typography-p2;
-    color: $color-text-muted;
-    margin-bottom: $margin-lg;
+  .empty-state-content-screen-work {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $margin-md;
+    
+    i {
+      font-size: 3rem;
+      color: $color-accent;
+      opacity: 0.5;
+    }
+    
+    p {
+      @include typography-p2;
+      color: $color-text-muted;
+      margin: 0;
+    }
   }
   
-  .add-btn-screen-work {
-    @include btn-cinema-primary;
+  .add-first-scene-btn-screen-work {
+    @include btn-cinema-accent;
     padding: $padding-sm $padding-lg;
-    background: $color-accent;
     
     i {
       margin-right: $gap-xs;
-    }
-    
-    &:hover {
-      background: $color-accent-dark;
     }
   }
 }
 
 // ────────────────────────────────────────────────
-// Responsive
+// Modal détails séquence
+// ────────────────────────────────────────────────
+.details-modal-overlay-screen-work {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.details-modal-screen-work {
+  background: $color-background;
+  border-radius: $border-radius-lg;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: $shadow-lg;
+}
+
+.details-modal-header-screen-work {
+  padding: $padding-lg;
+  border-bottom: 1px solid $color-border;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  h2 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-accent;
+    }
+  }
+  
+  .close-details-modal-screen-work {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: $font-size-p2;
+    
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+}
+
+.details-modal-content-screen-work {
+  padding: $padding-lg;
+}
+
+.details-section-screen-work {
+  margin-bottom: $margin-xl;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .details-section-title-screen-work {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-lg 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-accent;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+.details-grid-screen-work {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $gap-lg;
+}
+
+.detail-item-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-md;
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+  
+  .detail-label-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    
+    i {
+      font-size: 0.9em;
+    }
+  }
+  
+  .detail-value-screen-work {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    flex: 1;
+    
+    .status-badge-screen-work {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p4;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.synopsis-content-screen-work {
+  @include typography-p2;
+  color: $color-text-secondary;
+  line-height: 1.7;
+  padding: $padding-lg;
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+}
+
+.stats-grid-screen-work {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $gap-lg;
+  
+  .stat-item-screen-work {
+    background: $color-background-alt;
+    border-radius: $border-radius-sm;
+    padding: $padding-lg;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    
+    .stat-icon-screen-work {
+      color: $color-accent;
+      font-size: 2rem;
+      margin-bottom: $margin-sm;
+    }
+    
+    .stat-number-screen-work {
+      @include typography-h3;
+      color: $color-text-primary;
+      margin: 0 0 4px 0;
+    }
+    
+    .stat-label-screen-work {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+}
+
+.quick-actions-grid-screen-work {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $gap-md;
+  
+  .quick-action-btn-screen-work {
+    background: $color-background;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-sm;
+    padding: $padding-lg;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $gap-sm;
+    
+    &:hover {
+      border-color: $color-accent;
+      background: rgba($color-accent, 0.03);
+      transform: translateY(-2px);
+      box-shadow: $shadow;
+    }
+    
+    i {
+      color: $color-accent;
+      font-size: 1.5rem;
+    }
+    
+    span {
+      @include typography-p3;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Responsive (identique au projet)
 // ────────────────────────────────────────────────
 @media (max-width: $breakpoint-lg) {
-  .sequence-view-screen-work {
-    padding: $padding-md;
+  .sequence-view-container-screen-work {
+    padding: $padding-lg;
   }
   
-  .sequence-header-view-screen-work {
-    flex-direction: column;
-    gap: $gap-md;
-    align-items: flex-start;
+  .sequence-stats-view-screen-work {
+    gap: $gap-sm;
   }
   
-  .sequence-header-actions-screen-work {
-    width: 100%;
-    justify-content: flex-start;
+  .stat-card-screen-work {
+    padding: $padding-sm;
+    min-height: calc(#{$font-size-p4} + #{$padding-sm} * 2);
   }
   
-  .details-grid-screen-work {
-    grid-template-columns: 1fr;
+  .stat-icon-screen-work {
+    font-size: $font-size-p3;
+    width: 20px;
+  }
+  
+  .stat-number-screen-work {
+    font-size: $font-size-p2;
+  }
+  
+  .stat-label-screen-work {
+    font-size: $font-size-p4;
   }
   
   .scenes-list-screen-work {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
+  
+  .stats-grid-screen-work,
+  .quick-actions-grid-screen-work {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: $breakpoint-md) {
+  .sequence-stats-view-screen-work {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .stat-card-screen-work {
+    flex: 0 0 calc(50% - #{$gap-sm});
+    margin-bottom: $gap-sm;
+    
+    &:nth-child(3) {
+      flex: 0 0 100%;
+    }
+  }
+  
   .sequence-title-view-screen-work {
     font-size: calc(#{$font-size-h3} - 2px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
   }
   
-  .scenes-list-screen-work {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .sequence-view-screen-work {
-    padding: $padding-sm;
+  .sequence-header-view-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
   }
   
-  .detail-section-screen-work {
-    padding: $padding-lg;
+  .detail-section-header-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
   }
   
-  .sequence-header-actions-screen-work {
+  .edit-sequence-btn-screen-work {
+    align-self: flex-end;
+  }
+  
+  .sequence-actions-bar-screen-work {
     flex-direction: column;
     align-items: stretch;
     
@@ -575,6 +1031,49 @@
       width: 100%;
       justify-content: center;
     }
+  }
+  
+  .scenes-list-screen-work {
+    grid-template-columns: 1fr;
+  }
+  
+  .sequence-actions-view-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-btn-secondary-screen-work {
+    width: 100%;
+  }
+  
+  .stats-grid-screen-work,
+  .quick-actions-grid-screen-work {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .sequence-view-container-screen-work {
+    padding: $padding-md;
+  }
+  
+  .sequence-stats-view-screen-work {
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+  
+  .stat-card-screen-work {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-bottom: $gap-xs;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .detail-section-screen-work {
+    padding: $padding-lg;
   }
   
   .scene-card-header-screen-work {
@@ -592,11 +1091,11 @@
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-  .sequence-header-actions-screen-work button,
-  .detail-item-screen-work,
+  .sequence-actions-bar-screen-work button,
+  .stat-card-screen-work,
   .scene-card-screen-work,
-  .comment-badge-screen-work,
-  .comment-item-screen-work {
+  .edit-sequence-btn-screen-work,
+  .quick-action-btn-screen-work {
     transition: none;
     
     &:hover {

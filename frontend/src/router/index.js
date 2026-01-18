@@ -304,9 +304,9 @@ const routes = [
     component: () => import('../components/sidebar/RightSidebar.vue')
   },
   {
-    path: '/sidebar/tools',
-    name: 'right-tools',
-    component: () => import('../components/sidebar/SceneToolsSidebar.vue')
+    path: '/navbar/tools',
+    name: 'navbar-tools',
+    component: () => import('../components/sidebar/SceneToolsNavbar.vue')
   },
   {
     path: '/forgot-password',

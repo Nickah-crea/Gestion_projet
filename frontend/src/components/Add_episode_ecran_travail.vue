@@ -1,138 +1,140 @@
 <template>
-  <div class="add-episode-container">
-    <!-- Contenu principal -->
-    <main class="main-content">
-      <div class="form-header">
-        <button @click="goBack" class="back-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          Retour
-        </button>
-        <h2>Créer votre épisode</h2>
-      </div>
-
-      <form @submit.prevent="submitForm" class="episode-form">
-        <!-- Ligne 1 : Titre de l'épisode + Titre du projet -->
-        <div class="form-row">
-          <div class="form-group form-group-half">
-            <label for="titre">Titre de l'épisode</label>
-            <input 
-              type="text" 
-              id="titre"
-              v-model="form.titre" 
-              required 
-              placeholder="Entrez le titre"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group form-group-half">
-            <label for="projet">Titre du projet</label>
-            <input 
-              id="projet"
-              :value="projetTitre" 
-              type="text"
-              disabled
-              class="form-input"
-            />
-          </div>
-        </div>
-
-        <!-- Ligne 2 : Ordre dans le projet + Statut -->
-        <div class="form-row">
-          <div class="form-group form-group-half">
-            <label for="ordre">Ordre dans le projet</label>
-            <input 
-              type="number" 
-              id="ordre"
-              v-model="form.ordre" 
-              required 
-              placeholder="Entrez le nombre"
-              min="1"
-              class="form-input"
-              :class="{ 'error-input': ordreError }"
-              @blur="validateOrdre"
-            />
-            <span v-if="ordreError" class="error-text">{{ ordreError }}</span>
-            <span v-if="suggestedOrdre" class="suggestion-text">
-              Suggestion: Le prochain ordre disponible est {{ suggestedOrdre }}
-              <button type="button" @click="useSuggestedOrder" class="suggestion-btn">
-                Utiliser cette valeur
-              </button>
-            </span>
-          </div>
-          <div class="form-group form-group-half">
-            <label for="statut">Statut</label>
-            <select 
-              id="statut"
-              v-model="form.statutId" 
-              required
-              class="form-select"
-            >
-              <option value="">Sélectionner le statut</option>
-              <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
-                {{ statut.nomStatutsEpisode }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Ligne 3 : Réalisateur + Scénariste -->
-        <div class="form-row">
-          <div class="form-group form-group-half">
-            <label for="realisateur">Réalisateur *</label>
-            <select 
-              id="realisateur"
-              v-model="form.realisateurId" 
-              required
-              class="form-select"
-            >
-              <option value="">Sélectionner un réalisateur</option>
-              <option v-for="realisateur in realisateurs" :key="realisateur.idRealisateur" :value="realisateur.idRealisateur">
-                {{ realisateur.nom }} - {{ realisateur.specialite }}
-              </option>
-            </select>
-          </div>
-          <div class="form-group form-group-half">
-            <label for="scenariste">Scénariste *</label>
-            <select 
-              id="scenariste"
-              v-model="form.scenaristeId" 
-              required
-              class="form-select"
-            >
-              <option value="">Sélectionner un scénariste</option>
-              <option v-for="scenariste in scenaristes" :key="scenariste.idScenariste" :value="scenariste.idScenariste">
-                {{ scenariste.nom }} - {{ scenariste.specialite }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Ligne 4 : Synopsis (pleine largeur) -->
-        <div class="form-group">
-          <label for="synopsis">Synopsis</label>
-          <textarea 
-            id="synopsis"
-            v-model="form.synopsis" 
-            rows="6"
-            placeholder="Entrez le synopsis"
-            class="form-textarea"
-          ></textarea>
-        </div>
-
-        <div v-if="errorMessage" class="error-message">
-          {{ errorMessage }}
-        </div>
-
-        <div class="form-actions">
-          <button type="button" @click="goBack" class="cancel-btn">Annuler</button>
-          <button type="submit" class="submit-btn" :disabled="loading || ordreError !== ''">
-            {{ loading ? 'Création en cours...' : 'Créer' }}
+  <div class="app-wrapper-global">
+    <div class="add-episode-container">
+      <!-- Contenu principal -->
+      <main class="main-content">
+        <div class="form-header">
+          <button @click="goBack" class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Retour
           </button>
+          <h2>Créer votre épisode</h2>
         </div>
-      </form>
-    </main>
+
+        <form @submit.prevent="submitForm" class="episode-form">
+          <!-- Ligne 1 : Titre de l'épisode + Titre du projet -->
+          <div class="form-row">
+            <div class="form-group form-group-half">
+              <label for="titre">Titre de l'épisode</label>
+              <input 
+                type="text" 
+                id="titre"
+                v-model="form.titre" 
+                required 
+                placeholder="Entrez le titre"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group form-group-half">
+              <label for="projet">Titre du projet</label>
+              <input 
+                id="projet"
+                :value="projetTitre" 
+                type="text"
+                disabled
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <!-- Ligne 2 : Ordre dans le projet + Statut -->
+          <div class="form-row">
+            <div class="form-group form-group-half">
+              <label for="ordre">Ordre dans le projet</label>
+              <input 
+                type="number" 
+                id="ordre"
+                v-model="form.ordre" 
+                required 
+                placeholder="Entrez le nombre"
+                min="1"
+                class="form-input"
+                :class="{ 'error-input': ordreError }"
+                @blur="validateOrdre"
+              />
+              <span v-if="ordreError" class="error-text">{{ ordreError }}</span>
+              <span v-if="suggestedOrdre" class="suggestion-text">
+                Suggestion: Le prochain ordre disponible est {{ suggestedOrdre }}
+                <button type="button" @click="useSuggestedOrder" class="suggestion-btn">
+                  Utiliser cette valeur
+                </button>
+              </span>
+            </div>
+            <div class="form-group form-group-half">
+              <label for="statut">Statut</label>
+              <select 
+                id="statut"
+                v-model="form.statutId" 
+                required
+                class="form-select"
+              >
+                <option value="">Sélectionner le statut</option>
+                <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.idStatutEpisode">
+                  {{ statut.nomStatutsEpisode }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Ligne 3 : Réalisateur + Scénariste -->
+          <div class="form-row">
+            <div class="form-group form-group-half">
+              <label for="realisateur">Réalisateur *</label>
+              <select 
+                id="realisateur"
+                v-model="form.realisateurId" 
+                required
+                class="form-select"
+              >
+                <option value="">Sélectionner un réalisateur</option>
+                <option v-for="realisateur in realisateurs" :key="realisateur.idRealisateur" :value="realisateur.idRealisateur">
+                  {{ realisateur.nom }} - {{ realisateur.specialite }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group form-group-half">
+              <label for="scenariste">Scénariste *</label>
+              <select 
+                id="scenariste"
+                v-model="form.scenaristeId" 
+                required
+                class="form-select"
+              >
+                <option value="">Sélectionner un scénariste</option>
+                <option v-for="scenariste in scenaristes" :key="scenariste.idScenariste" :value="scenariste.idScenariste">
+                  {{ scenariste.nom }} - {{ scenariste.specialite }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Ligne 4 : Synopsis (pleine largeur) -->
+          <div class="form-group">
+            <label for="synopsis">Synopsis</label>
+            <textarea 
+              id="synopsis"
+              v-model="form.synopsis" 
+              rows="6"
+              placeholder="Entrez le synopsis"
+              class="form-textarea"
+            ></textarea>
+          </div>
+
+          <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <div class="form-actions">
+            <button type="button" @click="goBack" class="cancel-btn">Annuler</button>
+            <button type="submit" class="submit-btn" :disabled="loading || ordreError !== ''">
+              {{ loading ? 'Création en cours...' : 'Créer' }}
+            </button>
+          </div>
+        </form>
+      </main>
+    </div>
   </div>
 </template>
 

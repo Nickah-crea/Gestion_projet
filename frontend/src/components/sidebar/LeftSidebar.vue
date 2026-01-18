@@ -1,19 +1,25 @@
 <template>
   <div class="left-sidebar-compact" :class="{ 'closed': !open }">
     <!-- BOUTON TOGGLE EN HAUT -->
-    <button class="sidebar-toggle" @click="$emit('toggle-left')" :title="open ? 'Fermer la sidebar' : 'Ouvrir la sidebar'">
-      <i class="fas" :class="open ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
+    <button 
+      class="sidebar-toggle" 
+      @click="$emit('toggle-left')"
+      :title="open ? 'Fermer la sidebar' : 'Ouvrir la sidebar'"
+    >
+      <i class="fas" :class="open ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
     </button>
     
     <!-- PROJET - Toujours visible en haut -->
     <div class="sidebar-header" v-if="open">
       <div class="project-header" @click="selectItem('project', null)">
-        <i class="fas fa-project-diagram"></i>
+        <div class="project-title-container">
         <div class="project-info">
+          <i class="fas fa-project-diagram"></i>
           <h4 class="project-title">{{ projetTitle }}</h4>
-          <span class="project-status" :style="{ color: statusColor }">
+          <span class="project-status statut-en-cours" :style="{ color: statusColor }">
             {{ projetStatus }}
           </span>
+        </div>
         </div>
         <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': projectExpanded }"></i>
       </div>
@@ -136,7 +142,7 @@
     </div>
 
     <!-- Actions globales - Seulement quand ouvert -->
-    <div class="sidebar-footer" v-if="open">
+    <!-- <div class="sidebar-footer" v-if="open">
       <button v-if="userPermissions?.canCreateEpisode" class="action-btn" @click="$emit('add-episode')">
         <i class="fas fa-plus"></i>
         <span>Nouvel épisode</span>
@@ -150,9 +156,9 @@
         <span>Nouvelle scène</span>
       </button>
     </div>
-    
+     -->
     <!-- Quick Actions en mode fermé -->
-    <div class="quick-actions-closed" v-if="!open">
+    <!-- <div class="quick-actions-closed" v-if="!open">
       <button v-if="userPermissions?.canCreateEpisode" class="icon-btn-closed" @click="$emit('add-episode')" title="Nouvel épisode">
         <i class="fas fa-plus"></i>
       </button>
@@ -162,7 +168,7 @@
       <button v-if="userPermissions?.canCreateScene" class="icon-btn-closed" @click="$emit('add-scene')" title="Nouvelle scène">
         <i class="fas fa-plus"></i>
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 

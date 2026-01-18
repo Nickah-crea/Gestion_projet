@@ -1,36 +1,40 @@
-// _episode.scss – Style pour la vue épisode cohérent avec le reste
+// _episode.scss – Style pour la vue épisode ALIGNÉE AVEC VUE PROJET
 @import '../base/variables';
 
 // =============================================
-// VUE ÉPISODE PRINCIPALE
+// VUE ÉPISODE PRINCIPALE - STRUCTURE IDENTIQUE AU PROJET
 // =============================================
-.episode-view-screen-work {
-  max-width: 1200px;
+
+// Conteneur principal identique à .project-view-screen-work
+.episode-view-container-screen-work {
+  max-width: 1400px;
   margin: 0 auto;
-  padding: $padding-lg;
+  background: $color-background;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  padding: $padding-xl;
+  position: relative;
 }
 
 // ────────────────────────────────────────────────
-// En-tête de l'épisode
+// En-tête de l'épisode (identique structure projet)
 // ────────────────────────────────────────────────
 .episode-header-view-screen-work {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: $margin-xl;
-  padding-bottom: $padding-lg;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
   position: relative;
-  border-bottom: 1px solid rgba($color-border, 0.3);
-  
+
   &::after {
     content: '';
     position: absolute;
-    bottom: -1px;
+    bottom: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, $color-primary, transparent);
-    opacity: 0.5;
+    height: 1px;
+    background: rgba($color-border, 0.3);
   }
 }
 
@@ -39,35 +43,149 @@
 }
 
 .episode-title-view-screen-work {
-  @include typography-playfair-h4;
+  @include typography-playfair-h2;
   color: $color-text-primary;
-  margin: 0 0 $margin-sm 0;
+  margin: 0 0 $margin-xs 0;
   font-size: calc(#{$font-size-h2} - 4px);
   line-height: 1.2;
   letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $gap-sm;
 }
 
 .episode-status-badge-screen-work {
-  display: inline-block;
   padding: 6px 16px;
   border-radius: $border-radius-pill;
   font-size: $font-size-p4;
   font-weight: $font-weight-semibold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: rgba($color-primary, 0.1);
-  color: $color-primary;
-  border: 1px solid rgba($color-primary, 0.3);
+  color: $color-text-light;
+  background: linear-gradient(135deg, $color-primary, darken($color-primary, 10%));
+  box-shadow: $shadow;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+  min-width: 100px;
+  justify-content: center;
+  height: fit-content;
 }
 
-.episode-header-actions-screen-work {
+// Badge commentaire dans l'en-tête
+.comment-badge-screen-work {
+  @include typography-p4;
+  color: $color-accent;
+  background: rgba($color-accent, 0.1);
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: $transition-fast;
+  border: 1px solid rgba($color-accent, 0.3);
+  
+  &:hover {
+    background: rgba($color-accent, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  i {
+    font-size: 0.9em;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Statistiques HORIZONTALES - Identique au projet
+// ────────────────────────────────────────────────
+.episode-stats-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin: $margin-lg 0;
+  gap: $gap-md;
+  padding: 0;
+  background: transparent;
+  min-height: auto;
+}
+
+// Réutilisation des styles de stat-card du projet
+.stat-card-screen-work {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-md;
+  background: rgba($color-border, 0.1);
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  min-height: calc(#{$font-size-p4} + #{$padding-md} * 2);
+  line-height: normal;
+  border: none;
+  box-shadow: none;
+  
+  &:hover {
+    background: rgba($color-border, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-icon-screen-work {
+  color: $color-primary;
+  font-size: $font-size-p2;
+  width: 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  i {
+    font-size: 1.2em;
+  }
+}
+
+.stat-content-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.stat-number-screen-work {
+  @include typography-p1;
+  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  margin: 0;
+  font-size: $font-size-p1;
+}
+
+.stat-label-screen-work {
+  @include typography-p4;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+  margin: 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+// ────────────────────────────────────────────────
+// Barre d'actions (sous les stats)
+// ────────────────────────────────────────────────
+.episode-actions-bar-screen-work {
   display: flex;
   gap: $gap-sm;
-  align-items: center;
+  margin: $margin-lg 0;
+  padding: $padding-md;
+  background: rgba($color-border, 0.05);
+  border-radius: $border-radius;
   flex-wrap: wrap;
   
   button {
-    padding: $padding-xs $padding-sm;
+    padding: $padding-xs $padding-md;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     font-weight: $font-weight-medium;
@@ -90,6 +208,15 @@
     
     &:active {
       transform: translateY(0);
+    }
+  }
+  
+  .details-btn-screen-work {
+    color: $color-primary;
+    
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
     }
   }
   
@@ -124,28 +251,27 @@
 }
 
 // ────────────────────────────────────────────────
-// Contenu de l'épisode
+// Section détails épisode (structure projet)
 // ────────────────────────────────────────────────
-.episode-content-view-screen-work {
-  display: flex;
-  flex-direction: column;
-  gap: $margin-xl;
+.episode-details-view-screen-work {
+  margin-bottom: $margin-xl;
+  background: $color-background-alt;
+  border-radius: 8px;
+  padding: $padding-lg;
 }
 
-// ────────────────────────────────────────────────
-// Section détails (grille d'informations)
-// ────────────────────────────────────────────────
-.detail-section-screen-work {
-  background: $color-background-alt;
-  border-radius: $border-radius;
-  padding: $padding-xl;
-  box-shadow: $shadow;
-  border: 1px solid rgba($color-border, 0.2);
+.detail-section-header-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
   
-  h3 {
+  h3, h4 {
     @include typography-playfair-h4;
     color: $color-text-primary;
-    margin: 0 0 $margin-lg 0;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: $gap-sm;
@@ -157,58 +283,62 @@
   }
 }
 
-.details-grid-screen-work {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $gap-lg;
-}
-
-.detail-item-screen-work {
+// Bouton d'édition (style projet)
+.edit-episode-btn-screen-work {
+  padding: $padding-xs $padding-md;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  background: $color-background-light;
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius-xs;
+  cursor: pointer;
+  transition: $transition-fast;
   display: flex;
   align-items: center;
-  gap: $gap-sm;
-  padding: $padding-md;
-  background: $color-background;
-  border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-border, 0.1);
-  transition: $transition-fast;
+  gap: 6px;
+  
+  i {
+    font-size: 0.9em;
+  }
   
   &:hover {
-    border-color: $color-primary;
-    background: rgba($color-primary, 0.03);
+    background: $color-primary;
+    color: $color-text-light;
+    transform: translateY(-1px);
+    box-shadow: $shadow;
   }
   
-  .detail-label-screen-work {
-    @include typography-p4;
-    color: $color-text-muted;
-    font-weight: $font-weight-medium;
-    min-width: 60px;
+  &:active {
+    transform: translateY(0);
   }
+}
+
+.detail-section-content-screen-work {
+  margin-bottom: $margin-xl;
+}
+
+// ────────────────────────────────────────────────
+// Section Équipe (dans détails)
+// ────────────────────────────────────────────────
+.team-section-screen-work {
+  margin-bottom: $margin-lg;
   
-  .detail-value-screen-work {
-    @include typography-p2;
+  h4 {
+    @include typography-playfair-h4;
     color: $color-text-primary;
-    font-weight: $font-weight-semibold;
+    margin: 0 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-h4;
+    }
   }
 }
 
-// ────────────────────────────────────────────────
-// Synopsis
-// ────────────────────────────────────────────────
-.synopsis-text-screen-work {
-  @include typography-p2;
-  color: $color-text-secondary;
-  line-height: 1.7;
-  margin: 0;
-  padding: $padding-lg;
-  background: $color-background;
-  border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-border, 0.1);
-}
-
-// ────────────────────────────────────────────────
-// Équipe (réalisateur, scénariste)
-// ────────────────────────────────────────────────
 .team-grid-screen-work {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -255,6 +385,38 @@
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
   }
+}
+
+// ────────────────────────────────────────────────
+// Synopsis
+// ────────────────────────────────────────────────
+.synopsis-section-screen-work {
+  margin-top: $margin-lg;
+  
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+.synopsis-text-screen-work {
+  @include typography-p2;
+  color: $color-text-secondary;
+  line-height: 1.7;
+  margin: 0;
+  padding: $padding-lg;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
 }
 
 // ────────────────────────────────────────────────
@@ -369,6 +531,136 @@
 }
 
 // ────────────────────────────────────────────────
+// Section Commentaires (optionnelle)
+// ────────────────────────────────────────────────
+.comment-section-screen-work {
+  margin-top: $margin-lg;
+  
+  .add-comment-screen-work {
+    margin-bottom: $margin-lg;
+    
+    textarea {
+      width: 100%;
+      padding: $padding-md;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-sm;
+      font-family: inherit;
+      font-size: $font-size-p3;
+      resize: vertical;
+      min-height: 80px;
+      margin-bottom: $margin-sm;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      }
+    }
+    
+    .add-comment-btn-screen-work {
+      background: $color-primary;
+      color: $color-text-light;
+      border: none;
+      padding: $padding-sm $padding-lg;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      &:hover {
+        background: $color-primary-dark;
+      }
+    }
+  }
+  
+  .comments-list-screen-work {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+  }
+  
+  .comment-item-screen-work {
+    background: $color-background;
+    padding: $padding-md;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-border, 0.1);
+    
+    .comment-header-screen-work {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: $margin-xs;
+      
+      .comment-author-screen-work {
+        @include typography-p4;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+      }
+      
+      .comment-date-screen-work {
+        @include typography-p4;
+        color: $color-text-muted;
+      }
+    }
+    
+    .comment-content-screen-work {
+      @include typography-p3;
+      color: $color-text-secondary;
+      line-height: 1.5;
+    }
+    
+    .comment-actions-screen-work {
+      margin-top: $margin-xs;
+      text-align: right;
+      
+      .delete-comment-btn-screen-work {
+        @include typography-p4;
+        color: $color-error;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Actions supplémentaires (style projet)
+// ────────────────────────────────────────────────
+.episode-actions-view-screen-work {
+  display: flex;
+  gap: $gap-lg;
+  flex-wrap: wrap;
+  margin-top: $margin-xl;
+  padding-top: $padding-xl;
+  border-top: 1px solid rgba($color-border, 0.35);
+  
+  .action-btn-secondary-screen-work {
+    @include btn-cinema-accent;
+    padding: $padding-md $padding-xl;
+    font-size: $font-size-p2;
+    min-width: 200px;
+    justify-content: center;
+    
+    i {
+      margin-right: $gap-sm;
+      font-size: 1.1em;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, $color-accent, $color-accent-dark);
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
 // États vides
 // ────────────────────────────────────────────────
 .empty-state-screen-work {
@@ -395,40 +687,142 @@
 }
 
 // ────────────────────────────────────────────────
-// Responsive
+// Modal détails épisode
+// ────────────────────────────────────────────────
+.modal-overlay-screen-work {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content-screen-work {
+  background: $color-background;
+  border-radius: $border-radius-lg;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: $shadow-lg;
+}
+
+.modal-header-screen-work {
+  padding: $padding-lg;
+  border-bottom: 1px solid $color-border;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+  
+  .close-btn-screen-work {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: $font-size-p2;
+    
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+}
+
+.modal-body-screen-work {
+  padding: $padding-lg;
+}
+
+.modal-footer-screen-work {
+  padding: $padding-lg;
+  border-top: 1px solid $color-border;
+  text-align: right;
+  
+  .btn-primary-screen-work {
+    @include btn-cinema-primary;
+    padding: $padding-sm $padding-lg;
+  }
+}
+
+// Grille détails dans modal
+.details-grid-screen-work {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $gap-lg;
+}
+
+.detail-item-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-md;
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
+  
+  .detail-label-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    min-width: 100px;
+  }
+  
+  .detail-value-screen-work {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    flex: 1;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Responsive (identique au projet)
 // ────────────────────────────────────────────────
 @media (max-width: $breakpoint-lg) {
-  .episode-view-screen-work {
-    padding: $padding-md;
+  .episode-view-container-screen-work {
+    padding: $padding-lg;
   }
   
-  .episode-header-view-screen-work {
-    flex-direction: column;
-    gap: $gap-md;
-    align-items: flex-start;
+  .episode-stats-view-screen-work {
+    gap: $gap-sm;
   }
   
-  .episode-header-actions-screen-work {
-    width: 100%;
-    justify-content: flex-start;
+  .stat-card-screen-work {
+    padding: $padding-sm;
+    min-height: calc(#{$font-size-p4} + #{$padding-sm} * 2);
   }
   
-  .details-grid-screen-work {
-    grid-template-columns: 1fr;
+  .stat-icon-screen-work {
+    font-size: $font-size-p3;
+    width: 20px;
+  }
+  
+  .stat-number-screen-work {
+    font-size: $font-size-p2;
+  }
+  
+  .stat-label-screen-work {
+    font-size: $font-size-p4;
   }
   
   .sequences-list-screen-work {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .episode-title-view-screen-work {
-    font-size: calc(#{$font-size-h3} - 2px);
-  }
-  
-  .sequences-list-screen-work {
-    grid-template-columns: 1fr;
   }
   
   .team-grid-screen-work {
@@ -436,16 +830,45 @@
   }
 }
 
-@media (max-width: $breakpoint-sm) {
-  .episode-view-screen-work {
-    padding: $padding-sm;
+@media (max-width: $breakpoint-md) {
+  .episode-stats-view-screen-work {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
   
-  .detail-section-screen-work {
-    padding: $padding-lg;
+  .stat-card-screen-work {
+    flex: 0 0 calc(50% - #{$gap-sm});
+    margin-bottom: $gap-sm;
+    
+    &:nth-child(3) {
+      flex: 0 0 100%;
+    }
   }
   
-  .episode-header-actions-screen-work {
+  .episode-title-view-screen-work {
+    font-size: calc(#{$font-size-h3} - 2px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+  
+  .episode-header-view-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .detail-section-header-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .edit-episode-btn-screen-work {
+    align-self: flex-end;
+  }
+  
+  .episode-actions-bar-screen-work {
     flex-direction: column;
     align-items: stretch;
     
@@ -453,6 +876,44 @@
       width: 100%;
       justify-content: center;
     }
+  }
+  
+  .sequences-list-screen-work {
+    grid-template-columns: 1fr;
+  }
+  
+  .episode-actions-view-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-btn-secondary-screen-work {
+    width: 100%;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .episode-view-container-screen-work {
+    padding: $padding-md;
+  }
+  
+  .episode-stats-view-screen-work {
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+  
+  .stat-card-screen-work {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-bottom: $gap-xs;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .detail-section-screen-work {
+    padding: $padding-lg;
   }
   
   .sequence-card-header-screen-work {
@@ -464,10 +925,11 @@
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-  .episode-header-actions-screen-work button,
-  .detail-item-screen-work,
+  .episode-actions-bar-screen-work button,
+  .stat-card-screen-work,
   .team-member-screen-work,
-  .sequence-card-screen-work {
+  .sequence-card-screen-work,
+  .edit-episode-btn-screen-work {
     transition: none;
     
     &:hover {
@@ -475,4 +937,5 @@
     }
   }
 }
+
 

@@ -1,223 +1,329 @@
+
 @import '../base/variables';
 
-// ────────────────────────────────────────────────
-// Navigation unifiée sur une même ligne
-// ────────────────────────────────────────────────
+// _header-ecran.scss
+
 .header-ecran-travail-screen-work {
-  margin-bottom: $margin-lg;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: $z-index-sticky;
   background: $color-background;
-  border-radius: $border-radius;
-  box-shadow: $shadow;
-  padding: $padding-md;
+  border-bottom: 1px solid $color-border;
+  box-shadow: $shadow-md;
+  height: 60px;
+  transition: $transition-medium;
+  border-radius: 0 0 20px 20px;
+
+  // Position par défaut - collé à la navbar principale
+  top: 60px; // Positionné juste en dessous de la navbar principale
+
+  // Mode scène actif - ajuste la position car il y a déjà une navbar au-dessus
+  &.scene-mode-active {
+    top: 120px; // 60px (navbar principale) + 60px (navbar scène)
+    background: $color-secondary-black;
+  }
+
+  // Mode séquence actif
+  &.sequence-mode-active {
+    background: $color-accent-dark;
+  }
+
+  // Mode épisode actif
+  &.episode-mode-active {
+    background: $color-primary-light;
+  }
 }
 
-.unified-navigation-screen-work {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: $gap-md;
-}
-
-// Sections gauche, centre, droite
-.nav-left-section-screen-work,
-.nav-center-section-screen-work,
-.nav-right-section-screen-work {
-  display: flex;
-  align-items: center;
+// Conteneur de navigation fixe
+.fixed-nav-container-screen-work {
+  @include flex-between;
+  height: 100%;
+  padding: 0 $padding-sm;
+  max-width: 1400px;
+  margin: 0 auto;
   gap: $gap-sm;
-  flex-wrap: nowrap;
-}
 
-.nav-center-section-screen-work {
-  flex: 1;
-  justify-content: center;
-  text-align: center;
-  min-width: 0; // Permet le truncate
-}
-
-// Navigation globale (Précédent/Suivant)
-.global-navigation-buttons {
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-}
-
-.nav-btn-global-screen-work {
-  @include btn-cinema-primary;
-  padding: $padding-sm $padding-md;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-medium;
-  min-width: 100px;
-  border: 1px solid rgba($color-primary, 0.3);
-  background: rgba($color-primary, 0.1);
-  color: $color-primary;
-  
-  &:hover:not(:disabled) {
-    background: $color-primary;
-    color: $color-text-light;
-    transform: translateY(-1px);
-  }
-  
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    transform: none;
-  }
-  
-  &.nav-prev-global {
-    border-radius: $border-radius-pill 0 0 $border-radius-pill;
-  }
-  
-  &.nav-next-global {
-    border-radius: 0 $border-radius-pill $border-radius-pill 0;
-  }
-}
-
-// Navigation scène
-.scene-navigation-buttons-screen-work {
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  margin-left: $gap-sm;
-  padding-left: $gap-sm;
-  border-left: 1px solid $color-border;
-}
-
-.nav-btn-ecran-travail-screen-work {
-  @include btn-cinema-accent;
-  padding: $padding-xs $padding-sm;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-medium;
-  background: rgba($color-accent, 0.1);
-  color: $color-accent;
-  border: 1px solid rgba($color-accent, 0.3);
-  white-space: nowrap;
-  
-  &:hover:not(:disabled) {
-    background: $color-accent;
-    color: $color-text-light;
-    transform: translateY(-1px);
-  }
-  
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    transform: none;
-  }
-  
-  &.scene-prev-btn {
-    border-radius: $border-radius-xs 0 0 $border-radius-xs;
-  }
-  
-  &.scene-next-btn {
-    border-radius: 0 $border-radius-xs $border-radius-xs 0;
-  }
-}
-
-// Contexte courant
-.current-context-screen-work {
-  @include typography-p2;
-  color: $color-text-primary;
-  font-weight: $font-weight-semibold;
-  padding: $gap-xs $padding-sm;
-  background: rgba($color-primary, 0.1);
-  border-radius: $border-radius-pill;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 300px;
-  display: inline-block;
-}
-
-// Responsive
-@media (max-width: $breakpoint-lg) {
-  .unified-navigation-screen-work {
-    flex-wrap: wrap;
-    gap: $gap-sm;
-  }
-  
+  // Sections de navigation
   .nav-left-section-screen-work,
   .nav-center-section-screen-work,
   .nav-right-section-screen-work {
-    flex: 1 1 100%;
+    flex: 1;
+    @include flex-center;
+  }
+
+  .nav-left-section-screen-work {
+    justify-content: flex-start;
+  }
+
+  .nav-center-section-screen-work {
     justify-content: center;
   }
-  
-  .nav-center-section-screen-work {
-    order: 1;
+
+  .nav-right-section-screen-work {
+    justify-content: flex-end;
   }
-  
+}
+
+// Navigation globale (précédent/suivant)
+.global-navigation-buttons {
+  display: flex;
+  gap: $gap-xs;
+  align-items: center;
+
+  button {
+    @include btn-cinema-primary;
+    padding: 6px 12px;
+    font-size: $font-size-p4;
+    min-width: 90px;
+    height: 36px;
+    border-radius: $border-radius-xs;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: rgba($color-text-muted, 0.1);
+      color: $color-text-muted;
+      box-shadow: none;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    i {
+      font-size: $font-size-p5;
+    }
+  }
+
+  .nav-btn-fixed-left-screen-work {
+    background: linear-gradient(135deg, $color-tertiary-light, $color-tertiary);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, $color-tertiary, $color-tertiary-dark);
+    }
+  }
+
+  .nav-btn-fixed-right-screen-work {
+    background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, $color-primary-dark, $color-primary);
+    }
+  }
+}
+
+// Indicateur de contexte actuel
+.current-context-screen-work {
+  @include typography-playfair-h4;
+  font-size: $font-size-p2;
+  color: $color-text-primary;
+  background: $color-surface;
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  border: 1px solid $color-border;
+  white-space: nowrap;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  transition: $transition-fast;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .scene-mode-active & {
+    background: rgba($color-scene, 0.1);
+    border-color: rgba($color-scene, 0.3);
+    color: darken($color-scene, 20%);
+  }
+
+  .sequence-mode-active & {
+    background: rgba($color-sequence, 0.1);
+    border-color: rgba($color-sequence, 0.3);
+    color: darken($color-sequence, 20%);
+  }
+
+  .episode-mode-active & {
+    background: rgba($color-episode, 0.1);
+    border-color: rgba($color-episode, 0.3);
+    color: darken($color-episode, 20%);
+  }
+}
+
+// Navigation spécifique aux scènes
+.scene-navigation-buttons-screen-work {
+  display: flex;
+  gap: $gap-xs;
+  margin-left: $margin-xs;
+
+  .scene-nav-btn-screen-work {
+    @include btn-cinema-accent;
+    padding: 6px 10px;
+    font-size: $font-size-p4;
+    min-width: 100px;
+    height: 36px;
+    background: linear-gradient(135deg, $color-secondary, $color-secondary-dark);
+    border-radius: $border-radius-xs;
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, $color-secondary-dark, $color-secondary);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: rgba($color-text-muted, 0.1);
+      color: $color-text-muted;
+      box-shadow: none;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    i {
+      font-size: $font-size-p5;
+    }
+  }
+}
+
+// Boutons génériques de navigation
+.nav-btn-ecran-travail-screen-work {
+  @include flex-center;
+  gap: $gap-xs;
+  border: none;
+  border-radius: $border-radius-xs;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-fast;
+  position: relative;
+  overflow: hidden;
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// Responsive
+@include respond-to($breakpoint-md) {
+  .header-ecran-travail-screen-work {
+    &.scene-mode-active {
+      top: 120px;
+    }
+  }
+
+  .fixed-nav-container-screen-work {
+    padding: 0 $padding-md;
+    gap: $gap-md;
+  }
+
+  .global-navigation-buttons button,
+  .scene-nav-btn-screen-work {
+    min-width: 110px;
+    padding: 8px 14px;
+    font-size: $font-size-p3;
+  }
+
+  .current-context-screen-work {
+    font-size: $font-size-p2;
+    max-width: 400px;
+    padding: 6px 16px;
+  }
+}
+
+@include respond-to($breakpoint-lg) {
+  .fixed-nav-container-screen-work {
+    gap: $gap-lg;
+  }
+
+  .current-context-screen-work {
+    max-width: 500px;
+    font-size: $font-size-p1;
+  }
+
+  .global-navigation-buttons button,
+  .scene-nav-btn-screen-work {
+    min-width: 120px;
+    padding: 8px 16px;
+  }
+}
+
+@include respond-to($breakpoint-xs) {
+  .header-ecran-travail-screen-work {
+    top: 60px;
+    height: auto;
+    min-height: 60px;
+    
+    &.scene-mode-active {
+      top: 120px;
+    }
+  }
+
+  .fixed-nav-container-screen-work {
+    padding: 8px $padding-sm;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 60px;
+  }
+
+  .nav-left-section-screen-work,
+  .nav-center-section-screen-work,
+  .nav-right-section-screen-work {
+    flex: 100%;
+    justify-content: center;
+    margin: 4px 0;
+  }
+
+  .current-context-screen-work {
+    order: 1;
+    max-width: 90%;
+    height: 32px;
+    font-size: $font-size-p3;
+    margin: 4px auto;
+  }
+
   .nav-left-section-screen-work {
     order: 2;
   }
-  
+
   .nav-right-section-screen-work {
     order: 3;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $gap-xs;
+    margin-top: 4px;
   }
-  
+
+  .global-navigation-buttons,
+  .scene-navigation-buttons-screen-work {
+    width: auto;
+    justify-content: center;
+  }
+
+  .global-navigation-buttons {
+    button {
+      min-width: 80px;
+      height: 32px;
+      padding: 4px 8px;
+      font-size: $font-size-p5;
+    }
+  }
+
   .scene-navigation-buttons-screen-work {
     margin-left: 0;
-    padding-left: 0;
-    border-left: none;
-    margin-top: $gap-sm;
-    justify-content: center;
-    width: 100%;
-  }
-  
-  .current-context-screen-work {
-    max-width: 200px;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .header-ecran-travail-screen-work {
-    padding: $padding-sm;
-  }
-  
-  .nav-btn-global-screen-work {
-    min-width: 80px;
-    padding: $padding-xs $padding-sm;
-    font-size: $font-size-p4;
-  }
-  
-  .nav-btn-ecran-travail-screen-work {
-    font-size: $font-size-p5;
-    padding: 6px 8px;
-  }
-  
-  .current-context-screen-work {
-    font-size: $font-size-p3;
-    max-width: 180px;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .global-navigation-buttons {
-    flex-direction: column;
-    gap: $gap-xs;
-    width: 100%;
-  }
-  
-  .nav-btn-global-screen-work {
-    width: 100%;
-    border-radius: $border-radius-xs !important;
-  }
-  
-  .scene-navigation-buttons-screen-work {
-    flex-direction: column;
-    gap: $gap-xs;
-    width: 100%;
-  }
-  
-  .nav-btn-ecran-travail-screen-work {
-    width: 100%;
-    border-radius: $border-radius-xs !important;
-  }
-  
-  .current-context-screen-work {
-    max-width: 150px;
-    font-size: $font-size-p4;
+    
+    .scene-nav-btn-screen-work {
+      min-width: 90px;
+      height: 32px;
+      padding: 4px 8px;
+      font-size: $font-size-p5;
+    }
   }
 }
 
