@@ -1,0 +1,501 @@
+// _admin-accueil.scss
+@import '../base/variables';
+
+.app-wrapper-global {
+  display: flex;
+  min-height: 100vh;
+  background: none;
+}
+
+.projects-list-container {
+  flex: 1;
+  padding: $padding-lg;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $padding-md;
+  }
+}
+
+.projects-header {
+  margin-bottom: $spacing-lg;
+  text-align: center;
+
+  h1 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin-bottom: $margin-sm;
+  }
+
+  p {
+    @include typography-playfair-p2;
+    color: $color-text-muted;
+    margin: 0;
+  }
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: $gap-lg;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $gap-md;
+  }
+
+  .search-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: $color-background-alt;
+    // border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    padding: $padding-xs $padding-sm;
+    transition: $transition-fast;
+
+    &:focus-within {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+
+    i {
+      color: $color-text-muted;
+      margin-right: $gap-sm;
+      margin-left: $gap-md;
+      padding-bottom: $padding-xs;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: $font-size-p2;
+      color: $color-text-primary;
+
+      &::placeholder {
+        color: $color-text-muted;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .filters {
+    display: flex;
+    gap: $gap-md;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .filter-select {
+      padding: $padding-sm;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-xs;
+      background: $color-background-alt;
+      font-size: $font-size-p2;
+      color: $color-text-primary;
+      min-width: 150px;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+      }
+    }
+  }
+
+  .add-btn {
+    padding: $padding-sm $padding-lg;
+    background: $color-primary;
+    color: $color-text-light;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p2;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    transition: $transition;
+
+    &:hover {
+      background: $color-primary-dark;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    i {
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+.table-container {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+}
+
+.projects-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: $color-surface;
+    border-bottom: 1px solid $color-border;
+
+    th {
+      padding: $padding-md $padding-lg;
+      text-align: left;
+      @include typography-playfair-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-semibold;
+
+      &:first-child {
+        padding-left: $padding-lg;
+      }
+    }
+  }
+
+  tbody {
+    .project-row {
+      border-bottom: 1px solid $color-border;
+      transition: $transition-fast;
+
+      &:hover {
+        background: $color-surface-hover;
+      }
+
+      td {
+        padding: $padding-md $padding-lg;
+        @include typography-playfair-p2;
+        color: $color-text-primary;
+
+        &:first-child {
+          padding-left: $padding-lg;
+        }
+      }
+
+      .project-title {
+        .title-wrapper {
+          display: flex;
+          align-items: flex-start;
+          gap: $gap-md;
+
+          .project-icon {
+            color: $color-primary;
+            font-size: $font-size-h4;
+            margin-top: 4px;
+          }
+
+          strong {
+            display: block;
+            font-weight: $font-weight-bold;
+          }
+
+          .synopsis-preview {
+            margin: $margin-xs 0 0 0;
+            color: $color-text-muted;
+            font-size: $font-size-p3;
+            line-height: $line-height-tight;
+          }
+        }
+      }
+
+      .genre-tag {
+        padding: 4px 12px;
+        background: rgba($color-tertiary, 0.1);
+        color: $color-tertiary;
+        border-radius: $border-radius-pill;
+        font-size: $font-size-p3;
+        font-weight: $font-weight-medium;
+      }
+
+      .status-badge {
+        padding: 4px 12px;
+        border-radius: $border-radius-pill;
+        font-size: $font-size-p3;
+        font-weight: $font-weight-medium;
+
+        &.statut-en-cours {
+          background: rgba($color-accent, 0.1);
+          color: $color-accent;
+        }
+
+        &.statut-termine {
+          background: rgba($color-success, 0.1);
+          color: $color-success;
+        }
+
+        &.statut-attente {
+          background: rgba($color-warning, 0.1);
+          color: $color-warning;
+        }
+
+        &.statut-annule {
+          background: rgba($color-error, 0.1);
+          color: $color-error;
+        }
+
+        &.statut-default {
+          background: rgba($color-text-muted, 0.1);
+          color: $color-text-muted;
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: $gap-sm;
+
+        .btn-icon {
+          padding: $padding-xs;
+          background: transparent;
+          border: none;
+          color: $color-text-muted;
+          cursor: pointer;
+          border-radius: $border-radius-xs;
+          transition: $transition-fast;
+
+          &:hover {
+            background: rgba($color-primary, 0.1);
+            color: $color-primary;
+          }
+
+          &.edit-btn:hover {
+            color: $color-accent;
+          }
+
+          &.view-btn:hover {
+            color: $color-info;
+          }
+
+          &.work-btn:hover {
+            color: $color-primary;
+          }
+
+          &.delete-btn:hover {
+            color: $color-error;
+          }
+        }
+      }
+    }
+  }
+}
+
+.no-projects {
+  text-align: center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+
+  .no-projects-icon {
+    font-size: 48px;
+    margin-bottom: $margin-md;
+    color: $color-primary;
+  }
+
+  h3 {
+    @include typography-playfair-h4;
+    margin-bottom: $margin-sm;
+  }
+
+  p {
+    @include typography-playfair-p2;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-background-dark, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+}
+
+.modal-content {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-lg;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: $font-size-p2;
+    transition: $transition-fast;
+
+    &:hover {
+      color: $color-error;
+    }
+  }
+}
+
+.modal-form {
+  padding: $padding-lg;
+
+  .form-group {
+    margin-bottom: $margin-lg;
+
+    label {
+      @include typography-playfair-p4;
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+      display: block;
+      margin-bottom: $margin-xs;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: $padding-sm;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p2;
+      color: $color-text-primary;
+      background: $color-white;
+      transition: $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: $gap-lg;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      gap: $gap-md;
+    }
+
+    .form-group {
+      flex: 1;
+    }
+  }
+
+  .error-message {
+    padding: $padding-md;
+    background: rgba($color-error, 0.1);
+    border: 1px solid rgba($color-error, 0.3);
+    border-radius: $border-radius-xs;
+    color: $color-error;
+    margin-bottom: $margin-lg;
+    font-size: $font-size-p2;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $gap-md;
+    margin-top: $margin-lg;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+    }
+
+    .cancel-btn,
+    .submit-btn {
+      padding: $padding-sm $padding-lg;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p2;
+      font-weight: $font-weight-semibold;
+      cursor: pointer;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+    }
+
+    .cancel-btn {
+      background: transparent;
+      border: 1px solid $color-border-dark;
+      color: $color-text-secondary;
+
+      &:hover {
+        background: rgba($color-text-secondary, 0.1);
+        color: $color-text-primary;
+      }
+    }
+
+    .submit-btn {
+      background: $color-primary;
+      color: $color-text-light;
+      border: none;
+
+      &:hover {
+        background: $color-primary-dark;
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .projects-table {
+    thead th,
+    tbody td {
+      padding: $padding-sm $padding-md;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .projects-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
