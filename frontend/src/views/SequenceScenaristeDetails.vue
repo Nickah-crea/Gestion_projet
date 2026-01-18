@@ -14,9 +14,11 @@
             <i class="fas fa-bolt"></i> Actions Rapides
           </h3>
           <div class="sidebar-actions-projet-scenariste">
+            <!-- Bouton "Nouvelle scène" seulement si pas viewer -->
             <button 
               @click="goToAddScene" 
               class="sidebar-btn-projet-scenariste nouvelle-scene-btn"
+              v-if="!isViewer"
             >
               <i class="fas fa-plus"></i>
               Nouvelle scène
@@ -154,6 +156,7 @@
                   <div class="project-synopsis-spiral-Scenariste" v-if="sequence.synopsis">
                     <h4>
                       <i class="fas fa-align-left"></i> Synopsis
+                      <!-- Icône commentaire visible pour tous les rôles -->
                       <span class="comment-icon" @click="toggleCommentSection">
                         <i class="fas fa-comment"></i> {{ commentCount }}
                       </span>
@@ -164,14 +167,14 @@
               </div>
             </div>
 
-            <!-- Section Commentaires -->
+            <!-- Section Commentaires - Visible pour tous les rôles -->
             <div v-if="showCommentSection" class="comment-section">
               <div class="comment-header">
                 <i class="fas fa-comments"></i>
                 Commentaires
               </div>
               
-              <!-- Formulaire d'ajout de commentaire -->
+              <!-- Formulaire d'ajout de commentaire - Visible pour tous les rôles -->
               <div class="add-comment">
                 <textarea v-model="newComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
                 <button @click="addComment" class="add-comment-btn">
@@ -189,6 +192,7 @@
                   <div class="comment-content">
                     {{ comment.contenu }}
                   </div>
+                  <!-- Bouton supprimer seulement pour l'auteur du commentaire -->
                   <div class="comment-actions" v-if="comment.utilisateurId === user.id">
                     <button @click="deleteComment(comment.id)" class="delete-comment-btn">
                       <i class="fas fa-trash"></i> Supprimer
@@ -218,14 +222,15 @@
                 </span>
               </div>
               <div class="movie-actions-Scenariste">
-                <!-- AJOUT: Icône de lieu pour ajouter un lieu à la scène -->
-                <button class="action-btn-Scenariste lieu-btn-Scenariste" @click.stop="openAddLieuModal(scene)" title="Ajouter un lieu">
+                <!-- Masquer les boutons d'action pour les viewers -->
+                <!-- Icône de lieu pour ajouter un lieu à la scène -->
+                <button class="action-btn-Scenariste lieu-btn-Scenariste" @click.stop="openAddLieuModal(scene)" title="Ajouter un lieu" v-if="!isViewer">
                   <i class="fas fa-map-marker-alt"></i>
                 </button>
-                <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEditScene(scene)" title="Modifier">
+                <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEditScene(scene)" title="Modifier" v-if="!isViewer">
                   <i class="fas fa-marker"></i>
                 </button>
-                <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="confirmDeleteScene(scene.idScene)" title="Supprimer">
+                <button class="action-btn-Scenariste delete-btn-Scenariste" @click.stop="confirmDeleteScene(scene.idScene)" title="Supprimer" v-if="!isViewer">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -253,6 +258,7 @@
                     <i class="fas fa-search"></i>
                     <span>Voir détails</span>
                   </button>
+                  <!-- Bouton commentaires visible pour tous les rôles -->
                   <button class="action-btn-Scenariste accent-btn" @click="openSceneComments(scene)" title="Commentaires">
                     <i class="fas fa-comment"></i>
                     <span>Commentaires ({{ scene.commentCount || 0 }})</span>
@@ -269,8 +275,10 @@
                   <i class="fas fa-list-alt"></i>
                 </div>
                 <h3>Aucune scène trouvée</h3>
-                <p>Commencez par créer votre première scène !</p>
-                <button class="add-project-btn-large-Scenariste" @click="goToAddScene">
+                <p v-if="!isViewer">Commencez par créer votre première scène !</p>
+                <p v-else>Aucune scène disponible</p>
+                <!-- Bouton créer une scène seulement si pas viewer -->
+                <button class="add-project-btn-large-Scenariste" @click="goToAddScene" v-if="!isViewer">
                   <i class="fas fa-plus-circle"></i>
                   Créer une scène
                 </button>
@@ -425,7 +433,7 @@
                 </div>
                 
                 <div class="modal-body-Scenariste">
-                  <!-- Formulaire d'ajout de commentaire -->
+                  <!-- Formulaire d'ajout de commentaire - Visible pour tous les rôles -->
                   <div class="add-comment">
                     <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3" class="form-textarea-Scenariste"></textarea>
                     <button @click="addSceneComment" class="add-comment-btn">
@@ -443,6 +451,7 @@
                       <div class="comment-content">
                         {{ comment.contenu }}
                       </div>
+                      <!-- Bouton supprimer seulement pour l'auteur du commentaire -->
                       <div class="comment-actions" v-if="comment.utilisateurId === user.id">
                         <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn">
                           <i class="fas fa-trash"></i> Supprimer
@@ -522,7 +531,7 @@
                         <span v-if="sceneLieu.plateauNom"> - Plateau: {{ sceneLieu.plateauNom }}</span>
                         - {{ sceneLieu.descriptionUtilisation || 'Aucune description' }}
                       </div>
-                      <button @click="removeLieuFromScene(sceneLieu.id)" class="delete-comment-btn" title="Supprimer">
+                      <button @click="removeLieuFromScene(sceneLieu.id)" class="delete-comment-btn" title="Supprimer" v-if="!isViewer">
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>
@@ -639,6 +648,26 @@ export default {
     };
   },
   computed: {
+    // Ajout du computed pour vérifier le rôle
+    isViewer() {
+      return this.user?.role === 'UTILISATEUR';
+    },
+    isScenariste() {
+      return this.user?.role === 'SCENARISTE';
+    },
+    isRealisateur() {
+      return this.user?.role === 'REALISATEUR';
+    },
+    isAdmin() {
+      return this.user?.role === 'ADMIN';
+    },
+    canEdit() {
+      // Seuls les SCENARISTE, REALISATEUR et ADMIN peuvent éditer
+      return this.user?.role === 'SCENARISTE' || 
+             this.user?.role === 'REALISATEUR' || 
+             this.user?.role === 'ADMIN';
+    },
+    
     filteredScenes() {
       let filtered = this.scenes;
 
@@ -674,8 +703,22 @@ export default {
       return filtered;
     },
   },
-  async created() {
+async created() {
+  // Pour les UTILISATEUR et ADMIN, pas besoin de vérifier
+  if (this.user?.role !== 'UTILISATEUR' && this.user?.role !== 'ADMIN') {
+    await this.checkAccess(); // Cette méthode charge déjà la séquence si l'accès est accordé
+  } else {
+    // Pour UTILISATEUR et ADMIN, charger la séquence directement
     await this.loadSequence();
+  }
+  
+  if (!this.accessDenied) {
+    // Si la séquence n'a pas encore été chargée (cas UTILISATEUR/ADMIN)
+    if (!this.sequence.idSequence) {
+      await this.loadSequence();
+    }
+    
+    // Charger le reste des données
     if (this.sequence.episodeId) {
       await this.loadEpisode();
     }
@@ -683,26 +726,39 @@ export default {
     await this.loadStatutsScene();
     await this.loadCommentCount();
     await this.loadLieuxDisponibles();
-  },
+  } else {
+    // Si accès refusé, arrêtez le chargement ici
+    return;
+  }
+},
   methods: {
     async loadSequence() {
-      try {
-        const response = await axios.get(`/api/sequences/${this.$route.params.id}`, {
-          timeout: 10000, // Ajout d'un timeout de 10 secondes
-          headers: {
-            'X-User-Id': this.user.id
-          }
-        });
-        this.sequence = response.data;
-      } catch (error) {
-        console.error('Erreur lors du chargement de la séquence:', error);
-        if (error.response?.status === 403) {
-          this.accessDenied = true;
-        } else {
-          this.showNotification('Erreur lors du chargement de la séquence', 'error');
-        }
+  try {
+    const response = await axios.get(`/api/sequences/${this.$route.params.id}`, {
+      timeout: 10000, 
+      headers: {
+        'X-User-Id': this.user.id
       }
-    },
+    });
+    this.sequence = response.data;
+  } catch (error) {
+    console.error('Erreur lors du chargement de la séquence:', error);
+    
+    // Ne pas bloquer automatiquement l'accès pour les erreurs réseau
+    if (error.response?.status === 403) {
+      this.accessDenied = true;
+      this.showNotification('Accès refusé', 'error');
+    } else if (error.response?.status === 404) {
+      this.accessDenied = true;
+      this.showNotification('Séquence non trouvée', 'error');
+    } else {
+      // Pour les erreurs réseau, montrer un message mais ne pas bloquer
+      this.showNotification('Erreur de connexion lors du chargement de la séquence', 'error');
+      // Vous pouvez choisir de bloquer ou non selon votre besoin
+      // this.accessDenied = true;
+    }
+  }
+},
 
     async loadEpisode() {
       try {
@@ -784,6 +840,7 @@ export default {
     },
     
     async toggleCommentSection() {
+      // Tous les rôles peuvent ouvrir la section commentaires
       this.showCommentSection = !this.showCommentSection;
       if (this.showCommentSection) {
         await this.loadComments();
@@ -827,6 +884,7 @@ export default {
     },
     
     async openSceneComments(scene) {
+      // Tous les rôles peuvent ouvrir les commentaires des scènes
       this.selectedScene = scene;
       await this.loadSceneComments(scene.idScene);
       this.showSceneCommentModal = true;
@@ -881,6 +939,9 @@ export default {
     },
 
     startEditScene(scene) {
+      // Ne pas permettre l'édition pour les viewers
+      if (this.isViewer) return;
+      
       this.editingScene = {
         idScene: scene.idScene,
         titre: scene.titre,
@@ -973,6 +1034,9 @@ export default {
     },
 
     async saveEditedScene() {
+      // Ne pas permettre la sauvegarde pour les viewers
+      if (this.isViewer) return;
+      
       this.validateOrder();
       if (this.orderError) {
         return;
@@ -1034,6 +1098,9 @@ export default {
     },
 
     async confirmDeleteScene(sceneId) {
+      // Ne pas permettre la suppression pour les viewers
+      if (this.isViewer) return;
+      
       const scene = this.scenes.find(sc => sc.idScene === sceneId);
       if (!scene) return;
       
@@ -1048,6 +1115,9 @@ export default {
     },
 
     async executeDeleteScene() {
+      // Ne pas permettre la suppression pour les viewers
+      if (this.isViewer) return;
+      
       if (!this.sceneToDelete) return;
       
       this.isDeleting = true;
@@ -1078,6 +1148,9 @@ export default {
     },
 
     async openAddLieuModal(scene) {
+      // Ne pas permettre l'ajout de lieu pour les viewers
+      if (this.isViewer) return;
+      
       this.selectedScene = scene;
       this.showAddLieuModal = true;
       await this.loadSceneLieus(scene.idScene);
@@ -1132,6 +1205,9 @@ export default {
     },
 
     async addLieuToScene() {
+      // Ne pas permettre l'ajout de lieu pour les viewers
+      if (this.isViewer) return;
+      
       if (!this.selectedLieuId) {
         this.showNotification('Veuillez sélectionner un lieu', 'error');
         return;
@@ -1174,6 +1250,9 @@ export default {
     },
 
     async removeLieuFromScene(sceneLieuId) {
+      // Ne pas permettre la suppression de lieu pour les viewers
+      if (this.isViewer) return;
+      
       try {
         await axios.delete(`/api/scene-lieux/${sceneLieuId}`, {
           timeout: 10000
@@ -1209,6 +1288,67 @@ export default {
       }
     },
 
+    async checkAccess() {
+      // Les UTILISATEUR et ADMIN ont accès à tout
+      if (this.user?.role === 'UTILISATEUR' || this.user?.role === 'ADMIN') {
+        this.accessDenied = false;
+        return;
+      }
+
+      // Les SCENARISTE et REALISATEUR doivent vérifier leurs accès via l'épisode
+      if (this.user?.role === 'SCENARISTE' || this.user?.role === 'REALISATEUR') {
+        try {
+          // D'abord charger la séquence pour obtenir l'ID de l'épisode parent
+          const sequenceResponse = await axios.get(`/api/sequences/${this.$route.params.id}`, {
+            timeout: 10000,
+            headers: {
+              'X-User-Id': this.user.id
+            }
+          });
+          
+          const sequence = sequenceResponse.data;
+          
+          if (!sequence || !sequence.episodeId) {
+            this.accessDenied = true;
+            return;
+          }
+          
+          // Ensuite vérifier si l'utilisateur a accès à l'épisode parent
+          const episodeResponse = await axios.get(`/api/episodes/utilisateur/${this.user.id}`, {
+            timeout: 10000,
+            headers: {
+              'X-User-Id': this.user.id
+            }
+          });
+          
+          const userEpisodes = episodeResponse.data || [];
+          const hasAccess = userEpisodes.some(ep => ep.idEpisode === sequence.episodeId);
+          
+          if (!hasAccess) {
+            this.accessDenied = true;
+            this.showNotification('Vous n\'avez pas accès à cette séquence', 'error');
+          } else {
+            this.accessDenied = false;
+            this.sequence = sequence; // Stocker la séquence déjà chargée
+          }
+        } catch (error) {
+          console.error('Erreur lors de la vérification des droits d\'accès:', error);
+          
+          if (error.response?.status === 403) {
+            this.accessDenied = true;
+            this.showNotification('Accès refusé', 'error');
+          } else if (error.response?.status === 404) {
+            this.accessDenied = true;
+            this.showNotification('Séquence non trouvée', 'error');
+          } else {
+            // Pour les autres erreurs, ne pas bloquer automatiquement
+            // Charger la séquence normalement et laisser l'API backend gérer les permissions
+            this.accessDenied = false;
+          }
+        }
+      }
+    },
+
     closeSynopsisModal() {
       this.showSynopsisModal = false;
       this.selectedScene = {};
@@ -1217,6 +1357,9 @@ export default {
     },
 
     goToAddScene() {
+      // Ne pas permettre la navigation vers l'ajout de scène pour les viewers
+      if (this.isViewer) return;
+      
       this.$router.push(`/sequence/${this.$route.params.id}/add-scene`);
     },
     
