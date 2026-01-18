@@ -1,0 +1,372 @@
+@import '../base/variables';
+
+// =============================================
+// MODALE INFORMATIONS ÉPISODE
+// =============================================
+
+// Overlay de la modale
+.modal-overlay-screen-work {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: fadeInOverlay 0.3s ease-out;
+  
+  @keyframes fadeInOverlay {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+// Contenu de la modale
+.modal-content-screen-work.episode-details-modal {
+  background: $color-background;
+  border-radius: $border-radius-lg;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: $shadow-xl;
+  border: 1px solid rgba($color-border, 0.3);
+  animation: slideInModal 0.3s ease-out;
+  
+  @keyframes slideInModal {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+// En-tête de la modale
+.modal-header-screen-work {
+  padding: $padding-xl;
+  border-bottom: 1px solid rgba($color-border, 0.2);
+  background: $color-background-alt;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-info;
+    }
+  }
+  
+  .close-btn-screen-work {
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    font-size: $font-size-h4;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+      transform: rotate(90deg);
+    }
+  }
+}
+
+// Corps de la modale
+.modal-body-screen-work {
+  padding: $padding-xl;
+  overflow-y: auto;
+  max-height: calc(80vh - 140px);
+  
+  .details-grid-screen-work {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+    
+    .detail-item-screen-work {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: $padding-md $padding-lg;
+      background: rgba($color-background-alt, 0.5);
+      border-radius: $border-radius-sm;
+      border: 1px solid rgba($color-border, 0.1);
+      transition: $transition-fast;
+      
+      &:hover {
+        background: rgba($color-info, 0.05);
+        border-color: rgba($color-info, 0.2);
+      }
+      
+      .detail-label-screen-work {
+        @include typography-p3;
+        color: $color-text-muted;
+        font-weight: $font-weight-medium;
+      }
+      
+      .detail-value-screen-work {
+        @include typography-p2;
+        color: $color-text-primary;
+        font-weight: $font-weight-semibold;
+        text-align: right;
+        max-width: 60%;
+        word-break: break-word;
+      }
+    }
+  }
+}
+
+// Pied de la modale
+.modal-footer-screen-work {
+  padding: $padding-xl;
+  border-top: 1px solid rgba($color-border, 0.2);
+  background: $color-background-alt;
+  display: flex;
+  justify-content: flex-end;
+  
+  .btn-primary-screen-work {
+    @include btn-cinema-primary;
+    padding: $padding-sm $padding-lg;
+    background: $color-info;
+    color: $color-text-light;
+    font-size: $font-size-p3;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &:hover {
+      background: darken($color-info, 10%);
+    }
+    
+    i {
+      font-size: 0.9em;
+    }
+  }
+}
+
+// =============================================
+// BOUTON "VOIR DÉTAILS" DANS L'EN-TÊTE
+// =============================================
+.details-btn-screen-work {
+  padding: $padding-xs $padding-sm;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba($color-info, 0.3);
+  background: rgba($color-info, 0.1);
+  color: $color-info;
+  
+  i {
+    font-size: 0.9em;
+  }
+  
+  &:hover {
+    background: rgba($color-info, 0.2);
+    border-color: $color-info;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($color-info, 0.2);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// SECTION ÉQUIPE INTÉGRÉE AU SYNOPSIS
+// =============================================
+.team-section-screen-work {
+  margin-bottom: $margin-lg;
+  padding-bottom: $margin-lg;
+  border-bottom: 1px solid rgba($color-border, 0.2);
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-accent;
+    }
+  }
+  
+  .team-grid-screen-work {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $gap-lg;
+    
+    .team-member-screen-work {
+      display: flex;
+      align-items: center;
+      gap: $gap-md;
+      padding: $padding-md;
+      background: rgba($color-background, 0.8);
+      border-radius: $border-radius-sm;
+      border: 1px solid rgba($color-border, 0.1);
+      flex: 1;
+      min-width: 200px;
+      transition: $transition-fast;
+      
+      &:hover {
+        border-color: rgba($color-accent, 0.3);
+        transform: translateY(-2px);
+        box-shadow: $shadow;
+      }
+      
+      i {
+        font-size: $font-size-h4;
+        color: $color-accent;
+        background: rgba($color-accent, 0.1);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .team-member-info-screen-work {
+        display: flex;
+        flex-direction: column;
+        
+        .team-role-screen-work {
+          @include typography-p4;
+          color: $color-text-muted;
+          font-weight: $font-weight-medium;
+          margin-bottom: 2px;
+        }
+        
+        .team-name-screen-work {
+          @include typography-p2;
+          color: $color-text-primary;
+          font-weight: $font-weight-semibold;
+        }
+      }
+    }
+  }
+}
+
+// Section synopsis (séparée de l'équipe)
+.synopsis-section-screen-work {
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: $margin-lg 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-info;
+    }
+  }
+  
+  .synopsis-text-screen-work {
+    @include typography-p2;
+    color: $color-text-secondary;
+    line-height: 1.7;
+    margin: 0;
+    padding: $padding-lg;
+    background: $color-background;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-border, 0.1);
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR LA MODALE
+// =============================================
+@media (max-width: $breakpoint-md) {
+  .modal-content-screen-work.episode-details-modal {
+    width: 95%;
+    max-width: 400px;
+  }
+  
+  .modal-header-screen-work,
+  .modal-body-screen-work,
+  .modal-footer-screen-work {
+    padding: $padding-lg;
+  }
+  
+  .detail-item-screen-work {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: $gap-xs;
+    
+    .detail-value-screen-work {
+      max-width: 100%;
+      text-align: left !important;
+    }
+  }
+  
+  .team-grid-screen-work .team-member-screen-work {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .modal-content-screen-work.episode-details-modal {
+    width: 98%;
+    max-width: 350px;
+  }
+  
+  .modal-header-screen-work h3 {
+    font-size: calc(#{$font-size-h4} + 2px);
+  }
+  
+  .details-btn-screen-work {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: $gap-sm;
+  }
+}
+
+// Animation pour réduire le mouvement
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay-screen-work,
+  .modal-content-screen-work.episode-details-modal,
+  .team-member-screen-work,
+  .details-btn-screen-work {
+    animation: none !important;
+    transition: none !important;
+    
+    &:hover {
+      transform: none !important;
+    }
+  }
+}
+

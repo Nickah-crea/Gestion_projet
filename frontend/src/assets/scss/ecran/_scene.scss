@@ -1,36 +1,40 @@
-// _scene.scss – Style pour la vue scène cohérent avec le reste
+// _scene.scss – Style pour la vue scène ALIGNÉE AVEC VUE PROJET/ÉPISODE/SÉQUENCE
 @import '../base/variables';
 
 // =============================================
-// VUE SCÈNE PRINCIPALE
+// VUE SCÈNE PRINCIPALE - STRUCTURE IDENTIQUE
 // =============================================
-.scene-view-screen-work {
-  max-width: 1400px;
+
+// Conteneur principal identique à .project-view-screen-work
+.scene-view-container-screen-work {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: $padding-lg;
+  background: $color-background;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  padding: $padding-xl;
+  position: relative;
 }
 
 // ────────────────────────────────────────────────
-// En-tête de la scène
+// En-tête de la scène (identique structure)
 // ────────────────────────────────────────────────
 .scene-header-view-screen-work {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: $margin-xl;
-  padding-bottom: $padding-lg;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
   position: relative;
-  border-bottom: 1px solid rgba($color-border, 0.3);
-  
+
   &::after {
     content: '';
     position: absolute;
-    bottom: -1px;
+    bottom: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, $color-info, transparent);
-    opacity: 0.5;
+    height: 1px;
+    background: rgba($color-border, 0.3);
   }
 }
 
@@ -41,33 +45,163 @@
 .scene-title-view-screen-work {
   @include typography-playfair-h2;
   color: $color-text-primary;
-  margin: 0 0 $margin-sm 0;
+  margin: 0 0 $margin-xs 0;
   font-size: calc(#{$font-size-h2} - 4px);
   line-height: 1.2;
   letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+}
+
+.scene-order-badge-screen-work {
+  @include typography-p2;
+  color: $color-info;
+  font-weight: $font-weight-bold;
+  background: rgba($color-info, 0.1);
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  
+  i {
+    font-size: 0.9em;
+  }
 }
 
 .scene-status-badge-screen-work {
-  display: inline-block;
   padding: 6px 16px;
   border-radius: $border-radius-pill;
   font-size: $font-size-p4;
   font-weight: $font-weight-semibold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: rgba($color-info, 0.1);
-  color: $color-info;
-  border: 1px solid rgba($color-info, 0.3);
+  color: $color-text-light;
+  background: linear-gradient(135deg, $color-info, darken($color-info, 10%));
+  box-shadow: $shadow;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+  min-width: 100px;
+  justify-content: center;
+  height: fit-content;
 }
 
-.scene-header-actions-screen-work {
+// Badge commentaire dans l'en-tête
+.comment-badge-screen-work {
+  @include typography-p4;
+  color: $color-info;
+  background: rgba($color-info, 0.1);
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: $transition-fast;
+  border: 1px solid rgba($color-info, 0.3);
+  
+  &:hover {
+    background: rgba($color-info, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  i {
+    font-size: 0.9em;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Statistiques HORIZONTALES - Identique au projet
+// ────────────────────────────────────────────────
+.scene-stats-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin: $margin-lg 0;
+  gap: $gap-md;
+  padding: 0;
+  background: transparent;
+  min-height: auto;
+}
+
+// Réutilisation des styles de stat-card
+.stat-card-screen-work {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-md;
+  background: rgba($color-border, 0.1);
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  min-height: calc(#{$font-size-p4} + #{$padding-md} * 2);
+  line-height: normal;
+  border: none;
+  box-shadow: none;
+  
+  &:hover {
+    background: rgba($color-border, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-icon-screen-work {
+  color: $color-info;
+  font-size: $font-size-p2;
+  width: 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  i {
+    font-size: 1.2em;
+  }
+}
+
+.stat-content-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.stat-number-screen-work {
+  @include typography-p1;
+  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  margin: 0;
+  font-size: $font-size-p1;
+}
+
+.stat-label-screen-work {
+  @include typography-p4;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+  margin: 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+// ────────────────────────────────────────────────
+// Barre d'actions (sous les stats)
+// ────────────────────────────────────────────────
+.scene-actions-bar-screen-work {
   display: flex;
   gap: $gap-sm;
-  align-items: center;
+  margin: $margin-lg 0;
+  padding: $padding-md;
+  background: rgba($color-border, 0.05);
+  border-radius: $border-radius;
   flex-wrap: wrap;
   
   button {
-    padding: $padding-xs $padding-sm;
+    padding: $padding-xs $padding-md;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     font-weight: $font-weight-medium;
@@ -93,12 +227,12 @@
     }
   }
   
-  .back-btn-screen-work {
-    color: $color-text-secondary;
+  .details-btn-screen-work {
+    color: $color-info;
     
     &:hover {
-      background: rgba($color-border, 0.2);
-      border-color: $color-border-dark;
+      background: rgba($color-info, 0.1);
+      border-color: $color-info;
     }
   }
   
@@ -139,19 +273,122 @@
       border-color: $color-accent;
     }
   }
+  
+  .back-btn-screen-work {
+    color: $color-text-muted;
+    
+    &:hover {
+      background: rgba($color-border, 0.2);
+      border-color: $color-text-muted;
+    }
+  }
 }
 
 // ────────────────────────────────────────────────
-// Section planning de tournage
+// Section Planning de Tournage
 // ────────────────────────────────────────────────
 .scene-planning-section-screen-work {
-  background: $color-background-alt;
-  border-radius: $border-radius;
-  padding: $padding-xl;
-  box-shadow: $shadow;
-  border: 1px solid rgba($color-border, 0.2);
   margin-bottom: $margin-xl;
+  background: $color-background-alt;
+  border-radius: 8px;
+  padding: $padding-lg;
   
+  .section-header-screen-work {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $margin-lg;
+    padding-bottom: $padding-md;
+    border-bottom: 1px solid rgba($color-border, 0.2);
+    
+    h3 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+      
+      i {
+        color: $color-info;
+      }
+    }
+    
+    .section-actions-screen-work {
+      display: flex;
+      gap: $gap-sm;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Section Dialogues (principale)
+// ────────────────────────────────────────────────
+.scene-details-view-screen-work {
+  margin-bottom: $margin-xl;
+  background: $color-background-alt;
+  border-radius: 8px;
+  padding: $padding-lg;
+}
+
+.detail-section-header-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
+  
+  h3, h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-info;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+// Bouton d'édition (style projet)
+.edit-scene-btn-screen-work {
+  padding: $padding-xs $padding-md;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  background: $color-background-light;
+  color: $color-info;
+  border: 1px solid rgba($color-info, 0.3);
+  border-radius: $border-radius-xs;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
+  i {
+    font-size: 0.9em;
+  }
+  
+  &:hover {
+    background: $color-info;
+    color: $color-text-light;
+    transform: translateY(-1px);
+    box-shadow: $shadow;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ────────────────────────────────────────────────
+// Section Dialogues
+// ────────────────────────────────────────────────
+.dialogues-section-screen-work {
   .section-header-screen-work {
     display: flex;
     justify-content: space-between;
@@ -167,32 +404,510 @@
       gap: $gap-sm;
       
       i {
-        color: $color-primary;
+        color: $color-info;
+      }
+    }
+  }
+}
+
+.dialogues-list-screen-work {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+}
+
+.dialogue-item-screen-work {
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  padding: $padding-lg;
+  border: 1px solid rgba($color-border, 0.2);
+  transition: all $transition;
+  position: relative;
+  
+  &:hover {
+    border-color: $color-info;
+    background: rgba($color-info, 0.03);
+    box-shadow: $shadow;
+  }
+}
+
+.dialogue-header-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-sm;
+  
+  .dialogue-character-screen-work {
+    @include typography-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .dialogue-order-screen-work {
+    @include typography-p4;
+    color: $color-text-muted;
+    background: rgba($color-border, 0.1);
+    padding: 2px 8px;
+    border-radius: $border-radius-xs;
+  }
+}
+
+.dialogue-content-screen-work {
+  @include typography-p2;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: $margin-md;
+  padding: $padding-sm;
+  background: rgba($color-border, 0.05);
+  border-radius: $border-radius-xs;
+  cursor: text;
+  position: relative;
+  
+  .text-highlight-screen-work {
+    padding: 0 2px;
+    border-radius: 2px;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.dialogue-observation-screen-work {
+  @include typography-p3;
+  color: $color-accent;
+  font-style: italic;
+  margin-top: $margin-sm;
+  padding: $padding-sm;
+  background: rgba($color-accent, 0.05);
+  border-radius: $border-radius-xs;
+  border-left: 3px solid $color-accent;
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-xs;
+  
+  i {
+    margin-top: 2px;
+  }
+}
+
+.dialogue-actions-screen-work {
+  display: flex;
+  gap: $gap-sm;
+  margin-top: $margin-md;
+  padding-top: $padding-sm;
+  border-top: 1px solid rgba($color-border, 0.1);
+  
+  .action-icon-screen-work {
+    padding: 4px 10px;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    
+    i {
+      font-size: 0.9em;
+    }
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+  
+  .edit-icon-screen-work {
+    color: $color-info;
+    
+    &:hover {
+      background: rgba($color-info, 0.1);
+      border-color: rgba($color-info, 0.3);
+    }
+  }
+  
+  .delete-icon-screen-work {
+    color: $color-error;
+    
+    &:hover {
+      background: rgba($color-error, 0.1);
+      border-color: rgba($color-error, 0.3);
+    }
+  }
+  
+  .comment-icon-screen-work {
+    color: $color-accent;
+    
+    &:hover {
+      background: rgba($color-accent, 0.1);
+      border-color: rgba($color-accent, 0.3);
+    }
+  }
+  
+  .highlight-icon-screen-work {
+    color: $color-warning;
+    
+    &:hover {
+      background: rgba($color-warning, 0.1);
+      border-color: rgba($color-warning, 0.3);
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Formulaire d'ajout de dialogue
+// ────────────────────────────────────────────────
+.add-dialogue-form-screen-work {
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  padding: $padding-lg;
+  border: 2px dashed rgba($color-info, 0.3);
+  margin-top: $margin-lg;
+  
+  h4 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-lg 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-info;
+    }
+  }
+  
+  .form-group-screen-work {
+    margin-bottom: $margin-md;
+    
+    label {
+      @include typography-p4;
+      color: $color-text-muted;
+      font-weight: $font-weight-medium;
+      display: block;
+      margin-bottom: $margin-xs;
+    }
+  }
+  
+  .form-select-screen-work {
+    width: 100%;
+    padding: $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-family: inherit;
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    background: $color-background;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-info;
+      box-shadow: 0 0 0 3px rgba($color-info, 0.1);
+    }
+  }
+  
+  .form-textarea-screen-work {
+    width: 100%;
+    padding: $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-family: inherit;
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+    background: $color-background;
+    resize: vertical;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-info;
+      box-shadow: 0 0 0 3px rgba($color-info, 0.1);
+    }
+  }
+  
+  .form-actions-screen-work {
+    display: flex;
+    gap: $gap-sm;
+    margin-top: $margin-lg;
+    
+    .save-btn-screen-work {
+      background: $color-info;
+      color: $color-text-light;
+      border: none;
+      padding: $padding-sm $padding-lg;
+      border-radius: $border-radius-sm;
+      font-size: $font-size-p3;
+      font-weight: $font-weight-medium;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: $transition-fast;
+      
+      &:hover:not(:disabled) {
+        background: darken($color-info, 10%);
+        transform: translateY(-1px);
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+    
+    .cancel-btn-screen-work {
+      background: $color-background;
+      color: $color-text-muted;
+      border: 1px solid $color-border;
+      padding: $padding-sm $padding-lg;
+      border-radius: $border-radius-sm;
+      font-size: $font-size-p3;
+      font-weight: $font-weight-medium;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: $transition-fast;
+      
+      &:hover {
+        background: rgba($color-border, 0.2);
+        border-color: $color-text-muted;
       }
     }
   }
 }
 
 // ────────────────────────────────────────────────
-// Contenu de la scène
+// Section Commentaires
 // ────────────────────────────────────────────────
-.scene-content-view-screen-work {
-  display: flex;
-  flex-direction: column;
-  gap: $margin-xl;
+.comment-section-screen-work {
+  background: rgba($color-accent, 0.03);
+  border: 1px solid rgba($color-accent, 0.1);
+  
+  .add-comment-screen-work {
+    margin-bottom: $margin-lg;
+    
+    textarea {
+      width: 100%;
+      padding: $padding-md;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-sm;
+      font-family: inherit;
+      font-size: $font-size-p3;
+      resize: vertical;
+      min-height: 80px;
+      margin-bottom: $margin-sm;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-accent;
+        box-shadow: 0 0 0 3px rgba($color-accent, 0.1);
+      }
+    }
+    
+    .add-comment-btn-screen-work {
+      background: $color-accent;
+      color: $color-text-light;
+      border: none;
+      padding: $padding-sm $padding-lg;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      &:hover {
+        background: darken($color-accent, 10%);
+      }
+    }
+  }
+  
+  .comments-list-screen-work {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+  }
+  
+  .comment-item-screen-work {
+    background: $color-background;
+    padding: $padding-md;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-border, 0.1);
+    
+    .comment-header-screen-work {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: $margin-xs;
+      
+      .comment-author-screen-work {
+        @include typography-p4;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+      }
+      
+      .comment-date-screen-work {
+        @include typography-p4;
+        color: $color-text-muted;
+      }
+    }
+    
+    .comment-content-screen-work {
+      @include typography-p3;
+      color: $color-text-secondary;
+      line-height: 1.5;
+    }
+    
+    .comment-actions-screen-work {
+      margin-top: $margin-xs;
+      text-align: right;
+      
+      .delete-comment-btn-screen-work {
+        @include typography-p4;
+        color: $color-error;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }
 
 // ────────────────────────────────────────────────
-// Section détails (grille d'informations)
+// Actions supplémentaires (style projet)
 // ────────────────────────────────────────────────
-.detail-section-screen-work {
-  background: $color-background-alt;
-  border-radius: $border-radius;
-  padding: $padding-xl;
-  box-shadow: $shadow;
-  border: 1px solid rgba($color-border, 0.2);
+.scene-actions-view-screen-work {
+  display: flex;
+  gap: $gap-lg;
+  flex-wrap: wrap;
+  margin-top: $margin-xl;
+  padding-top: $padding-xl;
+  border-top: 1px solid rgba($color-border, 0.35);
   
-  h3 {
+  .action-btn-secondary-screen-work {
+    @include btn-cinema-accent;
+    padding: $padding-md $padding-xl;
+    font-size: $font-size-p2;
+    min-width: 200px;
+    justify-content: center;
+    
+    i {
+      margin-right: $gap-sm;
+      font-size: 1.1em;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, $color-accent, $color-accent-dark);
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// États vides
+// ────────────────────────────────────────────────
+.empty-state-screen-work {
+  text-align: center;
+  padding: $padding-xl;
+  background: $color-background;
+  border-radius: $border-radius;
+  border: 2px dashed rgba($color-border, 0.5);
+  
+  p {
+    @include typography-p2;
+    color: $color-text-muted;
+    margin-bottom: $margin-lg;
+  }
+  
+  .add-btn-screen-work {
+    @include btn-cinema-primary;
+    padding: $padding-sm $padding-lg;
+    
+    i {
+      margin-right: $gap-xs;
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// Modal détails scène (POPUP)
+// ────────────────────────────────────────────────
+.scene-details-modal-overlay-screen-work {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.scene-details-modal-screen-work {
+  background: $color-background;
+  border-radius: $border-radius-lg;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: $shadow-lg;
+}
+
+.scene-details-modal-header-screen-work {
+  padding: $padding-lg;
+  border-bottom: 1px solid $color-border;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  h2 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-info;
+    }
+  }
+  
+  .close-scene-details-modal-screen-work {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: $font-size-p2;
+    
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+}
+
+.scene-details-modal-content-screen-work {
+  padding: $padding-lg;
+}
+
+// Styles réutilisables pour la grille dans la modal
+.details-section-screen-work {
+  margin-bottom: $margin-xl;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .details-section-title-screen-work {
     @include typography-playfair-h4;
     color: $color-text-primary;
     margin: 0 0 $margin-lg 0;
@@ -218,600 +933,124 @@
   align-items: center;
   gap: $gap-sm;
   padding: $padding-md;
-  background: $color-background;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   border: 1px solid rgba($color-border, 0.1);
-  transition: $transition-fast;
-  
-  &:hover {
-    border-color: $color-info;
-    background: rgba($color-info, 0.03);
-  }
   
   .detail-label-screen-work {
     @include typography-p4;
     color: $color-text-muted;
     font-weight: $font-weight-medium;
-    min-width: 80px;
+    min-width: 100px;
   }
   
   .detail-value-screen-work {
     @include typography-p2;
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
+    flex: 1;
   }
 }
 
-// ────────────────────────────────────────────────
-// Synopsis
-// ────────────────────────────────────────────────
 .synopsis-text-screen-work {
   @include typography-p2;
   color: $color-text-secondary;
   line-height: 1.7;
   margin: 0;
   padding: $padding-lg;
-  background: $color-background;
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   border: 1px solid rgba($color-border, 0.1);
 }
 
-// ────────────────────────────────────────────────
-// Lieu de tournage
-// ────────────────────────────────────────────────
 .location-info-screen-work {
   @include typography-p2;
   color: $color-text-primary;
   font-weight: $font-weight-semibold;
-  margin-bottom: $gap-sm;
+  margin-bottom: $margin-sm;
   display: flex;
   align-items: center;
   gap: $gap-xs;
   
   i {
-    color: $color-accent;
+    color: $color-info;
   }
 }
 
 .location-description-screen-work {
   @include typography-p3;
   color: $color-text-secondary;
-  padding: $padding-md;
-  background: $color-background;
-  border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-border, 0.1);
-  margin: 0;
-}
-
-// ────────────────────────────────────────────────
-// Dialogues
-// ────────────────────────────────────────────────
-.section-header-screen-work {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $margin-lg;
-  
-  h3 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-  }
-  
-  .add-btn-sm-screen-work {
-    @include btn-cinema-primary;
-    padding: $padding-xs $padding-sm;
-    font-size: $font-size-p4;
-    background: $color-accent;
-    
-    &:hover {
-      background: $color-accent-dark;
-    }
-    
-    i {
-      margin-right: $gap-xs;
-    }
-  }
-}
-
-.dialogues-list-screen-work {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-md;
-}
-
-.dialogue-item-screen-work {
-  background: $color-background;
-  border-radius: $border-radius-sm;
-  padding: $padding-lg;
-  border: 1px solid rgba($color-border, 0.2);
-  transition: $transition-fast;
-  position: relative;
-  
-  &:hover {
-    border-color: $color-accent;
-    box-shadow: $shadow;
-  }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 4px;
-    background: $color-accent;
-    border-radius: $border-radius-xs 0 0 $border-radius-xs;
-    opacity: 0.3;
-  }
-}
-
-.dialogue-header-screen-work {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $margin-md;
-  
-  .dialogue-character-screen-work {
-    @include typography-p2;
-    color: $color-text-primary;
-    font-weight: $font-weight-bold;
-    
-    strong {
-      color: $color-accent;
-    }
-  }
-  
-  .dialogue-order-screen-work {
-    @include typography-p4;
-    color: $color-text-muted;
-    background: rgba($color-border, 0.1);
-    padding: 2px 8px;
-    border-radius: $border-radius-xs;
-    font-weight: $font-weight-medium;
-  }
-}
-
-.dialogue-content-screen-work {
-  @include typography-p2;
-  color: $color-text-secondary;
-  line-height: 1.6;
-  margin-bottom: $margin-md;
-  padding: $padding-sm;
-  background: rgba($color-background-alt, 0.5);
-  border-radius: $border-radius-xs;
-  position: relative;
-  cursor: text;
-  user-select: text;
-}
-
-.text-highlight-screen-work {
-  background-color: rgba(yellow, 0.3);
-  padding: 1px 3px;
-  border-radius: 2px;
-  margin: 0 1px;
-  transition: $transition-fast;
-  
-  &:hover {
-    filter: brightness(1.1);
-  }
-}
-
-.dialogue-observation-screen-work {
-  @include typography-p3;
-  color: $color-text-muted;
-  font-style: italic;
-  margin-top: $margin-sm;
-  padding: $padding-sm;
-  background: rgba($color-info, 0.05);
-  border-radius: $border-radius-xs;
-  border-left: 3px solid $color-info;
-  display: flex;
-  align-items: flex-start;
-  gap: $gap-xs;
-  
-  i {
-    color: $color-info;
-    margin-top: 2px;
-  }
-}
-
-.dialogue-actions-screen-work {
-  display: flex;
-  gap: $gap-sm;
-  margin-top: $margin-md;
-  padding-top: $padding-sm;
-  border-top: 1px solid rgba($color-border, 0.1);
-  justify-content: flex-end;
-}
-
-.action-icon-screen-work {
-  background: transparent;
-  border: 1px solid $color-border;
-  border-radius: $border-radius-xs;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: $transition-fast;
-  font-size: $font-size-p4;
-  
-  &:hover {
-    transform: translateY(-1px);
-  }
-  
-  &.edit-icon-screen-work {
-    color: $color-info;
-    
-    &:hover {
-      background: rgba($color-info, 0.1);
-      border-color: $color-info;
-    }
-  }
-  
-  &.delete-icon-screen-work {
-    color: $color-error;
-    
-    &:hover {
-      background: rgba($color-error, 0.1);
-      border-color: $color-error;
-    }
-  }
-  
-  &.comment-icon-screen-work {
-    color: $color-accent;
-    
-    &:hover {
-      background: rgba($color-accent, 0.1);
-      border-color: $color-accent;
-    }
-  }
-  
-  &.highlight-icon-screen-work {
-    color: $color-warning;
-    
-    &:hover {
-      background: rgba($color-warning, 0.1);
-      border-color: $color-warning;
-    }
-  }
-}
-
-// ────────────────────────────────────────────────
-// Formulaire d'ajout de dialogue
-// ────────────────────────────────────────────────
-.add-dialogue-form-screen-work {
-  background: rgba($color-background, 0.8);
-  border-radius: $border-radius;
-  padding: $padding-xl;
-  border: 2px dashed rgba($color-info, 0.3);
-  margin-top: $margin-lg;
-  
-  h4 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0 0 $margin-lg 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-    
-    i {
-      color: $color-info;
-    }
-  }
-}
-
-.form-group-screen-work {
-  margin-bottom: $margin-md;
-  
-  label {
-    @include typography-p4;
-    color: $color-text-primary;
-    font-weight: $font-weight-medium;
-    display: block;
-    margin-bottom: $gap-xs;
-  }
-}
-
-.form-select-screen-work,
-.form-textarea-screen-work {
-  width: 100%;
-  padding: $padding-md;
-  border: 1px solid $color-border;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p3;
-  color: $color-text-primary;
-  background: $color-background;
-  transition: $transition-fast;
-  
-  &:focus {
-    outline: none;
-    border-color: $color-info;
-    box-shadow: 0 0 0 2px rgba($color-info, 0.1);
-  }
-}
-
-.form-textarea-screen-work {
-  resize: vertical;
-  min-height: 80px;
-  
-  &::placeholder {
-    color: $color-text-muted;
-  }
-}
-
-.form-actions-screen-work {
-  display: flex;
-  gap: $gap-md;
-  margin-top: $margin-lg;
-  
-  button {
-    flex: 1;
-    padding: $padding-md;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p3;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $gap-xs;
-    border: none;
-    
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  }
-  
-  .save-btn-screen-work {
-    background: $color-info;
-    color: $color-text-light;
-    
-    &:hover:not(:disabled) {
-      background: darken($color-info, 10%);
-    }
-  }
-  
-  .cancel-btn-screen-work {
-    background: $color-surface;
-    color: $color-text-secondary;
-    border: 1px solid $color-border;
-    
-    &:hover {
-      background: $color-surface-hover;
-      color: $color-text-primary;
-    }
-  }
-}
-
-// ────────────────────────────────────────────────
-// Section commentaires
-// ────────────────────────────────────────────────
-.comment-section-screen-work {
-  background: rgba($color-accent, 0.03);
-  border: 1px solid rgba($color-accent, 0.1);
-}
-
-.add-comment-screen-work {
-  margin-bottom: $margin-lg;
-  
-  textarea {
-    width: 100%;
-    padding: $padding-md;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-sm;
-    font-size: $font-size-p3;
-    color: $color-text-primary;
-    background: $color-background;
-    resize: vertical;
-    min-height: 80px;
-    margin-bottom: $gap-sm;
-    transition: $transition-fast;
-    
-    &:focus {
-      outline: none;
-      border-color: $color-accent;
-      box-shadow: 0 0 0 2px rgba($color-accent, 0.1);
-    }
-    
-    &::placeholder {
-      color: $color-text-muted;
-    }
-  }
-  
-  .add-comment-btn-screen-work {
-    @include btn-cinema-primary;
-    padding: $padding-sm $padding-md;
-    background: $color-accent;
-    color: $color-text-light;
-    font-size: $font-size-p3;
-    
-    &:hover {
-      background: $color-accent-dark;
-    }
-    
-    i {
-      margin-right: $gap-xs;
-    }
-  }
-}
-
-.comments-list-screen-work {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-md;
-}
-
-.comment-item-screen-work {
-  background: $color-background;
-  border-radius: $border-radius-sm;
-  padding: $padding-md;
-  border: 1px solid rgba($color-border, 0.1);
-  transition: $transition-fast;
-  
-  &:hover {
-    border-color: rgba($color-accent, 0.3);
-  }
-}
-
-.comment-header-screen-work {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $gap-sm;
-  
-  .comment-author-screen-work {
-    @include typography-p3;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-  }
-  
-  .comment-date-screen-work {
-    @include typography-p4;
-    color: $color-text-muted;
-  }
-}
-
-.comment-content-screen-work {
-  @include typography-p3;
-  color: $color-text-secondary;
   line-height: 1.5;
-  margin-bottom: $gap-sm;
-}
-
-.comment-actions-screen-work {
-  text-align: right;
-  
-  .delete-comment-btn-screen-work {
-    @include typography-p4;
-    color: $color-error;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 2px 6px;
-    border-radius: $border-radius-xs;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: $transition-fast;
-    
-    &:hover {
-      background: rgba($color-error, 0.1);
-    }
-    
-    i {
-      font-size: 0.9em;
-    }
-  }
+  padding: $padding-md;
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-border, 0.1);
 }
 
 // ────────────────────────────────────────────────
-// États vides
+// Responsive (identique au projet)
 // ────────────────────────────────────────────────
-.empty-state-screen-work {
-  text-align: center;
-  padding: $padding-xl;
-  background: $color-background;
-  border-radius: $border-radius;
-  border: 2px dashed rgba($color-border, 0.5);
-  
-  p {
-    @include typography-p2;
-    color: $color-text-muted;
-    margin-bottom: $margin-lg;
-  }
-  
-  .add-btn-screen-work {
-    @include btn-cinema-primary;
-    padding: $padding-sm $padding-lg;
-    background: $color-info;
-    
-    i {
-      margin-right: $gap-xs;
-    }
-    
-    &:hover {
-      background: darken($color-info, 10%);
-    }
-  }
-}
-
-// ────────────────────────────────────────────────
-// Responsive
-// ────────────────────────────────────────────────
-@media (max-width: $breakpoint-xl) {
-  .scene-view-screen-work {
-    padding: $padding-md;
-  }
-}
-
 @media (max-width: $breakpoint-lg) {
-  .scene-header-view-screen-work {
-    flex-direction: column;
-    gap: $gap-md;
-    align-items: flex-start;
+  .scene-view-container-screen-work {
+    padding: $padding-lg;
   }
   
-  .scene-header-actions-screen-work {
-    width: 100%;
-    justify-content: flex-start;
+  .scene-stats-view-screen-work {
+    gap: $gap-sm;
   }
   
-  .details-grid-screen-work {
-    grid-template-columns: repeat(2, 1fr);
+  .stat-card-screen-work {
+    padding: $padding-sm;
+    min-height: calc(#{$font-size-p4} + #{$padding-sm} * 2);
   }
   
-  .section-header-screen-work {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $gap-md;
-    
-    .add-btn-sm-screen-work {
-      align-self: flex-start;
-    }
+  .stat-icon-screen-work {
+    font-size: $font-size-p3;
+    width: 20px;
   }
   
-  .dialogue-actions-screen-work {
-    flex-wrap: wrap;
+  .stat-number-screen-work {
+    font-size: $font-size-p2;
   }
-}
-
-@media (max-width: $breakpoint-md) {
-  .scene-title-view-screen-work {
-    font-size: calc(#{$font-size-h3} - 2px);
+  
+  .stat-label-screen-work {
+    font-size: $font-size-p4;
   }
   
   .details-grid-screen-work {
     grid-template-columns: 1fr;
   }
-  
-  .scene-planning-section-screen-work,
-  .detail-section-screen-work {
-    padding: $padding-lg;
-  }
-  
-  .dialogue-item-screen-work {
-    padding: $padding-md;
-  }
-  
-  .form-actions-screen-work {
-    flex-direction: column;
-  }
 }
 
-@media (max-width: $breakpoint-sm) {
-  .scene-view-screen-work {
-    padding: $padding-sm;
+@media (max-width: $breakpoint-md) {
+  .scene-stats-view-screen-work {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
   
-  .scene-header-actions-screen-work {
+  .stat-card-screen-work {
+    flex: 0 0 calc(50% - #{$gap-sm});
+    margin-bottom: $gap-sm;
+    
+    &:nth-child(3) {
+      flex: 0 0 100%;
+    }
+  }
+  
+  .scene-title-view-screen-work {
+    font-size: calc(#{$font-size-h3} - 2px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+  
+  .scene-header-view-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .scene-actions-bar-screen-work {
     flex-direction: column;
     align-items: stretch;
     
@@ -821,9 +1060,11 @@
     }
   }
   
-  .scene-planning-section-screen-work,
-  .detail-section-screen-work {
-    padding: $padding-md;
+  .dialogues-section-screen-work .section-header-screen-work,
+  .scene-planning-section-screen-work .section-header-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $margin-md;
   }
   
   .dialogue-header-screen-work {
@@ -833,22 +1074,42 @@
   }
   
   .dialogue-actions-screen-work {
-    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .scene-view-container-screen-work {
+    padding: $padding-md;
   }
   
-  .action-icon-screen-work {
-    flex: 1;
-    min-width: 40px;
+  .scene-stats-view-screen-work {
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+  
+  .stat-card-screen-work {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-bottom: $gap-xs;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .add-dialogue-form-screen-work .form-actions-screen-work {
+    flex-direction: column;
   }
 }
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-  .scene-header-actions-screen-work button,
-  .detail-item-screen-work,
+  .scene-actions-bar-screen-work button,
+  .stat-card-screen-work,
   .dialogue-item-screen-work,
   .action-icon-screen-work,
-  .comment-item-screen-work {
+  .edit-scene-btn-screen-work {
     transition: none;
     
     &:hover {

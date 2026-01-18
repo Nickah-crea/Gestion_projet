@@ -1,0 +1,562 @@
+// _right_sidebar_compact.scss – CORRIGÉ avec toggle qui reste visible
+@import '../base/variables';
+
+// =============================================
+// SIDEBAR LATÉRALE FIXE À DROITE
+// =============================================
+.right-sidebar-ecran {
+  position: fixed;
+  top: 60px;
+  right: 0;
+  width: 250px;
+  height: calc(100vh - 60px);
+  z-index: $z-index-fixed;
+  overflow-y: auto;
+  padding: $padding-md;
+  background: $color-tertiary;
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px 0 0 20px;
+  transition: all $transition-slow ease;
+  transform: translateX(100%);
+
+  // QUAND OUVERT
+  &.open {
+    transform: translateX(0);
+    
+    & ~ * {
+      margin-right: 250px;
+      transition: margin-right $transition-slow ease;
+    }
+  }
+
+  // QUAND FERMÉ
+  &:not(.open) {
+    width: 80px;
+    padding: $padding-sm;
+    transform: translateX(calc(100% - 80px));
+    
+    & ~ * {
+      margin-right: 90px;
+      transition: margin-right $transition-slow ease;
+    }
+    
+    .sidebar-section-title-ecran,
+    .sidebar-section-title {
+      display: none;
+    }
+    
+    .sidebar-btn,
+    .export-option,
+    .sidebar-btn-ecran {
+      justify-content: center !important;
+      padding: 0 !important;           // ← supprime tout padding parasite
+      width: 35px;                     // ← un peu plus large si tu veux
+      height: 35px;
+      margin: 0 auto;                  // ← centrage block si besoin
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      span {
+        display: none;
+      }
+      
+      i {
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: $font-size-p2;
+      }
+    }
+  }
+
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-sm;
+    
+    &.open ~ * {
+      margin-right: 240px;
+    }
+    
+    &:not(.open) {
+      width: 80px;
+      transform: translateX(calc(100% - 80px));
+    }
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: block;
+    
+    &.open {
+      transform: translateX(0);
+    }
+    
+    &:not(.open) {
+      transform: translateX(calc(100% - 70px));
+      width: 70px;
+      
+      & ~ * {
+        margin-right: 80px;
+      }
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    top: 50px;
+    height: calc(100vh - 50px);
+    
+    &.open {
+      width: 200px;
+      
+      & ~ * {
+        margin-right: 200px;
+      }
+    }
+    
+    &:not(.open) {
+      width: 60px;
+      transform: translateX(calc(100% - 60px));
+      
+      & ~ * {
+        margin-right: 70px;
+      }
+    }
+  }
+}
+
+// =============================================
+// BOUTON TOGGLE - CORRECTION IMPORTANTE
+// =============================================
+
+.sidebar-toggle-right {
+  width: 100%;
+  height: 32px;
+  padding: 0 $padding-sm;
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p1;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  font-weight: $font-weight-semibold;
+  gap: $gap-xs;
+  box-sizing: border-box;
+  margin-bottom: $spacing-sm;
+
+  &:hover {
+    background: $color-surface-hover;
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 1px;
+  }
+  
+  i {
+    transition: transform $transition;
+  }
+  
+  .left-sidebar-compact.closed & i {
+    transform: rotate(180deg);
+  }
+}
+// =============================================
+// CONTENU DE LA SIDEBAR
+// =============================================
+.sidebar-content-ecran {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  padding-top: $spacing-sm;
+}
+
+// =============================================
+// TITRES DES SECTIONS AVEC ICÔNES
+// =============================================
+.sidebar-section-title,
+.sidebar-section-title-ecran {
+  @include typography-p3;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  margin: 0 0 $margin-sm 0;
+  padding-bottom: $padding-xs;
+  border-bottom: 1px solid $color-border;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p2;
+    width: 20px;
+    text-align: center;
+  }
+}
+
+// =============================================
+// BOUTONS DE LA SIDEBAR
+// =============================================
+.sidebar-btn,
+.sidebar-btn-ecran {
+  display: flex;
+  align-items: center;
+  padding: $padding-sm;
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p1;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  gap: $gap-sm;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: $gap-xs;
+
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 1px;
+  }
+  
+  i {
+    color: inherit;
+    font-size: $font-size-p3;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  
+  span {
+    @include typography-p3;
+    font-weight: $font-weight-medium;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+}
+
+// =============================================
+// SECTIONS
+// =============================================
+.export-section,
+.quick-links-section-ecran {
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  padding: $padding-xs;
+  box-shadow: $shadow-hover;
+}
+
+// =============================================
+// OPTIONS D'EXPORT
+// =============================================
+.export-options-ecran {
+  gap: $gap-xs;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  overflow: hidden;               /* très important */
+  max-height: 500px;              /* valeur haute quand ouvert */
+  opacity: 1;
+  padding-top: $padding-sm;       /* ou la valeur que tu utilises normalement */
+  padding-bottom: $padding-sm;
+}
+
+.export-options-ecran.collapsed {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Force visible quand la sidebar est fermée (priorité maximale) */
+.right-sidebar-ecran:not(.open) {
+
+  .sidebar-btn,
+  .sidebar-btn-ecran,
+  .export-option,
+  .section-icon {                     // ← ajoute .section-icon ici aussi !
+
+    position: relative;
+    width: 32px;                      // ou 36px / 44px selon tes préférences
+    height: 32px;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i,
+    .section-icon {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0 !important;
+      font-size: $font-size-p4;              // ajuste la taille si besoin
+    }
+  }
+
+  // Si tu veux que la section-icon (Exporter/Ajouter) soit un peu plus grande
+  .section-icon {
+    font-size: 1.6rem;
+  }
+}
+
+.export-option {
+  display: flex;
+  align-items: center;
+  padding: $padding-sm;
+  background: rgba($color-accent, 0.1);
+  border: 1px solid rgba($color-accent, 0.3);
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  gap: $gap-sm;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    background: rgba($color-accent, 0.2);
+    border-color: $color-accent;
+    color: $color-accent;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 1px;
+  }
+  
+  i {
+    color: $color-warning;
+    font-size: $font-size-p3;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  
+  span {
+    @include typography-p4;
+    font-weight: $font-weight-medium;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+}
+
+// =============================================
+// LIENS RAPIDES
+// =============================================
+.quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+// =============================================
+// RESPONSIVE - CORRECTIONS POUR LE TOGGLE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .right-sidebar-ecran {
+    width: 220px;
+    
+    &.open ~ * {
+      margin-right: 220px;
+    }
+    
+    &:not(.open) {
+      width: 70px;
+      transform: translateX(calc(100% - 70px));
+      
+      & ~ * {
+        margin-right: 80px;
+      }
+    }
+  }
+  
+  .sidebar-toggle-right {
+    right: 220px;
+    
+    .right-sidebar-ecran:not(.open) ~ & {
+      right: 70px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .right-sidebar-ecran {
+    &.open {
+      transform: translateX(0);
+      
+      & ~ * {
+        margin-right: 220px;
+      }
+    }
+    
+    &:not(.open) {
+      transform: translateX(calc(100% - 70px));
+      width: 70px;
+      
+      & ~ * {
+        margin-right: 80px;
+      }
+    }
+  }
+  
+  .sidebar-toggle-right {
+    right: 220px;
+    top: 70px;
+    
+    .right-sidebar-ecran:not(.open) ~ & {
+      right: 70px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .right-sidebar-ecran {
+    top: 50px;
+    height: calc(100vh - 50px);
+    
+    &.open {
+      width: 200px;
+      
+      & ~ * {
+        margin-right: 200px;
+      }
+    }
+    
+    &:not(.open) {
+      width: 60px;
+      transform: translateX(calc(100% - 60px));
+      
+      & ~ * {
+        margin-right: 70px;
+      }
+    }
+  }
+  
+  .sidebar-toggle-right {
+    right: 200px;
+    top: 60px;
+    width: 28px;
+    height: 28px;
+    
+    .right-sidebar-ecran:not(.open) ~ & {
+      right: 60px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .right-sidebar-ecran {
+    &.open {
+      width: 180px;
+      
+      & ~ * {
+        margin-right: 180px;
+      }
+    }
+    
+    &:not(.open) {
+      width: 50px;
+      transform: translateX(calc(100% - 50px));
+      
+      & ~ * {
+        margin-right: 60px;
+      }
+      
+      .sidebar-btn,
+      .sidebar-btn-ecran,
+      .export-option {
+        width: 36px;
+        height: 36px;
+        padding: $padding-xs;
+        
+        i {
+          font-size: $font-size-p3;
+        }
+      }
+    }
+  }
+  
+  .sidebar-toggle-right {
+    right: 180px;
+    top: 55px;
+    width: 24px;
+    height: 24px;
+    font-size: $font-size-p5;
+    
+    .right-sidebar-ecran:not(.open) ~ & {
+      right: 50px;
+    }
+  }
+}
+
+// Icône de section visible en mode compact
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;     // centre en mode fermé
+
+  .section-icon {
+    font-size: $font-size-p1;   // un peu plus grand que les icônes de boutons (ex: 1.5rem ou 24px)
+    color: $color-primary-dark;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius-sm;
+    background: rgba($color-primary, 0.1); // léger fond pour mieux voir
+    transition: all $transition-fast;
+  }
+
+  // Quand ouvert → on remet le style normal (titre + icône à gauche)
+  .right-sidebar-ecran.open & {
+    justify-content: flex-start;
+    margin-bottom: $margin-xs;
+
+    .section-icon {
+      width: auto;
+      height: auto;
+      background: none;
+      margin-right: $gap-xs;
+      font-size: $font-size-p2; // taille normale
+    }
+  }
+}
+
+// On cache les titres en mode fermé (déjà fait, mais on renforce)
+.right-sidebar-ecran:not(.open) {
+  .sidebar-section-title,
+  .sidebar-section-title-ecran {
+    display: none !important;
+  }
+
+  // Optionnel : réduire un peu l'espace si tu veux encore plus compact
+  .export-section,
+  .quick-links-section-ecran {
+    padding: $padding-xs;
+  }
+}
+

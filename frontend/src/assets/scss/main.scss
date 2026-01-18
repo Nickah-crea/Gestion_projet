@@ -12,8 +12,6 @@
 
 // Components
 @import 'components/navbar';
-@import 'components/left-sidebar';
-@import 'components/right-sidebar';
 @import 'components/sidebar';
 @import 'components/tools';
 @import 'components/ecran-travail';
@@ -29,6 +27,13 @@
 @import 'ecran/scene';
 @import 'ecran/scene_tournage';
 @import 'ecran/scene_tools_sidebar';
+@import 'ecran/left_sidebar_compact';
+@import 'ecran/add-episode-ecran';
+@import 'ecran/navbar-scene-tools';
+@import 'ecran/right-sidebar-compact';
+
+//modal ecran
+@import 'modal-ecran/modal-episode';
 
 // Layouts
 @import 'layouts/header';
