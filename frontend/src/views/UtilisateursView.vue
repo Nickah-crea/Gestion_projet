@@ -1,4 +1,5 @@
 <template>
+  <div class="app-wrapper-global">
   <div class="utilisateurs-container">
     <!-- Header -->
     <div class="utilisateurs-header">
@@ -33,7 +34,6 @@
             <th>Nom</th>
             <th>Email</th>
             <th>Rôle</th>
-            <th>Spécialité</th>
             <th>Date création</th>
             <th>Actions</th>
           </tr>
@@ -41,9 +41,13 @@
         <tbody>
           <tr v-for="user in filteredUsers" :key="user.idUtilisateur || user.id">
             <td>{{ user.idUtilisateur || user.id }}</td>
-            <td class="user-name">
+          <td class="user-name">
               <div class="avatar">
-                <i class="fas fa-user"></i>
+                <img 
+                  :src="getUserAvatar(user)" 
+                  :alt="user.nom"
+                  @error="handleAvatarError"
+                >
               </div>
               {{ user.nom }}
             </td>
@@ -53,7 +57,6 @@
                 {{ getRoleLabel(user.role) }}
               </span>
             </td>
-            <td>{{ user.specialite || '-' }}</td>
             <td>{{ formatDate(user.creeLe) }}</td>
             <td class="actions">
               <button class="btn-edit" @click="editUser(user)" title="Modifier">
@@ -202,6 +205,7 @@
       <span>{{ toast.message }}</span>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
@@ -322,6 +326,23 @@ export default {
       this.userToDelete = null;
     },
 
+      getUserAvatar(user) {
+      // Si l'utilisateur a une photo de profil, utilisez l'API
+      if (user.profilePhotoPath) {
+        return `/api/profil/photo/${user.profilePhotoPath}`;
+      }
+      
+      // Sinon, utilisez l'icône par défaut (vous devrez ajouter l'icon comme background CSS)
+      return '';
+    },
+    
+    handleAvatarError(event) {
+      // En cas d'erreur de chargement, affichez l'icône par défaut
+      event.target.style.display = 'none';
+      event.target.parentElement.innerHTML = '<i class="fas fa-user"></i>';
+    },
+    
+
     async submitForm() {
       try {
         this.loading = true;
@@ -385,413 +406,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.utilisateurs-container {
-  padding: 30px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.utilisateurs-header {
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.utilisateurs-header h1 {
-  color: #2c3e50;
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-}
-
-.utilisateurs-header p {
-  color: #7f8c8d;
-  font-size: 1.1rem;
-}
-
-.actions-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  gap: 20px;
-}
-
-.btn-add {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-
-.btn-add:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-}
-
-.search-bar {
-  position: relative;
-  width: 300px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 40px 12px 16px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.search-icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #7f8c8d;
-}
-
-.table-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.utilisateurs-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.utilisateurs-table th {
-  background: #f8f9fa;
-  padding: 16px;
-  text-align: left;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #e9ecef;
-}
-
-.utilisateurs-table td {
-  padding: 16px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.user-name {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.role-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.role-admin {
-  background: #ffeaa7;
-  color: #e17055;
-}
-
-.role-scenariste {
-  background: #a29bfe;
-  color: white;
-}
-
-.role-realisateur {
-  background: #74b9ff;
-  color: white;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
-.btn-edit, .btn-delete {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-edit {
-  background: #74b9ff;
-  color: white;
-}
-
-.btn-edit:hover {
-  background: #0984e3;
-}
-
-.btn-delete {
-  background: #ff7675;
-  color: white;
-}
-
-.btn-delete:hover {
-  background: #d63031;
-}
-
-.no-data {
-  text-align: center;
-  padding: 60px 20px;
-  color: #7f8c8d;
-}
-
-.no-data i {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  opacity: 0.5;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.delete-modal {
-  max-width: 400px;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.modal-header h2 {
-  margin: 0;
-  color: #2c3e50;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #7f8c8d;
-}
-
-.user-form {
-  padding: 24px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.hint {
-  font-weight: normal;
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-  box-sizing: border-box;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 30px;
-}
-
-.btn-cancel, .btn-submit, .btn-delete-confirm {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-cancel {
-  background: #95a5a6;
-  color: white;
-}
-
-.btn-cancel:hover {
-  background: #7f8c8d;
-}
-
-.btn-submit {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-}
-
-.btn-submit:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-
-.btn-delete-confirm {
-  background: #e74c3c;
-  color: white;
-}
-
-.btn-delete-confirm:hover:not(:disabled) {
-  background: #c0392b;
-}
-
-.btn-submit:disabled, .btn-delete-confirm:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.loading {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.modal-body {
-  padding: 24px;
-  text-align: center;
-}
-
-.warning-icon {
-  font-size: 3rem;
-  color: #e74c3c;
-  margin-bottom: 20px;
-}
-
-.warning-text {
-  color: #e74c3c;
-  font-weight: 600;
-}
-
-/* Toast */
-.toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 16px 24px;
-  border-radius: 8px;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 1001;
-  animation: slideIn 0.3s ease;
-}
-
-.toast.success {
-  background: #27ae60;
-}
-
-.toast.error {
-  background: #e74c3c;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .utilisateurs-container {
-    padding: 15px;
-  }
-  
-  .actions-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .search-bar {
-    width: 100%;
-  }
-  
-  .utilisateurs-table {
-    font-size: 14px;
-  }
-  
-  .utilisateurs-table th,
-  .utilisateurs-table td {
-    padding: 12px 8px;
-  }
-  
-  .actions {
-    flex-direction: column;
-    gap: 4px;
-  }
-}
-</style>
