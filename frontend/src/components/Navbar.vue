@@ -11,9 +11,11 @@
 
         <!-- LIENS + BOUTON AJOUTER CENTRÉS -->
         <div class="nav-center" v-if="!isCollapsed">
-          <router-link to="/accueil" class="nav-link" v-if="user?.role !== 'ADMIN' && user?.role !== 'SCENARISTE'" @click="toggleNavbarIfMobile">
-            <span class="link-text">Accueil</span>
-          </router-link>
+           <router-link to="/scenariste" class="nav-link" 
+               v-if="user?.role === 'UTILISATEUR' || (user?.role !== 'ADMIN' && user?.role !== 'SCENARISTE' && user?.role !== 'UTILISATEUR')" 
+                        @click="toggleNavbarIfMobile">
+              <span class="link-text">Accueil</span>
+            </router-link>
 
           <router-link to="/admin" class="nav-link" v-if="user?.role === 'ADMIN'" @click="toggleNavbarIfMobile">
             <span class="link-text">Admin</span>
@@ -36,17 +38,18 @@
           </router-link>
 
           <!-- BOUTON + AJOUTER AVEC POP-UP STYLISÉ -->
-          <div class="quick-add-section">
-            <button 
-              class="quick-add-btn" 
-              @click="toggleAddPopup"
-              :aria-expanded="showAddPopup"
-              aria-haspopup="true"
-            >
-              <span>+ Ajouter</span>
-              <i class="fas fa-chevron-down" :class="{ 'rotate-180': showAddPopup }"></i>
-            </button>
-            
+          <!-- BOUTON + AJOUTER AVEC POP-UP STYLISÉ -->
+<div class="quick-add-section" v-if="user?.role !== 'UTILISATEUR'">
+  <button 
+    class="quick-add-btn" 
+    @click="toggleAddPopup"
+    :aria-expanded="showAddPopup"
+    aria-haspopup="true"
+  >
+    <span>+ Ajouter</span>
+    <i class="fas fa-chevron-down" :class="{ 'rotate-180': showAddPopup }"></i>
+  </button>
+  
             <!-- POP-UP SOUS LA NAVBAR : GRILLE DE BOUTONS (4 par ligne max) -->
             <div v-if="showAddPopup" class="add-popup" @click.stop>
               <div class="popup-content">
@@ -75,19 +78,19 @@
                     <button class="popup-btn" @click="navigateTo('/raccords')">
                       Raccord
                     </button>
-                    <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/gestion-equipe')">
+                    <!-- <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/gestion-equipe')">
                       Équipe
-                    </button>
+                    </button> -->
                     <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/utilisateurs')">
                       Utilisateurs
+                    </button>
+                     <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/status-gestion')">
+                      Tous Status
                     </button>
                   </div>
                   
                   <!-- Ligne 3 : centrée si moins de 4 -->
                   <div class="popup-row">
-                    <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/status-gestion')">
-                      Tous Status
-                    </button>
                     <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/type-raccord')">
                       Type Raccord
                     </button>
