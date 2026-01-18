@@ -272,7 +272,7 @@
     }
   }
 
-  .voir-plus-btn {
+   .voir-plus-btn {
     width: 100%;
     padding: $gap-xs;
     background: transparent;
@@ -284,6 +284,7 @@
     transition: $transition-fast;
     text-align: center;
     margin-top: $gap-xs;
+    font-weight: $font-weight-semibold;
     
     &:hover {
       background: rgba($color-primary, 0.1);
@@ -292,6 +293,7 @@
     }
   }
 }
+
 
 // =============================================
 // CONTENU PRINCIPAL À DROITE
@@ -993,8 +995,17 @@
 
 // Modal Planning
 .planning-modal {
-  width: 90%;
-  max-width: 800px;
+  .modal-actions {
+    // S'assurer que les boutons remplissent bien l'espace
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    
+    .btn {
+      // Assurer que le texte ne déborde pas
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .planning-form {
@@ -1032,47 +1043,59 @@
   .form-select,
   .form-input,
   .form-textarea {
-    padding: $padding-sm;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    color: $color-text-primary;
-    background: $color-white;
-    transition: $transition-fast;
-    
-    &:focus {
-      outline: none;
-      border-color: $color-primary;
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      padding: $gap-sm $padding-sm;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p4;
+      color: $color-text-primary;
+      background: $color-background-alt;
+      transition: $transition-fast;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+      
+      &:hover {
+        border-color: rgba($color-primary, 0.5);
+      }
+      
+      &:disabled {
+        background: $color-background;
+        color: $color-text-muted;
+        cursor: not-allowed;
+      }
     }
     
-    &:disabled {
-      background: $color-background;
-      color: $color-text-muted;
-      cursor: not-allowed;
+    .form-input {
+      height: 42px;
+    }
+    
+    .form-select {
+      height: 42px;
+      cursor: pointer;
+    }
+    
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+      line-height: $line-height-base;
     }
   }
   
-  .form-textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
-    line-height: $line-height-base;
-  }
-  
-  .field-info,
-  .text-info {
+  .text-info,
+  .field-info {
     @include typography-p4;
     color: $color-text-muted;
     margin-top: $gap-xs;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
+    display: block;
+    font-style: italic;
     
     i {
       color: $color-info;
     }
-  }
 }
 
 // Messages d'erreur
@@ -1115,77 +1138,142 @@
 }
 
 .modal-actions {
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: 1fr 1fr; // Deux colonnes égales
   gap: $spacing-sm;
   margin-top: $spacing-lg;
   padding-top: $spacing-md;
   border-top: 1px solid $color-border;
+  width: 100%;
   
   @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
+    grid-template-columns: 1fr; // Une colonne sur mobile
   }
   
   .btn {
-    padding: $padding-sm $padding-lg;
+    padding: $gap-sm $spacing-md;
     border: none;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     font-weight: $font-weight-semibold;
     cursor: pointer;
-    transition: $transition;
+    transition: $transition-fast;
     display: flex;
     align-items: center;
-    gap: $gap-sm;
+    justify-content: center;
+    gap: $gap-xs;
+    width: 100%; // Prend toute la largeur de la colonne
+    min-height: 42px; // Hauteur cohérente
+    
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
     
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      transform: none !important;
-    }
-    
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
+      transform: none;
     }
   }
   
   .btn-secondary {
     background: transparent;
-    border: 1px solid $color-border-dark;
+    border: 1px solid $color-border;
     color: $color-text-secondary;
     
     &:hover:not(:disabled) {
-      background: rgba($color-text-secondary, 0.1);
-      border-color: $color-text-secondary;
-      color: $color-text-primary;
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
     }
   }
   
   .btn-primary {
     background: $color-primary;
-    color: $color-white;
+    color: $color-text-light;
     
     &:hover:not(:disabled) {
       background: darken($color-primary, 10%);
+      transform: translateY(-1px);
       box-shadow: $shadow-hover;
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
   }
   
   .btn-danger {
     background: $color-error;
-    color: $color-white;
+    color: $color-text-light;
     
     &:hover:not(:disabled) {
       background: darken($color-error, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
     }
   }
 }
 
+
 // Modal Détails
 .details-modal {
-  width: 90%;
-  max-width: 600px;
+  .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-sm;
+    padding: $spacing-lg;
+    border-top: 1px solid $color-border;
+    
+    @media (max-width: $breakpoint-sm) {
+      grid-template-columns: 1fr;
+    }
+    
+    .btn {
+      padding: $gap-sm $spacing-md;
+      border: none;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p4;
+      font-weight: $font-weight-semibold;
+      cursor: pointer;
+      transition: $transition-fast;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-xs;
+      width: 100%;
+      min-height: 42px;
+      
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+    
+    .btn-edit-modal {
+      background: $color-primary;
+      color: $color-text-light;
+      
+      &:hover {
+        background: darken($color-primary, 10%);
+        box-shadow: $shadow-hover;
+      }
+    }
+    
+    .btn-close-modal {
+      background: transparent;
+      border: 1px solid $color-border;
+      color: $color-text-secondary;
+      
+      &:hover {
+        background: rgba($color-primary, 0.1);
+        border-color: $color-primary;
+        color: $color-primary;
+      }
+    }
+  }
 }
+
 
 .details-content {
   padding: $padding-lg;
@@ -1194,49 +1282,69 @@
 .detail-section {
   margin-bottom: $spacing-lg;
   
-  h4 {
+ h4 {
     @include typography-playfair-p4;
     color: $color-text-primary;
-    margin-bottom: $spacing-sm;
+    margin-bottom: $spacing-md;
     display: flex;
     align-items: center;
     gap: $gap-sm;
+    padding-bottom: $gap-sm;
+    border-bottom: 1px solid $color-border;
   }
 }
 
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(2, 1fr); // 2 colonnes égales
   gap: $spacing-sm;
   
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr; // 1 colonne sur tablette
+  }
+  
   @media (max-width: $breakpoint-sm) {
-    grid-template-columns: 1fr;
+    gap: $gap-sm;
   }
 }
 
 .detail-item {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: $gap-sm;
+  gap: $gap-xs;
+  padding: $padding-sm;
+  border-radius: $border-radius-xs;
+  // border: 1px solid $color-border;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+    border-color: rgba($color-primary, 0.3);
+  }
   
   strong {
     @include typography-p4;
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
-    min-width: 100px;
+    line-height: 1.4;
   }
   
   span {
     @include typography-p4;
     color: $color-text-secondary;
-    flex: 1;
+    line-height: 1.4;
+    word-break: break-word;
   }
   
   .statut-badge {
     @include typography-p4;
-    padding: 2px 8px;
+    padding: $gap-xs $padding-xs;
     border-radius: $border-radius-pill;
     font-weight: $font-weight-medium;
+    display: inline-flex;
+    align-items: center;
+    gap: $gap-xs;
     
     &.statut-planifie {
       background: rgba($color-primary, 0.1);
@@ -1270,14 +1378,17 @@
   }
 }
 
+
 .notes-content {
-  padding: $padding-md;
+  padding: $padding-sm;
   background: $color-background;
   border-radius: $border-radius-xs;
   border-left: 3px solid $color-primary;
   @include typography-p4;
   color: $color-text-secondary;
   line-height: $line-height-base;
+  width: 100%;
+  margin-top: $gap-sm;
 }
 
 // =============================================
