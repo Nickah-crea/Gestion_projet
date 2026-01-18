@@ -29,7 +29,7 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long> {
     List<Episode> findByProjetIdOrderByOrdreAsc(Long projetId);
      
     @Query("SELECT new com.example.films.dto.RechercheEpisodeDTO(" +
-    "e.id, e.titre, e.synopsis, p.titre, p.id, e.ordre) " +  // Ajouter p.id
+    "e.id, e.titre, e.synopsis, p.titre, p.id, e.ordre) " + 
     "FROM Episode e JOIN e.projet p " +
     "WHERE LOWER(e.titre) LIKE LOWER(CONCAT('%', :query, '%')) " +
     "OR LOWER(e.synopsis) LIKE LOWER(CONCAT('%', :query, '%')) " +
