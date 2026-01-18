@@ -1,8 +1,9 @@
+[file name]: RaccordSceneComponent.vue
 <template>
-  <div class="raccord-scene-container">
+  <div class="raccord-scene-container-raccord-scene">
     <!-- Bouton pour ouvrir le modal -->
     <button 
-      class="btn-open-raccord"
+      class="btn-open-raccord-raccord-scene"
       @click="openRaccordModal"
       :disabled="!canOpenModal"
     >
@@ -11,61 +12,51 @@
     </button>
 
     <!-- Modal pour la création de raccord -->
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
+    <div v-if="showModal" class="modal-overlay-raccord-scene" @click="closeModal">
+      <div class="modal-content-raccord-scene" @click.stop>
         <!-- En-tête du modal -->
-        <div class="modal-header">
+        <div class="modal-header-raccord-scene">
           <h3>
             <i class="fas fa-link"></i>
             Créer un Raccord entre Scènes
           </h3>
-          <button class="close-btn" @click="closeModal">
+          <button class="close-btn-raccord-scene" @click="closeModal">
             <i class="fas fa-times"></i>
           </button>
         </div>
 
         <!-- Formulaire de création de raccord -->
-        <div class="raccord-form">
+        <div class="raccord-form-raccord-scene">
           <!-- Sélection des scènes -->
-            <div class="form-section">
+          <div class="form-section-raccord-scene">
             <h4><i class="fas fa-film"></i> Sélection des Scènes</h4>
 
-             <!-- ALERTE D'INCOHÉRENCE CHRONOLOGIQUE -->
+            <!-- ALERTE D'INCOHÉRENCE CHRONOLOGIQUE -->
             <div 
               v-if="showChronologyAlert" 
-              class="chronology-alert"
+              class="chronology-alert-raccord-scene"
               :class="{ critical: hasCriticalChronologyIssue }"
             >
-              <div class="alert-content">
+              <div class="alert-content-raccord-scene">
                 <i class="fas fa-exclamation-triangle"></i>
-                <div class="alert-text">
+                <div class="alert-text-raccord-scene">
                   <h5>⚠️ Incohérence chronologique détectée</h5>
                   <p>{{ chronologyAlertMessage }}</p>
-                  <p class="alert-details">
+                  <p class="alert-details-raccord-scene">
                     <strong>Scène source:</strong> {{ formatDate(sceneSourceTournageInfo?.dateTournage) || 'Non planifiée' }}<br>
                     <strong>Scène cible:</strong> {{ formatDate(sceneCibleTournageInfo?.dateTournage) || 'Non planifiée' }}
                   </p>
-                  <div v-if="hasCriticalChronologyIssue" class="alert-actions">
-                    <!-- <button 
-                      class="btn-adjust-planning"
-                      @click="openPlanningAdjustment"
-                    >
-                      <i class="fas fa-calendar-alt"></i>
-                      Ajuster le planning
-                    </button> -->
-                  </div>
                 </div>
               </div>
             </div>
 
-            
-            <div class="form-row">
-              <div class="form-group">
+            <div class="form-row-raccord-scene">
+              <div class="form-group-raccord-scene">
                 <label for="scene-source">Scène Source *</label>
                 <select 
                   id="scene-source"
                   v-model="raccordData.sceneSourceId"
-                  class="form-select"
+                  class="form-select-raccord-scene"
                   disabled
                   required
                 >
@@ -79,18 +70,18 @@
                     Scène {{ scene.ordre }}: {{ scene.titre }}
                   </option>
                 </select>
-                <small class="field-description">
+                <small class="field-description-raccord-scene">
                   Cette scène est automatiquement sélectionnée
                 </small>
               </div>
 
-                <div class="form-group">
+              <div class="form-group-raccord-scene">
                 <label for="scene-cible">Scène Cible *</label>
                 <select 
                   id="scene-cible"
                   v-model="raccordData.sceneCibleId"
                   @change="onSceneCibleChange"
-                  class="form-select"
+                  class="form-select-raccord-scene"
                   required
                 >
                   <option value="">Sélectionnez une scène cible</option>
@@ -105,15 +96,15 @@
               </div>
             </div>
 
-             <!-- Informations des scènes sélectionnées AVEC DATES DE TOURNAGE -->
-            <div v-if="sceneSourceInfo || sceneCibleInfo" class="scenes-info">
+            <!-- Informations des scènes sélectionnées AVEC DATES DE TOURNAGE -->
+            <div v-if="sceneSourceInfo || sceneCibleInfo" class="scenes-info-raccord-scene">
               <!-- Scène Source -->
-              <div v-if="sceneSourceInfo" class="scene-info">
+              <div v-if="sceneSourceInfo" class="scene-info-raccord-scene">
                 <h5>Scène Source (fixe)</h5>
                 <p><strong>Titre:</strong> {{ sceneSourceInfo.titre }}</p>
                 <p><strong>Ordre:</strong> {{ sceneSourceInfo.ordre }}</p>
                 <p><strong>Date tournage:</strong> 
-                  <span :class="{ 'date-warning': !sceneSourceTournageInfo }">
+                  <span :class="{ 'date-warning-raccord-scene': !sceneSourceTournageInfo }">
                     {{ sceneSourceTournageInfo ? formatDate(sceneSourceTournageInfo.dateTournage) : 'Non planifiée' }}
                   </span>
                 </p>
@@ -121,14 +112,14 @@
               </div>
 
               <!-- Scène Cible -->
-              <div v-if="sceneCibleInfo" class="scene-info">
+              <div v-if="sceneCibleInfo" class="scene-info-raccord-scene">
                 <h5>Scène Cible</h5>
                 <p><strong>Titre:</strong> {{ sceneCibleInfo.titre }}</p>
                 <p><strong>Ordre:</strong> {{ sceneCibleInfo.ordre }}</p>
                 <p><strong>Date tournage:</strong> 
                   <span :class="{ 
-                    'date-warning': !sceneCibleTournageInfo,
-                    'date-error': hasCriticalChronologyIssue 
+                    'date-warning-raccord-scene': !sceneCibleTournageInfo,
+                    'date-error-raccord-scene': hasCriticalChronologyIssue 
                   }">
                     {{ sceneCibleTournageInfo ? formatDate(sceneCibleTournageInfo.dateTournage) : 'Non planifiée' }}
                   </span>
@@ -138,21 +129,20 @@
             </div>
           </div>
 
-
           <!-- Section Personnages et Comédiens -->
-          <div class="form-section">
+          <div class="form-section-raccord-scene">
             <h4><i class="fas fa-users"></i> Personnages et Comédiens</h4>
-            <p class="section-description">
+            <p class="section-description-raccord-scene">
               Optionnel - Liez ce raccord à un ou plusieurs personnages 
             </p>
             
-            <div class="form-group">
+            <div class="form-group-raccord-scene">
               <label for="personnages">Personnages</label>
               <select 
                 id="personnages"
                 v-model="raccordData.personnagesIds"
                 @change="onPersonnagesChange"
-                class="form-select"
+                class="form-select-raccord-scene"
                 multiple
                 size="4"
               >
@@ -166,27 +156,27 @@
                   <span v-if="personnage.comedienNom"> - {{ personnage.comedienNom }}</span>
                 </option>
               </select>
-              <small class="field-description">
+              <small class="field-description-raccord-scene">
                 Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs personnages
               </small>
             </div>
 
             <!-- Affichage des comédiens sélectionnés -->
-            <div v-if="selectedComediens.length > 0" class="selected-comediens">
+            <div v-if="selectedComediens.length > 0" class="selected-comediens-raccord-scene">
               <h5>Comédiens sélectionnés ({{ selectedComediens.length }})</h5>
-              <div class="comediens-list">
+              <div class="comediens-list-raccord-scene">
                 <div 
                   v-for="comedien in selectedComediens" 
                   :key="comedien.id"
-                  class="comedien-item"
+                  class="comedien-item-raccord-scene"
                 >
                   <i class="fas fa-user"></i>
                   <span>{{ comedien.nom }}</span>
-                  <span class="personnage-associe" v-if="comedien.personnageNom">
+                  <span class="personnage-associe-raccord-scene" v-if="comedien.personnageNom">
                     ({{ comedien.personnageNom }})
                   </span>
                   <button 
-                    class="remove-comedien-btn"
+                    class="remove-comedien-btn-raccord-scene"
                     @click="removeComedien(comedien.id)"
                   >
                     <i class="fas fa-times"></i>
@@ -196,31 +186,31 @@
             </div>
 
             <!-- Informations des personnages sélectionnés -->
-            <div v-if="selectedPersonnagesInfo.length > 0" class="personnages-info">
+            <div v-if="selectedPersonnagesInfo.length > 0" class="personnages-info-raccord-scene">
               <h5>Personnages sélectionnés ({{ selectedPersonnagesInfo.length }})</h5>
-              <div class="personnages-grid">
+              <div class="personnages-grid-raccord-scene">
                 <div 
                   v-for="personnage in selectedPersonnagesInfo" 
                   :key="personnage.id"
-                  class="personnage-info-card"
+                  class="personnage-info-card-raccord-scene"
                 >
-                  <div class="personnage-header">
+                  <div class="personnage-header-raccord-scene">
                     <strong>{{ personnage.nom }}</strong>
                     <button 
-                      class="remove-personnage-btn"
+                      class="remove-personnage-btn-raccord-scene"
                       @click="removePersonnage(personnage.id)"
                     >
                       <i class="fas fa-times"></i>
                     </button>
                   </div>
-                  <div class="personnage-details">
-                    <div v-if="personnage.description" class="detail">
+                  <div class="personnage-details-raccord-scene">
+                    <div v-if="personnage.description" class="detail-raccord-scene">
                       <strong>Description:</strong> {{ personnage.description }}
                     </div>
-                    <div v-if="personnage.comedienNom" class="detail">
+                    <div v-if="personnage.comedienNom" class="detail-raccord-scene">
                       <strong>Comédien:</strong> {{ personnage.comedienNom }}
                     </div>
-                    <div v-if="personnage.projetTitre" class="detail">
+                    <div v-if="personnage.projetTitre" class="detail-raccord-scene">
                       <strong>Projet:</strong> {{ personnage.projetTitre }}
                     </div>
                   </div>
@@ -231,13 +221,13 @@
           
 
           <!-- Sélection des types de raccord -->
-          <div class="form-section">
+          <div class="form-section-raccord-scene">
             <h4><i class="fas fa-tags"></i> Types de Raccord</h4>
-            <div class="types-selection">
+            <div class="types-selection-raccord-scene">
               <div 
                 v-for="type in availableTypes" 
                 :key="type.id"
-                class="type-checkbox"
+                class="type-checkbox-raccord-scene"
               >
                 <label>
                   <input 
@@ -246,45 +236,45 @@
                     v-model="raccordData.selectedTypes"
                     @change="onTypeSelectionChange"
                   >
-                  <span class="checkmark"></span>
+                  <span class="checkmark-raccord-scene"></span>
                   {{ type.nomType }}
                 </label>
-                <small class="type-description">{{ type.description }}</small>
+                <small class="type-description-raccord-scene">{{ type.description }}</small>
               </div>
             </div>
           </div>
 
           <!-- Description du raccord -->
-          <div class="form-section">
+          <div class="form-section-raccord-scene">
             <h4><i class="fas fa-align-left"></i> Description du Raccord</h4>
-            <div class="form-group">
+            <div class="form-group-raccord-scene">
               <textarea
                 v-model="raccordData.description"
                 rows="4"
-                class="form-textarea"
+                class="form-textarea-raccord-scene"
                 placeholder="Décrivez les éléments de continuité à respecter entre les scènes..."
               ></textarea>
             </div>
           </div>
 
           <!-- Sélection des photos existantes par type -->
-          <div class="form-section">
+          <div class="form-section-raccord-scene">
             <h4><i class="fas fa-images"></i> Photos de Référence</h4>
-            <p class="section-description">
+            <p class="section-description-raccord-scene">
               Sélectionnez les photos de la <strong>scène source</strong> à utiliser comme référence pour ce raccord
             </p>
 
-            <div v-if="loadingPhotos" class="loading">
+            <div v-if="loadingPhotos" class="loading-raccord-scene">
               <i class="fas fa-spinner fa-spin"></i> Chargement des photos...
             </div>
 
-            <div v-else-if="availablePhotos.length === 0" class="no-photos">
+            <div v-else-if="availablePhotos.length === 0" class="no-photos-raccord-scene">
               <p>Aucune photo disponible pour ces scènes</p>
             </div>
 
-            <div v-else class="photos-selection">
+            <div v-else class="photos-selection-raccord-scene">
               <!-- Filtrage par type -->
-              <div class="photos-filter">
+              <div class="photos-filter-raccord-scene">
                 <label>Filtrer par type:</label>
                 <select v-model="selectedPhotoType" @change="filterPhotosByType">
                   <option value="">Tous les types</option>
@@ -299,52 +289,52 @@
               </div>
 
               <!-- Liste des photos disponibles -->
-               <div class="photos-grid">
-                  <div 
-                    v-for="photo in filteredPhotos" 
-                    :key="photo.id"
-                    class="photo-item"
-                    :class="{ 
-                      selected: isPhotoSelected(photo.id),
-                      shared: photo.isShared 
-                    }"
-                    @click="togglePhotoSelection(photo)"
-                  >
-                    <div class="photo-image">
-                      <img :src="getImageUrl(photo.cheminFichier)" :alt="photo.descriptionImage">
-                      <div class="photo-overlay">
-                        <i class="fas fa-check"></i>
-                      </div>
-                      <!-- Indicateur d'image partagée -->
-                      <div v-if="photo.isShared" class="shared-indicator" title="Image partagée">
-                        <i class="fas fa-share-alt"></i>
-                      </div>
+              <div class="photos-grid-raccord-scene">
+                <div 
+                  v-for="photo in filteredPhotos" 
+                  :key="photo.id"
+                  class="photo-item-raccord-scene"
+                  :class="{ 
+                    selected: isPhotoSelected(photo.id),
+                    shared: photo.isShared 
+                  }"
+                  @click="togglePhotoSelection(photo)"
+                >
+                  <div class="photo-image-raccord-scene">
+                    <img :src="getImageUrl(photo.cheminFichier)" :alt="photo.descriptionImage">
+                    <div class="photo-overlay-raccord-scene">
+                      <i class="fas fa-check"></i>
                     </div>
-                    <div class="photo-info">
-                      <span class="photo-type">{{ getTypeName(photo.typeRaccordId) }}</span>
-                      <span class="photo-date">{{ formatDate(photo.creeLe) }}</span>
-                      <span v-if="photo.isShared" class="shared-badge">Partagée</span>
-                      <p class="photo-description" v-if="photo.descriptionImage">
-                        {{ photo.descriptionImage }}
-                      </p>
+                    <!-- Indicateur d'image partagée -->
+                    <div v-if="photo.isShared" class="shared-indicator-raccord-scene" title="Image partagée">
+                      <i class="fas fa-share-alt"></i>
                     </div>
                   </div>
+                  <div class="photo-info-raccord-scene">
+                    <span class="photo-type-raccord-scene">{{ getTypeName(photo.typeRaccordId) }}</span>
+                    <span class="photo-date-raccord-scene">{{ formatDate(photo.creeLe) }}</span>
+                    <span v-if="photo.isShared" class="shared-badge-raccord-scene">Partagée</span>
+                    <p class="photo-description-raccord-scene" v-if="photo.descriptionImage">
+                      {{ photo.descriptionImage }}
+                    </p>
+                  </div>
                 </div>
+              </div>
 
               <!-- Photos sélectionnées -->
-              <div v-if="selectedPhotos.length > 0" class="selected-photos">
+              <div v-if="selectedPhotos.length > 0" class="selected-photos-raccord-scene">
                 <h5>Photos sélectionnées ({{ selectedPhotos.length }})</h5>
-                <div class="selected-grid">
+                <div class="selected-grid-raccord-scene">
                   <div 
                     v-for="photo in selectedPhotos" 
                     :key="photo.id"
-                    class="selected-item"
+                    class="selected-item-raccord-scene"
                   >
                     <img :src="getImageUrl(photo.cheminFichier)" :alt="photo.descriptionImage">
-                    <div class="selected-info">
+                    <div class="selected-info-raccord-scene">
                       <span>{{ getTypeName(photo.typeRaccordId) }}</span>
                       <button 
-                        class="remove-btn"
+                        class="remove-btn-raccord-scene"
                         @click="removeSelectedPhoto(photo.id)"
                       >
                         <i class="fas fa-times"></i>
@@ -357,29 +347,29 @@
           </div>
 
           <!-- Options supplémentaires -->
-          <div class="form-section">
+          <div class="form-section-raccord-scene">
             <h4><i class="fas fa-cog"></i> Options</h4>
-            <div class="form-options">
-              <div class="checkbox-group">
+            <div class="form-options-raccord-scene">
+              <div class="checkbox-group-raccord-scene">
                 <label>
                   <input 
                     type="checkbox" 
                     v-model="raccordData.estCritique"
                   >
-                  <span class="checkmark"></span>
+                  <span class="checkmark-raccord-scene"></span>
                   Raccord critique
                 </label>
-                <small class="option-description">
+                <small class="option-description-raccord-scene">
                   Ce raccord est essentiel pour la continuité du film
                 </small>
               </div>
 
-              <div class="form-group">
+              <div class="form-group-raccord-scene">
                 <label for="statut-raccord">Statut du raccord</label>
                 <select 
                   id="statut-raccord"
                   v-model="raccordData.statutRaccordId"
-                  class="form-select"
+                  class="form-select-raccord-scene"
                 >
                   <option 
                     v-for="statut in availableStatuts" 
@@ -394,15 +384,15 @@
           </div>
 
           <!-- Actions -->
-          <div class="form-actions">
+          <div class="form-actions-raccord-scene">
             <button 
-              class="btn-cancel"
+              class="btn-cancel-raccord-scene"
               @click="closeModal"
             >
               Annuler
             </button>
             <button 
-              class="btn-submit"
+              class="btn-submit-raccord-scene"
               @click="createRaccord"
               :disabled="!canCreateRaccord"
             >
@@ -455,7 +445,6 @@ const selectedPhotoType = ref('')
 const sceneSourceInfo = ref(null)
 const sceneCibleInfo = ref(null)
 const personnages = ref([])
-const selectedPersonnageInfo = ref(null)
 
 // Données du raccord
 const raccordData = ref({
@@ -465,7 +454,7 @@ const raccordData = ref({
   description: '',
   estCritique: false,
   statutRaccordId: 1,
- personnagesIds: [],   
+  personnagesIds: [],   
   comediensIds: []  
 })
 
@@ -474,7 +463,6 @@ const filteredScenesCible = ref([])
 
 const selectedPersonnagesInfo = ref([])
 const selectedComediens = ref([])
-
 
 const sceneSourceTournageInfo = ref(null)
 const sceneCibleTournageInfo = ref(null)
@@ -491,15 +479,9 @@ const canCreateRaccord = computed(() => {
          raccordData.value.selectedTypes.length > 0
 })
 
-const selectedPersonnagesDisplay = computed(() => {
-  if (raccordData.value.personnagesIds.length === 0) return 'Aucun personnage sélectionné'
-  return raccordData.value.personnagesIds.length + ' personnage(s) sélectionné(s)'
-})
-
 const showChronologyAlert = computed(() => {
   return hasChronologyIssue.value
 })
-
 
 const hasChronologyIssue = computed(() => {
   if (!sceneSourceTournageInfo.value || !sceneCibleTournageInfo.value) {
@@ -564,8 +546,7 @@ const loadInitialData = async () => {
       loadScenes(),
       loadTypesRaccord(),
       loadStatutsRaccord(),
-      loadPersonnages(),
-      checkSceneChronology()
+      loadPersonnages()
     ])
   } catch (error) {
     console.error('Erreur lors du chargement des données:', error)
@@ -662,7 +643,6 @@ const loadSceneTournageInfo = async (sceneId, type) => {
   }
 }
 
-
 // Méthode pour mettre à jour le message d'alerte
 const updateChronologyAlert = () => {
   if (!sceneSourceTournageInfo.value || !sceneCibleTournageInfo.value) {
@@ -679,28 +659,6 @@ const updateChronologyAlert = () => {
   } else {
     chronologyAlertMessage.value = ''
   }
-}
-
-// // Méthode pour ouvrir la modification du planning
-// const openPlanningAdjustment = () => {
-//   if (sceneCibleInfo.value) {
-//     adjustScenePlanning(sceneCibleInfo.value.idScene || sceneCibleInfo.value.id)
-//   }
-// }
-
-// // Méthode pour ajuster le planning d'une scène
-// const adjustScenePlanning = (sceneId) => {
-//   // Navigation vers la page de gestion du planning avec la scène présélectionnée
-//   window.open(`/calendrier-tournage?sceneId=${sceneId}`, '_blank')
-// }
-
-const checkSceneChronology = (sourceScene, targetScene) => {
-  if (!sourceScene || !targetScene) return true
-  
-  const sourceOrder = sourceScene.ordre
-  const targetOrder = targetScene.ordre
-  
-  return targetOrder >= sourceOrder
 }
 
 const loadPersonnages = async () => {
@@ -749,7 +707,6 @@ const onPersonnagesChange = () => {
   raccordData.value.comediensIds = selectedComediens.value.map(comedien => comedien.id)
 }
 
-
 const removePersonnage = (personnageId) => {
   const index = raccordData.value.personnagesIds.indexOf(personnageId)
   if (index !== -1) {
@@ -779,16 +736,6 @@ const removeComedien = (comedienId) => {
     })
   }
 }
-
-
-// const getComedienNameFromPersonnage = (personnageId) => {
-//   if (!personnageId) return 'Aucun comédien'
-//   const personnage = personnages.value.find(p => p.id === personnageId)
-//   return personnage && personnage.comedienNom 
-//     ? personnage.comedienNom 
-//     : 'Aucun comédien assigné'
-// }
-
 
 const loadTypesRaccord = async () => {
   try {
@@ -856,6 +803,7 @@ const loadPhotosForScenes = async () => {
     loadingPhotos.value = false
   }
 }
+
 const onSceneCibleChange = async () => {
   console.log('Scène cible changée:', raccordData.value.sceneCibleId)
   if (raccordData.value.sceneCibleId) {
@@ -1018,7 +966,6 @@ const resetForm = () => {
   sceneCibleInfo.value = null
   sceneCibleTournageInfo.value = null
   sceneSourceTournageInfo.value = null
-  selectedPersonnageInfo.value = null
   chronologyAlertMessage.value = ''
   selectedPersonnagesInfo.value = []   
   selectedComediens.value = []       
@@ -1051,6 +998,11 @@ onMounted(() => {
   loadTypesRaccord()
   loadStatutsRaccord()
   loadPersonnages()
+})
+
+// Exposer la méthode pour ouvrir le modal
+defineExpose({
+  openRaccordModal
 })
 </script>
 

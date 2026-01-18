@@ -1,9 +1,10 @@
+[file name]: RaccordsPhotosComponent.vue
 <template>
-  <div class="raccords-photos-container">
+  <div class="raccords-photos-container-raccord-photo">
     <!-- Bouton pour ouvrir le modal -->
     <button 
       v-if="showTriggerButton"
-      class="btn-open-raccords"
+      class="btn-open-raccords-raccord-photo"
       @click="openRaccordsModal"
       :disabled="!sceneId"
     >
@@ -12,22 +13,22 @@
     </button>
 
     <!-- Modal pour la gestion des raccords -->
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
+    <div v-if="showModal" class="modal-overlay-raccord-photo" @click="closeModal">
+      <div class="modal-content-raccord-photo" @click.stop>
         <!-- En-tête du modal -->
-        <div class="modal-header">
+        <div class="modal-header-raccord-photo">
           <h3>
             <i class="fas fa-camera"></i>
             Photos de Raccords - Scène {{ sceneInfo?.ordre }}
           </h3>
-          <button class="close-btn" @click="closeModal">
+          <button class="close-btn-raccord-photo" @click="closeModal">
             <i class="fas fa-times"></i>
           </button>
         </div>
 
         <!-- Informations de la scène -->
-        <div class="scene-info-section">
-          <div class="scene-details">
+        <div class="scene-info-section-raccord-photo">
+          <div class="scene-details-raccord-photo">
             <h4>{{ sceneInfo?.titre }}</h4>
             <p><strong>Synopsis:</strong> {{ sceneInfo?.synopsis || 'Aucun synopsis' }}</p>
             <p><strong>Statut:</strong> {{ sceneInfo?.statutNom || 'Non défini' }}</p>
@@ -35,16 +36,16 @@
         </div>
 
         <!-- Section d'ajout de nouveaux raccords -->
-        <div class="add-raccord-section">
+        <div class="add-raccord-section-raccord-photo">
           <h4><i class="fas fa-plus-circle"></i> Ajouter de nouveaux raccords</h4>
           
           <!-- Sélection du type de raccord -->
-          <div class="form-group">
+          <div class="form-group-raccord-photo">
             <label for="type-raccord">Type de raccord *</label>
             <select 
               id="type-raccord"
               v-model="newRaccord.typeId"
-              class="form-select"
+              class="form-select-raccord-photo"
               required
             >
               <option value="">Sélectionnez un type</option>
@@ -59,58 +60,58 @@
           </div>
 
           <!-- Description du raccord -->
-          <div class="form-group">
+          <div class="form-group-raccord-photo">
             <label for="raccord-description">Description</label>
             <textarea
               id="raccord-description"
               v-model="newRaccord.description"
               rows="3"
-              class="form-textarea"
+              class="form-textarea-raccord-photo"
               placeholder="Décrivez les éléments à conserver pour le prochain tournage..."
             ></textarea>
           </div>
 
-          <!-- Upload de photos - MÊME LOGIQUE QUE GestionRaccords.vue -->
-          <div class="upload-section">
+          <!-- Upload de photos -->
+          <div class="upload-section-raccord-photo">
             <label>Photos pour ce type de raccord *</label>
             <input 
               type="file" 
               multiple 
               accept="image/*" 
               @change="handleImageUpload"
-              class="file-input"
+              class="file-input-raccord-photo"
             >
-            <div v-if="previewImages.length" class="image-previews">
-              <div v-for="(preview, index) in previewImages" :key="index" class="image-preview">
+            <div v-if="previewImages.length" class="image-previews-raccord-photo">
+              <div v-for="(preview, index) in previewImages" :key="index" class="image-preview-raccord-photo">
                 <img :src="preview" alt="Preview">
-                <button @click="removePreview(index)" class="remove-btn">×</button>
+                <button @click="removePreview(index)" class="remove-btn-raccord-photo">×</button>
               </div>
             </div>
-            <small class="field-note">Formats supportés: JPG, PNG, JPEG</small>
+            <small class="field-note-raccord-photo">Formats supportés: JPG, PNG, JPEG</small>
           </div>
 
           <!-- Options supplémentaires -->
-          <div class="form-options">
-            <div class="checkbox-group">
+          <div class="form-options-raccord-photo">
+            <div class="checkbox-group-raccord-photo">
               <label>
                 <input 
                   type="checkbox" 
                   v-model="newRaccord.estCritique"
                 >
-                <span class="checkmark"></span>
+                <span class="checkmark-raccord-photo"></span>
                 Raccord critique
               </label>
-              <small class="option-description">
+              <small class="option-description-raccord-photo">
                 Ce raccord est essentiel pour la continuité du film
               </small>
             </div>
 
-            <div class="form-group">
+            <div class="form-group-raccord-photo">
               <label for="statut-raccord">Statut du raccord</label>
               <select 
                 id="statut-raccord"
                 v-model="newRaccord.statutRaccordId"
-                class="form-select"
+                class="form-select-raccord-photo"
               >
                 <option 
                   v-for="statut in availableStatuts" 
@@ -124,15 +125,15 @@
           </div>
 
           <!-- Bouton d'ajout -->
-          <div class="action-buttons">
+          <div class="action-buttons-raccord-photo">
             <button 
-              class="btn-cancel"
+              class="btn-cancel-raccord-photo"
               @click="resetNewRaccord"
             >
               Annuler
             </button>
             <button 
-              class="btn-add"
+              class="btn-add-raccord-photo"
               @click="addRaccord"
               :disabled="!canAddRaccord || loading"
             >
@@ -143,48 +144,48 @@
         </div>
 
         <!-- Liste des raccords existants -->
-        <div class="existing-raccords-section">
+        <div class="existing-raccords-section-raccord-photo">
           <h4><i class="fas fa-list"></i> Raccords existants</h4>
           
-          <div v-if="loadingRaccords" class="loading">
+          <div v-if="loadingRaccords" class="loading-raccord-photo">
             <i class="fas fa-spinner fa-spin"></i> Chargement...
           </div>
 
-          <div v-else-if="existingRaccords.length === 0" class="no-data">
+          <div v-else-if="existingRaccords.length === 0" class="no-data-raccord-photo">
             <p>Aucun raccord sauvegardé pour cette scène</p>
           </div>
 
-          <div v-else class="raccords-list">
+          <div v-else class="raccords-list-raccord-photo">
             <div 
               v-for="raccord in existingRaccords" 
               :key="raccord.id"
-              class="raccord-item"
+              class="raccord-item-raccord-photo"
             >
-              <div class="raccord-header">
-                <div class="raccord-info">
+              <div class="raccord-header-raccord-photo">
+                <div class="raccord-info-raccord-photo">
                   <h5>{{ raccord.typeRaccordNom || getTypeName(raccord.typeRaccordId) }}</h5>
-                  <span class="raccord-date">
+                  <span class="raccord-date-raccord-photo">
                     Créé le {{ formatDate(raccord.creeLe) }}
                   </span>
                   <!-- Indicateur d'images partagées -->
                   <span 
                     v-if="raccord.sharedImages && raccord.sharedImages.length > 0" 
-                    class="shared-badge"
+                    class="shared-badge-raccord-photo"
                   >
                     <i class="fas fa-share-alt"></i>
                     {{ raccord.sharedImages.length }} image(s) partagée(s)
                   </span>
                 </div>
-                <div class="raccord-actions">
+                <div class="raccord-actions-raccord-photo">
                   <button 
-                    class="btn-view"
+                    class="btn-view-raccord-photo"
                     @click="viewRaccord(raccord)"
                     title="Voir les photos"
                   >
                     <i class="fas fa-eye"></i>
                   </button>
                   <button 
-                    class="btn-delete"
+                    class="btn-delete-raccord-photo"
                     @click="deleteRaccord(raccord.id)"
                     title="Supprimer"
                   >
@@ -193,23 +194,23 @@
                 </div>
               </div>
               
-              <p v-if="raccord.description" class="raccord-description">
+              <p v-if="raccord.description" class="raccord-description-raccord-photo">
                 {{ raccord.description }}
               </p>
 
               <!-- Miniatures des photos (propres + partagées) -->
-              <div v-if="getAllImagesForRaccord(raccord).length > 0" class="photos-miniatures">
+              <div v-if="getAllImagesForRaccord(raccord).length > 0" class="photos-miniatures-raccord-photo">
                 <div 
                   v-for="image in getAllImagesForRaccord(raccord).slice(0, 4)" 
                   :key="image.id"
-                  class="miniature"
+                  class="miniature-raccord-photo"
                   @click="viewImage(image)"
                 >
                   <img :src="getImageUrl(image.cheminFichier)" alt="Miniature">
                 </div>
                 <div 
                   v-if="getAllImagesForRaccord(raccord).length > 4" 
-                  class="miniature more-count"
+                  class="miniature-raccord-photo more-count-raccord-photo"
                 >
                   +{{ getAllImagesForRaccord(raccord).length - 4 }}
                 </div>
@@ -219,22 +220,22 @@
         </div>
 
         <!-- Modal de visualisation des photos -->
-        <div v-if="showImageModal" class="image-modal-overlay" @click="closeImageModal">
-          <div class="image-modal-content" @click.stop>
-            <div class="image-modal-header">
+        <div v-if="showImageModal" class="image-modal-overlay-raccord-photo" @click="closeImageModal">
+          <div class="image-modal-content-raccord-photo" @click.stop>
+            <div class="image-modal-header-raccord-photo">
               <h4>{{ selectedRaccord ? (selectedRaccord.typeRaccordNom || getTypeName(selectedRaccord.typeRaccordId)) : 'Photos' }}</h4>
-              <button class="close-btn" @click="closeImageModal">
+              <button class="close-btn-raccord-photo" @click="closeImageModal">
                 <i class="fas fa-times"></i>
               </button>
             </div>
-            <div class="image-gallery">
+            <div class="image-gallery-raccord-photo">
               <div 
                 v-for="image in selectedRaccord?.images || []" 
                 :key="image.id"
-                class="gallery-item"
+                class="gallery-item-raccord-photo"
               >
                 <img :src="getImageUrl(image.cheminFichier)" :alt="image.nomFichier">
-                <div class="image-info">
+                <div class="image-info-raccord-photo">
                   <p>{{ image.nomFichier }}</p>
                   <p v-if="image.descriptionImage">{{ image.descriptionImage }}</p>
                 </div>
@@ -283,7 +284,7 @@ const previewImages = ref([])
 
 const currentUserId = ref(null)
 
-// Nouveau raccord - MÊME STRUCTURE QUE GestionRaccords.vue
+// Nouveau raccord
 const newRaccord = ref({
   typeId: null,
   description: '',
@@ -450,7 +451,6 @@ const loadSharedImages = async (raccordId) => {
   }
 }
 
-// MÊME LOGIQUE D'UPLOAD QUE GestionRaccords.vue
 const handleImageUpload = (event) => {
   const files = event.target.files
   if (files && files.length > 0) {
@@ -490,7 +490,6 @@ const resetNewRaccord = () => {
   previewImages.value = []
 }
 
-
 const addRaccord = async () => {
   if (!canAddRaccord.value) return
 
@@ -525,7 +524,7 @@ const addRaccord = async () => {
     const response = await axios.post('/api/raccords', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'X-User-Id': userId  // ← AJOUTER CET EN-TÊTE
+        'X-User-Id': userId
       }
     })
 
@@ -579,7 +578,7 @@ const deleteRaccord = async (raccordId) => {
     
     await axios.delete(`/api/raccords/${raccordId}`, {
       headers: {
-        'X-User-Id': userId  // ← AJOUTER CET EN-TÊTE
+        'X-User-Id': userId
       }
     })
     await loadExistingRaccords()
@@ -595,10 +594,6 @@ const deleteRaccord = async (raccordId) => {
     }
   }
 }
-
-// const getAllImagesForRaccord = (raccord) => {
-//   return raccord.images || []
-// }
 
 const getAllImagesForRaccord = (raccord) => {
   // Récupérer les images propres au raccord
@@ -652,5 +647,14 @@ onMounted(() => {
   loadTypesRaccord()
   loadStatutsRaccord()
 })
+
+// Exposer la méthode pour ouvrir le modal
+defineExpose({
+  openRaccordsModal
+})
 </script>
+
+<style scoped>
+
+</style>
 
