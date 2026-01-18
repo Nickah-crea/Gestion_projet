@@ -1,8 +1,7 @@
 // =============================================
-// _navbar.scss - MODIFIÉ AVEC NOUVELLE PALETTE
+// _navbar.scss - INSPIRÉ DE NOCTELLER
 // =============================================
 
-// _navbar.scss
 @import '../base/variables';
 
 .navbar {
@@ -10,13 +9,16 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 80px;
   padding: 0 $padding-lg;
   display: flex;
   align-items: center;
   transition: $transition;
   z-index: $z-index-fixed;
   background: $color-background-alt;
+  border-bottom: 1px solid rgba($color-border, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  
   &.collapsed {
     height: 70px;
     padding: 0 $padding-md;
@@ -34,13 +36,16 @@
   justify-content: space-between;
   height: 100%;
   width: 100%;
-  padding: 0 $padding-lg;
+  padding: 0 $padding-md;
   margin: 0 auto;
 }
 
-/* Logo - Gauche */
+/* Logo - Gauche (Comme Nocteller) */
 .navbar-left {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: $gap-lg;
 }
 
 .logo-link {
@@ -48,7 +53,6 @@
   align-items: center;
   text-decoration: none;
   transition: $transition-fast;
-  padding: $padding-xs 0;
 
   &:hover {
     opacity: 0.9;
@@ -62,47 +66,35 @@
   object-fit: contain;
 }
 
-/* === [Prénom NOM + rôle] - GAUCHE === */
-.user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex-shrink: 0;
-  margin-left: 50px;
-}
-
-.user-name p {
-  @include typography-playfair-h4;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary; // Changé: brun foncé
+/* Texte du logo (Nocteller) */
+.logo-text {
+  @include typography-playfair-h1;
+  font-size: 28px;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  letter-spacing: -0.5px;
   margin: 0;
-  line-height: 1.2;
+  background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.user-role {
-  @include typography-playfair-p3;
-  color: $color-primary; // Changé: doré
-  font-weight: $font-weight-medium;
-  opacity: 0.8;
-  white-space: nowrap;
-  letter-spacing: 0.5px;
-}
-
-/* Navigation centrale */
+/* Navigation centrale - Style épuré comme nav.png */
 .nav-center {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $gap-lg;
+  gap: $gap-xl;
   flex: 1;
-  margin: 0 $margin-lg;
+  margin: 0 $margin-xl;
   transition: $transition;
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
 
-/* === LIENS DE NAVIGATION - PETITE TAILLE, PREMIÈRE LETTRE MAJUSCULE === */
+/* Liens de navigation - Style Nocteller */
 .nav-link {
   text-decoration: none;
   position: relative;
@@ -111,56 +103,70 @@
   text-align: center;
 
   .link-text {
-    @include typography-playfair-p3;
+    @include typography-playfair-p2;
     font-weight: $font-weight-medium;
-    color: $color-text-primary; // CHANGÉ: brun foncé (au lieu de rouge sombre)
+    color: $color-text-secondary;
     letter-spacing: 0.3px;
     transition: $transition-fast;
-    text-transform: capitalize;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, $color-primary, $color-accent);
+      transition: $transition;
+    }
   }
 
   &:hover {
     .link-text {
-      color: $color-primary; // CHANGÉ: doré (au lieu d'orange)
+      color: $color-text-primary;
       transform: translateY(-1px);
+      
+      &::after {
+        width: 100%;
+      }
     }
-
-    &::after {
-      width: 70%;
-      opacity: 1;
-    }
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, $color-primary, $color-primary-light); // Changé: doré
-    transition: $transition;
-    border-radius: 1px;
-    opacity: 0;
   }
 
   &.router-link-active {
     .link-text {
-      @include typography-playfair-p3;
-      color: $color-primary; // CHANGÉ: doré (au lieu d'orange)
+      color: $color-text-primary;
       font-weight: $font-weight-semibold;
-    }
-
-    &::after {
-      width: 70%;
-      opacity: 1;
-      background: linear-gradient(90deg, $color-primary, $color-primary-light); // Changé: doré
+      
+      &::after {
+        width: 100%;
+        background: linear-gradient(90deg, $color-primary, $color-accent);
+      }
     }
   }
 }
 
-/* Section Ajouter */
+/* Liens avec dropdown (comme "Parcourir ▼") */
+.nav-link-dropdown {
+  @extend .nav-link;
+  
+  .link-text {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    i {
+      font-size: 10px;
+      transition: $transition;
+    }
+  }
+  
+  &:hover .link-text i {
+    transform: rotate(180deg);
+  }
+}
+
+/* Section Ajouter - Style bouton "Écrire" de Nocteller */
 .quick-add-section {
   position: relative;
   margin-left: $margin-md;
@@ -169,124 +175,118 @@
 .quick-add-btn {
   @include flex-center;
   gap: $gap-sm;
-  background: rgba($color-primary, 0.12); // Changé: doré subtil
-  border: 1px solid rgba($color-primary, 0.2); // Changé: doré
-  border-radius: 4px;
-  padding: 6px 14px;
+  background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+  border: none;
+  border-radius: $border-radius-pill;
+  padding: 10px 24px;
   cursor: pointer;
-  transition: $transition;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  min-width: 100px;
-  height: 36px;
+  transition: $transition-fast;
+  min-width: 120px;
+  height: 42px;
+  box-shadow: 0 4px 15px rgba($color-primary, 0.3);
 
   span {
-    @include typography-playfair-p3;
+    @include typography-playfair-p2;
     font-weight: $font-weight-semibold;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-light;
     letter-spacing: 0.3px;
-    text-transform: capitalize;
+    text-transform: uppercase;
   }
 
   i {
     font-size: $font-size-p4;
-    color: $color-text-secondary; // Changé: brun
+    color: $color-text-light;
     transition: $transition;
   }
 
   &:hover {
-    background: rgba($color-primary, 0.2); // Changé: doré plus visible
-    border-color: rgba($color-primary, 0.3); // Changé: doré
     transform: translateY(-2px);
-    box-shadow: $shadow-primary; // Changé: ombre dorée
+    box-shadow: 0 6px 20px rgba($color-primary, 0.4);
+    background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
 
-    span, i {
-      color: $color-primary; // Changé: doré
+    i {
+      transform: translateY(2px);
     }
   }
 
   &[aria-expanded="true"] {
-    background: rgba($color-primary, 0.25); // Changé: doré
-    border-color: $color-primary; // Changé: doré
-    box-shadow: $shadow-primary; // Changé: ombre dorée
+    background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
+    box-shadow: 0 4px 20px rgba($color-primary, 0.4);
 
     i {
       transform: rotate(180deg);
-      color: $color-primary; // Changé: doré
     }
   }
 }
 
-/* === POPUP AJOUTER - VERSION RÉTRÉCIE === */
+/* === POPUP AJOUTER - STYLE NOCTELLER MODERNE === */
 .add-popup {
   position: absolute;
   top: calc(100% + $gap-md);
   left: 50%;
   transform: translateX(-50%);
   z-index: $z-index-popover;
-  min-width: 380px; /* RÉDUIT DE 425px */
+  min-width: 420px;
   animation: slideDown 0.3s $ease-out-cinema forwards;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
 }
 
 .popup-content {
-  background: $color-background-alt; // Changé: blanc
-  border-radius: $border-radius; /* RÉDUIT DE $border-radius-lg */
-  padding: $padding-lg; /* RÉDUIT DE $padding-xl */
-  box-shadow: $shadow-lg; /* RÉDUIT DE $shadow-xl */
-  border: 1px solid $color-border; // Changé: bordure dorée
-  backdrop-filter: blur(12px); /* RÉDUIT DE 15px */
-  -webkit-backdrop-filter: blur(12px);
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  padding: $padding-lg;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba($color-border, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   width: 100%;
-  
-  background: rgba($color-background-alt, 0.95); // Changé: blanc
-  border: 1px solid rgba($color-primary, 0.15); // Changé: doré subtil
 }
 
 .popup-grid {
   display: flex;
   flex-direction: column;
-  gap: $gap-lg; /* RÉDUIT DE $gap-xl */
+  gap: $gap-lg;
 }
 
 .popup-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: $gap-md; /* RÉDUIT DE $gap-lg */
+  gap: $gap-md;
 }
 
 .popup-btn {
   @include flex-center;
-  height: 50px; /* RÉDUIT DE 65px */
-  background: rgba($color-primary, 0.05); // Changé: doré très subtil
-  border: 1px solid rgba($color-primary, 0.1); // Changé: doré
-  border-radius: $border-radius-sm; /* RÉDUIT DE $border-radius */
+  height: 60px;
+  background: rgba($color-primary, 0.05);
+  border: 1px solid rgba($color-border, 0.2);
+  border-radius: $border-radius;
   cursor: pointer;
-  transition: $transition;
-  padding: $padding-sm; /* RÉDUIT DE $padding-md */
+  transition: $transition-fast;
+  padding: $padding-sm;
   text-align: center;
   flex-direction: column;
 
-  @include typography-playfair-p3; /* CHANGÉ DE p2 À p3 */
+  @include typography-playfair-p3;
   font-weight: $font-weight-medium;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-secondary;
   letter-spacing: 0.3px;
-  line-height: 1.2; /* RÉDUIT DE 1.3 */
-  text-transform: capitalize;
+  line-height: 1.3;
 
   &:hover {
-    background: rgba($color-primary, 0.12); // Changé: doré subtil
-    border-color: rgba($color-primary, 0.25); // Changé: doré
-    transform: translateY(-2px) scale(1.02); /* RÉDUIT DE -3px */
-    box-shadow: $shadow-md; /* RÉDUIT DE $shadow-primary */
-    color: $color-primary; // Changé: doré
+    background: linear-gradient(135deg, rgba($color-primary, 0.1), rgba($color-accent, 0.1));
+    border-color: $color-primary;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba($color-primary, 0.15);
+    color: $color-text-primary;
   }
 
   &:active {
-    transform: translateY(-1px);
+    transform: translateY(0);
   }
 }
 
-/* Actions de navigation - Droite */
+/* Actions de navigation - Droite (Profile, Déconnexion) */
 .nav-actions {
   display: flex;
   align-items: center;
@@ -299,39 +299,39 @@
   align-items: center;
   gap: $gap-md;
   text-decoration: none;
-  padding: 4px 10px;
-  border-radius: 4px;
-  transition: $transition;
-  background: rgba($color-primary, 0.07); // Changé: doré subtil
-  border: 1px solid rgba($color-primary, 0.1); // Changé: doré
-  min-width: 130px;
-  height: 36px;
+  padding: 6px 12px;
+  border-radius: $border-radius-pill;
+  transition: $transition-fast;
+  background: rgba($color-primary, 0.05);
+  border: 1px solid rgba($color-border, 0.2);
+  min-width: 140px;
+  height: 42px;
 
   &:hover {
-    background: rgba($color-primary, 0.12); // Changé: doré
-    border-color: rgba($color-primary, 0.18); // Changé: doré
-    transform: translateY(-2px);
-    box-shadow: $shadow-primary; // Changé: ombre dorée
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba($color-primary, 0.15);
   }
 }
 
 .profile-avatar-container {
   position: relative;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid rgba($color-primary, 0.12); // Changé: doré
+  border: 2px solid rgba($color-primary, 0.2);
 }
 
 .profile-avatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: $transition;
+  transition: $transition-fast;
 
   .profile-link:hover & {
-    transform: scale(1.06);
+    transform: scale(1.1);
   }
 }
 
@@ -339,82 +339,119 @@
   @include flex-center;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, $color-primary, $color-accent); // Changé: doré à orange
-  color: $color-text-light; // Changé: blanc
-  font-size: $font-size-p4;
+  background: linear-gradient(135deg, $color-primary, $color-accent);
+  color: $color-text-light;
+  font-size: $font-size-p3;
 }
 
 .profile-text {
   @include typography-playfair-p3;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary; // Changé: brun foncé
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
   max-width: 100px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: 0.3px;
-  text-transform: capitalize;
+}
+
+/* Barre de recherche (comme nav.png) */
+.search-container {
+  position: relative;
+  margin: 0 $margin-lg;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  border: 1px solid rgba($color-border, 0.3);
+  border-radius: $border-radius-pill;
+  background: rgba($color-primary, 0.03);
+  @include typography-playfair-p3;
+  color: $color-text-secondary;
+  transition: $transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    background: $color-background-alt;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+  
+  &::placeholder {
+    color: $color-text-muted;
+  }
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $color-text-muted;
+  font-size: $font-size-p3;
 }
 
 .logout-link {
   @include flex-center;
   gap: $gap-sm;
   text-decoration: none;
-  padding: 4px 10px;
-  border-radius: 4px;
-  background: rgba($color-error, 0.12); // Changé: rouge bordeaux subtil
-  border: 1px solid rgba($color-error, 0.2); // Changé: rouge bordeaux
-  transition: $transition;
+  padding: 8px 12px;
+  border-radius: $border-radius;
+  background: rgba($color-error, 0.08);
+  border: 1px solid rgba($color-error, 0.2);
+  transition: $transition-fast;
   min-width: 40px;
-  height: 36px;
+  height: 42px;
 
   i {
-    font-size: $font-size-p3;
-    color: $color-error; // Changé: rouge bordeaux
+    font-size: $font-size-p2;
+    color: $color-error;
   }
 
   .logout-text {
     @include typography-playfair-p3;
     font-weight: $font-weight-medium;
-    color: $color-error; // Changé: rouge bordeaux
+    color: $color-error;
     letter-spacing: 0.3px;
   }
 
   &:hover {
-    background: rgba($color-error, 0.2); // Changé: rouge bordeaux
-    border-color: $color-error; // Changé: rouge bordeaux
-    transform: translateY(-2px);
-    box-shadow: $shadow-accent; // Changé: ombre orange
+    background: rgba($color-error, 0.15);
+    border-color: $color-error;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba($color-error, 0.15);
 
     i, .logout-text {
-      color: $color-text-light; // Changé: blanc
+      color: $color-error;
     }
   }
 }
 
 .burger-menu {
   display: none;
-  background: rgba($color-primary, 0.08); // Changé: doré subtil
-  border: 1px solid rgba($color-primary, 0.15); // Changé: doré
+  background: transparent;
+  border: 1px solid rgba($color-border, 0.3);
   cursor: pointer;
-  padding: $padding-xs;
-  border-radius: 4px;
-  transition: $transition;
-  min-width: 38px;
-  min-height: 38px;
+  padding: $padding-sm;
+  border-radius: $border-radius;
+  transition: $transition-fast;
+  min-width: 44px;
+  min-height: 44px;
 
   i {
     font-size: $font-size-p1;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary;
   }
 
   &:hover {
-    background: rgba($color-primary, 0.15); // Changé: doré
-    border-color: $color-primary; // Changé: doré
-    transform: scale(1.05);
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
 
     i {
-      color: $color-primary; // Changé: doré
+      color: $color-primary;
     }
   }
 }
@@ -423,7 +460,7 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-15px);
+    transform: translateX(-50%) translateY(-10px);
   }
   to {
     opacity: 1;
@@ -433,43 +470,8 @@
 
 /* Responsive */
 @include respond-to($breakpoint-lg) {
-  .navbar-content {
-    padding: 0 $padding-md;
-  }
-
-  .nav-center {
-    gap: $gap-md;
-    margin: 0 $margin-md;
-  }
-
-  .nav-link {
-    .link-text {
-      @include typography-playfair-p3;
-    }
-    
-    &.router-link-active {
-      .link-text {
-        @include typography-playfair-p3;
-      }
-    }
-  }
-
-  .popup-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .add-popup {
-    min-width: 340px; /* RÉDUIT DE 380px */
-  }
-  
-  .popup-btn {
-    height: 45px; /* RÉDUIT DE 60px */
-  }
-}
-
-@include respond-to($breakpoint-md) {
   .navbar {
-    height: 60px;
+    padding: 0 $padding-md;
   }
 
   .navbar-content {
@@ -477,53 +479,67 @@
   }
 
   .nav-center {
-    gap: $gap-sm;
+    gap: $gap-lg;
+    margin: 0 $margin-lg;
+  }
+
+  .logo-text {
+    font-size: 24px;
+  }
+
+  .popup-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .add-popup {
+    min-width: 360px;
+  }
+}
+
+@include respond-to($breakpoint-md) {
+  .navbar {
+    height: 70px;
+  }
+
+  .navbar-content {
+    padding: 0 $padding-xs;
+  }
+
+  .nav-center {
+    gap: $gap-md;
+    margin: 0 $margin-md;
+  }
+
+  .search-container {
     margin: 0 $margin-sm;
-  }
-
-  .user-name p {
-    @include typography-playfair-p1;
-  }
-
-  .nav-link {
-    padding: $padding-xs;
-
-    .link-text {
-      @include typography-playfair-p3;
-      font-size: $font-size-p3;
-    }
+    max-width: 300px;
   }
 
   .quick-add-btn {
-    padding: 4px 10px;
-    min-width: 90px;
-    height: 34px;
-
-    span {
-      @include typography-playfair-p3;
-    }
+    padding: 8px 16px;
+    min-width: 100px;
+    height: 38px;
   }
 
   .profile-link {
     min-width: 120px;
-    padding: 4px 8px;
-    height: 34px;
+    height: 38px;
   }
 
   .logout-link {
-    min-width: 38px;
-    padding: 4px;
-    height: 34px;
+    height: 38px;
   }
 }
 
 /* Mobile */
 @media (max-width: $breakpoint-sm) {
   .navbar {
-    height: 55px;
+    height: 65px;
 
     &.collapsed {
-      .nav-center {
+      .nav-center,
+      .search-container,
+      .quick-add-section {
         display: none;
       }
     }
@@ -539,48 +555,42 @@
     left: 0;
     right: 0;
     flex-direction: column;
-    background: rgba($color-background-alt, 0.98); // Changé: blanc
-    backdrop-filter: blur(35px);
-    -webkit-backdrop-filter: blur(35px);
-    padding: $padding-md; /* RÉDUIT DE $padding-lg */
-    gap: $gap-sm; /* RÉDUIT DE $gap-md */
+    background: $color-background-alt;
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    padding: $padding-md;
+    gap: $gap-sm;
     margin: 0;
-    border-top: 1px solid $color-border; // Changé: bordure dorée
-    border-bottom: 1px solid $color-border; // Changé: bordure dorée
-    box-shadow: $shadow-lg; /* RÉDUIT DE $shadow-xl */
+    border-top: 1px solid rgba($color-border, 0.3);
+    border-bottom: 1px solid rgba($color-border, 0.3);
+    box-shadow: $shadow-lg;
     z-index: $z-index-dropdown;
-    max-height: 70vh; /* RÉDUIT DE 75vh */
+    max-height: 70vh;
     overflow-y: auto;
   }
 
-  .user-name p {
-    @include typography-playfair-p2;
+  .search-container {
+    position: absolute;
+    top: calc(100% + $padding-sm);
+    left: $padding-md;
+    right: $padding-md;
+    margin: 0;
+    max-width: none;
   }
 
   .nav-link {
     width: 100%;
     text-align: center;
-    padding: $padding-sm; /* RÉDUIT DE $padding-md */
-    min-width: auto;
+    padding: $padding-sm;
+    border-radius: $border-radius;
 
     .link-text {
-      @include typography-playfair-p3; /* CHANGÉ DE p2 À p3 */
-      color: $color-text-primary; // CHANGÉ: brun foncé (au lieu de rouge sombre)
-    }
-
-    &::after {
-      display: none;
+      font-size: $font-size-p1;
     }
 
     &.router-link-active {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
-      border-radius: $border-radius-sm;
-      border: 1px solid rgba($color-primary, 0.2); // Changé: doré
-      
-      .link-text {
-        @include typography-playfair-p3;
-        color: $color-primary; // CHANGÉ: doré (au lieu d'orange)
-      }
+      background: rgba($color-primary, 0.1);
+      border: 1px solid rgba($color-primary, 0.2);
     }
   }
 
@@ -593,8 +603,6 @@
     width: 100%;
     justify-content: center;
     min-width: auto;
-    padding: $padding-sm;
-    height: 38px; /* AJUSTÉ */
   }
 
   .add-popup {
@@ -602,34 +610,25 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 90%; /* RÉDUIT DE 95% */
-    max-width: 280px; /* RÉDUIT DE 300px */
+    width: 90%;
+    max-width: 320px;
     min-width: auto;
     animation: fadeIn 0.3s $ease-out-cinema forwards;
   }
 
   .popup-content {
-    max-height: 65vh; /* RÉDUIT DE 75vh */
+    max-height: 70vh;
     overflow-y: auto;
-    padding: $padding-md; /* RÉDUIT DE $padding-lg */
-    background: $color-background-alt; // Changé: blanc
+    padding: $padding-md;
   }
 
   .popup-row {
     grid-template-columns: 1fr;
-    gap: $padding-sm; /* RÉDUIT DE $padding-md */
+    gap: $padding-sm;
   }
 
   .popup-btn {
-    height: 48px; /* RÉDUIT DE 55px */
-    padding: $padding-sm;
-    background: rgba($color-primary, 0.07); // Changé: doré subtil
-    color: $color-text-primary; // Changé: brun foncé
-    
-    &:hover {
-      background: rgba($color-primary, 0.12); // Changé: doré
-      color: $color-primary; // Changé: doré
-    }
+    height: 52px;
   }
 
   .burger-menu {
@@ -638,27 +637,25 @@
     justify-content: center;
   }
 
-  .profile-text,
-  .logout-text {
+  .profile-text {
     display: none;
   }
 
   .profile-link {
     min-width: auto;
-    padding: $padding-xs;
+    padding: 6px;
     background: transparent;
     border: none;
     height: auto;
 
     &:hover {
-      background: rgba($color-primary, 0.08); // Changé: doré subtil
+      background: rgba($color-primary, 0.1);
     }
   }
 
   .logout-link {
     min-width: auto;
-    padding: $padding-xs;
-    background: rgba($color-error, 0.08); // Changé: rouge bordeaux subtil
+    padding: 6px;
     height: auto;
 
     .logout-text {
@@ -670,15 +667,10 @@
     gap: $padding-sm;
   }
 
-  .profile-avatar-container {
-    width: 30px;
-    height: 30px;
-  }
-
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translate(-50%, -50%) scale(0.9);
+      transform: translate(-50%, -50%) scale(0.95);
     }
     to {
       opacity: 1;
@@ -694,7 +686,8 @@
       justify-content: space-between;
     }
 
-    .nav-center {
+    .nav-center,
+    .search-container {
       display: none;
     }
 
@@ -711,28 +704,33 @@
   }
 
   .nav-center {
-    gap: $gap-xl;
+    gap: $gap-xxl;
     margin: 0 $margin-xl;
   }
 
-  .nav-link {
-    padding: $padding-xs $padding-md;
-
-    .link-text {
-      @include typography-playfair-p3;
-    }
-  }
-
-  .quick-add-btn {
-    padding: 6px 14px;
-    min-width: 110px;
-    height: 38px;
-
-    span {
-      @include typography-playfair-p3;
-    }
+  .search-container {
+    max-width: 500px;
   }
 }
 
-
-
+/* Style pour le texte Nocteller dans le logo */
+.navbar-left .logo-text {
+  @include typography-playfair-h1;
+  font-size: 28px;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  letter-spacing: -0.5px;
+  margin: 0;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, $color-primary, $color-accent);
+    border-radius: 1px;
+  }
+}
