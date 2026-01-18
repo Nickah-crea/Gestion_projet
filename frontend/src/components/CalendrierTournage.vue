@@ -13,21 +13,16 @@
       <div class="sidebar-section">
         <h3 class="section-title"><i class="fas fa-bolt"></i> Actions Rapides</h3>
         <div class="sidebar-actions">
+          <!-- Bouton "Ajouter un tournage" seulement si pas viewer -->
           <button 
             @click="ouvrirModalPlanning(today)" 
             class="sidebar-btn-add-tournage nouveau-tournage-btn"
+            :disabled="!permissions.canCreatePlanning"
+            :title="!permissions.canCreatePlanning ? 'Vous n\'avez pas les permissions pour créer un planning' : ''"
           >
             <i class="fas fa-plus"></i>
             Ajouter un tournage
           </button>
-         <!-- <button 
-            @click="showAlertesRaccords = !showAlertesRaccords" 
-            class="sidebar-btn"
-            :class="{ active: showAlertesRaccords }"
-          >
-            <i class="fas fa-exclamation-triangle"></i>
-            {{ showAlertesRaccords ? 'Masquer' : 'Voir' }} alertes
-           </button> -->
           <button @click="reinitialiserFiltres" class="sidebar-btn-add-tournage">
             <i class="fas fa-times"></i>
             Réinitialiser filtres
@@ -37,7 +32,7 @@
 
       <!-- Section Filtres -->
       <div class="sidebar-section">
-        <h3 class="section-title"><i class="fas fa-filter"></i> Filtres</h3>
+         <h3 class="section-title"><i class="fas fa-filter"></i> Filtres</h3>
         <div class="filter-group">
           <div class="filter-item">
             <label for="projetFilter">Projet</label>
@@ -46,9 +41,10 @@
               v-model="filtreProjet" 
               @change="chargerTournages"
               class="filter-select"
+              :disabled="!permissions.canViewPlanning"
             >
               <option value="">Tous les projets</option>
-              <option v-for="projet in projets" :key="projet.id" :value="projet.id">
+              <option v-for="projet in projetsAccessibles" :key="projet.id" :value="projet.id">
                 {{ projet.titre }}
               </option>
             </select>
@@ -96,10 +92,6 @@
             <span class="stat-number">{{ getTournagesEnCoursCount }}</span>
             <span class="stat-label">En cours</span>
           </div>
-          <!-- <div class="stat-item">
-            <span class="stat-number">{{ alertesRaccordsCritiques.length }}</span>
-            <span class="stat-label">Alertes critiques</span>
-          </div> -->
         </div>
       </div>
 
@@ -179,15 +171,35 @@
                       :class="`tournage-item statut-${tournage.statutTournage}`">
                     <div class="tournage-header">
                       <div class="tournage-time">{{ formatHeure(tournage.heureDebut) }}</div>
-                      <div class="tournage-actions-small">
+                      <!-- Actions seulement si pas viewer -->
+                      <div class="tournage-actions-small" v-if="!isViewer">
                         <button @click.stop="ouvrirDetailsTournage(tournage)" class="btn-details-small" title="Voir les détails">
                           <i class="fas fa-eye"></i>
                         </button>
-                        <button @click.stop="ouvrirModificationTournage(tournage)" class="btn-edit-small" title="Modifier">
+                        <!-- Vérifier l'accès avant d'afficher le bouton modifier -->
+                        <button 
+                          @click.stop="ouvrirModificationTournage(tournage)" 
+                          class="btn-edit-small" 
+                          title="Modifier"
+                          v-if="hasAccessToEpisode(tournage.episodeId)"
+                        >
                           <i class="fas fa-edit"></i>
                         </button>
-                        <button @click.stop="supprimerTournageDirect(tournage)" class="btn-delete-small" title="Supprimer">
+                        
+                        <!-- Vérifier l'accès avant d'afficher le bouton supprimer -->
+                        <button 
+                          @click.stop="supprimerTournageDirect(tournage)" 
+                          class="btn-delete-small" 
+                          title="Supprimer"
+                          v-if="hasAccessToEpisode(tournage.episodeId)"
+                        >
                           <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                      <!-- Pour les viewers, seulement le bouton voir détails -->
+                      <div class="tournage-actions-small" v-else>
+                        <button @click.stop="ouvrirDetailsTournage(tournage)" class="btn-details-small" title="Voir les détails">
+                          <i class="fas fa-eye"></i>
                         </button>
                       </div>
                     </div>
@@ -213,7 +225,8 @@
       </div>
 
     <!-- Modal de création/modification de planning -->
-    <div v-if="showPlanningModal" class="modal-overlay" @click="fermerModalPlanning">
+    
+           <div v-if="showPlanningModal" class="modal-overlay" @click="fermerModalPlanning">
       <div class="modal-content planning-modal" @click.stop>
         <div class="modal-header">
           <h3>
@@ -224,6 +237,7 @@
             <i class="fas fa-times"></i>
           </button>
         </div>
+        
         <form @submit.prevent="soumettrePlanning" class="planning-form">
           <div class="form-row">
             <div class="form-group">
@@ -234,25 +248,27 @@
                 @change="chargerEpisodesParProjet"
                 required
                 class="form-select"
+                :disabled="!permissions.canCreatePlanning && !permissions.canEditPlanning"
               >
                 <option value="">Sélectionner un projet</option>
-                <option v-for="projet in projets" :key="projet.id" :value="projet.id">
+                <option v-for="projet in projetsAccessibles" :key="projet.id" :value="projet.id">
                   {{ projet.titre }}
                 </option>
               </select>
             </div>
+            
             <div class="form-group">
               <label for="episodeId">Épisode *</label>
               <select 
                 id="episodeId"
                 v-model="formPlanning.episodeId" 
                 @change="chargerSequencesParEpisode"
-                :disabled="!formPlanning.projetId"
+                :disabled="!formPlanning.projetId || (!permissions.canCreatePlanning && !permissions.canEditPlanning)"
                 required
                 class="form-select"
               >
                 <option value="">Sélectionner un épisode</option>
-                <option v-for="episode in episodesParProjet" :key="episode.idEpisode" :value="episode.idEpisode">
+                <option v-for="episode in episodesAccessiblesPourFiltre" :key="episode.idEpisode" :value="episode.idEpisode">
                   Épisode {{ episode.ordre }}: {{ episode.titre }}
                 </option>
               </select>
@@ -418,14 +434,6 @@
             >
               <i class="fas fa-times"></i> Annuler
             </button>
-            <!-- <button 
-              v-if="isModificationPlanning"
-              type="button" 
-              @click="supprimerPlanning"
-              class="btn btn-danger"
-            >
-              <i class="fas fa-trash"></i> Supprimer
-            </button> -->
             <button 
               type="submit" 
               :disabled="chargementPlanning"
@@ -527,6 +535,16 @@ export default {
   name: 'CalendrierTournage',
   data() {
     return {
+     user: JSON.parse(localStorage.getItem('user')) || null,
+      currentUserId: null,
+      permissions: {
+        canCreatePlanning: false,
+        canEditPlanning: false,
+        canDeletePlanning: false,
+        canViewPlanning: false
+      },
+      userProjetIds: [],
+      episodesAccessibles: [],
       tournages: [],
       projets: [],
       filtreProjet: '',
@@ -573,19 +591,52 @@ export default {
     };
   },
 
-  watch: {
-    'formPlanning.sceneId': {
-      handler(newSceneId) {
-        if (newSceneId && !this.isModificationPlanning) {
-          // Charger les lieux associés à cette scène
-          this.chargerSceneLieus(newSceneId);
-        }
-      },
-      immediate: false
-    }
-  },
-  
   computed: {
+    // Vérifier le rôle de l'utilisateur
+     
+    isScenariste() {
+      return this.user?.role === 'SCENARISTE';
+    },
+    
+    isRealisateur() {
+      return this.user?.role === 'REALISATEUR';
+    },
+    
+    isAdmin() {
+      return this.user?.role === 'ADMIN';
+    },
+    
+    isViewer() {
+      return this.user?.role === 'UTILISATEUR';
+    },
+    canEdit() {
+      // Seuls les SCENARISTE, REALISATEUR et ADMIN peuvent éditer
+      return this.user?.role === 'SCENARISTE' || 
+             this.user?.role === 'REALISATEUR' || 
+             this.user?.role === 'ADMIN';
+    },
+    // Liste des projets accessibles
+    projetsAccessibles() {
+      if (!this.user) return [];
+      if (this.isAdmin) return this.projets;
+      
+      // Pour les réalisateurs et scénaristes, filtrer les projets accessibles
+      return this.projets.filter(projet => 
+        this.permissions.canViewPlanning || 
+        this.userProjetIds.includes(projet.id)
+      );
+    },
+    
+    // Épisodes accessibles pour le filtre
+    episodesAccessiblesPourFiltre() {
+      // ICI: utiliser formPlanning.projetId au lieu de filtreProjet
+      if (!this.formPlanning.projetId) return [];
+      if (this.isAdmin) return this.episodesParProjet;
+      
+      return this.episodesParProjet.filter(episode => 
+        this.episodesAccessibles.includes(episode.idEpisode)
+      );
+    },
     moisCourant() {
       return this.dateCourante.toLocaleDateString('fr-FR', { 
         month: 'long', 
@@ -633,6 +684,29 @@ export default {
       return this.formatDateForAPI(new Date());
     }
   },
+
+watch: {
+  'formPlanning.sceneId': {
+    handler(newSceneId) {
+      if (newSceneId && !this.isModificationPlanning) {
+        this.chargerSceneLieus(newSceneId);
+      }
+    },
+    immediate: false
+  },
+ 
+  'formPlanning.projetId'(newProjetId) {
+    if (newProjetId) {
+      this.chargerEpisodesParProjet();
+    } else {
+      this.episodesParProjet = [];
+      this.formPlanning.episodeId = '';
+      this.formPlanning.sequenceId = '';
+      this.formPlanning.sceneId = '';
+    }
+  }
+},
+  
   methods: {
     async chargerTournages() {
       try {
@@ -700,9 +774,18 @@ export default {
     async chargerProjets() {
       try {
         const response = await axios.get('/api/projets');
-        this.projets = response.data;
+        
+        // Filtrer les projets accessibles
+        if (this.isAdmin) {
+          this.projets = response.data;
+        } else {
+          this.projets = response.data.filter(projet => 
+            this.userProjetIds.includes(projet.id)
+          );
+        }
       } catch (error) {
         console.error('Erreur chargement projets:', error);
+        this.projets = [];
       }
     },
 
@@ -754,7 +837,26 @@ export default {
       this.selectedTournageDetails = tournage;
       this.showDetailsModal = true;
     },
-    ouvrirModificationTournage(tournage) {
+    
+    async ouvrirModificationTournage(tournage) {
+     // Vérifier les permissions
+      if (!this.permissions.canEditPlanning) {
+        this.showAccessError('Vous n\'avez pas les permissions pour modifier un planning.');
+        return;
+      }
+      
+      // Vérifier l'accès à l'épisode - ATTENDRE la vérification
+      if (tournage.episodeId) {
+        const hasAccess = await this.checkEpisodeAccess(tournage.episodeId);
+        if (!hasAccess) {
+          // Ne pas ouvrir le modal si pas d'accès
+          return;
+        }
+      }
+      
+      // Ne pas permettre la modification pour les viewers
+      if (this.isViewer) return;
+      
       this.isModificationPlanning = true;
       this.selectedDate = tournage.dateTournage;
       this.erreurPlanning = '';
@@ -772,18 +874,42 @@ export default {
         statutTournage: tournage.statutTournage,
         notes: tournage.notes || ''
       };
-      Promise.all([
-        this.chargerProjets(),
-        this.chargerLieuxDisponibles(),
-        this.chargerEpisodesParProjet(),
-        this.chargerSequencesParEpisode(),
-        this.chargerScenesParSequence(),
-        this.chargerPlateauxParLieu()
-      ]).then(() => {
+      
+      try {
+        await Promise.all([
+          this.chargerProjets(),
+          this.chargerLieuxDisponibles(),
+          this.chargerEpisodesParProjet(),
+          this.chargerSequencesParEpisode(),
+          this.chargerScenesParSequence(),
+          this.chargerPlateauxParLieu()
+        ]);
+        
+        // Vérifier à nouveau après le chargement
+        if (this.formPlanning.episodeId && !this.isAdmin) {
+          const episodeEstAccessible = this.episodesAccessibles.includes(this.formPlanning.episodeId);
+          if (!episodeEstAccessible) {
+            this.showAccessError('Vous n\'avez pas accès à cet épisode.');
+            return;
+          }
+        }
+        
         this.showPlanningModal = true;
-      });
+      } catch (error) {
+        console.error('Erreur lors du chargement des données:', error);
+        this.showAccessError('Erreur lors du chargement des données.');
+      }
     },
+    
     async ouvrirModalPlanning(date) {
+       // Vérifier les permissions
+      if (!this.permissions.canCreatePlanning) {
+        this.showAccessError('Vous n\'avez pas les permissions pour créer un planning.');
+        return;
+      }
+      // Ne pas permettre l'ouverture du modal de création pour les viewers
+      if (this.isViewer) return;
+      
       this.selectedDate = date;
       this.isModificationPlanning = false;
       this.erreurPlanning = '';
@@ -809,6 +935,7 @@ export default {
       ]);
       this.showPlanningModal = true;
     },
+    
     fermerModalPlanning() {
       this.showPlanningModal = false;
       this.selectedDate = null;
@@ -820,22 +947,209 @@ export default {
       this.hasSceneLieu = false;
       this.sceneLieus = []; 
     },
-    async chargerEpisodesParProjet() {
-      if (!this.formPlanning.projetId) {
-        this.episodesParProjet = [];
-        return;
+
+     async loadUserData() {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        this.user = JSON.parse(userStr);
+        this.currentUserId = this.user.id;
+        
+        if (!this.user || !this.user.id) {
+          this.$router.push('/');
+        }
+      } else {
+        this.$router.push('/');
       }
-      try {
-        const response = await axios.get(`/api/episodes/projet/${this.formPlanning.projetId}`);
-        this.episodesParProjet = response.data;
+    } catch (error) {
+      console.error('Erreur lors du chargement des données utilisateur:', error);
+      this.$router.push('/');
+    }
+  },
+  
+  async initializePermissions() {
+    try {
+      // Récupérer les permissions générales de l'utilisateur
+      const role = this.user?.role;
+      
+      // Permissions par défaut basées sur le rôle
+      if (this.isAdmin) {
+        this.permissions = {
+          canCreatePlanning: true,
+          canEditPlanning: true,
+          canDeletePlanning: true,
+          canViewPlanning: true
+        };
+      } else if (this.isRealisateur) {
+        this.permissions = {
+          canCreatePlanning: false,
+          canEditPlanning: false,
+          canDeletePlanning: false,
+          canViewPlanning: true
+        };
+      } else if (this.isScenariste) {
+        this.permissions = {
+          canCreatePlanning: true,
+          canEditPlanning: true,
+          canDeletePlanning: true,
+          canViewPlanning: true
+        };
+      } else {
+        this.permissions = {
+          canCreatePlanning: false,
+          canEditPlanning: false,
+          canDeletePlanning: false,
+          canViewPlanning: false
+        };
+      }
+      
+      // Charger les projets et épisodes accessibles
+      await this.loadUserProjects();
+      await this.loadUserEpisodes();
+      
+    } catch (error) {
+      console.error('Erreur lors de l\'initialisation des permissions:', error);
+    }
+  },
+  
+  async loadUserProjects() {
+    try {
+      if (this.isAdmin) {
+        // Admin a accès à tous les projets
+        const response = await axios.get('/api/projets');
+        this.userProjetIds = response.data.map(p => p.id);
+      } else {
+        // Pour les autres rôles, récupérer les projets via les épisodes
+        const episodesResponse = await axios.get(`/api/episodes/utilisateur/${this.currentUserId}`);
+        this.userProjetIds = [...new Set(episodesResponse.data.map(ep => ep.projetId))];
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des projets utilisateur:', error);
+      this.userProjetIds = [];
+    }
+  },
+  
+async loadUserEpisodes() {
+  try {
+    if (this.isAdmin) {
+      // Admin a accès à tous les épisodes
+      this.episodesAccessibles = [];
+    } else {
+      // Pour les scénaristes et réalisateurs, récupérer les épisodes accessibles
+      const episodesResponse = await axios.get(`/api/episodes/utilisateur/${this.currentUserId}`);
+      
+      // S'assurer que les données sont au bon format
+      if (episodesResponse.data && Array.isArray(episodesResponse.data)) {
+        this.episodesAccessibles = episodesResponse.data.map(ep => ep.idEpisode);
+        console.log('Épisodes accessibles chargés:', this.episodesAccessibles);
+      } else {
+        console.error('Format de réponse invalide pour les épisodes:', episodesResponse.data);
+        this.episodesAccessibles = [];
+      }
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des épisodes utilisateur:', error);
+    this.episodesAccessibles = [];
+  }
+},
+  
+  // Vérifier l'accès à l'épisode
+  async checkEpisodeAccess(episodeId) {
+    try {
+      // Si admin, pas besoin de vérifier
+      if (this.isAdmin) return true;
+      
+      // Si pas d'ID utilisateur, refuser
+      if (!this.currentUserId) return false;
+      
+      const hasAccess = await axios.get(`/api/episodes/${episodeId}/access-check`, {
+        headers: { 'X-User-Id': this.currentUserId }
+      });
+      
+      if (!hasAccess.data) {
+        this.showAccessError(`Vous n'avez pas accès à cet épisode.`);
+        this.formPlanning.episodeId = '';
+        this.sequencesParEpisode = [];
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la vérification de l\'accès à l\'épisode:', error);
+      this.showAccessError(`Erreur de vérification d'accès à l'épisode.`);
+      return false;
+    }
+  },
+  
+  // Vérifier l'accès au projet
+  async checkProjectAccess(projetId) {
+    try {
+      // Si admin, pas besoin de vérifier
+      if (this.isAdmin) return true;
+      
+      // Si pas d'ID utilisateur, refuser
+      if (!this.currentUserId) return false;
+      
+      const hasAccess = await axios.get(`/api/projets/${projetId}/access-check`, {
+        headers: { 'X-User-Id': this.currentUserId }
+      });
+      
+      if (!hasAccess.data) {
+        this.showAccessError(`Vous n'avez pas accès à ce projet.`);
+        this.formPlanning.projetId = '';
+        this.episodesParProjet = [];
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la vérification de l\'accès au projet:', error);
+      this.showAccessError(`Erreur de vérification d'accès au projet.`);
+      return false;
+    }
+  },
+  
+  // Afficher les erreurs d'accès
+  showAccessError(message) {
+    alert(message);
+    this.erreurPlanning = message;
+  },
+
+async chargerEpisodesParProjet() {
+  if (!this.formPlanning.projetId) {
+    this.episodesParProjet = [];
+    return;
+  }
+  
+  try {
+    const response = await axios.get(`/api/episodes/projet/${this.formPlanning.projetId}`, {
+      headers: { 'X-User-Id': this.currentUserId }
+    });
+    
+    // Filtrer les épisodes accessibles
+    if (this.isAdmin) {
+      this.episodesParProjet = response.data;
+    } else {
+      // Filtrer les épisodes accessibles à cet utilisateur
+      this.episodesParProjet = response.data.filter(episode => 
+        this.episodesAccessibles.includes(episode.idEpisode)
+      );
+    }
+    
+    // Si on est en mode modification, s'assurer que l'épisode sélectionné est accessible
+    if (this.isModificationPlanning && this.formPlanning.episodeId) {
+      const episodeExiste = this.episodesParProjet.some(ep => ep.idEpisode === this.formPlanning.episodeId);
+      if (!episodeExiste) {
+        // Si l'épisode n'est pas accessible, réinitialiser
         this.formPlanning.episodeId = '';
         this.formPlanning.sequenceId = '';
         this.formPlanning.sceneId = '';
-      } catch (error) {
-        console.error('Erreur chargement épisodes:', error);
-        this.episodesParProjet = [];
       }
-    },
+    }
+    
+  } catch (error) {
+    console.error('Erreur chargement épisodes:', error);
+    this.episodesParProjet = [];
+  }
+},
     async chargerSequencesParEpisode() {
       if (!this.formPlanning.episodeId) {
         this.sequencesParEpisode = [];
@@ -975,6 +1289,25 @@ export default {
     },
 
 async soumettrePlanning() {
+    // Vérifier les permissions
+  if (this.isModificationPlanning && !this.permissions.canEditPlanning) {
+    this.showAccessError('Vous n\'avez pas les permissions pour modifier un planning.');
+    return;
+  }
+  
+  if (!this.isModificationPlanning && !this.permissions.canCreatePlanning) {
+    this.showAccessError('Vous n\'avez pas les permissions pour créer un planning.');
+    return;
+  }
+  
+  // Vérifier l'accès à l'épisode
+  if (this.formPlanning.episodeId) {
+    const hasAccess = await this.checkEpisodeAccess(this.formPlanning.episodeId);
+    if (!hasAccess) return;
+  }
+        // Ne pas permettre la soumission pour les viewers
+        if (this.isViewer) return;
+        
         if (!this.validerFormulairePlanning()) return;
         
         // Vérifier les conflits avant soumission
@@ -1007,31 +1340,48 @@ async soumettrePlanning() {
         }
     },
 
-    // async supprimerPlanning() {
-    //   if (!this.formPlanning.id || !confirm('Êtes-vous sûr de vouloir supprimer ce planning ?')) return;
-    //   try {
-    //     await axios.delete(`/api/scene-tournage/${this.formPlanning.id}`);
-    //     await this.chargerTournages();
-    //     this.fermerModalPlanning();
-    //     alert('Planning supprimé avec succès!');
-    //   } catch (error) {
-    //     console.error('Erreur suppression planning:', error);
-    //     this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la suppression du planning';
-    //   }
-    // },
     async supprimerTournageDirect(tournage) {
+      // Vérifier les permissions
+      if (!this.permissions.canDeletePlanning) {
+        this.showAccessError('Vous n\'avez pas les permissions pour supprimer un planning.');
+        return;
+      }
+      
+      // Vérifier l'accès à l'épisode AVANT de demander confirmation
+      if (tournage.episodeId) {
+        const hasAccess = await this.checkEpisodeAccess(tournage.episodeId);
+        if (!hasAccess) return; // Ne pas continuer si pas d'accès
+      }
+      
+      // Ne pas permettre la suppression pour les viewers
+      if (this.isViewer) return;
+      
       if (!confirm(`Êtes-vous sûr de vouloir supprimer le tournage "${tournage.sceneTitre}" du ${this.formatDateDetails(tournage.dateTournage)} ?`)) {
         return;
       }
       
       try {
-        await axios.delete(`/api/scene-tournage/${tournage.id}`);
+        await axios.delete(`/api/scene-tournage/${tournage.id}`, {
+          headers: { 'X-User-Id': this.currentUserId }
+        });
         await this.chargerTournages();
-        alert('✅ Tournage supprimé avec succès !');
+        alert(' Tournage supprimé avec succès !');
       } catch (error) {
         console.error('Erreur suppression tournage:', error);
-        alert('❌ Erreur lors de la suppression du tournage: ' + (error.response?.data?.message || error.message));
+        
+        if (error.response?.status === 403) {
+          alert(' Vous n\'avez pas les permissions pour supprimer ce tournage.');
+        } else {
+          alert('Erreur lors de la suppression du tournage: ' + (error.response?.data?.message || error.message));
+        }
       }
+    },
+    // Méthode pour vérifier l'accès localement (sans appel API)
+    hasAccessToEpisode(episodeId) {
+      if (this.isAdmin) return true;
+      if (!this.currentUserId) return false;
+      
+      return this.episodesAccessibles.includes(episodeId);
     },
     // Mettre à jour la méthode validerFormulairePlanning
     validerFormulairePlanning() {
@@ -1165,6 +1515,14 @@ async soumettrePlanning() {
 
   },
   mounted() {
+     this.loadUserData();
+    this.initializePermissions();
+     // Vérifier si l'utilisateur peut voir le calendrier
+     if (!this.permissions.canViewPlanning) {
+        this.showAccessError('Vous n\'avez pas les permissions pour accéder au calendrier de tournage.');
+        this.$router.push('/dashboard'); // Rediriger vers le tableau de bord
+        return;
+      }
     this.chargerTournages();
     this.chargerProjets();
     this.gererParametresURL();
@@ -1188,6 +1546,7 @@ async soumettrePlanning() {
         },
         { deep: true }
     );
+    
   }
 };
 </script>
