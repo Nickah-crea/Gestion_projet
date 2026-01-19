@@ -1,46 +1,52 @@
-[file name]: SceneToolsNavbar.vue
 <template>
   <nav 
-    class="scene-tools-navbar"
-    :class="{ 
-      'without-right-sidebar': !rightSidebarOpen,
-      'with-right-sidebar': rightSidebarOpen
-    }"
-  >
-    <!-- Section gauche : titre et informations -->
-    <div class="navbar-left-section">
-      <div class="navbar-title">
-        <i class="fas fa-tools"></i>
-        <span>Outils Scène</span>
+      class="scene-tools-navbar"
+      :class="{ 
+        'without-right-sidebar': !rightSidebarOpen,
+        'with-right-sidebar': rightSidebarOpen
+      }"
+    >
+      <!-- Section gauche : titre et informations -->
+      <div class="navbar-left-section">
+        <div class="navbar-title">
+          <i class="fas fa-tools"></i>
+          <span>Outils Scène</span>
+        </div>
+        <!-- Affichage conditionnel pour les utilisateurs sans permissions -->
+        <div v-if="!hasAnyPermissions" class="navbar-permission-notice">
+          <i class="fas fa-eye"></i>
+          <span>Mode consultation seulement</span>
+        </div>
       </div>
-    </div>
 
     <!-- Section centrale : outils principaux -->
     <div class="navbar-center-section">
       <!-- Raccords Photos - S'ouvre directement dans le composant -->
-      <div class="nav-tool-item">
+      <div class="nav-tool-item" v-if="userPermissions.canViewRaccords">
         <RaccordsPhotosComponent 
           :scene-id="scene?.idScene"
           :scene-info="scene"
+          :user-permissions="filteredPermissions" 
           @raccords-updated="onRaccordsUpdated"
           ref="raccordsPhotosRef"
         />
       </div>
       
       <!-- Création Raccord - S'ouvre directement dans le composant -->
-      <div class="nav-tool-item">
+      <div class="nav-tool-item" v-if="userPermissions.canCreateRaccord">
         <RaccordSceneComponent 
           :projet-id="projetId"
           :episode-id="episodeId"
           :sequence-id="sequenceId"
           :scene-source-id="scene?.idScene"
+          :user-permissions="filteredPermissions" 
           @raccord-created="onRaccordCreated"
           ref="raccordSceneRef"
         />
       </div>
       
       <!-- Actions Rapides - Dropdown -->
-      <div class="nav-tool-item dropdown">
+      <div class="nav-tool-item dropdown" v-if="hasQuickActionsPermissions">
         <button class="nav-tool-btn" @click="toggleDropdown('actions')">
           <i class="fas fa-bolt"></i>
           <span>Actions Rapides</span>
@@ -48,40 +54,89 @@
         </button>
         <div v-if="activeDropdown === 'actions'" class="dropdown-content quick-actions-dropdown" @click.stop>
           <div class="quick-actions-grid">
-            <button class="action-btn" @click="openAddLieuModal" title="Ajouter un lieu/plateau">
+            <!-- MODIFICATION : Conditions sur chaque bouton -->
+            <button 
+              class="action-btn" 
+              @click="openAddLieuModal" 
+              title="Ajouter un lieu/plateau"
+              v-if="userPermissions.canCreateLieu"
+            >
               <i class="fas fa-map-marker-alt"></i>
               <span>Lieu/Plateau</span>
             </button>
             
-            <button class="action-btn" @click="exportScenePDF" title="Exporter cette scène en PDF">
+            <button 
+              class="action-btn" 
+              @click="exportScenePDF" 
+              title="Exporter cette scène en PDF"
+              v-if="userPermissions.canExport"
+            >
               <i class="fas fa-file-pdf"></i>
               <span>Exporter PDF</span>
             </button>
             
-            <button class="action-btn" @click="exportRaccordsWithImages" title="Exporter les raccords avec images">
+            <button 
+              class="action-btn" 
+              @click="exportRaccordsWithImages" 
+              title="Exporter les raccords avec images"
+              v-if="userPermissions.canExport && userPermissions.canViewRaccords"
+            >
               <i class="fas fa-file-image"></i>
               <span>Raccords + Images</span>
             </button>
             
-            <button class="action-btn" @click="startAddDialogue" title="Ajouter un dialogue">
+            <button 
+              class="action-btn" 
+              @click="startAddDialogue" 
+              title="Ajouter un dialogue"
+              v-if="userPermissions.canCreateDialogue"
+            >
               <i class="fas fa-comment-medical"></i>
               <span>Nouveau dialogue</span>
             </button>
             
-            <button class="action-btn" @click="openEmailModal" title="Envoyer par email">
+            <button 
+              class="action-btn" 
+              @click="openEmailModal" 
+              title="Envoyer par email"
+              v-if="userPermissions.canSendEmail"
+            >
               <i class="fas fa-envelope"></i>
               <span>Envoyer par email</span>
             </button>
             
-            <button class="action-btn" @click="toggleComments" title="Afficher/masquer les commentaires">
+            <!-- MODIFICATION : Toujours visible mais avec accès limité -->
+            <button 
+              class="action-btn" 
+              @click="toggleComments" 
+              title="Afficher/masquer les commentaires"
+            >
               <i class="fas fa-comments"></i>
               <span>Commentaires</span>
               <span class="badge" v-if="commentCount > 0">{{ commentCount }}</span>
             </button>
+            
+            <!-- MODIFICATION : Bouton pour les utilisateurs sans permissions -->
+            <div v-if="!hasAnyPermissions" class="no-permissions-message">
+              <i class="fas fa-info-circle"></i>
+              <span>Lecture seule</span>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- MODIFICATION : Message pour les utilisateurs sans permissions -->
+      <div v-else-if="hasAnyPermissions" class="navbar-center-info">
+        <div class="nav-tool-item">
+          <button class="nav-tool-btn disabled" disabled>
+            <i class="fas fa-lock"></i>
+            <span>Actions limitées</span>
+          </button>
+        </div>
+      </div>
     </div>
+
+
 
     <!-- Section droite : navigation entre scènes -->
     <div class="navbar-right-section">
@@ -129,7 +184,18 @@ const props = defineProps({
   projetId: [String, Number],
   episodeId: [String, Number],
   sequenceId: [String, Number],
-  userPermissions: Object,
+  userPermissions: {
+    type: Object,
+    default: () => ({
+      canCreateScene: false,
+      canCreateDialogue: false,
+      canCreateLieu: false,
+      canCreateRaccord: false,
+      canViewRaccords: false,
+      canExport: false,
+      canSendEmail: false
+    })
+  },
   commentCount: {
     type: Number,
     default: 0
@@ -164,6 +230,7 @@ const props = defineProps({
   }
 });
 
+
 const emit = defineEmits([
   'close',
   'tournage-updated',
@@ -180,14 +247,53 @@ const emit = defineEmits([
   'go-to-next-scene'
 ]);
 
+
 // Références aux composants
 const raccordsPhotosRef = ref(null);
 const raccordSceneRef = ref(null);
 
 const activeDropdown = ref(null);
 
+// Computed properties pour les permissions
+const filteredPermissions = computed(() => {
+  // Retourne les permissions filtrées pour les composants enfants
+  return {
+    canCreateScene: props.userPermissions.canCreateScene || false,
+    canCreateDialogue: props.userPermissions.canCreateDialogue || false,
+    canCreateLieu: props.userPermissions.canCreateLieu || false,
+    canCreateRaccord: props.userPermissions.canCreateRaccord || false,
+    canViewRaccords: props.userPermissions.canViewRaccords || false,
+    canExport: props.userPermissions.canExport || false,
+    canSendEmail: props.userPermissions.canSendEmail || false
+  };
+});
+
+const hasAnyPermissions = computed(() => {
+  // Vérifie si l'utilisateur a au moins une permission
+  const perms = props.userPermissions;
+  return perms.canCreateScene || 
+         perms.canCreateDialogue || 
+         perms.canCreateLieu || 
+         perms.canCreateRaccord || 
+         perms.canViewRaccords || 
+         perms.canExport || 
+         perms.canSendEmail;
+});
+
+const hasQuickActionsPermissions = computed(() => {
+  // Vérifie si l'utilisateur a au moins une permission pour les actions rapides
+  const perms = props.userPermissions;
+  return perms.canCreateLieu || 
+         perms.canCreateDialogue || 
+         perms.canExport || 
+         perms.canSendEmail;
+});
+
 // Méthodes
 const toggleDropdown = (dropdown) => {
+  if (!hasQuickActionsPermissions.value && dropdown === 'actions') {
+    return; // Ne pas ouvrir si pas de permissions
+  }
   activeDropdown.value = activeDropdown.value === dropdown ? null : dropdown;
 };
 
@@ -221,31 +327,54 @@ const onRaccordCreated = () => {
 };
 
 const openAddLieuModal = () => {
+  if (!props.userPermissions.canCreateLieu) {
+    showPermissionAlert("Ajouter un lieu/plateau");
+    return;
+  }
   emit('add-lieu', props.scene);
   closeAllDropdowns();
 };
 
+
 const exportScenePDF = () => {
+  if (!props.userPermissions.canExport) {
+    showPermissionAlert("Exporter en PDF");
+    return;
+  }
   emit('export-scene-pdf', props.scene);
   closeAllDropdowns();
 };
 
 const exportRaccordsWithImages = () => {
+  if (!props.userPermissions.canExport || !props.userPermissions.canViewRaccords) {
+    showPermissionAlert("Exporter les raccords");
+    return;
+  }
   emit('export-raccords-images', props.scene?.idScene);
   closeAllDropdowns();
 };
 
 const startAddDialogue = () => {
+  if (!props.userPermissions.canCreateDialogue) {
+    showPermissionAlert("Ajouter un dialogue");
+    return;
+  }
   emit('add-dialogue', props.scene);
   closeAllDropdowns();
 };
 
 const toggleComments = () => {
+  // Toujours autorisé pour la consultation
   emit('toggle-comments', props.scene);
   closeAllDropdowns();
 };
 
+
 const openEmailModal = () => {
+  if (!props.userPermissions.canSendEmail) {
+    showPermissionAlert("Envoyer par email");
+    return;
+  }
   emit('open-email', props.scene);
   closeAllDropdowns();
 };
@@ -254,8 +383,13 @@ const goToPrevScene = () => {
   emit('go-to-prev-scene');
 };
 
+
 const goToNextScene = () => {
   emit('go-to-next-scene');
+};
+
+const showPermissionAlert = (actionName) => {
+  alert(`Vous n'avez pas la permission nécessaire pour ${actionName.toLowerCase()}.`);
 };
 
 // Mettre à jour les styles des boutons pour qu'ils s'intègrent dans la navbar
