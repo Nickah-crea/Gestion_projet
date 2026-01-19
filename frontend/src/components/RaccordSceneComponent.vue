@@ -427,6 +427,14 @@ const props = defineProps({
   sceneSourceId: { 
     type: Number,
     default: null
+  },
+   userPermissions: {
+    type: Object,
+    default: () => ({
+      canCreateRaccord: false,
+      canViewRaccords: false,
+      canCreateScene: false
+    })
   }
 })
 
@@ -835,6 +843,18 @@ const loadSceneInfo = async (sceneId, type) => {
   }
 }
 
+const checkPermission = (action) => {
+  switch(action) {
+    case 'create':
+      return props.userPermissions?.canCreateRaccord === true;
+    case 'view':
+      return props.userPermissions?.canViewRaccords === true;
+    case 'modify':
+      return props.userPermissions?.canCreateScene === true;
+    default:
+      return false;
+  }
+};
 // Watcher pour la scène cible
 watch(() => raccordData.value.sceneCibleId, async (newSceneCibleId) => {
   console.log('Scène cible changée:', newSceneCibleId)
@@ -1002,7 +1022,8 @@ onMounted(() => {
 
 // Exposer la méthode pour ouvrir le modal
 defineExpose({
-  openRaccordModal
+  openRaccordModal,
+  checkPermission
 })
 </script>
 

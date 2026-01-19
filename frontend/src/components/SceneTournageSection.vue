@@ -18,15 +18,16 @@
           <i class="fas fa-calendar-plus"></i> Planifier
         </button>
 
-        <ReplanificationComponent 
-            v-if="tournage"
-            :sceneId="scene.idScene"
-            :showTriggerButton="true"
-            :sceneInfo="scene"
-            @tournage-updated="chargerTournage"
-            @replanification-appliquee="onReplanificationAppliquee"
-          />
         
+        <ReplanificationComponent 
+          v-if="tournage"
+          :sceneId="scene.idScene"
+          :showTriggerButton="true"
+          :sceneInfo="scene"
+          :userPermissions="userPermissions"
+          @tournage-updated="chargerTournage"
+          @replanification-appliquee="onReplanificationAppliquee"
+        />
         <!-- Boutons de changement de statut rapide -->
         <template v-if="tournage && userPermissions.canCreateScene">
           <!-- Confirmer - seulement si planifié -->

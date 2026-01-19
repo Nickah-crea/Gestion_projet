@@ -2,7 +2,7 @@
   <div class="replanification-container">
     <!-- Bouton pour ouvrir le modal de replanification -->
     <button 
-      v-if="showTriggerButton"
+      v-if="showTriggerButton && canShowButton"
       class="btn-open-replanification"
       @click="openReplanificationModal"
       :disabled="!sceneId"
@@ -220,7 +220,12 @@ export default {
     sceneInfo: {
       type: Object,
       default: () => ({})
-    }
+    },
+    userPermissions: {
+      type: Object,
+      default: () => ({
+        canCreateScene: false
+    })
   },
   emits: ['replanification-updated', 'tournage-updated', 'replanification-appliquee'],
 
@@ -257,6 +262,10 @@ export default {
 
     const minDate = computed(() => {
       return new Date().toISOString().split('T')[0]
+    })
+    const canShowButton = computed(() => {
+      // Vérifie si l'utilisateur a la permission de créer/modifier des scènes
+      return props.userPermissions?.canCreateScene === true
     })
 
     // Méthodes
@@ -351,7 +360,7 @@ export default {
       }
     }
 
-    // NOUVEAU: Vérification des conflits en temps réel
+ 
     const verifierConflitsTempsReel = async () => {
       if (!replanificationData.value.nouvelleDate) {
         conflitsDetected.value = []
@@ -608,26 +617,28 @@ export default {
     watch(() => replanificationData.value.nouvelleHeureDebut, verifierConflitsTempsReel)
     watch(() => replanificationData.value.nouvelleHeureFin, verifierConflitsTempsReel)
 
-    return {
-      showModal,
-      loading,
-      availableRaccords,
-      currentTournage,
-      activeReplanifications,
-      replanificationData,
-      conflitsDetected,
-      canConfirmReplanification,
-      hasActiveReplanification,
-      minDate,
-      openReplanificationModal,
-      closeModal,
-      confirmReplanification,
-      appliquerReplanification,
-      verifierConflitsTempsReel,
-      formatDate,
-      formatHeure
-    }
-  }
+      return {
+        showModal,
+        loading,
+        availableRaccords,
+        currentTournage,
+        activeReplanifications,
+        replanificationData,
+        conflitsDetected,
+        canConfirmReplanification,
+        hasActiveReplanification,
+        minDate,
+        openReplanificationModal,
+        closeModal,
+        confirmReplanification,
+        appliquerReplanification,
+        verifierConflitsTempsReel,
+        formatDate,
+        formatHeure,
+        canShowButton
+      }
+   }
+ }
 }
 </script>
 

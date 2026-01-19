@@ -46,7 +46,11 @@
     :aria-expanded="showAddPopup"
     aria-haspopup="true"
   >
-    <span>+ Ajouter</span>
+  
+    <span>
+      <i class="fas fa-plus"></i>
+       Ajouter
+    </span>
     <i class="fas fa-chevron-down" :class="{ 'rotate-180': showAddPopup }"></i>
   </button>
   

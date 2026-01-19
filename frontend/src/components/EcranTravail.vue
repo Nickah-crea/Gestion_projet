@@ -841,6 +841,7 @@
                   :sceneId="currentScene.idScene"
                   :showTriggerButton="true"
                   :sceneInfo="currentScene"
+                  :userPermissions="userPermissions" 
                   @tournage-updated="onTournageUpdated"
                   @replanification-appliquee="onReplanificationDansScene"
                 />
@@ -1346,14 +1347,45 @@ const userPermissions = ref({
     canCreateLieu: false,
     canCreatePlateau: false,
     canCreateComedien: false,
-    canCreatePersonnage: false
+    canCreatePersonnage: false,
+
+    // NOUVEAU : Permissions pour les raccords
+    canCreateRaccord: false,
+    canViewRaccords: true, // Par défaut true pour la consultation
+    
+    // NOUVEAU : Permissions pour l'export
+    canExport: false,
+    
+    // NOUVEAU : Permissions pour l'email
+    canSendEmail: false,
+    
+    // NOUVEAU : Permissions pour le tournage
+    canPlanTournage: false,
+    canEditTournage: false,
+    
+    // NOUVEAU : Permissions pour les commentaires
+    canAddComments: true, // Par défaut true
+    canDeleteComments: false,
+    
+    // NOUVEAU : Permissions pour les surlignages
+    canHighlight: false,
+
 });
 
 const showEmailModal = ref(false)
 
 const openEmailModal = () => {
-  showEmailModal.value = true
-}
+  if (!userPermissions.value.canSendEmail) {
+    alert('Vous n\'êtes pas autorisé à envoyer des emails.');
+    return;
+  }
+  
+  showEmailModal.value = true;
+};
+
+// const openEmailModal = () => {
+//   showEmailModal.value = true
+// }
 
 const closeEmailModal = () => {
   showEmailModal.value = false
@@ -1826,7 +1858,38 @@ const checkUserPermissions = async (episodeId) => {
             }
         });
         
-        userPermissions.value = response.data;
+        userPermissions.value = {
+            // Permissions de base (déjà existantes)
+            canEditEpisode: response.data.canEditEpisode || false,
+            canCreateSequence: response.data.canCreateSequence || false,
+            canCreateScene: response.data.canCreateScene || false,
+            canCreateDialogue: response.data.canCreateDialogue || false,
+            canCreateLieu: response.data.canCreateLieu || false,
+            canCreatePlateau: response.data.canCreatePlateau || false,
+            canCreateComedien: response.data.canCreateComedien || false,
+            canCreatePersonnage: response.data.canCreatePersonnage || false,
+            
+            // NOUVEAU : Permissions pour les raccords
+            canCreateRaccord: response.data.canCreateRaccord || false,
+            canViewRaccords: response.data.canViewRaccords || true, // Par défaut true pour la consultation
+            
+            // NOUVEAU : Permissions pour l'export
+            canExport: response.data.canExport || response.data.canCreateScene || false,
+            
+            // NOUVEAU : Permissions pour l'email
+            canSendEmail: response.data.canSendEmail || false,
+            
+            // NOUVEAU : Permissions pour le tournage
+            canPlanTournage: response.data.canPlanTournage || response.data.canCreateScene || false,
+            canEditTournage: response.data.canEditTournage || response.data.canCreateScene || false,
+            
+            // NOUVEAU : Permissions pour les commentaires
+            canAddComments: response.data.canAddComments || true, // Par défaut true
+            canDeleteComments: response.data.canDeleteComments || false,
+            
+            // NOUVEAU : Permissions pour les surlignages
+            canHighlight: response.data.canHighlight || response.data.canCreateDialogue || false
+        };
         
         const accessResponse = await axios.get(`/api/episodes/${episodeId}/access-check`, {
             headers: {
@@ -1841,9 +1904,26 @@ const checkUserPermissions = async (episodeId) => {
         }
     } catch (error) {
         console.error('Erreur lors de la vérification des permissions:', error);
-        Object.keys(userPermissions.value).forEach(key => {
-            userPermissions.value[key] = false;
-        });
+        // Définir toutes les permissions à false en cas d'erreur
+        userPermissions.value = {
+            canEditEpisode: false,
+            canCreateSequence: false,
+            canCreateScene: false,
+            canCreateDialogue: false,
+            canCreateLieu: false,
+            canCreatePlateau: false,
+            canCreateComedien: false,
+            canCreatePersonnage: false,
+            canCreateRaccord: false,
+            canViewRaccords: true, // Toujours permettre la vue
+            canExport: false,
+            canSendEmail: false,
+            canPlanTournage: false,
+            canEditTournage: false,
+            canAddComments: true, // Toujours permettre d'ajouter des commentaires
+            canDeleteComments: false,
+            canHighlight: false
+        };
     }
 };
 

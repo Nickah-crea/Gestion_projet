@@ -265,6 +265,14 @@ const props = defineProps({
   sceneInfo: {
     type: Object,
     default: () => ({})
+  },
+   userPermissions: {
+    type: Object,
+    default: () => ({
+      canCreateRaccord: false,
+      canViewRaccords: false,
+      canCreateScene: false
+    })
   }
 })
 
@@ -297,6 +305,19 @@ const newRaccord = ref({
 const canAddRaccord = computed(() => {
   return newRaccord.value.typeId && newRaccord.value.images.length > 0
 })
+
+const checkPermission = (action) => {
+  switch(action) {
+    case 'create':
+      return props.userPermissions?.canCreateRaccord === true;
+    case 'view':
+      return props.userPermissions?.canViewRaccords === true;
+    case 'modify':
+      return props.userPermissions?.canCreateScene === true;
+    default:
+      return false;
+  }
+};
 
 // Méthodes
 const checkAccessBeforeOpen = async () => {
@@ -650,11 +671,9 @@ onMounted(() => {
 
 // Exposer la méthode pour ouvrir le modal
 defineExpose({
-  openRaccordsModal
+  openRaccordsModal,
+  checkPermission,
 })
 </script>
 
-<style scoped>
-
-</style>
 
