@@ -9,22 +9,32 @@
   background: $color-background;
   
   // =============================================
-  // HEADER DE LA PAGE
+  // HEADER DE LA PAGE - Style moderne
   // =============================================
   .utilisateurs-header {
-    margin-bottom: $spacing-xl;
     text-align: center;
-    padding: $spacing-lg;
-    background: linear-gradient(135deg, rgba($color-primary, 0.1), rgba($color-cool, 0.05));
+    margin-bottom: $spacing-xl;
+    padding: $spacing-xl;
+    background: linear-gradient(135deg, $color-background-alt, rgba($color-primary, 0.05));
     border-radius: $border-radius-lg;
-    border: 1px solid rgba($color-primary, 0.15);
+    border: 1px solid rgba($color-primary, 0.1);
     box-shadow: $shadow-md;
+    backdrop-filter: blur(10px);
 
     h1 {
-      @include typography-playfair-h2;
+      @include typography-playfair-h3;
       color: $color-text-primary;
       margin-bottom: $gap-sm;
-      font-size: calc(#{$font-size-h2} - 4px);
+      font-size: calc(#{$font-size-h3} + 4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-md;
+      
+      i {
+        color: $color-primary;
+        font-size: calc(#{$font-size-h3} + 2px);
+      }
     }
 
     p {
@@ -32,41 +42,58 @@
       color: $color-text-secondary;
       max-width: 600px;
       margin: 0 auto;
+      font-size: $font-size-p1;
     }
   }
 
   // =============================================
-  // BARRE D'ACTIONS ET RECHERCHE
+  // BARRE D'ACTIONS ET RECHERCHE - Style moderne
   // =============================================
   .actions-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: $spacing-xl;
-    gap: $spacing-md;
+    gap: $spacing-lg;
     flex-wrap: wrap;
+    padding: $spacing-lg;
+    background: $color-background-alt;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-md;
 
     @media (max-width: $breakpoint-md) {
       flex-direction: column;
       align-items: stretch;
+      gap: $spacing-md;
+      padding: $spacing-md;
     }
   }
 
   .btn-add {
     @include btn-cinema-primary;
     padding: $padding-md $padding-xl;
-    font-size: $font-size-p2;
+    font-size: $font-size-p1;
     display: flex;
     align-items: center;
-    gap: $gap-sm;
+    gap: $gap-md;
+    border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
+    box-shadow: $shadow-primary;
     
     i {
       font-size: $font-size-p1;
+      transition: transform $transition-fast;
+    }
+
+    &:hover {
+      i {
+        transform: scale(1.1);
+      }
     }
 
     @media (max-width: $breakpoint-md) {
       width: 100%;
       justify-content: center;
+      padding: $padding-lg;
     }
   }
 
@@ -81,86 +108,141 @@
 
     .search-input {
       width: 100%;
-      padding: $padding-sm $padding-lg $padding-sm $padding-xl;
-      border: 1px solid $color-border;
-      border-radius: $border-radius-pill;
+      height: 50px;
+      padding: 0 $padding-xl 0 ($padding-xl + $gap-lg);
+      border: 2px solid rgba($color-primary, 0.2);
+      border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
       font-size: $font-size-p2;
       color: $color-text-primary;
       background: $color-white;
-      transition: $transition-fast;
+      transition: all $transition-fast;
       box-shadow: $shadow-md;
-      padding-left: $padding-xl + $gap-lg; // Correction: plus d'espace pour l'icône
 
       &:focus {
         outline: none;
         border-color: $color-primary;
-        box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+        box-shadow: 0 0 0 4px rgba($color-primary, 0.15);
+        background: $color-white;
       }
 
       &::placeholder {
         color: $color-text-muted;
+        font-weight: $font-weight-regular;
       }
     }
 
     .search-icon {
       position: absolute;
-      left: $padding-md;
+      left: $padding-lg;
       top: 50%;
       transform: translateY(-50%);
-      color: $color-text-muted;
+      color: $color-primary;
       font-size: $font-size-p2;
+      z-index: 1;
     }
   }
 
   // =============================================
-  // TABLEAU DES UTILISATEURS - STYLE SIMILAIRE À ADMIN_ACCUEIL
+  // TABLEAU DES UTILISATEURS - STYLE MODERNE
   // =============================================
   .table-container {
     background: $color-background-alt;
     border-radius: $border-radius-lg;
     box-shadow: $shadow-lg;
     overflow: hidden;
+    border: 1px solid rgba($color-primary, 0.1);
   }
 
   .utilisateurs-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 
     thead {
-      background: $color-surface;
-      border-bottom: 1px solid $color-border;
+      background: linear-gradient(135deg, $color-surface, rgba($color-primary, 0.05));
+      border-bottom: 2px solid $color-border;
 
       th {
-        padding: $padding-md $padding-lg;
+        padding: $spacing-md $spacing-lg;
         text-align: left;
         @include typography-playfair-p4;
-        color: $color-text-secondary;
+        color: $color-text-primary;
         font-weight: $font-weight-semibold;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
+        font-size: $font-size-p3;
+        position: relative;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         &:first-child {
-          padding-left: $padding-lg;
+          padding-left: $spacing-xl;
+          width: 60px;
+        }
+
+        &:nth-child(2) {
+          width: 200px;
+        }
+
+        &:nth-child(3) {
+          width: 250px;
+        }
+
+        &:nth-child(4) {
+          width: 120px;
+        }
+
+        &:nth-child(5) {
+          width: 140px;
         }
 
         &:last-child {
+          width: 120px; // ← AUGMENTÉ pour plus d'espace entre les boutons
           text-align: center;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 2px;
+          background: $color-primary;
+          transition: width $transition-fast;
+        }
+
+        &:hover::after {
+          width: 80%;
         }
       }
     }
 
     tbody {
       tr {
-        border-bottom: 1px solid $color-border;
-        transition: $transition-fast;
         background: $color-white;
+        transition: all $transition-fast;
+        position: relative;
+        border-bottom: 1px solid rgba($color-border, 0.3);
+
+        &:last-child {
+          border-bottom: none;
+        }
 
         &:hover {
-          background: $color-surface-hover;
+          background: rgba($color-primary, 0.03);
+          transform: translateY(-2px);
+          box-shadow: $shadow-md;
+
+          &::before {
+            background: $color-primary;
+          }
         }
 
         &:nth-child(even) {
-          background: rgba($color-border, 0.05);
+          background: rgba($color-border, 0.03);
           
           &:hover {
             background: rgba($color-primary, 0.05);
@@ -168,41 +250,64 @@
         }
 
         td {
-          padding: $padding-md $padding-lg;
-          @include typography-playfair-p2;
+          padding: $spacing-md $spacing-lg;
+          @include typography-p2;
           color: $color-text-primary;
           vertical-align: middle;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          border-bottom: 1px solid rgba($color-border, 0.3);
 
           &:first-child {
-            padding-left: $padding-lg;
+            padding-left: $spacing-xl;
             font-weight: $font-weight-semibold;
             color: $color-text-muted;
-            width: 80px;
+            font-family: $font-family-playfair;
+            width: 60px;
+          }
+
+          &:nth-child(2) {
+            width: 200px;
+          }
+
+          &:nth-child(3) {
+            width: 250px;
+          }
+
+          &:nth-child(4) {
+            width: 120px;
+          }
+
+          &:nth-child(5) {
+            width: 140px;
           }
 
           &:last-child {
+            width: 120px; // ← AUGMENTÉ pour correspondre au th
             text-align: center;
-            width: 140px;
+            border-bottom: none;
           }
         }
 
-        // Style pour le nom avec avatar - SIMILAIRE À ADMIN
+        // Style pour le nom avec avatar - MODERNE
         .user-name {
           display: flex;
           align-items: center;
-          gap: $gap-md;
+          gap: $spacing-md;
           
           .avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             overflow: hidden;
-            border: 2px solid rgba($color-primary, 0.3);
-            background: $color-surface;
+            border: 2px solid $color-primary;
+            background: linear-gradient(135deg, $color-primary-light, $color-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            box-shadow: $shadow;
 
             img {
               width: 100%;
@@ -211,8 +316,8 @@
             }
 
             .fas.fa-user {
-              color: rgba($color-text-muted, 0.7);
-              font-size: $font-size-p1;
+              color: $color-white;
+              font-size: $font-size-p2;
             }
           }
 
@@ -220,57 +325,128 @@
             @include typography-p2;
             font-weight: $font-weight-bold;
             color: $color-text-primary;
+            font-size: $font-size-p1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
 
-        // Badges de rôle - STYLE SIMILAIRE
+        // Badges de rôle - STYLE MODERNE
         .role-badge {
-          display: inline-block;
+          display: inline-flex;
+          align-items: center;
+          gap: $gap-xs;
           padding: $gap-xs $padding-sm;
-          border-radius: $border-radius-pill;
+          border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
           font-size: $font-size-p3;
-          font-weight: $font-weight-medium;
+          font-weight: $font-weight-semibold;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border: 1px solid transparent;
+          transition: all $transition-fast;
+          white-space: nowrap;
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.8;
+          }
 
           &.role-admin {
             background: rgba($color-primary, 0.1);
             color: $color-primary-dark;
+            border-color: rgba($color-primary, 0.3);
+            
+            &:hover {
+              background: rgba($color-primary, 0.2);
+              transform: translateY(-1px);
+            }
           }
 
           &.role-scenariste {
             background: rgba($color-accent, 0.1);
             color: $color-accent-dark;
+            border-color: rgba($color-accent, 0.3);
+            
+            &:hover {
+              background: rgba($color-accent, 0.2);
+              transform: translateY(-1px);
+            }
           }
 
           &.role-realisateur {
             background: rgba($color-secondary, 0.1);
             color: $color-secondary-dark;
+            border-color: rgba($color-secondary, 0.3);
+            
+            &:hover {
+              background: rgba($color-secondary, 0.2);
+              transform: translateY(-1px);
+            }
           }
 
           &.role-default {
             background: rgba($color-text-muted, 0.1);
             color: $color-text-muted;
+            border-color: rgba($color-text-muted, 0.3);
+            
+            &:hover {
+              background: rgba($color-text-muted, 0.2);
+              transform: translateY(-1px);
+            }
           }
         }
 
-        // Actions - STYLE SIMILAIRE
+        // Actions - STYLE MODERNE avec PLUS D'ESPACE
         .actions {
           display: flex;
           justify-content: center;
-          gap: $gap-sm;
+          gap: $gap-md; // ← AUGMENTÉ de $gap-sm à $gap-md (de 6px à 10px)
+          width: 100%;
 
           button {
-            padding: $padding-xs;
+            width: 36px;
+            height: 36px;
             background: transparent;
-            border: none;
+            border: 2px solid transparent;
             color: $color-text-muted;
             cursor: pointer;
-            border-radius: $border-radius-xs;
-            transition: $transition-fast;
+            border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
+            transition: all $transition-fast;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+              content: '';
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              background: currentColor;
+              opacity: 0;
+              border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
+              transition: opacity $transition-fast;
+            }
+
+            &:hover::before {
+              opacity: 0.1;
+            }
+
+            i {
+              position: relative;
+              z-index: 1;
+              font-size: $font-size-p2; // ← AUGMENTÉ la taille des icônes
+              transition: transform $transition-fast;
+            }
 
             &:focus-visible {
               outline: 2px solid $color-primary;
@@ -278,16 +454,34 @@
             }
 
             &.btn-edit {
+              color: $color-accent;
+              border-color: rgba($color-accent, 0.3);
+
               &:hover {
+                color: $color-accent-dark;
+                transform: scale(1.1) rotate(10deg);
+                border-color: $color-accent;
                 background: rgba($color-accent, 0.1);
-                color: $color-accent;
+                
+                i {
+                  transform: scale(1.2);
+                }
               }
             }
 
             &.btn-delete {
+              color: $color-error;
+              border-color: rgba($color-error, 0.3);
+
               &:hover {
-                background: rgba($color-error, 0.1);
                 color: $color-error;
+                transform: scale(1.1);
+                border-color: $color-error;
+                background: rgba($color-error, 0.1);
+                
+                i {
+                  transform: scale(1.2);
+                }
               }
             }
           }
@@ -297,27 +491,32 @@
   }
 
   // =============================================
-  // MESSAGE AUCUNE DONNÉE - STYLE SIMILAIRE
+  // MESSAGE AUCUNE DONNÉE - STYLE MODERNE
   // =============================================
   .no-data {
     text-align: center;
-    padding: $padding-xl;
+    padding: $spacing-xl * 2;
     color: $color-text-muted;
+    background: linear-gradient(135deg, rgba($color-background-alt, 0.8), rgba($color-primary, 0.05));
+    border-radius: 0 0 $border-radius-lg $border-radius-lg;
 
     i {
-      font-size: 48px;
-      margin-bottom: $margin-md;
+      font-size: 64px;
+      margin-bottom: $spacing-lg;
       color: $color-primary;
+      opacity: 0.7;
     }
 
     p {
       @include typography-playfair-p2;
       margin: 0;
+      font-size: $font-size-p1;
+      color: $color-text-secondary;
     }
   }
 
   // =============================================
-  // MODALS (AJOUT/MODIFICATION)
+  // MODALS (AJOUT/MODIFICATION) - CORRECTIONS BORDURES
   // =============================================
   .modal-overlay {
     position: fixed;
@@ -325,8 +524,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba($color-background-dark, 0.5);
-    backdrop-filter: blur(4px);
+    background: rgba($color-background-dark, 0.8);
+    backdrop-filter: blur(8px);
     z-index: $z-index-modal + 50;
     display: flex;
     align-items: center;
@@ -337,13 +536,14 @@
 
   .modal-content {
     background: $color-background-alt;
-    border-radius: $border-radius-lg;
+    border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
     width: 100%;
     max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: $shadow-xl;
     animation: modalSlideIn 0.3s $ease-out-cinema;
+    border: 1px solid rgba($color-primary, 0.2);
   }
 
   @keyframes fadeIn {
@@ -366,62 +566,68 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: $padding-lg;
+    padding: $spacing-xl;
     border-bottom: 1px solid $color-border;
-    background: linear-gradient(135deg, $color-background 0%, $color-white 100%);
-    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    background: linear-gradient(135deg, rgba($color-background, 0.9), rgba($color-primary, 0.05));
+    border-radius: $border-radius-xs $border-radius-xs 0 0; // ← CORRECTION: $border-radius-xs
 
     h2 {
       margin: 0;
       @include typography-playfair-h3;
       display: flex;
       align-items: center;
-      gap: $gap-sm;
-      font-size: calc(#{$font-size-h3} - 4px);
+      gap: $gap-md;
+      font-size: $font-size-h3;
+      color: $color-text-primary;
 
       i {
         color: $color-primary;
+        font-size: calc(#{$font-size-h3} - 2px);
       }
     }
 
     .btn-close {
-      background: none;
-      border: none;
+      background: rgba($color-error, 0.1);
+      border: 2px solid transparent;
       font-size: $font-size-p1;
       color: $color-text-muted;
       cursor: pointer;
-      padding: $padding-xs;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      padding: $padding-sm;
+      border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: $transition-fast;
+      transition: all $transition-fast;
 
       &:hover {
-        background: rgba($color-border, 0.2);
-        color: $color-text-primary;
+        background: rgba($color-error, 0.2);
+        color: $color-error;
+        border-color: rgba($color-error, 0.3);
+        transform: rotate(90deg);
       }
     }
   }
 
-  // Formulaire utilisateur
+  // Formulaire utilisateur - CORRECTIONS BORDURES
   .user-form {
-    padding: $padding-lg;
+    padding: $spacing-xl;
 
     .form-group {
-      margin-bottom: $spacing-md;
+      margin-bottom: $spacing-lg;
 
       label {
-        display: block;
-        margin-bottom: $gap-xs;
-        @include typography-hauora-p4;
+        display: flex;
+        align-items: center;
+        margin-bottom: $gap-sm;
+        @include typography-p2;
         font-weight: $font-weight-semibold;
         color: $color-text-primary;
+        gap: $gap-xs;
 
         .hint {
-          font-size: $font-size-p5;
+          font-size: $font-size-p4;
           color: $color-text-muted;
           font-weight: $font-weight-regular;
           margin-left: $gap-xs;
@@ -443,31 +649,35 @@
       select,
       textarea {
         width: 100%;
-        padding: $padding-sm $padding-md;
-        border: 1px solid $color-border;
-        border-radius: $border-radius-sm;
-        @include typography-hauora-p2;
+        padding: $padding-md;
+        border: 2px solid $color-border;
+        border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
+        @include typography-p2;
         color: $color-text-primary;
-        transition: $transition-fast;
+        transition: all $transition-fast;
         background: $color-white;
+        box-shadow: $shadow-inset;
 
         &:focus {
           outline: none;
           border-color: $color-primary;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+          box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+          background: $color-white;
         }
 
         &:disabled {
           background: $color-surface;
           color: $color-text-muted;
           cursor: not-allowed;
+          border-color: rgba($color-border, 0.5);
         }
       }
 
       textarea {
         resize: vertical;
-        min-height: 80px;
+        min-height: 100px;
         font-family: $font-family-hauora;
+        line-height: $line-height-base;
       }
 
       select {
@@ -483,7 +693,7 @@
 
     .form-actions {
       display: flex;
-      gap: $gap-md;
+      gap: $spacing-md;
       margin-top: $spacing-xl;
       padding-top: $spacing-lg;
       border-top: 1px solid $color-border;
@@ -496,17 +706,19 @@
     .btn-cancel,
     .btn-submit {
       flex: 1;
-      padding: $padding-md $padding-lg;
-      border-radius: $border-radius-sm;
-      @include typography-hauora-p4;
+      padding: $padding-lg;
+      border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
+      @include typography-p2;
       font-weight: $font-weight-semibold;
       cursor: pointer;
-      transition: $transition;
+      transition: all $transition-fast;
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: $gap-sm;
+      gap: $gap-md;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
 
       @media (max-width: $breakpoint-sm) {
         width: 100%;
@@ -514,14 +726,18 @@
     }
 
     .btn-submit {
-      background: $color-primary;
+      background: linear-gradient(135deg, $color-primary, $color-primary-dark);
       color: $color-text-light;
       box-shadow: $shadow-primary;
 
       &:hover:not(:disabled) {
-        background: $color-primary-dark;
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, $color-primary-dark, $color-primary);
+        transform: translateY(-2px);
         box-shadow: $shadow-hover;
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
       }
 
       &:disabled {
@@ -533,65 +749,79 @@
       .loading {
         display: flex;
         align-items: center;
-        gap: $gap-sm;
+        gap: $gap-md;
       }
     }
 
     .btn-cancel {
       background: transparent;
-      border: 1px solid $color-border-dark;
+      border: 2px solid $color-border;
       color: $color-text-secondary;
 
       &:hover {
-        background: rgba($color-text-secondary, 0.1);
+        background: rgba($color-text-secondary, 0.05);
         color: $color-text-primary;
+        border-color: $color-primary;
       }
     }
   }
 
   // =============================================
-  // MODAL DE CONFIRMATION DE SUPPRESSION - STYLE SIMILAIRE
+  // MODAL DE CONFIRMATION DE SUPPRESSION - CORRECTIONS BORDURES
   // =============================================
   .delete-modal {
-    max-width: 450px;
+    max-width: 500px;
     text-align: center;
 
     .modal-header {
       justify-content: center;
-      background: linear-gradient(135deg, rgba($color-error, 0.1), rgba($color-error, 0.05));
+      background: linear-gradient(135deg, rgba($color-error, 0.1), rgba($color-background-alt, 0.9));
+      border-bottom: 1px solid rgba($color-error, 0.2);
     }
 
     .modal-body {
-      padding: $padding-xl;
+      padding: $spacing-xl;
       
       .warning-icon {
-        font-size: 48px;
+        font-size: 64px;
         color: $color-error;
-        margin-bottom: $spacing-md;
+        margin-bottom: $spacing-lg;
+        animation: pulse 2s infinite;
       }
 
       p {
-        @include typography-playfair-p2;
+        @include typography-p2;
         color: $color-text-secondary;
-        margin-bottom: $spacing-sm;
+        margin-bottom: $spacing-md;
+        line-height: $line-height-base;
 
         &.warning-text {
           color: $color-error;
-          font-weight: $font-weight-semibold;
-          margin-top: $spacing-md;
+          font-weight: $font-weight-bold;
+          margin-top: $spacing-lg;
+          font-size: $font-size-p1;
+          padding: $padding-md;
+          background: rgba($color-error, 0.05);
+          border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
+          border: 1px solid rgba($color-error, 0.1);
         }
 
         strong {
           color: $color-text-primary;
           font-weight: $font-weight-bold;
+          background: linear-gradient(135deg, $color-primary, $color-accent);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          padding: 0 $gap-xs;
         }
       }
     }
 
     .form-actions {
-      padding: $padding-lg $padding-xl $padding-xl;
+      padding: $spacing-xl;
       display: flex;
-      gap: $gap-md;
+      gap: $spacing-md;
       border-top: 1px solid rgba($color-error, 0.1);
 
       @media (max-width: $breakpoint-sm) {
@@ -600,45 +830,54 @@
 
       .btn-cancel {
         flex: 1;
-        padding: $padding-sm $padding-lg;
-        border-radius: $border-radius-xs;
+        padding: $padding-lg;
+        border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
         font-size: $font-size-p2;
         font-weight: $font-weight-semibold;
         cursor: pointer;
-        transition: $transition;
+        transition: all $transition-fast;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: $gap-sm;
+        gap: $gap-md;
         background: transparent;
-        border: 1px solid $color-border-dark;
+        border: 2px solid $color-border;
         color: $color-text-secondary;
 
         &:hover {
-          background: rgba($color-text-secondary, 0.1);
+          background: rgba($color-text-secondary, 0.05);
           color: $color-text-primary;
+          border-color: $color-primary;
         }
       }
 
       .btn-delete-confirm {
         flex: 1;
-        padding: $padding-sm $padding-lg;
-        border-radius: $border-radius-xs;
+        padding: $padding-lg;
+        border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
         font-size: $font-size-p2;
         font-weight: $font-weight-semibold;
         cursor: pointer;
-        transition: $transition;
+        transition: all $transition-fast;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: $gap-sm;
-        background: $color-error;
+        gap: $gap-md;
+        background: linear-gradient(135deg, $color-error, darken($color-error, 10%));
         color: $color-text-light;
-        border: 1px solid rgba($color-error, 0.3);
+        border: 2px solid rgba($color-error, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
 
         &:hover:not(:disabled) {
-          background: darken($color-error, 10%);
-          transform: translateY(-1px);
+          background: linear-gradient(135deg, darken($color-error, 10%), $color-error);
+          transform: translateY(-2px);
+          box-shadow: $shadow-hover;
+          border-color: $color-error;
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0);
         }
 
         &:disabled {
@@ -650,54 +889,63 @@
         .loading {
           display: flex;
           align-items: center;
-          gap: $gap-sm;
+          gap: $gap-md;
         }
       }
     }
   }
 
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
   // =============================================
-  // TOAST DE NOTIFICATION - STYLE SIMILAIRE
+  // TOAST DE NOTIFICATION - CORRECTIONS BORDURES
   // =============================================
   .toast {
     position: fixed;
-    top: 100px;
-    right: $spacing-lg;
-    padding: $padding-md $padding-lg;
-    border-radius: $border-radius-sm;
+    top: $spacing-xl;
+    right: $spacing-xl;
+    padding: $spacing-lg;
+    border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
     color: $color-white;
     z-index: $z-index-toast;
     animation: slideInRight 0.3s $ease-out-cinema;
     max-width: 400px;
-    box-shadow: $shadow-lg;
+    box-shadow: $shadow-xl;
     display: flex;
     align-items: center;
-    gap: $gap-md;
+    gap: $spacing-md;
     cursor: pointer;
-    transition: $transition-fast;
+    transition: all $transition-fast;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba($color-white, 0.1);
 
     &:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px) scale(1.02);
       box-shadow: $shadow-xl;
     }
 
     &.success {
-      background: linear-gradient(135deg, $color-success, $color-primary-dark);
+      background: linear-gradient(135deg, rgba($color-primary, 0.9), rgba($color-primary-dark, 0.9));
       border-left: 4px solid $color-primary-dark;
     }
 
     &.error {
-      background: linear-gradient(135deg, $color-error, darken($color-error, 10%));
+      background: linear-gradient(135deg, rgba($color-error, 0.9), rgba(darken($color-error, 20%), 0.9));
       border-left: 4px solid darken($color-error, 20%);
     }
 
     i {
-      font-size: $font-size-p1;
+      font-size: $font-size-h4;
+      opacity: 0.9;
     }
 
     span {
-      @include typography-p3;
-      font-weight: $font-weight-medium;
+      @include typography-p2;
+      font-weight: $font-weight-semibold;
+      color: $color-white;
     }
   }
 
@@ -713,28 +961,67 @@
   }
 
   // =============================================
-  // RESPONSIVE DESIGN
+  // RESPONSIVE DESIGN AMÉLIORÉ
   // =============================================
   @media (max-width: $breakpoint-lg) {
     .utilisateurs-table {
       thead th,
       tbody td {
-        padding: $padding-sm $padding-md;
+        padding: $spacing-md;
+      }
+      
+      .user-name {
+        gap: $spacing-sm;
+        
+        .avatar {
+          width: 36px;
+          height: 36px;
+        }
+      }
+      
+      .actions {
+        gap: $gap-sm; // Réduire l'espace sur tablette
+      }
+      
+      .actions button {
+        width: 32px;
+        height: 32px;
       }
     }
   }
 
   @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+    
+    .utilisateurs-header {
+      padding: $spacing-lg;
+      margin-bottom: $spacing-lg;
+      
+      h1 {
+        font-size: $font-size-h3;
+      }
+    }
+
+    .actions-bar {
+      padding: $spacing-md;
+    }
+
     .utilisateurs-table {
       display: block;
       overflow-x: auto;
-    }
-    
-    padding: $spacing-sm;
-    
-    .utilisateurs-header {
-      padding: $spacing-md;
-      margin-bottom: $spacing-lg;
+      white-space: nowrap;
+      
+      thead {
+        display: table-header-group;
+      }
+      
+      tbody {
+        display: table-row-group;
+      }
+      
+      .actions {
+        gap: $gap-sm; // Réduire l'espace sur mobile
+      }
     }
 
     .modal-content {
@@ -742,35 +1029,38 @@
       max-height: 95vh;
     }
 
-    .modal-header,
+    .modal-header {
+      padding: $spacing-lg;
+    }
+
     .user-form {
       padding: $spacing-lg;
     }
 
-    .modal-header h2 {
-      font-size: $font-size-h4;
-    }
-
     .toast {
-      left: $spacing-sm;
-      right: $spacing-sm;
+      left: $spacing-md;
+      right: $spacing-md;
       max-width: none;
+      top: $spacing-md;
     }
   }
 
   @media (max-width: $breakpoint-sm) {
     .actions-bar {
-      gap: $spacing-sm;
+      gap: $spacing-md;
     }
 
     .search-bar {
       .search-input {
         font-size: $font-size-p3;
+        height: 46px;
       }
     }
 
     .user-form {
       .form-group {
+        margin-bottom: $spacing-md;
+
         label {
           font-size: $font-size-p3;
         }
@@ -779,6 +1069,70 @@
         select,
         textarea {
           font-size: $font-size-p3;
+          padding: $padding-sm;
+        }
+      }
+      
+      .btn-cancel,
+      .btn-submit {
+        padding: $padding-md;
+      }
+    }
+
+    // Version mobile du tableau - Cartes
+    &.mobile-view {
+      .utilisateurs-table {
+        thead {
+          display: none;
+        }
+        
+        tbody {
+          display: block;
+          
+          tr {
+            display: block;
+            margin-bottom: $spacing-md;
+            border: 1px solid $color-border;
+            border-radius: $border-radius-xs; // ← CORRECTION: $border-radius-xs
+            padding: $spacing-md;
+            background: $color-white;
+            box-shadow: $shadow-md;
+            
+            td {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: $spacing-sm 0;
+              text-align: left;
+              border-bottom: 1px solid rgba($color-border, 0.2);
+              width: 100% !important;
+              
+              &:last-child {
+                border-bottom: none;
+                padding-top: $spacing-sm;
+              }
+              
+              &::before {
+                content: attr(data-label);
+                @include typography-p4;
+                font-weight: $font-weight-semibold;
+                color: $color-text-muted;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-right: $spacing-sm;
+                min-width: 100px;
+              }
+            }
+            
+            .actions {
+              justify-content: flex-start;
+              width: 100%;
+              
+              button::before {
+                content: none;
+              }
+            }
+          }
         }
       }
     }
