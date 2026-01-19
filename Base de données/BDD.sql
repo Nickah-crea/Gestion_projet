@@ -1429,3 +1429,4 @@ WHERE conrelid = 'dialogues'::regclass
 AND contype = 'u';
 
 ALTER TABLE scenaristes ADD CONSTRAINT unique_scenariste_utilisateur UNIQUE (id_utilisateur);
+

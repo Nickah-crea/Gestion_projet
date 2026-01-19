@@ -97,7 +97,8 @@
           'episode-mode-active': sidebarSelection.type === 'episode'
         }"
       >
-        <!-- Navigation unique sur une même ligne -->
+
+        <!-- Header navigation unique sur une même ligne -->
         <div class="fixed-nav-container-screen-work">
             <div class="nav-left-section-screen-work">
                 <!-- Navigation globale précédent/suivant -->
@@ -151,7 +152,7 @@
                 </div>
             </div>
         </div>
-      </div>
+    </div>
 
 
     <!-- Contenu principal -->
@@ -502,43 +503,6 @@
             </div>
           </div>
           
-          <!-- Statistiques horizontales (identique au projet) -->
-          <div class="sequence-stats-view-screen-work">
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-film"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">{{ scenes.length }}</div>
-                <div class="stat-label-screen-work">Scènes</div>
-              </div>
-            </div>
-            
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-comment"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">
-                  {{ scenes.reduce((total, scene) => total + (scene.dialogues?.length || 0), 0) }}
-                </div>
-                <div class="stat-label-screen-work">Dialogues</div>
-              </div>
-            </div>
-            
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-clock"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">
-                  {{ scenes.reduce((total, scene) => total + (scene.dureeEstimee || 0), 0) }} min
-                </div>
-                <div class="stat-label-screen-work">Durée estimée</div>
-              </div>
-            </div>
-          </div>
-          
           <!-- Barre d'actions (sous les stats) -->
           <div class="sequence-actions-bar-screen-work">
             <button class="details-btn-screen-work" @click="showSequenceDetails = true">
@@ -800,43 +764,6 @@
             </div>
           </div>
           
-          <!-- Statistiques horizontales (identique au projet) -->
-          <div class="scene-stats-view-screen-work">
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-comment"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">{{ currentScene.dialogues?.length || 0 }}</div>
-                <div class="stat-label-screen-work">Dialogues</div>
-              </div>
-            </div>
-            
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-highlighter"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">
-                  {{ getTotalHighlights(currentScene) }}
-                </div>
-                <div class="stat-label-screen-work">Surlignages</div>
-              </div>
-            </div>
-            
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-clock"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">
-                  {{ currentScene.dureeEstimee || 0 }} min
-                </div>
-                <div class="stat-label-screen-work">Durée estimée</div>
-              </div>
-            </div>
-          </div>
-          
           <!-- Barre d'actions (sous les stats) -->
           <div class="scene-actions-bar-screen-work">
             <button class="details-btn-screen-work" @click="showSceneDetailsModal = true">
@@ -864,6 +791,37 @@
               <i class="fas fa-arrow-left"></i> Retour à la séquence
             </button>
           </div>
+
+          <!-- Section Commentaires (optionnelle) -->
+            <div v-if="showSceneCommentModal && selectedSceneForComments?.idScene === currentScene.idScene" class="detail-section-screen-work comment-section-screen-work">
+              <div class="detail-section-header-screen-work">
+                <h3><i class="fas fa-comments"></i> Commentaires de la scène</h3>
+              </div>
+              
+              <div class="add-comment-screen-work">
+                <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
+                <button @click="addSceneComment" class="add-comment-btn-screen-work">
+                  <i class="fas fa-plus-circle"></i> Ajouter
+                </button>
+              </div>
+              
+              <div class="comments-list-screen-work">
+                <div v-for="comment in sceneComments" :key="comment.id" class="comment-item-screen-work">
+                  <div class="comment-header-screen-work">
+                    <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
+                    <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
+                  </div>
+                  <div class="comment-content-screen-work">
+                    {{ comment.contenu }}
+                  </div>
+                  <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
+                    <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn-screen-work">
+                      <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
           <!-- Section Synopsis (si disponible) -->
           <div v-if="currentScene.synopsis" class="details-section-screen-work">
@@ -1015,37 +973,6 @@
                   >
                     <i class="fas fa-times"></i> Annuler
                   </button>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Section Commentaires (optionnelle) -->
-            <div v-if="showSceneCommentModal && selectedSceneForComments?.idScene === currentScene.idScene" class="detail-section-screen-work comment-section-screen-work">
-              <div class="detail-section-header-screen-work">
-                <h3><i class="fas fa-comments"></i> Commentaires de la scène</h3>
-              </div>
-              
-              <div class="add-comment-screen-work">
-                <textarea v-model="newSceneComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-                <button @click="addSceneComment" class="add-comment-btn-screen-work">
-                  <i class="fas fa-plus-circle"></i> Ajouter
-                </button>
-              </div>
-              
-              <div class="comments-list-screen-work">
-                <div v-for="comment in sceneComments" :key="comment.id" class="comment-item-screen-work">
-                  <div class="comment-header-screen-work">
-                    <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
-                    <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
-                  </div>
-                  <div class="comment-content-screen-work">
-                    {{ comment.contenu }}
-                  </div>
-                  <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
-                    <button @click="deleteSceneComment(comment.id)" class="delete-comment-btn-screen-work">
-                      <i class="fas fa-trash"></i> Supprimer
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
