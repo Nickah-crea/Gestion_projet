@@ -540,14 +540,14 @@ position: fixed;
   .suggestion-btn-add-episode {
     background: transparent;
     border: none;
-    color: $color-primary; // Changé: doré
+    color: $color-second-prim; 
     cursor: pointer;
     text-decoration: underline;
     font-size: $font-size-p4;
     margin-left: $gap-xs;
     
     &:hover {
-      color: darken($color-primary, 10%); // Changé: doré plus foncé
+      color: darken($color-second-prim, 10%); // Changé: doré plus foncé
     }
   }
 }
