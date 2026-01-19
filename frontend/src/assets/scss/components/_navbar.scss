@@ -177,8 +177,8 @@
   gap: $gap-sm;
   background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
   border: none;
-  border-radius: $border-radius-pill;
-  padding: 10px 24px;
+  border-radius: $border-radius-xs;
+  padding: $padding-sm;
   cursor: pointer;
   transition: $transition-fast;
   min-width: 120px;
