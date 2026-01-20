@@ -5,7 +5,7 @@
         <!-- Section Productivité -->
         <div class="personal-stats-compact-Scenariste">
           <h3 class="section-title-compact-Scenariste">
-            <i class="fas fa-chart-line"></i> Productivité
+            <i class="fas fa-chart-line"></i>
           </h3>
           
           <div class="personal-stats-grid-compact-Scenariste">
