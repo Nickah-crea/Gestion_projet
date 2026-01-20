@@ -1870,8 +1870,8 @@ const checkUserPermissions = async (episodeId) => {
             canCreatePersonnage: response.data.canCreatePersonnage || false,
             
             // NOUVEAU : Permissions pour les raccords
-            canCreateRaccord: response.data.canCreateRaccord || false,
-            canViewRaccords: response.data.canViewRaccords || true, // Par défaut true pour la consultation
+            canCreateRaccord: response.data.canCreateRaccord || true,
+            canViewRaccords: response.data.canViewRaccords || true, 
             
             // NOUVEAU : Permissions pour l'export
             canExport: response.data.canExport || response.data.canCreateScene || false,
