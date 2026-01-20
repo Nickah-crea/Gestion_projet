@@ -1,4 +1,3 @@
-[file name]: RaccordSceneComponent.vue
 <template>
   <div class="raccord-scene-container-raccord-scene">
     <!-- Bouton pour ouvrir le modal -->
