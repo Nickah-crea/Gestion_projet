@@ -1,61 +1,86 @@
-// _recherche.scss – Version avec sidebar 220px et tailles réduites
+// _recherche.scss – Version moderne avec couleurs chaudes dorées
 @import '../base/variables';
 
 .app-wrapper-global-recherche {
   display: flex;
   min-height: 100vh;
-  background: $color-background;
+  background: $color-background-alt;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 // =============================================
-// SIDEBAR LATÉRALE FIXE À GAUCHE - 220px
+// SIDEBAR LATÉRALE - COULEUR CHAUDE MODERNE
 // =============================================
 .search-sidebar-recherche {
   position: fixed;
   left: 0;
-  top: 80px; // AJOUT: Décalage pour laisser la place à la navbar
-  width: 250px;
-  height: calc(100vh - 60px); // AJOUT: Ajustement de la hauteur
-  background: $color-background;
+  top: 60px;
+  width: 280px;
+  height: calc(100vh - 60px);
+  background: $color-primary-light;
   padding: $spacing-md;
   box-sizing: border-box;
   z-index: $z-index-sticky;
   overflow-y: auto;
-  border-right: 1px solid $color-border;
-  box-shadow: $shadow-md;
+  border-right: 1px solid rgba($color-primary-dark, 0.15);
+  transition: all 0.3s ease;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-primary-dark, 0.2);
+    border-radius: 3px;
+  }
 
   .sidebar-header-recherche {
-    margin-bottom: $spacing-sm;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid rgba($color-primary-dark, 0.1);
 
     .sidebar-title-recherche {
       @include typography-playfair-h4;
       color: $color-text-primary;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
+      font-weight: 600;
     }
 
     .sidebar-subtitle-recherche {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-secondary;
       margin: 0;
+      opacity: 0.8;
     }
   }
 
   .filter-section-recherche {
-    margin-bottom: $spacing-sm;
-    background: $color-background-alt;
-    border-radius: $border-radius-xs;
-    padding: $padding-xs;
-    box-shadow: $shadow-hover;
+    margin-bottom: 6px;
+    padding: $spacing-sm;
+    background: rgba($color-white, 0.8);
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-primary-dark, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: rgba($color-primary-dark, 0.2);
+      box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+    }
 
     .section-title-recherche {
-      @include typography-p4; // CORRECTION: typography correcte
+      @include typography-p4;
       color: $color-text-primary;
-      margin-bottom: $gap-xs;
-      font-size: calc(#{$font-size-p4} + 1px); // CORRECTION: taille adaptée
+      margin-bottom: $gap-sm;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: $gap-xs;
+      
+      i {
+        color: $color-primary-dark;
+        font-size: calc(#{$font-size-p4} + 2px);
+      }
     }
   }
 
@@ -72,10 +97,10 @@
 
     .dropdown-trigger-recherche {
       width: 100%;
-      height: 34px;
-      padding: 0 $padding-xs;
-      background: $color-background-alt;
-      border: 1px solid $color-border;
+      height: 38px;
+      padding: 0 $padding-sm;
+      background: $color-white;
+      border: 1px solid rgba($color-primary-dark, 0.15);
       border-radius: $border-radius-xs;
       font-size: $font-size-p4;
       color: $color-text-primary;
@@ -83,15 +108,18 @@
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      transition: $transition-fast;
+      transition: all 0.3s ease;
+      font-weight: 500;
 
       &:hover {
-        border-color: $color-primary;
+        border-color: $color-primary-dark;
+        background: $color-white;
       }
 
       &:focus-visible {
-        outline: 2px solid $color-primary;
-        outline-offset: 1px;
+        outline: none;
+        border-color: $color-primary-dark;
+        box-shadow: 0 0 0 2px rgba($color-primary-dark, 0.1);
       }
 
       .dropdown-text-recherche {
@@ -104,7 +132,7 @@
       }
 
       .dropdown-icon-recherche {
-        color: $color-text-muted;
+        color: $color-primary-dark;
         font-size: $font-size-p4;
         transition: $transition-fast;
         flex-shrink: 0;
@@ -113,104 +141,109 @@
 
       &.open .dropdown-icon-recherche {
         transform: rotate(180deg);
+        color: $color-primary-dark;
       }
     }
 
     .dropdown-menu-recherche {
       position: absolute;
-      top: 100%;
+      top: calc(100% + 4px);
       left: 0;
-      right: 0; // CORRECTION: au lieu de auto pour éviter le débordement
-      width: 100%; // CORRECTION: s'assurer qu'il ne dépasse pas
-      margin-top: $gap-xs;
-      background: $color-background-alt;
-      border: 1px solid $color-border;
-      border-radius: $border-radius-xs;
-      box-shadow: $shadow-md;
+      right: 0;
+      width: 100%;
+      background: $color-white;
+      border: 1px solid rgba($color-primary-dark, 0.15);
+      border-radius: $border-radius-sm;
+      box-shadow: 0 8px 24px rgba($color-primary-dark, 0.12);
       z-index: $z-index-dropdown;
-      max-height: 160px;
+      max-height: 220px;
       overflow-y: auto;
-      box-sizing: border-box; // AJOUT: pour inclure les bordures dans le width
+      animation: fadeIn 0.2s ease;
+      box-sizing: border-box;
 
       .dropdown-options-recherche {
-        padding: $padding-xs;
+        padding: $spacing-sm;
         display: flex;
         flex-direction: column;
         gap: $gap-xs;
         box-sizing: border-box;
 
         .dropdown-option-recherche {
-          padding: $gap-xs $padding-xs $gap-xs 32px;
+          padding: $gap-sm $padding-sm;
           font-size: $font-size-p4;
           color: $color-text-primary;
           cursor: pointer;
-          transition: $transition-fast;
+          transition: all 0.2s ease;
           border-radius: $border-radius-xs;
           display: flex;
           align-items: center;
-          gap: $gap-xs;
+          gap: $gap-sm;
           position: relative;
-          min-height: 18px;
+          min-height: 36px;
           box-sizing: border-box;
+          background: transparent;
+          border: none;
+          width: 100%;
+          text-align: left;
 
           &:hover {
-            background: $color-surface-hover;
+            background: rgba($color-primary-light, 0.3);
           }
 
-          // Style des checkboxes
+          // Checkbox custom moderne
           input[type="checkbox"] {
             position: absolute;
-            left: 8px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             opacity: 0;
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             margin: 0;
             cursor: pointer;
             z-index: 2;
           }
 
-          // Checkbox custom
+          // Checkbox custom design
           &::before {
             content: '';
             position: absolute;
-            left: 8px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            width: 14px;
-            height: 14px;
-            border: 1.5px solid $color-border;
-            border-radius: 2px;
-            background: $color-background-alt;
-            transition: all $transition-fast;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba($color-primary-dark, 0.3);
+            border-radius: 4px;
+            background: $color-white;
+            transition: all 0.2s ease;
             z-index: 1;
           }
 
           // Checked state
           &:has(input:checked)::before {
-            background: $color-primary;
-            border-color: $color-primary;
+            background: $color-primary-dark;
+            border-color: $color-primary-dark;
           }
 
-          // Icône de coche
+          // Icône de coche moderne
           &:has(input:checked)::after {
             content: '✓';
             position: absolute;
-            left: 10px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: $color-text-light;
-            font-size: 9px;
+            color: $color-white;
+            font-size: 10px;
             font-weight: bold;
             z-index: 1;
           }
 
-          // Style pour les icônes FontAwesome
+          // Style pour les icônes
           i:not(.dropdown-icon-recherche) {
-            color: $color-primary;
+            color: $color-primary-dark;
             font-size: $font-size-p4;
-            width: 14px;
+            width: 18px;
             text-align: center;
             flex-shrink: 0;
           }
@@ -220,7 +253,7 @@
             flex: 1;
             display: flex;
             align-items: center;
-            gap: $gap-xs;
+            gap: $gap-sm;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -230,26 +263,33 @@
         // Styles pour les inputs date
         .date-input-recherche {
           width: 100%;
-          padding: $gap-xs;
-          border: 1px solid $color-border;
+          padding: $gap-sm;
+          border: 1px solid rgba($color-primary-dark, 0.15);
           border-radius: $border-radius-xs;
           font-size: $font-size-p4;
-          background: $color-background-alt;
+          background: $color-white;
+          color: $color-text-primary;
           cursor: pointer;
           box-sizing: border-box;
+          transition: all 0.2s ease;
           
           &:focus {
             outline: none;
-            border-color: $color-primary;
-            box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+            border-color: $color-primary-dark;
+            box-shadow: 0 0 0 2px rgba($color-primary-dark, 0.1);
+          }
+          
+          &::-webkit-calendar-picker-indicator {
+            color: $color-primary-dark;
+            cursor: pointer;
           }
         }
 
         .clear-date-btn-recherche {
           width: 100%;
-          padding: $gap-xs;
+          padding: $gap-sm;
           background: transparent;
-          border: 1px solid $color-border;
+          border: 1px solid rgba($color-primary-dark, 0.15);
           border-radius: $border-radius-xs;
           font-size: $font-size-p4;
           color: $color-text-secondary;
@@ -258,128 +298,104 @@
           align-items: center;
           justify-content: center;
           gap: $gap-xs;
-          transition: $transition-fast;
+          transition: all 0.3s ease;
           box-sizing: border-box;
 
           &:hover {
-            background: rgba($color-error, 0.1);
-            border-color: $color-error;
-            color: $color-error;
+            background: rgba($color-secondary, 0.1);
+            border-color: $color-secondary;
+            color: $color-secondary;
+            
+            i {
+              color: $color-secondary;
+            }
+          }
+          
+          i {
+            transition: all 0.3s ease;
           }
         }
       }
     }
   }
 
-  // Styles pour les selects et inputs
+  // Styles pour les selects
   .filter-select-recherche {
-    width: 100%; // CORRECTION: s'assurer qu'il ne dépasse pas
-    height: 34px;
-    padding: 0 $padding-xs;
-    background: $color-background-alt;
-    border: 1px solid $color-border;
+    width: 100%;
+    height: 38px;
+    padding: 0 $padding-sm;
+    background: $color-white;
+    border: 1px solid rgba($color-primary-dark, 0.15);
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
     cursor: pointer;
-    box-sizing: border-box; // AJOUT: pour inclure le padding dans le width
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A832' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right $padding-sm center;
+    background-size: 16px;
     
     &:focus {
       outline: none;
-      border-color: $color-primary;
+      border-color: $color-primary-dark;
+      box-shadow: 0 0 0 2px rgba($color-primary-dark, 0.1);
     }
-  }
-
-  .date-input-group-recherche {
-    display: flex;
-    flex-direction: column;
-    gap: $gap-xs;
-    
-    label {
-      font-size: $font-size-p5;
-      color: $color-text-secondary;
-      font-weight: $font-weight-medium;
-    }
-  }
-
-  .date-input-sidebar-recherche {
-    width: 100%;
-    padding: $gap-xs;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    box-sizing: border-box;
-    
-    &:focus {
-      outline: none;
-      border-color: $color-primary;
-    }
-  }
-
-  .reset-dates-btn-recherche {
-    width: 100%;
-    padding: $gap-xs;
-    background: transparent;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    color: $color-text-secondary;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $gap-xs;
-    transition: $transition-fast;
-    margin-top: $gap-xs;
-    box-sizing: border-box;
     
     &:hover {
-      background: $color-surface-hover;
-      border-color: $color-primary;
+      border-color: rgba($color-primary-dark, 0.3);
     }
   }
 
-  // Boutons dans la sidebar
+  // Boutons d'action dans la sidebar
   .sidebar-actions-recherche {
-    margin-top: $spacing-sm;
-    padding-top: $gap-xs;
-    border-top: 1px solid $color-border;
+    margin-top: $spacing-md;
+    padding-top: $spacing-sm;
+    border-top: 1px solid rgba($color-primary-dark, 0.1);
     display: flex;
     flex-direction: column;
     gap: $gap-sm;
 
     .search-btn-sidebar-recherche,
     .reset-btn-sidebar-recherche {
-      height: 36px;
+      height: 44px;
       border: none;
       border-radius: $border-radius-xs;
-      font-weight: $font-weight-semibold;
+      font-weight: 600;
       font-size: $font-size-p4;
       cursor: pointer;
-      transition: $transition-fast;
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: $gap-xs;
+      gap: $gap-sm;
       box-sizing: border-box;
+      letter-spacing: 0.3px;
 
       &:focus-visible {
-        outline: 2px solid $color-primary;
-        outline-offset: 1px;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba($color-primary-dark, 0.2);
       }
     }
 
     .search-btn-sidebar-recherche {
-      background: $color-primary;
+      background: $color-primary-dark;
       color: $color-text-light;
+      font-weight: 600;
 
       &:hover:not(:disabled) {
-        background: $color-primary-dark;
+        background: darken($color-primary-dark, 8%);
         transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($color-primary-dark, 0.3);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
       }
 
       &:disabled {
-        opacity: 0.6;
+        opacity: 0.5;
         cursor: not-allowed;
         transform: none;
       }
@@ -387,315 +403,526 @@
 
     .reset-btn-sidebar-recherche {
       background: transparent;
-      border: 1px solid $color-border;
+      border: 1px solid rgba($color-primary-dark, 0.3);
       color: $color-text-secondary;
 
       &:hover {
-        background: $color-surface-hover;
-        border-color: $color-primary;
+        background: rgba($color-primary-dark, 0.1);
+        border-color: $color-primary-dark;
+        color: $color-primary-dark;
       }
     }
   }
 }
 
 // =============================================
-// CONTENU PRINCIPAL À DROITE - Ajusté pour sidebar 220px
+// CONTENU PRINCIPAL - STYLE MODERNE MINIMALISTE
 // =============================================
 .search-body-recherche {
   flex: 1;
-  margin-left: 220px;
+  margin-left: 280px;
   min-height: 100vh;
-  background: none;
+  background: $color-background-alt;
+  padding: $spacing-lg 0;
 }
 
 // Main content area
 .search-main-content-recherche {
-  padding: $spacing-md;
-  max-width: 1000px;
+  padding: 0 $spacing-lg;
+  max-width: 1200px;
   margin: 0 auto;
 
   .main-header-recherche {
     text-align: center;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-xl;
+    padding-bottom: $spacing-lg;
+    border-bottom: 1px solid rgba($color-primary-dark, 0.1);
 
     .page-title-recherche {
       @include typography-playfair-h3;
       color: $color-text-primary;
-      margin: 0 0 $gap-xs 0;
-      font-size: calc(#{$font-size-h3} - 2px);
+      margin: 0 0 $gap-sm 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+      
+      i {
+        color: $color-primary-dark;
+      }
     }
 
     .page-subtitle-recherche {
       @include typography-p3;
-      color: $color-text-muted;
-      max-width: 450px;
+      color: $color-text-secondary;
+      max-width: 600px;
       margin: 0 auto;
+      line-height: 1.6;
+      opacity: 0.9;
     }
   }
 }
 
-// Barre de recherche principale - Taille réduite
+// Barre de recherche principale - Style moderne
 .search-bar-main-recherche {
-  max-width: 550px; // Réduit
-  margin: 0 auto $spacing-md; // Réduit
+  max-width: 700px;
+  margin: 0 auto $spacing-xl;
 
   .search-input-container-recherche {
     position: relative;
     display: flex;
     align-items: center;
+    background: $color-white;
+    border-radius: $border-radius-pill;
+    border: 1px solid rgba($color-primary-dark, 0.15);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+
+    &:focus-within {
+      border-color: $color-primary-dark;
+      box-shadow: 0 4px 16px rgba($color-primary-dark, 0.15);
+    }
 
     .search-input-large-recherche {
-      width: 100%;
-      height: 42px; // Réduit
-      padding: 0 $padding-md 0 ($padding-md + $padding-xs); // Réduit
-      border: 1px solid $color-border;
-      border-radius: $border-radius-pill;
-      background: $color-background-alt;
-      font-size: $font-size-p3; // Plus petit
+      flex: 1;
+      height: 56px;
+      padding: 0 $spacing-lg;
+      border: none;
+      background: transparent;
+      font-size: $font-size-p3;
       color: $color-text-primary;
       transition: $transition-fast;
+      font-weight: 500;
+
+      &::placeholder {
+        color: rgba($color-text-secondary, 0.6);
+      }
 
       &:focus {
         outline: none;
-        border-color: $color-primary;
-        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
       }
     }
 
-    .search-icon-main-recherche {
-      position: absolute;
-      left: $padding-sm; // Réduit
-      color: $color-primary;
-      font-size: $font-size-p3; // Plus petit
+    // Bouton de recherche cliquable à droite
+    .search-btn-main-recherche {
+      background: $color-primary-dark;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      margin-right: 4px;
+      color: $color-white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+
+      &:hover:not(:disabled) {
+        background: darken($color-primary-dark, 8%);
+        transform: scale(1.05);
+      }
+
+      &:active:not(:disabled) {
+        transform: scale(0.95);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      
+      i {
+        font-size: 18px;
+      }
     }
 
     .clear-search-btn-main-recherche {
       position: absolute;
-      right: $padding-xs; // Réduit
+      right: 60px;
       background: none;
       border: none;
-      color: $color-text-muted;
+      color: rgba($color-text-secondary, 0.5);
       cursor: pointer;
-      padding: 2px; // Réduit
+      padding: 8px;
       border-radius: 50%;
-      transition: $transition-fast;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &:hover {
-        background: rgba($color-error, 0.1);
-        color: $color-error;
+        background: rgba($color-secondary, 0.1);
+        color: $color-secondary;
       }
     }
   }
 }
 
-// Indicateur de projet - Taille réduite
+// Contrôles de tri - Style moderne
+.sort-controls-recherche {
+  max-width: 700px;
+  margin: 0 auto $spacing-lg;
+  
+  .sort-options-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    background: $color-white;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-primary-dark, 0.1);
+    box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+
+    .sort-label-recherche {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+      
+      i {
+        color: $color-primary-dark;
+      }
+    }
+
+    .sort-select-recherche {
+      flex: 1;
+      padding: $gap-sm $padding-sm;
+      border: 1px solid rgba($color-primary-dark, 0.15);
+      border-radius: $border-radius-xs;
+      background: $color-white;
+      color: $color-text-primary;
+      font-size: $font-size-p4;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A832' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right $padding-sm center;
+      background-size: 16px;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary-dark;
+        box-shadow: 0 0 0 2px rgba($color-primary-dark, 0.1);
+      }
+    }
+
+    .sort-direction-recherche {
+      background: transparent;
+      border: 1px solid rgba($color-primary-dark, 0.15);
+      border-radius: $border-radius-xs;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: $color-primary-dark;
+
+      &:hover {
+        background: rgba($color-primary-dark, 0.1);
+        border-color: $color-primary-dark;
+      }
+    }
+  }
+}
+
+// Indicateurs de filtre - Style moderne
 .projet-filter-indicator-recherche {
-  background: rgba($color-primary, 0.1);
-  border: 1px solid $color-primary;
-  border-radius: $border-radius-xs; // Plus petit
-  padding: $padding-xs; // Réduit
-  margin-bottom: $spacing-sm; // Réduit
+  max-width: 700px;
+  margin: 0 auto $spacing-md;
+  background: rgba($color-primary-light, 0.4);
+  border: 1px solid rgba($color-primary-dark, 0.2);
+  border-radius: $border-radius-sm;
+  padding: $spacing-sm;
+  backdrop-filter: blur(10px);
   
   .projet-indicator-content-recherche {
     display: flex;
     align-items: center;
-    gap: $gap-sm; // Réduit
+    gap: $gap-md;
     flex-wrap: wrap;
     
     .projet-label-recherche {
-      @include typography-p4; // Plus petit
+      @include typography-p4;
       color: $color-text-primary;
-      font-weight: $font-weight-semibold;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+      
+      i {
+        color: $color-primary-dark;
+      }
     }
     
     .projet-nom-recherche {
-      @include typography-p4; // Plus petit
-      color: $color-primary;
-      font-weight: $font-weight-bold;
+      @include typography-p4;
+      color: $color-primary-dark;
+      font-weight: 700;
       flex: 1;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
     
     .clear-projet-btn-recherche {
-      padding: $gap-xs $padding-xs;
-      background: transparent;
-      border: 1px solid $color-border;
+      padding: $gap-sm $padding-md;
+      background: $color-white;
+      border: 1px solid rgba($color-primary-dark, 0.2);
       border-radius: $border-radius-xs;
-      font-size: $font-size-p5; // Plus petit
+      font-size: $font-size-p5;
       color: $color-text-secondary;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: $gap-xs;
-      transition: $transition-fast;
+      transition: all 0.3s ease;
+      font-weight: 500;
       
       &:hover {
-        background: rgba($color-error, 0.1);
-        border-color: $color-error;
-        color: $color-error;
+        background: $color-white;
+        border-color: $color-secondary;
+        color: $color-secondary;
+        
+        i {
+          color: $color-secondary;
+        }
+      }
+      
+      i {
+        transition: all 0.3s ease;
       }
     }
   }
 }
 
 // =============================================
-// RÉSULTATS – GRILLE CORRIGÉE - TAILLES RÉDUITES
+// RÉSULTATS – DESIGN MODERNE MINIMALISTE
 // =============================================
 .results-section-recherche {
+  max-width: 1200px;
+  margin: 0 auto;
+
   .results-header-recherche {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-sm; // Réduit
-    padding: $padding-xs; // Réduit
-    background: $color-background-alt;
-    border-radius: $border-radius-xs; // Plus petit
-    box-shadow: $shadow-primary;
+    margin-bottom: $spacing-lg;
+    padding: $spacing-md;
+    background: $color-white;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-primary-dark, 0.1);
+    box-shadow: 0 2px 12px rgba($color-primary-dark, 0.08);
 
     h2 {
-      @include typography-playfair-p4; // H5 au lieu de H4
+      @include typography-playfair-p4;
       color: $color-text-primary;
       margin: 0;
       display: flex;
       align-items: center;
-      gap: $gap-sm; // Réduit
+      gap: $gap-sm;
+      font-weight: 600;
+      
+      i {
+        color: $color-primary-dark;
+      }
     }
 
     .results-info-recherche {
       display: flex;
       align-items: center;
-      gap: $gap-sm; // Réduit
-      @include typography-p4; // Plus petit
+      gap: $spacing-md;
+      @include typography-p4;
 
-      .projet-info-recherche {
-        display: flex;
-        align-items: center;
-        gap: $gap-xs; // Réduit
-        color: $color-text-secondary;
-
-        i {
-          color: $color-primary;
-        }
-      }
-
+      .projet-info-recherche,
       .regroupement-info-recherche {
         display: flex;
         align-items: center;
-        gap: $gap-xs; // Réduit
+        gap: $gap-xs;
         color: $color-text-secondary;
+        font-weight: 500;
 
         i {
-          color: $color-primary;
+          color: $color-primary-dark;
+        }
+
+        strong {
+          color: $color-text-primary;
+          font-weight: 600;
         }
       }
     }
 
     .reset-all-btn-recherche {
-      padding: $gap-xs $padding-xs;
-      background: transparent;
-      border: 1px solid $color-border;
+      padding: $gap-sm $padding-md;
+      background: $color-white;
+      border: 1px solid rgba($color-primary-dark, 0.2);
       border-radius: $border-radius-xs;
-      font-size: $font-size-p4; // Plus petit
+      font-size: $font-size-p4;
       color: $color-text-secondary;
       cursor: pointer;
-      transition: $transition-fast;
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
-      gap: $gap-xs; // Réduit
+      gap: $gap-xs;
+      font-weight: 500;
 
       &:hover {
-        background: $color-surface-hover;
-        border-color: $color-primary;
+        background: rgba($color-primary-dark, 0.1);
+        border-color: $color-primary-dark;
+        color: $color-primary-dark;
       }
     }
   }
 }
 
-// CORRECTION : Structure de grille refaite - Tailles réduites
+// Grille de résultats moderne
 .modern-results-recherche {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm; // Réduit
+  gap: $spacing-md;
 
   .result-group-recherche {
     display: flex;
     flex-direction: column;
-    gap: $gap-xs; // Réduit
+    gap: $spacing-sm;
 
     .group-header-recherche {
-      padding: $padding-xs;
-      border-radius: $border-radius-xs;
-      background: $color-background-alt;
-      box-shadow: $shadow-primary;
+      padding: $spacing-md;
+      border-radius: $border-radius-sm;
+      background: $color-white;
+      box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+      border-left: 4px solid transparent;
       display: flex;
       align-items: center;
-      gap: $gap-sm; // Réduit
+      gap: $gap-md;
       @include typography-playfair-p4;
-      margin-bottom: 0;
+      margin: 0;
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 16px rgba($color-primary-dark, 0.1);
+      }
 
       .group-icon-recherche {
-        font-size: calc(#{$font-size-h4} - 1px); // Plus petit
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba($color-primary-dark, 0.1);
+        border-radius: 50%;
       }
 
       .group-title-recherche {
         color: $color-text-primary;
         flex: 1;
-        font-size: calc(#{$font-size-h4} - 1px); // Plus petit
+        font-size: 1.2rem;
+        font-weight: 600;
       }
 
       .group-count-recherche {
         color: $color-text-muted;
-        font-size: $font-size-p4; // Plus petit
-        font-weight: $font-weight-regular;
+        font-size: $font-size-p4;
+        font-weight: 500;
+        padding: $gap-xs $gap-sm;
+        background: rgba($color-primary-dark, 0.05);
+        border-radius: $border-radius-xs;
       }
 
       // Styles spécifiques par type de groupe
       &.group-header-plateau-recherche {
-        border-left: 2px solid $color-accent; // Réduit
+        border-left-color: $color-set;
+        .group-icon-recherche { color: $color-set; }
       }
       &.group-header-lieu-recherche {
-        border-left: 2px solid $color-info;
+        border-left-color: $color-location;
+        .group-icon-recherche { color: $color-location; }
       }
       &.group-header-personnage-recherche {
-        border-left: 2px solid $color-primary;
+        border-left-color: $color-character;
+        .group-icon-recherche { color: $color-character; }
       }
       &.group-header-statut-recherche {
-        border-left: 2px solid $color-success;
+        border-left-color: $color-primary-dark;
+        .group-icon-recherche { color: $color-primary-dark; }
+      }
+      &.group-header-episode-recherche {
+        border-left-color: $color-episode;
+        .group-icon-recherche { color: $color-episode; }
+      }
+      &.group-header-sequence-recherche {
+        border-left-color: $color-sequence;
+        .group-icon-recherche { color: $color-sequence; }
       }
     }
 
     .group-items-recherche {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: $gap-xs; // Réduit
-
-      // Responsive
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: $spacing-sm;
+      
       @media (max-width: $breakpoint-xl) {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       }
-
+      
       @media (max-width: $breakpoint-lg) {
         grid-template-columns: 1fr;
       }
     }
   }
 
-  // Style pour les résultats sans regroupement - Tailles réduites
+  // Style pour les cartes de résultats
   .result-item-recherche {
-    background: $color-background-alt;
-    border-radius: $border-radius-xs;
-    box-shadow: $shadow-md;
-    padding: $padding-sm; // Réduit
-    transition: $transition;
-    min-height: 220px; // Réduit
+    background: $color-white;
+    border-radius: $border-radius-sm;
+    box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+    padding: $spacing-md;
+    transition: all 0.3s ease;
+    min-height: auto;
     height: auto;
     display: flex;
     flex-direction: column;
-    border: 1px solid $color-border;
+    border: 1px solid rgba($color-primary-dark, 0.08);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, $color-primary-dark, rgba($color-primary-dark, 0.5));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
 
     &:hover {
-      transform: translateY(-2px); // Réduit
-      box-shadow: $shadow-lg;
-      border-color: $color-primary;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba($color-primary-dark, 0.12);
+      border-color: rgba($color-primary-dark, 0.2);
+      
+      &::before {
+        opacity: 1;
+      }
+      
+      .view-details-text-recherche {
+        color: $color-primary-dark;
+        transform: translateX(4px);
+      }
     }
 
     .result-link-recherche {
@@ -707,9 +934,9 @@
       outline: none;
 
       &:focus-visible {
-        outline: 2px solid $color-primary;
-        outline-offset: 1px;
-        border-radius: $border-radius-xs;
+        outline: 2px solid $color-primary-dark;
+        outline-offset: 2px;
+        border-radius: $border-radius-sm;
       }
     }
 
@@ -723,35 +950,51 @@
     .result-header-recherche {
       display: flex;
       flex-direction: column;
-      gap: $gap-xs; // Réduit
-      margin-bottom: $gap-xs; // Réduit
+      gap: $gap-sm;
+      margin-bottom: $spacing-sm;
 
       .result-type-badge-recherche {
-        padding: $gap-xs $padding-xs;
+        padding: $gap-xs $gap-sm;
         border-radius: $border-radius-pill;
-        font-size: $font-size-p5; // Plus petit
-        font-weight: $font-weight-bold;
+        font-size: $font-size-p5;
+        font-weight: 700;
         text-transform: uppercase;
         align-self: flex-start;
         display: flex;
         align-items: center;
         gap: $gap-xs;
+        letter-spacing: 0.5px;
+        border: 1px solid transparent;
 
         &.scene-badge-recherche { 
-          background: rgba($color-primary, 0.2); 
-          color: $color-primary-dark; 
+          background: rgba($color-scene, 0.1); 
+          color: $color-scene; 
+          border-color: rgba($color-scene, 0.2);
         }
         &.personnage-badge-recherche { 
-          background: rgba($color-accent, 0.2); 
-          color: $color-accent; 
+          background: rgba($color-character, 0.1); 
+          color: $color-character; 
+          border-color: rgba($color-character, 0.2);
         }
         &.lieu-badge-recherche { 
-          background: rgba($color-info, 0.2); 
-          color: $color-info; 
+          background: rgba($color-location, 0.1); 
+          color: $color-location; 
+          border-color: rgba($color-location, 0.2);
         }
         &.plateau-badge-recherche { 
-          background: rgba($color-accent-dark, 0.2); 
-          color: $color-accent-dark; 
+          background: rgba($color-set, 0.1); 
+          color: $color-set; 
+          border-color: rgba($color-set, 0.2);
+        }
+        &.episode-badge-recherche {
+          background: rgba($color-episode, 0.1);
+          color: $color-episode;
+          border-color: rgba($color-episode, 0.2);
+        }
+        &.sequence-badge-recherche {
+          background: rgba($color-sequence, 0.1);
+          color: $color-sequence;
+          border-color: rgba($color-sequence, 0.2);
         }
       }
 
@@ -759,39 +1002,47 @@
         @include typography-playfair-p4;
         color: $color-text-primary;
         margin: 0;
-        line-height: $line-height-tight;
+        line-height: 1.4;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        font-size: calc(#{$font-size-h4} - 1px); // Plus petit
+        font-size: 1.3rem;
+        font-weight: 600;
+        -webkit-line-clamp: 2;
       }
 
       .result-status-recherche {
-        padding: $gap-xs $padding-xs;
+        padding: $gap-xs $gap-sm;
         border-radius: $border-radius-pill;
-        font-size: $font-size-p5; // Plus petit
-        font-weight: $font-weight-medium;
+        font-size: $font-size-p5;
+        font-weight: 600;
         align-self: flex-start;
+        border: 1px solid transparent;
 
         &.status-planifie { 
-          background: rgba($color-warning, 0.2); 
-          color: darken($color-warning, 20%); 
+          background: rgba($color-warning, 0.1); 
+          color: $color-warning; 
+          border-color: rgba($color-warning, 0.2);
         }
         &.status-confirme { 
-          background: rgba($color-info, 0.2); 
-          color: darken($color-info, 20%); 
+          background: rgba($color-cool, 0.1); 
+          color: $color-cool; 
+          border-color: rgba($color-cool, 0.2);
         }
         &.status-en_cours { 
-          background: rgba($color-primary, 0.2); 
+          background: rgba($color-primary-dark, 0.1); 
           color: $color-primary-dark; 
+          border-color: rgba($color-primary-dark, 0.2);
         }
         &.status-termine { 
-          background: rgba($color-success, 0.2); 
-          color: darken($color-success, 20%); 
+          background: rgba($color-success, 0.1); 
+          color: $color-success; 
+          border-color: rgba($color-success, 0.2);
         }
         &.status-reporte { 
-          background: rgba($color-error, 0.2); 
+          background: rgba($color-error, 0.1); 
           color: $color-error; 
+          border-color: rgba($color-error, 0.2);
         }
       }
     }
@@ -800,30 +1051,41 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: $gap-xs;
-      margin-bottom: $gap-xs;
+      gap: $gap-sm;
+      margin-bottom: $spacing-sm;
       overflow-y: auto;
-      max-height: 110px; // Réduit
+      max-height: 120px;
+      padding-right: $gap-xs;
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: rgba($color-primary-dark, 0.2);
+        border-radius: 2px;
+      }
 
       .detail-row-recherche {
         display: flex;
         align-items: flex-start;
-        gap: $gap-xs;
-        @include typography-p4; // Plus petit
+        gap: $gap-sm;
+        @include typography-p4;
         color: $color-text-secondary;
+        line-height: 1.5;
 
         .detail-label-recherche {
           display: flex;
           align-items: center;
           gap: $gap-xs;
           color: $color-text-primary;
-          font-weight: $font-weight-medium;
-          min-width: 60px; // Réduit
+          font-weight: 600;
+          min-width: 80px;
           flex-shrink: 0;
 
           i {
-            color: $color-primary;
-            font-size: $font-size-p5; // Plus petit
+            color: $color-primary-dark;
+            font-size: $font-size-p5;
           }
         }
 
@@ -835,30 +1097,40 @@
         .comedien-recherche {
           color: $color-text-muted;
           font-style: italic;
+          margin-left: $gap-xs;
         }
       }
     }
 
     .dialogues-section-recherche {
-      margin: $gap-xs 0;
-      padding: $padding-xs;
-      background: rgba($color-primary, 0.05);
+      margin: $gap-sm 0;
+      padding: $spacing-sm;
+      background: rgba($color-primary-light, 0.3);
       border-radius: $border-radius-xs;
-      border-left: 2px solid $color-primary;
-      max-height: 90px; // Réduit
+      border-left: 3px solid $color-primary-dark;
+      max-height: 100px;
       overflow-y: auto;
 
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: rgba($color-primary-dark, 0.2);
+        border-radius: 2px;
+      }
+
       .dialogues-title-recherche {
-        @include typography-p4; // Plus petit
+        @include typography-p4;
         color: $color-text-primary;
-        font-weight: $font-weight-semibold;
+        font-weight: 600;
         margin-bottom: $gap-xs;
         display: flex;
         align-items: center;
         gap: $gap-xs;
 
         i {
-          color: $color-primary;
+          color: $color-primary-dark;
         }
       }
 
@@ -868,12 +1140,20 @@
         gap: $gap-xs;
 
         .dialogue-item-recherche {
-          @include typography-p4; // Plus petit
+          @include typography-p4;
           color: $color-text-secondary;
           font-style: italic;
           padding-left: $padding-xs;
-          border-left: 1px solid rgba($color-primary, 0.3);
+          border-left: 1px solid rgba($color-primary-dark, 0.3);
           word-break: break-word;
+          line-height: 1.4;
+        }
+        
+        .dialogues-more-recherche {
+          @include typography-p5;
+          color: $color-text-muted;
+          font-style: italic;
+          margin-top: $gap-xs;
         }
       }
     }
@@ -881,112 +1161,98 @@
     .hierarchy-recherche {
       display: flex;
       flex-wrap: wrap;
-      gap: $gap-xs;
-      margin: $gap-xs 0;
-      padding: $gap-xs 0;
-      border-top: 1px solid $color-border;
+      gap: $gap-sm;
+      margin: $gap-sm 0;
+      padding: $gap-sm 0;
+      border-top: 1px solid rgba($color-primary-dark, 0.1);
 
       .hierarchy-item-recherche {
-        font-size: $font-size-p5; // Plus petit
+        font-size: $font-size-p5;
         color: $color-text-muted;
         display: flex;
         align-items: center;
         gap: $gap-xs;
+        padding: $gap-xs $gap-sm;
+        background: rgba($color-primary-dark, 0.05);
+        border-radius: $border-radius-xs;
+        border: 1px solid rgba($color-primary-dark, 0.1);
 
         i {
-          color: $color-primary;
-          font-size: $font-size-p5; // Plus petit
+          color: $color-primary-dark;
+          font-size: $font-size-p5;
         }
 
         &.sans-projet-recherche {
+          background: rgba($color-error, 0.1);
+          border-color: rgba($color-error, 0.2);
           color: $color-error;
+          
+          i {
+            color: $color-error;
+          }
         }
       }
     }
 
     .view-details-recherche {
       margin-top: auto;
-      padding-top: $gap-xs;
-      border-top: 1px solid $color-border;
+      padding-top: $spacing-sm;
+      border-top: 1px solid rgba($color-primary-dark, 0.1);
       
       .view-details-text-recherche {
-        @include typography-p4; // Plus petit
-        color: $color-primary;
-        font-weight: $font-weight-semibold;
+        @include typography-p4;
+        color: $color-primary-dark;
+        font-weight: 600;
         display: flex;
         align-items: center;
-        gap: $gap-xs; // Réduit
-        transition: $transition;
+        gap: $gap-sm;
+        transition: all 0.3s ease;
+        justify-content: flex-end;
 
-        &:hover {
-          color: $color-primary-dark;
+        i {
+          transition: transform 0.3s ease;
         }
-      }
-    }
 
-    // Styles spécifiques pour chaque type de résultat
-    &.type-scene {
-      .scene-result-recherche {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-    }
-
-    &.type-personnage {
-      .personnage-result-recherche {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-    }
-
-    &.type-lieu {
-      .lieu-result-recherche {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-    }
-
-    &.type-plateau {
-      .plateau-result-recherche {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
+        &:hover i {
+          transform: translateX(4px);
+        }
       }
     }
   }
 }
 
 // =============================================
-// ÉTATS SPÉCIAUX - TAILLES RÉDUITES
+// ÉTATS SPÉCIAUX - DESIGN MODERNE
 // =============================================
 .empty-state-recherche, .loading-state-recherche {
   text-align: center;
-  padding: $spacing-md; // Réduit
-  background: $color-background-alt;
-  border-radius: $border-radius-xs;
-  box-shadow: $shadow-primary;
-  margin: $spacing-md 0; // Réduit
+  padding: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-sm;
+  box-shadow: 0 2px 12px rgba($color-primary-dark, 0.08);
+  border: 1px solid rgba($color-primary-dark, 0.1);
+  margin: $spacing-xl 0;
 
   .empty-icon-recherche, .spinner-recherche {
-    font-size: 32px; // Réduit
-    color: $color-primary;
-    margin-bottom: $gap-xs; // Réduit
+    font-size: 48px;
+    color: $color-primary-dark;
+    margin-bottom: $spacing-md;
+    opacity: 0.7;
   }
 
   h3 {
-    @include typography-playfair-p4; // H5 au lieu de H4
+    @include typography-playfair-p4;
     color: $color-text-primary;
-    margin-bottom: $gap-xs;
+    margin-bottom: $gap-sm;
+    font-weight: 600;
   }
 
   p {
-    @include typography-p3; // P3 au lieu de P2
-    color: $color-text-muted;
-    max-width: 300px; // Réduit
+    @include typography-p3;
+    color: $color-text-secondary;
+    max-width: 400px;
     margin: 0 auto;
+    line-height: 1.6;
   }
 }
 
@@ -996,22 +1262,15 @@
   }
 }
 
-// Squelettes de chargement
-.skeleton-loading-recherche {
-  .result-item-recherche {
-    position: relative;
-    overflow: hidden;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba($color-background-alt, 0.4), transparent);
-      animation: loading 1.5s infinite;
-    }
+// Animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -1020,17 +1279,37 @@
   to { transform: rotate(360deg); }
 }
 
-@keyframes loading {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
 // =============================================
-// RESPONSIVE
+// RESPONSIVE DESIGN
 // =============================================
 @media (max-width: $breakpoint-xl) {
+  .search-sidebar-recherche {
+    width: 260px;
+  }
+  
+  .search-body-recherche {
+    margin-left: 260px;
+  }
+  
   .modern-results-recherche .result-group-recherche .group-items-recherche {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  
+  .results-header-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    
+    .results-info-recherche {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $gap-sm;
+    }
+    
+    .reset-all-btn-recherche {
+      align-self: stretch;
+      justify-content: center;
+    }
   }
 }
 
@@ -1039,48 +1318,64 @@
     position: relative;
     width: 100%;
     height: auto;
+    max-height: 400px;
+    margin-bottom: $spacing-lg;
+    top: 0;
   }
   
   .search-body-recherche {
     margin-left: 0;
+    padding: $spacing-md 0;
+  }
+  
+  .search-main-content-recherche {
+    padding: 0 $spacing-md;
   }
   
   .modern-results-recherche .result-group-recherche .group-items-recherche {
     grid-template-columns: 1fr;
   }
-  
-  .results-header-recherche {
-    flex-direction: column;
-    gap: $gap-xs;
-    text-align: center;
-    
-    .results-info-recherche {
-      flex-direction: column;
-      gap: $gap-xs;
-    }
-  }
 }
 
 @media (max-width: $breakpoint-md) {
   .search-main-content-recherche {
-    padding: $spacing-sm; // Réduit
+    padding: 0 $spacing-sm;
   }
   
   .main-header-recherche .page-title-recherche {
-    font-size: calc(#{$font-size-h3} - 4px); // Plus petit sur mobile
+    font-size: 2rem;
+  }
+  
+  .search-bar-main-recherche {
+    .search-input-container-recherche {
+      .search-input-large-recherche {
+        height: 48px;
+        font-size: $font-size-p4;
+      }
+      
+      .search-btn-main-recherche {
+        width: 44px;
+        height: 44px;
+      }
+    }
   }
   
   .modern-results-recherche .result-item-recherche {
-    padding: $padding-xs; // Réduit
+    padding: $spacing-sm;
+  }
+  
+  .results-header-recherche {
+    padding: $spacing-sm;
   }
 }
 
-// Amélioration de l'accessibilité
+// Accessibilité
 @media (prefers-reduced-motion: reduce) {
   .result-item-recherche,
   .dropdown-trigger-recherche,
   .search-btn-sidebar-recherche,
-  .reset-btn-sidebar-recherche {
+  .reset-btn-sidebar-recherche,
+  .search-btn-main-recherche {
     transition: none;
     
     &:hover {
@@ -1092,4 +1387,145 @@
     animation: none;
   }
 }
+
+// =============================================
+// NAVBAR STICKY POUR LES BOUTONS D'EXPORT
+// =============================================
+.sticky-export-navbar-resultat-recherche {
+  position: sticky;
+  top: 60px; // Sous la navbar principale
+  z-index: $z-index-sticky - 1;
+  background: $color-background-alt;
+  border-bottom: 2px solid $color-primary;
+  box-shadow: $shadow-lg;
+  margin: 0 (-$spacing-lg) $spacing-lg;
+  padding: 0 $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) {
+    margin: 0 (-$spacing-sm) $spacing-md;
+    padding: 0 $spacing-sm;
+  }
+}
+
+.navbar-content-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+.navbar-title-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  
+  h3 {
+    @include typography-p3;
+    color: $color-text-primary;
+    margin: 0;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.navbar-subtitle-resultat-recherche {
+  @include typography-p4;
+  color: $color-primary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  font-weight: $font-weight-medium;
+}
+
+.navbar-actions-resultat-recherche {
+  display: flex;
+  gap: $gap-sm;
+  align-items: center;
+  
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    width: 100%;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Réutilisez les styles existants des boutons
+.navbar-actions-resultat-recherche {
+  .btn-ecran-travail-resultat-recherche,
+  .btn-export-pdf-resultat-recherche,
+  .btn-send-email-resultat-recherche {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    min-width: 160px;
+    justify-content: center;
+    
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+  
+  .btn-ecran-travail-resultat-recherche {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+    border: 1px solid rgba($color-info, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: $color-info;
+      color: $color-text-light;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
+  
+  .btn-export-pdf-resultat-recherche {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    border: 1px solid rgba($color-error, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: $color-error;
+      color: $color-text-light;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
+  
+  .btn-send-email-resultat-recherche {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: $color-success;
+      color: $color-text-light;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
+}
+
 
