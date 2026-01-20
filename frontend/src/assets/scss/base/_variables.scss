@@ -28,28 +28,16 @@ $font-weight-black: 900;
 $font-style-italic: italic;
 $font-style-normal: normal;
 
-// // Tailles de police
-// $font-size-h1: 60px;
-// $font-size-h2: 48px;
-// $font-size-h3: 36px;
-// $font-size-h4: 24px;
-// $font-size-p1: 18px;
-// $font-size-p2: 14px;
-// $font-size-p3: 12px;
-// $font-size-p4: 11px;
-// $font-size-p5: 8px;
-
-
-// Tailles de police
+// Tailles de police AJUSTÉES pour lisibilité (augmenté les petites tailles)
 $font-size-h1: 48px;
 $font-size-h2: 36px;
 $font-size-h3: 24px;
 $font-size-h4: 18px;
 $font-size-p1: 16px;
 $font-size-p2: 14px;
-$font-size-p3: 12px;
-$font-size-p4: 11px;
-$font-size-p5: 8px;
+$font-size-p3: 13px; // CHANGEMENT: Augmenté de 12px pour meilleure lisibilité
+$font-size-p4: 12px; // CHANGEMENT: Augmenté de 11px
+$font-size-p5: 10px; // CHANGEMENT: Augmenté de 8px
 
 $font-size-28: 28px;
 // Line heights
@@ -112,7 +100,7 @@ $color-surface-hover: rgba(237, 202, 73, 0.25);  // Hover depth
 $color-success:       $color-primary;           // Golden – positive, done
 $color-warning:       $color-accent;            // Orange – in progress
 $color-error:         $color-secondary;         // Wine red – issues
-$color-info:          $color-cool;              // Blue – info only
+$color-info:          $color-cool;            // Blue – info only
 
 // === Category-Specific (Harmonized) ===
 $color-calendar:      $color-cool;              // Blue – calm organization
@@ -133,11 +121,7 @@ $color-pastel-gold:   rgba(237, 202, 73, 0.15);
 $color-pastel-wine:   rgba(236, 119, 132, 0.12);
 $color-pastel-brown:  rgba(141, 105, 93, 0.1);
 
-// =============================================
-// ESPACEMENTS - CORRIGÉ
-// =============================================
-
-// Dans _variables.scss, ajoutez ces mixins :
+// CHANGEMENT: Ajout de mixins pour pastels (déjà présents, mais explicités)
 @mixin pastel-gold {
   background: $color-pastel-gold;
   border: 1px solid rgba($color-primary, 0.2);
@@ -153,59 +137,55 @@ $color-pastel-brown:  rgba(141, 105, 93, 0.1);
   border: 1px solid rgba($color-tertiary, 0.2);
 }
 
-// Gaps (espacements entre éléments)
-$gap-xs: 4px;
-$gap-sm: 6px;
-$gap-md: 10px;
-$gap-lg: 14px;
-$gap-xl: 20px;
-$gap-xxl: 30px;
+// Gaps (espacements entre éléments) AJUSTÉS pour plus d'air
+$gap-xs: 6px; // CHANGEMENT: Augmenté de 4px
+$gap-sm: 8px; // CHANGEMENT: Augmenté de 6px
+$gap-md: 12px; // CHANGEMENT: Augmenté de 10px
+$gap-lg: 16px; // CHANGEMENT: Augmenté de 14px
+$gap-xl: 24px; // CHANGEMENT: Augmenté de 20px
+$gap-xxl: 36px; // CHANGEMENT: Augmenté de 30px
 
-// Paddings
-$padding-xs: 8px;
-$padding-sm: 12px;
-$padding-md: 16px;
-$padding-lg: 20px;
-$padding-xl: 24px;
+// Paddings AJUSTÉS
+$padding-xs: 10px; // CHANGEMENT: Augmenté de 8px
+$padding-sm: 14px; // CHANGEMENT: Augmenté de 12px
+$padding-md: 18px; // CHANGEMENT: Augmenté de 16px
+$padding-lg: 24px; // CHANGEMENT: Augmenté de 20px
+$padding-xl: 32px; // CHANGEMENT: Augmenté de 24px
 
-// Margins
-$margin-xs: 8px;
-$margin-sm: 12px;
-$margin-md: 16px;
-$margin-lg: 20px;
-$margin-xl: 24px;
+// Margins AJUSTÉS
+$margin-xs: 10px; // CHANGEMENT: Augmenté de 8px
+$margin-sm: 14px; // CHANGEMENT: Augmenté de 12px
+$margin-md: 18px; // CHANGEMENT: Augmenté de 16px
+$margin-lg: 24px; // CHANGEMENT: Augmenté de 20px
+$margin-xl: 32px; // CHANGEMENT: Augmenté de 24px
 
 // Spacings (pour compatibilité)
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
+$spacing-xs: 6px;
+$spacing-sm: 10px;
+$spacing-md: 18px;
+$spacing-lg: 28px;
+$spacing-xl: 40px;
 
-// =============================================
-// BORDS & OMBRES - STYLE CINÉMA
-// =============================================
-
-// Bordures
-$border-radius-xs: 8px;
-$border-radius-sm: 12px;
-$border-radius: 16px;
-$border-radius-lg: 20px;
+// Bordures AJUSTÉES pour plus de rondeur
+$border-radius-xs: 10px; // CHANGEMENT: Augmenté de 8px
+$border-radius-sm: 14px; // CHANGEMENT: Augmenté de 12px
+$border-radius: 18px; // CHANGEMENT: Augmenté de 16px
+$border-radius-lg: 24px; // CHANGEMENT: Augmenté de 20px
 $border-radius-pill: 50px;
-$border-radius-xl: 24px;
+$border-radius-xl: 28px; // CHANGEMENT: Augmenté de 24px
 
 // Ombres cinéma
-$shadow: 0px 0px 2px rgba(0, 0, 0, 0.08);
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
-$shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.2);
-$shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.15);
-$shadow-inset: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow: 0px 2px 6px rgba(0, 0, 0, 0.08); // CHANGEMENT: Plus doux
+$shadow-md: 0 6px 16px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.16);
+$shadow-xl: 0 14px 36px rgba(0, 0, 0, 0.2);
+$shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
+$shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 
 // Ombres colorées cinéma
-$shadow-primary: 0 4px 15px rgba(26, 35, 126, 0.2);
-$shadow-accent: 0 4px 15px rgba(183, 28, 28, 0.2);
-$shadow-gold: 0 4px 15px rgba(229, 198, 135, 0.3);
+$shadow-primary: 0 6px 18px rgba(26, 35, 126, 0.2); // CHANGEMENT: Plus prononcé
+$shadow-accent: 0 6px 18px rgba(183, 28, 28, 0.2);
+$shadow-gold: 0 6px 18px rgba(229, 198, 135, 0.3);
 
 // Bordures
 $border-width: 1px;
@@ -218,7 +198,10 @@ $border-width-lg: 3px;
 
 $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 $transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-$transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); // CHANGEMENT: Accéléré pour réactivité
+
+// Ajouter cette ligne :
+$transition-medium: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); // <-- AJOUTER CETTE LIGNE
 
 // Durées d'animation
 $duration-fast: 0.2s;
@@ -229,6 +212,19 @@ $duration-cinematic: 0.8s;
 // Animations spéciales cinéma
 $ease-in-out-cinema: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 $ease-out-cinema: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+// CHANGEMENT: Ajout de mixin pour cartes aérées
+@mixin card-aeree {
+  padding: $padding-md;
+  margin-bottom: $margin-lg;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  transition: $transition-fast;
+  &:hover {
+    transform: scale(1.02); // Micro-animation
+    box-shadow: $shadow-lg;
+  }
+}
 
 // =============================================
 // BREAKPOINTS (Responsive)
