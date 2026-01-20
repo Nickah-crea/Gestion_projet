@@ -1,0 +1,1234 @@
+@import '../base/variables';
+
+// =============================================
+// CONTENEUR PRINCIPAL
+// =============================================
+.raccord-scene-container-raccord-scene {
+  display: inline-block;
+}
+
+// =============================================
+// BOUTON D'OUVERTURE DU MODAL
+// =============================================
+.btn-open-raccord-raccord-scene {
+  @include btn-cinema-primary;
+  padding: $padding-sm $padding-md;
+  font-size: $font-size-p3;
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: 140px;
+  
+  i {
+    font-size: $font-size-p2;
+    margin-right: $gap-xs;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover {
+      transform: none;
+      box-shadow: $shadow-primary;
+      background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+    }
+  }
+}
+
+// =============================================
+// MODAL OVERLAY
+// =============================================
+.modal-overlay-raccord-scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-text-primary, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+  animation: fadeInOverlay-raccord-scene 0.3s ease-out;
+  backdrop-filter: blur(4px);
+}
+
+@keyframes fadeInOverlay-raccord-scene {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+// =============================================
+// CONTENU DU MODAL
+// =============================================
+.modal-content-raccord-scene {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 1000px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn-raccord-scene 0.3s ease-out;
+  border: 1px solid $color-border;
+  position: relative;
+}
+
+@keyframes modalSlideIn-raccord-scene {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// =============================================
+// EN-TÊTE DU MODAL
+// =============================================
+.modal-header-raccord-scene {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  background: linear-gradient(135deg, rgba($color-primary, 0.08), rgba($color-tertiary, 0.04));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    font-size: calc(#{$font-size-h4} - 2px);
+    
+    i {
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+    }
+  }
+}
+
+.close-btn-raccord-scene {
+  background: rgba($color-text-muted, 0.1);
+  border: none;
+  font-size: $font-size-p3;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    transform: rotate(90deg);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION DE RACCORD
+// =============================================
+.raccord-form-raccord-scene {
+  padding: $spacing-lg;
+}
+
+// =============================================
+// SECTIONS DU FORMULAIRE
+// =============================================
+.form-section-raccord-scene {
+  margin-bottom: $spacing-xl;
+  padding: $spacing-md;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 1px solid $color-border;
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: rgba($color-primary, 0.3);
+    box-shadow: $shadow-md;
+  }
+
+  h4 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin: 0 0 $spacing-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    font-size: calc(#{$font-size-p4} + 1px);
+    padding-bottom: $gap-sm;
+    border-bottom: 1px solid $color-border;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+.section-description-raccord-scene {
+  @include typography-p3;
+  color: $color-text-muted;
+  margin: 0 0 $spacing-md 0;
+  line-height: 1.5;
+  font-style: italic;
+  
+  strong {
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// =============================================
+// ALERTE D'INCOHÉRENCE CHRONOLOGIQUE
+// =============================================
+.chronology-alert-raccord-scene {
+  background: rgba($color-warning, 0.1);
+  border: 1px solid $color-warning;
+  border-radius: $border-radius-xs;
+  padding: $spacing-sm;
+  margin-bottom: $spacing-md;
+  animation: pulseAlert 2s infinite;
+  
+  &.critical {
+    background: rgba($color-error, 0.1);
+    border-color: $color-error;
+    animation: pulseCritical 1.5s infinite;
+  }
+}
+
+@keyframes pulseAlert {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba($color-warning, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba($color-warning, 0);
+  }
+}
+
+@keyframes pulseCritical {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba($color-error, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba($color-error, 0);
+  }
+}
+
+.alert-content-raccord-scene {
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-sm;
+  
+  i {
+    color: $color-warning;
+    font-size: $font-size-h4;
+    margin-top: 2px;
+    
+    .critical & {
+      color: $color-error;
+    }
+  }
+}
+
+.alert-text-raccord-scene {
+  flex: 1;
+  
+  h5 {
+    @include typography-p4;
+    color: $color-text-primary;
+    margin: 0 0 $gap-xs 0;
+    font-weight: $font-weight-bold;
+    
+    .critical & {
+      color: $color-error;
+    }
+  }
+  
+  p {
+    @include typography-p4;
+    color: $color-text-secondary;
+    margin: 0 0 $gap-xs 0;
+    line-height: 1.4;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.alert-details-raccord-scene {
+  @include typography-p5;
+  background: rgba($color-text-primary, 0.05);
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  margin-top: $gap-xs !important;
+  
+  strong {
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// =============================================
+// LIGNES DE FORMULAIRES
+// =============================================
+.form-row-raccord-scene {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+// =============================================
+// GROUPES DE FORMULAIRES
+// =============================================
+.form-group-raccord-scene {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+    
+    &:not([for*="source"]):not([for*="cible"])::after {
+      content: '';
+    }
+  }
+}
+
+.form-select-raccord-scene,
+.form-textarea-raccord-scene {
+  width: 100%;
+  padding: $padding-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  background: $color-background-alt;
+  transition: $transition-fast;
+  box-sizing: border-box;
+  font-family: $font-family-primary;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px $color-pastel-gold;
+  }
+  
+  &:hover {
+    border-color: $color-border-dark;
+  }
+  
+  &:disabled {
+    background: $color-background;
+    color: $color-text-muted;
+    cursor: not-allowed;
+    border-color: $color-border;
+  }
+}
+
+.form-select-raccord-scene {
+  height: 42px;
+  cursor: pointer;
+  
+  &[multiple] {
+    height: auto;
+    min-height: 100px;
+    padding: $gap-sm;
+  }
+}
+
+.form-textarea-raccord-scene {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+  
+  &::placeholder {
+    color: $color-text-muted;
+    font-style: italic;
+  }
+}
+
+.field-description-raccord-scene {
+  @include typography-p5;
+  color: $color-text-muted;
+  display: block;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+// =============================================
+// INFORMATIONS DES SCÈNES
+// =============================================
+.scenes-info-raccord-scene {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+  padding: $spacing-sm;
+  background: rgba($color-primary, 0.03);
+  border-radius: $border-radius-xs;
+  border: 1px solid rgba($color-primary, 0.1);
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scene-info-raccord-scene {
+  padding: $spacing-sm;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+  
+  h5 {
+    @include typography-p4;
+    color: $color-primary;
+    margin: 0 0 $gap-sm 0;
+    padding-bottom: $gap-xs;
+    border-bottom: 1px solid $color-border;
+    font-weight: $font-weight-semibold;
+  }
+  
+  p {
+    @include typography-p4;
+    color: $color-text-secondary;
+    margin: 0 0 $gap-xs 0;
+    line-height: 1.4;
+    
+    strong {
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+      min-width: 100px;
+      display: inline-block;
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.date-warning-raccord-scene {
+  color: $color-warning !important;
+  font-weight: $font-weight-semibold;
+}
+
+.date-error-raccord-scene {
+  color: $color-error !important;
+  font-weight: $font-weight-bold;
+  animation: blinkDate 1s infinite;
+}
+
+@keyframes blinkDate {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+// =============================================
+// PERSONNAGES ET COMÉDIENS
+// =============================================
+.selected-comediens-raccord-scene,
+.personnages-info-raccord-scene {
+  margin-top: $spacing-md;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+  
+  h5 {
+    @include typography-p4;
+    color: $color-text-primary;
+    margin: 0 0 $spacing-sm 0;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &:before {
+      content: '👤';
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+.comediens-list-raccord-scene {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+}
+
+.comedien-item-raccord-scene {
+  @include typography-p4;
+  background: rgba($color-primary, 0.1);
+  color: $color-text-primary;
+  padding: $gap-xs $gap-sm;
+  border-radius: $border-radius-xs;
+  border: 1px solid rgba($color-primary, 0.2);
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  transition: $transition-fast;
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p5;
+  }
+  
+  &:hover {
+    background: rgba($color-primary, 0.15);
+    border-color: rgba($color-primary, 0.3);
+  }
+}
+
+.personnage-associe-raccord-scene {
+  @include typography-p5;
+  color: $color-text-muted;
+  font-style: italic;
+}
+
+.remove-comedien-btn-raccord-scene {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: 0 $gap-xs;
+  font-size: $font-size-p5;
+  transition: $transition-fast;
+  opacity: 0.7;
+  
+  &:hover {
+    color: $color-error;
+    opacity: 1;
+  }
+}
+
+// =============================================
+// PERSONNAGES SÉLECTIONNÉS
+// =============================================
+.personnages-grid-raccord-scene {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-sm;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.personnage-info-card-raccord-scene {
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $spacing-sm;
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.personnage-header-raccord-scene {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-sm;
+  padding-bottom: $gap-xs;
+  border-bottom: 1px solid $color-border;
+  
+  strong {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.remove-personnage-btn-raccord-scene {
+  background: rgba($color-error, 0.1);
+  border: none;
+  color: $color-error;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p5;
+  transition: $transition-fast;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: $color-error;
+    color: $color-text-light;
+  }
+}
+
+.personnage-details-raccord-scene {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.detail-raccord-scene {
+  @include typography-p4;
+  color: $color-text-secondary;
+  line-height: 1.4;
+  
+  strong {
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    margin-right: $gap-xs;
+  }
+}
+
+// =============================================
+// SÉLECTION DES TYPES DE RACCORD
+// =============================================
+.types-selection-raccord-scene {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: $spacing-sm;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+.type-checkbox-raccord-scene {
+  padding: $spacing-sm;
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.03);
+  }
+  
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-medium;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    cursor: pointer;
+    margin-bottom: $gap-xs;
+    
+    input[type="checkbox"] {
+      display: none;
+      
+      + .checkmark-raccord-scene {
+        width: 18px;
+        height: 18px;
+        border: 2px solid $color-border;
+        border-radius: 4px;
+        display: inline-block;
+        position: relative;
+        transition: $transition-fast;
+        flex-shrink: 0;
+        
+        &:after {
+          content: '';
+          position: absolute;
+          display: none;
+          left: 5px;
+          top: 1px;
+          width: 5px;
+          height: 10px;
+          border: solid $color-text-light;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg);
+        }
+      }
+      
+      &:checked + .checkmark-raccord-scene {
+        background: $color-primary;
+        border-color: $color-primary;
+        
+        &:after {
+          display: block;
+        }
+      }
+      
+      &:checked ~ span {
+        color: $color-primary;
+        font-weight: $font-weight-semibold;
+      }
+    }
+  }
+}
+
+.type-description-raccord-scene {
+  @include typography-p5;
+  color: $color-text-muted;
+  display: block;
+  margin-top: $gap-xs;
+  line-height: 1.4;
+}
+
+// =============================================
+// PHOTOS DE RÉFÉRENCE
+// =============================================
+.loading-raccord-scene,
+.no-photos-raccord-scene {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-background;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+  margin: $spacing-md 0;
+  
+  i {
+    font-size: 32px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
+  }
+  
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    margin: 0;
+  }
+}
+
+.loading-raccord-scene i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// FILTRE DE PHOTOS
+// =============================================
+.photos-filter-raccord-scene {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    white-space: nowrap;
+  }
+  
+  select {
+    padding: $gap-sm $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    cursor: pointer;
+    transition: $transition-fast;
+    min-width: 200px;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+    
+    &:hover {
+      border-color: $color-border-dark;
+    }
+  }
+}
+
+// =============================================
+// GRILLE DES PHOTOS
+// =============================================
+.photos-grid-raccord-scene {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+.photo-item-raccord-scene {
+  background: $color-background-alt;
+  border: 2px solid $color-border;
+  border-radius: $border-radius-xs;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all $transition-medium;
+  position: relative;
+  
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+    
+    .photo-image-raccord-scene img {
+      transform: scale(1.05);
+    }
+  }
+  
+  &.selected {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.05);
+    
+    .photo-overlay-raccord-scene {
+      opacity: 1;
+    }
+  }
+  
+  &.shared {
+    border-style: dashed;
+    border-color: $color-info;
+    
+    &:hover {
+      border-color: $color-info;
+    }
+  }
+}
+
+.photo-image-raccord-scene {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-medium;
+  }
+}
+
+.photo-overlay-raccord-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-primary, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity $transition-medium;
+  
+  i {
+    color: $color-text-light;
+    font-size: $font-size-h4;
+  }
+}
+
+.shared-indicator-raccord-scene {
+  position: absolute;
+  top: $gap-xs;
+  right: $gap-xs;
+  background: rgba($color-info, 0.9);
+  color: $color-text-light;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-p5;
+}
+
+.photo-info-raccord-scene {
+  padding: $spacing-sm;
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.photo-type-raccord-scene {
+  @include typography-p5;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.photo-date-raccord-scene {
+  @include typography-p5;
+  color: $color-text-muted;
+  font-style: italic;
+}
+
+.shared-badge-raccord-scene {
+  @include typography-p5;
+  background: rgba($color-info, 0.1);
+  color: $color-info;
+  padding: 1px 6px;
+  border-radius: $border-radius-xs;
+  font-weight: $font-weight-medium;
+  width: fit-content;
+}
+
+.photo-description-raccord-scene {
+  @include typography-p5;
+  color: $color-text-secondary;
+  margin: $gap-xs 0 0 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// =============================================
+// PHOTOS SÉLECTIONNÉES
+// =============================================
+.selected-photos-raccord-scene {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 2px solid $color-primary;
+  
+  h5 {
+    @include typography-playfair-p4;
+    color: $color-primary;
+    margin: 0 0 $spacing-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &:before {
+      content: '📸';
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+.selected-grid-raccord-scene {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+}
+
+.selected-item-raccord-scene {
+  width: 80px;
+  border-radius: $border-radius-xs;
+  overflow: hidden;
+  border: 2px solid $color-primary;
+  position: relative;
+  transition: $transition-fast;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $shadow-md;
+  }
+  
+  img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.selected-info-raccord-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-primary, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  opacity: 0;
+  transition: opacity $transition-medium;
+  
+  &:hover {
+    opacity: 1;
+  }
+  
+  span {
+    @include typography-p5;
+    color: $color-text-light;
+    font-weight: $font-weight-semibold;
+    text-align: center;
+    padding: 0 $gap-xs;
+  }
+}
+
+.remove-btn-raccord-scene {
+  background: rgba($color-error, 0.9);
+  border: none;
+  color: $color-text-light;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: 50%;
+  font-size: $font-size-p5;
+  transition: $transition-fast;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: $color-error;
+    transform: scale(1.1);
+  }
+}
+
+// =============================================
+// OPTIONS SUPPLEMENTAIRES
+// =============================================
+.form-options-raccord-scene {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+.checkbox-group-raccord-scene {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-regular;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    cursor: pointer;
+  }
+}
+
+.option-description-raccord-scene {
+  @include typography-p5;
+  color: $color-text-muted;
+  margin-left: 26px;
+  line-height: 1.4;
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-raccord-scene {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  padding-top: $spacing-xl;
+  margin-top: $spacing-lg;
+  border-top: 1px solid $color-border;
+  
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.btn-cancel-raccord-scene,
+.btn-submit-raccord-scene {
+  padding: $gap-sm $spacing-lg;
+  border: none;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  min-width: 180px;
+  
+  @media (max-width: $breakpoint-sm) {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+.btn-cancel-raccord-scene {
+  background: transparent;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  
+  &:hover:not(:disabled) {
+    background: $color-surface-hover;
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+}
+
+.btn-submit-raccord-scene {
+  background: $color-primary;
+  color: $color-text-light;
+  
+  &:hover:not(:disabled) {
+    background: $color-primary-dark;
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .modal-content-raccord-scene {
+    max-width: 95%;
+  }
+  
+  .form-options-raccord-scene,
+  .form-row-raccord-scene,
+  .scenes-info-raccord-scene {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .modal-content-raccord-scene {
+    max-height: 95vh;
+    margin: $spacing-sm;
+  }
+  
+  .modal-header-raccord-scene,
+  .raccord-form-raccord-scene {
+    padding: $spacing-md;
+  }
+  
+  .form-section-raccord-scene {
+    padding: $spacing-sm;
+  }
+  
+  .photos-grid-raccord-scene {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .btn-open-raccord-raccord-scene {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .form-actions-raccord-scene {
+    flex-direction: column;
+  }
+  
+  .photos-grid-raccord-scene {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+  
+  .personnages-grid-raccord-scene {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =============================================
+// ACCESSIBILITÉ
+// =============================================
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay-raccord-scene,
+  .modal-content-raccord-scene,
+  .btn-open-raccord-raccord-scene,
+  .btn-cancel-raccord-scene,
+  .btn-submit-raccord-scene,
+  .photo-item-raccord-scene,
+  .personnage-info-card-raccord-scene,
+  .type-checkbox-raccord-scene,
+  .selected-item-raccord-scene,
+  .comedien-item-raccord-scene,
+  .close-btn-raccord-scene {
+    transition: none;
+    animation: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .loading-raccord-scene i,
+  .chronology-alert-raccord-scene,
+  .date-error-raccord-scene {
+    animation: none;
+  }
+}
+
+// =============================================
+// ÉTATS DE FOCUS POUR ACCESSIBILITÉ
+// =============================================
+.btn-open-raccord-raccord-scene:focus-visible,
+.btn-cancel-raccord-scene:focus-visible,
+.btn-submit-raccord-scene:focus-visible,
+.close-btn-raccord-scene:focus-visible,
+.form-select-raccord-scene:focus-visible,
+.form-textarea-raccord-scene:focus-visible,
+.photo-item-raccord-scene:focus-visible,
+.type-checkbox-raccord-scene:focus-within,
+.remove-comedien-btn-raccord-scene:focus-visible,
+.remove-personnage-btn-raccord-scene:focus-visible,
+.remove-btn-raccord-scene:focus-visible {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+}
