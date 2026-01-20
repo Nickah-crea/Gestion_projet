@@ -33,17 +33,17 @@
       </div>
       
       <!-- Création Raccord - S'ouvre directement dans le composant -->
-      <div class="nav-tool-item" v-if="userPermissions.canCreateRaccord">
-        <RaccordSceneComponent 
-          :projet-id="projetId"
-          :episode-id="episodeId"
-          :sequence-id="sequenceId"
-          :scene-source-id="scene?.idScene"
-          :user-permissions="filteredPermissions" 
-          @raccord-created="onRaccordCreated"
-          ref="raccordSceneRef"
-        />
-      </div>
+    <div class="nav-tool-item" v-if="userPermissions.canCreateRaccord">
+      <RaccordSceneComponent 
+        :projet-id="projetId"
+        :episode-id="episodeId"
+        :sequence-id="sequenceId"
+        :scene-source-id="scene?.idScene"
+        :user-permissions="filteredPermissions" 
+        @raccord-created="onRaccordCreated"
+        ref="raccordSceneRef"
+      />
+    </div>
       
       <!-- Actions Rapides - Dropdown -->
       <div class="nav-tool-item dropdown" v-if="hasQuickActionsPermissions">
