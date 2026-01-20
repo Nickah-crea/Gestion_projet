@@ -1,0 +1,1247 @@
+@import '../base/variables';
+
+.app-wrapper-global-crea-lieu-ecran {
+  display: flex;
+  min-height: 100vh;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE
+// =============================================
+.creation-sidebar-crea-lieu-ecran {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 280px;
+  height: calc(100vh - 50px);
+  z-index: $z-index-fixed - 1;
+  overflow-y: auto;
+  padding: $padding-lg;
+  background: rgba($color-border, 0.1);
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
+
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
+
+  .sidebar-header-crea-lieu-ecran {
+    margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
+
+    .sidebar-title-crea-lieu-ecran {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-crea-lieu-ecran {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-crea-lieu-ecran {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-crea-lieu-ecran {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  .sidebar-actions-crea-lieu-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-crea-lieu-ecran {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: $color-surface-hover;
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background: $color-tertiary-dark;
+      color: $color-text-light;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .filter-group-crea-lieu-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-crea-lieu-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .filter-select-crea-lieu-ecran {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+  }
+
+  .stats-crea-lieu-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-crea-lieu-ecran {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-crea-lieu-ecran {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-crea-lieu-ecran {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL
+// =============================================
+.creation-body-crea-lieu-ecran {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-crea-lieu-ecran {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .main-header-crea-lieu-ecran {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+
+    .page-title-crea-lieu-ecran {
+      @include typography-playfair-h3;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-sm;
+    }
+
+    .page-subtitle-crea-lieu-ecran {
+      @include typography-p3;
+      color: $color-text-muted;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// =============================================
+// SYSTÈME D'ONGlets
+// =============================================
+.tabs-container-crea-lieu-ecran {
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-crea-lieu-ecran {
+  display: flex;
+  background: $color-background;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-crea-lieu-ecran {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: $color-surface-hover;
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-crea-lieu-ecran {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-crea-lieu-ecran {
+  position: relative;
+}
+
+.tab-pane-crea-lieu-ecran {
+  padding: $spacing-lg;
+  animation: fadeInUp-crea-lieu-ecran 0.3s ease-out;
+}
+
+@keyframes fadeInUp-crea-lieu-ecran {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION
+// =============================================
+.form-container-crea-lieu-ecran {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tab-pane-crea-lieu-ecran .form-header-crea-lieu-ecran {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+}
+
+.lieu-form-crea-lieu-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-crea-lieu-ecran {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-crea-lieu-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
+  }
+
+  // Ajoutez ce style pour les champs de formulaire standards
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  select {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+
+    &:hover {
+      border-color: $color-border-dark;
+    }
+  }
+
+  // Style spécifique pour le champ de recherche (garder le style existant)
+  .search-input-crea-lieu-ecran {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+  }
+}
+
+// =============================================
+// RECHERCHE AVEC SUGGESTIONS
+// =============================================
+.search-container-crea-lieu-ecran {
+  position: relative;
+
+  .search-input-crea-lieu-ecran {
+    width: 100%;
+    height: 42px;
+    padding: 0 $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px $color-pastel-gold;
+    }
+  }
+
+  .suggestions-dropdown-crea-lieu-ecran {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    box-shadow: $shadow-md;
+    z-index: $z-index-dropdown;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .suggestion-item-crea-lieu-ecran {
+    padding: $gap-sm $padding-sm;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: $transition-fast;
+    border-bottom: 1px solid $color-border;
+
+    &:hover {
+      background: $color-surface-hover;
+    }
+
+    &.clear-filter {
+      color: $color-primary;
+      font-weight: $font-weight-semibold;
+      border-top: 1px solid $color-border;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .projet-option-info-crea-lieu-ecran {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .projet-title-crea-lieu-ecran {
+      font-weight: $font-weight-medium;
+    }
+
+    .projet-details-crea-lieu-ecran {
+      font-size: $font-size-p5;
+      color: $color-text-muted;
+    }
+  }
+
+  .no-results-crea-lieu-ecran {
+    padding: $gap-sm $padding-sm;
+    text-align: center;
+    color: $color-text-muted;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+  }
+}
+
+// =============================================
+// MESSAGES D'ERREUR
+// =============================================
+.error-message-crea-lieu-ecran {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions-crea-lieu-ecran {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .cancel-btn-crea-lieu-ecran,
+  .submit-btn-crea-lieu-ecran {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .cancel-btn-crea-lieu-ecran {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: $color-surface-hover;
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn-crea-lieu-ecran {
+    background: $color-primary;
+    color: $color-text-light;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-dark;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// =============================================
+// LISTE DES LIEUX
+// =============================================
+.lieux-list-crea-lieu-ecran {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.list-header-crea-lieu-ecran {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.search-section-crea-lieu-ecran {
+  .search-group-crea-lieu-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-input-container-crea-lieu-ecran {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .search-input-large-crea-lieu-ecran {
+      width: 300px;
+      height: 42px;
+      padding: 0 $padding-md 0 ($padding-md + $padding-xs);
+      border: 1px solid $color-border;
+      border-radius: $border-radius-xs;
+      background: $color-background-alt;
+      font-size: $font-size-p3;
+      color: $color-text-primary;
+      transition: $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px $color-pastel-gold;
+      }
+
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
+      }
+    }
+
+    .search-icon-crea-lieu-ecran {
+      position: absolute;
+      left: $padding-sm;
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// =============================================
+// GRILLE DES LIEUX
+// =============================================
+.lieux-container-crea-lieu-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.lieux-grid-crea-lieu-ecran {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lieu-card-crea-lieu-ecran {
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  box-shadow: $shadow;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-hover;
+    transform: translateY(-2px);
+  }
+}
+
+.lieu-header-crea-lieu-ecran {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-sm;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  .lieu-info-crea-lieu-ecran {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    .lieu-title-crea-lieu-ecran {
+      @include typography-playfair-p4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+
+    .type-badge-crea-lieu-ecran {
+      @include typography-p4;
+      padding: 2px 8px;
+      border-radius: $border-radius-pill;
+      font-weight: $font-weight-medium;
+      width: fit-content;
+
+      &.type-interieur {
+        background: rgba($color-primary, 0.1);
+        color: $color-primary;
+      }
+      &.type-exterieur {
+        background: rgba($color-success, 0.1);
+        color: $color-success;
+      }
+      &.type-mixte {
+        background: rgba($color-warning, 0.1);
+        color: $color-warning;
+      }
+      &.type-studio {
+        background: rgba($color-info, 0.1);
+        color: $color-info;
+      }
+      &.type-naturel {
+        background: rgba($color-tertiary, 0.1);
+        color: $color-tertiary;
+      }
+      &.type-urbain {
+        background: rgba($color-text-primary, 0.1);
+        color: $color-text-primary;
+      }
+    }
+  }
+}
+
+.lieu-actions-crea-lieu-ecran {
+  display: flex;
+  gap: $gap-xs;
+
+  .btn-scenes-crea-lieu-ecran,
+  .btn-edit-crea-lieu-ecran,
+  .btn-delete-crea-lieu-ecran {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $border-radius-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-fast;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .btn-scenes-crea-lieu-ecran {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+
+    &:hover {
+      background: $color-info;
+      color: $color-text-light;
+    }
+  }
+
+  .btn-edit-crea-lieu-ecran {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+
+    &:hover {
+      background: $color-warning;
+      color: $color-text-light;
+    }
+  }
+
+  .btn-delete-crea-lieu-ecran {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+
+    &:hover {
+      background: $color-error;
+      color: $color-text-light;
+    }
+  }
+}
+
+.lieu-content-crea-lieu-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.lieu-details-crea-lieu-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.detail-item-crea-lieu-ecran {
+  @include typography-p4;
+  color: $color-text-muted;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  i {
+    color: $color-primary;
+    width: 14px;
+    text-align: center;
+  }
+}
+
+.scenes-section-crea-lieu-ecran {
+  margin-top: $spacing-sm;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+}
+
+.scenes-title-crea-lieu-ecran {
+  @include typography-p4;
+  color: $color-text-primary;
+  margin: 0 0 $gap-sm 0;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.scenes-list-crea-lieu-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.scene-item-crea-lieu-ecran {
+  @include typography-p4;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  padding: $gap-xs;
+  background: $color-background;
+  border-radius: $border-radius-xs;
+
+  .scene-name-crea-lieu-ecran {
+    font-weight: $font-weight-medium;
+  }
+
+  .scene-usage-crea-lieu-ecran {
+    font-size: $font-size-p5;
+    color: $color-text-muted;
+  }
+}
+
+// =============================================
+// ÉTATS SPÉCIAUX
+// =============================================
+.loading-state-crea-lieu-ecran,
+.empty-state-crea-lieu-ecran {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow;
+  margin: $spacing-md 0;
+
+  i {
+    font-size: 48px;
+    color: $color-primary;
+    margin-bottom: $gap-sm;
+  }
+
+  h3 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-xs;
+  }
+
+  p {
+    @include typography-p3;
+    color: $color-text-muted;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-crea-lieu-ecran i {
+  animation: spin-crea-lieu-ecran 1s linear infinite;
+}
+
+@keyframes spin-crea-lieu-ecran {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// MODALE SCÈNES
+// =============================================
+.modal-overlay-crea-lieu-ecran {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-text-primary, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+}
+
+.modal-content-crea-lieu-ecran {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn-crea-lieu-ecran 0.3s ease-out;
+}
+
+@keyframes modalSlideIn-crea-lieu-ecran {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header-crea-lieu-ecran {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+}
+
+.modal-close-btn-crea-lieu-ecran {
+  background: transparent;
+  border: none;
+  font-size: $font-size-h4;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+}
+
+.modal-body-crea-lieu-ecran {
+  padding: $spacing-lg;
+}
+
+.no-scenes-crea-lieu-ecran {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $color-text-muted;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $gap-sm;
+
+  i {
+    font-size: 48px;
+  }
+}
+
+.scenes-details-crea-lieu-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.scene-detail-crea-lieu-ecran {
+  background: $color-background;
+  border-radius: $border-radius-xs;
+  padding: $spacing-md;
+  border: 1px solid $color-border;
+}
+
+.scene-title-crea-lieu-ecran {
+  @include typography-playfair-p4;
+  color: $color-text-primary;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.scene-info-crea-lieu-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.info-item-crea-lieu-ecran {
+  @include typography-p4;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+
+  i {
+    color: $color-primary;
+    width: 16px;
+    text-align: center;
+  }
+}
+
+.modal-footer-crea-lieu-ecran {
+  padding: $spacing-lg;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: $gap-sm;
+  justify-content: flex-end;
+
+  .btn-close-modal-crea-lieu-ecran {
+    padding: $gap-sm $spacing-md;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    color: $color-text-secondary;
+
+    &:hover {
+      background: $color-surface-hover;
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-crea-lieu-ecran {
+    width: 250px;
+  }
+  
+  .creation-body-crea-lieu-ecran {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-crea-lieu-ecran {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .creation-body-crea-lieu-ecran {
+    margin-left: 0;
+  }
+  
+  .tabs-header-crea-lieu-ecran {
+    flex-direction: column;
+  }
+
+  .tab-btn-crea-lieu-ecran {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-crea-lieu-ecran {
+    display: none;
+  }
+
+  .tab-pane-crea-lieu-ecran {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-crea-lieu-ecran {
+    padding: $spacing-sm;
+  }
+  
+  .lieux-grid-crea-lieu-ecran {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn-crea-lieu-ecran,
+  .search-input-crea-lieu-ecran,
+  .submit-btn-crea-lieu-ecran,
+  .cancel-btn-crea-lieu-ecran,
+  .tab-btn-crea-lieu-ecran,
+  .tab-indicator-crea-lieu-ecran,
+  .lieu-card-crea-lieu-ecran,
+  .btn-scenes-crea-lieu-ecran,
+  .btn-edit-crea-lieu-ecran,
+  .btn-delete-crea-lieu-ecran {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .loading-state-crea-lieu-ecran i {
+    animation: none;
+  }
+  
+  .tab-pane-crea-lieu-ecran,
+  .modal-content-crea-lieu-ecran {
+    animation: none;
+  }
+}
+.form-input-disabled-ecran {
+  width: 100%;
+  height: 42px;
+  padding: 0 $padding-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-muted;
+  background: $color-background;
+  box-sizing: border-box;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.create-first-btn-ecran {
+  margin-top: $spacing-md;
+  padding: $padding-sm $padding-md;
+  background: $color-primary;
+  color: $color-text-light;
+  border: none;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+
+  &:hover {
+    background: $color-primary-dark;
+    transform: translateY(-1px);
+  }
+}
+
+/* Styles pour la sidebar modifiée */
+.projet-info-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.info-item-ecran {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-xs 0;
+  border-bottom: 1px solid rgba($color-border, 0.3);
+}
+
+.info-label-ecran {
+  @include typography-p4;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.info-value-ecran {
+ @include typography-p4;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.suggestion-highlight-ecran {
+  color: $color-primary;
+  font-weight: $font-weight-bold;
+}
+
+.aide-content-ecran {
+  padding: $padding-sm 0;
+}
+
+.aide-text-ecran {
+  @include typography-p4;
+  color: $color-text-muted;
+  line-height: 1.5;
+  margin: 0;
+}
