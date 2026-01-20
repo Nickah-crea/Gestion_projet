@@ -258,7 +258,6 @@
                   
                   <div class="search-section-crea-lieu">
                     <div class="search-group-crea-lieu">
-                      <label for="lieuSearch">Rechercher un lieu</label>
                       <div class="search-input-container-crea-lieu">
                         <i class="fas fa-search search-icon-crea-lieu"></i>
                         <input
