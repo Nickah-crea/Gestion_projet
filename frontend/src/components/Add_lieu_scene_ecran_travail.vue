@@ -1,178 +1,360 @@
 <template>
-  <div class="creation-lieu-container">
-
-    <!-- Contenu principal -->
-    <main class="main-content">
-      <div class="page-header">
-        <button @click="goBack" class="back-btn">← Retour</button>
-        <h2>Gestion des Lieux</h2>
+  <div class="app-wrapper-global">
+    <!-- Sidebar latérale -->
+    <div class="creation-sidebar-crea-lieu-ecran">
+      <div class="sidebar-header-crea-lieu-ecran">
+        <h2 class="sidebar-title-crea-lieu-ecran">Gestion Lieux</h2>
+        <p class="sidebar-subtitle-crea-lieu-ecran">Créez et gérez vos lieux dans ce projet</p>
       </div>
 
-      <!-- Formulaire de création -->
-      <div class="creation-form">
-        <h3>{{ isEditing ? 'Modifier' : 'Ajouter' }} un lieu</h3>
-        <form @submit.prevent="submitForm">
-          <div class="form-group">
-            <label>Projet *</label>
-            <div class="combobox-container">
-             <input
-                type="text"
-                v-model="projetSearch"
-                :disabled="!!formData.projetId"  
-                @focus="showProjetSuggestions = !formData.projetId"  
-                @blur="hideProjetSuggestions"
-                @input="filterProjets"
-                :placeholder="formData.projetId ? getProjetName(formData.projetId) : 'Rechercher un projet...'"
-                required
-                class="combobox-input"
-              />
-              <ul v-if="!formData.projetId && showProjetSuggestions && filteredProjets.length" class="suggestions-list">                <li
-                  v-for="projet in filteredProjets"
-                  :key="projet.id"
-                  @mousedown="selectProjet(projet)"
-                  class="suggestion-item"
-                >
-                  {{ projet.titre }} ({{ projet.genreNom }})
-                </li>
-              </ul>
-              <ul v-if="showProjetSuggestions && filteredProjets.length === 0" class="suggestions-list">
-                <li class="suggestion-item no-results">Aucun projet trouvé</li>
-              </ul>
-            </div>
-            <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-          </div>
-          
-          <div class="form-group">
-            <label>Nom du lieu *</label>
-            <input v-model="formData.nomLieu" type="text" required placeholder="Ex: Appartement principal, Rue de Paris...">
-          </div>
-          
-          <div class="form-group">
-            <label>Type de lieu *</label>
-            <select v-model="formData.typeLieu" required>
-              <option value="">Sélectionnez un type</option>
-              <option value="Intérieur">Intérieur</option>
-              <option value="Extérieur">Extérieur</option>
-              <option value="Intérieur/Extérieur">Intérieur/Extérieur</option>
-              <option value="Studio">Studio</option>
-              <option value="Naturel">Naturel</option>
-              <option value="Urbain">Urbain</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label>Adresse</label>
-            <textarea v-model="formData.adresse" rows="3" placeholder="Adresse complète du lieu..."></textarea>
-          </div>
-          
-          <button type="submit" class="submit-btn">{{ isEditing ? 'Modifier' : 'Ajouter' }} le lieu</button>
-          <button v-if="isEditing" type="button" @click="resetForm" class="cancel-btn">Annuler</button>
-        </form>
+      <!-- Section Navigation -->
+      <div class="sidebar-section-crea-lieu-ecran">
+        <h3 class="section-title-crea-lieu-ecran"><i class="fas fa-bolt"></i> Navigation</h3>
+        <div class="sidebar-actions-crea-lieu-ecran">
+          <button 
+            @click="goToEcranTravail" 
+            class="sidebar-btn-crea-lieu-ecran"
+          >
+            <i class="fas fa-desktop"></i>
+            Écran de travail
+          </button>
+          <button 
+            @click="goBack" 
+            class="sidebar-btn-crea-lieu-ecran"
+          >
+            <i class="fas fa-arrow-left"></i>
+            Retour
+          </button>
+        </div>
       </div>
 
-      <!-- Liste des lieux -->
-      <div class="lieux-list">
-        <h3>Liste des lieux</h3>
-        
-        <div class="filters">
-          <div class="filter-group">
-            <input v-model="searchTerm" type="text" placeholder="Rechercher par nom..." />
+      <!-- Section Informations Projet -->
+      <div class="sidebar-section-crea-lieu-ecran">
+        <h3 class="section-title-crea-lieu-ecran"><i class="fas fa-info-circle"></i> Informations Projet</h3>
+        <div class="projet-info-ecran">
+          <div class="info-item-ecran">
+            <span class="info-label-ecran">Projet :</span>
+            <span class="info-value-ecran">{{ projetTitre || 'Chargement...' }}</span>
           </div>
-          
-          <div class="filter-group">
-            <select v-model="filterProjetId">
-              <option value="">Tous les projets</option>
-              <option v-for="projet in projets" :key="projet.id" :value="projet.id">
-                {{ projet.titre }}
-              </option>
-            </select>
+          <div class="info-item-ecran">
+            <span class="info-label-ecran">Lieux existants :</span>
+            <span class="info-value-ecran">{{ lieux.length }}</span>
           </div>
-          
-          <div class="filter-group">
-            <select v-model="filterTypeLieu">
-              <option value="">Tous les types</option>
-              <option value="Intérieur">Intérieur</option>
-              <option value="Extérieur">Extérieur</option>
-              <option value="Intérieur/Extérieur">Intérieur/Extérieur</option>
-              <option value="Studio">Studio</option>
-              <option value="Naturel">Naturel</option>
-              <option value="Urbain">Urbain</option>
-            </select>
+          <div class="info-item-ecran">
+            <span class="info-label-ecran">Lieux intérieurs :</span>
+            <span class="info-value-ecran">{{ getLieuxInterieur }}</span>
+          </div>
+          <div class="info-item-ecran">
+            <span class="info-label-ecran">Lieux extérieurs :</span>
+            <span class="info-value-ecran">{{ getLieuxExterieur }}</span>
           </div>
         </div>
+      </div>
 
-        <div v-if="loading" class="loading">Chargement des lieux...</div>
-        
-        <div v-else-if="filteredLieux.length === 0" class="no-data">
-          Aucun lieu trouvé.
+      <!-- Section Aide -->
+      <div class="sidebar-section-crea-lieu-ecran">
+        <h3 class="section-title-crea-lieu-ecran"><i class="fas fa-question-circle"></i> Aide</h3>
+        <div class="aide-content-ecran">
+          <p class="aide-text-ecran">
+            • Tous les lieux créés seront associés au projet actuel.<br>
+            • Les champs marqués d'un * sont obligatoires.<br>
+            • Vous pouvez gérer tous les lieux depuis cet écran.
+          </p>
         </div>
+      </div>
+    </div>
+
+    <!-- Contenu principal à droite -->
+    <div class="creation-body-crea-lieu-ecran">
+      <div class="creation-main-content-crea-lieu-ecran">
         
-        <div v-else class="lieux-grid">
-          <div v-for="lieu in filteredLieux" :key="lieu.id" class="lieu-card">
-            <div class="lieu-header">
-              <h4>{{ lieu.nomLieu }}</h4>
-              <div class="lieu-actions">
-                <span class="icon-edit" @click="editLieu(lieu)">✏️</span>
-                <span class="icon-delete" @click="deleteLieu(lieu.id)">🗑️</span>
-                <span 
-                  class="icon-scenes" 
-                  @click="viewLieuScenes(lieu)"
-                  title="Voir les scènes utilisant ce lieu"
-                >
-                  🎬
-                </span>
+        <!-- Système d'onglets -->
+        <div class="tabs-container-crea-lieu-ecran">
+          <div class="tabs-header-crea-lieu-ecran">
+            <button 
+              @click="activeTab = 'form'"
+              :class="['tab-btn-crea-lieu-ecran', { active: activeTab === 'form' }]"
+            >
+              <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
+              {{ isEditing ? 'Modifier lieu' : 'Créer lieu' }}
+            </button>
+            <button 
+              @click="activeTab = 'list'"
+              :class="['tab-btn-crea-lieu-ecran', { active: activeTab === 'list' }]"
+            >
+              <i class="fas fa-list"></i>
+              Liste lieux
+            </button>
+          </div>
+          
+          <div class="tabs-content-crea-lieu-ecran">
+            <!-- Indicateur visuel de l'onglet actif -->
+            <div class="tab-indicator-crea-lieu-ecran" :style="getTabIndicatorStyle"></div>
+            
+            <!-- Contenu de l'onglet Formulaire -->
+            <div v-show="activeTab === 'form'" class="tab-pane-crea-lieu-ecran">
+              <!-- Formulaire de création/modification -->
+              <div class="form-container-crea-lieu-ecran">
+                <div class="form-header-crea-lieu-ecran">
+                  <h3>
+                    <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
+                    {{ isEditing ? 'Modifier le lieu' : 'Créer un nouveau lieu' }}
+                  </h3>
+                </div>
+
+                <form @submit.prevent="submitForm" class="lieu-form-crea-lieu-ecran">
+                  <!-- Ligne 1 : Projet (non modifiable) + Nom du lieu -->
+                  <div class="form-row-crea-lieu-ecran">
+                    <div class="form-group-crea-lieu-ecran">
+                      <label for="projet">Projet</label>
+                      <input 
+                        type="text" 
+                        id="projet"
+                        :value="projetTitre" 
+                        disabled
+                        class="form-input-disabled-ecran"
+                      />
+                    </div>
+
+                    <div class="form-group-crea-lieu-ecran">
+                      <label for="nomLieu">Nom du lieu *</label>
+                      <input 
+                        type="text" 
+                        id="nomLieu"
+                        v-model="formData.nomLieu"
+                        required 
+                        placeholder="Ex: Appartement principal, Rue de Paris..."
+                        class="search-input-crea-lieu-ecran"
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Ligne 2 : Type de lieu + Adresse -->
+                  <div class="form-row-crea-lieu-ecran">
+                    <div class="form-group-crea-lieu-ecran">
+                      <label for="typeLieu">Type de lieu *</label>
+                      <select 
+                        id="typeLieu"
+                        v-model="formData.typeLieu" 
+                        required
+                        class="search-input-crea-lieu-ecran"
+                      >
+                        <option value="">Sélectionnez un type</option>
+                        <option value="Intérieur">Intérieur</option>
+                        <option value="Extérieur">Extérieur</option>
+                        <option value="Intérieur/Extérieur">Intérieur/Extérieur</option>
+                        <option value="Studio">Studio</option>
+                        <option value="Naturel">Naturel</option>
+                        <option value="Urbain">Urbain</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group-crea-lieu-ecran">
+                      <label for="adresse">Adresse</label>
+                      <input 
+                        id="adresse"
+                        v-model="formData.adresse" 
+                        type="text" 
+                        placeholder="Adresse complète du lieu..."
+                        class="search-input-crea-lieu-ecran"
+                      >
+                    </div>
+                  </div>
+
+                  <div v-if="error" class="error-message-crea-lieu-ecran">
+                    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                  </div>
+
+                  <div class="form-actions-crea-lieu-ecran">
+                    <button
+                      v-if="isEditing"
+                      type="button"
+                      @click="goToForm"
+                      class="cancel-btn-crea-lieu-ecran"
+                    >
+                      <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      :disabled="isSubmitting"
+                      class="submit-btn-crea-lieu-ecran"
+                    >
+                      <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
+                      <i v-else :class="isEditing ? 'fas fa-save' : 'fas fa-plus'"></i>
+                      {{ isSubmitting ? 'Enregistrement...' : (isEditing ? 'Enregistrer' : 'Créer le lieu') }}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-            
-            <div class="lieu-info">
-              <p><strong>Projet:</strong> {{ lieu.projetTitre }}</p>
-              <p><strong>Type:</strong> {{ lieu.typeLieu }}</p>
-              <p v-if="lieu.adresse"><strong>Adresse:</strong> {{ lieu.adresse }}</p>
-              <p><strong>Créé le:</strong> {{ formatDate(lieu.creeLe) }}</p>
-              <p><strong>Scènes associées:</strong> {{ lieu.sceneCount || 0 }}</p>
-            </div>
-            
-            <!-- Liste des scènes utilisant ce lieu -->
-            <div v-if="lieu.scenes && lieu.scenes.length" class="scenes-section">
-              <h5>Scènes utilisant ce lieu:</h5>
-              <div v-for="scene in lieu.scenes" :key="scene.id" class="scene-item">
-                <span>{{ scene.titre }} ({{ scene.descriptionUtilisation }})</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Modale pour afficher les scènes d'un lieu -->
-      <div v-if="showScenesModal" class="modal-overlay" @click="showScenesModal = false">
-        <div class="modal-content" @click.stop>
-          <div class="modal-header">
-            <h3>Scènes utilisant "{{ selectedLieu.nomLieu }}"</h3>
-            <button class="modal-close" @click="showScenesModal = false">×</button>
-          </div>
-          
-          <div class="scenes-list">
-            <div v-if="selectedLieuScenes.length === 0" class="no-scenes">
-              Aucune scène n'utilise ce lieu.
-            </div>
-            
-            <div v-else>
-              <div v-for="scene in selectedLieuScenes" :key="scene.id" class="scene-detail">
-                <h4>{{ scene.sceneTitre }}</h4>
-                <p><strong>Séquence:</strong> {{ scene.sequenceTitre }}</p>
-                <p><strong>Épisode:</strong> {{ scene.episodeTitre }}</p>
-                <p><strong>Projet:</strong> {{ scene.projetTitre }}</p>
-                <p><strong>Utilisation:</strong> {{ scene.descriptionUtilisation }}</p>
+            <!-- Contenu de l'onglet Liste -->
+            <div v-show="activeTab === 'list'" class="tab-pane-crea-lieu-ecran">
+              <!-- Liste des lieux -->
+              <div class="lieux-list-crea-lieu-ecran">
+                <div class="list-header-crea-lieu-ecran">
+                  <h3><i class="fas fa-map-marker-alt"></i> Liste des lieux ({{ filteredLieux.length }})</h3>
+                  
+                  <div class="search-section-crea-lieu-ecran">
+                    <div class="search-group-crea-lieu-ecran">
+                      <div class="search-input-container-crea-lieu-ecran">
+                        <i class="fas fa-search search-icon-crea-lieu-ecran"></i>
+                        <input
+                          type="text"
+                          id="lieuSearch"
+                          v-model="searchTerm"
+                          placeholder=" Rechercher par nom ou adresse..."
+                          class="search-input-large-crea-lieu-ecran"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div v-if="loading" class="loading-state-crea-lieu-ecran">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <h3>Chargement des lieux...</h3>
+                </div>
+                
+                <div v-else-if="filteredLieux.length === 0" class="empty-state-crea-lieu-ecran">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <h3>Aucun lieu trouvé</h3>
+                  <div v-if="searchTerm">
+                    <p>Aucun lieu ne correspond à vos critères de recherche.</p>
+                  </div>
+                  <div v-else>
+                    <p>Aucun lieu créé pour ce projet.</p>
+                    <button @click="goToForm" class="create-first-btn-ecran">
+                      <i class="fas fa-plus"></i> Créer votre premier lieu
+                    </button>
+                  </div>
+                </div>
+
+                <div v-else class="lieux-container-crea-lieu-ecran">
+                  <div class="lieux-grid-crea-lieu-ecran">
+                    <div v-for="lieu in filteredLieux" :key="lieu.id" class="lieu-card-crea-lieu-ecran">
+                      <div class="lieu-header-crea-lieu-ecran">
+                        <div class="lieu-info-crea-lieu-ecran">
+                          <h4 class="lieu-title-crea-lieu-ecran">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ lieu.nomLieu }}
+                          </h4>
+                          <span class="type-badge-crea-lieu-ecran" :class="getTypeClass(lieu.typeLieu)">
+                            {{ lieu.typeLieu }}
+                          </span>
+                        </div>
+                        <div class="lieu-actions-crea-lieu-ecran">
+                          <button @click="viewLieuScenes(lieu)" class="btn-scenes-crea-lieu-ecran" title="Voir les scènes">
+                            <i class="fas fa-film"></i>
+                            {{ lieu.sceneCount || 0 }}
+                          </button>
+                          <button @click="editLieu(lieu)" class="btn-edit-crea-lieu-ecran" title="Modifier">
+                            <i class="fas fa-marker"></i>
+                          </button>
+                          <button @click="confirmDeleteLieu(lieu.id)" class="btn-delete-crea-lieu-ecran" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div class="lieu-content-crea-lieu-ecran">
+                        <div class="lieu-details-crea-lieu-ecran">
+                          <div v-if="lieu.adresse" class="detail-item-crea-lieu-ecran">
+                            <i class="fas fa-location-dot"></i>
+                            <span>{{ lieu.adresse }}</span>
+                          </div>
+                          <div class="detail-item-crea-lieu-ecran">
+                            <i class="fas fa-calendar"></i>
+                            <span>{{ formatDate(lieu.creeLe) }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale pour afficher les scènes d'un lieu -->
+    <div v-if="showScenesModal" class="modal-overlay-crea-lieu-ecran" @click="showScenesModal = false">
+      <div class="modal-content-crea-lieu-ecran" @click.stop>
+        <div class="modal-header-crea-lieu-ecran">
+          <h3>
+            <i class="fas fa-film"></i>
+            Scènes utilisant "{{ selectedLieu.nomLieu }}"
+          </h3>
+          <button @click="showScenesModal = false" class="modal-close-btn-crea-lieu-ecran">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body-crea-lieu-ecran">
+          <div v-if="selectedLieuScenes.length === 0" class="no-scenes-crea-lieu-ecran">
+            <i class="fas fa-info-circle"></i>
+            Aucune scène n'utilise ce lieu.
+          </div>
           
-          <div class="modal-actions">
-            <button type="button" @click="showScenesModal = false" class="cancel-btn">Fermer</button>
+          <div v-else class="scenes-details-crea-lieu-ecran">
+            <div v-for="scene in selectedLieuScenes" :key="scene.id" class="scene-detail-crea-lieu-ecran">
+              <h4 class="scene-title-crea-lieu-ecran">{{ scene.sceneTitre }}</h4>
+              <div class="scene-info-crea-lieu-ecran">
+                <div class="info-item-crea-lieu-ecran">
+                  <i class="fas fa-layer-group"></i>
+                  <span><strong>Séquence:</strong> {{ scene.sequenceTitre }}</span>
+                </div>
+                <div class="info-item-crea-lieu-ecran">
+                  <i class="fas fa-tv"></i>
+                  <span><strong>Épisode:</strong> {{ scene.episodeTitre }}</span>
+                </div>
+                <div class="info-item-crea-lieu-ecran">
+                  <i class="fas fa-info-circle"></i>
+                  <span><strong>Utilisation:</strong> {{ scene.descriptionUtilisation }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
+
+    <!-- Modale de confirmation de suppression -->
+    <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+      <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+      <div class="modal-content-confirm-Scenariste">
+        <div class="modal-header-confirm-Scenariste">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+          <button @click="closeDeleteModal" class="close-modal-btn-delete-Scenariste">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body-confirm-Scenariste">
+          <div class="warning-icon-Scenariste">
+            <i class="fas fa-trash"></i>
+          </div>
+          <p class="warning-text-Scenariste">
+            Êtes-vous sûr de vouloir supprimer le lieu <strong>"{{ lieuToDelete?.nomLieu }}"</strong> ?
+          </p>
+          <p class="warning-subtext-Scenariste">
+            Cette action est irréversible. Toutes les scènes utilisant ce lieu seront affectées.
+          </p>
+        </div>
+        
+        <div class="modal-footer-confirm-Scenariste">
+          <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button @click="executeDeleteLieu" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+            <span v-if="isDeleting"><i class="fas fa-spinner fa-spin"></i> Suppression...</span>
+            <span v-else><i class="fas fa-trash"></i> Supprimer définitivement</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -182,11 +364,11 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:8080';
 
 export default {
-  name: 'CreationLieu',
+  name: 'AddLieuEcranTravail',
   data() {
     return {
       user: JSON.parse(localStorage.getItem('user')) || null,
-      showProfileMenu: false,
+      activeTab: 'form',
       formData: {
         projetId: '',
         nomLieu: '',
@@ -195,192 +377,181 @@ export default {
       },
       isEditing: false,
       editingId: null,
-      projets: [],
-      lieux: [],
-      searchTerm: '',
-      filterProjetId: '',
-      filterTypeLieu: '',
+      isSubmitting: false,
       loading: true,
+      error: '',
+      
+      // Données pour les listes
+      projetTitre: '',
+      lieux: [],
+      filteredLieux: [],
+      
+      // Filtres et recherche
+      searchTerm: '',
+      
+      // Modale scènes
       showScenesModal: false,
       selectedLieu: {},
       selectedLieuScenes: [],
-      // Nouvelles données pour la zone de liste modifiable
-      projetSearch: '',
-      showProjetSuggestions: false,
-      filteredProjets: []
+
+      // Modale suppression
+      showDeleteModal: false,
+      lieuToDelete: null,
+      isDeleting: false,
     };
   },
   computed: {
-    userInitials() {
-      if (!this.user?.nom) return '';
-      const names = this.user.nom.split(' ');
-      return names.map(n => n[0]).join('').toUpperCase();
+    getTabIndicatorStyle() {
+      const tabWidth = 100 / 2;
+      const translateX = this.activeTab === 'form' ? 0 : 100;
+      return {
+        transform: `translateX(${translateX}%)`,
+        width: `${tabWidth}%`
+      };
+    },
+    getLieuxInterieur() {
+      return this.lieux.filter(l => 
+        l.typeLieu === 'Intérieur' || l.typeLieu === 'Intérieur/Extérieur' || l.typeLieu === 'Studio'
+      ).length;
+    },
+    getLieuxExterieur() {
+      return this.lieux.filter(l => 
+        l.typeLieu === 'Extérieur' || l.typeLieu === 'Intérieur/Extérieur' || l.typeLieu === 'Naturel' || l.typeLieu === 'Urbain'
+      ).length;
     },
     filteredLieux() {
       return this.lieux.filter(lieu => {
-        const matchesSearch = lieu.nomLieu.toLowerCase().includes(this.searchTerm.toLowerCase());
-        const matchesProjet = !this.filterProjetId || lieu.projetId === parseInt(this.filterProjetId);
-        const matchesType = !this.filterTypeLieu || lieu.typeLieu === this.filterTypeLieu;
-        return matchesSearch && matchesProjet && matchesType;
+        const matchesSearch = lieu.nomLieu.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                            (lieu.adresse && lieu.adresse.toLowerCase().includes(this.searchTerm.toLowerCase()));
+        return matchesSearch;
       });
     }
   },
-  
-async created() {
-  axios.defaults.baseURL = API_BASE_URL;
-  
-  axios.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
-  
-  // Vérifier que l'utilisateur est connecté
-  this.user = JSON.parse(localStorage.getItem('user'));
-  if (!this.user || !this.user.id) {
-    alert('Utilisateur non connecté');
-    this.$router.push('/login');
-    return;
-  }
-  
-  await this.loadProjets();
-  await this.loadLieux();
-  document.addEventListener('click', this.handleClickOutside);
-},
-
-  beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
-  },
-  watch: {
-    // Mettre à jour la liste filtrée quand les projets changent
-    projets: {
-      handler(newVal) {
-        this.filteredProjets = [...newVal];
-      },
-      deep: true
-    }
-  },
- mounted() {
-  const projetId = this.$route.params.projetId || this.$route.params.id || this.$route.query.projetId;
-  
-  if (projetId) {
-    this.formData.projetId = projetId;
-    this.fetchProjetDetails(projetId);
-  } else {
-    console.warn('ID du projet non spécifié ; utilisation de la recherche manuelle.');
-    // Laisser l'utilisateur sélectionner le projet via la combobox
-  }
-  
-  this.loadProjets();
-  this.loadLieux();
-},
-  methods: {
- async fetchProjetDetails(projetId) {
-  try {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
+  async created() {
+    axios.defaults.baseURL = API_BASE_URL;
     
-    const response = await axios.get(`/api/projets/${projetId}`, { headers });
-    const projet = response.data;
-    this.projetSearch = `${projet.titre} (${projet.genreNom || 'Inconnu'})`;
-    this.selectedProjet = projet;
-  } catch (error) {
-    console.error('Erreur lors du chargement du projet:', error);
-  }
-},
-
-  
-  selectProjet(projet) {
-    if (!this.formData.projetId) {  
-      this.formData.projetId = projet.id;
-      this.projetSearch = `${projet.titre} (${projet.genreNom})`;
-      this.showProjetSuggestions = false;
-    }
-  },
-
-async loadProjets() {
-  try {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
-    
-    const response = await axios.get('/api/projets', { headers });
-    this.projets = response.data;
-    this.filteredProjets = [...this.projets];
-  } catch (error) {
-    console.error('Erreur lors du chargement des projets:', error);
-    alert('Erreur lors du chargement des projets');
-  }
-},
-
-async loadLieux() {
-  this.loading = true;
-  try {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
-    
-    const response = await axios.get('/api/lieux', { headers });
-    this.lieux = response.data;
-    
-    // Charger le nombre de scènes pour chaque lieu
-    for (let lieu of this.lieux) {
-      try {
-        const scenesResponse = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`, { headers });
-        lieu.sceneCount = scenesResponse.data.length;
+    axios.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
         
-        // Charger les premières scènes pour l'affichage
-        if (scenesResponse.data.length > 0) {
-          lieu.scenes = scenesResponse.data.slice(0, 3); // Afficher seulement 3 scènes
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        
+        if (user && user.id) {
+          config.headers['X-User-Id'] = user.id;
+        }
+        
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+    
+    await this.fetchProjetDetails();
+    await this.loadLieux();
+  },
+  methods: {
+    // Navigation
+    goToEcranTravail() {
+      this.$router.push(`/projet/${this.formData.projetId}/ecran-travail`);
+    },
+    
+    goBack() {
+      this.$router.push(`/projet/${this.formData.projetId}/ecran-travail`);
+    },
+
+    async fetchProjetDetails() {
+      try {
+        const projetId = this.$route.params.projetId || this.$route.params.id || this.$route.query.projetId;
+        if (!projetId) {
+          this.error = 'ID du projet non spécifié';
+          return;
+        }
+        
+        const response = await axios.get(`/api/projets/${projetId}`);
+        this.projetTitre = response.data.titre;
+        this.formData.projetId = projetId;
+      } catch (error) {
+        console.error('Erreur lors du chargement du projet:', error);
+        this.error = 'Erreur lors du chargement des détails du projet. Veuillez réessayer.';
+      }
+    },
+
+    async loadLieux() {
+      this.loading = true;
+      try {
+        // Charger uniquement les lieux du projet courant
+        const response = await axios.get(`/api/lieux/projets/${this.formData.projetId}`);
+        this.lieux = response.data;
+        
+        // Charger le nombre de scènes pour chaque lieu
+        for (let lieu of this.lieux) {
+          try {
+            const scenesResponse = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`);
+            lieu.sceneCount = scenesResponse.data.length;
+            
+            // Charger les premières scènes pour l'affichage
+            if (scenesResponse.data.length > 0) {
+              lieu.scenes = scenesResponse.data.slice(0, 3);
+            }
+          } catch (error) {
+            console.error('Erreur lors du chargement des scènes du lieu:', error);
+            lieu.sceneCount = 0;
+            lieu.scenes = [];
+          }
         }
       } catch (error) {
-        console.error('Erreur lors du chargement des scènes du lieu:', error);
-        lieu.sceneCount = 0;
-        lieu.scenes = [];
+        console.error('Erreur lors du chargement des lieux:', error);
+        this.error = 'Erreur lors du chargement des lieux: ' + (error.response?.data?.message || error.message);
+      } finally {
+        this.loading = false;
       }
-    }
-  } catch (error) {
-    console.error('Erreur lors du chargement des lieux:', error);
-    alert('Erreur lors du chargement des lieux: ' + (error.response?.data?.message || error.message));
-  } finally {
-    this.loading = false;
-  }
-},
+    },
 
-async submitForm() {
-  try {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.id) {
-      throw new Error('Utilisateur non connecté');
-    }
+    async submitForm() {
+      try {
+        if (!this.user || !this.user.id) {
+          alert('Erreur: Utilisateur non connecté');
+          return;
+        }
 
-    const payload = {
-      ...this.formData,
-      projetId: parseInt(this.formData.projetId)
-    };
-    
-    const headers = { 'X-User-Id': user.id };
-    
-    if (this.isEditing) {
-      await axios.put(`/api/lieux/${this.editingId}`, payload, { headers });
-      alert('Lieu modifié avec succès!');
-    } else {
-      await axios.post('/api/lieux', payload, { headers });
-      alert('Lieu créé avec succès!');
-    }
-    
-    this.resetForm();
-    await this.loadLieux();
-  } catch (error) {
-    console.error('Erreur lors de la sauvegarde du lieu:', error);
-    alert('Erreur: ' + (error.response?.data?.message || error.message));
-  }
-},
+        const payload = {
+          ...this.formData,
+          projetId: parseInt(this.formData.projetId)
+        };
+        
+        const config = {
+          headers: {
+            'X-User-Id': this.user.id
+          }
+        };
+        
+        if (this.isEditing) {
+          await axios.put(`/api/lieux/${this.editingId}`, payload, config);
+        } else {
+          await axios.post('/api/lieux', payload, config);
+        }
+        
+        this.resetForm();
+        await this.loadLieux();
+        this.activeTab = 'list';
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde du lieu:', error);
+        const errorMessage = error.response?.data?.message || error.message;
+        
+        if (error.response?.status === 403) {
+          this.error = 'Vous n\'avez pas les permissions nécessaires pour effectuer cette action';
+        } else if (error.response?.status === 400) {
+          this.error = 'Données invalides - ' + errorMessage;
+        } else {
+          this.error = errorMessage;
+        }
+      }
+    },
+
     editLieu(lieu) {
       this.formData = {
         projetId: lieu.projetId.toString(),
@@ -388,45 +559,88 @@ async submitForm() {
         typeLieu: lieu.typeLieu,
         adresse: lieu.adresse || ''
       };
-      this.projetSearch = this.getProjetName(lieu.projetId);
       this.isEditing = true;
       this.editingId = lieu.id;
-      
-      document.querySelector('.creation-form').scrollIntoView({ behavior: 'smooth' });
+      this.activeTab = 'form';
     },
 
-async deleteLieu(lieuId) {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?')) {
-    return;
-  }
-  
-  try {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.id) {
-      throw new Error('Utilisateur non connecté');
-    }
+    goToForm() {
+      this.activeTab = 'form';
+      this.resetForm();
+    },
 
-    const headers = { 'X-User-Id': user.id };
-    await axios.delete(`/api/lieux/${lieuId}`, { headers });
-    await this.loadLieux();
-    alert('Lieu supprimé avec succès!');
-  } catch (error) {
-    console.error('Erreur lors de la suppression du lieu:', error);
-    alert('Erreur: ' + (error.response?.data?.message || error.message));
-  }
-},
+    // Modal de confirmation de suppression
+    confirmDeleteLieu(lieuId) {
+      const lieu = this.lieux.find(l => l.id === lieuId);
+      if (!lieu) return;
+      
+      this.lieuToDelete = lieu;
+      this.showDeleteModal = true;
+      this.isDeleting = false;
+    },
+    
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+      this.lieuToDelete = null;
+      this.isDeleting = false;
+    },
+    
+    async executeDeleteLieu() {
+      if (!this.lieuToDelete) return;
+      
+      this.isDeleting = true;
+      
+      try {
+        if (!this.user || !this.user.id) {
+          alert('Erreur: Utilisateur non connecté');
+          return;
+        }
+
+        const config = {
+          headers: {
+            'X-User-Id': this.user.id
+          }
+        };
+
+        await axios.delete(`/api/lieux/${this.lieuToDelete.id}`, config);
+        
+        // Recharger la liste
+        await this.loadLieux();
+        this.closeDeleteModal();
+        
+      } catch (error) {
+        console.error('Erreur lors de la suppression du lieu:', error);
+        const errorMessage = error.response?.data?.message || error.message;
+        
+        if (error.response?.status === 403) {
+          this.showErrorMessage('Vous n\'avez pas les permissions nécessaires pour supprimer ce lieu');
+        } else {
+          this.showErrorMessage('Erreur: ' + errorMessage);
+        }
+        this.isDeleting = false;
+      }
+    },
+    
+    showSuccessMessage(message) {
+      alert(message);
+    },
+    
+    showErrorMessage(message) {
+      alert(message);
+    },
+    
     resetForm() {
       this.formData = {
-        projetId: '',
+        projetId: this.formData.projetId, // Garder le même projetId
         nomLieu: '',
         typeLieu: '',
         adresse: ''
       };
-      this.projetSearch = '';
       this.isEditing = false;
       this.editingId = null;
-      this.filteredProjets = [...this.projets];
+      this.error = '';
     },
+    
     formatDate(dateString) {
       if (!dateString) return '';
       return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -437,545 +651,30 @@ async deleteLieu(lieuId) {
         minute: '2-digit'
       });
     },
-async viewLieuScenes(lieu) {
-  this.selectedLieu = lieu;
-  try {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const headers = user && user.id ? { 'X-User-Id': user.id } : {};
     
-    const response = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`, { headers });
-    this.selectedLieuScenes = response.data;
-    this.showScenesModal = true;
-  } catch (error) {
-    console.error('Erreur lors du chargement des scènes du lieu:', error);
-    alert('Erreur lors du chargement des scènes');
-  }
-},
-    goBack() {
-      this.$router.go(-1);    
-    },
-    toggleProfileMenu() {
-      this.showProfileMenu = !this.showProfileMenu;
-    },
-    handleClickOutside(event) {
-      if (!event.target.closest('.profile-section')) {
-        this.showProfileMenu = false;
+    async viewLieuScenes(lieu) {
+      this.selectedLieu = lieu;
+      try {
+        const response = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`);
+        this.selectedLieuScenes = response.data;
+        this.showScenesModal = true;
+      } catch (error) {
+        console.error('Erreur lors du chargement des scènes du lieu:', error);
+        alert('Erreur lors du chargement des scènes');
       }
     },
-    seDeconnecter() {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      this.$router.push('/');
-    },
-    async loadScenesForProject() {
-      // Cette méthode peut être utilisée pour charger les scènes d'un projet spécifique
-      // si nécessaire pour des fonctionnalités futures
-    },
     
-    // Méthodes pour la zone de liste modifiable
-    filterProjets() {
-      const searchTerm = this.projetSearch.toLowerCase();
-      if (!searchTerm) {
-        this.filteredProjets = [...this.projets];
-        return;
+    getTypeClass(type) {
+      switch (type) {
+        case 'Intérieur': return 'type-interieur';
+        case 'Extérieur': return 'type-exterieur';
+        case 'Intérieur/Extérieur': return 'type-mixte';
+        case 'Studio': return 'type-studio';
+        case 'Naturel': return 'type-naturel';
+        case 'Urbain': return 'type-urbain';
+        default: return '';
       }
-      this.filteredProjets = this.projets.filter(projet => 
-        projet.titre.toLowerCase().includes(searchTerm) ||
-        (projet.genreNom && projet.genreNom.toLowerCase().includes(searchTerm))
-      );
-    },
-
-    selectProjet(projet) {
-      this.formData.projetId = projet.id.toString();
-      this.projetSearch = `${projet.titre} (${projet.genreNom})`;
-      this.showProjetSuggestions = false;
-    },
-
-    hideProjetSuggestions() {
-      // Petit délai pour permettre la sélection avant de cacher
-      setTimeout(() => {
-        this.showProjetSuggestions = false;
-      }, 200);
-    },
-
-    getProjetName(id) {
-      const projet = this.projets.find(p => p.id === parseInt(id));
-      return projet ? `${projet.titre} (${projet.genreNom})` : '';
     }
   }
 };
 </script>
-
-<style scoped>
-.creation-lieu-container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-}
-
-.header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 1rem 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 1rem;
-}
-
-.profile-section {
-  position: relative;
-}
-
-.profile-icon {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.profile-icon:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.profile-avatar {
-  width: 32px;
-  height: 32px;
-  background-color: white;
-  color: #667eea;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-.profile-name {
-  margin-right: 0.5rem;
-}
-
-.profile-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  width: 280px;
-  z-index: 1000;
-  margin-top: 0.5rem;
-  overflow: hidden;
-}
-
-.profile-info {
-  display: flex;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.profile-avatar-large {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-right: 1rem;
-}
-
-.profile-details h3 {
-  margin: 0 0 0.25rem 0;
-  color: #333;
-}
-
-.profile-details p {
-  margin: 0.25rem 0;
-  color: #666;
-}
-
-.role-badge {
-  background-color: #e9ecef;
-  color: #495057;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  display: inline-block;
-}
-
-.profile-actions {
-  padding: 1rem 1.5rem;
-}
-
-.logout-btn {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.back-btn {
-  background: #6c757d;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 1rem;
-}
-
-.creation-form {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.creation-form h3 {
-  margin-top: 0;
-  color: #333;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 0.5rem;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #555;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-/* Styles pour la zone de liste modifiable */
-.combobox-container {
-  position: relative;
-  width: 100%;
-}
-
-.combobox-input {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.suggestions-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-top: none;
-  border-radius: 0 0 6px 6px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.suggestion-item {
-  padding: 10px 12px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.suggestion-item:hover {
-  background-color: #f0f8ff;
-}
-
-.suggestion-item.no-results {
-  color: #888;
-  cursor: default;
-}
-
-.suggestion-item.no-results:hover {
-  background-color: white;
-}
-
-.submit-btn,
-.cancel-btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  margin-right: 1rem;
-}
-
-.submit-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.cancel-btn {
-  background: #6c757d;
-  color: white;
-}
-
-.lieux-list {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.lieux-list h3 {
-  margin-top: 0;
-  color: #333;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 0.5rem;
-}
-
-.filters {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.filter-group {
-  flex: 1;
-  min-width: 200px;
-}
-
-.filter-group input,
-.filter-group select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.loading,
-.no-data {
-  text-align: center;
-  padding: 2rem;
-  color: #666;
-  font-style: italic;
-}
-
-.lieux-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-}
-
-.lieu-card {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 1.5rem;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.lieu-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.lieu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.lieu-header h4 {
-  margin: 0;
-  color: #333;
-}
-
-.lieu-actions span {
-  margin-left: 0.75rem;
-  cursor: pointer;
-  font-size: 1.1rem;
-}
-
-.icon-edit {
-  color: #f39c12;
-}
-
-.icon-delete {
-  color: #dc3545;
-}
-
-.icon-scenes {
-  color: #3498db;
-}
-
-.lieu-info p {
-  margin: 0.5rem 0;
-  color: #666;
-}
-
-.scenes-section {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #f0f0f0;
-}
-
-.scenes-section h5 {
-  margin: 0 0 0.5rem 0;
-  color: #555;
-}
-
-.scene-item {
-  padding: 0.5rem;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  width: 90%;
-  max-width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1rem;
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: #333;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-}
-
-.scenes-list {
-  margin-bottom: 1.5rem;
-}
-
-.no-scenes {
-  text-align: center;
-  color: #666;
-  font-style: italic;
-  padding: 2rem;
-}
-
-.scene-detail {
-  border: 1px solid #eee;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.scene-detail h4 {
-  margin: 0 0 0.5rem 0;
-  color: #333;
-}
-
-.scene-detail p {
-  margin: 0.25rem 0;
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .profile-section {
-    margin-top: 1rem;
-  }
-  
-  .filters {
-    flex-direction: column;
-  }
-  
-  .lieux-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .modal-content {
-    width: 95%;
-    padding: 1rem;
-  }
-}
-</style>
