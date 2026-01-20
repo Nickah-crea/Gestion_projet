@@ -8,7 +8,7 @@
   left: 0;
   right: 0;
   z-index: $z-index-sticky;
-  background: $color-background;
+  background: $color-secondary-black;
   border-bottom: 1px solid $color-border;
   box-shadow: $shadow-md;
   height: 60px;
@@ -26,12 +26,12 @@
 
   // Mode séquence actif
   &.sequence-mode-active {
-    background: $color-accent-dark;
+    background: $color-secondary-black;
   }
 
   // Mode épisode actif
   &.episode-mode-active {
-    background: $color-primary-light;
+    background: $color-secondary-dark;
   }
 }
 
@@ -135,9 +135,9 @@
   justify-content: center;
 
   .scene-mode-active & {
-    background: rgba($color-scene, 0.1);
-    border-color: rgba($color-scene, 0.3);
-    color: darken($color-scene, 20%);
+    background: $color-background;
+    border-color: rgba($color-tertiary-dark, 0.3);
+    color: darken($color-text-primary, 20%);
   }
 
   .sequence-mode-active & {
