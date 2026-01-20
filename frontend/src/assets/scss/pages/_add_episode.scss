@@ -17,7 +17,7 @@ position: fixed;
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: rgba($color-border, 0.1);
+  background: $color-primary; // <-- CHANGÉ: couleur principale
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -30,6 +30,23 @@ position: fixed;
   
   @media (max-width: $breakpoint-lg) {
     display: none;
+  }
+  
+  
+  // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-dark !important;
+  }
+  
+  // Exception pour les boutons
+  .view-all-btn-compact-Scenariste {
+    i {
+      color: $color-text-light !important;
+    }
+    
+    &:hover {
+      background: rgba($color-text-light, 0.1) !important;
+    }
   }
 
   .sidebar-header-add-episode {
