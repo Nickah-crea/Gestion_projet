@@ -1,201 +1,786 @@
-@import '../base/variables';
+// _scene-raccord.scss
+// Styles pour le composant de gestion des raccords photos
+// Utilisation des variables VDFI WARM LUXE 2026
 
-.scene-tools-navbar {
-  position: fixed;
-  top: 60px; 
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: $color-background-dark;
-  border-bottom: 1px solid rgba($color-primary, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 $padding-md;
-  z-index: $z-index-fixed;
-  box-shadow: $shadow-lg;
-  transition: $transition;
-  
-  &.with-right-sidebar {
-    right: 250px;
-    transition: right $transition-slow ease;
-    
-    @media (max-width: $breakpoint-lg) {
-      right: 220px;
-    }
-    
-    @media (max-width: $breakpoint-md) {
-      right: 200px;
-    }
-  }
+// Conteneur principal
+.raccords-photos-container-raccord-photo {
+  display: inline-block;
 }
 
-/* Sections de la navbar */
-.navbar-left-section,
-.navbar-center-section,
-.navbar-right-section {
-  display: flex;
-  align-items: center;
-  gap: $gap-md;
+.raccords-photos-container {
+  @extend .raccords-photos-container-raccord-photo;
 }
 
-/* Titre de la navbar */
-.navbar-title {
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  color: $color-primary;
-  font-family: $font-family-primary;
-  font-size: $font-size-p1;
-  font-weight: $font-weight-semibold;
-  @include typography-playfair-p1;
-  
-  i {
-    font-size: $font-size-p2;
-    color: $color-primary-light;
-  }
-}
-
-/* Section centrale - FORCEZ L'AFFICHAGE */
-.navbar-center-section {
-  flex: 1;
-  justify-content: center;
-  gap: $gap-lg;
-  
-  .nav-tool-item {
-    // Styles de base pour TOUS les composants enfants
-    :deep(*) {
-      display: inline-block !important;
-      
-      button {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 8px !important;
-        background: rgba($color-accent, 0.1) !important;
-        border: 1px solid rgba($color-accent, 0.2) !important;
-        border-radius: $border-radius-xs !important;
-        padding: $padding-sm $padding-md !important;
-        color: $color-primary-light !important;
-        font-family: $font-family-primary !important;
-        font-size: $font-size-p3 !important;
-        font-weight: $font-weight-medium !important;
-        cursor: pointer !important;
-        transition: all $transition-fast !important;
-        min-width: 160px !important;
-        white-space: nowrap !important;
-        
-        &:hover:not(:disabled) {
-          background: rgba($color-accent, 0.2) !important;
-          border-color: rgba($color-accent, 0.4) !important;
-          color: $color-accent !important;
-          transform: translateY(-1px) !important;
-          
-          i {
-            color: $color-accent !important;
-          }
-        }
-        
-        i {
-          color: $color-accent-light !important;
-          font-size: $font-size-p2 !important;
-        }
-      }
-    }
-  }
-}
-
-/* Navigation entre scènes */
-.scene-navigation {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-}
-
-.nav-scene-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $gap-xs;
-  background: rgba($color-primary, 0.1);
-  border: 1px solid rgba($color-primary, 0.2);
-  border-radius: $border-radius-xs;
+// Bouton d'ouverture
+.btn-open-raccords-raccord-photo {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-background-alt;
+  border: none;
   padding: $padding-sm $padding-md;
-  color: $color-primary-light;
-  font-family: $font-family-primary;
+  border-radius: $border-radius-xs;
+  cursor: pointer;
   font-size: $font-size-p3;
   font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: all $transition-fast;
-  min-width: 100px;
-  
+  transition: $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+
   &:hover:not(:disabled) {
-    background: rgba($color-primary, 0.2);
-    border-color: rgba($color-primary, 0.4);
+    transform: translateY(-1px);
+    box-shadow: $shadow-primary;
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
-.scene-counter {
+.btn-open-raccords {
+  @extend .btn-open-raccords-raccord-photo;
+}
+
+// Overlay et modal
+.modal-overlay-raccord-photo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
-  align-items: baseline;
-  color: $color-text-light;
-  font-family: $font-family-primary;
-  font-weight: $font-weight-semibold;
-  min-width: 60px;
   justify-content: center;
-  
-  .current-scene {
-    font-size: $font-size-h4;
-    color: $color-primary;
-    margin-right: 2px;
-    font-weight: $font-weight-bold;
-  }
-  
-  .total-scenes {
-    font-size: $font-size-p2;
-    color: $color-text-muted;
-    opacity: 0.8;
+  align-items: center;
+  z-index: $z-index-modal;
+}
+
+.modal-overlay {
+  @extend .modal-overlay-raccord-photo;
+}
+
+.modal-content-raccord-photo {
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: $shadow-xl;
+}
+
+.modal-content {
+  @extend .modal-content-raccord-photo;
+}
+
+// En-tête du modal
+.modal-header-raccord-photo {
+  background: linear-gradient(135deg, $color-secondary-black 0%, $color-tertiary-dark 100%);
+  color: $color-text-light;
+  padding: $padding-md;
+  border-radius: $border-radius $border-radius 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    @include typography-h3;
+    margin: 0;
+    color: $color-text-light;
   }
 }
 
-.close-navbar-btn {
+.modal-header {
+  @extend .modal-header-raccord-photo;
+}
+
+.close-btn-raccord-photo {
+  background: none;
+  border: none;
+  color: $color-text-light;
+  font-size: $font-size-h4;
+  cursor: pointer;
+  padding: $padding-xs;
+  border-radius: 50%;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: rgba($color-text-light, 0.2);
+  }
+}
+
+.close-btn {
+  @extend .close-btn-raccord-photo;
+}
+
+// Sections du modal
+.scene-info-section-raccord-photo,
+.add-raccord-section-raccord-photo,
+.existing-raccords-section-raccord-photo {
+  padding: $padding-md;
+  border-bottom: 1px solid rgba($color-border-dark, 0.3);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.scene-info-section {
+  @extend .scene-info-section-raccord-photo;
+}
+
+.add-raccord-section {
+  @extend .add-raccord-section-raccord-photo;
+}
+
+.existing-raccords-section {
+  @extend .existing-raccords-section-raccord-photo;
+}
+
+// Formulaires
+.form-group-raccord-photo {
+  margin-bottom: $margin-md;
+
+  label {
+    display: block;
+    margin-bottom: $margin-xs;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    @include typography-p3;
+  }
+}
+
+.form-group {
+  @extend .form-group-raccord-photo;
+}
+
+.form-select-raccord-photo,
+.form-textarea-raccord-photo,
+.file-input-raccord-photo {
+  width: 100%;
+  padding: $padding-sm;
+  border: 2px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p3;
+  transition: border-color $transition-fast;
+  background: $color-background-alt;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+}
+
+.form-select {
+  @extend .form-select-raccord-photo;
+}
+
+.form-textarea {
+  @extend .form-textarea-raccord-photo;
+}
+
+.file-input {
+  @extend .file-input-raccord-photo;
+}
+
+// Prévisualisation d'images
+.image-previews-raccord-photo {
+  display: flex;
+  gap: $gap-sm;
+  flex-wrap: wrap;
+  margin-top: $margin-sm;
+}
+
+.image-previews {
+  @extend .image-previews-raccord-photo;
+}
+
+.image-preview-raccord-photo {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 1px solid $color-border-dark;
+  border-radius: $border-radius-xs;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.image-preview {
+  @extend .image-preview-raccord-photo;
+}
+
+.remove-btn-raccord-photo {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: $color-error;
+  color: $color-text-light;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: $font-size-p4;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba($color-secondary, 0.1);
-  border: 1px solid rgba($color-secondary, 0.2);
-  border-radius: $border-radius-xs;
-  width: 40px;
-  height: 40px;
-  color: $color-secondary;
-  cursor: pointer;
-  
+  transition: background $transition-fast;
+
   &:hover {
-    background: rgba($color-secondary, 0.2);
+    background: darken($color-error, 10%);
   }
 }
 
-/* Responsive */
-@media (max-width: $breakpoint-md) {
-  .scene-tools-navbar {
-    height: 50px;
-    padding: 0 $padding-xs;
-    top: 55px;
-  }
-  
-  .navbar-center-section {
-    gap: $gap-sm;
-    
-    .nav-tool-item :deep(button) {
-      min-width: 40px !important;
-      width: 40px !important;
-      height: 40px !important;
-      padding: 0 !important;
-      
-      span {
-        display: none !important;
-      }
-    }
+.remove-btn {
+  @extend .remove-btn-raccord-photo;
+}
+
+.field-note-raccord-photo {
+  font-size: $font-size-p5;
+  color: $color-text-muted;
+  margin-top: $margin-xs;
+  font-style: italic;
+}
+
+.field-note {
+  @extend .field-note-raccord-photo;
+}
+
+// Options de formulaire
+.form-options-raccord-photo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $gap-lg;
+  margin-top: $margin-lg;
+}
+
+.form-options {
+  @extend .form-options-raccord-photo;
+}
+
+.checkbox-group-raccord-photo {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    cursor: pointer;
+    margin-bottom: $margin-xs;
+    @include typography-p3;
   }
 }
+
+.checkbox-group {
+  @extend .checkbox-group-raccord-photo;
+}
+
+.option-description-raccord-photo {
+  color: $color-text-muted;
+  font-size: $font-size-p5;
+  margin-left: 28px;
+}
+
+.option-description {
+  @extend .option-description-raccord-photo;
+}
+
+// Boutons d'action
+.action-buttons-raccord-photo {
+  display: flex;
+  gap: $gap-sm;
+  justify-content: flex-end;
+  margin-top: $margin-lg;
+}
+
+.action-buttons {
+  @extend .action-buttons-raccord-photo;
+}
+
+.btn-cancel-raccord-photo,
+.btn-add-raccord-photo {
+  padding: $padding-sm $padding-lg;
+  border: none;
+  border-radius: $border-radius-xs;
+  cursor: pointer;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-semibold;
+  transition: $transition-fast;
+  @include flex-center;
+  gap: $gap-xs;
+}
+
+.btn-cancel {
+  @extend .btn-cancel-raccord-photo;
+}
+
+.btn-add {
+  @extend .btn-add-raccord-photo;
+}
+
+.btn-cancel-raccord-photo {
+  background: $color-text-muted;
+  color: $color-text-light;
+
+  &:hover {
+    background: darken($color-text-muted, 10%);
+  }
+}
+
+.btn-add-raccord-photo {
+  background: linear-gradient(135deg, $color-success 0%, $color-primary-dark 100%);
+  color: $color-text-light;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-success 100%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Raccords existants
+.raccord-item-raccord-photo {
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  padding: $padding-md;
+  margin-bottom: $margin-md;
+  background: $color-background;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-md;
+  }
+}
+
+.raccord-item {
+  @extend .raccord-item-raccord-photo;
+}
+
+.raccord-header-raccord-photo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $margin-sm;
+}
+
+.raccord-header {
+  @extend .raccord-header-raccord-photo;
+}
+
+.raccord-info-raccord-photo {
+  h5 {
+    @include typography-h4;
+    margin: 0 0 $margin-xs 0;
+    color: $color-text-primary;
+  }
+}
+
+.raccord-info {
+  @extend .raccord-info-raccord-photo;
+}
+
+.raccord-date-raccord-photo {
+  font-size: $font-size-p4;
+  color: $color-text-muted;
+  @include typography-p4;
+}
+
+.raccord-date {
+  @extend .raccord-date-raccord-photo;
+}
+
+.raccord-actions-raccord-photo {
+  display: flex;
+  gap: $gap-xs;
+}
+
+.raccord-actions {
+  @extend .raccord-actions-raccord-photo;
+}
+
+.btn-view-raccord-photo,
+.btn-delete-raccord-photo {
+  background: none;
+  border: none;
+  padding: $padding-xs;
+  border-radius: $border-radius-xs;
+  cursor: pointer;
+  font-size: $font-size-p3;
+  transition: $transition-fast;
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+}
+
+.btn-view {
+  @extend .btn-view-raccord-photo;
+}
+
+.btn-delete {
+  @extend .btn-delete-raccord-photo;
+}
+
+.btn-view-raccord-photo {
+  color: $color-info;
+
+  &:hover {
+    background: $color-info;
+    color: $color-text-light;
+  }
+}
+
+.btn-delete-raccord-photo {
+  color: $color-error;
+
+  &:hover {
+    background: $color-error;
+    color: $color-text-light;
+  }
+}
+
+.raccord-description-raccord-photo {
+  color: $color-text-secondary;
+  font-style: italic;
+  margin-bottom: $margin-md;
+  @include typography-p3;
+}
+
+.raccord-description {
+  @extend .raccord-description-raccord-photo;
+}
+
+// Miniatures de photos
+.photos-miniatures-raccord-photo {
+  display: flex;
+  gap: $gap-xs;
+  flex-wrap: wrap;
+}
+
+.photos-miniatures {
+  @extend .photos-miniatures-raccord-photo;
+}
+
+.miniature-raccord-photo {
+  width: 60px;
+  height: 60px;
+  border: 2px solid $color-border-dark;
+  border-radius: $border-radius-xs;
+  overflow: hidden;
+  cursor: pointer;
+  transition: $transition-fast;
+  position: relative;
+
+  &:hover {
+    border-color: $color-primary;
+    transform: scale(1.05);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.miniature {
+  @extend .miniature-raccord-photo;
+}
+
+.more-count-raccord-photo {
+  @include flex-center;
+  background: $color-surface;
+  color: $color-text-muted;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-p4;
+}
+
+.more-count {
+  @extend .more-count-raccord-photo;
+}
+
+// Modal d'images
+.image-modal-overlay-raccord-photo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: $z-index-modal + 100;
+}
+
+.image-modal-overlay {
+  @extend .image-modal-overlay-raccord-photo;
+}
+
+.image-modal-content-raccord-photo {
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  width: 95%;
+  max-width: 1200px;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: $shadow-xl;
+}
+
+.image-modal-content {
+  @extend .image-modal-content-raccord-photo;
+}
+
+.image-modal-header-raccord-photo {
+  background: $color-secondary-black;
+  color: $color-text-light;
+  padding: $padding-md;
+  border-radius: $border-radius $border-radius 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h4 {
+    @include typography-h4;
+    margin: 0;
+    color: $color-text-light;
+  }
+}
+
+.image-modal-header {
+  @extend .image-modal-header-raccord-photo;
+}
+
+.image-gallery-raccord-photo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $gap-lg;
+  padding: $padding-md;
+}
+
+.image-gallery {
+  @extend .image-gallery-raccord-photo;
+}
+
+.gallery-item-raccord-photo {
+  border: 1px solid $color-border-dark;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  background: $color-background-alt;
+
+  img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+  }
+}
+
+.gallery-item {
+  @extend .gallery-item-raccord-photo;
+}
+
+.image-info-raccord-photo {
+  padding: $padding-sm;
+  background: $color-background;
+
+  p {
+    margin: $margin-xs 0;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+  }
+}
+
+.image-info {
+  @extend .image-info-raccord-photo;
+}
+
+// États de chargement et données vides
+.loading-raccord-photo,
+.no-data-raccord-photo {
+  text-align: center;
+  padding: $padding-xl;
+  color: $color-text-muted;
+  @include typography-p2;
+}
+
+.loading {
+  @extend .loading-raccord-photo;
+}
+
+.no-data {
+  @extend .no-data-raccord-photo;
+}
+
+.loading-raccord-photo i {
+  margin-right: $margin-sm;
+}
+
+// Styles pour les images partagées
+.shared-badge-raccord-photo {
+  background: $color-info;
+  color: $color-text-light;
+  padding: 2px $padding-xs;
+  border-radius: 10px;
+  font-size: $font-size-p5;
+  margin-left: $margin-xs;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.shared-badge {
+  @extend .shared-badge-raccord-photo;
+}
+
+.shared-overlay-raccord-photo {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba($color-info, 0.9);
+  color: $color-text-light;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-p5;
+}
+
+.shared-overlay {
+  @extend .shared-overlay-raccord-photo;
+}
+
+.shared-indicator-raccord-photo {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: $color-info;
+  color: $color-text-light;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-p5;
+}
+
+.shared-indicator {
+  @extend .shared-indicator-raccord-photo;
+}
+
+// Correction du problème d'extend compound
+.photo-item.shared-raccord-photo {
+  border-left: 3px solid $color-info;
+}
+
+.photo-item.shared {
+  border-left: 3px solid $color-info;
+}
+
+.miniature.shared-raccord-photo {
+  border: 2px solid $color-info;
+}
+
+.miniature.shared {
+  border: 2px solid $color-info;
+}
+
+// Cases à cocher personnalisées
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+// Responsive
+@media (max-width: $breakpoint-md) {
+  .modal-content-raccord-photo {
+    width: 95%;
+    margin: $margin-md;
+  }
+
+  .form-options-raccord-photo {
+    grid-template-columns: 1fr;
+  }
+
+  .raccord-header-raccord-photo {
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .raccord-actions-raccord-photo {
+    align-self: flex-end;
+  }
+
+  .image-gallery-raccord-photo {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons-raccord-photo {
+    flex-direction: column;
+  }
+}
+
+// Classes utilitaires supplémentaires
+.loading-raccord-photo i.fa-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Améliorations pour les indicateurs
+.miniature-raccord-photo {
+  &.shared::after {
+    content: "Partagée";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba($color-info, 0.8);
+    color: $color-text-light;
+    font-size: 8px;
+    text-align: center;
+    padding: 2px;
+  }
+}
+
+// Badges de statut
+.raccord-status-badge-raccord-photo {
+  display: inline-block;
+  padding: 2px $padding-xs;
+  border-radius: 10px;
+  font-size: $font-size-p5;
+  margin-left: $margin-xs;
+  
+  &.critical {
+    background: rgba($color-error, 0.2);
+    color: $color-error;
+    border: 1px solid rgba($color-error, 0.3);
+  }
+  
+  &.normal {
+    background: rgba($color-success, 0.2);
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.3);
+  }
+}
+
 
