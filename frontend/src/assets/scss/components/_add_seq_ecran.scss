@@ -1,56 +1,236 @@
-// =============================================
-// _add_seq_ecran.scss - MODIFIÉ AVEC NOUVELLE PALETTE
-// =============================================
-
-// add_seq_ecran.scss
 @import '../base/variables';
 
-.add-sequence-container {
-  flex: 1;
-  padding: $spacing-md;
-  max-width: 900px;
-  margin: 0 auto;
+.app-wrapper-global-seq-ecran {
+  display: flex;
   min-height: 100vh;
-  background: $color-background; // Changé: champagne beige
-  animation: fadeIn 0.5s ease-in-out;
 }
 
 // =============================================
-// CONTENU PRINCIPAL
+// SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
-.main-content {
-  background: $color-background-alt; // Changé: blanc propre
+.creation-sidebar-seq-ecran {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 280px;
+  height: calc(100vh - 50px);
+  z-index: $z-index-fixed - 1;
+  overflow-y: auto;
+  padding: $padding-lg;
+  background: rgba($color-border, 0.1);
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
+
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
+
+  .sidebar-header-seq-ecran {
+    margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
+
+    .sidebar-title-seq-ecran {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-seq-ecran {
+      @include typography-p4;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-seq-ecran {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-seq-ecran {
+      @include typography-p4;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  .sidebar-actions-seq-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-seq-ecran {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    font-weight: $font-weight-semibold;
+    gap: $gap-xs;
+    box-sizing: border-box;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background: $color-tertiary-dark;
+      color: $color-text-light;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+  }
+
+  .filter-group-seq-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-seq-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .episode-info-seq-ecran {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $gap-xs $padding-xs;
+    background: rgba($color-primary, 0.05);
+    border: 1px solid rgba($color-primary, 0.2);
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+    
+    span {
+      flex: 1;
+      @include text-truncate;
+    }
+  }
+
+  .stats-seq-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-seq-ecran {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-seq-ecran {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-seq-ecran {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
+}
+
+// =============================================
+// CONTENU PRINCIPAL À DROITE
+// =============================================
+.creation-body-seq-ecran {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-seq-ecran {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION
+// =============================================
+.form-container-seq-ecran {
+  background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
-  padding: $spacing-xl;
-  animation: slideIn 0.3s ease-out;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
 }
 
-// =============================================
-// EN-TÊTE DE SÉQUENCE
-// =============================================
-.sequence-header {
+.form-header-seq-ecran {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: $spacing-lg;
   padding-bottom: $spacing-md;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée subtile
+  border-bottom: 1px solid $color-border;
 
   h2 {
-    color: $color-text-primary; // Changé: brun foncé
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
     margin: 0;
-    font-size: 1.5rem;
-    font-weight: $font-weight-semibold;
   }
 
-  .back-btn {
-    padding: $gap-sm $padding-sm;
+  .back-btn-seq-ecran {
+    padding: $gap-xs $padding-sm;
     background: transparent;
-    border: 1px solid $color-border; // Changé: bordure dorée
+    border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-secondary; // Changé: brun
+    color: $color-text-secondary;
     cursor: pointer;
     transition: $transition-fast;
     display: flex;
@@ -58,221 +238,203 @@
     gap: $gap-xs;
 
     &:hover {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
-      border-color: $color-primary; // Changé: doré
-      color: $color-primary; // Changé: doré
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
-      outline-offset: 1px;
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
     }
   }
 }
 
-// =============================================
-// FORMULAIRE D'AJOUT DE SÉQUENCE
-// =============================================
-.add-sequence-form {
+.sequence-form-seq-ecran {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
 }
 
-.add-sequence-form form {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
-}
-
-// =============================================
-// GROUPES DE FORMULAIRES CÔTE À CÔTE
-// =============================================
-.form-row {
+.form-row-seq-ecran {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: $spacing-lg;
-  
+  gap: $spacing-md;
+
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
-    gap: $spacing-md;
+    gap: $spacing-sm;
   }
 }
 
-// =============================================
-// CHAMP DE FORMULAIRE INDIVIDUEL
-// =============================================
-.form-group {
+.form-group-seq-ecran {
   display: flex;
   flex-direction: column;
-  gap: $gap-sm;
+  gap: $gap-xs;
 
   label {
-    color: $color-text-primary; // Changé: brun foncé
+    @include typography-p4;
+    color: $color-text-primary;
     font-weight: $font-weight-semibold;
-    font-size: $font-size-p4;
-    margin-bottom: $gap-xs;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
   }
 
-  input,
-  textarea,
-  select {
+  .form-input-seq-ecran,
+  .form-select-seq-ecran,
+  .form-textarea-seq-ecran {
     width: 100%;
-    padding: $gap-md $padding-sm;
-    border: 1px solid $color-border; // Changé: bordure dorée
+    padding: $gap-sm $padding-sm;
+    border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-primary; // Changé: brun foncé
-    background: $color-background-alt; // Changé: blanc
+    color: $color-text-primary;
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
-      border-color: $color-primary; // Changé: doré
-      box-shadow: 0 0 0 3px rgba($color-primary, 0.1); // Changé: doré subtil
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
 
     &:hover {
-      border-color: rgba($color-primary, 0.5); // Changé: doré plus visible
+      border-color: rgba($color-primary, 0.5);
     }
 
+    &:disabled {
+      background: $color-background;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  .form-input-seq-ecran {
+    height: 42px;
+    
     &.error-input {
-      border-color: $color-error; // Changé: rouge bordeaux
-      
-      &:focus {
-        box-shadow: 0 0 0 3px rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-      }
+      border-color: $color-error;
+      background: rgba($color-error, 0.05);
     }
   }
 
-  input,
-  select {
-    height: 44px;
+  .form-select-seq-ecran {
+    height: 42px;
+    cursor: pointer;
   }
 
-  textarea {
+  .form-textarea-seq-ecran {
     resize: vertical;
     min-height: 120px;
     font-family: inherit;
     line-height: $line-height-base;
-    padding: $padding-sm;
-  }
-
-  select {
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right $padding-sm center;
-    background-size: 12px;
-    padding-right: $padding-lg;
-  }
-
-  input[disabled] {
-    background: #f3f4f6; // Gardé gris neutre
-    color: $color-text-secondary; // Changé: brun
-    cursor: not-allowed;
-    border-color: $color-border; // Changé: bordure dorée
   }
 }
 
 // =============================================
-// SYNOPSIS (PLEINE LARGEUR)
+// AFFICHAGE DE L'ÉPISODE PARENT
 // =============================================
-.form-group-full-width {
-  grid-column: 1 / -1;
-}
-
-// =============================================
-// SUGGESTION D'ORDRE
-// =============================================
-.suggestion-text {
-  margin-top: $gap-xs;
-  font-size: $font-size-p5;
-  color: $color-primary; // Changé: doré
-  display: flex;
-  align-items: center;
-  gap: $gap-md;
-  flex-wrap: wrap;
-
-  .suggestion-btn {
-    background: transparent;
-    color: $color-primary; // Changé: doré
-    border: 1px solid $color-primary; // Changé: doré
-    padding: $gap-xs $padding-xs;
+.episode-display-seq-ecran {
+  .episode-display-content-seq-ecran {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $gap-sm $padding-sm;
+    background: rgba($color-primary, 0.05);
+    border: 1px solid rgba($color-primary, 0.2);
     border-radius: $border-radius-xs;
-    font-size: $font-size-p5;
-    cursor: pointer;
-    transition: $transition-fast;
-
-    &:hover {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
+    min-height: 42px;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p3;
     }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
-      outline-offset: 1px;
+    
+    span {
+      flex: 1;
+      font-size: $font-size-p4;
+      color: $color-text-primary;
     }
   }
 }
 
 // =============================================
-// MESSAGES D'ERREUR
+// MESSAGES D'ERREUR ET SUGGESTIONS
 // =============================================
-.error-text {
-  font-size: $font-size-p5;
-  color: $color-error; // Changé: rouge bordeaux
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
+.error-text-seq-ecran {
+  @include typography-p4;
+  color: $color-error;
   margin-top: $gap-xs;
+  display: block;
+}
 
-  &::before {
-    content: '!';
-    font-size: $font-size-p5;
-    font-weight: $font-weight-bold;
+.info-text-seq-ecran {
+  @include typography-p4;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  display: block;
+  font-style: italic;
+}
+
+.suggestion-text-seq-ecran {
+  @include typography-p4;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  display: block;
+  
+  .suggestion-btn-seq-ecran {
+    background: transparent;
+    border: none;
+    color: $color-second-prim;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: $font-size-p4;
+    margin-left: $gap-xs;
+    
+    &:hover {
+      color: darken($color-second-prim, 10%);
+    }
   }
 }
 
-.error-message {
+.error-message-seq-ecran {
   padding: $padding-sm;
-  background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-  border: 1px solid $color-error; // Changé: rouge bordeaux
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
   border-radius: $border-radius-xs;
-  color: $color-error; // Changé: rouge bordeaux
+  color: $color-error;
   font-size: $font-size-p4;
   font-weight: $font-weight-medium;
   display: flex;
   align-items: center;
   gap: $gap-xs;
-  animation: shake 0.3s ease-in-out;
-  margin-bottom: $spacing-md;
-
-  &::before {
-    content: '⚠';
-    font-size: $font-size-p3;
-  }
 }
 
 // =============================================
 // ACTIONS DU FORMULAIRE
 // =============================================
-.form-actions {
+.form-actions-seq-ecran {
   display: flex;
   gap: $spacing-sm;
   justify-content: flex-end;
-  margin-top: $spacing-xl;
-  padding-top: $spacing-md;
-  border-top: 1px solid $color-border; // Changé: bordure dorée
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
 
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
   }
 
-  .submit-btn,
-  .cancel-btn {
-    padding: $gap-md $spacing-lg;
+  .cancel-btn-seq-ecran,
+  .submit-btn-seq-ecran {
+    padding: $gap-sm $spacing-md;
     border: none;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -282,9 +444,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: $gap-sm;
-    min-width: 160px;
-    height: 44px;
+    gap: $gap-xs;
+    min-width: 140px;
 
     @media (max-width: $breakpoint-md) {
       min-width: auto;
@@ -292,8 +453,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
-      outline-offset: 2px;
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
     }
 
     &:disabled {
@@ -303,21 +464,21 @@
     }
   }
 
-  .cancel-btn {
+  .cancel-btn-seq-ecran {
     background: transparent;
-    border: 1px solid $color-border; // Changé: bordure dorée
-    color: $color-text-secondary; // Changé: brun
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
 
     &:hover:not(:disabled) {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
-      border-color: $color-primary; // Changé: doré
-      color: $color-primary; // Changé: doré
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
     }
   }
 
-  .submit-btn {
-    background: $color-primary; // Changé: doré
-    color: $color-text-light; // Changé: blanc
+  .submit-btn-seq-ecran {
+    background: $color-primary;
+    color: $color-text-light;
 
     &:hover:not(:disabled) {
       background: darken($color-primary, 10%);
@@ -332,167 +493,70 @@
 }
 
 // =============================================
-// SPINNER DE CHARGEMENT
-// =============================================
-.loading-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top: 2px solid $color-text-light; // Changé: blanc
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-right: $gap-sm;
-}
-
-// =============================================
-// ANIMATIONS
-// =============================================
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  50% { transform: translateX(4px); }
-  75% { transform: translateX(-4px); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// =============================================
 // RESPONSIVE
 // =============================================
+@media (max-width: $breakpoint-xl) {
+  .creation-sidebar-seq-ecran {
+    width: 250px;
+  }
+  
+  .creation-body-seq-ecran {
+    margin-left: 250px;
+  }
+}
+
 @media (max-width: $breakpoint-lg) {
-  .add-sequence-container {
-    padding: $spacing-sm;
+  .creation-sidebar-seq-ecran {
+    position: relative;
+    width: 100%;
+    height: auto;
   }
-
-  .main-content {
-    padding: $spacing-lg;
-  }
-
-  .sequence-header {
-    flex-direction: column;
-    gap: $spacing-sm;
-    align-items: flex-start;
-
-    h2 {
-      font-size: 1.25rem;
-    }
-  }
-
-  .form-row {
-    gap: $spacing-md;
+  
+  .creation-body-seq-ecran {
+    margin-left: 0;
   }
 }
 
 @media (max-width: $breakpoint-md) {
-  .main-content {
-    padding: $spacing-md;
-    border-radius: $border-radius-sm;
-  }
-
-  .add-sequence-form form {
-    gap: $spacing-lg;
-  }
-
-  .form-actions {
-    margin-top: $spacing-lg;
-  }
-
-  .suggestion-text {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $gap-xs;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: $spacing-md;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .add-sequence-container {
-    padding: $spacing-xs;
-  }
-
-  .main-content {
+  .creation-main-content-seq-ecran {
     padding: $spacing-sm;
   }
-
-  .form-group {
-    input,
-    textarea,
-    select {
-      padding: $gap-sm $padding-xs;
-      font-size: $font-size-p4;
-    }
-
-    input,
-    select {
-      height: 40px;
-    }
-  }
-
-  .form-actions {
-    .submit-btn,
-    .cancel-btn {
-      padding: $gap-sm $spacing-md;
-      height: 40px;
-      font-size: $font-size-p3;
-    }
+  
+  .form-header-seq-ecran {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
   }
 }
 
-// =============================================
-// AMÉLIORATIONS D'ACCESSIBILITÉ
-// =============================================
+// Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  .error-message,
-  .loading-spinner {
-    animation: none;
-  }
-}
-
-// Support des modes de contraste élevé
-@media (prefers-contrast: high) {
-  input,
-  textarea,
-  select {
-    border-width: 2px;
-  }
-
-  .error-message {
-    border-width: 2px;
-  }
-
-  .back-btn,
-  .cancel-btn {
-    border-width: 2px;
+  .sidebar-btn-seq-ecran,
+  .form-input-seq-ecran,
+  .submit-btn-seq-ecran,
+  .cancel-btn-seq-ecran,
+  .back-btn-seq-ecran {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
   }
 }
 
-// Amélioration de la visibilité du focus
-:focus-visible {
-  outline: 2px solid $color-primary; // Changé: doré
-  outline-offset: 2px;
+.aide-content-seq-ecran {
+  .aide-text-seq-ecran {
+    @include typography-p5;
+    color: $color-text-muted;
+    line-height: 1.5;
+    margin: 0;
+  }
 }
 
-
+/* Ajustements pour les icônes */
+.back-btn-seq-ecran i,
+.sidebar-btn-seq-ecran i,
+.submit-btn-seq-ecran i,
+.cancel-btn-seq-ecran i {
+  font-size: 14px;
+}
