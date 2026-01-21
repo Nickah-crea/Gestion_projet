@@ -1,0 +1,803 @@
+@import '../base/variables';
+
+// =============================================
+// MODALE D'ENVOI D'EMAIL
+// =============================================
+.modal-overlay-email {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+}
+
+.modal-content-email {
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn-email 0.3s ease-out;
+}
+
+@keyframes modalSlideIn-email {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// =============================================
+// EN-TÊTE DE LA MODALE
+// =============================================
+.modal-header-email {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  background: $color-primary;
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
+  
+  h2 {
+    @include typography-playfair-h4;
+    color: $color-text-light;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    font-size: calc(#{$font-size-h4} - 2px);
+    
+    i {
+      color: $color-text-light;
+    }
+  }
+}
+
+.close-btn-email {
+  background: rgba($color-text-light, 0.1);
+  border: 1px solid rgba($color-text-light, 0.3);
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p3;
+  color: $color-text-light;
+  cursor: pointer;
+  padding: $gap-xs $gap-sm;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: rgba($color-text-light, 0.2);
+    border-color: rgba($color-text-light, 0.5);
+  }
+}
+
+// =============================================
+// CORPS DE LA MODALE
+// =============================================
+.modal-body-email {
+  padding: $spacing-lg;
+}
+
+// =============================================
+// SECTIONS DU FORMULAIRE
+// =============================================
+.form-section-email {
+  margin-bottom: $spacing-md;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-label-email {
+  @include typography-p4;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  margin-bottom: $gap-xs;
+  
+  &::after {
+    content: '*';
+    color: $color-error;
+    margin-left: 2px;
+  }
+  
+  &:not([for*="*"])::after {
+    content: '';
+  }
+}
+
+.form-select-email,
+.form-input-email,
+.form-textarea-email {
+  width: 100%;
+  padding: $gap-sm $padding-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  background: $color-background-alt;
+  transition: $transition-fast;
+  box-sizing: border-box;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+  
+  &:hover {
+    border-color: rgba($color-primary, 0.5);
+  }
+  
+  &:disabled {
+    background: $color-background;
+    color: $color-text-muted;
+    cursor: not-allowed;
+  }
+}
+
+.form-select-email {
+  height: 42px;
+  cursor: pointer;
+}
+
+.form-input-email {
+  height: 42px;
+}
+
+.form-textarea-email {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+  line-height: $line-height-base;
+}
+
+// =============================================
+// INDICATEURS DE CHARGEMENT
+// =============================================
+.loading-indicator {
+  padding: $padding-sm;
+  background: rgba($color-primary, 0.1);
+  border: 1px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius-xs;
+  color: $color-primary;
+  font-size: $font-size-p4;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: $spacing-md;
+  
+  i {
+    animation: spin-add-episode 1s linear infinite;
+  }
+}
+
+.loading-message,
+.empty-message {
+  @include typography-p4;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  padding: $gap-xs;
+  border-radius: $border-radius-xs;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  font-style: italic;
+}
+
+.empty-message {
+  background: rgba($color-warning, 0.1);
+  border: 1px solid rgba($color-warning, 0.3);
+  color: $color-warning;
+}
+
+// =============================================
+// BOUTON DE RECHARGEMENT
+// =============================================
+.reload-btn {
+  background: $color-text-muted;
+  color: $color-text-light;
+  border: none;
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p5;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  &:hover:not(:disabled) {
+    background: darken($color-text-muted, 10%);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  i {
+    &.fa-spin {
+      animation: spin-add-episode 1s linear infinite;
+    }
+  }
+}
+
+// =============================================
+// TYPES DE DESTINATAIRES
+// =============================================
+.recipient-type-simple-email {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.recipient-type-option-email {
+  display: flex;
+  align-items: center;
+}
+
+.recipient-radio-email {
+  margin-right: $gap-sm;
+}
+
+.recipient-type-label-email {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $gap-sm;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  cursor: pointer;
+  transition: $transition-fast;
+  flex: 1;
+  
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+}
+
+.recipient-type-icon-email {
+  font-size: $font-size-p2;
+  color: $color-primary;
+}
+
+.recipient-type-info-email {
+  display: flex;
+  flex-direction: column;
+  
+  strong {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  small {
+    @include typography-p5;
+    color: $color-text-muted;
+    margin-top: 2px;
+  }
+}
+
+// =============================================
+// SAISIE MANUELLE D'EMAILS
+// =============================================
+.recipient-section-email {
+  margin-top: $spacing-md;
+}
+
+.form-group-email {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.emails-input-container-email {
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $gap-sm;
+  background: $color-background-alt;
+  transition: $transition-fast;
+  
+  &:focus-within {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+}
+
+.email-tags-email {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-xs;
+  margin-bottom: $gap-sm;
+}
+
+.email-tag-email {
+  background: rgba($color-primary, 0.1);
+  border: 1px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius-pill;
+  padding: $gap-xs $gap-sm;
+  font-size: $font-size-p5;
+  color: $color-primary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.email-tag-remove-email {
+  background: transparent;
+  border: none;
+  color: $color-error;
+  cursor: pointer;
+  padding: 0;
+  font-size: $font-size-p5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  
+  &:hover {
+    color: darken($color-error, 10%);
+  }
+}
+
+.email-input-multiple-email {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  padding: 0;
+  
+  &:focus {
+    outline: none;
+  }
+}
+
+.help-text-email {
+  @include typography-p5;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  font-style: italic;
+}
+
+// =============================================
+// SÉLECTION DE COMÉDIENS
+// =============================================
+.loading-indicator-email {
+  padding: $padding-sm;
+  background: rgba($color-primary, 0.1);
+  border: 1px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius-xs;
+  color: $color-primary;
+  font-size: $font-size-p4;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  
+  i {
+    animation: spin-add-episode 1s linear infinite;
+  }
+}
+
+.comedien-selection-header-email {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-sm;
+}
+
+.comedien-selection-stats-email {
+  @include typography-p5;
+  color: $color-text-muted;
+  font-style: italic;
+}
+
+.comedien-search-email {
+  margin-bottom: $spacing-sm;
+}
+
+.search-input-container-email {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon-email {
+  position: absolute;
+  left: $padding-sm;
+  color: $color-primary;
+  font-size: $font-size-p4;
+}
+
+.search-input-email {
+  width: 100%;
+  height: 42px;
+  padding: 0 $padding-md 0 ($padding-md + $padding-xs);
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  background: $color-background-alt;
+  font-size: $font-size-p4;
+  color: $color-text-primary;
+  transition: $transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+}
+
+.comedien-quick-actions-email {
+  display: flex;
+  gap: $gap-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.quick-action-btn-email {
+  padding: $gap-xs $padding-sm;
+  background: rgba($color-primary, 0.1);
+  border: 1px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p5;
+  color: $color-primary;
+  cursor: pointer;
+  transition: $transition-fast;
+  
+  &:hover:not(:disabled) {
+    background: $color-primary;
+    color: $color-text-light;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.comedien-checkbox-list-email {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $gap-sm;
+  background: $color-background-alt;
+}
+
+.comedien-checkbox-item-email {
+  padding: $gap-sm;
+  border-bottom: 1px solid $color-border;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &.no-email {
+    opacity: 0.6;
+  }
+}
+
+.checkbox-label-email {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  cursor: pointer;
+  width: 100%;
+}
+
+.checkbox-input-email {
+  display: none;
+  
+  &:checked + .checkbox-custom-email {
+    background: $color-primary;
+    border-color: $color-primary;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      background: $color-text-light;
+      border-radius: 1px;
+    }
+  }
+  
+  &:disabled + .checkbox-custom-email {
+    background: $color-background;
+    border-color: $color-border;
+    cursor: not-allowed;
+  }
+}
+
+.checkbox-custom-email {
+  width: 18px;
+  height: 18px;
+  border: 2px solid $color-border;
+  border-radius: $border-radius-xs;
+  background: $color-background-alt;
+  position: relative;
+  flex-shrink: 0;
+  transition: $transition-fast;
+}
+
+.comedien-info-email {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.comedien-name-email {
+  @include typography-p4;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.comedien-email-email {
+  @include typography-p5;
+  color: $color-text-muted;
+}
+
+.no-comediens-email {
+  @include typography-p4;
+  color: $color-text-muted;
+  text-align: center;
+  padding: $spacing-md;
+  font-style: italic;
+  border: 1px dashed $color-border;
+  border-radius: $border-radius-xs;
+}
+
+// =============================================
+// SECTION DE PRÉVISUALISATION
+// =============================================
+.preview-section-email {
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.05);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius-sm;
+  
+  h4 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $gap-sm;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+}
+
+.preview-info-email {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  
+  p {
+    @include typography-p4;
+    color: $color-text-secondary;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    
+    strong {
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+      min-width: 100px;
+      margin-right: $gap-sm;
+    }
+  }
+}
+
+// =============================================
+// MESSAGES D'ERREUR ET SUCCÈS
+// =============================================
+.error-message-email {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  margin-top: $spacing-md;
+}
+
+.success-message-email {
+  padding: $padding-sm;
+  background: rgba($color-success, 0.1);
+  border: 1px solid $color-success;
+  border-radius: $border-radius-xs;
+  color: $color-success;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  margin-top: $spacing-md;
+}
+
+// =============================================
+// PIED DE LA MODALE
+// =============================================
+.modal-footer-email {
+  padding: $spacing-lg;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: $gap-sm;
+  justify-content: flex-end;
+  
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.cancel-btn-email,
+.send-btn-email {
+  padding: $gap-sm $spacing-md;
+  border: none;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  min-width: 120px;
+  
+  @media (max-width: $breakpoint-sm) {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 1px;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.cancel-btn-email {
+  background: transparent;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+}
+
+.send-btn-email {
+  background: $color-primary;
+  color: $color-text-light;
+  
+  &:hover:not(:disabled) {
+    background: darken($color-primary, 10%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .modal-content-email {
+    max-width: 90%;
+  }
+  
+  .recipient-type-label-email {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+  
+  .recipient-type-info-email {
+    width: 100%;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .modal-body-email {
+    padding: $spacing-md;
+  }
+  
+  .modal-header-email,
+  .modal-footer-email {
+    padding: $spacing-md;
+  }
+  
+  .preview-section-email {
+    padding: $spacing-sm;
+  }
+  
+  .preview-info-email p {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+    
+    strong {
+      margin-right: 0;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .modal-overlay-email {
+    padding: $spacing-sm;
+  }
+  
+  .modal-content-email {
+    max-width: 100%;
+    max-height: 95vh;
+  }
+  
+  .comedien-quick-actions-email {
+    flex-direction: column;
+  }
+  
+  .quick-action-btn-email {
+    width: 100%;
+  }
+}
+
+// =============================================
+// ACCESSIBILITÉ
+// =============================================
+@media (prefers-reduced-motion: reduce) {
+  .modal-content-email {
+    animation: none;
+  }
+  
+  .loading-indicator i,
+  .reload-btn i.fa-spin {
+    animation: none;
+  }
+  
+  .send-btn-email:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+// Animation de spin (réutilisée depuis _add_episode.scss)
+@keyframes spin-add-episode {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
