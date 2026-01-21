@@ -209,7 +209,6 @@
         <!-- Barre de recherche principale -->
         <div class="search-bar-main-recherche">
           <div class="search-input-container-recherche">
-            <i class="fas fa-search search-icon-main-recherche"></i>
             <input
               v-model="criteres.termeRecherche"
               type="text"
@@ -217,6 +216,10 @@
               class="search-input-large-recherche"
               @keyup.enter="rechercher"
             />
+            <!-- Bouton de recherche cliquable à droite -->
+            <button @click="rechercher" class="search-btn-main-recherche" :disabled="chargement">
+              <i :class="chargement ? 'fas fa-spinner fa-spin' : 'fas fa-search'"></i>
+            </button>
             <button v-if="criteres.termeRecherche" @click="criteres.termeRecherche = ''" class="clear-search-btn-main-recherche">
               <i class="fas fa-times"></i>
             </button>

@@ -155,9 +155,21 @@
               <span class="type-icon-resultat-recherche">{{ getTypeIcon(resultat.type) }}</span>
               <span class="type-label-resultat-recherche">{{ getTypeLabel(resultat.type) }}</span>
             </div>
+          </div>
+        </div>
+
+        <!-- NAVBAR STICKY POUR LES BOUTONS D'EXPORT -->
+        <div v-if="resultat" class="sticky-export-navbar-resultat-recherche">
+          <div class="navbar-content-resultat-recherche">
+            <div class="navbar-title-resultat-recherche">
+              <h3>{{ resultat.titre }}</h3>
+              <span class="navbar-subtitle-resultat-recherche">
+                <i class="fas" :class="'fa-' + getTypeIconClass(resultat.type)"></i>
+                {{ getTypeLabel(resultat.type) }}
+              </span>
+            </div>
             
-            <!-- Boutons d'export séparés -->
-            <div class="export-buttons-resultat-recherche">
+            <div class="navbar-actions-resultat-recherche">
               <button @click="naviguerVersEcranTravail" class="btn-ecran-travail-resultat-recherche">
                 <i class="fas fa-external-link-alt"></i>
                 {{ getEcranTravailButtonText() }}
@@ -167,6 +179,7 @@
                 <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
                 {{ exportEnCours ? 'Génération...' : 'Télécharger PDF' }}
               </button>
+              
               <button @click="ouvrirDialogueEmail" class="btn-send-email-resultat-recherche" :disabled="exportEnCours">
                 <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-envelope'"></i>
                 {{ exportEnCours ? 'Envoi...' : 'Envoyer par email' }}
@@ -176,250 +189,250 @@
         </div>
 
         <!-- Dialogue d'envoi d'email -->
-<!-- Remplacer la section du dialogue d'envoi d'email par cette version -->
-<div v-if="emailDialogVisible" class="modal-overlay-resultat-recherche">
-  <div class="modal-content-resultat-recherche">
-    <div class="modal-header-resultat-recherche">
-      <h3>
-        <i class="fas fa-envelope"></i>
-        Envoyer le PDF par email
-      </h3>
-      <button @click="fermerDialogueEmail" class="modal-close-btn-resultat-recherche">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    
-    <div class="modal-body-resultat-recherche">
-      <!-- Type de destinataire simple -->
-      <div class="form-group-resultat-recherche">
-        <label class="form-label-resultat-recherche">Sélectionner le type de destinataires :</label>
-        <div class="recipient-type-simple-resultat-recherche">
-          <div class="recipient-type-option-resultat-recherche">
-            <input
-              type="radio"
-              id="manualType"
-              value="manual"
-              v-model="recipientType"
-              class="recipient-radio-resultat-recherche"
-            >
-            <label for="manualType" class="recipient-type-label-resultat-recherche">
-              <span class="recipient-type-icon-resultat-recherche"><i class="fas fa-marker"></i></span>
-              <span class="recipient-type-info-resultat-recherche">
-                <strong>Saisir des emails manuellement</strong>
-                <small>Pour envoyer à des personnes qui ne sont pas dans la liste des comédiens</small>
-              </span>
-            </label>
-          </div>
-          
-          <div class="recipient-type-option-resultat-recherche">
-            <input
-              type="radio"
-              id="comedienType"
-              value="comedien"
-              v-model="recipientType"
-              class="recipient-radio-resultat-recherche"
-            >
-            <label for="comedienType" class="recipient-type-label-resultat-recherche">
-              <span class="recipient-type-icon-resultat-recherche"><i class="fas fa-user-tie"></i></span>
-              <span class="recipient-type-info-resultat-recherche">
-                <strong>Sélectionner parmi les comédiens</strong>
-                <small>Choisir un ou plusieurs comédiens du projet</small>
-              </span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Saisie manuelle d'emails -->
-      <div v-if="recipientType === 'manual'" class="recipient-section-resultat-recherche">
-        <div class="form-group-resultat-recherche">
-          <label for="toEmail" class="form-label-resultat-recherche">Emails des destinataires</label>
-          <div class="emails-input-container-resultat-recherche">
-            <div class="email-tags-resultat-recherche">
-              <span 
-                v-for="(email, index) in emailForm.toEmails" 
-                :key="index" 
-                class="email-tag-resultat-recherche"
-              >
-                {{ email }}
-                <button 
-                  type="button" 
-                  @click="supprimerEmail(index)" 
-                  class="email-tag-remove-resultat-recherche"
-                >
-                  <i class="fas fa-times"></i>
-                </button>
-              </span>
-            </div>
-            <input
-              id="toEmail"
-              v-model="nouvelEmail"
-              type="email"
-              placeholder="Saisir un email (exemple@domaine.com)"
-              class="email-input-multiple-resultat-recherche"
-              @keydown.enter="ajouterEmail"
-              @blur="ajouterEmail"
-            />
-          </div>
-          <small class="help-text-resultat-recherche">
-            Appuyez sur Entrée, Tab ou cliquez en dehors pour ajouter un email à la liste
-          </small>
-        </div>
-      </div>
-
-      <!-- Sélection de comédiens -->
-      <div v-if="recipientType === 'comedien'" class="recipient-section-resultat-recherche">
-        <div class="form-group-resultat-recherche">
-          <div v-if="loadingComediens" class="loading-indicator-resultat-recherche">
-            <i class="fas fa-spinner fa-spin"></i> Chargement de la liste des comédiens...
-          </div>
-          <div v-else>
-            <div class="comedien-selection-header-resultat-recherche">
-              <label class="form-label-resultat-recherche">
-                Sélectionner un ou plusieurs comédiens
-              </label>
-              <div class="comedien-selection-stats-resultat-recherche">
-                {{ selectedComedienIds.length }} sélectionné(s) sur {{ comediensList.filter(c => c.email).length }} avec email
-              </div>
+        <!-- Remplacer la section du dialogue d'envoi d'email par cette version -->
+        <div v-if="emailDialogVisible" class="modal-overlay-resultat-recherche">
+          <div class="modal-content-resultat-recherche">
+            <div class="modal-header-resultat-recherche">
+              <h3>
+                <i class="fas fa-envelope"></i>
+                Envoyer le PDF par email
+              </h3>
+              <button @click="fermerDialogueEmail" class="modal-close-btn-resultat-recherche">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
             
-            <!-- Filtre de recherche pour comédiens -->
-            <div class="comedien-search-resultat-recherche">
-              <div class="search-input-container-resultat-recherche">
-                <i class="fas fa-search search-icon-resultat-recherche"></i>
-                <input 
-                  v-model="comedienSearch" 
-                  type="text" 
-                  placeholder="Rechercher un comédien..." 
-                  class="search-input-resultat-recherche"
+            <div class="modal-body-resultat-recherche">
+              <!-- Type de destinataire simple -->
+              <div class="form-group-resultat-recherche">
+                <label class="form-label-resultat-recherche">Sélectionner le type de destinataires :</label>
+                <div class="recipient-type-simple-resultat-recherche">
+                  <div class="recipient-type-option-resultat-recherche">
+                    <input
+                      type="radio"
+                      id="manualType"
+                      value="manual"
+                      v-model="recipientType"
+                      class="recipient-radio-resultat-recherche"
+                    >
+                    <label for="manualType" class="recipient-type-label-resultat-recherche">
+                      <span class="recipient-type-icon-resultat-recherche"><i class="fas fa-marker"></i></span>
+                      <span class="recipient-type-info-resultat-recherche">
+                        <strong>Saisir des emails manuellement</strong>
+                        <small>Pour envoyer à des personnes qui ne sont pas dans la liste des comédiens</small>
+                      </span>
+                    </label>
+                  </div>
+                  
+                  <div class="recipient-type-option-resultat-recherche">
+                    <input
+                      type="radio"
+                      id="comedienType"
+                      value="comedien"
+                      v-model="recipientType"
+                      class="recipient-radio-resultat-recherche"
+                    >
+                    <label for="comedienType" class="recipient-type-label-resultat-recherche">
+                      <span class="recipient-type-icon-resultat-recherche"><i class="fas fa-user-tie"></i></span>
+                      <span class="recipient-type-info-resultat-recherche">
+                        <strong>Sélectionner parmi les comédiens</strong>
+                        <small>Choisir un ou plusieurs comédiens du projet</small>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Saisie manuelle d'emails -->
+              <div v-if="recipientType === 'manual'" class="recipient-section-resultat-recherche">
+                <div class="form-group-resultat-recherche">
+                  <label for="toEmail" class="form-label-resultat-recherche">Emails des destinataires</label>
+                  <div class="emails-input-container-resultat-recherche">
+                    <div class="email-tags-resultat-recherche">
+                      <span 
+                        v-for="(email, index) in emailForm.toEmails" 
+                        :key="index" 
+                        class="email-tag-resultat-recherche"
+                      >
+                        {{ email }}
+                        <button 
+                          type="button" 
+                          @click="supprimerEmail(index)" 
+                          class="email-tag-remove-resultat-recherche"
+                        >
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </span>
+                    </div>
+                    <input
+                      id="toEmail"
+                      v-model="nouvelEmail"
+                      type="email"
+                      placeholder="Saisir un email (exemple@domaine.com)"
+                      class="email-input-multiple-resultat-recherche"
+                      @keydown.enter="ajouterEmail"
+                      @blur="ajouterEmail"
+                    />
+                  </div>
+                  <small class="help-text-resultat-recherche">
+                    Appuyez sur Entrée, Tab ou cliquez en dehors pour ajouter un email à la liste
+                  </small>
+                </div>
+              </div>
+
+              <!-- Sélection de comédiens -->
+              <div v-if="recipientType === 'comedien'" class="recipient-section-resultat-recherche">
+                <div class="form-group-resultat-recherche">
+                  <div v-if="loadingComediens" class="loading-indicator-resultat-recherche">
+                    <i class="fas fa-spinner fa-spin"></i> Chargement de la liste des comédiens...
+                  </div>
+                  <div v-else>
+                    <div class="comedien-selection-header-resultat-recherche">
+                      <label class="form-label-resultat-recherche">
+                        Sélectionner un ou plusieurs comédiens
+                      </label>
+                      <div class="comedien-selection-stats-resultat-recherche">
+                        {{ selectedComedienIds.length }} sélectionné(s) sur {{ comediensList.filter(c => c.email).length }} avec email
+                      </div>
+                    </div>
+                    
+                    <!-- Filtre de recherche pour comédiens -->
+                    <div class="comedien-search-resultat-recherche">
+                      <div class="search-input-container-resultat-recherche">
+                        <i class="fas fa-search search-icon-resultat-recherche"></i>
+                        <input 
+                          v-model="comedienSearch" 
+                          type="text" 
+                          placeholder="Rechercher un comédien..." 
+                          class="search-input-resultat-recherche"
+                        />
+                      </div>
+                    </div>
+                    
+                    <!-- Boutons de sélection rapide -->
+                    <div class="comedien-quick-actions-resultat-recherche">
+                      <button 
+                        @click="selectAllComediens" 
+                        type="button" 
+                        class="quick-action-btn-resultat-recherche"
+                        :disabled="filteredComediensWithEmail.length === 0"
+                      >
+                        Tout sélectionner
+                      </button>
+                      <button 
+                        @click="clearAllComediens" 
+                        type="button" 
+                        class="quick-action-btn-resultat-recherche"
+                        :disabled="selectedComedienIds.length === 0"
+                      >
+                        Tout effacer
+                      </button>
+                    </div>
+                    
+                    <!-- Liste des comédiens avec cases à cocher -->
+                    <div class="comedien-checkbox-list-resultat-recherche">
+                      <div 
+                        v-for="comedien in filteredComediens" 
+                        :key="comedien.id" 
+                        class="comedien-checkbox-item-resultat-recherche"
+                        :class="{'no-email': !comedien.email}"
+                      >
+                        <label class="checkbox-label-resultat-recherche">
+                          <input 
+                            type="checkbox" 
+                            :value="comedien.id" 
+                            v-model="selectedComedienIds"
+                            :disabled="!comedien.email"
+                            class="checkbox-input-resultat-recherche"
+                          >
+                          <span class="checkbox-custom-resultat-recherche"></span>
+                          <div class="comedien-info-resultat-recherche">
+                            <span class="comedien-name-resultat-recherche">{{ comedien.nom }}</span>
+                            <span class="comedien-email-resultat-recherche">
+                              {{ comedien.email || 'Email non disponible' }}
+                            </span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <p v-if="filteredComediens.length === 0" class="no-comediens-resultat-recherche">
+                      Aucun comédien trouvé avec ce nom
+                    </p>
+                    <p v-if="comediensList.length === 0 && !loadingComediens" class="no-comediens-resultat-recherche">
+                      Aucun comédien disponible dans ce projet
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group-resultat-recherche">
+                <label for="subject">Sujet de l'email</label>
+                <input
+                  id="subject"
+                  v-model="emailForm.subject"
+                  type="text"
+                  class="form-input-resultat-recherche"
+                  placeholder="Ex: Détails de la scène - [Nom du Projet]"
                 />
               </div>
-            </div>
-            
-            <!-- Boutons de sélection rapide -->
-            <div class="comedien-quick-actions-resultat-recherche">
-              <button 
-                @click="selectAllComediens" 
-                type="button" 
-                class="quick-action-btn-resultat-recherche"
-                :disabled="filteredComediensWithEmail.length === 0"
-              >
-                Tout sélectionner
-              </button>
-              <button 
-                @click="clearAllComediens" 
-                type="button" 
-                class="quick-action-btn-resultat-recherche"
-                :disabled="selectedComedienIds.length === 0"
-              >
-                Tout effacer
-              </button>
-            </div>
-            
-            <!-- Liste des comédiens avec cases à cocher -->
-            <div class="comedien-checkbox-list-resultat-recherche">
-              <div 
-                v-for="comedien in filteredComediens" 
-                :key="comedien.id" 
-                class="comedien-checkbox-item-resultat-recherche"
-                :class="{'no-email': !comedien.email}"
-              >
-                <label class="checkbox-label-resultat-recherche">
-                  <input 
-                    type="checkbox" 
-                    :value="comedien.id" 
-                    v-model="selectedComedienIds"
-                    :disabled="!comedien.email"
-                    class="checkbox-input-resultat-recherche"
-                  >
-                  <span class="checkbox-custom-resultat-recherche"></span>
-                  <div class="comedien-info-resultat-recherche">
-                    <span class="comedien-name-resultat-recherche">{{ comedien.nom }}</span>
-                    <span class="comedien-email-resultat-recherche">
-                      {{ comedien.email || 'Email non disponible' }}
+              
+              <div class="form-group-resultat-recherche">
+                <label for="message">Message personnalisé</label>
+                <textarea
+                  id="message"
+                  v-model="emailForm.message"
+                  rows="4"
+                  class="form-textarea-resultat-recherche"
+                  placeholder="Message accompagnant le PDF..."
+                ></textarea>
+              </div>
+
+              <!-- Liste des destinataires (affichage seulement) -->
+              <div v-if="currentRecipients.length > 0" class="destinataires-list-resultat-recherche">
+                <h4><i class="fas fa-users"></i> Destinataires ({{ currentRecipients.length }})</h4>
+                <ul class="emails-list-resultat-recherche">
+                  <li v-for="(recipient, index) in currentRecipients" :key="index" class="email-item-resultat-recherche">
+                    <span class="email-address-resultat-recherche">
+                      <i v-if="recipient.type === 'comedien'" class="fas fa-user-tie recipient-icon-resultat-recherche"></i>
+                      <i v-else class="fas fa-envelope recipient-icon-resultat-recherche"></i>
+                      {{ recipient.email }}
+                      <span v-if="recipient.name" class="recipient-name-resultat-recherche">
+                        ({{ recipient.name }})
+                      </span>
                     </span>
-                  </div>
-                </label>
+                    <button 
+                      type="button" 
+                      @click="removeRecipient(index)" 
+                      class="email-remove-btn-resultat-recherche"
+                      title="Supprimer ce destinataire"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </li>
+                </ul>
               </div>
             </div>
             
-            <p v-if="filteredComediens.length === 0" class="no-comediens-resultat-recherche">
-              Aucun comédien trouvé avec ce nom
-            </p>
-            <p v-if="comediensList.length === 0 && !loadingComediens" class="no-comediens-resultat-recherche">
-              Aucun comédien disponible dans ce projet
-            </p>
+            <div class="modal-footer-resultat-recherche">
+              <button 
+                @click="fermerDialogueEmail" 
+                class="cancel-btn-resultat-recherche"
+                :disabled="exportEnCours"
+              >
+                Annuler
+              </button>
+              <button 
+                @click="envoyerEmailAvecPDF" 
+                class="submit-btn-resultat-recherche"
+                :disabled="exportEnCours || currentRecipients.length === 0"
+              >
+                <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+                {{ exportEnCours ? 'Envoi en cours...' : `Envoyer (${currentRecipients.length})` }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      
-      <div class="form-group-resultat-recherche">
-        <label for="subject">Sujet de l'email</label>
-        <input
-          id="subject"
-          v-model="emailForm.subject"
-          type="text"
-          class="form-input-resultat-recherche"
-          placeholder="Ex: Détails de la scène - [Nom du Projet]"
-        />
-      </div>
-      
-      <div class="form-group-resultat-recherche">
-        <label for="message">Message personnalisé</label>
-        <textarea
-          id="message"
-          v-model="emailForm.message"
-          rows="4"
-          class="form-textarea-resultat-recherche"
-          placeholder="Message accompagnant le PDF..."
-        ></textarea>
-      </div>
-
-      <!-- Liste des destinataires (affichage seulement) -->
-      <div v-if="currentRecipients.length > 0" class="destinataires-list-resultat-recherche">
-        <h4><i class="fas fa-users"></i> Destinataires ({{ currentRecipients.length }})</h4>
-        <ul class="emails-list-resultat-recherche">
-          <li v-for="(recipient, index) in currentRecipients" :key="index" class="email-item-resultat-recherche">
-            <span class="email-address-resultat-recherche">
-              <i v-if="recipient.type === 'comedien'" class="fas fa-user-tie recipient-icon-resultat-recherche"></i>
-              <i v-else class="fas fa-envelope recipient-icon-resultat-recherche"></i>
-              {{ recipient.email }}
-              <span v-if="recipient.name" class="recipient-name-resultat-recherche">
-                ({{ recipient.name }})
-              </span>
-            </span>
-            <button 
-              type="button" 
-              @click="removeRecipient(index)" 
-              class="email-remove-btn-resultat-recherche"
-              title="Supprimer ce destinataire"
-            >
-              <i class="fas fa-times"></i>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="modal-footer-resultat-recherche">
-      <button 
-        @click="fermerDialogueEmail" 
-        class="cancel-btn-resultat-recherche"
-        :disabled="exportEnCours"
-      >
-        Annuler
-      </button>
-      <button 
-        @click="envoyerEmailAvecPDF" 
-        class="submit-btn-resultat-recherche"
-        :disabled="exportEnCours || currentRecipients.length === 0"
-      >
-        <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
-        {{ exportEnCours ? 'Envoi en cours...' : `Envoyer (${currentRecipients.length})` }}
-      </button>
-    </div>
-  </div>
-</div>
 
         <!-- Chargement -->
         <div v-if="chargement" class="loading-state-resultat-recherche">
@@ -919,6 +932,7 @@
   </div>
 </template>
 
+
 <script>
 // IMPORT DES VRAIS SERVICES
 import { getResultatDetails, getResultatDetailsComplets } from '../service/rechercheService'
@@ -1037,6 +1051,15 @@ export default {
   },
 
   methods: {
+    getTypeIconClass(type) {
+      const icons = {
+        scene: 'film',
+        personnage: 'user',
+        lieu: 'landmark',
+        plateau: 'theater-masks'
+      }
+      return icons[type] || 'file'
+    },
     // NOUVELLE MÉTHODE : Copier le lien
     copierLien() {
       const url = window.location.href;
