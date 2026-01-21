@@ -39,20 +39,17 @@
 
           <!-- BOUTON + AJOUTER AVEC POP-UP STYLISÉ -->
           <!-- BOUTON + AJOUTER AVEC POP-UP STYLISÉ -->
-<div class="quick-add-section" v-if="user?.role !== 'UTILISATEUR'">
-  <button 
-    class="quick-add-btn" 
-    @click="toggleAddPopup"
-    :aria-expanded="showAddPopup"
-    aria-haspopup="true"
-  >
-  
-    <span>
-      <i class="fas fa-plus"></i>
-       Ajouter
-    </span>
-    <i class="fas fa-chevron-down" :class="{ 'rotate-180': showAddPopup }"></i>
-  </button>
+    <div class="quick-add-section" v-if="user?.role !== 'UTILISATEUR'">
+      <button 
+        class="quick-add-btn" 
+        @click="toggleAddPopup"
+        :aria-expanded="showAddPopup"
+        aria-haspopup="true"
+      >
+        <i class="fas fa-plus btn-icon"></i>
+        <span class="btn-text">Ajouter</span>
+        <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotate-180': showAddPopup }"></i>
+      </button>
   
             <!-- POP-UP SOUS LA NAVBAR : GRILLE DE BOUTONS (4 par ligne max) -->
             <div v-if="showAddPopup" class="add-popup" @click.stop>
