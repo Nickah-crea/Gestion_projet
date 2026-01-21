@@ -172,9 +172,10 @@
   margin-left: $margin-md;
 }
 
+
 .quick-add-btn {
   @include flex-center;
-  gap: $gap-sm;
+  gap: 8px; /* Espacement uniforme entre tous les éléments */
   background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
   border: none;
   border-radius: $border-radius-xs;
@@ -184,19 +185,40 @@
   min-width: 120px;
   height: 42px;
   box-shadow: 0 4px 15px rgba($color-primary, 0.3);
+  
+  /* Alignement vertical parfait */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  span {
+  .btn-icon {
+    font-size: $font-size-p3; /* Taille ajustée pour l'icône + */
+    color: $color-text-light;
+    line-height: 1;
+    /* Pas de margin-top car aligné automatiquement */
+  }
+
+  .btn-text {
     @include typography-playfair-p2;
     font-weight: $font-weight-semibold;
     color: $color-text-light;
     letter-spacing: 0.3px;
     text-transform: uppercase;
+    font-size: 13px;
+    line-height: 1;
+    /* Ajustement manuel si nécessaire */
+    position: relative;
+    margin-top: 3px; /* Micro-ajustement pour alignement vertical parfait */
   }
 
-  i {
+  .dropdown-icon {
     font-size: $font-size-p4;
     color: $color-text-light;
     transition: $transition;
+    line-height: 1;
+    /* Ajustement manuel si nécessaire */
+    position: relative;
+    top: 0.5px; /* Même ajustement que le texte pour cohérence */
   }
 
   &:hover {
@@ -204,8 +226,8 @@
     box-shadow: 0 6px 20px rgba($color-primary, 0.4);
     background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
 
-    i {
-      transform: translateY(2px);
+    .dropdown-icon {
+      transform: translateY(1px);
     }
   }
 
@@ -213,10 +235,15 @@
     background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
     box-shadow: 0 4px 20px rgba($color-primary, 0.4);
 
-    i {
+    .dropdown-icon {
       transform: rotate(180deg);
     }
   }
+}
+
+/* Pour l'effet de rotation du dropdown */
+.rotate-180 {
+  transform: rotate(180deg) !important;
 }
 
 /* === POPUP AJOUTER - STYLE NOCTELLER MODERNE === */
