@@ -20,7 +20,7 @@
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: rgba($color-border, 0.1);
+  background: $color-primary; // <-- CHANGÉ: couleur principale
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -34,6 +34,23 @@
   @media (max-width: $breakpoint-lg) {
     display: none;
   }
+  
+  
+  // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-dark !important;
+  }
+  
+  // Exception pour les boutons
+  .view-all-btn-compact-Scenariste {
+    i {
+      color: $color-text-light !important;
+    }
+    
+    &:hover {
+      background: rgba($color-text-light, 0.1) !important;
+    }
+  }
 
   .sidebar-header-projet-scenariste {
     margin-bottom: $spacing-md;
@@ -42,28 +59,28 @@
 
     .sidebar-title-projet-scenariste {
       @include typography-playfair-h4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle-projet-scenariste {
-      @include typography-p4;
-      color: $color-text-muted;
+       @include typography-p4;
+      color: $color-text-light;
       margin: 0;
     }
   }
 
   .sidebar-section-projet-scenariste {
     margin-bottom: $spacing-md;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important; 
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
     .section-title-projet-scenariste {
       @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
@@ -79,7 +96,7 @@
   }
 
   .sidebar-btn-projet-scenariste {
-    width: 100%;
+     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
     background: $color-background-alt;
@@ -91,6 +108,7 @@
     transition: $transition-fast;
     display: flex;
     align-items: center;
+    font-weight: $font-weight-semibold;
     gap: $gap-xs;
     box-sizing: border-box;
 
@@ -101,7 +119,7 @@
     }
 
     &.active {
-      background: $color-primary;
+      background: $color-accent-dark;
       border-color: $color-primary;
       color: $color-text-light;
     }
@@ -110,10 +128,9 @@
       outline: 2px solid $color-primary;
       outline-offset: 1px;
     }
-    
    
     &.nouvelle-sequence-btn {
-        background:$color-tertiary-dark;
+       background:$color-accent-dark;
         // border-color: $color-primary;
         color: $color-white;
         font-weight: $font-weight-semibold;
@@ -209,8 +226,8 @@
   // DÉTAILS DE L'ÉPISODE - STYLE IDENTIQUE À PROJET
   // =============================================
   .project-details-spiral-Scenariste {
-    background: $color-white;
-      border-radius: $border-radius-lg;
+    background: $color-primary;
+      border-radius: $border-radius-xs;
       box-shadow: $shadow-lg;
       margin: $margin-xl 0 $margin-lg 0; 
       padding: $padding-xl;
@@ -239,106 +256,86 @@
   }
 
   .project-header-spiral-Scenariste {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $margin-lg;
-    padding-bottom: $padding-md;
-    border-bottom: 1px solid $color-border;
+   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
   }
 
   .project-title-spiral-Scenariste {
     @include typography-playfair-h3;
-    color: $color-text-primary;
+    color: $color-text-light;
     margin: 0;
     display: flex;
     align-items: center;
     gap: $gap-sm;
     
     i {
-      color: $color-primary;
+      color: $color-primary-light;
       font-size: $font-size-h4;
     }
   }
 
   .project-statut-badge-Scenariste {
-    padding: $gap-xs $padding-sm;
+     padding: $gap-xs $padding-sm;
     border-radius: $border-radius-pill;
     font-size: $font-size-p3;
     font-weight: $font-weight-semibold;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    
-    &.statut-en-cours { 
-      background: rgba($color-primary, 0.2); 
-      color: $color-primary-dark; 
-    }
-    &.statut-termine { 
-      background: rgba($color-success, 0.2); 
-      color: $color-success; 
-    }
-    &.statut-attente { 
-      background: rgba($color-warning, 0.2); 
-      color: $color-warning; 
-    }
-    &.statut-annule { 
-      background: rgba($color-error, 0.2); 
-      color: $color-error; 
-    }
-    &.statut-planifie { 
-      background: rgba($color-accent, 0.2); 
-      color: $color-accent; 
-    }
+    background:  $color-accent-light; 
+    color: $color-primary; 
   }
 
   .project-meta-spiral-Scenariste {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: $gap-md;
-    margin-bottom: $margin-lg;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $gap-md;
+  margin-bottom: $margin-lg;
   }
 
   .meta-item-spiral-Scenariste {
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-    padding: $padding-sm;
-    background: rgba($color-border, 0.1);
-    border-radius: $border-radius-sm;
-    transition: $transition-fast;
-    min-height: calc(#{$font-size-p4} + #{$padding-sm} * 2);
-    line-height: normal;
-    
-    &:hover {
-      background: rgba($color-border, 0.2);
-    }
-    
-    i {
-      color: $color-primary;
-      font-size: $font-size-p2;
-      width: 20px;
-      text-align: center;
-    }
-    
-    .meta-label {
-      @include typography-p4;
-      color: $color-text-muted;
-      font-weight: $font-weight-medium;
-      white-space: nowrap;
-    }
-    
-    .meta-value {
-      @include typography-p3;
-      color: $color-text-primary;
-      font-weight: $font-weight-semibold;
-      margin-left: auto;
-      white-space: nowrap;
-    }
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-sm;
+  background: $color-primary-light;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  min-height: calc(#{$font-size-p4} + #{$padding-sm} * 2);
+  line-height: normal;
+  
+  &:hover {
+    background:$color-accent-light;
   }
-
+  
+  i {
+    color: $color-primary;
+    font-size: $font-size-p2;
+    width: 20px;
+    text-align: center;
+  }
+  
+  .meta-label {
+    @include typography-p4;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    white-space: nowrap;
+  }
+  
+  .meta-value {
+    @include typography-p3;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+}
   .project-synopsis-spiral-Scenariste {
-    background: $color-background-alt;
-    border-radius: $border-radius;
+     background: $color-primary-light;
+    border-radius: $border-radius-xs;
     padding: $padding-lg;
     position: relative;
     
@@ -387,14 +384,14 @@
       position: relative;
       z-index: 1;
     }
-  }
+}
 
   // =============================================
   // COMMENTAIRES - STYLE SPÉCIFIQUE POUR L'ÉPISODE
   // =============================================
   .comment-section {
-    background: $color-white;
-    border-radius: $border-radius;
+    background: $color-primary-light;
+    border-radius: $border-radius-xs;
     padding: $padding-lg;
     margin-top: $margin-lg;
     border: 1px solid $color-border;

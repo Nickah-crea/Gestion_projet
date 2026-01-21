@@ -9,15 +9,15 @@
 
 .calendar-sidebar {
 
- position: fixed;
-  top: 60px;
+position: fixed;
+  top: 60px; // 50px de marge en haut
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: rgba($color-border, 0.1);
+  background: $color-primary; // <-- CHANGÉ: couleur principale
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -32,35 +32,51 @@
     display: none;
   }
 
+   // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-dark !important;
+  }
+  
+  // Exception pour les boutons
+  .view-all-btn-compact-Scenariste {
+    i {
+      color: $color-text-light !important;
+    }
+    
+    &:hover {
+      background: rgba($color-text-light, 0.1) !important;
+    }
+  }
+
   .sidebar-header {
-     margin-bottom: $spacing-md;
-    border-bottom: 1px solid $color-border;
+      margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border; // Changé: bordure dorée
     padding-bottom: $spacing-sm;
 
     .sidebar-title {
-      @include typography-playfair-h4;
-      color: $color-text-primary;
+       @include typography-playfair-h4;
+      color: $color-text-light; // Changé: brun foncé
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-light; // Changé: taupe
       margin: 0;
     }
   }
 
   .sidebar-section {
     margin-bottom: $spacing-md;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important; 
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
   .section-title {
-      @include typography-p4;
-      color: $color-text-primary;
+     @include typography-p4;
+      color: $color-text-light;
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
@@ -84,7 +100,7 @@
 
     .section-title {
       @include typography-p4;
-      color: $color-text-primary; // Changé: brun foncé
+      color: $color-text-light; // Changé: brun foncé
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
@@ -168,7 +184,7 @@
 
     label {
       @include typography-p4;
-      color: $color-text-secondary;
+      color: $color-text-light;
       font-weight: $font-weight-medium;
     }
   }

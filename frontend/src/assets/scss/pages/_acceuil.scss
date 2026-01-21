@@ -831,37 +831,40 @@ body, html {
   font-weight: $font-weight-bold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  background: $color-accent-light; 
+  color: $color-primary; 
 
-  // Badges améliorés avec dégradés
-  &.statut-en-cours {
-    background: linear-gradient(135deg, rgba($color-primary, 0.15), rgba($color-primary, 0.25));
-    color: $color-primary-dark;
-    border: 1px solid rgba($color-primary, 0.3);
-  }
+
+  // // Badges améliorés avec dégradés
+  // &.statut-en-cours {
+  //   background: linear-gradient(135deg, rgba($color-primary, 0.15), rgba($color-primary, 0.25));
+  //   color: $color-primary-dark;
+  //   border: 1px solid rgba($color-primary, 0.3);
+  // }
   
-  &.statut-termine {
-    background: linear-gradient(135deg, rgba($color-success, 0.15), rgba($color-success, 0.25));
-    color: $color-success;
-    border: 1px solid rgba($color-success, 0.3);
-  }
+  // &.statut-termine {
+  //   background: linear-gradient(135deg, rgba($color-success, 0.15), rgba($color-success, 0.25));
+  //   color: $color-success;
+  //   border: 1px solid rgba($color-success, 0.3);
+  // }
   
-  &.statut-attente {
-    background: linear-gradient(135deg, rgba($color-warning, 0.15), rgba($color-warning, 0.25));
-    color: $color-warning;
-    border: 1px solid rgba($color-warning, 0.3);
-  }
+  // &.statut-attente {
+  //   background: linear-gradient(135deg, rgba($color-warning, 0.15), rgba($color-warning, 0.25));
+  //   color: $color-warning;
+  //   border: 1px solid rgba($color-warning, 0.3);
+  // }
   
-  &.statut-annule {
-    background: linear-gradient(135deg, rgba($color-error, 0.15), rgba($color-error, 0.25));
-    color: $color-error;
-    border: 1px solid rgba($color-error, 0.3);
-  }
+  // &.statut-annule {
+  //   background: linear-gradient(135deg, rgba($color-error, 0.15), rgba($color-error, 0.25));
+  //   color: $color-error;
+  //   border: 1px solid rgba($color-error, 0.3);
+  // }
   
-  &.statut-planifie {
-    background: linear-gradient(135deg, rgba($color-accent, 0.15), rgba($color-accent, 0.25));
-    color: $color-accent;
-    border: 1px solid rgba($color-accent, 0.3);
-  }
+  // &.statut-planifie {
+  //   background: linear-gradient(135deg, rgba($color-accent, 0.15), rgba($color-accent, 0.25));
+  //   color: $color-accent;
+  //   border: 1px solid rgba($color-accent, 0.3);
+  // }
 }
 
 .movie-info-Scenariste {
