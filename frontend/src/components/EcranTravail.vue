@@ -1374,18 +1374,11 @@ const userPermissions = ref({
 
 const showEmailModal = ref(false)
 
-const openEmailModal = () => {
-  if (!userPermissions.value.canSendEmail) {
-    alert('Vous n\'êtes pas autorisé à envoyer des emails.');
-    return;
-  }
-  
-  showEmailModal.value = true;
-};
 
-// const openEmailModal = () => {
-//   showEmailModal.value = true
-// }
+
+const openEmailModal = () => {
+  showEmailModal.value = true
+}
 
 const closeEmailModal = () => {
   showEmailModal.value = false
@@ -1877,7 +1870,7 @@ const checkUserPermissions = async (episodeId) => {
             canExport: response.data.canExport || response.data.canCreateScene || false,
             
             // NOUVEAU : Permissions pour l'email
-            canSendEmail: response.data.canSendEmail || false,
+            canSendEmail: response.data.canSendEmail || true,
             
             // NOUVEAU : Permissions pour le tournage
             canPlanTournage: response.data.canPlanTournage || response.data.canCreateScene || false,
@@ -1917,7 +1910,7 @@ const checkUserPermissions = async (episodeId) => {
             canCreateRaccord: false,
             canViewRaccords: true, // Toujours permettre la vue
             canExport: false,
-            canSendEmail: false,
+            canSendEmail: true,
             canPlanTournage: false,
             canEditTournage: false,
             canAddComments: true, // Toujours permettre d'ajouter des commentaires
