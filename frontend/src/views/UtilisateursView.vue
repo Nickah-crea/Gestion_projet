@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global">
+  <div class="app-wrapper-global-utilisateurs">
     <!-- Sidebar latérale fixe à gauche -->
     <aside class="utilisateurs-sidebar">
       <div class="sidebar-header">
@@ -141,7 +141,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="user in filteredUsers" :key="user.id">
+                      <tr v-for="user in filteredUsers" :key="user.idUtilisateur || user.id">
                         <td class="user-photo-cell">
                           <div class="user-photo" @click="viewUserPhoto(user)">
                             <img 
@@ -451,9 +451,7 @@ export default {
         motDePasse: '',
         role: '',
         specialite: '',
-        biographie: '',
-        currentPassword: '', // Pour la modification (non utilisé en admin)
-        newPassword: '' // Pour la modification (alias de motDePasse)
+        biographie: ''
       },
       formError: '',
       toast: {
@@ -509,7 +507,6 @@ export default {
     async loadUsers() {
       try {
         this.loading = true;
-        // Charger tous les utilisateurs via l'API de profil
         const response = await axios.get('/api/utilisateurs');
         this.users = response.data;
       } catch (error) {
@@ -525,8 +522,18 @@ export default {
       
       // Si l'utilisateur a une photo de profil dans la base de données
       if (user.profilePhotoPath) {
-        // Retourner l'URL complète de la photo (API du contrôleur ProfilController)
+        // Retourner l'URL complète de la photo
         return `/api/profil/photo/${user.profilePhotoPath}`;
+      }
+      
+      // Si l'utilisateur a un chemin de photo stocké
+      if (user.photo) {
+        // Gérer les chemins relatifs ou absolus
+        if (user.photo.startsWith('http')) {
+          return user.photo;
+        } else {
+          return `/uploads/profiles/${user.photo}`;
+        }
       }
       
       return null;
@@ -546,8 +553,7 @@ export default {
       // En cas d'erreur de chargement, remplace par placeholder
       const parent = event.target.parentElement;
       if (parent.classList.contains('user-photo')) {
-        const user = this.getUserFromPhoto(parent);
-        parent.innerHTML = `<div class="user-photo-placeholder">${this.getUserInitials(user?.nom)}</div>`;
+        parent.innerHTML = `<div class="user-photo-placeholder">${this.getUserInitials(this.getUserFromPhoto(parent)?.nom)}</div>`;
       }
     },
 
@@ -568,9 +574,8 @@ export default {
       const row = element.closest('tr');
       if (!row) return null;
       
-      // Trouver l'index de la ligne
-      const rowIndex = Array.from(row.parentNode.children).indexOf(row) - 1; // -1 pour l'en-tête
-      return this.filteredUsers[rowIndex];
+      const userId = row.dataset.userId || row.querySelector('td:nth-child(2)').textContent;
+      return this.users.find(u => u.idUtilisateur == userId || u.id == userId || u.nom === userId);
     },
 
     viewUserPhoto(user) {
@@ -580,6 +585,7 @@ export default {
 
     viewUserDetails(user) {
       this.selectedUser = user;
+      // Vous pouvez ajouter un modal pour les détails complets ici
       alert(`Détails de ${user.nom}:\nEmail: ${user.email}\nRôle: ${this.getRoleLabel(user.role)}\nCrée le: ${this.formatDate(user.creeLe)}`);
     },
 
@@ -587,9 +593,9 @@ export default {
       const file = event.target.files[0];
       if (!file) return;
 
-      // Vérifier la taille (max 5MB comme dans le service)
-      if (file.size > 5 * 1024 * 1024) {
-        this.formError = 'La photo ne doit pas dépasser 5MB';
+      // Vérifier la taille (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        this.formError = 'La photo ne doit pas dépasser 2MB';
         return;
       }
 
@@ -607,8 +613,8 @@ export default {
     removePhoto() {
       this.photoFile = null;
       this.photoPreview = null;
-      // Marquer pour suppression si on modifie un utilisateur existant
       if (this.editingUser) {
+        // Marquer la photo pour suppression
         this.formData.removePhoto = true;
       }
       if (this.$refs.photoInput) {
@@ -651,9 +657,7 @@ export default {
         motDePasse: '',
         role: user.role,
         specialite: user.specialite || '',
-        biographie: user.biographie || '',
-        currentPassword: '', // Laissé vide en admin
-        newPassword: '' // Laissé vide
+        biographie: user.biographie || ''
       };
     },
 
@@ -677,9 +681,7 @@ export default {
         motDePasse: '',
         role: '',
         specialite: '',
-        biographie: '',
-        currentPassword: '',
-        newPassword: ''
+        biographie: ''
       };
       this.formError = '';
       if (this.$refs.photoInput) {
@@ -692,18 +694,46 @@ export default {
       this.formError = '';
 
       try {
+        const formData = new FormData();
+        
+        // Ajouter les champs texte
+        Object.keys(this.formData).forEach(key => {
+          if (this.formData[key]) {
+            formData.append(key, this.formData[key]);
+          }
+        });
+
+        // Ajouter la photo si sélectionnée
+        if (this.photoFile) {
+          formData.append('photo', this.photoFile);
+        }
+
+        // Ajouter l'indicateur de suppression de photo
+        if (this.formData.removePhoto) {
+          formData.append('removePhoto', 'true');
+        }
+
         if (this.editingUser) {
-          // MODIFICATION avec ProfilController
-          await this.updateUser();
+          // Modification avec photo
+          await axios.put(`/api/utilisateurs/${this.editingUser.idUtilisateur || this.editingUser.id}`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          this.showToast('Utilisateur modifié avec succès', 'success');
         } else {
-          // CRÉATION (vous aurez besoin d'un endpoint de création admin)
-          await this.createUser();
+          // Création avec photo
+          await axios.post('/api/auth/register', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          this.showToast('Utilisateur créé avec succès', 'success');
         }
 
         await this.loadUsers();
         this.resetForm();
         this.activeTab = 'liste';
-        
       } catch (error) {
         console.error('Erreur soumission formulaire:', error);
         const message = error.response?.data?.message || 'Erreur lors de l\'opération';
@@ -714,83 +744,11 @@ export default {
       }
     },
 
-    async updateUser() {
-      const userId = this.editingUser.id;
-      
-      // 1. Mise à jour des données de base (sans photo)
-      const updateData = {
-        nom: this.formData.nom,
-        email: this.formData.email,
-        specialite: this.formData.specialite,
-        biographie: this.formData.biographie
-      };
-
-      // Ajouter le mot de passe seulement si fourni
-      if (this.formData.motDePasse) {
-        updateData.newPassword = this.formData.motDePasse;
-        // En admin, on ne demande pas le currentPassword
-        updateData.currentPassword = ''; 
-      }
-
-      await axios.put(`/api/profil/${userId}`, updateData);
-
-      // 2. Upload de la photo si sélectionnée
-      if (this.photoFile) {
-        const photoFormData = new FormData();
-        photoFormData.append('photo', this.photoFile);
-        
-        await axios.put(`/api/profil/${userId}/photo`, photoFormData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-      }
-      
-      // 3. Suppression de la photo si demandée
-      if (this.formData.removePhoto && !this.photoFile) {
-        await axios.delete(`/api/profil/${userId}/photo`);
-      }
-
-      this.showToast('Utilisateur modifié avec succès', 'success');
-    },
-
-    
-    async createUser() {
-      // Création via l'endpoint d'inscription admin
-      const userData = {
-        nom: this.formData.nom,
-        email: this.formData.email,
-        motDePasse: this.formData.motDePasse,
-        role: this.formData.role,
-        specialite: this.formData.specialite,
-        biographie: this.formData.biographie
-      };
-
-      // Utiliser l'endpoint d'inscription (à adapter selon votre API)
-      const response = await axios.post('/api/auth/register/admin', userData);
-      const newUserId = response.data.id;
-
-      // Upload de la photo si sélectionnée
-      if (this.photoFile) {
-        const photoFormData = new FormData();
-        photoFormData.append('photo', this.photoFile);
-        
-        await axios.post(`/api/profil/${newUserId}/photo`, photoFormData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-      }
-
-      this.showToast('Utilisateur créé avec succès', 'success');
-    },
-
     async deleteUser() {
       try {
         this.loading = true;
         
-        // Supprimer via l'API utilisateurs
-        await axios.delete(`/api/utilisateurs/${this.userToDelete.id}`);
+        await axios.delete(`/api/utilisateurs/${this.userToDelete.idUtilisateur || this.userToDelete.id}`);
         this.showToast('Utilisateur supprimé avec succès', 'success');
         this.showDeleteModal = false;
         await this.loadUsers();
