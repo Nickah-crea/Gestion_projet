@@ -18,9 +18,8 @@
           <i class="fas fa-calendar-plus"></i> Planifier
         </button>
 
-        
-        <ReplanificationComponent 
-          v-if="tournage"
+       <!-- Replanifier - seulement si tournage existe -->
+       <ReplanificationComponent 
           :sceneId="scene.idScene"
           :showTriggerButton="true"
           :sceneInfo="scene"
