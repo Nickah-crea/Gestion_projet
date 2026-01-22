@@ -76,7 +76,6 @@
       :total-scenes="scenes.length"
       @close="closeSceneToolsNavbar"
       @tournage-updated="onTournageUpdated"
-      @replanification-appliquee="onReplanificationDansScene"
       @raccords-updated="onRaccordsUpdated"
       @raccord-created="onRaccordCreated"
       @add-dialogue="startAddDialogue"
@@ -799,19 +798,6 @@
           <div class="scene-planning-section-screen-work">
             <div class="section-header-screen-work">
               <h3><i class="fas fa-video"></i> Planning de Tournage</h3>
-              <div class="section-actions-screen-work">
-                <ReplanificationComponent 
-                  v-if="currentScene"
-                  :sceneId="currentScene.idScene"
-                  :showTriggerButton="true"
-                  :sceneInfo="currentScene"
-                  :userPermissions="userPermissions" 
-                  @tournage-updated="onTournageUpdated"
-                  @replanification-appliquee="onReplanificationDansScene"
-                />
-              </div>
-            </div>
-            
             <SceneTournageSection 
               v-if="currentScene"
               :scene="currentScene"
@@ -820,7 +806,7 @@
               @tournage-updated="onTournageUpdated"
             />
           </div>
-          
+        </div>  
           <!-- Section principale : Dialogues -->
           <div class="scene-details-view-screen-work">
             
