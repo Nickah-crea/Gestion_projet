@@ -444,6 +444,7 @@ const emit = defineEmits(['raccord-created'])
 const showModal = ref(false)
 const loadingPhotos = ref(false)
 const availableScenes = ref([])
+const accessibleScenes = ref([])
 const availableTypes = ref([])
 const availableStatuts = ref([])
 const availablePhotos = ref([])
@@ -550,14 +551,18 @@ const closeModal = () => {
 const loadInitialData = async () => {
   try {
     await Promise.all([
-      loadScenes(),
+      loadScenes(), // Charger toutes les scènes d'abord
       loadTypesRaccord(),
       loadStatutsRaccord(),
       loadPersonnages()
-    ])
+    ]);
+    
+    // Après avoir chargé les scènes, filtrer les scènes accessibles
+    await filterAccessibleScenes();
+    
   } catch (error) {
-    console.error('Erreur lors du chargement des données:', error)
-    alert('Erreur lors du chargement des données')
+    console.error('Erreur lors du chargement des données:', error);
+    alert('Erreur lors du chargement des données');
   }
 }
 
@@ -580,11 +585,63 @@ const loadScenes = async () => {
     
     const response = await axios.get(url)
     availableScenes.value = response.data
-    updateScenesCibleFilter()
+    // Initialiser accessibleScenes avec toutes les scènes (sera filtré plus tard)
+    accessibleScenes.value = [...availableScenes.value]
     
     console.log('Scènes chargées - structure:', availableScenes.value[0])
   } catch (error) {
     console.error('Erreur lors du chargement des scènes:', error)
+  }
+}
+
+// Méthode pour filtrer les scènes accessibles
+const filterAccessibleScenes = async () => {
+  try {
+    // Récupérer l'utilisateur connecté
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+      console.error('Utilisateur non connecté');
+      accessibleScenes.value = availableScenes.value;
+      return;
+    }
+    
+    // Filtrer les scènes accessibles via l'API d'accès
+    const accessibleScenesResult = [];
+    
+    // Vérifier l'accès pour chaque scène
+    for (const scene of availableScenes.value) {
+      try {
+        // Utiliser le bon champ d'ID selon la structure des données
+        const sceneId = scene.idScene || scene.id;
+        
+        // Appeler l'API pour vérifier l'accès
+        const response = await axios.get(`/api/scenes/${sceneId}/access-check`, {
+          headers: {
+            'X-User-Id': user.id
+          }
+        });
+        
+        if (response.data === true) {
+          // L'utilisateur a accès à cette scène
+          accessibleScenesResult.push(scene);
+        }
+      } catch (error) {
+        console.error(`Erreur lors de la vérification de l'accès pour la scène ${scene.id}:`, error);
+        // En cas d'erreur, ne pas inclure la scène pour la sécurité
+      }
+    }
+    
+    accessibleScenes.value = accessibleScenesResult;
+    console.log('Scènes accessibles après vérification:', accessibleScenes.value.length);
+    
+    // Mettre à jour le filtre des scènes cible
+    updateScenesCibleFilter();
+    
+  } catch (error) {
+    console.error('Erreur lors du filtrage des scènes accessibles:', error);
+    // En cas d'erreur, utiliser un filtrage basique
+    accessibleScenes.value = availableScenes.value;
+    updateScenesCibleFilter();
   }
 }
 
@@ -875,19 +932,19 @@ watch(() => raccordData.value.sceneSourceId, async (newSceneSourceId) => {
 })
 
 const updateScenesCibleFilter = () => {
-  if (raccordData.value.sceneSourceId && availableScenes.value.length > 0) {
+  if (raccordData.value.sceneSourceId && accessibleScenes.value.length > 0) {
     // Vérifier la structure des données pour utiliser le bon champ d'ID
-    const firstScene = availableScenes.value[0]
+    const firstScene = accessibleScenes.value[0]
     const idField = firstScene.idScene !== undefined ? 'idScene' : 'id'
     
     console.log(`Utilisation du champ d'ID: ${idField}`, firstScene)
     
-    filteredScenesCible.value = availableScenes.value.filter(
+    filteredScenesCible.value = accessibleScenes.value.filter(
       scene => scene[idField] !== raccordData.value.sceneSourceId
     )
-    console.log('Scènes cible disponibles:', filteredScenesCible.value.length)
+    console.log('Scènes cible disponibles (après filtrage accessibilité):', filteredScenesCible.value.length)
   } else {
-    filteredScenesCible.value = [...availableScenes.value]
+    filteredScenesCible.value = [...accessibleScenes.value]
   }
 }
 
@@ -969,7 +1026,6 @@ const createRaccord = async () => {
     alert('Erreur lors de la création du raccord: ' + (error.response?.data || error.message))
   }
 }
-
 const resetForm = () => {
   raccordData.value = {
     sceneSourceId: props.sceneSourceId,
@@ -989,23 +1045,22 @@ const resetForm = () => {
   selectedPersonnagesInfo.value = []   
   selectedComediens.value = []       
   
-  // Mettre à jour le filtre avec la bonne structure d'ID
-  if (availableScenes.value.length > 0 && props.sceneSourceId) {
-    const firstScene = availableScenes.value[0]
+  // Mettre à jour le filtre avec accessibleScenes
+  if (accessibleScenes.value.length > 0 && props.sceneSourceId) {
+    const firstScene = accessibleScenes.value[0]
     const idField = firstScene.idScene !== undefined ? 'idScene' : 'id'
     
-    filteredScenesCible.value = availableScenes.value.filter(
+    filteredScenesCible.value = accessibleScenes.value.filter(
       scene => scene[idField] !== props.sceneSourceId
     )
   } else {
-    filteredScenesCible.value = [...availableScenes.value]
+    filteredScenesCible.value = [...accessibleScenes.value]
   }
   
   availablePhotos.value = []
   filteredPhotos.value = []
   selectedPhotoType.value = ''
 }
-
 // Initialisation
 onMounted(() => {
   // Définir la scène source si elle est fournie
