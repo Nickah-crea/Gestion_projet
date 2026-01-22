@@ -1,0 +1,607 @@
+/* AJOUTER À LA FIN DU FICHIER _connexion.scss */
+
+/* =============================================
+   FORGOT PASSWORD - STYLE COHÉRENT AVEC CONNEXION
+   ============================================= */
+
+.forgot-password-container {
+  min-height: 100vh;
+  background: $color-background;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: $font-family-primary;
+}
+
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.scenariste-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.15;
+}
+
+.scenariste-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: none; /* Caché par défaut, affiché si la vidéo ne charge pas */
+}
+
+.video-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba($color-text-primary, 0.9) 0%,
+    rgba($color-text-primary, 0.7) 50%,
+    rgba($color-text-primary, 0.5) 100%
+  );
+  color: $color-text-light;
+  padding: $padding-xl;
+  
+  .overlay-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    .overlay-title {
+      @include typography-playfair-h4;
+      color: $color-text-light;
+      font-weight: $font-weight-bold;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    
+    .overlay-text {
+      @include typography-p3;
+      font-family: $font-family-primary;
+      color: rgba($color-text-light, 0.9);
+      line-height: 1.4;
+    }
+  }
+}
+
+/* Carte principale - SIMILAIRE À .connexion-card-conn */
+.forgot-password-card {
+  width: 100%;
+  max-width: 500px;
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  padding: $padding-xl;
+  box-shadow: $shadow-lg;
+  z-index: 2;
+  position: relative;
+  border: 1px solid rgba($color-primary, 0.1);
+}
+
+/* En-tête - SIMILAIRE À .cinema-logo */
+.password-reset-header {
+  text-align: center;
+  margin-bottom: $margin-lg;
+  
+  .logo-icon {
+    font-size: 32px;
+    color: $color-primary;
+    margin-bottom: 8px;
+  }
+  
+  .logo-text {
+    @include typography-playfair-h2;
+    color: $color-text-primary;
+    font-weight: $font-weight-black;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+    
+    background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .logo-subtitle {
+    @include typography-p2;
+    font-family: $font-family-primary;
+    color: $color-text-muted;
+  }
+}
+
+/* Indicateur d'étapes */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $margin-xl;
+  gap: 8px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $color-border;
+  color: $color-text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: $font-weight-semibold;
+  font-size: 14px;
+  transition: $transition;
+}
+
+.step.active .step-number {
+  background: $color-primary;
+  color: $color-text-light;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba($color-primary, 0.2);
+}
+
+.step.completed .step-number {
+  background: $color-success;
+  color: $color-text-light;
+}
+
+.step-label {
+  margin-top: 6px;
+  @include typography-p4;
+  color: $color-text-muted;
+  text-align: center;
+  min-width: 70px;
+}
+
+.step.active .step-label {
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: $color-border;
+  max-width: 60px;
+}
+
+.step-line.completed {
+  background: $color-success;
+}
+
+/* Contenu des étapes */
+.step-content {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-description {
+  text-align: center;
+  margin-bottom: $margin-lg;
+  
+  .step-icon {
+    font-size: 28px;
+    color: $color-primary;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    @include typography-p2;
+    color: $color-text-secondary;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  
+  .code-expiry {
+    @include typography-p3;
+    color: $color-accent;
+    font-weight: $font-weight-medium;
+  }
+}
+
+/* Champs de code */
+.code-input-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.code-input {
+  width: 46px;
+  height: 56px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: $font-weight-semibold;
+  border: 2px solid $color-border;
+  border-radius: $border-radius;
+  background: rgba($color-background, 0.5);
+  color: $color-text-primary;
+  transition: $transition-fast;
+  
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-pastel-gold;
+    outline: none;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.code-hint {
+  text-align: center;
+  @include typography-p3;
+  color: $color-text-muted;
+  margin-top: 8px;
+}
+
+/* Renvoyer le code */
+.resend-code-section {
+  text-align: center;
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba($color-primary, 0.05);
+  border-radius: $border-radius;
+  
+  p {
+    @include typography-p3;
+    color: $color-text-secondary;
+    margin-bottom: 8px;
+  }
+}
+
+.resend-btn {
+  background: none;
+  border: 1px solid $color-primary;
+  color: $color-primary;
+  cursor: pointer;
+  font-weight: $font-weight-medium;
+  padding: 8px 16px;
+  border-radius: $border-radius;
+  transition: $transition-fast;
+  @include typography-p3;
+  
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  i {
+    margin-right: 6px;
+  }
+}
+
+/* Boutons d'étape */
+.step-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.secondary-btn {
+  padding: 12px 24px;
+  background: rgba($color-primary, 0.05);
+  color: $color-primary;
+  border: 2px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  @include typography-p2;
+  
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Force du mot de passe */
+.password-strength {
+  margin: 16px 0;
+}
+
+.strength-bar {
+  height: 4px;
+  border-radius: 2px;
+  margin-bottom: 8px;
+  transition: $transition;
+  
+  &.weak {
+    width: 33%;
+    background: $color-error;
+  }
+  
+  &.medium {
+    width: 66%;
+    background: $color-accent;
+  }
+  
+  &.strong {
+    width: 100%;
+    background: $color-success;
+  }
+}
+
+.strength-label {
+  @include typography-p3;
+  color: $color-text-muted;
+}
+
+/* Étape de succès */
+.success-step {
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.success-animation {
+  font-size: 48px;
+  color: $color-success;
+  margin-bottom: 20px;
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.success-title {
+  @include typography-playfair-h3;
+  color: $color-text-primary;
+  margin-bottom: 16px;
+}
+
+.success-message {
+  @include typography-p2;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.user-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba($color-primary, 0.05);
+  padding: 12px 24px;
+  border-radius: 50px;
+  margin-bottom: 24px;
+  @include typography-p2;
+  color: $color-text-secondary;
+  
+  i {
+    color: $color-primary;
+  }
+}
+
+.redirect-countdown {
+  @include typography-p2;
+  color: $color-text-secondary;
+  margin-bottom: 24px;
+}
+
+.countdown-number {
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  font-size: 20px;
+}
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Messages de succès */
+.success-message-cinema {
+  background: rgba($color-success, 0.08);
+  border-left: 2px solid $color-success;
+  padding: 12px;
+  border-radius: $border-radius-xs;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+  
+  i {
+    color: $color-success;
+    font-size: 16px;
+  }
+  
+  @include typography-p2;
+  color: darken($color-success, 20%);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Lien retour */
+.back-to-login {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba($color-primary, 0.1);
+}
+
+.back-link {
+  @include typography-p2;
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  transition: $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:hover {
+    color: $color-accent;
+    text-decoration: underline;
+  }
+}
+
+/* =============================================
+   RESPONSIVE FORGOT PASSWORD
+   ============================================= */
+
+// TABLETTE (768px - 991px)
+@media (max-width: 991px) and (min-width: 768px) {
+  .forgot-password-card {
+    max-width: 600px;
+    padding: $padding-lg;
+  }
+  
+  .step-indicator {
+    gap: 6px;
+  }
+  
+  .step-label {
+    font-size: $font-size-p4;
+    min-width: 60px;
+  }
+  
+  .code-input {
+    width: 40px;
+    height: 50px;
+    font-size: 18px;
+  }
+}
+
+// MOBILE (< 768px)
+@media (max-width: 767px) {
+  .forgot-password-container {
+    padding: 10px;
+  }
+  
+  .forgot-password-card {
+    padding: $padding-lg;
+    margin: 0 10px;
+  }
+  
+  .password-reset-header {
+    .logo-text {
+      font-size: $font-size-h3;
+    }
+    
+    .logo-icon {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+  }
+  
+  .step-indicator {
+    gap: 4px;
+    margin-bottom: $margin-lg;
+  }
+  
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+  
+  .step-label {
+    font-size: 11px;
+    min-width: 50px;
+  }
+  
+  .step-line {
+    max-width: 30px;
+  }
+  
+  .code-input-container {
+    gap: 8px;
+  }
+  
+  .code-input {
+    width: 36px;
+    height: 46px;
+    font-size: 16px;
+  }
+  
+  .step-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .secondary-btn,
+  .premier-btn {
+    width: 100%;
+  }
+}
+
+// PETIT MOBILE (< 576px)
+@media (max-width: 575px) {
+  .forgot-password-card {
+    padding: $padding-md;
+  }
+  
+  .password-reset-header {
+    .logo-text {
+      font-size: $font-size-h4;
+    }
+    
+    .logo-subtitle {
+      font-size: $font-size-p3;
+    }
+  }
+  
+  .step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .step-label {
+    display: none;
+  }
+  
+  .code-input {
+    width: 32px;
+    height: 42px;
+    font-size: 14px;
+  }
+}
+
+

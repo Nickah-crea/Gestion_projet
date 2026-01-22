@@ -4,10 +4,10 @@
 .statistiques-sidebar-statistiques {
   position: fixed;
   left: 0;
-  top: 80px;
+  top: 60px;
   width: 280px;
   height: calc(100vh - 80px);
-  background: $color-background;
+  background: $color-primary;
   padding: $spacing-md;
   box-sizing: border-box;
   z-index: $z-index-sticky;
@@ -103,7 +103,7 @@
 
     .section-title-statistiques {
       @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin-bottom: $gap-md;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
@@ -111,7 +111,7 @@
       gap: $gap-xs;
 
       i {
-        color: $color-primary;
+        color: $color-text-light;
         font-size: $font-size-p3;
       }
     }

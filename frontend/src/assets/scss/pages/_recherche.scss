@@ -1,78 +1,92 @@
-// _recherche.scss – Version moderne avec couleurs chaudes dorées
+// _new-recherche.scss – Version unifiée avec AddEpisode
 @import '../base/variables';
 
 .app-wrapper-global-recherche {
   display: flex;
   min-height: 100vh;
-  background: $color-background-alt;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 // =============================================
-// SIDEBAR LATÉRALE - COULEUR CHAUDE MODERNE
+// SIDEBAR LATÉRALE FIXE À GAUCHE - STYLE ADD_EPISODE
 // =============================================
 .search-sidebar-recherche {
   position: fixed;
+  top: 60px; // 50px de marge en haut
   left: 0;
-  top: 60px;
   width: 280px;
-  height: calc(100vh - 60px);
-  background: $color-primary-light;
-  padding: $spacing-md;
-  box-sizing: border-box;
-  z-index: $z-index-sticky;
+  height: calc(100vh - 50px); // Hauteur ajustée
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  border-right: 1px solid rgba($color-primary-dark, 0.15);
-  transition: all 0.3s ease;
-  
-  &::-webkit-scrollbar {
-    width: 6px;
+  padding: $padding-lg;
+  background: $color-primary; // <-- MÊME COULEUR QUE ADD_EPISODE
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
+
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
   }
   
-  &::-webkit-scrollbar-thumb {
-    background: rgba($color-primary-dark, 0.2);
-    border-radius: 3px;
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
+  
+  // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-dark !important;
+  }
+  
+  // Exception pour les boutons
+  .search-btn-sidebar-recherche {
+    i {
+      color: $color-text-light !important;
+    }
+    
+    &:hover {
+      background: rgba($color-text-light, 0.1) !important;
+    }
   }
 
   .sidebar-header-recherche {
     margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border; // Bordure dorée
     padding-bottom: $spacing-sm;
-    border-bottom: 1px solid rgba($color-primary-dark, 0.1);
 
     .sidebar-title-recherche {
       @include typography-playfair-h4;
-      color: $color-text-primary;
+      color: $color-text-primary; // Brun foncé
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
-      font-weight: 600;
     }
 
     .sidebar-subtitle-recherche {
       @include typography-p4;
-      color: $color-text-secondary;
+      color: $color-text-muted; // Taupe
       margin: 0;
-      opacity: 0.8;
     }
   }
 
+  // Sections de filtre - style add_episode
   .filter-section-recherche {
-    margin-bottom: 6px;
-    padding: $spacing-sm;
-    background: rgba($color-white, 0.8);
-    border-radius: $border-radius-sm;
-    border: 1px solid rgba($color-primary-dark, 0.1);
+    margin-bottom: $spacing-md;
+    background: $color-background-alt; // Blanc
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
     transition: all 0.3s ease;
 
     &:hover {
       border-color: rgba($color-primary-dark, 0.2);
-      box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+      box-shadow: $shadow-md;
     }
 
     .section-title-recherche {
       @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-primary; // Brun foncé
       margin-bottom: $gap-sm;
-      font-weight: 600;
+      font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
       align-items: center;
       gap: $gap-xs;
@@ -84,42 +98,44 @@
     }
   }
 
-  // Filtres dans la sidebar
+  // Groupes de filtres
   .filter-group-recherche {
     display: flex;
     flex-direction: column;
-    gap: $gap-xs;
+    gap: $gap-sm;
   }
 
+  // Dropdowns - style modernisé
   .filter-dropdown-recherche {
     position: relative;
     width: 100%;
 
     .dropdown-trigger-recherche {
       width: 100%;
-      height: 38px;
+      height: 36px; // Hauteur unifiée
       padding: 0 $padding-sm;
-      background: $color-white;
-      border: 1px solid rgba($color-primary-dark, 0.15);
+      background: $color-background-alt; // Blanc
+      border: 1px solid $color-border; // Bordure dorée
       border-radius: $border-radius-xs;
       font-size: $font-size-p4;
-      color: $color-text-primary;
+      color: $color-text-secondary; // Brun
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 500;
+      transition: $transition-fast;
+      font-weight: $font-weight-semibold;
+      box-sizing: border-box;
 
       &:hover {
-        border-color: $color-primary-dark;
-        background: $color-white;
+        background: rgba($color-primary, 0.1); // Doré subtil
+        border-color: $color-primary; // Doré
+        color: $color-primary; // Doré
       }
 
       &:focus-visible {
-        outline: none;
-        border-color: $color-primary-dark;
-        box-shadow: 0 0 0 2px rgba($color-primary-dark, 0.1);
+        outline: 2px solid $color-primary;
+        outline-offset: 1px;
       }
 
       .dropdown-text-recherche {
@@ -151,10 +167,10 @@
       left: 0;
       right: 0;
       width: 100%;
-      background: $color-white;
-      border: 1px solid rgba($color-primary-dark, 0.15);
+      background: $color-background-alt; // Blanc
+      border: 1px solid $color-border; // Bordure dorée
       border-radius: $border-radius-sm;
-      box-shadow: 0 8px 24px rgba($color-primary-dark, 0.12);
+      box-shadow: $shadow-md; // Ombre unifiée
       z-index: $z-index-dropdown;
       max-height: 220px;
       overflow-y: auto;
@@ -171,7 +187,7 @@
         .dropdown-option-recherche {
           padding: $gap-sm $padding-sm;
           font-size: $font-size-p4;
-          color: $color-text-primary;
+          color: $color-text-primary; // Brun foncé
           cursor: pointer;
           transition: all 0.2s ease;
           border-radius: $border-radius-xs;
@@ -187,7 +203,7 @@
           text-align: left;
 
           &:hover {
-            background: rgba($color-primary-light, 0.3);
+            background: rgba($color-primary, 0.1); // Doré subtil
           }
 
           // Checkbox custom moderne
@@ -213,9 +229,9 @@
             transform: translateY(-50%);
             width: 16px;
             height: 16px;
-            border: 2px solid rgba($color-primary-dark, 0.3);
+            border: 2px solid $color-border; // Bordure dorée
             border-radius: 4px;
-            background: $color-white;
+            background: $color-background-alt; // Blanc
             transition: all 0.2s ease;
             z-index: 1;
           }
@@ -233,7 +249,7 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: $color-white;
+            color: $color-text-light; // Blanc
             font-size: 10px;
             font-weight: bold;
             z-index: 1;
@@ -264,19 +280,19 @@
         .date-input-recherche {
           width: 100%;
           padding: $gap-sm;
-          border: 1px solid rgba($color-primary-dark, 0.15);
+          border: 1px solid $color-border; // Bordure dorée
           border-radius: $border-radius-xs;
           font-size: $font-size-p4;
-          background: $color-white;
-          color: $color-text-primary;
+          background: $color-background-alt; // Blanc
+          color: $color-text-primary; // Brun foncé
           cursor: pointer;
           box-sizing: border-box;
-          transition: all 0.2s ease;
+          transition: $transition-fast;
           
           &:focus {
             outline: none;
-            border-color: $color-primary-dark;
-            box-shadow: 0 0 0 2px rgba($color-primary-dark, 0.1);
+            border-color: $color-primary;
+            box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
           }
           
           &::-webkit-calendar-picker-indicator {
@@ -289,30 +305,30 @@
           width: 100%;
           padding: $gap-sm;
           background: transparent;
-          border: 1px solid rgba($color-primary-dark, 0.15);
+          border: 1px solid $color-border; // Bordure dorée
           border-radius: $border-radius-xs;
           font-size: $font-size-p4;
-          color: $color-text-secondary;
+          color: $color-text-secondary; // Brun
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: $gap-xs;
-          transition: all 0.3s ease;
+          transition: $transition-fast;
           box-sizing: border-box;
 
           &:hover {
-            background: rgba($color-secondary, 0.1);
-            border-color: $color-secondary;
-            color: $color-secondary;
+            background: rgba($color-primary, 0.1); // Doré subtil
+            border-color: $color-primary;
+            color: $color-primary;
             
             i {
-              color: $color-secondary;
+              color: $color-primary;
             }
           }
           
           i {
-            transition: all 0.3s ease;
+            transition: $transition-fast;
           }
         }
       }
@@ -322,50 +338,51 @@
   // Styles pour les selects
   .filter-select-recherche {
     width: 100%;
-    height: 38px;
+    height: 36px; // Hauteur unifiée
     padding: 0 $padding-sm;
-    background: $color-white;
-    border: 1px solid rgba($color-primary-dark, 0.15);
+    background: $color-background-alt; // Blanc
+    border: 1px solid $color-border; // Bordure dorée
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: $transition-fast;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A832' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right $padding-sm center;
     background-size: 16px;
+    box-sizing: border-box;
     
     &:focus {
       outline: none;
-      border-color: $color-primary-dark;
-      box-shadow: 0 0 0 2px rgba($color-primary-dark, 0.1);
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
     
     &:hover {
-      border-color: rgba($color-primary-dark, 0.3);
+      border-color: $color-primary;
     }
   }
 
-  // Boutons d'action dans la sidebar
+  // Boutons d'action dans la sidebar - style add_episode
   .sidebar-actions-recherche {
     margin-top: $spacing-md;
     padding-top: $spacing-sm;
-    border-top: 1px solid rgba($color-primary-dark, 0.1);
+    border-top: 1px solid $color-border; // Bordure dorée
     display: flex;
     flex-direction: column;
     gap: $gap-sm;
 
     .search-btn-sidebar-recherche,
     .reset-btn-sidebar-recherche {
-      height: 44px;
+      height: 36px; // Hauteur unifiée
       border: none;
       border-radius: $border-radius-xs;
-      font-weight: 600;
+      font-weight: $font-weight-semibold;
       font-size: $font-size-p4;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: $transition-fast;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -374,20 +391,20 @@
       letter-spacing: 0.3px;
 
       &:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba($color-primary-dark, 0.2);
+        outline: 2px solid $color-primary;
+        outline-offset: 1px;
       }
     }
 
     .search-btn-sidebar-recherche {
-      background: $color-primary-dark;
-      color: $color-text-light;
-      font-weight: 600;
+      background: $color-primary-dark; // Doré foncé
+      color: $color-text-light; // Blanc
+      font-weight: $font-weight-bold;
 
       &:hover:not(:disabled) {
         background: darken($color-primary-dark, 8%);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba($color-primary-dark, 0.3);
+        box-shadow: $shadow-hover;
       }
 
       &:active:not(:disabled) {
@@ -403,69 +420,151 @@
 
     .reset-btn-sidebar-recherche {
       background: transparent;
-      border: 1px solid rgba($color-primary-dark, 0.3);
-      color: $color-text-secondary;
+      border: 1px solid $color-border; // Bordure dorée
+      color: $color-text-secondary; // Brun
 
       &:hover {
-        background: rgba($color-primary-dark, 0.1);
-        border-color: $color-primary-dark;
-        color: $color-primary-dark;
+        background: rgba($color-primary, 0.1); // Doré subtil
+        border-color: $color-primary;
+        color: $color-primary;
       }
     }
   }
 }
 
 // =============================================
-// CONTENU PRINCIPAL - STYLE MODERNE MINIMALISTE
+// CONTENU PRINCIPAL À DROITE - STYLE ADD_EPISODE
 // =============================================
 .search-body-recherche {
   flex: 1;
   margin-left: 280px;
   min-height: 100vh;
-  background: $color-background-alt;
-  padding: $spacing-lg 0;
+  background: none; // Pas de fond global
 }
 
-// Main content area
 .search-main-content-recherche {
-  padding: 0 $spacing-lg;
+  padding: $spacing-lg;
   max-width: 1200px;
   margin: 0 auto;
+}
 
-  .main-header-recherche {
-    text-align: center;
-    margin-bottom: $spacing-xl;
-    padding-bottom: $spacing-lg;
-    border-bottom: 1px solid rgba($color-primary-dark, 0.1);
+// =============================================
+// SYSTÈME D'ONGlets - COMME ADD_EPISODE
+// =============================================
+.tabs-container-recherche {
+  background: $color-background-alt; // Blanc
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
 
-    .page-title-recherche {
-      @include typography-playfair-h3;
-      color: $color-text-primary;
-      margin: 0 0 $gap-sm 0;
-      font-size: 2.5rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: $gap-sm;
-      
-      i {
-        color: $color-primary-dark;
-      }
-    }
+.tabs-header-recherche {
+  display: flex;
+  background: $color-background-alt; // Blanc
+  border-bottom: 1px solid $color-border; // Bordure dorée
+  position: relative;
+}
 
-    .page-subtitle-recherche {
-      @include typography-p3;
-      color: $color-text-secondary;
-      max-width: 600px;
-      margin: 0 auto;
-      line-height: 1.6;
-      opacity: 0.9;
-    }
+.tab-btn-recherche {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary; // Brun
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary; // Doré
+    background: rgba($color-primary, 0.05); // Doré subtil
+  }
+
+  &.active {
+    color: $color-primary; // Doré
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
   }
 }
 
-// Barre de recherche principale - Style moderne
+.tab-indicator-recherche {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary; // Doré
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-recherche {
+  position: relative;
+}
+
+.tab-pane-recherche {
+  padding: $spacing-lg;
+  animation: fadeInUp-recherche 0.3s ease-out;
+}
+
+@keyframes fadeInUp-recherche {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// EN-TÊTE PRINCIPAL - STYLE MODERNISÉ
+// =============================================
+.main-header-recherche {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid $color-border; // Bordure dorée
+
+  .page-title-recherche {
+    @include typography-playfair-h3;
+    color: $color-text-primary; // Brun foncé
+    margin: 0 0 $gap-sm 0;
+    font-size: 2.5rem;
+    font-weight: $font-weight-bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary-dark;
+    }
+  }
+
+  .page-subtitle-recherche {
+    @include typography-p3;
+    color: $color-text-secondary; // Brun
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+}
+
+// =============================================
+// BARRE DE RECHERCHE PRINCIPALE - STYLE UNIFIÉ
+// =============================================
 .search-bar-main-recherche {
   max-width: 700px;
   margin: 0 auto $spacing-xl;
@@ -474,15 +573,15 @@
     position: relative;
     display: flex;
     align-items: center;
-    background: $color-white;
+    background: $color-background-alt; // Blanc
     border-radius: $border-radius-pill;
-    border: 1px solid rgba($color-primary-dark, 0.15);
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+    border: 1px solid $color-border; // Bordure dorée
+    transition: $transition-fast;
+    box-shadow: $shadow;
 
     &:focus-within {
-      border-color: $color-primary-dark;
-      box-shadow: 0 4px 16px rgba($color-primary-dark, 0.15);
+      border-color: $color-primary;
+      box-shadow: $shadow-md;
     }
 
     .search-input-large-recherche {
@@ -492,9 +591,9 @@
       border: none;
       background: transparent;
       font-size: $font-size-p3;
-      color: $color-text-primary;
+      color: $color-text-primary; // Brun foncé
       transition: $transition-fast;
-      font-weight: 500;
+      font-weight: $font-weight-medium;
 
       &::placeholder {
         color: rgba($color-text-secondary, 0.6);
@@ -513,12 +612,12 @@
       width: 48px;
       height: 48px;
       margin-right: 4px;
-      color: $color-white;
+      color: $color-text-light; // Blanc
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease;
+      transition: $transition-fast;
       flex-shrink: 0;
 
       &:hover:not(:disabled) {
@@ -549,20 +648,22 @@
       cursor: pointer;
       padding: 8px;
       border-radius: 50%;
-      transition: all 0.2s ease;
+      transition: $transition-fast;
       display: flex;
       align-items: center;
       justify-content: center;
 
       &:hover {
-        background: rgba($color-secondary, 0.1);
-        color: $color-secondary;
+        background: rgba($color-primary, 0.1); // Doré subtil
+        color: $color-primary;
       }
     }
   }
 }
 
-// Contrôles de tri - Style moderne
+// =============================================
+// CONTRÔLES DE TRI - STYLE MODERNISÉ
+// =============================================
 .sort-controls-recherche {
   max-width: 700px;
   margin: 0 auto $spacing-lg;
@@ -571,16 +672,16 @@
     display: flex;
     align-items: center;
     gap: $gap-sm;
-    background: $color-white;
+    background: $color-background-alt; // Blanc
     padding: $spacing-sm $spacing-md;
     border-radius: $border-radius-sm;
-    border: 1px solid rgba($color-primary-dark, 0.1);
-    box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+    border: 1px solid $color-border; // Bordure dorée
+    box-shadow: $shadow;
 
     .sort-label-recherche {
       @include typography-p4;
-      color: $color-text-secondary;
-      font-weight: 600;
+      color: $color-text-secondary; // Brun
+      font-weight: $font-weight-semibold;
       display: flex;
       align-items: center;
       gap: $gap-xs;
@@ -593,13 +694,13 @@
     .sort-select-recherche {
       flex: 1;
       padding: $gap-sm $padding-sm;
-      border: 1px solid rgba($color-primary-dark, 0.15);
+      border: 1px solid $color-border; // Bordure dorée
       border-radius: $border-radius-xs;
-      background: $color-white;
-      color: $color-text-primary;
+      background: $color-background-alt; // Blanc
+      color: $color-text-primary; // Brun foncé
       font-size: $font-size-p4;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: $transition-fast;
       appearance: none;
       background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A832' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
       background-repeat: no-repeat;
@@ -608,14 +709,14 @@
 
       &:focus {
         outline: none;
-        border-color: $color-primary-dark;
-        box-shadow: 0 0 0 2px rgba($color-primary-dark, 0.1);
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
       }
     }
 
     .sort-direction-recherche {
       background: transparent;
-      border: 1px solid rgba($color-primary-dark, 0.15);
+      border: 1px solid $color-border; // Bordure dorée
       border-radius: $border-radius-xs;
       width: 40px;
       height: 40px;
@@ -623,26 +724,27 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: $transition-fast;
       color: $color-primary-dark;
 
       &:hover {
-        background: rgba($color-primary-dark, 0.1);
-        border-color: $color-primary-dark;
+        background: rgba($color-primary, 0.1); // Doré subtil
+        border-color: $color-primary;
       }
     }
   }
 }
 
-// Indicateurs de filtre - Style moderne
+// =============================================
+// INDICATEURS DE FILTRE - STYLE MODERNISÉ
+// =============================================
 .projet-filter-indicator-recherche {
   max-width: 700px;
   margin: 0 auto $spacing-md;
-  background: rgba($color-primary-light, 0.4);
-  border: 1px solid rgba($color-primary-dark, 0.2);
+  background: rgba($color-primary, 0.1); // Doré subtil
+  border: 1px solid $color-border; // Bordure dorée
   border-radius: $border-radius-sm;
   padding: $spacing-sm;
-  backdrop-filter: blur(10px);
   
   .projet-indicator-content-recherche {
     display: flex;
@@ -652,8 +754,8 @@
     
     .projet-label-recherche {
       @include typography-p4;
-      color: $color-text-primary;
-      font-weight: 600;
+      color: $color-text-primary; // Brun foncé
+      font-weight: $font-weight-semibold;
       display: flex;
       align-items: center;
       gap: $gap-xs;
@@ -666,7 +768,7 @@
     .projet-nom-recherche {
       @include typography-p4;
       color: $color-primary-dark;
-      font-weight: 700;
+      font-weight: $font-weight-bold;
       flex: 1;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -675,37 +777,37 @@
     
     .clear-projet-btn-recherche {
       padding: $gap-sm $padding-md;
-      background: $color-white;
-      border: 1px solid rgba($color-primary-dark, 0.2);
+      background: $color-background-alt; // Blanc
+      border: 1px solid $color-border; // Bordure dorée
       border-radius: $border-radius-xs;
       font-size: $font-size-p5;
-      color: $color-text-secondary;
+      color: $color-text-secondary; // Brun
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: $gap-xs;
-      transition: all 0.3s ease;
-      font-weight: 500;
+      transition: $transition-fast;
+      font-weight: $font-weight-medium;
       
       &:hover {
-        background: $color-white;
-        border-color: $color-secondary;
-        color: $color-secondary;
+        background: $color-background-alt; // Blanc
+        border-color: $color-primary;
+        color: $color-primary;
         
         i {
-          color: $color-secondary;
+          color: $color-primary;
         }
       }
       
       i {
-        transition: all 0.3s ease;
+        transition: $transition-fast;
       }
     }
   }
 }
 
 // =============================================
-// RÉSULTATS – DESIGN MODERNE MINIMALISTE
+// RÉSULTATS – DESIGN UNIFIÉ
 // =============================================
 .results-section-recherche {
   max-width: 1200px;
@@ -717,19 +819,19 @@
     align-items: center;
     margin-bottom: $spacing-lg;
     padding: $spacing-md;
-    background: $color-white;
+    background: $color-background-alt; // Blanc
     border-radius: $border-radius-sm;
-    border: 1px solid rgba($color-primary-dark, 0.1);
-    box-shadow: 0 2px 12px rgba($color-primary-dark, 0.08);
+    border: 1px solid $color-border; // Bordure dorée
+    box-shadow: $shadow;
 
     h2 {
       @include typography-playfair-p4;
-      color: $color-text-primary;
+      color: $color-text-primary; // Brun foncé
       margin: 0;
       display: flex;
       align-items: center;
       gap: $gap-sm;
-      font-weight: 600;
+      font-weight: $font-weight-semibold;
       
       i {
         color: $color-primary-dark;
@@ -747,44 +849,44 @@
         display: flex;
         align-items: center;
         gap: $gap-xs;
-        color: $color-text-secondary;
-        font-weight: 500;
+        color: $color-text-secondary; // Brun
+        font-weight: $font-weight-medium;
 
         i {
           color: $color-primary-dark;
         }
 
         strong {
-          color: $color-text-primary;
-          font-weight: 600;
+          color: $color-text-primary; // Brun foncé
+          font-weight: $font-weight-semibold;
         }
       }
     }
 
     .reset-all-btn-recherche {
       padding: $gap-sm $padding-md;
-      background: $color-white;
-      border: 1px solid rgba($color-primary-dark, 0.2);
+      background: $color-background-alt; // Blanc
+      border: 1px solid $color-border; // Bordure dorée
       border-radius: $border-radius-xs;
       font-size: $font-size-p4;
-      color: $color-text-secondary;
+      color: $color-text-secondary; // Brun
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: $transition-fast;
       display: flex;
       align-items: center;
       gap: $gap-xs;
-      font-weight: 500;
+      font-weight: $font-weight-medium;
 
       &:hover {
-        background: rgba($color-primary-dark, 0.1);
-        border-color: $color-primary-dark;
-        color: $color-primary-dark;
+        background: rgba($color-primary, 0.1); // Doré subtil
+        border-color: $color-primary;
+        color: $color-primary;
       }
     }
   }
 }
 
-// Grille de résultats moderne
+// Grille de résultats modernisée
 .modern-results-recherche {
   display: flex;
   flex-direction: column;
@@ -798,20 +900,20 @@
     .group-header-recherche {
       padding: $spacing-md;
       border-radius: $border-radius-sm;
-      background: $color-white;
-      box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+      background: $color-background-alt; // Blanc
+      box-shadow: $shadow;
       border-left: 4px solid transparent;
       display: flex;
       align-items: center;
       gap: $gap-md;
       @include typography-playfair-p4;
       margin: 0;
-      font-weight: 600;
-      transition: all 0.3s ease;
+      font-weight: $font-weight-semibold;
+      transition: $transition-fast;
 
       &:hover {
         transform: translateX(4px);
-        box-shadow: 0 4px 16px rgba($color-primary-dark, 0.1);
+        box-shadow: $shadow-md;
       }
 
       .group-icon-recherche {
@@ -826,16 +928,16 @@
       }
 
       .group-title-recherche {
-        color: $color-text-primary;
+        color: $color-text-primary; // Brun foncé
         flex: 1;
         font-size: 1.2rem;
-        font-weight: 600;
+        font-weight: $font-weight-semibold;
       }
 
       .group-count-recherche {
-        color: $color-text-muted;
+        color: $color-text-muted; // Taupe
         font-size: $font-size-p4;
-        font-weight: 500;
+        font-weight: $font-weight-medium;
         padding: $gap-xs $gap-sm;
         background: rgba($color-primary-dark, 0.05);
         border-radius: $border-radius-xs;
@@ -885,16 +987,16 @@
 
   // Style pour les cartes de résultats
   .result-item-recherche {
-    background: $color-white;
+    background: $color-background-alt; // Blanc
     border-radius: $border-radius-sm;
-    box-shadow: 0 2px 8px rgba($color-primary-dark, 0.05);
+    box-shadow: $shadow;
     padding: $spacing-md;
-    transition: all 0.3s ease;
+    transition: $transition-fast;
     min-height: auto;
     height: auto;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba($color-primary-dark, 0.08);
+    border: 1px solid $color-border; // Bordure dorée
     position: relative;
     overflow: hidden;
 
@@ -912,8 +1014,8 @@
 
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba($color-primary-dark, 0.12);
-      border-color: rgba($color-primary-dark, 0.2);
+      box-shadow: $shadow-md;
+      border-color: $color-primary;
       
       &::before {
         opacity: 1;
@@ -934,7 +1036,7 @@
       outline: none;
 
       &:focus-visible {
-        outline: 2px solid $color-primary-dark;
+        outline: 2px solid $color-primary;
         outline-offset: 2px;
         border-radius: $border-radius-sm;
       }
@@ -957,7 +1059,7 @@
         padding: $gap-xs $gap-sm;
         border-radius: $border-radius-pill;
         font-size: $font-size-p5;
-        font-weight: 700;
+        font-weight: $font-weight-bold;
         text-transform: uppercase;
         align-self: flex-start;
         display: flex;
@@ -1000,14 +1102,14 @@
 
       .result-title-recherche {
         @include typography-playfair-p4;
-        color: $color-text-primary;
+        color: $color-text-primary; // Brun foncé
         margin: 0;
         line-height: 1.4;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         overflow: hidden;
         font-size: 1.3rem;
-        font-weight: 600;
+        font-weight: $font-weight-semibold;
         -webkit-line-clamp: 2;
       }
 
@@ -1015,7 +1117,7 @@
         padding: $gap-xs $gap-sm;
         border-radius: $border-radius-pill;
         font-size: $font-size-p5;
-        font-weight: 600;
+        font-weight: $font-weight-semibold;
         align-self: flex-start;
         border: 1px solid transparent;
 
@@ -1071,15 +1173,15 @@
         align-items: flex-start;
         gap: $gap-sm;
         @include typography-p4;
-        color: $color-text-secondary;
+        color: $color-text-secondary; // Brun
         line-height: 1.5;
 
         .detail-label-recherche {
           display: flex;
           align-items: center;
           gap: $gap-xs;
-          color: $color-text-primary;
-          font-weight: 600;
+          color: $color-text-primary; // Brun foncé
+          font-weight: $font-weight-semibold;
           min-width: 80px;
           flex-shrink: 0;
 
@@ -1095,7 +1197,7 @@
         }
 
         .comedien-recherche {
-          color: $color-text-muted;
+          color: $color-text-muted; // Taupe
           font-style: italic;
           margin-left: $gap-xs;
         }
@@ -1105,7 +1207,7 @@
     .dialogues-section-recherche {
       margin: $gap-sm 0;
       padding: $spacing-sm;
-      background: rgba($color-primary-light, 0.3);
+      background: rgba($color-primary, 0.1); // Doré subtil
       border-radius: $border-radius-xs;
       border-left: 3px solid $color-primary-dark;
       max-height: 100px;
@@ -1122,8 +1224,8 @@
 
       .dialogues-title-recherche {
         @include typography-p4;
-        color: $color-text-primary;
-        font-weight: 600;
+        color: $color-text-primary; // Brun foncé
+        font-weight: $font-weight-semibold;
         margin-bottom: $gap-xs;
         display: flex;
         align-items: center;
@@ -1141,7 +1243,7 @@
 
         .dialogue-item-recherche {
           @include typography-p4;
-          color: $color-text-secondary;
+          color: $color-text-secondary; // Brun
           font-style: italic;
           padding-left: $padding-xs;
           border-left: 1px solid rgba($color-primary-dark, 0.3);
@@ -1151,7 +1253,7 @@
         
         .dialogues-more-recherche {
           @include typography-p5;
-          color: $color-text-muted;
+          color: $color-text-muted; // Taupe
           font-style: italic;
           margin-top: $gap-xs;
         }
@@ -1164,18 +1266,18 @@
       gap: $gap-sm;
       margin: $gap-sm 0;
       padding: $gap-sm 0;
-      border-top: 1px solid rgba($color-primary-dark, 0.1);
+      border-top: 1px solid $color-border; // Bordure dorée
 
       .hierarchy-item-recherche {
         font-size: $font-size-p5;
-        color: $color-text-muted;
+        color: $color-text-muted; // Taupe
         display: flex;
         align-items: center;
         gap: $gap-xs;
         padding: $gap-xs $gap-sm;
         background: rgba($color-primary-dark, 0.05);
         border-radius: $border-radius-xs;
-        border: 1px solid rgba($color-primary-dark, 0.1);
+        border: 1px solid $color-border; // Bordure dorée
 
         i {
           color: $color-primary-dark;
@@ -1197,20 +1299,20 @@
     .view-details-recherche {
       margin-top: auto;
       padding-top: $spacing-sm;
-      border-top: 1px solid rgba($color-primary-dark, 0.1);
+      border-top: 1px solid $color-border; // Bordure dorée
       
       .view-details-text-recherche {
         @include typography-p4;
         color: $color-primary-dark;
-        font-weight: 600;
+        font-weight: $font-weight-semibold;
         display: flex;
         align-items: center;
         gap: $gap-sm;
-        transition: all 0.3s ease;
+        transition: $transition-fast;
         justify-content: flex-end;
 
         i {
-          transition: transform 0.3s ease;
+          transition: transform $transition-fast;
         }
 
         &:hover i {
@@ -1222,15 +1324,15 @@
 }
 
 // =============================================
-// ÉTATS SPÉCIAUX - DESIGN MODERNE
+// ÉTATS SPÉCIAUX - DESIGN UNIFIÉ
 // =============================================
 .empty-state-recherche, .loading-state-recherche {
   text-align: center;
   padding: $spacing-xl;
-  background: $color-white;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-sm;
-  box-shadow: 0 2px 12px rgba($color-primary-dark, 0.08);
-  border: 1px solid rgba($color-primary-dark, 0.1);
+  box-shadow: $shadow;
+  border: 1px solid $color-border; // Bordure dorée
   margin: $spacing-xl 0;
 
   .empty-icon-recherche, .spinner-recherche {
@@ -1242,14 +1344,14 @@
 
   h3 {
     @include typography-playfair-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     margin-bottom: $gap-sm;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
   }
 
   p {
     @include typography-p3;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Brun
     max-width: 400px;
     margin: 0 auto;
     line-height: 1.6;
@@ -1262,140 +1364,14 @@
   }
 }
 
-// Animation
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 // =============================================
-// RESPONSIVE DESIGN
-// =============================================
-@media (max-width: $breakpoint-xl) {
-  .search-sidebar-recherche {
-    width: 260px;
-  }
-  
-  .search-body-recherche {
-    margin-left: 260px;
-  }
-  
-  .modern-results-recherche .result-group-recherche .group-items-recherche {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  }
-  
-  .results-header-recherche {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-sm;
-    
-    .results-info-recherche {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: $gap-sm;
-    }
-    
-    .reset-all-btn-recherche {
-      align-self: stretch;
-      justify-content: center;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-lg) {
-  .search-sidebar-recherche {
-    position: relative;
-    width: 100%;
-    height: auto;
-    max-height: 400px;
-    margin-bottom: $spacing-lg;
-    top: 0;
-  }
-  
-  .search-body-recherche {
-    margin-left: 0;
-    padding: $spacing-md 0;
-  }
-  
-  .search-main-content-recherche {
-    padding: 0 $spacing-md;
-  }
-  
-  .modern-results-recherche .result-group-recherche .group-items-recherche {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .search-main-content-recherche {
-    padding: 0 $spacing-sm;
-  }
-  
-  .main-header-recherche .page-title-recherche {
-    font-size: 2rem;
-  }
-  
-  .search-bar-main-recherche {
-    .search-input-container-recherche {
-      .search-input-large-recherche {
-        height: 48px;
-        font-size: $font-size-p4;
-      }
-      
-      .search-btn-main-recherche {
-        width: 44px;
-        height: 44px;
-      }
-    }
-  }
-  
-  .modern-results-recherche .result-item-recherche {
-    padding: $spacing-sm;
-  }
-  
-  .results-header-recherche {
-    padding: $spacing-sm;
-  }
-}
-
-// Accessibilité
-@media (prefers-reduced-motion: reduce) {
-  .result-item-recherche,
-  .dropdown-trigger-recherche,
-  .search-btn-sidebar-recherche,
-  .reset-btn-sidebar-recherche,
-  .search-btn-main-recherche {
-    transition: none;
-    
-    &:hover {
-      transform: none;
-    }
-  }
-  
-  .spinner-recherche i {
-    animation: none;
-  }
-}
-
-// =============================================
-// NAVBAR STICKY POUR LES BOUTONS D'EXPORT
+// NAVBAR STICKY POUR BOUTONS D'EXPORT - STYLE UNIFIÉ
 // =============================================
 .sticky-export-navbar-resultat-recherche {
   position: sticky;
   top: 60px; // Sous la navbar principale
   z-index: $z-index-sticky - 1;
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-bottom: 2px solid $color-primary;
   box-shadow: $shadow-lg;
   margin: 0 (-$spacing-lg) $spacing-lg;
@@ -1427,7 +1403,7 @@
   
   h3 {
     @include typography-p3;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     margin: 0;
     font-weight: $font-weight-bold;
   }
@@ -1458,7 +1434,6 @@
   }
 }
 
-// Réutilisez les styles existants des boutons
 .navbar-actions-resultat-recherche {
   .btn-ecran-travail-resultat-recherche,
   .btn-export-pdf-resultat-recherche,
@@ -1528,4 +1503,154 @@
   }
 }
 
+// =============================================
+// ANIMATIONS
+// =============================================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// =============================================
+// RESPONSIVE DESIGN
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .search-sidebar-recherche {
+    width: 260px;
+  }
+  
+  .search-body-recherche {
+    margin-left: 260px;
+  }
+  
+  .modern-results-recherche .result-group-recherche .group-items-recherche {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  
+  .results-header-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    
+    .results-info-recherche {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $gap-sm;
+    }
+    
+    .reset-all-btn-recherche {
+      align-self: stretch;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .search-sidebar-recherche {
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    margin-bottom: $spacing-lg;
+    top: 0;
+  }
+  
+  .search-body-recherche {
+    margin-left: 0;
+    padding: $spacing-md 0;
+  }
+  
+  .search-main-content-recherche {
+    padding: 0 $spacing-md;
+  }
+  
+  .tabs-header-recherche {
+    flex-direction: column;
+  }
+
+  .tab-btn-recherche {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-recherche {
+    display: none;
+  }
+
+  .tab-pane-recherche {
+    padding: $spacing-md;
+  }
+  
+  .modern-results-recherche .result-group-recherche .group-items-recherche {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .search-main-content-recherche {
+    padding: 0 $spacing-sm;
+  }
+  
+  .main-header-recherche .page-title-recherche {
+    font-size: 2rem;
+  }
+  
+  .search-bar-main-recherche {
+    .search-input-container-recherche {
+      .search-input-large-recherche {
+        height: 48px;
+        font-size: $font-size-p4;
+      }
+      
+      .search-btn-main-recherche {
+        width: 44px;
+        height: 44px;
+      }
+    }
+  }
+  
+  .modern-results-recherche .result-item-recherche {
+    padding: $spacing-sm;
+  }
+  
+  .results-header-recherche {
+    padding: $spacing-sm;
+  }
+}
+
+// Accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .result-item-recherche,
+  .dropdown-trigger-recherche,
+  .search-btn-sidebar-recherche,
+  .reset-btn-sidebar-recherche,
+  .search-btn-main-recherche,
+  .tab-btn-recherche,
+  .tab-indicator-recherche {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .spinner-recherche i {
+    animation: none;
+  }
+  
+  .tab-pane-recherche {
+    animation: none;
+  }
+}
 

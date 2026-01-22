@@ -1,267 +1,410 @@
-// _resultat-recherche.scss – Version avec chaque section dans sa propre carte
+// _new-resultat-recherche.scss – Version unifiée avec nouvelle structure
 @import '../base/variables';
 
-$header-height: 80px; // Hauteur du header à synchroniser avec le layout global
-
-.app-wrapper-global-resultat-recherche {
+.app-wrapper-global {
   display: flex;
-  background: none;
+  min-height: 100vh;
 }
 
 // =============================================
-// SIDEBAR LATÉRALE FIXE À GAUCHE
+// SIDEBAR LATÉRALE FIXE À GAUCHE - STYLE UNIFIÉ
 // =============================================
 .sidebar-right-resultat-recherche {
   position: fixed;
+  top: 60px; // 50px de marge en haut
   left: 0;
-  top: $header-height;
-  width: 300px;
-  height: calc(100vh - #{$header-height});
-  background: $color-background url('../../img/book-illustration.png') no-repeat bottom center;
-  background-size: contain;
-  background-blend-mode: multiply; // Pour mieux intégrer l'illustration au fond
-  padding: $spacing-md;
-  box-sizing: border-box;
-  z-index: $z-index-sticky;
+  width: 280px;
+  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  border-right: 1px solid $color-border;
-  box-shadow: $shadow-md;
-}
+  padding: $padding-lg;
+  background: $color-primary; // <-- MÊME COULEUR QUE ADD_EPISODE
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
 
-.sidebar-header-resultat-recherche {
-  margin-bottom: $spacing-md;
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
+  
+  // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-dark !important;
+  }
 
-  .sidebar-title-resultat-recherche {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0;
+  .sidebar-header-resultat-recherche {
+    margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border; // Bordure dorée
+    padding-bottom: $spacing-sm;
+
+    .sidebar-title-resultat-recherche {
+      @include typography-playfair-h4;
+      color: $color-text-primary; // Brun foncé
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+  }
+
+  .sidebar-section-resultat-recherche {
+    margin-bottom: $spacing-md;
+    background: $color-background-alt; // Blanc
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-primary; // Brun foncé
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+
+  // CRITÈRES DE RECHERCHE DANS LA SIDEBAR
+  .criteria-sidebar-list-resultat-recherche {
     display: flex;
-    align-items: center;
-    gap: $gap-xs;
-  }
-}
-
-.sidebar-section-resultat-recherche {
-  margin-bottom: $spacing-md;
-  background: $color-background-alt;
-  border-radius: $border-radius-xs;
-  padding: $padding-sm;
-  box-shadow: $shadow-hover;
-}
-
-.section-title-resultat-recherche {
-  @include typography-p4;
-  color: $color-text-primary;
-  margin-bottom: $gap-sm;
-  font-size: calc(#{$font-size-p4} + 1px);
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-}
-
-// =============================================
-// CRITÈRES DE RECHERCHE DANS LA SIDEBAR
-// =============================================
-.criteria-sidebar-list-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.criterion-sidebar-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-
-  .criterion-label-sidebar-resultat-recherche {
-    @include typography-p4;
-    color: $color-text-secondary;
-    font-weight: $font-weight-medium;
+    flex-direction: column;
+    gap: $gap-sm;
   }
 
-  .criterion-value-sidebar-resultat-recherche {
-    @include typography-p4;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-  }
-}
-
-.no-criteria-resultat-recherche {
-  @include typography-p4;
-  color: $color-text-muted;
-  font-style: italic;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-}
-
-// =============================================
-// STRUCTURE DU PROJET DANS LA SIDEBAR
-// =============================================
-.project-structure-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.structure-item-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  padding: $gap-xs;
-
-  .structure-icon-resultat-recherche {
-    color: $color-primary;
-    font-size: $font-size-p3;
-    width: 20px;
-    text-align: center;
-  }
-
-  .structure-info-resultat-recherche {
+  .criterion-sidebar-resultat-recherche {
     display: flex;
     flex-direction: column;
     gap: 2px;
 
-    .structure-type-resultat-recherche {
+    .criterion-label-sidebar-resultat-recherche {
       @include typography-p4;
-      color: $color-text-secondary;
-    }
-
-    .structure-name-resultat-recherche {
-      @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-secondary; // Brun
       font-weight: $font-weight-medium;
     }
-  }
-}
 
-.no-structure-resultat-recherche {
-  @include typography-p4;
-  color: $color-text-muted;
-  font-style: italic;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-}
-
-// =============================================
-// MÉTADONNÉES DANS LA SIDEBAR
-// =============================================
-.metadata-list-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.metadata-item-resultat-recherche {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $gap-xs 0;
-  border-bottom: 1px solid $color-border;
-
-  &:last-child {
-    border-bottom: none;
+    .criterion-value-sidebar-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-primary; // Brun foncé
+      font-weight: $font-weight-semibold;
+    }
   }
 
-  .metadata-label-resultat-recherche {
+  .no-criteria-resultat-recherche {
     @include typography-p4;
-    color: $color-text-secondary;
-    font-weight: $font-weight-medium;
+    color: $color-text-muted; // Taupe
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
   }
 
-  .metadata-value-resultat-recherche {
+  // STRUCTURE DU PROJET DANS LA SIDEBAR
+  .project-structure-resultat-recherche {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .structure-item-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $gap-xs;
+
+    .structure-icon-resultat-recherche {
+      color: $color-primary;
+      font-size: $font-size-p3;
+      width: 20px;
+      text-align: center;
+    }
+
+    .structure-info-resultat-recherche {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .structure-type-resultat-recherche {
+        @include typography-p4;
+        color: $color-text-secondary; // Brun
+      }
+
+      .structure-name-resultat-recherche {
+        @include typography-p4;
+        color: $color-text-primary; // Brun foncé
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+
+  .no-structure-resultat-recherche {
     @include typography-p4;
-    color: $color-text-primary;
-    text-align: right;
-  }
-}
-
-.type-badge-small-resultat-recherche,
-.status-badge-small-resultat-recherche {
-  padding: 2px 8px;
-  border-radius: $border-radius-pill;
-  font-size: $font-size-p5;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-
-  &.type-scene {
-    background: rgba($color-scene, 0.2);
-    color: $color-scene;
+    color: $color-text-muted; // Taupe
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
   }
 
-  &.type-personnage {
-    background: rgba($color-character, 0.2);
-    color: $color-character;
+  // MÉTADONNÉES DANS LA SIDEBAR
+  .metadata-list-resultat-recherche {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
   }
 
-  &.type-lieu {
-    background: rgba($color-location, 0.2);
-    color: $color-location;
+  .metadata-item-resultat-recherche {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $gap-xs 0;
+    border-bottom: 1px solid $color-border; // Bordure dorée
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .metadata-label-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-secondary; // Brun
+      font-weight: $font-weight-medium;
+    }
+
+    .metadata-value-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-primary; // Brun foncé
+      text-align: right;
+    }
   }
 
-  &.type-plateau {
-    background: rgba($color-set, 0.2);
-    color: $color-set;
+  .type-badge-small-resultat-recherche,
+  .status-badge-small-resultat-recherche {
+    padding: 2px 8px;
+    border-radius: $border-radius-pill;
+    font-size: $font-size-p5;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.type-scene {
+      background: rgba($color-scene, 0.2);
+      color: $color-scene;
+    }
+
+    &.type-personnage {
+      background: rgba($color-character, 0.2);
+      color: $color-character;
+    }
+
+    &.type-lieu {
+      background: rgba($color-location, 0.2);
+      color: $color-location;
+    }
+
+    &.type-plateau {
+      background: rgba($color-set, 0.2);
+      color: $color-set;
+    }
+  }
+
+  // ACTIONS RAPIDES DANS LA SIDEBAR
+  .quick-actions-resultat-recherche {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $gap-sm;
+  }
+
+  .quick-action-btn-resultat-recherche {
+    padding: $gap-sm;
+    background: $color-background-alt; // Blanc
+    border: 1px solid $color-border; // Bordure dorée
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p5;
+    color: $color-text-secondary; // Brun
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1); // Doré subtil
+      border-color: $color-primary;
+      color: $color-primary;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    i {
+      font-size: $font-size-p3;
+    }
   }
 }
 
 // =============================================
-// ACTIONS RAPIDES DANS LA SIDEBAR
-// =============================================
-.quick-actions-resultat-recherche {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $gap-sm;
-}
-
-.quick-action-btn-resultat-recherche {
-  padding: $gap-sm;
-  background: $color-background-alt;
-  border: 1px solid $color-border;
-  border-radius: $border-radius-xs;
-  font-size: $font-size-p5;
-  color: $color-text-secondary;
-  cursor: pointer;
-  transition: $transition-fast;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: $gap-xs;
-
-  &:hover:not(:disabled) {
-    background: $color-surface-hover;
-    border-color: $color-primary;
-    color: $color-primary;
-    transform: translateY(-1px);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  i {
-    font-size: $font-size-p3;
-  }
-}
-
-// =============================================
-// CONTENU PRINCIPAL À DROITE
+// CONTENU PRINCIPAL À DROITE - STYLE UNIFIÉ
 // =============================================
 .main-content-resultat-recherche {
   flex: 1;
+  margin-left: 280px;
   min-height: 100vh;
-  background: none;
-  margin-left: 300px;
+  background: none; // Pas de fond global
 }
 
 .resultat-recherche-container {
   padding: $spacing-lg;
-  max-width: none;
+  max-width: 1200px;
   margin: 0 auto;
+}
+
+// =============================================
+// NAVBAR STICKY SECONDARIE EN HAUT (60px margin-top)
+// =============================================
+.sticky-export-navbar-resultat-recherche {
+  position: sticky;
+  top: 60px; // Positionné juste sous la navbar principale
+  z-index: $z-index-sticky - 1;
+  background: $color-background-alt; // Blanc
+  border-bottom: 2px solid $color-primary;
+  box-shadow: $shadow-lg;
+  margin: 0 (-$spacing-lg) $spacing-lg;
+  padding: 0 $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) {
+    margin: 0 (-$spacing-sm) $spacing-md;
+    padding: 0 $spacing-sm;
+  }
+}
+
+.navbar-content-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+.navbar-title-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+  
+  h3 {
+    @include typography-p3;
+    color: $color-text-primary; // Brun foncé
+    margin: 0;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.navbar-subtitle-resultat-recherche {
+  @include typography-p4;
+  color: $color-primary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  font-weight: $font-weight-medium;
+}
+
+.navbar-actions-resultat-recherche {
+  display: flex;
+  gap: $gap-sm;
+  align-items: center;
+  
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    width: 100%;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Styles des boutons dans la navbar
+.navbar-actions-resultat-recherche {
+  .btn-ecran-travail-resultat-recherche,
+  .btn-export-pdf-resultat-recherche,
+  .btn-send-email-resultat-recherche {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    min-width: 160px;
+    justify-content: center;
+    
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+  
+  .btn-ecran-travail-resultat-recherche {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+    border: 1px solid rgba($color-info, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: $color-info;
+      color: $color-text-light;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
+  
+  .btn-export-pdf-resultat-recherche {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    border: 1px solid rgba($color-error, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: $color-error;
+      color: $color-text-light;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
+  
+  .btn-send-email-resultat-recherche {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: $color-success;
+      color: $color-text-light;
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+  }
 }
 
 // =============================================
@@ -288,8 +431,10 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   .page-title-resultat-recherche {
     @include typography-playfair-h3;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     margin: 0 0 $spacing-md 0;
+    font-size: 2.5rem;
+    font-weight: $font-weight-bold;
     display: flex;
     align-items: center;
     gap: $gap-sm;
@@ -301,7 +446,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   justify-content: space-between;
   align-items: center;
   padding: $spacing-md;
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   border-left: 4px solid $color-primary;
@@ -320,7 +465,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   align-items: center;
   gap: $gap-sm;
   padding: $gap-xs $padding-sm;
-  background: $color-surface;
+  background: $color-background;
   border-radius: $border-radius-pill;
   border: 1px solid rgba($color-primary, 0.2);
 
@@ -337,91 +482,8 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   }
 }
 
-.export-buttons-resultat-recherche {
-  display: flex;
-  gap: $gap-sm;
-  align-items: center;
-
-  @media (max-width: $breakpoint-md) {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .btn-ecran-travail-resultat-recherche,
-  .btn-export-pdf-resultat-recherche,
-  .btn-send-email-resultat-recherche {
-    padding: $gap-sm $spacing-md;
-    border: none;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    min-width: 160px;
-    justify-content: center;
-
-    @media (max-width: $breakpoint-md) {
-      min-width: auto;
-      width: 100%;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary;
-      outline-offset: 1px;
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-  }
-
-  .btn-ecran-travail-resultat-recherche {
-    background: rgba($color-info, 0.1);
-    color: $color-info;
-    border: 1px solid rgba($color-info, 0.3);
-
-    &:hover:not(:disabled) {
-      background: $color-info;
-      color: $color-text-light;
-      transform: translateY(-1px);
-      box-shadow: $shadow-hover;
-    }
-  }
-
-  .btn-export-pdf-resultat-recherche {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
-    border: 1px solid rgba($color-error, 0.3);
-
-    &:hover:not(:disabled) {
-      background: $color-error;
-      color: $color-text-light;
-      transform: translateY(-1px);
-      box-shadow: $shadow-hover;
-    }
-  }
-
-  .btn-send-email-resultat-recherche {
-    background: rgba($color-success, 0.1);
-    color: $color-success;
-    border: 1px solid rgba($color-success, 0.3);
-
-    &:hover:not(:disabled) {
-      background: $color-success;
-      color: $color-text-light;
-      transform: translateY(-1px);
-      box-shadow: $shadow-hover;
-    }
-  }
-}
-
 // =============================================
-// CONTENEUR DES CARTES ORGANISÉES
+// CONTENEUR UNIQUE POUR TOUS LES RÉSULTATS
 // =============================================
 .details-container-resultat-recherche {
   display: grid;
@@ -435,10 +497,10 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 }
 
 // =============================================
-// CARTES INDIVIDUELLES (500px) - EXCEPTION POUR LES DIALOGUES
+// CARTES INDIVIDUELLES (500px) - UNIFIÉES
 // =============================================
 .section-card-resultat-recherche {
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   overflow: hidden;
@@ -472,7 +534,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   align-items: center;
   padding: $spacing-lg;
   background: $color-background;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid $color-border; // Bordure dorée
 
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
@@ -482,7 +544,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   .result-title-resultat-recherche {
     @include typography-playfair-h3;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     margin: 0;
     font-size: calc(#{$font-size-h3} - 2px);
   }
@@ -495,7 +557,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   .last-modified-resultat-recherche {
     @include typography-p4;
-    color: $color-text-muted;
+    color: $color-text-muted; // Taupe
     display: flex;
     align-items: center;
     gap: $gap-xs;
@@ -525,13 +587,13 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   h3 {
     @include typography-playfair-h4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     margin: 0 0 $spacing-md 0;
     display: flex;
     align-items: center;
     gap: $gap-sm;
     padding-bottom: $gap-sm;
-    border-bottom: 2px solid $color-border;
+    border-bottom: 2px solid $color-border; // Bordure dorée
     font-size: calc(#{$font-size-h4} - 2px);
   }
 }
@@ -549,11 +611,11 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   padding: $padding-sm;
   background: $color-background;
   border-radius: $border-radius-xs;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
 
   .detail-label-resultat-recherche {
     @include typography-p4;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Brun
     font-weight: $font-weight-medium;
     display: flex;
     align-items: center;
@@ -562,7 +624,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   .detail-value-resultat-recherche {
     @include typography-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     font-weight: $font-weight-semibold;
   }
 }
@@ -581,30 +643,34 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   align-items: center;
   gap: 4px;
 
-  // Statuts disponibles
   &.status-planifie {
-    background: linear-gradient(135deg, $color-info, darken($color-info, 10%));
-    color: $color-text-light;
+    background: rgba($color-info, 0.2);
+    color: $color-info;
+    border: 1px solid rgba($color-info, 0.3);
   }
 
   &.status-confirme {
-    background: linear-gradient(135deg, $color-success, $color-success);
-    color: $color-text-light;
+    background: rgba($color-success, 0.2);
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.3);
   }
 
   &.status-en_cours {
-    background: linear-gradient(135deg, $color-warning, $color-accent-dark);
-    color: $color-text-light;
+    background: rgba($color-warning, 0.2);
+    color: $color-warning;
+    border: 1px solid rgba($color-warning, 0.3);
   }
 
   &.status-termine {
-    background: linear-gradient(135deg, $color-primary, $color-primary-dark);
-    color: $color-text-light;
+    background: rgba($color-primary, 0.2);
+    color: $color-primary;
+    border: 1px solid rgba($color-primary, 0.3);
   }
 
   &.status-annule {
-    background: linear-gradient(135deg, $color-error, $color-secondary-dark);
-    color: $color-text-light;
+    background: rgba($color-error, 0.2);
+    color: $color-error;
+    border: 1px solid rgba($color-error, 0.3);
   }
 }
 
@@ -624,7 +690,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   padding: $padding-sm;
   background: $color-background;
   border-radius: $border-radius-xs;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
 
   .level-icon-resultat-recherche {
     color: $color-primary;
@@ -633,14 +699,14 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   .level-label-resultat-recherche {
     @include typography-p4;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Brun
     font-weight: $font-weight-medium;
     min-width: 80px;
   }
 
   .level-value-resultat-recherche {
     @include typography-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     font-weight: $font-weight-semibold;
   }
 }
@@ -656,9 +722,9 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .personnage-detailed-item-resultat-recherche {
   padding: $padding-sm;
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-xs;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
   transition: $transition-fast;
 
   &:hover {
@@ -674,13 +740,13 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
     .personnage-nom-resultat-recherche {
       @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-primary; // Brun foncé
       font-weight: $font-weight-semibold;
     }
 
     .personnage-comedien-resultat-recherche {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-muted; // Taupe
       font-style: italic;
     }
   }
@@ -708,7 +774,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   .stat-item-resultat-recherche {
     @include typography-p4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     display: flex;
     align-items: center;
     gap: $gap-xs;
@@ -721,9 +787,9 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   gap: $spacing-sm;
   margin-bottom: $spacing-md;
   padding: $padding-sm;
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-xs;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
 }
 
 .filter-group-resultat-recherche {
@@ -733,18 +799,18 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   label {
     @include typography-p4;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Brun
     font-weight: $font-weight-medium;
   }
 }
 
 .form-select-resultat-recherche {
   padding: $gap-xs $padding-sm;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
   border-radius: $border-radius-xs;
   font-size: $font-size-p4;
-  color: $color-text-primary;
-  background: $color-background-alt;
+  color: $color-text-primary; // Brun foncé
+  background: $color-background-alt; // Blanc
   cursor: pointer;
 
   &:focus {
@@ -773,11 +839,11 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     padding: $gap-xs $padding-sm $gap-xs (
       $padding-md + $padding-xs
     );
-    border: 1px solid $color-border;
+    border: 1px solid $color-border; // Bordure dorée
     border-radius: $border-radius-pill;
     font-size: $font-size-p4;
-    color: $color-text-primary;
-    background: $color-background-alt;
+    color: $color-text-primary; // Brun foncé
+    background: $color-background-alt; // Blanc
     transition: $transition-fast;
 
     &:focus {
@@ -788,7 +854,6 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   }
 }
 
-// STYLES SPÉCIAUX POUR LES DIALOGUES EN LARGEUR COMPLÈTE
 .dialogues-list-resultat-recherche {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -801,9 +866,9 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .dialogue-item-resultat-recherche {
   padding: $spacing-md;
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-sm;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
   transition: $transition-fast;
   box-shadow: $shadow;
 
@@ -820,7 +885,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     gap: $spacing-sm;
     margin-bottom: $spacing-md;
     padding-bottom: $gap-sm;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid $color-border; // Bordure dorée
 
     @media (max-width: $breakpoint-sm) {
       flex-direction: column;
@@ -838,18 +903,18 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
     .dialogue-context-resultat-recherche {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-muted; // Taupe
       flex: 1;
 
       strong {
-        color: $color-text-secondary;
+        color: $color-text-secondary; // Brun
       }
     }
   }
 
   .dialogue-text-resultat-recherche {
     @include typography-p2;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     font-style: italic;
     line-height: 1.6;
     margin-bottom: $spacing-md;
@@ -866,7 +931,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     align-items: center;
     gap: $spacing-sm;
     padding-top: $gap-sm;
-    border-top: 1px solid $color-border;
+    border-top: 1px solid $color-border; // Bordure dorée
 
     @media (max-width: $breakpoint-sm) {
       flex-direction: column;
@@ -876,7 +941,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
     .dialogue-info-resultat-recherche {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-muted; // Taupe
       display: flex;
       align-items: center;
       gap: $gap-xs;
@@ -896,7 +961,6 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   }
 }
 
-// Styles pour les dialogues complets (scènes)
 .dialogues-complets-list-resultat-recherche {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
@@ -909,9 +973,9 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .dialogue-complet-item-resultat-recherche {
   padding: $spacing-lg;
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-sm;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
   transition: $transition-fast;
   box-shadow: $shadow;
 
@@ -927,7 +991,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
     align-items: center;
     margin-bottom: $spacing-md;
     padding-bottom: $gap-sm;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid $color-border; // Bordure dorée
 
     .dialogue-personnage-resultat-recherche {
       @include typography-p3;
@@ -937,7 +1001,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
     .dialogue-ordre-resultat-recherche {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-muted; // Taupe
       background: rgba($color-info, 0.1);
       padding: 2px 8px;
       border-radius: $border-radius-xs;
@@ -946,7 +1010,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   .dialogue-text-resultat-recherche {
     @include typography-p2;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     line-height: 1.6;
     margin-bottom: $spacing-md;
     padding: $spacing-md;
@@ -978,7 +1042,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 .empty-state-resultat-recherche {
   text-align: center;
   padding: $spacing-xl;
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   margin: $spacing-md 0;
@@ -992,13 +1056,13 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
   h3 {
     @include typography-playfair-h4;
-    color: $color-text-primary;
+    color: $color-text-primary; // Brun foncé
     margin-bottom: $gap-xs;
   }
 
   p {
     @include typography-p3;
-    color: $color-text-muted;
+    color: $color-text-muted; // Taupe
     margin: 0 auto $spacing-md auto;
   }
 }
@@ -1020,7 +1084,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   background: $color-primary;
   border: none;
   border-radius: $border-radius-xs;
-  color: $color-text-light;
+  color: $color-text-light; // Blanc
   font-size: $font-size-p4;
   font-weight: $font-weight-semibold;
   cursor: pointer;
@@ -1037,110 +1101,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 }
 
 // =============================================
-// RESPONSIVE
-// =============================================
-@media (max-width: $breakpoint-xl) {
-  .sidebar-right-resultat-recherche {
-    width: 280px;
-  }
-
-  .main-content-resultat-recherche {
-    margin-left: 280px;
-  }
-
-  .details-container-resultat-recherche {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: $breakpoint-lg) {
-  .sidebar-right-resultat-recherche {
-    position: relative;
-    width: 100%;
-    height: auto;
-    top: 0;
-  }
-
-  .main-content-resultat-recherche {
-    margin-left: 0;
-  }
-
-  .app-wrapper-global-resultat-recherche {
-    flex-direction: column;
-  }
-
-  .details-container-resultat-recherche {
-    grid-template-columns: 1fr;
-  }
-
-  .section-card-resultat-recherche {
-    max-width: 100%;
-
-    &.dialogue-card-resultat-recherche {
-      grid-column: 1;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .resultat-recherche-container {
-    padding: $spacing-sm;
-  }
-
-  .quick-actions-resultat-recherche {
-    grid-template-columns: 1fr;
-  }
-
-  .card-content-resultat-recherche {
-    max-height: none;
-    overflow-y: visible;
-  }
-
-  .dialogues-list-resultat-recherche,
-  .dialogues-complets-list-resultat-recherche {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .card-header-resultat-recherche {
-    flex-direction: column;
-    gap: $spacing-sm;
-    align-items: flex-start;
-  }
-
-  .export-buttons-resultat-recherche {
-    width: 100%;
-  }
-
-  .details-grid-resultat-recherche {
-    grid-template-columns: 1fr;
-  }
-
-  .dialogue-item-resultat-recherche .dialogue-header-resultat-recherche,
-  .dialogue-item-resultat-recherche .dialogue-footer-resultat-recherche {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-// Amélioration de l'accessibilité
-@media (prefers-reduced-motion: reduce) {
-  .quick-action-btn-resultat-recherche,
-  .export-buttons-resultat-recherche button,
-  .dialogue-item-resultat-recherche,
-  .dialogue-complet-item-resultat-recherche,
-  .personnage-detailed-item-resultat-recherche {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
-}
-
-// =============================================
-// MODAL / DIALOGUE EMAIL
+// MODAL / DIALOGUE EMAIL - STYLE UNIFIÉ
 // =============================================
 .modal-overlay-resultat-recherche {
   position: fixed;
@@ -1148,7 +1109,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1157,7 +1118,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 }
 
 .modal-content-resultat-recherche {
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
   border-radius: $border-radius-sm;
   box-shadow: $shadow-xl;
   width: 90%;
@@ -1181,8 +1142,8 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 }
 
 .modal-header-resultat-recherche {
-  padding: $spacing-md;
-  border-bottom: 1px solid $color-border;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border; // Bordure dorée
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1199,7 +1160,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 .modal-close-btn-resultat-recherche {
   background: none;
   border: none;
-  color: $color-text-muted;
+  color: $color-text-muted; // Taupe
   cursor: pointer;
   font-size: $font-size-p2;
   padding: $gap-xs;
@@ -1212,16 +1173,16 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 }
 
 .modal-body-resultat-recherche {
-  padding: $spacing-md;
+  padding: $spacing-lg;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: $spacing-lg;
 }
 
 .modal-footer-resultat-recherche {
-  padding: $spacing-md;
-  border-top: 1px solid $color-border;
+  padding: $spacing-lg;
+  border-top: 1px solid $color-border; // Bordure dorée
   display: flex;
   justify-content: flex-end;
   gap: $gap-md;
@@ -1229,6 +1190,169 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   border-radius: 0 0 $border-radius-sm $border-radius-sm;
 }
 
+// Styles pour le type de destinataire
+.recipient-type-simple-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.recipient-type-option-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  padding: $padding-sm;
+  border: 1px solid $color-border; // Bordure dorée
+  border-radius: $border-radius-xs;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  input[type="radio"]:checked + .recipient-type-label-resultat-recherche {
+    color: $color-primary;
+  }
+}
+
+.recipient-type-label-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  cursor: pointer;
+  width: 100%;
+
+  .recipient-type-icon-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-primary;
+    background: rgba($color-primary, 0.1);
+    padding: $gap-sm;
+    border-radius: $border-radius-xs;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+  }
+
+  .recipient-type-info-resultat-recherche {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+
+    strong {
+      @include typography-p4;
+      color: $color-text-primary; // Brun foncé
+    }
+
+    small {
+      @include typography-p5;
+      color: $color-text-muted; // Taupe
+    }
+  }
+}
+
+.recipient-radio-resultat-recherche {
+  margin: 0;
+  cursor: pointer;
+}
+
+// Section des comédiens
+.recipient-section-resultat-recherche {
+  .comedien-selection-header-resultat-recherche {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $gap-sm;
+  }
+
+  .comedien-selection-stats-resultat-recherche {
+    @include typography-p5;
+    color: $color-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  .comedien-search-resultat-recherche {
+    margin-bottom: $gap-md;
+  }
+
+  .comedien-quick-actions-resultat-recherche {
+    display: flex;
+    gap: $gap-sm;
+    margin-bottom: $gap-md;
+  }
+
+  .comedien-checkbox-list-resultat-recherche {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid $color-border; // Bordure dorée
+    border-radius: $border-radius-xs;
+    padding: $gap-xs;
+  }
+
+  .comedien-checkbox-item-resultat-recherche {
+    padding: $gap-xs;
+    border-bottom: 1px solid rgba($color-border, 0.5);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.no-email {
+      opacity: 0.6;
+    }
+  }
+
+  .checkbox-label-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .comedien-info-resultat-recherche {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+
+    .comedien-name-resultat-recherche {
+      @include typography-p4;
+      color: $color-text-primary; // Brun foncé
+      font-weight: $font-weight-medium;
+    }
+
+    .comedien-email-resultat-recherche {
+      @include typography-p5;
+      color: $color-text-muted; // Taupe
+    }
+  }
+}
+
+.loading-indicator-resultat-recherche {
+  @include typography-p4;
+  color: $color-text-muted; // Taupe
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  padding: $padding-sm;
+  background: $color-background;
+  border-radius: $border-radius-xs;
+}
+
+.no-comediens-resultat-recherche {
+  @include typography-p4;
+  color: $color-text-muted; // Taupe
+  font-style: italic;
+  text-align: center;
+  padding: $spacing-md;
+}
+
+// Styles du formulaire
 .form-group-resultat-recherche {
   display: flex;
   flex-direction: column;
@@ -1237,18 +1361,18 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   label {
     @include typography-p4;
     font-weight: $font-weight-medium;
-    color: $color-text-secondary;
+    color: $color-text-secondary; // Brun
   }
 }
 
 .emails-input-container-resultat-recherche {
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
   border-radius: $border-radius-xs;
   padding: $gap-xs;
   display: flex;
   flex-wrap: wrap;
   gap: $gap-xs;
-  background: $color-background-alt;
+  background: $color-background-alt; // Blanc
 
   &:focus-within {
     border-color: $color-primary;
@@ -1294,12 +1418,12 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   min-width: 150px;
   font-size: $font-size-p4;
   padding: 4px;
-  color: $color-text-primary;
+  color: $color-text-primary; // Brun foncé
 }
 
 .help-text-resultat-recherche {
   font-size: $font-size-p5;
-  color: $color-text-muted;
+  color: $color-text-muted; // Taupe
   font-style: italic;
 }
 
@@ -1307,10 +1431,10 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 .form-textarea-resultat-recherche {
   width: 100%;
   padding: $padding-sm;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
   border-radius: $border-radius-xs;
   font-size: $font-size-p4;
-  color: $color-text-primary;
+  color: $color-text-primary; // Brun foncé
   transition: $transition-fast;
 
   &:focus {
@@ -1341,7 +1465,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   margin: 0;
   max-height: 100px;
   overflow-y: auto;
-  border: 1px solid $color-border;
+  border: 1px solid $color-border; // Bordure dorée
   border-radius: $border-radius-xs;
 }
 
@@ -1350,7 +1474,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   justify-content: space-between;
   align-items: center;
   padding: $gap-xs $padding-sm;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid $color-border; // Bordure dorée
   font-size: $font-size-p4;
 
   &:last-child {
@@ -1360,12 +1484,27 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   &:hover {
     background: $color-background;
   }
+
+  .email-address-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    .recipient-icon-resultat-recherche {
+      color: $color-primary;
+    }
+
+    .recipient-name-resultat-recherche {
+      color: $color-text-muted; // Taupe
+      font-size: $font-size-p5;
+    }
+  }
 }
 
 .email-remove-btn-resultat-recherche {
   background: none;
   border: none;
-  color: $color-text-muted;
+  color: $color-text-muted; // Taupe
   cursor: pointer;
   transition: $transition-fast;
 
@@ -1376,17 +1515,18 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
 
 .cancel-btn-resultat-recherche {
   padding: $gap-sm $spacing-md;
-  background: $color-background-alt;
-  border: 1px solid $color-border;
+  background: $color-background-alt; // Blanc
+  border: 1px solid $color-border; // Bordure dorée
   border-radius: $border-radius-xs;
-  color: $color-text-secondary;
+  color: $color-text-secondary; // Brun
   cursor: pointer;
   font-weight: $font-weight-medium;
   transition: $transition-fast;
 
   &:hover:not(:disabled) {
-    background: $color-background;
-    color: $color-text-primary;
+    background: rgba($color-primary, 0.1); // Doré subtil
+    border-color: $color-primary;
+    color: $color-primary;
   }
 
   &:disabled {
@@ -1400,7 +1540,7 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   background: $color-primary;
   border: none;
   border-radius: $border-radius-xs;
-  color: $color-text-light;
+  color: $color-text-light; // Blanc
   cursor: pointer;
   font-weight: $font-weight-medium;
   display: flex;
@@ -1417,10 +1557,121 @@ $header-height: 80px; // Hauteur du header à synchroniser avec le layout global
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background: $color-text-muted;
+    background: $color-text-muted; // Taupe
   }
 }
 
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .sidebar-right-resultat-recherche {
+    width: 260px;
+  }
 
+  .main-content-resultat-recherche {
+    margin-left: 260px;
+  }
 
+  .details-container-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .sidebar-right-resultat-recherche {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+
+  .main-content-resultat-recherche {
+    margin-left: 0;
+  }
+
+  .app-wrapper-global {
+    flex-direction: column;
+  }
+
+  .details-container-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+
+  .section-card-resultat-recherche {
+    max-width: 100%;
+
+    &.dialogue-card-resultat-recherche {
+      grid-column: 1;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .resultat-recherche-container {
+    padding: $spacing-sm;
+  }
+
+  .quick-actions-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+
+  .card-content-resultat-recherche {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .dialogues-list-resultat-recherche,
+  .dialogues-complets-list-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar-actions-resultat-recherche {
+    flex-direction: column;
+    width: 100%;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .card-header-resultat-recherche {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+
+  .details-grid-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+
+  .dialogue-item-resultat-recherche .dialogue-header-resultat-recherche,
+  .dialogue-item-resultat-recherche .dialogue-footer-resultat-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .quick-action-btn-resultat-recherche,
+  .btn-ecran-travail-resultat-recherche,
+  .btn-export-pdf-resultat-recherche,
+  .btn-send-email-resultat-recherche,
+  .dialogue-item-resultat-recherche,
+  .dialogue-complet-item-resultat-recherche,
+  .personnage-detailed-item-resultat-recherche,
+  .modal-close-btn-resultat-recherche,
+  .submit-btn-resultat-recherche,
+  .cancel-btn-resultat-recherche {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
 

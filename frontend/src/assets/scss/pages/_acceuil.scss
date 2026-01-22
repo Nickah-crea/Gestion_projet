@@ -709,15 +709,15 @@ body, html {
 
 .filter-group-scenariste {
   select {
-    padding: $padding-sm;
+    padding: $padding-md;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border; // Changé: bordure dorée
     background: $color-background-alt; // Changé: blanc
     font-size: $font-size-p3;
-    min-width: 140px;
-    height: 42px;
+    width: 150px;
+    height: 55px;
     transition: $transition-fast;
-    
+
     &:focus {
       outline: none;
       border-color: $color-primary; // Changé: doré
@@ -748,7 +748,8 @@ body, html {
   cursor: pointer;
   transition: $transition;
   white-space: nowrap;
-  width: 200px;
+  width: 250px;
+  height: 55px;
   @include typography-playfair-h4;
   animation: pulse-glow 2s infinite; // Animation de pulsation
   
