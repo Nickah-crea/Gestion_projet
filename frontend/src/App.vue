@@ -15,8 +15,9 @@ export default {
   },
   computed: {
     showNavbar() {
-      // Ne pas afficher la navbar sur la page de connexion
-      return this.$route.path !== '/';
+      // Ne pas afficher la navbar sur la page de connexion ET sur forgot-password
+      return this.$route.path !== '/' && 
+             this.$route.path !== '/forgot-password';
     }
   }
 }
@@ -54,5 +55,4 @@ body {
 }
 
 </style>
-
 
