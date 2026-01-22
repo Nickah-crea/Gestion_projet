@@ -96,9 +96,9 @@
             </div>
 
             <!-- Informations des scènes sélectionnées AVEC DATES DE TOURNAGE -->
-            <div v-if="sceneSourceInfo || sceneCibleInfo" class="scenes-info-raccord-scene">
+            <!-- <div v-if="sceneSourceInfo || sceneCibleInfo" class="scenes-info-raccord-scene"> -->
               <!-- Scène Source -->
-              <div v-if="sceneSourceInfo" class="scene-info-raccord-scene">
+              <!-- <div v-if="sceneSourceInfo" class="scene-info-raccord-scene">
                 <h5>Scène Source (fixe)</h5>
                 <p><strong>Titre:</strong> {{ sceneSourceInfo.titre }}</p>
                 <p><strong>Ordre:</strong> {{ sceneSourceInfo.ordre }}</p>
@@ -108,10 +108,10 @@
                   </span>
                 </p>
                 <p><strong>Statut:</strong> {{ sceneSourceTournageInfo?.statutTournage || 'Non défini' }}</p>
-              </div>
+              </div> -->
 
               <!-- Scène Cible -->
-              <div v-if="sceneCibleInfo" class="scene-info-raccord-scene">
+              <!-- <div v-if="sceneCibleInfo" class="scene-info-raccord-scene">
                 <h5>Scène Cible</h5>
                 <p><strong>Titre:</strong> {{ sceneCibleInfo.titre }}</p>
                 <p><strong>Ordre:</strong> {{ sceneCibleInfo.ordre }}</p>
@@ -125,7 +125,7 @@
                 </p>
                 <p><strong>Statut:</strong> {{ sceneCibleTournageInfo?.statutTournage || 'Non défini' }}</p>
               </div>
-            </div>
+            </div> -->
           </div>
 
           <!-- Section Personnages et Comédiens -->
@@ -161,7 +161,7 @@
             </div>
 
             <!-- Affichage des comédiens sélectionnés -->
-            <div v-if="selectedComediens.length > 0" class="selected-comediens-raccord-scene">
+            <!-- <div v-if="selectedComediens.length > 0" class="selected-comediens-raccord-scene">
               <h5>Comédiens sélectionnés ({{ selectedComediens.length }})</h5>
               <div class="comediens-list-raccord-scene">
                 <div 
@@ -182,11 +182,11 @@
                   </button>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <!-- Informations des personnages sélectionnés -->
-            <div v-if="selectedPersonnagesInfo.length > 0" class="personnages-info-raccord-scene">
-              <h5>Personnages sélectionnés ({{ selectedPersonnagesInfo.length }})</h5>
+            <!-- <div v-if="selectedPersonnagesInfo.length > 0" class="personnages-info-raccord-scene"> -->
+              <!-- <h5>Personnages sélectionnés ({{ selectedPersonnagesInfo.length }})</h5>
               <div class="personnages-grid-raccord-scene">
                 <div 
                   v-for="personnage in selectedPersonnagesInfo" 
@@ -215,7 +215,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
           
 

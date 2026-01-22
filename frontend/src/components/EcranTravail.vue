@@ -252,40 +252,7 @@
               </h1>
             </div>
           </div>
-          
-          <!-- Statistiques horizontales (identique au projet) -->
-          <div class="episode-stats-view-screen-work">
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-list-ol"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">{{ sequences.length }}</div>
-                <div class="stat-label-screen-work">Séquences</div>
-              </div>
-            </div>
-            
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-film"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">{{ totalScenesInEpisode }}</div>
-                <div class="stat-label-screen-work">Scènes</div>
-              </div>
-            </div>
-            
-            <div class="stat-card-screen-work">
-              <div class="stat-icon-screen-work">
-                <i class="fas fa-comments"></i>
-              </div>
-              <div class="stat-content-screen-work">
-                <div class="stat-number-screen-work">{{ getEpisodeCommentCount(currentEpisode.idEpisode) }}</div>
-                <div class="stat-label-screen-work">Commentaires</div>
-              </div>
-            </div>
-          </div>
-          
+
           <!-- Barre d'actions (sous les stats) -->
           <div class="episode-actions-bar-screen-work">
             <button class="details-btn-screen-work" @click="showEpisodeDetailsModal = true">
@@ -304,18 +271,43 @@
               <i class="fas fa-plus"></i> Ajouter une séquence
             </button>
           </div>
+
+          <!-- Section Commentaires (optionnelle, comme action supplémentaire) -->
+            <div v-if="showEpisodeCommentSection" class="detail-section-screen-work comment-section-screen-work">
+              <h3><i class="fas fa-comments"></i> Commentaires de l'épisode</h3>
+              <div class="add-comment-screen-work">
+                <textarea v-model="newEpisodeComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
+                <button @click="addEpisodeComment" class="add-comment-btn-screen-work">
+                  <i class="fas fa-plus-circle"></i> Ajouter
+                </button>
+              </div>
+              
+              <div class="comments-list-screen-work">
+                <div v-for="comment in episodeComments" :key="comment.id" class="comment-item-screen-work">
+                  <div class="comment-header-screen-work">
+                    <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
+                    <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
+                  </div>
+                  <div class="comment-content-screen-work">
+                    {{ comment.contenu }}
+                  </div>
+                  <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
+                    <button @click="deleteEpisodeComment(comment.id)" class="delete-comment-btn-screen-work">
+                      <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           
           <!-- Section détails (structure projet) -->
           <div class="episode-details-view-screen-work">
             
             <!-- Section Équipe & Synopsis -->
             <div class="detail-section-screen-work">
-              <div class="detail-section-header-screen-work">
-                <h3><i class="fas fa-users"></i> Équipe & Synopsis</h3>
-                <button v-if="userPermissions.canEditEpisode" class="edit-episode-btn-screen-work" @click="startEditEpisode">
+              <!-- <button v-if="userPermissions.canEditEpisode" class="edit-episode-btn-screen-work" @click="startEditEpisode">
                   <i class="fas fa-pen"></i> Modifier
-                </button>
-              </div>
+                </button> -->
               
               <div class="detail-section-content-screen-work">
                 <!-- Équipe -->
@@ -388,34 +380,6 @@
                 <button v-if="userPermissions.canCreateSequence" class="add-btn-screen-work" @click="goToAddSequence">
                   <i class="fas fa-plus"></i> Créer la première séquence
                 </button>
-              </div>
-            </div>
-            
-            <!-- Section Commentaires (optionnelle, comme action supplémentaire) -->
-            <div v-if="showEpisodeCommentSection" class="detail-section-screen-work comment-section-screen-work">
-              <h3><i class="fas fa-comments"></i> Commentaires de l'épisode</h3>
-              <div class="add-comment-screen-work">
-                <textarea v-model="newEpisodeComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-                <button @click="addEpisodeComment" class="add-comment-btn-screen-work">
-                  <i class="fas fa-plus-circle"></i> Ajouter
-                </button>
-              </div>
-              
-              <div class="comments-list-screen-work">
-                <div v-for="comment in episodeComments" :key="comment.id" class="comment-item-screen-work">
-                  <div class="comment-header-screen-work">
-                    <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
-                    <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
-                  </div>
-                  <div class="comment-content-screen-work">
-                    {{ comment.contenu }}
-                  </div>
-                  <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
-                    <button @click="deleteEpisodeComment(comment.id)" class="delete-comment-btn-screen-work">
-                      <i class="fas fa-trash"></i> Supprimer
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
             
@@ -1374,18 +1338,11 @@ const userPermissions = ref({
 
 const showEmailModal = ref(false)
 
-const openEmailModal = () => {
-  if (!userPermissions.value.canSendEmail) {
-    alert('Vous n\'êtes pas autorisé à envoyer des emails.');
-    return;
-  }
-  
-  showEmailModal.value = true;
-};
 
-// const openEmailModal = () => {
-//   showEmailModal.value = true
-// }
+
+const openEmailModal = () => {
+  showEmailModal.value = true
+}
 
 const closeEmailModal = () => {
   showEmailModal.value = false
@@ -1877,7 +1834,7 @@ const checkUserPermissions = async (episodeId) => {
             canExport: response.data.canExport || response.data.canCreateScene || false,
             
             // NOUVEAU : Permissions pour l'email
-            canSendEmail: response.data.canSendEmail || false,
+            canSendEmail: response.data.canSendEmail || true,
             
             // NOUVEAU : Permissions pour le tournage
             canPlanTournage: response.data.canPlanTournage || response.data.canCreateScene || false,
@@ -1917,7 +1874,7 @@ const checkUserPermissions = async (episodeId) => {
             canCreateRaccord: false,
             canViewRaccords: true, // Toujours permettre la vue
             canExport: false,
-            canSendEmail: false,
+            canSendEmail: true,
             canPlanTournage: false,
             canEditTournage: false,
             canAddComments: true, // Toujours permettre d'ajouter des commentaires

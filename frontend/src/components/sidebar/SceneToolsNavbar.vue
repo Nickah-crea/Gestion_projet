@@ -95,15 +95,15 @@
               <span>Nouveau dialogue</span>
             </button>
             
-            <button 
-              class="action-btn" 
-              @click="openEmailModal" 
-              title="Envoyer par email"
-              v-if="userPermissions.canSendEmail"
-            >
-              <i class="fas fa-envelope"></i>
-              <span>Envoyer par email</span>
-            </button>
+              <button 
+                  class="action-btn" 
+                  @click="openEmailModal" 
+                  title="Envoyer par email"
+              >
+                  <i class="fas fa-envelope"></i>
+                  <span>Envoyer par email</span>
+              </button>
+
             
             <!-- MODIFICATION : Toujours visible mais avec accès limité -->
             <button 
@@ -370,13 +370,18 @@ const toggleComments = () => {
 };
 
 
+// const openEmailModal = () => {
+//   if (!props.userPermissions.canSendEmail) {
+//     showPermissionAlert("Envoyer par email");
+//     return;
+//   }
+//   emit('open-email', props.scene);
+//   closeAllDropdowns();
+// };
+
 const openEmailModal = () => {
-  if (!props.userPermissions.canSendEmail) {
-    showPermissionAlert("Envoyer par email");
-    return;
-  }
-  emit('open-email', props.scene);
-  closeAllDropdowns();
+    emit('open-email', props.scene);
+    closeAllDropdowns();
 };
 
 const goToPrevScene = () => {
