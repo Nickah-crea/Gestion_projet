@@ -1,6 +1,6 @@
 <!-- StatusCRUD.vue -->
 <template>
-  <div class="app-wrapper-global-status">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale -->
     <div class="creation-sidebar-status">
       <div class="sidebar-header-status">

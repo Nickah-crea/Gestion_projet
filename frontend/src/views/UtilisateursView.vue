@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-utilisateurs">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale fixe à gauche -->
     <aside class="utilisateurs-sidebar">
       <div class="sidebar-header">
@@ -754,6 +754,7 @@ export default {
       this.showToast('Utilisateur modifié avec succès', 'success');
     },
 
+    
     async createUser() {
       // Création via l'endpoint d'inscription admin
       const userData = {

@@ -7,6 +7,7 @@
         <p class="sidebar-subtitle">Gestion complète</p>
       </div>
 
+      
       <div class="sidebar-section">
         <h3 class="section-title">
           <i class="fas fa-film"></i> Navigation

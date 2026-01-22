@@ -24,7 +24,7 @@
             <div class="image-overlay">
               <div class="overlay-content">
                 <h2 class="overlay-title">
-                  {{ isLoginForm ? 'VOTRE CINÉMA' : 'VOTRE PLATEAU' }}
+                  {{ isLoginForm ? 'VDFI' : 'VOTRE PLATEAU' }}
                 </h2>
                 <p class="overlay-text">
                   {{ isLoginForm 

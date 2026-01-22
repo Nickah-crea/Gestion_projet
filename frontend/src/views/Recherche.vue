@@ -206,6 +206,7 @@
           <p class="page-subtitle-recherche">Trouvez des scènes, personnages, lieux, plateaux, épisodes et séquences selon vos critères</p>
         </div>
 
+        
         <!-- Barre de recherche principale -->
         <div class="search-bar-main-recherche">
           <div class="search-input-container-recherche">
