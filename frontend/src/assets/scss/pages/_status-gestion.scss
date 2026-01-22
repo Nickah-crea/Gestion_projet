@@ -1,57 +1,68 @@
-// _status-gestion.scss – Styles pour la gestion des statuts
 @import '../base/variables';
 
 .app-wrapper-global-status {
   display: flex;
   min-height: 100vh;
-  background: none;
 }
 
 // =============================================
-// SIDEBAR LATÉRALE
+// SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
-.creation-sidebar-status {
+.status-sidebar {
   position: fixed;
+  top: 60px;
   left: 0;
-  top: 80px;
   width: 280px;
-  height: calc(100vh - 80px);
-  background: $color-background;
-  padding: $spacing-md;
-  box-sizing: border-box;
-  z-index: $z-index-sticky;
+  height: calc(100vh - 50px);
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  border-right: 1px solid $color-border;
-  box-shadow: $shadow-md;
+  padding: $padding-lg;
+  background: $color-primary;
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
 
-  .sidebar-header-status {
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
+  
+  i {
+    color: $color-primary-dark !important;
+  }
+
+  .sidebar-header {
     margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
 
-    .sidebar-title-status {
+    .sidebar-title {
       @include typography-playfair-h4;
       color: $color-text-primary;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
-      display: flex;
-      align-items: center;
-      gap: $gap-xs;
     }
 
-    .sidebar-subtitle-status {
+    .sidebar-subtitle {
       @include typography-p4;
       color: $color-text-muted;
       margin: 0;
     }
   }
 
-  .sidebar-section-status {
+  .sidebar-section {
     margin-bottom: $spacing-md;
     background: $color-background-alt;
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
-    .section-title-status {
+    .section-title {
       @include typography-p4;
       color: $color-text-primary;
       margin-bottom: $gap-sm;
@@ -62,13 +73,13 @@
     }
   }
 
-  .sidebar-actions-status {
+  .sidebar-actions {
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
   }
 
-  .sidebar-btn-status {
+  .sidebar-btn {
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
@@ -81,18 +92,18 @@
     transition: $transition-fast;
     display: flex;
     align-items: center;
+    font-weight: $font-weight-semibold;
     gap: $gap-xs;
     box-sizing: border-box;
 
     &:hover {
-      background: $color-surface-hover;
+      background: rgba($color-primary, 0.1);
       border-color: $color-primary;
       color: $color-primary;
     }
 
     &.active {
-      background: $color-primary;
-      border-color: $color-primary;
+      background: $color-tertiary-dark;
       color: $color-text-light;
     }
 
@@ -102,42 +113,13 @@
     }
   }
 
-  .stats-status {
+  .filter-group {
     display: flex;
     flex-direction: column;
     gap: $gap-sm;
   }
 
-  .stat-item-status {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: $padding-sm;
-    background: $color-background-alt;
-    border-radius: $border-radius-xs;
-    border: 1px solid $color-border;
-
-    .stat-number-status {
-      @include typography-playfair-h4;
-      color: $color-primary;
-      font-size: calc(#{$font-size-h4} - 4px);
-      font-weight: $font-weight-bold;
-    }
-
-    .stat-label-status {
-      @include typography-p4;
-      color: $color-text-muted;
-      text-align: center;
-    }
-  }
-
-  .filter-group-status {
-    display: flex;
-    flex-direction: column;
-    gap: $gap-sm;
-  }
-
-  .filter-item-status {
+  .filter-item {
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
@@ -149,7 +131,7 @@
     }
   }
 
-  .filter-select-status {
+  .filter-select {
     width: 100%;
     height: 34px;
     padding: 0 $padding-xs;
@@ -160,19 +142,19 @@
     color: $color-text-primary;
     cursor: pointer;
     box-sizing: border-box;
-
+    
     &:focus {
       outline: none;
       border-color: $color-primary;
     }
   }
 
-  .search-input-container-status {
+  .search-input-container {
     position: relative;
     display: flex;
     align-items: center;
 
-    .search-input-status {
+    .search-input {
       width: 100%;
       height: 34px;
       padding: 0 $padding-xs 0 ($padding-xs + 20px);
@@ -190,58 +172,64 @@
       }
     }
 
-    .search-icon-status {
+    .search-icon {
       position: absolute;
       left: $padding-xs;
       color: $color-primary;
       font-size: $font-size-p4;
     }
   }
+
+  .stats {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
+  }
 }
 
 // =============================================
-// CONTENU PRINCIPAL
+// CONTENU PRINCIPAL À DROITE
 // =============================================
-.creation-body-status {
+.status-body {
   flex: 1;
   margin-left: 280px;
   min-height: 100vh;
   background: none;
 }
 
-.creation-main-content-status {
+.status-main-content {
   padding: $spacing-lg;
   max-width: 1400px;
   margin: 0 auto;
-
-  .main-header-status {
-    text-align: center;
-    margin-bottom: $spacing-lg;
-
-    .page-title-status {
-      @include typography-playfair-h3;
-      color: $color-text-primary;
-      margin: 0 0 $gap-xs 0;
-      font-size: calc(#{$font-size-h3} - 2px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: $gap-sm;
-    }
-
-    .page-subtitle-status {
-      @include typography-p3;
-      color: $color-text-muted;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-  }
 }
 
 // =============================================
-// SYSTÈME D'ONGLETS
+// SYSTÈME D'ONGlets
 // =============================================
-.tabs-container-status {
+.tabs-container {
   background: $color-background-alt;
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
@@ -249,31 +237,16 @@
   margin-bottom: $spacing-lg;
 }
 
-.tabs-header-status {
+.tabs-header {
   display: flex;
-  background: $color-background;
+  background: $color-background-alt;
   border-bottom: 1px solid $color-border;
   position: relative;
-  overflow-x: auto;
-
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-  }
 }
 
-.tab-btn-status {
+.tab-btn {
   flex: 1;
-  min-width: 160px;
-  padding: $spacing-md $spacing-sm;
+  padding: $spacing-md $spacing-lg;
   background: transparent;
   border: none;
   @include typography-p3;
@@ -283,14 +256,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $gap-xs;
+  gap: $gap-sm;
   position: relative;
   z-index: 2;
-  white-space: nowrap;
 
   &:hover {
     color: $color-primary;
-    background: $color-surface;
+    background: rgba($color-primary, 0.05);
   }
 
   &.active {
@@ -303,8 +275,8 @@
     outline-offset: -2px;
   }
 
-  .tab-count-status {
-    background: $color-surface;
+  .tab-count {
+    background: rgba($color-primary, 0.1);
     color: $color-primary;
     padding: 2px 6px;
     border-radius: $border-radius-pill;
@@ -313,7 +285,7 @@
   }
 }
 
-.tab-indicator-status {
+.tab-indicator {
   position: absolute;
   bottom: 0;
   height: 3px;
@@ -322,15 +294,16 @@
   z-index: 1;
 }
 
-.tabs-content-status {
+.tabs-content {
   position: relative;
 }
 
-.tab-pane-status {
-  animation: fadeInUp-status 0.3s ease-out;
+.tab-pane {
+  padding: $spacing-lg;
+  animation: fadeInUp 0.3s ease-out;
 }
 
-@keyframes fadeInUp-status {
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -341,68 +314,52 @@
   }
 }
 
-.tab-content-wrapper-status {
-  padding: $spacing-lg;
-}
+// =============================================
+// CONTENU DE L'ONGLET
+// =============================================
+.tab-content-wrapper {
+  .tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
 
-.tab-header-status {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-lg;
-  padding-bottom: $spacing-md;
-  border-bottom: 1px solid $color-border;
-
-  @media (max-width: $breakpoint-md) {
-    flex-direction: column;
-    gap: $spacing-sm;
-    align-items: flex-start;
-  }
-
-  .tab-title-status {
     h3 {
       @include typography-playfair-h4;
       color: $color-text-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
       margin: 0 0 $gap-xs 0;
       display: flex;
       align-items: center;
       gap: $gap-sm;
     }
 
-    .tab-description-status {
+    .tab-description {
       @include typography-p4;
       color: $color-text-muted;
       margin: 0;
     }
-  }
 
-  .btn-create-status {
-    padding: $gap-xs $padding-md;
-    background: $color-primary;
-    border: none;
-    border-radius: $border-radius-xs;
-    color: $color-text-light;
-    font-size: $font-size-p4;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
+    .create-btn {
+      padding: $gap-xs $padding-sm;
+      background: $color-primary;
+      border: none;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p4;
+      color: $color-text-light;
+      cursor: pointer;
+      transition: $transition-fast;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
 
-    &:hover {
-      background: $color-primary-dark;
-      transform: translateY(-1px);
-      box-shadow: $shadow-hover;
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary;
-      outline-offset: 2px;
+      &:hover {
+        background: darken($color-primary, 10%);
+        transform: translateY(-1px);
+        box-shadow: $shadow-hover;
+      }
     }
   }
 }
@@ -410,14 +367,13 @@
 // =============================================
 // LISTE DES STATUTS
 // =============================================
-.statuts-list-status {
-  .loading-state-status,
-  .empty-state-status {
+.status-list {
+  .loading-state,
+  .empty-state {
     text-align: center;
     padding: $spacing-xl;
     background: $color-background-alt;
     border-radius: $border-radius-xs;
-    box-shadow: $shadow;
     margin: $spacing-md 0;
 
     i {
@@ -426,25 +382,31 @@
       margin-bottom: $gap-sm;
     }
 
+    h4 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: $gap-sm 0;
+    }
+
     p {
-      @include typography-p3;
+      @include typography-p4;
       color: $color-text-muted;
       max-width: 400px;
       margin: 0 auto;
     }
   }
 
-  .loading-state-status i {
-    animation: spin-status 1s linear infinite;
+  .loading-state i {
+    animation: spin 1s linear infinite;
   }
 
-  @keyframes spin-status {
+  @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
 }
 
-.statuts-grid-status {
+.status-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: $spacing-md;
@@ -454,7 +416,7 @@
   }
 }
 
-.statut-card-status {
+.status-card {
   background: $color-background-alt;
   border-radius: $border-radius-sm;
   border: 1px solid $color-border;
@@ -472,7 +434,7 @@
     background: $color-background;
   }
 
-  .statut-card-header-status {
+  .status-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -481,12 +443,12 @@
     border-bottom: 1px solid $color-border;
   }
 
-  .statut-code-status {
+  .status-code {
     display: flex;
     align-items: center;
     gap: $gap-xs;
 
-    .code-badge-status {
+    .code-badge {
       padding: 2px 8px;
       background: $color-primary;
       color: $color-text-light;
@@ -496,7 +458,7 @@
       text-transform: uppercase;
     }
 
-    .activation-badge-status {
+    .activation-badge {
       padding: 2px 6px;
       border-radius: $border-radius-xs;
       font-size: $font-size-p5;
@@ -514,11 +476,11 @@
     }
   }
 
-  .statut-actions-status {
+  .status-actions {
     display: flex;
     gap: $gap-xs;
 
-    .btn-action-status {
+    .btn-action {
       width: 28px;
       height: 28px;
       border: none;
@@ -534,7 +496,7 @@
       }
 
       &.edit {
-        background: rgba($color-warning, 0.1);
+        background: rgba($color-accent, 0.1);
         color: $color-accent;
 
         &:hover {
@@ -562,37 +524,32 @@
           color: $color-text-light;
         }
       }
-
-      &:focus-visible {
-        outline: 2px solid $color-primary;
-        outline-offset: 1px;
-      }
     }
   }
 
-  .statut-card-body-status {
+  .status-card-body {
     padding: $padding-md;
 
-    .statut-name-status {
+    .status-name {
       @include typography-playfair-p4;
       color: $color-text-primary;
       margin: 0 0 $gap-sm 0;
       font-size: calc(#{$font-size-p4} + 1px);
     }
 
-    .statut-description-status {
+    .status-description {
       @include typography-p4;
       color: $color-text-secondary;
       margin: 0 0 $gap-md 0;
       line-height: 1.4;
     }
 
-    .statut-meta-status {
+    .status-meta {
       display: flex;
       gap: $gap-md;
       flex-wrap: wrap;
 
-      .meta-item-status {
+      .meta-item {
         display: flex;
         align-items: center;
         gap: $gap-xs;
@@ -608,30 +565,30 @@
 }
 
 // Classes de couleur pour les codes de statut
-.status-success .code-badge-status {
+.status-success .code-badge {
   background: $color-primary !important;
 }
 
-.status-error .code-badge-status {
+.status-error .code-badge {
   background: $color-error !important;
 }
 
-.status-warning .code-badge-status {
-  background: $color-warning !important;
+.status-warning .code-badge {
+  background: $color-accent !important;
 }
 
-.status-info .code-badge-status {
+.status-info .code-badge {
   background: $color-info !important;
 }
 
-.status-default .code-badge-status {
+.status-default .code-badge {
   background: $color-text-muted !important;
 }
 
 // =============================================
 // MODAL
 // =============================================
-.modal-overlay-status {
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -645,7 +602,7 @@
   padding: $spacing-md;
 }
 
-.modal-content-status {
+.modal-content {
   background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-xl;
@@ -653,10 +610,14 @@
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  animation: modalSlideIn-status 0.3s ease-out;
+  animation: modalSlideIn 0.3s ease-out;
 }
 
-@keyframes modalSlideIn-status {
+.confirmation-modal {
+  max-width: 500px;
+}
+
+@keyframes modalSlideIn {
   from {
     opacity: 0;
     transform: translateY(-50px) scale(0.9);
@@ -667,7 +628,7 @@
   }
 }
 
-.modal-header-status {
+.modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -684,7 +645,7 @@
   }
 }
 
-.modal-close-btn-status {
+.modal-close-btn {
   background: transparent;
   border: none;
   font-size: $font-size-h4;
@@ -698,27 +659,22 @@
     background: rgba($color-error, 0.1);
     color: $color-error;
   }
-
-  &:focus-visible {
-    outline: 2px solid $color-primary;
-    outline-offset: 1px;
-  }
 }
 
-.modal-body-status {
+.modal-body {
   padding: $spacing-lg;
 }
 
 // =============================================
 // FORMULAIRE
 // =============================================
-.statut-form-status {
+.status-form {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
 }
 
-.form-row-status {
+.form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
@@ -728,7 +684,7 @@
   }
 }
 
-.form-group-status {
+.form-group {
   display: flex;
   flex-direction: column;
   gap: $gap-xs;
@@ -752,10 +708,10 @@
     }
   }
 
-  .form-input-status,
-  .form-textarea-status {
+  .form-input,
+  .form-textarea {
     width: 100%;
-    padding: $padding-sm;
+    padding: $gap-sm $padding-sm;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -775,43 +731,38 @@
     }
   }
 
-  .form-textarea-status {
+  .form-textarea {
     resize: vertical;
     min-height: 80px;
   }
 
-  .error-message-status {
+  .error-message {
     color: $color-error;
     font-size: $font-size-p5;
     margin-top: 2px;
   }
 
-  .input-hint-status {
+  .input-hint {
     color: $color-text-muted;
     font-size: $font-size-p5;
     margin-top: 2px;
   }
 
-  .checkbox-group-status {
+  .checkbox-group {
     display: flex;
     align-items: center;
     gap: $gap-sm;
     margin-top: 4px;
 
-    .checkbox-input-status {
+    .checkbox-input {
       display: none;
 
-      &:checked + .checkbox-label-status .checkbox-custom-status::after {
+      &:checked + .checkbox-label .checkbox-custom::after {
         opacity: 1;
-      }
-
-      &:focus-visible + .checkbox-label-status .checkbox-custom-status {
-        outline: 2px solid $color-primary;
-        outline-offset: 1px;
       }
     }
 
-    .checkbox-label-status {
+    .checkbox-label {
       display: flex;
       align-items: center;
       gap: $gap-xs;
@@ -819,7 +770,7 @@
       font-size: $font-size-p4;
       color: $color-text-secondary;
 
-      .checkbox-custom-status {
+      .checkbox-custom {
         width: 18px;
         height: 18px;
         border: 2px solid $color-border;
@@ -840,14 +791,14 @@
         }
       }
 
-      &:hover .checkbox-custom-status {
+      &:hover .checkbox-custom {
         border-color: $color-primary;
       }
     }
   }
 }
 
-.form-error-status {
+.form-error {
   padding: $padding-sm;
   background: rgba($color-error, 0.1);
   border: 1px solid $color-error;
@@ -860,7 +811,10 @@
   gap: $gap-xs;
 }
 
-.form-actions-status {
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions {
   display: flex;
   gap: $spacing-sm;
   justify-content: flex-end;
@@ -872,8 +826,8 @@
     flex-direction: column;
   }
 
-  .cancel-btn-status,
-  .submit-btn-status {
+  .cancel-btn,
+  .submit-btn {
     padding: $gap-sm $spacing-md;
     border: none;
     border-radius: $border-radius-xs;
@@ -885,11 +839,16 @@
     align-items: center;
     justify-content: center;
     gap: $gap-xs;
-    min-width: 120px;
+    min-width: 140px;
 
     @media (max-width: $breakpoint-md) {
       min-width: auto;
       width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
     }
 
     &:disabled {
@@ -897,31 +856,26 @@
       cursor: not-allowed;
       transform: none;
     }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary;
-      outline-offset: 2px;
-    }
   }
 
-  .cancel-btn-status {
+  .cancel-btn {
     background: transparent;
     border: 1px solid $color-border;
     color: $color-text-secondary;
 
     &:hover:not(:disabled) {
-      background: $color-surface-hover;
+      background: rgba($color-primary, 0.1);
       border-color: $color-primary;
       color: $color-primary;
     }
   }
 
-  .submit-btn-status {
+  .submit-btn {
     background: $color-primary;
     color: $color-text-light;
 
     &:hover:not(:disabled) {
-      background: $color-primary-dark;
+      background: darken($color-primary, 10%);
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -933,309 +887,20 @@
 }
 
 // =============================================
-// RESPONSIVE
-// =============================================
-@media (max-width: $breakpoint-xl) {
-  .creation-sidebar-status {
-    width: 250px;
-  }
-
-  .creation-body-status {
-    margin-left: 250px;
-  }
-}
-
-@media (max-width: $breakpoint-lg) {
-  .creation-sidebar-status {
-    position: relative;
-    width: 100%;
-    height: auto;
-    top: 0;
-  }
-
-  .creation-body-status {
-    margin-left: 0;
-  }
-
-  .tabs-header-status {
-    flex-wrap: wrap;
-  }
-
-  .tab-btn-status {
-    min-width: 120px;
-    padding: $spacing-sm;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .creation-main-content-status {
-    padding: $spacing-sm;
-  }
-
-  .statuts-grid-status {
-    grid-template-columns: 1fr;
-  }
-
-  .tab-pane-status {
-    padding: $spacing-sm;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .comediens-table-status {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .tab-btn-status {
-    font-size: $font-size-p4;
-
-    i {
-      font-size: $font-size-p3;
-    }
-  }
-}
-
-// Amélioration de l'accessibilité
-@media (prefers-reduced-motion: reduce) {
-  .sidebar-btn-status,
-  .form-input-status,
-  .submit-btn-status,
-  .cancel-btn-status,
-  .btn-action-status,
-  .tab-btn-status,
-  .tab-indicator-status,
-  .btn-create-status,
-  .statut-card-status {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
-
-  .loading-state-status i {
-    animation: none;
-  }
-
-  .tab-pane-status {
-    animation: none;
-  }
-
-  .modal-content-status {
-    animation: none;
-  }
-}
-
-// =============================================
-// NOTIFICATIONS
-// =============================================
-.notifications-container-status {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: $z-index-modal + 1;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  max-width: 400px;
-  width: 100%;
-}
-
-.notification-status {
-  position: relative;
-  background: $color-background-alt;
-  border-radius: $border-radius-sm;
-  box-shadow: $shadow-lg;
-  padding: $padding-md;
-  display: flex;
-  align-items: flex-start;
-  gap: $spacing-sm;
-  animation: slideInRight-status 0.3s ease-out;
-  overflow: hidden;
-  border-left: 4px solid transparent;
-  cursor: pointer;
-  transition: transform $transition-fast;
-  
-  &:hover {
-    transform: translateX(-4px);
-    box-shadow: $shadow-xl;
-  }
-}
-
-@keyframes slideInRight-status {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.notification-success {
-  border-left-color: $color-primary;
-  background: $color-pastel-gold;
-}
-
-.notification-error {
-  border-left-color: $color-error;
-  background: $color-pastel-wine;
-}
-
-.notification-warning {
-  border-left-color: $color-warning;
-  background: rgba($color-accent, 0.05);
-}
-
-.notification-info {
-  border-left-color: $color-info;
-  background: rgba($color-info, 0.05);
-}
-
-.notification-icon-status {
-  font-size: 20px;
-  line-height: 1;
-  margin-top: 2px;
-}
-
-.notification-success .notification-icon-status {
-  color: $color-primary;
-}
-
-.notification-error .notification-icon-status {
-  color: $color-error;
-}
-
-.notification-warning .notification-icon-status {
-  color: $color-warning;
-}
-
-.notification-info .notification-icon-status {
-  color: $color-info;
-}
-
-.notification-content-status {
-  flex: 1;
-  min-width: 0;
-}
-
-.notification-message-status {
-  @include typography-p4;
-  color: $color-text-primary;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.notification-close-status {
-  background: transparent;
-  border: none;
-  color: $color-text-muted;
-  font-size: $font-size-p4;
-  cursor: pointer;
-  padding: $gap-xs;
-  border-radius: $border-radius-xs;
-  line-height: 1;
-  transition: $transition-fast;
-  
-  &:hover {
-    color: $color-error;
-    background: rgba($color-error, 0.1);
-  }
-  
-  &:focus-visible {
-    outline: 2px solid $color-primary;
-    outline-offset: 1px;
-  }
-}
-
-.notification-progress-status {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: rgba(0, 0, 0, 0.1);
-  transform-origin: left;
-  animation: progressBar-status linear forwards;
-  
-  .notification-success & {
-    background: $color-primary;
-  }
-  
-  .notification-error & {
-    background: $color-error;
-  }
-  
-  .notification-warning & {
-    background: $color-warning;
-  }
-  
-  .notification-info & {
-    background: $color-info;
-  }
-}
-
-@keyframes progressBar-status {
-  from {
-    transform: scaleX(1);
-  }
-  to {
-    transform: scaleX(0);
-  }
-}
-
-// Animation de sortie pour les notifications
-.notification-status.leaving {
-  animation: slideOutRight-status 0.3s ease-out forwards;
-}
-
-@keyframes slideOutRight-status {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-}
-
-// Responsive
-@media (max-width: $breakpoint-md) {
-  .notifications-container-status {
-    top: 10px;
-    right: 10px;
-    left: 10px;
-    max-width: none;
-  }
-  
-  .notification-status {
-    padding: $padding-sm;
-  }
-}
-
-// =============================================
 // MODAL DE CONFIRMATION
 // =============================================
-.confirmation-modal-status {
-  max-width: 500px;
-}
-
-.confirmation-content-status {
+.confirmation-content {
   text-align: center;
 }
 
-.confirmation-message-status {
+.confirmation-message {
   @include typography-p3;
   color: $color-text-primary;
   margin-bottom: $spacing-lg;
   line-height: 1.5;
 }
 
-.confirmation-actions-status {
+.confirmation-actions {
   display: flex;
   gap: $spacing-sm;
   justify-content: center;
@@ -1245,7 +910,7 @@
   }
 }
 
-.confirm-btn-status {
+.confirm-btn {
   padding: $gap-sm $spacing-lg;
   border: none;
   border-radius: $border-radius-xs;
@@ -1273,17 +938,12 @@
     transform: translateY(0);
   }
   
-  &:focus-visible {
-    outline: 2px solid $color-primary;
-    outline-offset: 2px;
-  }
-  
   &.confirm-warning {
-    background: $color-warning;
+    background: $color-accent;
     color: $color-text-light;
     
     &:hover:not(:disabled) {
-      background: $color-accent-dark;
+      background: darken($color-accent, 10%);
     }
   }
   
@@ -1292,7 +952,7 @@
     color: $color-text-light;
     
     &:hover:not(:disabled) {
-      background: $color-secondary-dark;
+      background: darken($color-error, 10%);
     }
   }
   
@@ -1305,15 +965,6 @@
     }
   }
   
-  &.confirm-success {
-    background: $color-primary;
-    color: $color-text-light;
-    
-    &:hover:not(:disabled) {
-      background: $color-primary-dark;
-    }
-  }
-  
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -1321,4 +972,155 @@
   }
 }
 
+// =============================================
+// TOAST DE NOTIFICATION
+// =============================================
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: $padding-md $spacing-lg;
+  border-radius: $border-radius-xs;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  z-index: $z-index-toast;
+  animation: slideInRight 0.3s ease-out;
+  box-shadow: $shadow-lg;
+  
+  &.success {
+    background: $color-success;
+    color: $color-text-light;
+  }
+  
+  &.error {
+    background: $color-error;
+    color: $color-text-light;
+  }
+  
+  &.warning {
+    background: $color-accent;
+    color: $color-text-light;
+  }
+  
+  i {
+    font-size: $font-size-p3;
+  }
+  
+  span {
+    @include typography-p4;
+    font-weight: $font-weight-medium;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-xl) {
+  .status-sidebar {
+    width: 250px;
+  }
+  
+  .status-body {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .status-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  
+  .status-body {
+    margin-left: 0;
+  }
+  
+  .tabs-header {
+    flex-direction: column;
+  }
+
+  .tab-btn {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator {
+    display: none;
+  }
+
+  .tab-pane {
+    padding: $spacing-md;
+  }
+  
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .status-main-content {
+    padding: $spacing-sm;
+  }
+  
+  .tab-header {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .tab-btn {
+    font-size: $font-size-p4;
+    
+    i {
+      font-size: $font-size-p3;
+    }
+  }
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-btn,
+  .form-input,
+  .submit-btn,
+  .cancel-btn,
+  .btn-action,
+  .tab-btn,
+  .tab-indicator,
+  .create-btn,
+  .status-card {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .tab-pane,
+  .toast {
+    animation: none;
+  }
+  
+  .modal-content {
+    animation: none;
+  }
+}
 
