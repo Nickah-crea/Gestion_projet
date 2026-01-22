@@ -5,7 +5,7 @@
       v-if="showTriggerButton && canShowButton"
       class="btn-open-replanification"
       @click="openReplanificationModal"
-      :disabled="!sceneId"
+      :disabled="!sceneId || !hasPlanifiedTournage"
     >
       <i class="fas fa-calendar-alt"></i>
       Replanifier
@@ -29,9 +29,9 @@
         <div class="scene-info-section">
           <div class="scene-details">
             <h4>Scène à replanifier</h4>
-            <p><strong>Scène {{ sceneInfo?.ordre }}:</strong> {{ sceneInfo?.titre }}</p>
+            <!-- <p><strong>Scène {{ sceneInfo?.ordre }}:</strong> {{ sceneInfo?.titre }}</p>
             <p><strong>Synopsis:</strong> {{ sceneInfo?.synopsis || 'Aucun synopsis' }}</p>
-            <p><strong>Statut:</strong> {{ sceneInfo?.statutNom || 'Non défini' }}</p>
+            <p><strong>Statut:</strong> {{ sceneInfo?.statutNom || 'Non défini' }}</p> -->
             
             <!-- Informations de tournage actuelles -->
             <div v-if="currentTournage" class="current-tournage-info">
@@ -39,7 +39,11 @@
               <p><strong>Date :</strong> {{ formatDate(currentTournage.dateTournage) }}</p>
               <p><strong>Heure début :</strong> {{ formatHeure(currentTournage.heureDebut) }}</p>
               <p><strong>Heure fin :</strong> {{ formatHeure(currentTournage.heureFin) }}</p>
-              <p><strong>Statut :</strong> {{ currentTournage.statutTournage }}</p>
+              <p><strong>Statut :</strong> {{ getStatutLibelle(currentTournage.statutTournage) }}</p>
+              <div v-if="!isPlanifiedTournage" class="statut-alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Seuls les tournages planifiés peuvent être replanifiés</span>
+              </div>
             </div>
             <div v-else class="no-tournage-info">
               <p><i class="fas fa-info-circle"></i> Aucun tournage planifié actuellement</p>
@@ -69,7 +73,7 @@
         </div>
 
         <!-- Formulaire de replanification -->
-        <div class="replanification-form-section">
+        <div class="replanification-form-section" v-if="isPlanifiedTournage">
           <h4><i class="fas fa-edit"></i> Nouvelle planification</h4>
           
           <!-- Sélection de la date -->
@@ -160,6 +164,15 @@
               <i class="fas fa-spinner fa-spin" v-else></i>
               {{ loading ? 'Replanification...' : 'Confirmer la replanification' }}
             </button>
+          </div>
+        </div>
+
+        <!-- Message si le tournage n'est pas planifié -->
+        <div v-else-if="currentTournage && !isPlanifiedTournage" class="non-planified-message">
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Cette scène ne peut pas être replanifiée</strong>
+            <p>Le tournage actuel a le statut "{{ getStatutLibelle(currentTournage.statutTournage) }}" et doit être en statut "Planifié" pour être replanifié.</p>
           </div>
         </div>
 
@@ -265,11 +278,26 @@ export default {
       return new Date().toISOString().split('T')[0]
     })
 
+    // Vérifie si le tournage actuel est en statut "planifie"
+    const isPlanifiedTournage = computed(() => {
+      return currentTournage.value?.statutTournage === 'planifie'
+    })
+
+    // Vérifie s'il y a un tournage planifié
+    const hasPlanifiedTournage = computed(() => {
+      return isPlanifiedTournage.value
+    })
+
     // Computed property pour conditionner l'affichage du bouton
     const canShowButton = computed(() => {
       // Vérifier si l'utilisateur a la permission de créer des scènes
-      // et s'il n'y a pas déjà une replanification active
-      return props.userPermissions.canCreateScene && !hasActiveReplanification.value
+      // ET s'il n'y a pas déjà une replanification active
+      // ET s'il y a un tournage planifié
+      return (
+        props.userPermissions.canCreateScene && 
+        !hasActiveReplanification.value &&
+        hasPlanifiedTournage.value
+      )
     })
 
     // Méthodes
@@ -318,6 +346,7 @@ export default {
         const response = await axios.get(`/api/scene-tournage/scene/${props.sceneId}`)
         currentTournage.value = response.data
         console.log('✅ Tournage chargé:', currentTournage.value)
+        console.log('📊 Statut du tournage:', currentTournage.value?.statutTournage)
         
         // Pré-remplir les heures actuelles dans le formulaire
         if (currentTournage.value) {
@@ -457,6 +486,12 @@ export default {
 
     const confirmReplanification = async () => {
       if (!canConfirmReplanification.value) return
+
+      // Vérifier que le tournage est toujours planifié
+      if (!isPlanifiedTournage.value) {
+        alert('Impossible de replanifier : le tournage n\'est plus en statut "Planifié"')
+        return
+      }
 
       // Validation des heures
       if (replanificationData.value.nouvelleHeureDebut && replanificationData.value.nouvelleHeureFin) {
@@ -598,6 +633,17 @@ export default {
       return formatHeure(timeString)
     }
 
+    const getStatutLibelle = (statut) => {
+      const statuts = {
+        'planifie': 'Planifié',
+        'confirme': 'Confirmé',
+        'en_cours': 'En cours',
+        'termine': 'Terminé',
+        'reporte': 'Reporté'
+      }
+      return statuts[statut] || statut
+    }
+
     // Lifecycle
     onMounted(() => {
       console.log('✅ Composant ReplanificationComponent monté')
@@ -615,6 +661,11 @@ export default {
       }
     })
 
+    // Watcher pour surveiller les changements du tournage
+    watch(currentTournage, (newTournage) => {
+      console.log('🔄 Tournage mis à jour:', newTournage?.statutTournage)
+    }, { deep: true })
+
     // Watchers pour la vérification en temps réel des conflits
     watch(() => replanificationData.value.nouvelleDate, verifierConflitsTempsReel)
     watch(() => replanificationData.value.nouvelleHeureDebut, verifierConflitsTempsReel)
@@ -630,6 +681,8 @@ export default {
       conflitsDetected,
       canConfirmReplanification,
       hasActiveReplanification,
+      isPlanifiedTournage,
+      hasPlanifiedTournage,
       minDate,
       canShowButton,
       openReplanificationModal,
@@ -638,7 +691,8 @@ export default {
       appliquerReplanification,
       verifierConflitsTempsReel,
       formatDate,
-      formatHeure
+      formatHeure,
+      getStatutLibelle
     }
   }
 }
