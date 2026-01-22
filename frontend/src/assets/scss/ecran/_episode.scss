@@ -7,13 +7,19 @@
 
 // Conteneur principal identique à .project-view-screen-work
 .episode-view-container-screen-work {
-  max-width: 1400px;
+  width: 1100px;  // Garde le max-width
   margin: 0 auto;
   background: $color-background;
   border-radius: $border-radius-lg;
   box-shadow: $shadow;
   padding: $padding-xl;
   position: relative;
+  border: 3px solid $color-background-dark !important;
+}
+
+.main-content-view-screen-work {
+  width: 100%;        // Assure-toi que c'est 100%
+  display: block;     // Pas flex/inline
 }
 
 // ────────────────────────────────────────────────

@@ -2,24 +2,33 @@
 @import '../base/variables';
 
 // =============================================
-// SIDEBAR LATÉRALE FIXE À GAUCHE
+// SIDEBAR LATÉRALE FIXE À GAUCHE - NOUVEAU STYLE PRINCIPAL
 // =============================================
 .left-sidebar-compact {
   position: fixed;
   top: 60px;
-  right: 90px;
   left: 0;
   width: 250px;
   height: calc(100vh - 60px);
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-md;
-  background: $color-background-dark;
+  background: $color-secondary-black !important; // <-- COULEUR PRINCIPALE
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
   border-radius: 0 20px 20px 0;
   transition: all $transition-slow ease;
+
+  // Texte en blanc pour contraste
+  *:not(i) {
+    color: $color-text-light !important;
+  }
+  
+  // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-dark !important;
+  }
 
   @media (max-width: 1400px) {
     width: 240px;
@@ -30,7 +39,7 @@
     display: none;
   }
 
-  // QUAND FERMÉ (mode compact)
+  // QUAND FERMÉ (mode compact) - AJUSTÉ POUR LE NOUVEAU STYLE
   &.closed {
     width: 80px;
     padding: $padding-sm;
@@ -49,7 +58,7 @@
       justify-content: center;
       padding: $padding-xs;
       margin-bottom: $gap-xs;
-      background: $color-background-alt;
+      background: rgba($color-text-light, 0.1) !important; // Fond clair
       border-radius: $border-radius-xs;
       
       .category-info {
@@ -58,7 +67,7 @@
         i {
           margin: 0;
           font-size: $font-size-p2;
-          color: $color-primary;
+          color: $color-text-light !important; // Icône en blanc
         }
         
         span {
@@ -80,15 +89,15 @@
       padding: $padding-xs;
       margin-bottom: $gap-xs;
       border-radius: $border-radius-xs;
-      background: $color-background-alt;
-      border: 1px solid transparent;
+      background: rgba($color-text-light, 0.1) !important; // Fond clair
+      border: 1px solid rgba($color-text-light, 0.2) !important;
       width: 40px;
       height: 40px;
       
       i {
         margin: 0;
         font-size: $font-size-p2;
-        color: $color-primary;
+        color: $color-text-light !important; // Icône en blanc
       }
       
       .item-text,
@@ -102,7 +111,7 @@
         right: 3px;
         width: 6px;
         height: 6px;
-        background: $color-accent;
+        background: $color-accent-dark !important; // Accent dark
         border-radius: 50%;
       }
     }
@@ -118,17 +127,17 @@
 }
 
 // =============================================
-// BOUTON TOGGLE
+// BOUTON TOGGLE - ADAPTÉ POUR LE NOUVEAU STYLE
 // =============================================
 .sidebar-toggle {
   width: 100%;
   height: 32px;
   padding: 0 $padding-sm;
-  background: $color-background-alt;
-  border: 1px solid $color-border;
+  background: rgba($color-text-light, 0.1) !important; // Fond clair
+  border: 1px solid rgba($color-text-light, 0.2) !important; // Bordure claire
   border-radius: $border-radius-xs;
   font-size: $font-size-p4;
-  color: $color-text-secondary;
+  color: $color-text-light !important; // Texte en blanc
   cursor: pointer;
   transition: $transition-fast;
   display: flex;
@@ -139,18 +148,19 @@
   margin-bottom: $spacing-sm;
 
   &:hover {
-    background: $color-surface-hover;
-    border-color: $color-primary;
-    color: $color-primary;
+    background: rgba($color-text-light, 0.2) !important; // Fond plus clair
+    border-color: $color-text-light !important; // Bordure blanche
+    color: $color-text-light !important;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-primary;
+    outline: 2px solid $color-text-light !important; // Outline blanc
     outline-offset: 1px;
   }
   
   i {
     transition: transform $transition;
+    color: $color-text-light !important; // Icône en blanc
   }
   
   .left-sidebar-compact.closed & i {
@@ -159,36 +169,35 @@
 }
 
 // =============================================
-// EN-TÊTE DU PROJET - Correction STATUT EN DESSOUS
+// EN-TÊTE DU PROJET - NOUVEAU STYLE
 // =============================================
 .sidebar-header {
   margin-bottom: $spacing-sm;
-  border-bottom: 1px solid $color-border;
-  padding-bottom: $spacing-xs;
+  border-bottom: 1px solid rgba($color-text-light, 0.2); // Bordure claire
 
   .project-header {
     cursor: pointer;
     padding: $padding-sm;
     border-radius: $border-radius-xs;
     transition: $transition-fast;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important; // Fond clair
     
     &:hover {
-      background: rgba($color-primary, 0.05);
+      background: rgba($color-text-light, 0.2) !important; // Fond plus clair
     }
     
     .project-title-container {
       display: flex;
-      align-items: flex-start; // ← Permet au V d'être en haut à droite
-      margin-bottom: $gap-xs; // ← Espace pour le statut en dessous
+      align-items: flex-start;
+      margin-bottom: $gap-xs;
       position: relative;
-      min-height: 40px; // ← Hauteur fixe pour l'alignement
+      min-height: 40px;
     }
     
     i.fa-project-diagram {
       font-size: $font-size-h4;
-      color: $color-primary;
-      margin-top: 2px; // ← Aligne avec le texte
+      color: $color-text-light !important; // Icône en blanc
+      margin-top: 2px;
       margin-right: $gap-sm;
       flex-shrink: 0;
     }
@@ -197,39 +206,39 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0; // ← Important: pas d'espace vertical
+      gap: 0;
       
       .project-title {
         @include typography-playfair-h4;
-        color: $color-text-primary;
+        color: $color-text-light !important; // Texte en blanc
         margin: 0;
         font-weight: $font-weight-semibold;
         line-height: 1.2;
       }
       
-      // CORRECTION: Statut EN DESSOUS
+      // CORRECTION: Statut EN DESSOUS - ADAPTÉ
       .project-status {
         @include typography-p4;
         font-size: $font-size-p4;
         font-weight: $font-weight-medium;
-        margin-top: 2px; // ← Petit espace sous le titre
+        margin-top: 2px;
         display: inline-block;
         
         &.statut-en-cours { 
-          color: $color-primary; 
-          background: rgba($color-primary, 0.1);
+          color: $color-text-light !important; // Texte en blanc
+          background: rgba($color-text-light, 0.2) !important; // Fond clair
           padding: 1px 6px;
           border-radius: $border-radius-xs;
         }
         &.statut-termine { 
-          color: $color-success; 
-          background: rgba($color-success, 0.1);
+          color: $color-text-light !important; // Texte en blanc
+          background: rgba($color-success, 0.3) !important; // Fond vert clair
           padding: 1px 6px;
           border-radius: $border-radius-xs;
         }
         &.statut-attente { 
-          color: $color-warning; 
-          background: rgba($color-warning, 0.1);
+          color: $color-text-light !important; // Texte en blanc
+          background: rgba($color-warning, 0.3) !important; // Fond orange clair
           padding: 1px 6px;
           border-radius: $border-radius-xs;
         }
@@ -240,9 +249,9 @@
     .dropdown-icon {
       position: absolute;
       right: 0;
-      top: 2px; // ← Aligné avec le titre
+      top: 2px;
       transition: transform $transition;
-      color: $color-text-muted;
+      color: $color-text-light !important; // Icône en blanc
       font-size: $font-size-p3;
       
       &.rotated {
@@ -253,15 +262,15 @@
   
   .project-details {
     padding: $padding-sm;
-    background: $color-background;
+    background: rgba($color-text-light, 0.1) !important; // Fond clair
     border-radius: $border-radius-xs;
-    border: 1px solid $color-border;
+    border: 1px solid rgba($color-text-light, 0.2) !important; // Bordure claire
     margin-top: $gap-sm;
     box-shadow: $shadow;
     
     .synopsis {
       @include typography-p3;
-      color: $color-text-secondary;
+      color: rgba($color-text-light, 0.9) !important; // Texte légèrement transparent
       margin: 0 0 $margin-sm 0;
       line-height: 1.5;
     }
@@ -273,14 +282,14 @@
       
       span {
         @include typography-p4;
-        color: $color-text-muted;
+        color: rgba($color-text-light, 0.8) !important; // Texte plus transparent
         font-size: $font-size-p4;
         display: flex;
         align-items: center;
         gap: $gap-xs;
         
         i {
-          color: $color-primary;
+          color: $color-text-light !important; // Icône en blanc
         }
       }
     }
@@ -293,10 +302,10 @@
       .icon-btn {
         width: 32px;
         height: 32px;
-        border: 1px solid $color-border;
-        background: $color-surface;
+        border: 1px solid rgba($color-text-light, 0.3) !important; // Bordure claire
+        background: rgba($color-text-light, 0.1) !important; // Fond clair
         border-radius: $border-radius-xs;
-        color: $color-text-secondary;
+        color: $color-text-light !important; // Icône en blanc
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -304,16 +313,16 @@
         transition: $transition-fast;
         
         &:hover {
-          background: rgba($color-primary, 0.1);
-          border-color: $color-primary;
-          color: $color-primary;
+          background: rgba($color-text-light, 0.2) !important; // Fond plus clair
+          border-color: $color-text-light !important; // Bordure blanche
+          color: $color-text-light !important; // Icône en blanc
           transform: scale(1.05);
         }
         
         &.delete:hover {
-          background: rgba($color-error, 0.1);
-          border-color: $color-error;
-          color: $color-error;
+          background: rgba($color-error, 0.3) !important; // Fond rouge clair
+          border-color: rgba($color-error, 0.5) !important; // Bordure rouge
+          color: $color-text-light !important; // Icône en blanc
         }
       }
     }
@@ -321,7 +330,7 @@
 }
 
 // =============================================
-// NAVIGATION - Catégories avec V à droite
+// NAVIGATION - Catégories avec V à droite - NOUVEAU STYLE
 // =============================================
 .compact-nav {
   flex: 1;
@@ -331,7 +340,7 @@
 }
 
 .nav-category {
-  background: $color-background-alt;
+  background: rgba($color-text-light, 0.1) !important; // Fond clair
   border-radius: $border-radius-xs;
   box-shadow: $shadow-hover;
   margin-bottom: $spacing-xs;
@@ -344,13 +353,13 @@
     padding: $padding-sm $padding-md;
     cursor: pointer;
     transition: $transition-fast;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important; // Fond clair
     border-bottom: 1px solid transparent;
     position: relative;
-    min-height: 44px; // ← Hauteur fixe pour alignement
+    min-height: 44px;
     
     &:hover {
-      background: rgba($color-primary, 0.05);
+      background: rgba($color-text-light, 0.2) !important; // Fond plus clair
     }
     
     .category-info {
@@ -360,7 +369,7 @@
       flex: 1;
       
       i {
-        color: $color-primary;
+        color: $color-text-light !important; // Icône en blanc
         font-size: $font-size-p2;
         width: 20px;
         text-align: center;
@@ -369,7 +378,7 @@
       
       span {
         @include typography-p4;
-        color: $color-text-primary;
+        color: $color-text-light !important; // Texte en blanc
         font-weight: $font-weight-semibold;
         flex: 1;
         white-space: nowrap;
@@ -378,14 +387,14 @@
       }
       
       .item-count {
-        background: $color-primary;
-        color: $color-text-light;
+        background: $color-text-light !important; // Fond blanc
+        color: $color-primary !important; // Texte couleur principale
         font-size: $font-size-p5;
         padding: 1px 5px;
         border-radius: $border-radius-pill;
         font-weight: $font-weight-semibold;
         margin-left: auto;
-        margin-right: 8px; // ← Espace avant le V
+        margin-right: 8px;
         flex-shrink: 0;
       }
     }
@@ -393,11 +402,11 @@
     // CORRECTION: V à l'extrémité DROITE (absolu)
     .dropdown-icon {
       position: absolute;
-      right: $padding-sm; // ← Collé à droite
+      right: $padding-sm;
       top: 50%;
       transform: translateY(-50%);
       transition: transform $transition;
-      color: $color-text-muted;
+      color: $color-text-light !important; // Icône en blanc
       font-size: $font-size-p3;
       
       &.rotated {
@@ -415,35 +424,35 @@
       display: flex;
       flex-direction: column;
       gap: $gap-xs;
-      background: $color-background;
-      border-top: 1px solid rgba($color-border, 0.2);
+      background: rgba($color-text-light, 0.05) !important; // Fond très clair
+      border-top: 1px solid rgba($color-text-light, 0.1); // Bordure très claire
     }
   }
   
   .empty-state {
     @include typography-p3;
-    color: $color-text-muted;
+    color: rgba($color-text-light, 0.7) !important; // Texte transparent
     text-align: center;
     padding: $padding-sm;
     font-style: italic;
-    background: rgba($color-border, 0.1);
+    background: rgba($color-text-light, 0.1) !important; // Fond clair
     border-radius: $border-radius-xs;
   }
 }
 
 // =============================================
-// ITEMS DE NAVIGATION
+// ITEMS DE NAVIGATION - NOUVEAU STYLE
 // =============================================
 .nav-item {
   display: flex;
   align-items: center;
   padding: $padding-xs $padding-sm;
-  background: $color-background-alt;
-  border: 1px solid $color-border;
+  background: rgba($color-text-light, 0.1) !important; // Fond clair
+  border: 1px solid rgba($color-text-light, 0.2) !important; // Bordure claire
   border-radius: $border-radius-xs;
   font-size: $font-size-p4;
   font-weight: $font-weight-medium;
-  color: $color-text-secondary;
+  color: $color-text-light !important; // Texte en blanc
   cursor: pointer;
   transition: $transition-fast;
   gap: $gap-xs;
@@ -451,26 +460,26 @@
   min-height: 32px;
 
   &:hover {
-    background: rgba($color-primary, 0.1);
-    border-color: $color-primary;
-    color: $color-primary;
+    background: rgba($color-text-light, 0.2) !important; // Fond plus clair
+    border-color: $color-text-light !important; // Bordure blanche
+    color: $color-text-light !important; // Texte en blanc
   }
 
   &.active {
-    background: rgba($color-primary, 0.15);
-    border-color: $color-primary;
-    color: $color-primary;
+    background: rgba($color-text-light, 0.25) !important; // Fond encore plus clair
+    border-color: $color-text-light !important; // Bordure blanche
+    color: $color-text-light !important; // Texte en blanc
     font-weight: $font-weight-semibold;
   }
 
   &.current {
-    background: rgba($color-scene, 0.1);
-    border-color: rgba($color-scene, 0.3);
-    color: $color-scene;
+    background: rgba($color-accent-dark, 0.3) !important; // Fond accent dark
+    border-color: rgba($color-accent-dark, 0.5) !important; // Bordure accent dark
+    color: $color-text-light !important; // Texte en blanc
   }
   
   i {
-    color: inherit;
+    color: inherit !important; // Hérite la couleur du texte
     font-size: $font-size-p4;
     width: 18px;
     text-align: center;
@@ -488,7 +497,7 @@
   
   .item-title {
     @include typography-p4;
-    color: inherit;
+    color: inherit !important;
     opacity: 0.9;
     flex: 1;
     white-space: nowrap;
@@ -499,11 +508,257 @@
   .has-details-indicator {
     width: 6px;
     height: 6px;
-    background: $color-accent;
+    background: $color-accent-dark !important; // Accent dark
     border-radius: 50%;
-    box-shadow: 0 0 3px rgba($color-accent, 0.5);
+    box-shadow: 0 0 3px rgba($color-accent-dark, 0.5);
     margin-left: auto;
     flex-shrink: 0;
+  }
+}
+
+// =============================================
+// MENUS DÉROULANTS (DROPDOWNS) - NOUVEAU STYLE
+// =============================================
+.dropdown-section {
+  background: rgba($color-text-light, 0.1) !important; // Fond clair
+  border-radius: $border-radius-xs;
+  box-shadow: $shadow-hover;
+  margin-bottom: $spacing-sm;
+  overflow: hidden;
+  transition: $transition-fast;
+  
+  &:hover {
+    box-shadow: $shadow-accent;
+  }
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $padding-sm $padding-md;
+  cursor: pointer;
+  transition: $transition-fast;
+  background: rgba($color-text-light, 0.1) !important; // Fond clair
+  border-bottom: 1px solid transparent;
+  min-height: 44px;
+  
+  &:hover {
+    background: rgba($color-text-light, 0.2) !important; // Fond plus clair
+    
+    .dropdown-chevron {
+      color: $color-text-light !important; // Icône en blanc
+    }
+  }
+  
+  &.active {
+    border-bottom-color: rgba($color-text-light, 0.2); // Bordure claire
+  }
+}
+
+.dropdown-header-content {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  flex: 1;
+  
+  i:first-child {
+    color: $color-text-light !important; // Icône en blanc
+    font-size: $font-size-p2;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  
+  .sidebar-section-title,
+  .sidebar-section-title-ecran {
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: $color-text-light !important; // Texte en blanc
+    font-weight: $font-weight-semibold;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.dropdown-chevron {
+  transition: transform $transition;
+  color: $color-text-light !important; // Icône en blanc
+  font-size: $font-size-p3;
+  margin-left: $gap-xs;
+  flex-shrink: 0;
+  
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height $transition;
+  background: rgba($color-text-light, 0.05) !important; // Fond très clair
+  
+  &.open {
+    max-height: 500px;
+    border-top: 1px solid rgba($color-text-light, 0.1); // Bordure très claire
+  }
+}
+
+// =============================================
+// ITEMS DE DROPDOWN - NOUVEAU STYLE
+// =============================================
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: $padding-sm $padding-md;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  color: rgba($color-text-light, 0.9) !important; // Texte légèrement transparent
+  cursor: pointer;
+  transition: $transition-fast;
+  gap: $gap-sm;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  text-align: left;
+  
+  &:hover {
+    background: rgba($color-text-light, 0.1) !important; // Fond clair
+    color: $color-text-light !important; // Texte en blanc
+    
+    .dropdown-item-icon i {
+      transform: scale(1.1);
+    }
+  }
+  
+  &.active {
+    background: rgba($color-text-light, 0.15) !important; // Fond plus clair
+    color: $color-text-light !important; // Texte en blanc
+    font-weight: $font-weight-semibold;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: $color-text-light !important; // Bordure blanche
+    }
+  }
+  
+  &.highlight {
+    background: rgba($color-accent-dark, 0.2) !important; // Fond accent dark
+    
+    &:hover {
+      background: rgba($color-accent-dark, 0.3) !important; // Fond accent dark plus fort
+      color: $color-text-light !important; // Texte en blanc
+    }
+  }
+}
+
+.dropdown-item-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  i {
+    color: inherit !important; // Hérite la couleur du texte
+    font-size: $font-size-p3;
+    transition: transform $transition-fast;
+  }
+}
+
+.dropdown-item span {
+  @include typography-p4;
+  font-weight: $font-weight-medium;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.dropdown-item-badge {
+  background: $color-text-light !important; // Fond blanc
+  color: $color-primary !important; // Texte couleur principale
+  font-size: $font-size-p5;
+  padding: 1px 5px;
+  border-radius: $border-radius-pill;
+  font-weight: $font-weight-bold;
+  margin-left: $gap-xs;
+  flex-shrink: 0;
+  min-width: 20px;
+  text-align: center;
+  
+  &.premium {
+    background: linear-gradient(135deg, $color-warning, $color-accent) !important;
+    color: $color-text-light !important; // Texte en blanc
+  }
+  
+  &.new {
+    background: $color-success !important;
+    color: $color-text-light !important; // Texte en blanc
+  }
+  
+  &.hot {
+    background: $color-error !important;
+    color: $color-text-light !important; // Texte en blanc
+  }
+  
+  i {
+    font-size: $font-size-p5;
+  }
+}
+
+// =============================================
+// STYLES SPÉCIFIQUES POUR LES OPTIONS D'EXPORT - ADAPTÉ
+// =============================================
+.export-options-ecran {
+  display: flex;
+  flex-direction: column;
+  padding: $padding-xs 0;
+}
+
+.export-option.dropdown-item {
+  border-left: 3px solid transparent;
+  
+  &:nth-child(1) { border-left-color: rgba($color-text-light, 0.5); }
+  &:nth-child(2) { border-left-color: rgba($color-text-light, 0.5); }
+  &:nth-child(3) { border-left-color: rgba($color-text-light, 0.5); }
+  &:nth-child(4) { border-left-color: rgba($color-text-light, 0.5); }
+  &:nth-child(5) { border-left-color: rgba($color-text-light, 0.5); }
+}
+
+// =============================================
+// SCROLLBAR PERSONNALISÉE POUR LA SIDEBAR
+// =============================================
+.left-sidebar-compact {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-text-light, 0.1); // Piste claire
+    border-radius: $border-radius-pill;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-text-light, 0.3); // Curseur clair
+    
+    &:hover {
+      background: rgba($color-text-light, 0.5); // Curseur plus clair au hover
+    }
   }
 }
 
@@ -567,239 +822,11 @@
 }
 
 // =============================================
-// MENUS DÉROULANTS (DROPDOWNS)
-// =============================================
-.dropdown-section {
-  background: $color-background-alt;
-  border-radius: $border-radius-xs;
-  box-shadow: $shadow-hover;
-  margin-bottom: $spacing-sm;
-  overflow: hidden;
-  transition: $transition-fast;
-  
-  &:hover {
-    box-shadow: $shadow-accent;
-  }
-}
-
-.dropdown-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $padding-sm $padding-md;
-  cursor: pointer;
-  transition: $transition-fast;
-  background: $color-background-alt;
-  border-bottom: 1px solid transparent;
-  min-height: 44px;
-  
-  &:hover {
-    background: rgba($color-primary, 0.05);
-    
-    .dropdown-chevron {
-      color: $color-primary;
-    }
-  }
-  
-  &.active {
-    border-bottom-color: $color-border;
-  }
-}
-
-.dropdown-header-content {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  flex: 1;
-  
-  i:first-child {
-    color: $color-primary;
-    font-size: $font-size-p2;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-  
-  .sidebar-section-title,
-  .sidebar-section-title-ecran {
-    margin: 0;
-    padding: 0;
-    border: none;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-.dropdown-chevron {
-  transition: transform $transition;
-  color: $color-text-muted;
-  font-size: $font-size-p3;
-  margin-left: $gap-xs;
-  flex-shrink: 0;
-  
-  &.rotated {
-    transform: rotate(180deg);
-  }
-}
-
-.dropdown-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height $transition;
-  background: $color-background;
-  
-  &.open {
-    max-height: 500px; // Ajustez selon le contenu
-    border-top: 1px solid rgba($color-border, 0.2);
-  }
-}
-
-// =============================================
-// ITEMS DE DROPDOWN
-// =============================================
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  padding: $padding-sm $padding-md;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-medium;
-  color: $color-text-secondary;
-  cursor: pointer;
-  transition: $transition-fast;
-  gap: $gap-sm;
-  width: 100%;
-  box-sizing: border-box;
-  position: relative;
-  text-align: left;
-  
-  &:hover {
-    background: rgba($color-primary, 0.08);
-    color: $color-primary;
-    
-    .dropdown-item-icon i {
-      transform: scale(1.1);
-    }
-  }
-  
-  &.active {
-    background: rgba($color-primary, 0.12);
-    color: $color-primary;
-    font-weight: $font-weight-semibold;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: $color-primary;
-    }
-  }
-  
-  &.highlight {
-    background: rgba($color-accent, 0.1);
-    
-    &:hover {
-      background: rgba($color-accent, 0.2);
-      color: $color-accent;
-    }
-  }
-}
-
-.dropdown-item-icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  
-  i {
-    color: inherit;
-    font-size: $font-size-p3;
-    transition: transform $transition-fast;
-  }
-}
-
-.dropdown-item span {
-  @include typography-p4;
-  font-weight: $font-weight-medium;
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
-}
-
-.dropdown-item-badge {
-  background: $color-primary;
-  color: white;
-  font-size: $font-size-p5;
-  padding: 1px 5px;
-  border-radius: $border-radius-pill;
-  font-weight: $font-weight-bold;
-  margin-left: $gap-xs;
-  flex-shrink: 0;
-  min-width: 20px;
-  text-align: center;
-  
-  &.premium {
-    background: linear-gradient(135deg, $color-warning, $color-accent);
-  }
-  
-  &.new {
-    background: $color-success;
-  }
-  
-  &.hot {
-    background: $color-error;
-  }
-  
-  i {
-    font-size: $font-size-p5;
-  }
-}
-
-// =============================================
-// STYLES SPÉCIFIQUES POUR LES OPTIONS D'EXPORT
-// =============================================
-.export-options-ecran {
-  display: flex;
-  flex-direction: column;
-  padding: $padding-xs 0;
-}
-
-.export-option.dropdown-item {
-  border-left: 3px solid transparent;
-  
-  &:nth-child(1) { border-left-color: $color-scene; }
-  &:nth-child(2) { border-left-color: $color-primary; }
-  &:nth-child(3) { border-left-color: $color-sequence; }
-  &:nth-child(4) { border-left-color: $color-episode; }
-  &:nth-child(5) { border-left-color: $color-accent; }
-  
-  .dropdown-item-icon i {
-    // Icônes spécifiques pour l'export
-    &:before {
-      // Les icônes sont déjà définies dans le HTML
-    }
-  }
-}
-
-// =============================================
-// MODE COMPACT (SIDEBAR FERMÉE)
+// MODE COMPACT (SIDEBAR FERMÉE) - AJUSTÉ
 // =============================================
 .right-sidebar-ecran:not(.open) {
   .dropdown-section {
-    background: transparent;
+    background: transparent !important;
     box-shadow: none;
     margin-bottom: $spacing-xs;
   }
@@ -815,6 +842,7 @@
       i:first-child {
         margin: 0;
         font-size: $font-size-p2;
+        color: $color-text-light !important; // Icône en blanc
       }
       
       .sidebar-section-title,
@@ -838,7 +866,7 @@
     width: 40px;
     height: 40px;
     border-radius: $border-radius-xs;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important; // Fond clair
     margin-bottom: $gap-xs;
     
     .dropdown-item-icon {
@@ -846,6 +874,7 @@
       
       i {
         font-size: $font-size-p2;
+        color: $color-text-light !important; // Icône en blanc
       }
     }
     
@@ -898,4 +927,82 @@
     }
   }
 }
+
+// =============================================
+// AJUSTEMENTS POUR LE THÈME SOMBRE SUR MOBILE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .left-sidebar-compact {
+    *:not(i) {
+      color: $color-text-primary !important;
+    }
+    
+    background: $color-background-alt !important;
+    
+    .sidebar-toggle {
+      background: $color-background-alt !important;
+      border: 1px solid $color-border !important;
+      color: $color-text-primary !important;
+      
+      i {
+        color: $color-primary !important;
+      }
+      
+      &:hover {
+        background: $color-surface-hover !important;
+        border-color: $color-primary !important;
+        color: $color-primary !important;
+      }
+    }
+    
+    .project-header {
+      background: $color-background-alt !important;
+      
+      .project-title {
+        color: $color-text-primary !important;
+      }
+      
+      .project-status {
+        &.statut-en-cours { 
+          color: $color-primary !important;
+          background: rgba($color-primary, 0.1) !important;
+        }
+        &.statut-termine { 
+          color: $color-success !important;
+          background: rgba($color-success, 0.1) !important;
+        }
+        &.statut-attente { 
+          color: $color-warning !important;
+          background: rgba($color-warning, 0.1) !important;
+        }
+      }
+    }
+    
+    .nav-category {
+      background: $color-background-alt !important;
+      
+      .category-header {
+        background: $color-background-alt !important;
+        
+        span {
+          color: $color-text-primary !important;
+        }
+      }
+    }
+    
+    .nav-item {
+      background: $color-background-alt !important;
+      border: 1px solid $color-border !important;
+      color: $color-text-primary !important;
+      
+      &:hover {
+        background: rgba($color-primary, 0.1) !important;
+        border-color: $color-primary !important;
+        color: $color-primary !important;
+      }
+    }
+  }
+}
+
+
 

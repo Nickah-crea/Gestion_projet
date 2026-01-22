@@ -13,7 +13,7 @@
   z-index: $z-index-fixed;
   overflow-y: auto;
   padding: $padding-md;
-  background: $color-tertiary;
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -559,4 +559,6 @@
     padding: $padding-xs;
   }
 }
+
+
 
