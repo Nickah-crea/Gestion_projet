@@ -1,22 +1,22 @@
-<!-- StatusCRUD.vue -->
 <template>
   <div class="app-wrapper-global">
-    <!-- Sidebar latérale -->
-    <div class="creation-sidebar-status">
-      <div class="sidebar-header-status">
-        <h2 class="sidebar-title-status"><i class="fas fa-sliders-h"></i> Gestion des Statuts</h2>
-        <p class="sidebar-subtitle-status">Gérez tous les statuts de votre application</p>
+    <!-- Sidebar latérale fixe à gauche -->
+    <aside class="status-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Gestion des Statuts</h2>
+        <p class="sidebar-subtitle">Gérez tous les statuts système</p>
       </div>
 
-      <!-- Navigation rapide -->
-      <div class="sidebar-section-status">
-        <h3 class="section-title-status"><i class="fas fa-bolt"></i> Navigation Rapide</h3>
-        <div class="sidebar-actions-status">
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-sliders-h"></i> Navigation
+        </h3>
+        <div class="sidebar-actions">
           <button 
             v-for="tab in tabs" 
             :key="tab.id"
             @click="activeTab = tab.id"
-            class="sidebar-btn-status" 
+            class="sidebar-btn" 
             :class="{ active: activeTab === tab.id }"
           >
             <i :class="tab.icon"></i>
@@ -25,32 +25,33 @@
         </div>
       </div>
 
-      <!-- Statistiques globales -->
-      <div class="sidebar-section-status">
-        <h3 class="section-title-status"><i class="fas fa-chart-bar"></i> Statistiques</h3>
-        <div class="stats-status">
-          <div class="stat-item-status">
-            <span class="stat-number-status">{{ totalStatuts }}</span>
-            <span class="stat-label-status">Total statuts</span>
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-chart-pie"></i> Statistiques
+        </h3>
+        <div class="stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ totalStatuts }}</span>
+            <span class="stat-label">Total statuts</span>
           </div>
-          <div class="stat-item-status">
-            <span class="stat-number-status">{{ totalStatutsActifs }}</span>
-            <span class="stat-label-status">Statuts actifs</span>
+          <div class="stat-item">
+            <span class="stat-number">{{ totalStatutsActifs }}</span>
+            <span class="stat-label">Statuts actifs</span>
           </div>
         </div>
       </div>
 
-      <!-- Filtres -->
-      <div class="sidebar-section-status">
-        <h3 class="section-title-status"><i class="fas fa-filter"></i> Filtres</h3>
-        <div class="filter-group-status">
-          <div class="filter-item-status">
-            <label for="statutFilter">Statut d'activation</label>
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-filter"></i> Filtres
+        </h3>
+        <div class="filter-group">
+          <div class="filter-item">
+            <label>Statut d'activation</label>
             <select 
-              id="statutFilter" 
               v-model="filtreActif" 
               @change="applyFilter"
-              class="filter-select-status"
+              class="filter-select"
             >
               <option value="">Tous les statuts</option>
               <option value="true">Actifs seulement</option>
@@ -58,127 +59,120 @@
             </select>
           </div>
           
-          <div class="filter-item-status">
-            <label for="searchFilter">Recherche globale</label>
-            <div class="search-input-container-status">
-              <i class="fas fa-search search-icon-status"></i>
+          <div class="filter-item">
+            <label>Recherche globale</label>
+            <div class="search-input-container">
+              <i class="fas fa-search search-icon"></i>
               <input
                 type="text"
-                id="searchFilter"
                 v-model="searchTerm"
                 @input="applyFilter"
                 placeholder="Rechercher..."
-                class="search-input-status"
+                class="search-input"
               />
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </aside>
 
     <!-- Contenu principal à droite -->
-    <div class="creation-body-status">
-      <div class="creation-main-content-status">
-        
-        <!-- En-tête principal -->
-        <div class="main-header-status">
-          <h1 class="page-title-status"><i class="fas fa-cogs"></i> Gestion des Statuts Système</h1>
-          <p class="page-subtitle-status">Créez, modifiez et gérez tous les statuts de votre application de gestion de films</p>
-        </div>
-
+    <div class="status-body">
+      <main class="status-main-content">
         <!-- Système d'onglets -->
-        <div class="tabs-container-status">
-          <div class="tabs-header-status">
+        <div class="tabs-container">
+          <div class="tabs-header">
             <button 
               v-for="tab in tabs" 
               :key="tab.id"
               @click="activeTab = tab.id"
-              :class="['tab-btn-status', { active: activeTab === tab.id }]"
+              :class="['tab-btn', { active: activeTab === tab.id }]"
             >
               <i :class="tab.icon"></i>
               {{ tab.label }}
-              <span class="tab-count-status">{{ getStatutsCount(tab.id) }}</span>
+              <span class="tab-count">{{ getStatutsCount(tab.id) }}</span>
             </button>
+            <div class="tab-indicator" :style="tabIndicatorStyle"></div>
           </div>
-          
-          <div class="tabs-content-status">
-            <!-- Indicateur visuel de l'onglet actif -->
-            <div class="tab-indicator-status" :style="getTabIndicatorStyle"></div>
-            
+
+          <div class="tabs-content">
             <!-- Contenu de chaque onglet -->
-            <div v-for="tab in tabs" :key="tab.id" v-show="activeTab === tab.id" class="tab-pane-status">
-              <div class="tab-content-wrapper-status">
+            <div v-for="tab in tabs" :key="tab.id" v-show="activeTab === tab.id" class="tab-pane">
+              <div class="tab-content-wrapper">
                 <!-- En-tête de l'onglet -->
-                <div class="tab-header-status">
-                  <div class="tab-title-status">
-                    <h3><i :class="tab.icon"></i> {{ tab.label }}</h3>
-                    <p class="tab-description-status">{{ getTabDescription(tab.id) }}</p>
+                <div class="tab-header">
+                  <div>
+                    <h3>
+                      <i :class="tab.icon"></i> {{ tab.label }}
+                    </h3>
+                    <p class="tab-description">{{ getTabDescription(tab.id) }}</p>
                   </div>
                   <button 
                     @click="openCreateModal(tab.id)"
-                    class="btn-create-status"
+                    class="create-btn"
                   >
                     <i class="fas fa-plus"></i> Ajouter un statut
                   </button>
                 </div>
 
                 <!-- Liste des statuts -->
-                <div class="statuts-list-status">
-                  <div v-if="loading" class="loading-state-status">
+                <div class="status-list">
+                  <div v-if="loading" class="loading-state">
                     <i class="fas fa-spinner fa-spin"></i> Chargement des statuts...
                   </div>
                   
-                  <div v-else-if="getFilteredStatuts(tab.id).length === 0" class="empty-state-status">
+                  <div v-else-if="getFilteredStatuts(tab.id).length === 0" class="empty-state">
                     <i class="fas fa-inbox"></i>
-                    <div v-if="searchTerm || filtreActif !== ''">
+                    <h4>Aucun statut trouvé</h4>
+                    <p v-if="searchTerm || filtreActif !== ''">
                       Aucun statut ne correspond à vos critères de recherche.
-                    </div>
-                    <div v-else>
+                    </p>
+                    <p v-else>
                       Aucun statut défini pour cette catégorie.
-                    </div>
+                    </p>
                   </div>
 
-                  <div v-else class="statuts-grid-status">
+                  <div v-else class="status-grid">
                     <div 
                       v-for="statut in getFilteredStatuts(tab.id)" 
                       :key="statut.id || statut.idStatutProjet || statut.idStatutEpisode"
-                      class="statut-card-status"
+                      class="status-card"
                       :class="{ 'inactive': !getStatutActif(statut) }"
                     >
-                      <div class="statut-card-header-status">
-                        <div class="statut-code-status" :class="getStatutColorClass(statut)">
-                          <span class="code-badge-status">{{ statut.code }}</span>
-                          <span class="activation-badge-status" :class="getActivationClass(statut)">
+                      <div class="status-card-header">
+                        <div class="status-code" :class="getStatutColorClass(statut)">
+                          <span class="code-badge">{{ statut.code }}</span>
+                          <span class="activation-badge" :class="getActivationClass(statut)">
                             {{ getStatutActif(statut) ? 'Actif' : 'Inactif' }}
                           </span>
                         </div>
-                        <div class="statut-actions-status">
-                          <button @click="editStatut(tab.id, statut)" class="btn-action-status edit" title="Modifier">
-                            <i class="fas fa-marker"></i>
+                        <div class="status-actions">
+                          <button @click="editStatut(tab.id, statut)" class="btn-action edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
                           </button>
                           <button 
                             @click="toggleActivation(tab.id, statut)" 
-                            class="btn-action-status toggle" 
+                            class="btn-action toggle" 
                             :title="getStatutActif(statut) ? 'Désactiver' : 'Activer'"
                           >
                             <i :class="getStatutActif(statut) ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
                           </button>
-                          <button @click="deleteStatut(tab.id, statut)" class="btn-action-status delete" title="Supprimer">
+                          <button @click="deleteStatut(tab.id, statut)" class="btn-action delete" title="Supprimer">
                             <i class="fas fa-trash"></i>
                           </button>
                         </div>
                       </div>
                       
-                      <div class="statut-card-body-status">
-                        <h4 class="statut-name-status">{{ getStatutName(statut) }}</h4>
-                        <p class="statut-description-status">{{ getStatutDescription(statut) }}</p>
+                      <div class="status-card-body">
+                        <h4 class="status-name">{{ getStatutName(statut) }}</h4>
+                        <p class="status-description">{{ getStatutDescription(statut) }}</p>
                         
-                        <div class="statut-meta-status">
-                          <div class="meta-item-status">
+                        <div class="status-meta">
+                          <div class="meta-item">
                             <i class="fas fa-sort-numeric-down"></i>
                             <span>Ordre: {{ getStatutOrdre(statut) }}</span>
                           </div>
-                          <div v-if="getStatutCreatedAt(statut)" class="meta-item-status">
+                          <div v-if="getStatutCreatedAt(statut)" class="meta-item">
                             <i class="fas fa-calendar-alt"></i>
                             <span>Créé le: {{ formatDate(getStatutCreatedAt(statut)) }}</span>
                           </div>
@@ -191,26 +185,26 @@
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
 
     <!-- Modal de création/modification -->
-    <div v-if="showModal" class="modal-overlay-status" @click="closeModal">
-      <div class="modal-content-status" @click.stop>
-        <div class="modal-header-status">
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
           <h3>
-            <i :class="isEditing ? 'fas fa-marker' : 'fas fa-plus'"></i>
+            <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
             {{ isEditing ? 'Modifier le statut' : 'Créer un nouveau statut' }}
           </h3>
-          <button @click="closeModal" class="modal-close-btn-status">
+          <button @click="closeModal" class="modal-close-btn">
             <i class="fas fa-times"></i>
           </button>
         </div>
         
-        <div class="modal-body-status">
-          <form @submit.prevent="submitStatut" class="statut-form-status">
-            <div class="form-row-status">
-              <div class="form-group-status">
+        <div class="modal-body">
+          <form @submit.prevent="submitStatut" class="status-form">
+            <div class="form-row">
+              <div class="form-group">
                 <label for="code">Code *</label>
                 <input
                   type="text"
@@ -218,14 +212,14 @@
                   v-model="formData.code"
                   required
                   placeholder="ex: en_cours, valide, etc."
-                  class="form-input-status"
+                  class="form-input"
                   :class="{ 'error': errors.code }"
                 />
-                <div v-if="errors.code" class="error-message-status">{{ errors.code }}</div>
-                <div class="input-hint-status">Doit être unique et en minuscules avec underscores</div>
+                <div v-if="errors.code" class="error-message">{{ errors.code }}</div>
+                <div class="input-hint">Doit être unique et en minuscules avec underscores</div>
               </div>
 
-              <div class="form-group-status">
+              <div class="form-group">
                 <label for="nom">Nom *</label>
                 <input
                   type="text"
@@ -233,26 +227,26 @@
                   v-model="formData.nom"
                   required
                   placeholder="Nom du statut"
-                  class="form-input-status"
+                  class="form-input"
                   :class="{ 'error': errors.nom }"
                 />
-                <div v-if="errors.nom" class="error-message-status">{{ errors.nom }}</div>
+                <div v-if="errors.nom" class="error-message">{{ errors.nom }}</div>
               </div>
             </div>
 
-            <div class="form-group-status">
+            <div class="form-group">
               <label for="description">Description</label>
               <textarea
                 id="description"
                 v-model="formData.description"
                 rows="3"
                 placeholder="Description du statut"
-                class="form-textarea-status"
+                class="form-textarea"
               ></textarea>
             </div>
 
-            <div class="form-row-status">
-              <div class="form-group-status">
+            <div class="form-row">
+              <div class="form-group">
                 <label for="ordreAffichage">Ordre d'affichage *</label>
                 <input
                   type="number"
@@ -260,47 +254,47 @@
                   v-model="formData.ordreAffichage"
                   required
                   min="1"
-                  class="form-input-status"
+                  class="form-input"
                   :class="{ 'error': errors.ordreAffichage }"
                 />
-                <div v-if="errors.ordreAffichage" class="error-message-status">{{ errors.ordreAffichage }}</div>
-                <div class="input-hint-status">Détermine l'ordre dans les listes déroulantes</div>
+                <div v-if="errors.ordreAffichage" class="error-message">{{ errors.ordreAffichage }}</div>
+                <div class="input-hint">Détermine l'ordre dans les listes déroulantes</div>
               </div>
 
-              <div class="form-group-status">
+              <div class="form-group">
                 <label for="estActif">Statut</label>
-                <div class="checkbox-group-status">
+                <div class="checkbox-group">
                   <input
                     type="checkbox"
                     id="estActif"
                     v-model="formData.estActif"
-                    class="checkbox-input-status"
+                    class="checkbox-input"
                   />
-                  <label for="estActif" class="checkbox-label-status">
-                    <span class="checkbox-custom-status"></span>
+                  <label for="estActif" class="checkbox-label">
+                    <span class="checkbox-custom"></span>
                     Actif
                   </label>
                 </div>
-                <div class="input-hint-status">Un statut inactif n'apparaîtra pas dans les sélections</div>
+                <div class="input-hint">Un statut inactif n'apparaîtra pas dans les sélections</div>
               </div>
             </div>
 
-            <div v-if="formError" class="form-error-status">
+            <div v-if="formError" class="form-error">
               <i class="fas fa-exclamation-triangle"></i> {{ formError }}
             </div>
 
-            <div class="form-actions-status">
+            <div class="form-actions">
               <button
                 type="button"
                 @click="closeModal"
-                class="cancel-btn-status"
+                class="cancel-btn"
               >
                 <i class="fas fa-times"></i> Annuler
               </button>
               <button
                 type="submit"
                 :disabled="isSubmitting"
-                class="submit-btn-status"
+                class="submit-btn"
               >
                 <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
                 <i v-else :class="isEditing ? 'fas fa-save' : 'fas fa-plus'"></i>
@@ -312,70 +306,49 @@
       </div>
     </div>
 
-    <!-- Notifications -->
-    <div class="notifications-container-status">
-      <div 
-        v-for="notification in notifications" 
-        :key="notification.id"
-        :class="['notification-status', `notification-${notification.type}`, { 'leaving': notification.leaving }]"
-        @click="removeNotification(notification.id)"
-      >
-        <div class="notification-icon-status">
-          <i :class="getNotificationIcon(notification.type)"></i>
-        </div>
-        <div class="notification-content-status">
-          <p class="notification-message-status">{{ notification.message }}</p>
-        </div>
-        <button 
-          @click.stop="removeNotification(notification.id)"
-          class="notification-close-status"
-        >
-          <i class="fas fa-times"></i>
-        </button>
-        <div 
-          class="notification-progress-status" 
-          :style="{ animationDuration: `${notification.duration}ms` }"
-        ></div>
-      </div>
-    </div>
-
     <!-- Modal de confirmation -->
-    <div v-if="showConfirmModal" class="modal-overlay-status" @click="closeConfirmModal">
-      <div class="modal-content-status confirmation-modal-status" @click.stop>
-        <div class="modal-header-status">
+    <div v-if="showConfirmModal" class="modal-overlay" @click="closeConfirmModal">
+      <div class="modal-content confirmation-modal" @click.stop>
+        <div class="modal-header">
           <h3>
-            <i :class="getConfirmIcon"></i>
+            <i :class="confirmIcon"></i>
             {{ confirmConfig.title }}
           </h3>
-          <button @click="closeConfirmModal" class="modal-close-btn-status">
+          <button @click="closeConfirmModal" class="modal-close-btn">
             <i class="fas fa-times"></i>
           </button>
         </div>
         
-        <div class="modal-body-status">
-          <div class="confirmation-content-status">
-            <p class="confirmation-message-status">{{ confirmConfig.message }}</p>
+        <div class="modal-body">
+          <div class="confirmation-content">
+            <p class="confirmation-message">{{ confirmConfig.message }}</p>
             
-            <div class="confirmation-actions-status">
+            <div class="confirmation-actions">
               <button
                 type="button"
                 @click="closeConfirmModal"
-                class="cancel-btn-status"
+                class="cancel-btn"
               >
                 <i class="fas fa-times"></i> Annuler
               </button>
               <button
                 type="button"
                 @click="confirmAction"
-                :class="['confirm-btn-status', `confirm-${confirmConfig.type}`]"
+                :class="['confirm-btn', `confirm-${confirmConfig.type}`]"
               >
-                <i :class="getConfirmActionIcon"></i>
+                <i :class="confirmActionIcon"></i>
                 Confirmer
               </button>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Toast de notification -->
+    <div v-if="toast.show" class="toast" :class="toast.type">
+      <i class="fas" :class="toast.icon"></i>
+      <span>{{ toast.message }}</span>
     </div>
   </div>
 </template>
@@ -389,12 +362,12 @@ export default {
     return {
       activeTab: 'projet',
       tabs: [
-        { id: 'projet', label: 'Statuts Projet', icon: 'fas fa-project-diagram' },
-        { id: 'episode', label: 'Statuts Épisode', icon: 'fas fa-film' },
-        { id: 'scene', label: 'Statuts Scène', icon: 'fas fa-video' },
-        { id: 'sequence', label: 'Statuts Séquence', icon: 'fas fa-list-ol' },
-        { id: 'planning', label: 'Statuts Planning', icon: 'fas fa-calendar-alt' },
-        { id: 'raccord', label: 'Statuts Raccord', icon: 'fas fa-link' }
+        { id: 'projet', label: 'Projet', icon: 'fas fa-project-diagram' },
+        { id: 'episode', label: 'Épisode', icon: 'fas fa-film' },
+        { id: 'scene', label: 'Scène', icon: 'fas fa-video' },
+        { id: 'sequence', label: 'Séquence', icon: 'fas fa-list-ol' },
+        { id: 'planning', label: 'Planning', icon: 'fas fa-calendar-alt' },
+        { id: 'raccord', label: 'Raccord', icon: 'fas fa-link' }
       ],
       
       // Données des statuts
@@ -416,15 +389,13 @@ export default {
       editingId: null,
       isSubmitting: false,
       formError: '',
-      notifications: [],
-      notificationId: 0,
+      
       showConfirmModal: false,
       confirmConfig: {
         title: '',
         message: '',
-        type: 'warning', // warning, danger, info
-        onConfirm: null,
-        onCancel: null
+        type: 'warning',
+        onConfirm: null
       },
       
       // Formulaire
@@ -436,6 +407,14 @@ export default {
         estActif: true
       },
       errors: {},
+      
+      // Toast
+      toast: {
+        show: false,
+        message: '',
+        type: 'success',
+        icon: 'fa-check'
+      },
       
       // États
       loading: false
@@ -461,7 +440,7 @@ export default {
              countActifs(this.statutsRaccord);
     },
     
-    getTabIndicatorStyle() {
+    tabIndicatorStyle() {
       const tabCount = this.tabs.length;
       const tabWidth = 100 / tabCount;
       const activeIndex = this.tabs.findIndex(tab => tab.id === this.activeTab);
@@ -473,8 +452,8 @@ export default {
       };
     },
 
-    getConfirmIcon() {
-        const icons = {
+    confirmIcon() {
+      const icons = {
         warning: 'fas fa-exclamation-triangle',
         danger: 'fas fa-exclamation-circle',
         info: 'fas fa-info-circle',
@@ -482,8 +461,8 @@ export default {
       };
       return icons[this.confirmConfig.type] || 'fas fa-exclamation-triangle';
     },
-  
-    getConfirmActionIcon() {
+
+    confirmActionIcon() {
       const icons = {
         warning: 'fas fa-toggle-off',
         danger: 'fas fa-trash',
@@ -513,13 +492,7 @@ export default {
         ]);
       } catch (error) {
         console.error('Erreur lors du chargement des statuts:', error);
-        
-        let errorMessage = 'Erreur lors du chargement des statuts';
-        if (error.response?.data?.message) {
-          errorMessage = error.response.data.message;
-        }
-        
-        this.showError(errorMessage);
+        this.showError('Erreur lors du chargement des statuts');
       } finally {
         this.loading = false;
       }
@@ -532,24 +505,19 @@ export default {
         this[`statuts${this.capitalizeFirst(type)}`] = response.data;
       } catch (error) {
         console.error(`Erreur lors du chargement des statuts ${type}:`, error);
-        
-        // Ne pas afficher de notification pour chaque type individuellement
-        // pour éviter de spammer l'utilisateur
         if (error.response?.status === 404) {
-          // Endpoint non trouvé, peut-être le contrôleur n'existe pas
-          console.warn(`Endpoint ${type} non trouvé:`, endpoint);
+          console.warn(`Endpoint ${type} non trouvé`);
         }
       }
     },
 
-    // Méthodes pour la confirmation personnalisée
+    // Méthodes pour la confirmation
     openConfirmModal(config) {
       this.confirmConfig = {
         title: config.title || 'Confirmation',
         message: config.message || 'Êtes-vous sûr ?',
         type: config.type || 'warning',
-        onConfirm: config.onConfirm || (() => {}),
-        onCancel: config.onCancel || (() => {})
+        onConfirm: config.onConfirm || (() => {})
       };
       this.showConfirmModal = true;
     },
@@ -560,8 +528,7 @@ export default {
         title: '',
         message: '',
         type: 'warning',
-        onConfirm: null,
-        onCancel: null
+        onConfirm: null
       };
     },
 
@@ -571,76 +538,16 @@ export default {
       }
       this.closeConfirmModal();
     },
-
-    cancelAction() {
-      if (this.confirmConfig.onCancel) {
-        this.confirmConfig.onCancel();
-      }
-      this.closeConfirmModal();
-    },
     
-    // Méthodes pour les notifications
-    addNotification(type, message, duration = 5000) {
-      const id = ++this.notificationId;
-      const notification = {
-        id,
-        type,
-        message,
-        duration
-      };
-      
-      this.notifications.push(notification);
-      
-      // Supprimer automatiquement après la durée spécifiée
-      setTimeout(() => {
-        this.removeNotification(id);
-      }, duration);
-      
-      return id;
-    },
-
-    removeNotification(id) {
-      const index = this.notifications.findIndex(n => n.id === id);
-      if (index !== -1) {
-        // Ajouter une classe d'animation de sortie
-        const notification = this.notifications[index];
-        notification.leaving = true;
-        
-        // Attendre la fin de l'animation avant de supprimer
-        setTimeout(() => {
-          const newIndex = this.notifications.findIndex(n => n.id === id);
-          if (newIndex !== -1) {
-            this.notifications.splice(newIndex, 1);
-          }
-        }, 300); // Durée de l'animation
-      }
-    },
-
-    showSuccess(message) {
-      this.addNotification('success', message);
-    },
-
-    showError(message) {
-      this.addNotification('error', message);
-    },
-
-    showWarning(message) {
-      this.addNotification('warning', message);
-    },
-
-    showInfo(message) {
-      this.addNotification('info', message);
-    },
-
     // Méthodes utilitaires
     getEndpoint(type) {
       const endpoints = {
-        projet: '/api/statuts-projet',       // Ajoutez /api ici
-        episode: '/api/statuts-episode',     // Ajoutez /api ici
-        scene: '/api/statuts-scene',         // Ajoutez /api ici
-        sequence: '/api/statuts-sequence',   // Ajoutez /api ici
-        planning: '/api/statuts-planning',   // Ajoutez /api ici
-        raccord: '/api/statuts-raccord'      // Ajoutez /api ici
+        projet: '/api/statuts-projet',
+        episode: '/api/statuts-episode',
+        scene: '/api/statuts-scene',
+        sequence: '/api/statuts-sequence',
+        planning: '/api/statuts-planning',
+        raccord: '/api/statuts-raccord'
       };
       return endpoints[type];
     },
@@ -668,13 +575,11 @@ export default {
     getFilteredStatuts(type) {
       let statuts = this[`statuts${this.capitalizeFirst(type)}`];
       
-      // Filtrer par statut d'activation
       if (this.filtreActif !== '') {
         const actif = this.filtreActif === 'true';
         statuts = statuts.filter(statut => this.getStatutActif(statut) === actif);
       }
       
-      // Filtrer par recherche
       if (this.searchTerm.trim() !== '') {
         const search = this.searchTerm.toLowerCase();
         statuts = statuts.filter(statut => 
@@ -684,11 +589,9 @@ export default {
         );
       }
       
-      // Trier par ordre d'affichage
       return statuts.sort((a, b) => this.getStatutOrdre(a) - this.getStatutOrdre(b));
     },
     
-    // Méthodes d'accès aux propriétés des statuts (pour gérer les différences entre les entités)
     getStatutActif(statut) {
       return statut.estActif !== undefined ? statut.estActif : true;
     },
@@ -699,7 +602,6 @@ export default {
              statut.nomStatutsScene || 
              statut.nomStatutsSequence || 
              statut.nomStatut || 
-             statut.nomStatutsEpisode || 
              'Nom non défini';
     },
     
@@ -734,7 +636,6 @@ export default {
       return this.getStatutActif(statut) ? 'active' : 'inactive';
     },
     
-    // Méthodes de formatage
     formatDate(dateString) {
       if (!dateString) return 'Non disponible';
       return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -744,7 +645,6 @@ export default {
       });
     },
     
-    // Filtres
     applyFilter() {
       // Le filtrage se fait dans les computed properties
     },
@@ -763,7 +663,6 @@ export default {
       this.editingType = type;
       this.editingId = statut.id || statut.idStatutProjet || statut.idStatutEpisode;
       
-      // Remplir le formulaire avec les données du statut
       this.formData = {
         code: statut.code,
         nom: this.getStatutName(statut),
@@ -831,7 +730,6 @@ export default {
       try {
         const endpoint = this.getEndpoint(this.editingType);
         
-        // Créez l'objet avec les champs corrects selon le type
         let requestData;
         switch(this.editingType) {
           case 'projet':
@@ -909,10 +807,6 @@ export default {
         let errorMessage = 'Erreur lors de la sauvegarde';
         if (error.response?.data?.message) {
           errorMessage = error.response.data.message;
-        } else if (error.response?.data?.error) {
-          errorMessage = error.response.data.error;
-        } else if (error.message) {
-          errorMessage = error.message;
         }
         
         this.showError(errorMessage);
@@ -937,19 +831,12 @@ export default {
             const endpoint = this.getEndpoint(type);
             await axios.patch(`${endpoint}/${id}/toggle-activation`);
             
-            // Recharger les données
             await this.loadStatuts(type);
             this.showSuccess(`Statut ${isActive ? 'désactivé' : 'activé'} avec succès`);
             
           } catch (error) {
             console.error('Erreur lors du changement de statut:', error);
-            
-            let errorMessage = 'Erreur lors du changement de statut';
-            if (error.response?.data?.message) {
-              errorMessage = error.response.data.message;
-            }
-            
-            this.showError(errorMessage);
+            this.showError('Erreur lors du changement de statut');
           }
         }
       });
@@ -966,39 +853,31 @@ export default {
         onConfirm: async () => {
           try {
             const endpoint = this.getEndpoint(type);
-            
-            // Appeler l'API DELETE
             await axios.delete(`${endpoint}/${id}`);
             
-            // Mettre à jour directement l'état local
             const statutKey = `statuts${this.capitalizeFirst(type)}`;
             const index = this[statutKey].findIndex(s => 
               (s.id === id) || (s.idStatutProjet === id) || (s.idStatutEpisode === id)
             );
             
             if (index !== -1) {
-              // Supprimer complètement de la liste
               this[statutKey].splice(index, 1);
             }
             
-            // Forcer le re-render du composant
             this.$forceUpdate();
-            
             this.showSuccess('Statut supprimé avec succès');
             
           } catch (error) {
             console.error('Erreur lors de la suppression:', error);
-            
             let errorMessage = 'Erreur lors de la suppression';
             if (error.response?.data?.message) {
               errorMessage = error.response.data.message;
             }
             
-            // Si l'erreur indique que le statut est utilisé
             if (errorMessage.toLowerCase().includes('utilisé') || 
                 errorMessage.toLowerCase().includes('en cours') ||
                 errorMessage.toLowerCase().includes('référencé')) {
-              this.showWarning('Impossible de supprimer ce statut car il est utilisé dans des éléments du système.');
+              this.showError('Impossible de supprimer ce statut car il est utilisé dans des éléments du système.');
             } else {
               this.showError(errorMessage);
             }
@@ -1007,16 +886,46 @@ export default {
       });
     },
 
-    getNotificationIcon(type) {
-      const icons = {
-        success: 'fas fa-check-circle',
-        error: 'fas fa-exclamation-circle',
-        warning: 'fas fa-exclamation-triangle',
-        info: 'fas fa-info-circle'
+    // Toast notifications
+    showSuccess(message) {
+      this.toast = {
+        show: true,
+        message,
+        type: 'success',
+        icon: 'fa-check'
       };
-      return icons[type] || 'fas fa-info-circle';
+      setTimeout(() => {
+        this.toast.show = false;
+      }, 3000);
     },
+
+    showError(message) {
+      this.toast = {
+        show: true,
+        message,
+        type: 'error',
+        icon: 'fa-exclamation-circle'
+      };
+      setTimeout(() => {
+        this.toast.show = false;
+      }, 5000);
+    },
+
+    showWarning(message) {
+      this.toast = {
+        show: true,
+        message,
+        type: 'warning',
+        icon: 'fa-exclamation-triangle'
+      };
+      setTimeout(() => {
+        this.toast.show = false;
+      }, 4000);
+    }
   }
 };
 </script>
+
+<style scoped>
+</style>
 
