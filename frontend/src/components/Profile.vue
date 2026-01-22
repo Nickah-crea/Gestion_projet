@@ -1,28 +1,29 @@
 <template>
-  <div class="app-wrapper-global-crea-profile">
-    <!-- Sidebar latérale -->
-    <div class="creation-sidebar-crea-profile">
-      <div class="sidebar-header-crea-profile">
-        <h2 class="sidebar-title-crea-profile">Gestion Profil</h2>
-        <p class="sidebar-subtitle-crea-profile">Gérez vos informations personnelles</p>
+  <div class="app-wrapper-global">
+    <!-- Sidebar latérale fixe à gauche -->
+    <aside class="profile-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Mon Profil</h2>
+        <p class="sidebar-subtitle">Gestion personnelle</p>
       </div>
 
-      <!-- Section Actions Rapides -->
-      <div class="sidebar-section-crea-profile">
-        <h3 class="section-title-crea-profile"><i class="fas fa-bolt"></i> Actions Rapides</h3>
-        <div class="sidebar-actions-crea-profile">
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-user-circle"></i> Navigation
+        </h3>
+        <div class="sidebar-actions">
           <button 
-            @click="scrollToSection('profile')" 
-            class="sidebar-btn-crea-profile" 
-            :class="{ active: activeSection === 'profile' }"
+            class="sidebar-btn" 
+            :class="{ active: activeTab === 'profile' }"
+            @click="activeTab = 'profile'"
           >
             <i class="fas fa-user"></i>
-            Informations
+            Profil
           </button>
           <button 
-            @click="scrollToSection('security')" 
-            class="sidebar-btn-crea-profile"
-            :class="{ active: activeSection === 'security' }"
+            class="sidebar-btn" 
+            :class="{ active: activeTab === 'security' }"
+            @click="activeTab = 'security'"
           >
             <i class="fas fa-shield-alt"></i>
             Sécurité
@@ -30,311 +31,347 @@
         </div>
       </div>
 
-      <!-- Section Statistiques -->
-      <div class="sidebar-section-crea-profile">
-        <h3 class="section-title-crea-profile"><i class="fas fa-chart-bar"></i> Statistiques</h3>
-        <div class="stats-crea-profile">
-          <div class="stat-item-crea-profile">
-            <span class="stat-number-crea-profile">{{ daysSinceCreation }}</span>
-            <span class="stat-label-crea-profile">Jours actif</span>
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-chart-pie"></i> Statistiques
+        </h3>
+        <div class="stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ daysSinceCreation }}</span>
+            <span class="stat-label">Jours actif</span>
           </div>
-          <div class="stat-item-crea-profile">
-            <span class="stat-number-crea-profile">{{ user.role }}</span>
-            <span class="stat-label-crea-profile">Rôle</span>
+          <div class="stat-item">
+            <span class="stat-number">{{ getRoleLabel(user.role) }}</span>
+            <span class="stat-label">Rôle</span>
           </div>
         </div>
       </div>
 
-      <!-- Section Informations rapides -->
-      <div class="sidebar-section-crea-profile">
-        <h3 class="section-title-crea-profile"><i class="fas fa-info-circle"></i> Informations</h3>
-        <div class="quick-info-crea-profile">
-          <div class="info-item-crea-profile">
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-info-circle"></i> Informations
+        </h3>
+        <div class="quick-info">
+          <div class="info-item">
             <i class="fas fa-envelope"></i>
-            <span>{{ user.email }}</span>
+            <span>{{ user.email || 'Non défini' }}</span>
           </div>
-          <div class="info-item-crea-profile">
+          <div class="info-item">
             <i class="fas fa-calendar"></i>
             <span>Créé le {{ formatDateShort(user.creeLe) }}</span>
           </div>
-          <div v-if="user.specialite" class="info-item-crea-profile">
+          <div v-if="user.specialite" class="info-item">
             <i class="fas fa-star"></i>
             <span>{{ user.specialite }}</span>
           </div>
         </div>
       </div>
-    </div>
+    </aside>
 
     <!-- Contenu principal à droite -->
-    <div class="creation-body-crea-profile">
-      <div class="creation-main-content-crea-profile">
-        
-        <!-- En-tête principal -->
-        <div class="main-header-crea-profile">
-          <h1 class="page-title-crea-profile"><i class="fas fa-user-circle"></i> Mon Profil</h1>
-          <p class="page-subtitle-crea-profile">Gérez vos informations personnelles, votre photo de profil et vos paramètres de sécurité</p>
-        </div>
+    <div class="profile-body">
+      <main class="profile-main-content">
+        <!-- Système d'onglets -->
+        <div class="tabs-container">
+          <div class="tabs-header">
+            <button 
+              class="tab-btn" 
+              :class="{ active: activeTab === 'profile' }"
+              @click="activeTab = 'profile'"
+            >
+              <i class="fas fa-user"></i>
+              Profil
+            </button>
+            <button 
+              class="tab-btn" 
+              :class="{ active: activeTab === 'security' }"
+              @click="activeTab = 'security'"
+            >
+              <i class="fas fa-shield-alt"></i>
+              Sécurité
+            </button>
+            <div class="tab-indicator" :style="tabIndicatorStyle"></div>
+          </div>
 
-        <!-- Contenu principal -->
-        <div class="profile-content-crea-profile">
-          
-          <!-- Section Profil avec image et informations côte à côte -->
-          <div id="profile-section" class="profile-main-section-crea-profile" ref="profileSection">
-            <!-- Conteneur pour image et infos -->
-            <div class="profile-header-container-crea-profile">
-              <!-- Photo de profil à gauche -->
-              <div class="profile-photo-section-crea-profile">
-                <div class="photo-wrapper-large-crea-profile">
-                  <img 
-                    :src="profilePhotoUrl" 
-                    alt="Photo de profil" 
-                    class="profile-photo-large-crea-profile"
-                    @error="handleImageError"
-                  >
-                  <div class="photo-overlay-large-crea-profile">
-                    <label for="photo-upload" class="upload-label-large-crea-profile">
-                      <i class="fas fa-camera"></i>
-                      <span>Changer la photo</span>
-                    </label>
-                    <input 
-                      type="file" 
-                      id="photo-upload" 
-                      accept="image/*" 
-                      @change="handlePhotoUpload"
-                      hidden
-                    >
+          <div class="tabs-content">
+            <!-- Onglet 1: Profil complet (photo + infos) -->
+            <div v-if="activeTab === 'profile'" class="tab-pane">
+              <div class="profile-main-section">
+                <!-- Conteneur pour image et infos côte à côte -->
+                <div class="profile-header-container">
+                  <!-- Photo de profil à gauche -->
+                  <div class="profile-photo-section">
+                    <div class="photo-wrapper">
+                      <img 
+                        :src="profilePhotoUrl" 
+                        alt="Photo de profil" 
+                        class="profile-photo"
+                        @error="handleImageError"
+                      />
+                      <div class="photo-overlay">
+                        <label for="photo-upload" class="upload-label">
+                          <i class="fas fa-camera"></i>
+                          <span>Changer la photo</span>
+                        </label>
+                        <input 
+                          type="file" 
+                          id="photo-upload" 
+                          accept="image/*" 
+                          @change="handlePhotoUpload"
+                          hidden
+                        />
+                      </div>
+                    </div>
+                    
+                    <!-- Boutons d'action pour la photo -->
+                    <div v-if="previewPhoto" class="photo-actions">
+                      <button 
+                        @click="uploadPhoto"
+                        class="submit-btn"
+                        :disabled="loading"
+                      >
+                        <i v-if="loading" class="fas fa-spinner fa-spin"></i>
+                        <i v-else class="fas fa-upload"></i>
+                        {{ loading ? 'Upload en cours...' : 'Uploader la photo' }}
+                      </button>
+                      
+                      <button 
+                        @click="removeSelectedPhoto"
+                        class="cancel-btn"
+                      >
+                        <i class="fas fa-times"></i> Annuler
+                      </button>
+                    </div>
+                    
+                    <div v-if="!previewPhoto && hasProfilePhoto" class="photo-delete-action">
+                      <button 
+                        @click="deletePhoto"
+                        class="cancel-btn delete-btn"
+                      >
+                        <i class="fas fa-trash"></i> Supprimer la photo
+                      </button>
+                    </div>
+                    
+                    <!-- Informations techniques -->
+                    <div class="photo-info">
+                      <h4><i class="fas fa-info-circle"></i> Instructions</h4>
+                      <ul>
+                        <li><strong>Formats acceptés :</strong> JPEG, PNG, GIF</li>
+                        <li><strong>Taille maximum :</strong> 5 MB</li>
+                        <li><strong>Dimensions recommandées :</strong> 300x300 px</li>
+                        <li><strong>Aspect ratio :</strong> Carré (1:1) recommandé</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <!-- Informations personnelles à droite -->
+                  <div class="profile-info-section">
+                    <div class="section-header">
+                      <h3><i class="fas fa-user-edit"></i> Informations personnelles</h3>
+                      <button 
+                        v-if="!isEditing" 
+                        @click="enableEditing"
+                        class="edit-btn"
+                      >
+                        <i class="fas fa-edit"></i> Modifier
+                      </button>
+                      <div v-else class="edit-actions">
+                        <button @click="saveChanges" class="submit-btn" :disabled="loading">
+                          <i v-if="loading" class="fas fa-spinner fa-spin"></i>
+                          <i v-else class="fas fa-save"></i>
+                          Enregistrer
+                        </button>
+                        <button @click="cancelEditing" class="cancel-btn">
+                          <i class="fas fa-times"></i> Annuler
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <form @submit.prevent="saveChanges" class="profile-form">
+                      <div class="form-grid">
+                        <div class="form-group">
+                          <label for="nom">Nom complet *</label>
+                          <input 
+                            type="text" 
+                            id="nom" 
+                            v-model="formData.nom"
+                            :disabled="!isEditing"
+                            placeholder="Votre nom complet"
+                            class="form-input"
+                          />
+                        </div>
+
+                        <div class="form-group">
+                          <label for="email">Email *</label>
+                          <input 
+                            type="email" 
+                            id="email" 
+                            v-model="formData.email"
+                            :disabled="!isEditing"
+                            placeholder="votre@email.com"
+                            class="form-input"
+                          />
+                        </div>
+
+                        <div class="form-group">
+                          <label for="role">Rôle</label>
+                          <input 
+                            type="text" 
+                            id="role" 
+                            v-model="formData.role"
+                            disabled
+                            class="form-input"
+                          />
+                        </div>
+
+                        <!-- Champs spécifiques selon le rôle -->
+                        <div v-if="user.role === 'SCENARISTE' || user.role === 'REALISATEUR'" class="form-group">
+                          <label for="specialite">Spécialité</label>
+                          <input 
+                            type="text" 
+                            id="specialite" 
+                            v-model="formData.specialite"
+                            :disabled="!isEditing"
+                            placeholder="Votre spécialité"
+                            class="form-input"
+                          />
+                        </div>
+
+                        <div v-if="user.role === 'SCENARISTE' || user.role === 'REALISATEUR'" class="form-group full-width">
+                          <label for="biographie">Biographie</label>
+                          <textarea 
+                            id="biographie" 
+                            v-model="formData.biographie"
+                            :disabled="!isEditing"
+                            rows="5"
+                            placeholder="Décrivez votre parcours et expérience..."
+                            class="form-textarea"
+                          ></textarea>
+                        </div>
+                      </div>
+
+                      <div v-if="formError" class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ formError }}
+                      </div>
+                    </form>
                   </div>
                 </div>
-                
-                <!-- Boutons d'action pour la photo -->
-                <div v-if="previewPhoto" class="photo-actions-crea-profile">
-                  <button 
-                    @click="uploadPhoto"
-                    class="upload-confirm-btn-crea-profile"
-                    :disabled="loading"
-                  >
-                    <i v-if="loading" class="fas fa-spinner fa-spin"></i>
-                    <i v-else class="fas fa-upload"></i>
-                    {{ loading ? 'Upload en cours...' : 'Uploader la photo' }}
-                  </button>
-                  
-                  <button 
-                    @click="removeSelectedPhoto"
-                    class="cancel-photo-btn-crea-profile"
-                  >
-                    <i class="fas fa-times"></i> Annuler
-                  </button>
-                </div>
-                
-                <div v-if="!previewPhoto && hasProfilePhoto" class="photo-delete-action-crea-profile">
-                  <button 
-                    @click="deletePhoto"
-                    class="delete-photo-btn-crea-profile"
-                  >
-                    <i class="fas fa-trash"></i> Supprimer la photo
-                  </button>
-                </div>
-                
-                <!-- Informations techniques -->
-                <div class="photo-info-crea-profile">
-                  <p><strong>Formats acceptés :</strong> JPEG, PNG, GIF</p>
-                  <p><strong>Taille maximum :</strong> 5 MB</p>
-                  <p><strong>Dimensions recommandées :</strong> 300x300 px</p>
+
+                <!-- Section Dates -->
+                <div class="dates-section">
+                  <h3><i class="fas fa-history"></i> Historique</h3>
+                  <div class="dates-grid">
+                    <div class="date-item">
+                      <i class="fas fa-calendar-plus"></i>
+                      <div>
+                        <p class="date-label">Compte créé le</p>
+                        <p class="date-value">{{ formatDate(user.creeLe) }}</p>
+                      </div>
+                    </div>
+                    <div class="date-item">
+                      <i class="fas fa-calendar-check"></i>
+                      <div>
+                        <p class="date-label">Dernière modification</p>
+                        <p class="date-value">{{ formatDate(user.modifieLe) }}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Informations personnelles à droite -->
-              <div class="profile-info-section-crea-profile">
-                <div class="section-header-crea-profile">
-                  <h3><i class="fas fa-user"></i> Informations personnelles</h3>
+            <!-- Onglet 2: Sécurité -->
+            <div v-if="activeTab === 'security'" class="tab-pane">
+              <div class="security-section">
+                <div class="section-header">
+                  <h3><i class="fas fa-shield-alt"></i> Sécurité</h3>
                   <button 
-                    v-if="!isEditing" 
-                    @click="enableEditing"
-                    class="edit-section-btn-crea-profile"
+                    v-if="!isEditingPassword" 
+                    @click="enablePasswordEditing"
+                    class="edit-btn"
                   >
-                    <i class="fas fa-edit"></i> Modifier
+                    <i class="fas fa-edit"></i>
+                    Changer mot de passe
                   </button>
-                  <div v-else class="edit-actions-crea-profile">
-                    <button @click="saveChanges" class="save-section-btn-crea-profile" :disabled="loading">
+                  <div v-else class="edit-actions">
+                    <button @click="savePassword" class="submit-btn" :disabled="loading">
                       <i v-if="loading" class="fas fa-spinner fa-spin"></i>
                       <i v-else class="fas fa-save"></i>
                       Enregistrer
                     </button>
-                    <button @click="cancelEditing" class="cancel-section-btn-crea-profile">
+                    <button @click="cancelPasswordEditing" class="cancel-btn">
                       <i class="fas fa-times"></i> Annuler
                     </button>
                   </div>
                 </div>
                 
-                <div class="profile-form-crea-profile">
-                  <div class="form-grid-crea-profile">
-                    <div class="form-group-crea-profile">
-                      <label for="nom">Nom complet *</label>
+                <div v-if="isEditingPassword" class="password-form">
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="currentPassword">Mot de passe actuel *</label>
                       <input 
-                        type="text" 
-                        id="nom" 
-                        v-model="formData.nom"
-                        :disabled="!isEditing"
-                        placeholder="Votre nom complet"
-                        class="form-input-crea-profile"
-                      >
+                        type="password" 
+                        id="currentPassword" 
+                        v-model="passwordData.currentPassword"
+                        placeholder="Votre mot de passe actuel"
+                        class="form-input"
+                      />
                     </div>
-
-                    <div class="form-group-crea-profile">
-                      <label for="email">Email *</label>
+                    <div class="form-group">
+                      <label for="newPassword">Nouveau mot de passe *</label>
                       <input 
-                        type="email" 
-                        id="email" 
-                        v-model="formData.email"
-                        :disabled="!isEditing"
-                        placeholder="votre@email.com"
-                        class="form-input-crea-profile"
-                      >
+                        type="password" 
+                        id="newPassword" 
+                        v-model="passwordData.newPassword"
+                        placeholder="Nouveau mot de passe"
+                        class="form-input"
+                      />
                     </div>
-
-                    <div class="form-group-crea-profile">
-                      <label for="role">Rôle</label>
+                    <div class="form-group">
+                      <label for="confirmPassword">Confirmer le mot de passe *</label>
                       <input 
-                        type="text" 
-                        id="role" 
-                        v-model="formData.role"
-                        disabled
-                        class="form-input-crea-profile"
-                      >
+                        type="password" 
+                        id="confirmPassword" 
+                        v-model="passwordData.confirmPassword"
+                        placeholder="Confirmer le nouveau mot de passe"
+                        class="form-input"
+                      />
                     </div>
+                  </div>
+                  <div class="password-requirements">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Exigences de sécurité :</h4>
+                    <ul>
+                      <li>Minimum 8 caractères</li>
+                      <li>Au moins une lettre majuscule</li>
+                      <li>Au moins un chiffre</li>
+                      <li>Au moins un caractère spécial (!@#$%^&*)</li>
+                      <li>Ne doit pas être trop similaire à vos informations personnelles</li>
+                    </ul>
+                  </div>
 
-                    <!-- Champs spécifiques selon le rôle -->
-                    <div v-if="user.role === 'SCENARISTE' || user.role === 'REALISATEUR'" class="form-group-crea-profile">
-                      <label for="specialite">Spécialité</label>
-                      <input 
-                        type="text" 
-                        id="specialite" 
-                        v-model="formData.specialite"
-                        :disabled="!isEditing"
-                        placeholder="Votre spécialité"
-                        class="form-input-crea-profile"
-                      >
-                    </div>
-
-                    <div v-if="user.role === 'SCENARISTE' || user.role === 'REALISATEUR'" class="form-group-crea-profile full-width">
-                      <label for="biographie">Biographie</label>
-                      <textarea 
-                        id="biographie" 
-                        v-model="formData.biographie"
-                        :disabled="!isEditing"
-                        rows="5"
-                        placeholder="Décrivez votre parcours et expérience..."
-                        class="form-textarea-crea-profile"
-                      ></textarea>
-                    </div>
+                  <div v-if="formError" class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ formError }}
+                  </div>
+                </div>
+                <div v-else class="security-info">
+                  <div class="info-card">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Pour changer votre mot de passe, cliquez sur "Changer mot de passe"</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Section Sécurité (Mot de passe) -->
-          <div id="security-section" class="profile-section-crea-profile" ref="securitySection">
-            <div class="section-header-crea-profile">
-              <h3><i class="fas fa-shield-alt"></i> Sécurité</h3>
-              <button 
-                v-if="!isEditingPassword" 
-                @click="enablePasswordEditing"
-                class="edit-section-btn-crea-profile"
-              >
-                <i class="fas fa-edit"></i> Changer mot de passe
-              </button>
-              <div v-else class="edit-actions-crea-profile">
-                <button @click="savePassword" class="save-section-btn-crea-profile" :disabled="loading">
-                  <i v-if="loading" class="fas fa-spinner fa-spin"></i>
-                  <i v-else class="fas fa-save"></i>
-                  Enregistrer
-                </button>
-                <button @click="cancelPasswordEditing" class="cancel-section-btn-crea-profile">
-                  <i class="fas fa-times"></i> Annuler
-                </button>
-              </div>
-            </div>
-            
-            <div v-if="isEditingPassword" class="password-form-crea-profile">
-              <div class="form-grid-crea-profile">
-                <div class="form-group-crea-profile">
-                  <label for="currentPassword">Mot de passe actuel *</label>
-                  <input 
-                    type="password" 
-                    id="currentPassword" 
-                    v-model="passwordData.currentPassword"
-                    placeholder="Votre mot de passe actuel"
-                    class="form-input-crea-profile"
-                  >
-                </div>
-                <div class="form-group-crea-profile">
-                  <label for="newPassword">Nouveau mot de passe *</label>
-                  <input 
-                    type="password" 
-                    id="newPassword" 
-                    v-model="passwordData.newPassword"
-                    placeholder="Nouveau mot de passe"
-                    class="form-input-crea-profile"
-                  >
-                </div>
-                <div class="form-group-crea-profile">
-                  <label for="confirmPassword">Confirmer le mot de passe *</label>
-                  <input 
-                    type="password" 
-                    id="confirmPassword" 
-                    v-model="passwordData.confirmPassword"
-                    placeholder="Confirmer le nouveau mot de passe"
-                    class="form-input-crea-profile"
-                  >
-                </div>
-              </div>
-              <div class="password-requirements-crea-profile">
-                <p><strong>Exigences de sécurité :</strong></p>
-                <ul>
-                  <li>Minimum 8 caractères</li>
-                  <li>Au moins une lettre majuscule</li>
-                  <li>Au moins un chiffre</li>
-                  <li>Au moins un caractère spécial</li>
-                </ul>
-              </div>
-            </div>
-            <div v-else class="security-info-crea-profile">
-              <p><i class="fas fa-info-circle"></i> Pour changer votre mot de passe, cliquez sur "Changer mot de passe"</p>
-            </div>
-          </div>
-
-          <!-- Section Dates -->
-          <div class="profile-section-crea-profile dates-section-crea-profile">
-            <h3><i class="fas fa-history"></i> Historique</h3>
-            <div class="dates-grid-crea-profile">
-              <div class="date-item-crea-profile">
-                <i class="fas fa-calendar-plus"></i>
-                <div>
-                  <p class="date-label-crea-profile">Compte créé le</p>
-                  <p class="date-value-crea-profile">{{ formatDate(user.creeLe) }}</p>
-                </div>
-              </div>
-              <div class="date-item-crea-profile">
-                <i class="fas fa-calendar-check"></i>
-                <div>
-                  <p class="date-label-crea-profile">Dernière modification</p>
-                  <p class="date-value-crea-profile">{{ formatDate(user.modifieLe) }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+      </main>
     </div>
 
-    <!-- Messages d'erreur/succès -->
-    <div v-if="message" :class="['message-crea-profile', message.type]" @click="clearMessage">
-      <i :class="message.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
-      {{ message.text }}
-      <button class="message-close-crea-profile">
-        <i class="fas fa-times"></i>
-      </button>
+    <!-- Toast de notification -->
+    <div v-if="toast.show" class="toast" :class="toast.type">
+      <i class="fas" :class="toast.icon"></i>
+      <span>{{ toast.message }}</span>
     </div>
   </div>
 </template>
@@ -347,6 +384,7 @@ export default {
   name: 'ProfilePage',
   data() {
     return {
+      activeTab: 'profile',
       user: {
         id: null,
         nom: '',
@@ -361,7 +399,6 @@ export default {
       isEditing: false,
       isEditingPassword: false,
       loading: false,
-      activeSection: 'profile',
       formData: {
         nom: '',
         email: '',
@@ -374,11 +411,17 @@ export default {
         newPassword: '',
         confirmPassword: ''
       },
-      message: null,
+      formError: '',
       defaultPhoto: defaultProfileImage,
       imageError: false,
       currentPhotoFile: null,
-      previewPhoto: null
+      previewPhoto: null,
+      toast: {
+        show: false,
+        message: '',
+        type: 'success',
+        icon: 'fa-check'
+      }
     };
   },
   computed: {
@@ -409,11 +452,19 @@ export default {
       const diffTime = Math.abs(now - created);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return diffDays;
+    },
+
+    tabIndicatorStyle() {
+      const tabs = ['profile', 'security'];
+      const index = tabs.indexOf(this.activeTab);
+      return {
+        width: `${100 / tabs.length}%`,
+        transform: `translateX(${index * 100}%)`
+      };
     }
   },
   mounted() {
     this.loadUserProfile();
-    this.setupScrollSpy();
   },
   methods: {
     async loadUserProfile() {
@@ -425,6 +476,7 @@ export default {
         
         if (!userData) {
           this.showError('Utilisateur non connecté');
+          this.$router.push('/login');
           return;
         }
         
@@ -468,30 +520,13 @@ export default {
       };
     },
 
-    setupScrollSpy() {
-      window.addEventListener('scroll', this.handleScroll);
-    },
-
-    handleScroll() {
-      const sections = ['profile', 'security'];
-      for (const section of sections) {
-        const element = this.$refs[`${section}Section`];
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 100 && rect.bottom >= 100) {
-            this.activeSection = section;
-            break;
-          }
-        }
-      }
-    },
-
-    scrollToSection(section) {
-      this.activeSection = section;
-      const element = this.$refs[`${section}Section`];
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    getRoleLabel(role) {
+      const roleLabels = {
+        'ADMIN': 'Administrateur',
+        'SCENARISTE': 'Scénariste',
+        'REALISATEUR': 'Réalisateur'
+      };
+      return roleLabels[role] || role;
     },
 
     enableEditing() {
@@ -537,7 +572,7 @@ export default {
       }
 
       this.loading = true;
-      this.clearMessage();
+      this.formError = '';
       
       try {
         const token = localStorage.getItem('token');
@@ -572,17 +607,20 @@ export default {
         localStorage.setItem('user', JSON.stringify(updatedUser));
 
         this.isEditing = false;
-        this.showSuccess('Profil mis à jour avec succès');
+        this.showToast('Profil mis à jour avec succès', 'success');
         
       } catch (error) {
         console.error('Erreur lors de la mise à jour:', error);
         
         if (error.response?.status === 409) {
-          this.showError('Cet email est déjà utilisé');
+          this.formError = 'Cet email est déjà utilisé';
+          this.showToast('Cet email est déjà utilisé', 'error');
         } else if (error.response?.status === 400) {
-          this.showError(error.response.data?.message || 'Données invalides');
+          this.formError = error.response.data?.message || 'Données invalides';
+          this.showToast(this.formError, 'error');
         } else {
-          this.showError(error.response?.data?.message || 'Erreur lors de la mise à jour du profil');
+          this.formError = error.response?.data?.message || 'Erreur lors de la mise à jour du profil';
+          this.showToast(this.formError, 'error');
         }
       } finally {
         this.loading = false;
@@ -606,7 +644,7 @@ export default {
       }
 
       this.loading = true;
-      this.clearMessage();
+      this.formError = '';
       
       try {
         const token = localStorage.getItem('token');
@@ -634,15 +672,17 @@ export default {
           confirmPassword: ''
         };
         
-        this.showSuccess('Mot de passe changé avec succès');
+        this.showToast('Mot de passe changé avec succès', 'success');
         
       } catch (error) {
         console.error('Erreur lors du changement de mot de passe:', error);
         
         if (error.response?.status === 400) {
-          this.showError('Mot de passe actuel incorrect');
+          this.formError = 'Mot de passe actuel incorrect';
+          this.showToast('Mot de passe actuel incorrect', 'error');
         } else {
-          this.showError(error.response?.data?.message || 'Erreur lors du changement de mot de passe');
+          this.formError = error.response?.data?.message || 'Erreur lors du changement de mot de passe';
+          this.showToast(this.formError, 'error');
         }
       } finally {
         this.loading = false;
@@ -656,7 +696,7 @@ export default {
       }
       
       this.loading = true;
-      this.clearMessage();
+      this.formError = '';
       
       try {
         const token = localStorage.getItem('token');
@@ -687,15 +727,17 @@ export default {
         this.currentPhotoFile = null;
         this.imageError = false;
         
-        this.showSuccess('Photo de profil mise à jour avec succès');
+        this.showToast('Photo de profil mise à jour avec succès', 'success');
         
       } catch (error) {
         console.error('Erreur lors de l\'upload:', error);
         
         if (error.response?.status === 400) {
-          this.showError(error.response.data?.message || 'Format d\'image invalide');
+          this.formError = error.response.data?.message || 'Format d\'image invalide';
+          this.showToast(this.formError, 'error');
         } else {
-          this.showError(error.response?.data?.message || 'Erreur lors de l\'upload de la photo');
+          this.formError = error.response?.data?.message || 'Erreur lors de l\'upload de la photo';
+          this.showToast(this.formError, 'error');
         }
       } finally {
         this.loading = false;
@@ -731,7 +773,7 @@ export default {
       }
 
       this.loading = true;
-      this.clearMessage();
+      this.formError = '';
       
       try {
         const token = localStorage.getItem('token');
@@ -754,10 +796,11 @@ export default {
         };
         localStorage.setItem('user', JSON.stringify(updatedUser));
 
-        this.showSuccess('Photo de profil supprimée avec succès');
+        this.showToast('Photo de profil supprimée avec succès', 'success');
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
-        this.showError('Erreur lors de la suppression de la photo');
+        this.formError = 'Erreur lors de la suppression de la photo';
+        this.showToast(this.formError, 'error');
       } finally {
         this.loading = false;
       }
@@ -809,24 +852,32 @@ export default {
       }
     },
 
-    showSuccess(text) {
-      this.message = { type: 'success', text };
-      setTimeout(() => this.clearMessage(), 5000);
+    showError(text) {
+      this.formError = text;
+      this.showToast(text, 'error');
     },
 
-    showError(text) {
-      this.message = { type: 'error', text };
-      setTimeout(() => this.clearMessage(), 5000);
+    showToast(message, type = 'success') {
+      this.toast = {
+        show: true,
+        message,
+        type,
+        icon: type === 'success' ? 'fa-check' : 'fa-exclamation-circle'
+      };
+      
+      setTimeout(() => {
+        this.toast.show = false;
+      }, 5000);
     },
 
     clearMessage() {
-      this.message = null;
+      this.formError = '';
+      this.toast.show = false;
     }
-  },
-  beforeUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
   }
 };
 </script>
 
+<style scoped>
+</style>
 
