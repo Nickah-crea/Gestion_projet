@@ -1,5 +1,5 @@
 // =============================================
-// _navbar.scss - INSPIRÉ DE NOCTELLER
+// _navbar.scss - STYLE SCÉNARISTE MODERNE
 // =============================================
 
 @import '../base/variables';
@@ -9,18 +9,19 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 70px;
   padding: 0 $padding-lg;
   display: flex;
   align-items: center;
   transition: $transition;
   z-index: $z-index-fixed;
   background: $color-background-alt;
-  border-bottom: 1px solid rgba($color-border, 0.3);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba($color-border, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   
   &.collapsed {
-    height: 70px;
+    height: 65px;
     padding: 0 $padding-md;
   }
 }
@@ -36,16 +37,16 @@
   justify-content: space-between;
   height: 100%;
   width: 100%;
-  padding: 0 $padding-md;
+  padding: 0 $padding-sm;
   margin: 0 auto;
 }
 
-/* Logo - Gauche (Comme Nocteller) */
+/* Logo - Version simplifiée */
 .navbar-left {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: $gap-lg;
+  gap: $gap-md;
 }
 
 .logo-link {
@@ -53,79 +54,76 @@
   align-items: center;
   text-decoration: none;
   transition: $transition-fast;
+  gap: 8px;
 
   &:hover {
-    opacity: 0.9;
-    transform: scale(1.02);
+    opacity: 0.8;
   }
 }
 
 .logo-img {
-  height: 40px;
+  height: 36px;
   width: auto;
   object-fit: contain;
 }
 
-/* Texte du logo (Nocteller) */
+/* Texte du logo - Style scénariste */
 .logo-text {
-  @include typography-playfair-h1;
-  font-size: 28px;
-  font-weight: $font-weight-bold;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: $font-weight-semibold;
   color: $color-text-primary;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
   margin: 0;
-  background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
-/* Navigation centrale - Style épuré comme nav.png */
+/* Navigation centrale - Style épuré */
 .nav-center {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $gap-xl;
+  gap: $gap-lg;
   flex: 1;
-  margin: 0 $margin-xl;
+  margin: 0 $margin-lg;
   transition: $transition;
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
 
-/* Liens de navigation - Style Nocteller */
+/* Liens de navigation - Style minimaliste */
 .nav-link {
   text-decoration: none;
   position: relative;
   padding: $padding-xs $padding-sm;
-  transition: $transition;
+  transition: $transition-fast;
   text-align: center;
 
   .link-text {
-    @include typography-playfair-p2;
+    font-family: 'Inter', sans-serif;
+    font-size: $font-size-p3;
     font-weight: $font-weight-medium;
     color: $color-text-secondary;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     transition: $transition-fast;
     position: relative;
     
     &::after {
       content: '';
       position: absolute;
-      bottom: -2px;
+      bottom: -4px;
       left: 0;
       width: 0;
-      height: 1px;
-      background: linear-gradient(90deg, $color-primary, $color-accent);
+      height: 2px;
+      background: $color-primary;
       transition: $transition;
+      border-radius: 1px;
     }
   }
 
   &:hover {
     .link-text {
       color: $color-text-primary;
-      transform: translateY(-1px);
       
       &::after {
         width: 100%;
@@ -135,96 +133,67 @@
 
   &.router-link-active {
     .link-text {
-      color: $color-text-primary;
+      color: $color-primary;
       font-weight: $font-weight-semibold;
       
       &::after {
         width: 100%;
-        background: linear-gradient(90deg, $color-primary, $color-accent);
+        background: $color-primary;
       }
     }
   }
 }
 
-/* Liens avec dropdown (comme "Parcourir ▼") */
-.nav-link-dropdown {
-  @extend .nav-link;
-  
-  .link-text {
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    
-    i {
-      font-size: 10px;
-      transition: $transition;
-    }
-  }
-  
-  &:hover .link-text i {
-    transform: rotate(180deg);
-  }
-}
-
-/* Section Ajouter - Style bouton "Écrire" de Nocteller */
+/* Bouton Ajouter - Style discret mais reconnaissable */
 .quick-add-section {
   position: relative;
   margin-left: $margin-md;
 }
 
-
 .quick-add-btn {
   @include flex-center;
-  gap: 8px; /* Espacement uniforme entre tous les éléments */
-  background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
-  border: none;
+  gap: 6px;
+  background: transparent;
+  border: 1.5px solid rgba($color-primary, 0.3);
   border-radius: $border-radius-xs;
-  padding: $padding-sm;
+  padding: $padding-xs $padding-sm;
   cursor: pointer;
   transition: $transition-fast;
-  min-width: 120px;
-  height: 42px;
-  box-shadow: 0 4px 15px rgba($color-primary, 0.3);
-  
-  /* Alignement vertical parfait */
+  min-width: 100px;
+  height: 38px;
+  background: rgba($color-primary, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
 
   .btn-icon {
-    font-size: $font-size-p3; /* Taille ajustée pour l'icône + */
-    color: $color-text-light;
+    font-size: 13px;
+    color: $color-primary;
     line-height: 1;
-    /* Pas de margin-top car aligné automatiquement */
   }
 
   .btn-text {
-    @include typography-playfair-p2;
-    font-weight: $font-weight-semibold;
-    color: $color-text-light;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-medium;
+    color: $color-primary;
+    letter-spacing: 0.2px;
+    text-transform: none;
     line-height: 1;
-    /* Ajustement manuel si nécessaire */
-    position: relative;
-    margin-top: 3px; /* Micro-ajustement pour alignement vertical parfait */
   }
 
   .dropdown-icon {
-    font-size: $font-size-p4;
-    color: $color-text-light;
+    font-size: 10px;
+    color: $color-primary;
     transition: $transition;
     line-height: 1;
-    /* Ajustement manuel si nécessaire */
-    position: relative;
-    top: 0.5px; /* Même ajustement que le texte pour cohérence */
+    margin-left: 2px;
   }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba($color-primary, 0.4);
-    background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
+    background: rgba($color-primary, 0.1);
+    border-color: rgba($color-primary, 0.6);
+    transform: translateY(-1px);
 
     .dropdown-icon {
       transform: translateY(1px);
@@ -232,8 +201,8 @@
   }
 
   &[aria-expanded="true"] {
-    background: linear-gradient(135deg, $color-accent 0%, $color-primary 100%);
-    box-shadow: 0 4px 20px rgba($color-primary, 0.4);
+    background: rgba($color-primary, 0.15);
+    border-color: $color-primary;
 
     .dropdown-icon {
       transform: rotate(180deg);
@@ -241,30 +210,29 @@
   }
 }
 
-/* Pour l'effet de rotation du dropdown */
 .rotate-180 {
   transform: rotate(180deg) !important;
 }
 
-/* === POPUP AJOUTER - STYLE NOCTELLER MODERNE === */
+/* Popup Ajouter - Style moderne simplifié */
 .add-popup {
   position: absolute;
-  top: calc(100% + $gap-md);
+  top: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
   z-index: $z-index-popover;
-  min-width: 420px;
-  animation: slideDown 0.3s $ease-out-cinema forwards;
-  border-radius: $border-radius-lg;
+  min-width: 380px;
+  animation: slideDown 0.2s $ease-out-cinema forwards;
+  border-radius: $border-radius;
   overflow: hidden;
 }
 
 .popup-content {
-  background: $color-background-alt;
-  border-radius: $border-radius-lg;
-  padding: $padding-lg;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba($color-border, 0.3);
+  background: $color-primary;
+  border-radius: $border-radius;
+  padding: $padding-md;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba($color-border, 0.2);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   width: 100%;
@@ -273,72 +241,62 @@
 .popup-grid {
   display: flex;
   flex-direction: column;
-  gap: $gap-lg;
+  gap: $gap-md;
 }
 
 .popup-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: $gap-md;
+  gap: $gap-sm;
 }
 
 .popup-btn {
   @include flex-center;
-  height: 60px;
-  background: rgba($color-primary, 0.05);
-  border: 1px solid rgba($color-border, 0.2);
-  border-radius: $border-radius;
+  height: 48px;
+  background: rgba($color-background-alt, 0.03);
+  border: 1px solid rgba($color-border, 0.15);
+  border-radius: $border-radius-xs;
   cursor: pointer;
   transition: $transition-fast;
-  padding: $padding-sm;
+  padding: $padding-xs;
   text-align: center;
   flex-direction: column;
 
-  @include typography-playfair-p3;
+  font-family: 'Inter', sans-serif;
+  font-size: $font-size-p4;
   font-weight: $font-weight-medium;
-  color: $color-text-secondary;
-  letter-spacing: 0.3px;
-  line-height: 1.3;
+  color: $color-text-light;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
 
   &:hover {
-    background: linear-gradient(135deg, rgba($color-primary, 0.1), rgba($color-accent, 0.1));
-    border-color: $color-primary;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba($color-primary, 0.15);
-    color: $color-text-primary;
-  }
-
-  &:active {
-    transform: translateY(0);
+    background: rgba($color-background-alt, 0.08);
+    border-color: $color-accent;
+    color: $color-text-light;
   }
 }
 
-/* Actions de navigation - Droite (Profile, Déconnexion) */
+/* Section droite */
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: $gap-lg;
+  gap: $gap-md;
   flex: 0 0 auto;
 }
 
 .profile-link {
   display: flex;
   align-items: center;
-  gap: $gap-md;
+  gap: $gap-sm;
   text-decoration: none;
-  padding: 6px 12px;
+  padding: 4px 8px;
   border-radius: $border-radius-xs;
   transition: $transition-fast;
-  background: rgba($color-primary, 0.05);
-  border: 1px solid rgba($color-border, 0.2);
-  min-width: 140px;
-  height: 42px;
+  background: transparent;
+  border: 1px solid transparent;
 
   &:hover {
-    background: rgba($color-primary, 0.1);
-    border-color: $color-primary;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba($color-primary, 0.15);
+    background: rgba($color-primary, 0.05);
   }
 }
 
@@ -348,18 +306,12 @@
   height: 32px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid rgba($color-primary, 0.2);
 }
 
 .profile-avatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: $transition-fast;
-
-  .profile-link:hover & {
-    transform: scale(1.1);
-  }
 }
 
 .profile-avatar-placeholder {
@@ -368,118 +320,61 @@
   height: 100%;
   background: linear-gradient(135deg, $color-primary, $color-accent);
   color: $color-text-light;
-  font-size: $font-size-p3;
+  font-size: $font-size-p4;
 }
 
 .profile-text {
-  @include typography-playfair-p3;
+  font-family: 'Inter', sans-serif;
+  font-size: $font-size-p4;
   font-weight: $font-weight-medium;
   color: $color-text-primary;
   max-width: 100px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: 0.3px;
-}
-
-/* Barre de recherche (comme nav.png) */
-.search-container {
-  position: relative;
-  margin: 0 $margin-lg;
-  flex: 1;
-  max-width: 400px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 16px 10px 40px;
-  border: 1px solid rgba($color-border, 0.3);
-  border-radius: $border-radius-pill;
-  background: rgba($color-primary, 0.03);
-  @include typography-playfair-p3;
-  color: $color-text-secondary;
-  transition: $transition-fast;
-  
-  &:focus {
-    outline: none;
-    border-color: $color-primary;
-    background: $color-background-alt;
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
-  }
-  
-  &::placeholder {
-    color: $color-text-muted;
-  }
-}
-
-.search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: $color-text-muted;
-  font-size: $font-size-p3;
 }
 
 .logout-link {
   @include flex-center;
-  gap: $gap-sm;
+  gap: $gap-xs;
   text-decoration: none;
-  padding: 8px 12px;
+  padding: 6px 8px;
   border-radius: $border-radius-xs;
   background: transparent;
-  // border: 1px solid rgba($color-error, 0.2);
   transition: $transition-fast;
-  min-width: 40px;
-  height: 42px;
+  color: $color-text-secondary;
 
   i {
-    font-size: $font-size-p2;
-    color: $color-error;
-  }
-
-  .logout-text {
-    @include typography-playfair-p3;
-    font-weight: $font-weight-medium;
-    color: $color-error;
-    letter-spacing: 0.3px;
+    font-size: $font-size-p3;
   }
 
   &:hover {
-    background: rgba($color-error, 0.15);
-    border-color: $color-error;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba($color-error, 0.15);
-
-    i, .logout-text {
-      color: $color-error;
-    }
+    background: rgba($color-error, 0.05);
+    color: $color-error;
   }
 }
 
 .burger-menu {
   display: none;
   background: transparent;
-  border: 1px solid rgba($color-border, 0.3);
+  border: 1px solid rgba($color-border, 0.2);
   cursor: pointer;
-  padding: $padding-sm;
-  border-radius: $border-radius;
+  padding: $padding-xs;
+  border-radius: $border-radius-xs;
   transition: $transition-fast;
-  min-width: 44px;
-  min-height: 44px;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
 
   i {
-    font-size: $font-size-p1;
+    font-size: $font-size-p2;
     color: $color-text-primary;
   }
 
   &:hover {
-    background: rgba($color-primary, 0.1);
+    background: rgba($color-primary, 0.05);
     border-color: $color-primary;
-
-    i {
-      color: $color-primary;
-    }
   }
 }
 
@@ -487,7 +382,7 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
+    transform: translateX(-50%) translateY(-8px);
   }
   to {
     opacity: 1;
@@ -501,35 +396,8 @@
     padding: 0 $padding-md;
   }
 
-  .navbar-content {
-    padding: 0 $padding-sm;
-  }
-
-  .nav-center {
-    gap: $gap-lg;
-    margin: 0 $margin-lg;
-  }
-
   .logo-text {
-    font-size: 24px;
-  }
-
-  .popup-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .add-popup {
-    min-width: 360px;
-  }
-}
-
-@include respond-to($breakpoint-md) {
-  .navbar {
-    height: 70px;
-  }
-
-  .navbar-content {
-    padding: 0 $padding-xs;
+    font-size: 20px;
   }
 
   .nav-center {
@@ -537,43 +405,41 @@
     margin: 0 $margin-md;
   }
 
-  .search-container {
-    margin: 0 $margin-sm;
-    max-width: 300px;
+  .popup-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .add-popup {
+    min-width: 320px;
+  }
+}
+
+@include respond-to($breakpoint-md) {
+  .navbar {
+    height: 65px;
+  }
+
+  .nav-center {
+    gap: $gap-sm;
   }
 
   .quick-add-btn {
-    padding: 8px 16px;
-    min-width: 100px;
-    height: 38px;
-  }
-
-  .profile-link {
-    min-width: 120px;
-    height: 38px;
-  }
-
-  .logout-link {
-    height: 38px;
+    min-width: 90px;
+    height: 36px;
   }
 }
 
 /* Mobile */
 @media (max-width: $breakpoint-sm) {
   .navbar {
-    height: 65px;
+    height: 60px;
 
     &.collapsed {
       .nav-center,
-      .search-container,
       .quick-add-section {
         display: none;
       }
     }
-  }
-
-  .navbar-content {
-    padding: 0 $padding-xs;
   }
 
   .nav-center {
@@ -583,41 +449,23 @@
     right: 0;
     flex-direction: column;
     background: $color-background-alt;
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    padding: $padding-md;
-    gap: $gap-sm;
+    backdrop-filter: blur(20px);
+    padding: $padding-sm;
+    gap: $gap-xs;
     margin: 0;
-    border-top: 1px solid rgba($color-border, 0.3);
-    border-bottom: 1px solid rgba($color-border, 0.3);
-    box-shadow: $shadow-lg;
+    border-top: 1px solid rgba($color-border, 0.15);
+    border-bottom: 1px solid rgba($color-border, 0.15);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
     z-index: $z-index-dropdown;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
-
-  .search-container {
-    position: absolute;
-    top: calc(100% + $padding-sm);
-    left: $padding-md;
-    right: $padding-md;
-    margin: 0;
-    max-width: none;
   }
 
   .nav-link {
     width: 100%;
     text-align: center;
-    padding: $padding-sm;
-    border-radius: $border-radius;
-
+    padding: $padding-xs;
+    
     .link-text {
-      font-size: $font-size-p1;
-    }
-
-    &.router-link-active {
-      background: rgba($color-primary, 0.1);
-      border: 1px solid rgba($color-primary, 0.2);
+      font-size: $font-size-p3;
     }
   }
 
@@ -628,7 +476,6 @@
 
   .quick-add-btn {
     width: 100%;
-    justify-content: center;
     min-width: auto;
   }
 
@@ -638,30 +485,25 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
-    max-width: 320px;
+    max-width: 300px;
     min-width: auto;
-    animation: fadeIn 0.3s $ease-out-cinema forwards;
   }
 
   .popup-content {
-    max-height: 70vh;
-    overflow-y: auto;
-    padding: $padding-md;
+    padding: $padding-sm;
   }
 
   .popup-row {
     grid-template-columns: 1fr;
-    gap: $padding-sm;
+    gap: $padding-xs;
   }
 
   .popup-btn {
-    height: 52px;
+    height: 44px;
   }
 
   .burger-menu {
     display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .profile-text {
@@ -669,95 +511,20 @@
   }
 
   .profile-link {
-    min-width: auto;
-    padding: 6px;
-    background: transparent;
-    border: none;
-    height: auto;
-
-    &:hover {
-      background: rgba($color-primary, 0.1);
-    }
+    padding: 4px;
   }
 
   .logout-link {
-    min-width: auto;
-    padding: 6px;
-    height: auto;
-
-    .logout-text {
-      display: none;
-    }
-  }
-
-  .nav-actions {
-    gap: $padding-sm;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-    }
+    padding: 4px;
   }
 }
 
 /* Version collapsed sur desktop */
 @media (min-width: 577px) {
   .navbar.collapsed {
-    .navbar-content {
-      justify-content: space-between;
-    }
-
-    .nav-center,
-    .search-container {
+    .nav-center {
       display: none;
     }
-
-    .nav-actions {
-      margin-left: auto;
-    }
   }
 }
 
-/* Pour les très grands écrans */
-@media (min-width: $breakpoint-xxl) {
-  .navbar-content {
-    max-width: 1600px;
-  }
-
-  .nav-center {
-    gap: $gap-xxl;
-    margin: 0 $margin-xl;
-  }
-
-  .search-container {
-    max-width: 500px;
-  }
-}
-
-/* Style pour le texte Nocteller dans le logo */
-.navbar-left .logo-text {
-  @include typography-playfair-h1;
-  font-size: 28px;
-  font-weight: $font-weight-bold;
-  color: $color-text-primary;
-  letter-spacing: -0.5px;
-  margin: 0;
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, $color-primary, $color-accent);
-    border-radius: 1px;
-  }
-}
