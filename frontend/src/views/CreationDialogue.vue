@@ -225,11 +225,10 @@
                   <!-- Ligne 2 : Texte -->
                   <div class="form-row-crea-dialogue">
                     <div class="form-group-crea-dialogue full-width">
-                      <label for="texte">Texte du dialogue *</label>
+                      <label for="texte">Texte du dialogue</label>
                       <textarea 
                         id="texte"
-                        v-model="formData.texte" 
-                        required 
+                        v-model="formData.texte"  
                         rows="4" 
                         placeholder="Entrez le texte du dialogue..."
                         class="form-textarea-crea-dialogue"
@@ -829,84 +828,88 @@ export default {
       validateOrder();
     };
     
-    const submitForm = async () => {
+  const submitForm = async () => {
       // Valider les champs obligatoires
       if (!formData.value.sceneId) {
-        alert('Veuillez sélectionner une scène');
-        return;
+          alert('Veuillez sélectionner une scène');
+          return;
       }
       
-      if (!formData.value.texte || formData.value.texte.trim() === '') {
-        alert('Le texte du dialogue est obligatoire');
-        return;
+      // MODIFIÉ: Ne pas obliger le texte si observation présente
+      const texte = formData.value.texte?.trim() || '';
+      const observation = formData.value.observation?.trim() || '';
+      
+      if (!texte && !observation) {
+          alert('Au moins le texte du dialogue ou une observation est obligatoire');
+          return;
       }
       
       if (!formData.value.ordre || formData.value.ordre < 1) {
-        alert('L\'ordre doit être un nombre positif');
-        return;
+          alert('L\'ordre doit être un nombre positif');
+          return;
       }
       
       validateOrder();
       
       if (orderError.value) {
-        alert(orderError.value);
-        return;
+          alert(orderError.value);
+          return;
       }
       
       isSubmitting.value = true;
       error.value = '';
       
       try {
-        const payload = {
-          sceneId: parseInt(formData.value.sceneId),
-          personnageId: formData.value.personnageId ? parseInt(formData.value.personnageId) : null,
-          texte: formData.value.texte.trim(),
-          ordre: parseInt(formData.value.ordre),
-          observation: formData.value.observation ? formData.value.observation.trim() : null
-        };
-        
-        console.log('Submitting dialogue:', payload);
-        
-        if (isEditing.value) {
-          const response = await axios.put(`/api/dialogues/${editingId.value}`, payload, {
-            headers: {
-              'X-User-Id': user.value.id
-            }
-          });
-          console.log('Update response:', response.data);
-        } else {
-          const response = await axios.post('/api/dialogues', payload, {
-            headers: {
-              'X-User-Id': user.value.id
-            }
-          });
-          console.log('Create response:', response.data);
-        }
-        
-        resetForm();
-        await loadDialogues();
-        activeTab.value = 'list';
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde du dialogue:', error);
-        console.error('Error details:', error.response);
-        
-        if (error.response?.status === 400) {
-          const errorMessage = error.response?.data?.message || error.response?.data || 'Erreur de validation';
-          error.value = errorMessage;
-          alert('Erreur: ' + errorMessage);
+          const payload = {
+              sceneId: parseInt(formData.value.sceneId),
+              personnageId: formData.value.personnageId ? parseInt(formData.value.personnageId) : null,
+              texte: texte, // Peut être vide si observation présente
+              ordre: parseInt(formData.value.ordre),
+              observation: observation // Peut être vide si texte présent
+          };
           
-          // Recharger les ordres existants si erreur d'ordre
-          if (errorMessage.includes('ordre') || errorMessage.includes('existe')) {
-            await loadExistingOrders();
+          console.log('Submitting dialogue:', payload);
+          
+          if (isEditing.value) {
+              const response = await axios.put(`/api/dialogues/${editingId.value}`, payload, {
+                  headers: {
+                      'X-User-Id': user.value.id
+                  }
+              });
+              console.log('Update response:', response.data);
+          } else {
+              const response = await axios.post('/api/dialogues', payload, {
+                  headers: {
+                      'X-User-Id': user.value.id
+                  }
+              });
+              console.log('Create response:', response.data);
           }
-        } else {
-          error.value = 'Erreur: ' + (error.response?.data?.message || error.message);
-          alert('Erreur lors de l\'opération: ' + error.value);
-        }
+          
+          resetForm();
+          await loadDialogues();
+          activeTab.value = 'list';
+      } catch (error) {
+          console.error('Erreur lors de la sauvegarde du dialogue:', error);
+          console.error('Error details:', error.response);
+          
+          if (error.response?.status === 400) {
+              const errorMessage = error.response?.data?.message || error.response?.data || 'Erreur de validation';
+              error.value = errorMessage;
+              alert('Erreur: ' + errorMessage);
+              
+              // Recharger les ordres existants si erreur d'ordre
+              if (errorMessage.includes('ordre') || errorMessage.includes('existe')) {
+                  await loadExistingOrders();
+              }
+          } else {
+              error.value = 'Erreur: ' + (error.response?.data?.message || error.message);
+              alert('Erreur lors de l\'opération: ' + error.value);
+          }
       } finally {
-        isSubmitting.value = false;
+          isSubmitting.value = false;
       }
-    };
+  };
     
     const editDialogue = (dialogue) => {
       console.log('Editing dialogue:', dialogue);
