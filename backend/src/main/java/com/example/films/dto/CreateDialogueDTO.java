@@ -12,8 +12,8 @@ public class CreateDialogueDTO {
     
     private Long personnageId;
     
-    @NotBlank(message = "Le texte du dialogue est obligatoire")
-    private String texte;
+   
+    private String texte; 
     
     @NotNull(message = "L'ordre est obligatoire")
     @Min(value = 1, message = "L'ordre doit être au moins 1")

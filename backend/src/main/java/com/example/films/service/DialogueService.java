@@ -55,12 +55,21 @@ public class DialogueService {
             throw new RuntimeException("L'ordre " + ordre + " existe déjà dans cette scène");
         }
         
+        // Vérifier qu'au moins l'observation ou le texte est présent
+        String texte = createDialogueDTO.getTexte();
+        String observation = createDialogueDTO.getObservation();
+        
+        if ((texte == null || texte.trim().isEmpty()) && 
+            (observation == null || observation.trim().isEmpty())) {
+            throw new RuntimeException("Au moins l'observation ou le texte doit être renseigné");
+        }
+        
         Dialogue dialogue = new Dialogue();
         dialogue.setScene(scene);
         dialogue.setPersonnage(personnage);
-        dialogue.setTexte(createDialogueDTO.getTexte());
+        dialogue.setTexte(texte != null ? texte.trim() : null);
         dialogue.setOrdre(ordre);
-        dialogue.setObservation(createDialogueDTO.getObservation());
+        dialogue.setObservation(observation != null ? observation.trim() : null);
         
         Dialogue savedDialogue = dialogueRepository.save(dialogue);
         return convertToDTO(savedDialogue);
@@ -93,7 +102,7 @@ public class DialogueService {
                 .collect(Collectors.toList());
     }
     
-  @Transactional
+     @Transactional
     public DialogueDTO updateDialogue(Long id, CreateDialogueDTO updateDialogueDTO) {
         Dialogue dialogue = dialogueRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Dialogue non trouvé"));
@@ -122,11 +131,20 @@ public class DialogueService {
             }
         }
         
+        // Vérifier qu'au moins l'observation ou le texte est présent
+        String texte = updateDialogueDTO.getTexte();
+        String observation = updateDialogueDTO.getObservation();
+        
+        if ((texte == null || texte.trim().isEmpty()) && 
+            (observation == null || observation.trim().isEmpty())) {
+            throw new RuntimeException("Au moins l'observation ou le texte doit être renseigné");
+        }
+        
         dialogue.setScene(scene);
         dialogue.setPersonnage(personnage);
-        dialogue.setTexte(updateDialogueDTO.getTexte());
+        dialogue.setTexte(texte != null ? texte.trim() : null);
         dialogue.setOrdre(nouvelOrdre);
-        dialogue.setObservation(updateDialogueDTO.getObservation());
+        dialogue.setObservation(observation != null ? observation.trim() : null);
         
         Dialogue updatedDialogue = dialogueRepository.save(dialogue);
         return convertToDTO(updatedDialogue);
