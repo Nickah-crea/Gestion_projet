@@ -999,7 +999,7 @@ watch: {
           canCreatePlanning: false,
           canEditPlanning: false,
           canDeletePlanning: false,
-          canViewPlanning: false
+          canViewPlanning: true
         };
       }
       
