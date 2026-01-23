@@ -1267,3 +1267,443 @@
 }
 
 
+
+// =============================================
+// AVATAR CLICKABLE DANS LE TABLEAU
+// =============================================
+.user-photo {
+  .photo-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid $color-border;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+      border-color: $color-primary;
+    }
+    
+    .user-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      background: rgba($color-primary, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $color-primary;
+      font-size: $font-size-p3;
+      cursor: pointer;
+    }
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+// =============================================
+// SECTION GESTION PHOTO DANS LE FORMULAIRE
+// =============================================
+.photo-management-section {
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background: rgba($color-info, 0.05);
+  border: 1px solid rgba($color-info, 0.2);
+  border-radius: $border-radius-sm;
+  
+  h4 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+  
+  .photo-management-info {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    
+    p {
+      @include typography-p4;
+      color: $color-text-secondary;
+      display: flex;
+      align-items: flex-start;
+      gap: $gap-xs;
+      
+      i {
+        color: $color-info;
+        margin-top: 2px;
+      }
+    }
+    
+    button {
+      align-self: flex-start;
+      min-width: 200px;
+    }
+  }
+}
+
+// =============================================
+// MODAL VISUALISATION PHOTO
+// =============================================
+.photo-modal {
+  max-width: 500px;
+  
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-lg;
+    padding: $spacing-lg;
+    
+    .photo-display {
+      width: 300px;
+      height: 300px;
+      border-radius: $border-radius-sm;
+      overflow: hidden;
+      border: 3px solid $color-border;
+      background: $color-surface;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      .large-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .no-photo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $gap-sm;
+        
+        i {
+          font-size: 120px;
+          color: rgba($color-primary, 0.3);
+        }
+        
+        p {
+          @include typography-p4;
+          color: $color-text-muted;
+          font-style: italic;
+        }
+      }
+    }
+    
+    .photo-info {
+      text-align: center;
+      
+      h3 {
+        @include typography-playfair-h4;
+        color: $color-text-primary;
+        margin: 0 0 $gap-xs 0;
+      }
+      
+      p {
+        @include typography-p4;
+        color: $color-text-secondary;
+        margin: 0 0 $gap-xs 0;
+      }
+      
+      .user-role {
+        padding: $gap-xs $padding-sm;
+        background: rgba($color-primary, 0.1);
+        color: $color-primary;
+        border-radius: $border-radius-pill;
+        display: inline-block;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+// =============================================
+// MODAL GESTION PHOTO
+// =============================================
+.photo-management-modal {
+  max-width: 700px;
+  
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+    padding: $spacing-lg;
+    
+    @media (max-width: $breakpoint-md) {
+      gap: $spacing-lg;
+    }
+  }
+  
+  .current-photo-section,
+  .photo-upload-section {
+    h3 {
+      @include typography-playfair-p4;
+      color: $color-text-primary;
+      margin-bottom: $spacing-md;
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+    }
+  }
+  
+  .current-photo-section {
+    .photo-preview {
+      display: flex;
+      justify-content: center;
+      
+      .current-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: $border-radius-sm;
+        border: 2px solid $color-border;
+        object-fit: cover;
+      }
+      
+      .no-current-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: $border-radius-sm;
+        border: 2px dashed $color-border;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: $gap-sm;
+        background: rgba($color-primary, 0.05);
+        
+        i {
+          font-size: 48px;
+          color: rgba($color-primary, 0.3);
+        }
+        
+        p {
+          @include typography-p4;
+          color: $color-text-muted;
+          font-style: italic;
+        }
+      }
+    }
+  }
+  
+  .photo-upload-section {
+    .upload-area {
+      border: 2px dashed $color-border;
+      border-radius: $border-radius-sm;
+      padding: $spacing-xl;
+      text-align: center;
+      background: rgba($color-primary, 0.02);
+      cursor: pointer;
+      transition: border-color 0.3s ease, background 0.3s ease;
+      
+      &:hover {
+        border-color: $color-primary;
+        background: rgba($color-primary, 0.05);
+      }
+      
+      .upload-label-large {
+        cursor: pointer;
+        
+        i {
+          font-size: 48px;
+          color: $color-primary;
+          margin-bottom: $gap-sm;
+        }
+        
+        p {
+          @include typography-p4;
+          color: $color-text-primary;
+          margin: 0 0 $gap-xs 0;
+        }
+        
+        .hint {
+          @include typography-p5;
+          color: $color-text-muted;
+          font-style: italic;
+        }
+      }
+    }
+    
+    .selected-photo {
+      margin-top: $spacing-md;
+      padding: $spacing-md;
+      background: rgba($color-info, 0.05);
+      border: 1px solid rgba($color-info, 0.2);
+      border-radius: $border-radius-sm;
+      
+      h4 {
+        @include typography-p4;
+        color: $color-text-primary;
+        margin-bottom: $spacing-md;
+      }
+      
+      .new-photo-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: $border-radius-sm;
+        border: 2px solid $color-border;
+        object-fit: cover;
+        margin-bottom: $spacing-md;
+      }
+      
+      .photo-management-actions {
+        display: flex;
+        gap: $spacing-sm;
+        
+        @media (max-width: $breakpoint-sm) {
+          flex-direction: column;
+        }
+      }
+    }
+    
+    .photo-instructions {
+      margin-top: $spacing-md;
+      padding: $spacing-md;
+      background: rgba($color-info, 0.05);
+      border: 1px solid rgba($color-info, 0.2);
+      border-radius: $border-radius-sm;
+      
+      p {
+        @include typography-p4;
+        color: $color-text-primary;
+        margin-bottom: $gap-sm;
+        font-weight: $font-weight-semibold;
+      }
+      
+      ul {
+        margin: 0;
+        padding-left: $spacing-md;
+        
+        li {
+          @include typography-p4;
+          color: $color-text-secondary;
+          margin-bottom: $gap-xs;
+          list-style-type: disc;
+        }
+      }
+    }
+  }
+}
+
+// =============================================
+// BOUTON CAMERA DANS LE TABLEAU
+// =============================================
+.table-actions {
+  .btn-view {
+    background: rgba($color-accent, 0.1);
+    color: $color-accent;
+    
+    &:hover {
+      background: $color-accent;
+      color: $color-text-light;
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVE MODALS
+// =============================================
+@media (max-width: $breakpoint-md) {
+  .photo-modal {
+    .modal-body {
+      .photo-display {
+        width: 250px;
+        height: 250px;
+      }
+    }
+  }
+  
+  .photo-management-modal {
+    .modal-body {
+      .current-photo-section {
+        .photo-preview {
+          .current-photo,
+          .no-current-photo {
+            width: 120px;
+            height: 120px;
+          }
+        }
+      }
+      
+      .photo-upload-section {
+        .selected-photo {
+          .new-photo-preview {
+            width: 120px;
+            height: 120px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .photo-modal {
+    .modal-body {
+      .photo-display {
+        width: 200px;
+        height: 200px;
+      }
+    }
+    
+    .modal-footer {
+      flex-direction: column;
+      gap: $spacing-sm;
+    }
+  }
+  
+  .photo-management-modal {
+    .modal-body {
+      .current-photo-section {
+        .photo-preview {
+          .current-photo,
+          .no-current-photo {
+            width: 100px;
+            height: 100px;
+          }
+        }
+      }
+      
+      .photo-upload-section {
+        .selected-photo {
+          .new-photo-preview {
+            width: 100px;
+            height: 100px;
+          }
+          
+          .photo-management-actions {
+            flex-direction: column;
+          }
+        }
+        
+        .upload-area {
+          padding: $spacing-lg;
+          
+          .upload-label-large {
+            i {
+              font-size: 36px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
