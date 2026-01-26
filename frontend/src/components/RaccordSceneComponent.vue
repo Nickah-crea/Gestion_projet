@@ -1117,7 +1117,7 @@ const createRaccord = async () => {
 const resetForm = () => {
   raccordData.value = {
     sceneSourceId: props.sceneSourceId,
-    scenesCibleIds: [], // Réinitialiser en tableau vide
+    scenesCibleIds: [],
     selectedTypes: [],
     description: '',
     estCritique: false,
@@ -1126,8 +1126,8 @@ const resetForm = () => {
     comediensIds: []
   }
   selectedPhotos.value = []
-  scenesCibleInfo.value = [] // Réinitialiser en tableau vide
-  scenesCibleTournageInfo.value = [] // Réinitialiser en tableau vide
+  scenesCibleInfo.value = [] 
+  scenesCibleTournageInfo.value = []
   sceneSourceTournageInfo.value = null
   
   // Mettre à jour le filtre avec accessibleScenes
