@@ -39,12 +39,16 @@
               <div class="alert-content-raccord-scene">
                 <i class="fas fa-exclamation-triangle"></i>
                 <div class="alert-text-raccord-scene">
-                  <h5>⚠️ Incohérence chronologique détectée</h5>
+                  <h5>⚠️ Incohérences chronologiques détectées</h5>
                   <p>{{ chronologyAlertMessage }}</p>
                   <p class="alert-details-raccord-scene">
-                    <strong>Scène source:</strong> {{ formatDate(sceneSourceTournageInfo?.dateTournage) || 'Non planifiée' }}<br>
-                    <strong>Scène cible:</strong> {{ formatDate(sceneCibleTournageInfo?.dateTournage) || 'Non planifiée' }}
+                    <strong>Scène source:</strong> {{ formatDate(sceneSourceTournageInfo?.dateTournage) || 'Non planifiée' }}
                   </p>
+                  <!-- Afficher les dates pour chaque scène cible -->
+                  <div v-for="sceneCibleInfoItem in scenesCibleTournageInfo" :key="sceneCibleInfoItem.id">
+                    <strong>Scène {{ getSceneOrder(sceneCibleInfoItem.id) }}:</strong> 
+                    {{ formatDate(sceneCibleInfoItem.dateTournage) || 'Non planifiée' }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -75,15 +79,16 @@
               </div>
 
               <div class="form-group-raccord-scene">
-                <label for="scene-cible">Scène Cible *</label>
+                <label for="scene-cible">Scènes Cibles *</label>
                 <select 
                   id="scene-cible"
-                  v-model="raccordData.sceneCibleId"
-                  @change="onSceneCibleChange"
+                  v-model="raccordData.scenesCibleIds"
+                  @change="onScenesCibleChange"
                   class="form-select-raccord-scene"
+                  multiple
+                  size="5"
                   required
                 >
-                  <option value="">Sélectionnez une scène cible</option>
                   <option 
                     v-for="scene in filteredScenesCible" 
                     :key="scene.idScene || scene.id" 
@@ -92,8 +97,32 @@
                     Scène {{ scene.ordre }}: {{ scene.titre }}
                   </option>
                 </select>
+                <small class="field-description-raccord-scene">
+                  Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs scènes
+                </small>
               </div>
+                <!-- Afficher les scènes cibles sélectionnées -->
+                <div v-if="raccordData.scenesCibleIds.length > 0" class="selected-scenes-raccord-scene">
+                  <h5>Scènes cibles sélectionnées ({{ raccordData.scenesCibleIds.length }})</h5>
+                  <div class="scenes-list-raccord-scene">
+                    <div 
+                      v-for="sceneId in raccordData.scenesCibleIds" 
+                      :key="sceneId"
+                      class="scene-item-raccord-scene"
+                    >
+                      <span>{{ getSceneInfo(sceneId) }}</span>
+                      <button 
+                        class="remove-scene-btn-raccord-scene"
+                        @click="removeSceneCible(sceneId)"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
             </div>
+
+           
 
             <!-- Informations des scènes sélectionnées AVEC DATES DE TOURNAGE -->
             <!-- <div v-if="sceneSourceInfo || sceneCibleInfo" class="scenes-info-raccord-scene"> -->
@@ -451,13 +480,13 @@ const availablePhotos = ref([])
 const filteredPhotos = ref([])
 const selectedPhotoType = ref('')
 const sceneSourceInfo = ref(null)
-const sceneCibleInfo = ref(null)
+const scenesCibleInfo = ref([]) 
 const personnages = ref([])
 
 // Données du raccord
 const raccordData = ref({
   sceneSourceId: null,
-  sceneCibleId: null,
+  scenesCibleIds: [],
   selectedTypes: [],
   description: '',
   estCritique: false,
@@ -473,8 +502,8 @@ const selectedPersonnagesInfo = ref([])
 const selectedComediens = ref([])
 
 const sceneSourceTournageInfo = ref(null)
-const sceneCibleTournageInfo = ref(null)
-const chronologyAlertMessage = ref('')
+const scenesCibleTournageInfo = ref([])
+// const chronologyAlertMessage = ref('')
 
 // Computed properties
 const canOpenModal = computed(() => {
@@ -483,29 +512,53 @@ const canOpenModal = computed(() => {
 
 const canCreateRaccord = computed(() => {
   return raccordData.value.sceneSourceId && 
-         raccordData.value.sceneCibleId && 
+         raccordData.value.scenesCibleIds.length > 0 && 
          raccordData.value.selectedTypes.length > 0
 })
 
 const showChronologyAlert = computed(() => {
-  return hasChronologyIssue.value
+  return hasChronologyIssues.value.length > 0
 })
 
-const hasChronologyIssue = computed(() => {
-  if (!sceneSourceTournageInfo.value || !sceneCibleTournageInfo.value) {
-    return false
-  }
+const hasChronologyIssues = computed(() => {
+  const issues = []
   
-  const sourceDate = new Date(sceneSourceTournageInfo.value.dateTournage)
-  const targetDate = new Date(sceneCibleTournageInfo.value.dateTournage)
+  if (!sceneSourceTournageInfo.value) return issues
   
-  // Vérifier si la scène cible est tournée avant la scène source
-  return targetDate < sourceDate
+  scenesCibleTournageInfo.value.forEach(cibleInfo => {
+    if (cibleInfo && cibleInfo.dateTournage) {
+      const sourceDate = new Date(sceneSourceTournageInfo.value.dateTournage)
+      const targetDate = new Date(cibleInfo.dateTournage)
+      
+      if (targetDate < sourceDate) {
+        issues.push({
+          sceneId: cibleInfo.id,
+          daysDifference: Math.ceil((sourceDate - targetDate) / (1000 * 60 * 60 * 24))
+        })
+      }
+    }
+  })
+  
+  return issues
 })
+
 
 const hasCriticalChronologyIssue = computed(() => {
-  return hasChronologyIssue.value
+  return hasChronologyIssues.value.length > 0
 })
+
+const chronologyAlertMessage = computed(() => {
+  if (hasChronologyIssues.value.length === 0) return ''
+  
+  if (hasChronologyIssues.value.length === 1) {
+    const issue = hasChronologyIssues.value[0]
+    return `La scène cible est tournée ${issue.daysDifference} jour(s) AVANT la scène source.`
+  } else {
+    return `${hasChronologyIssues.value.length} scènes cibles sont tournées avant la scène source.`
+  }
+})
+
+
 
 // Watcher pour la prop sceneSourceId
 watch(() => props.sceneSourceId, (newSceneSourceId) => {
@@ -594,6 +647,7 @@ const loadScenes = async () => {
   }
 }
 
+
 // Méthode pour filtrer les scènes accessibles
 const filterAccessibleScenes = async () => {
   try {
@@ -648,63 +702,76 @@ const filterAccessibleScenes = async () => {
 // Méthode pour charger les informations de tournage d'une scène
 const loadSceneTournageInfo = async (sceneId, type) => {
   try {
-    // Essayer d'abord avec l'endpoint scene-tournage
-    try {
-      const response = await axios.get(`/api/scene-tournage/scene/${sceneId}`)
-      if (response.data) {
-        if (type === 'source') {
-          sceneSourceTournageInfo.value = response.data
-        } else {
-          sceneCibleTournageInfo.value = response.data
-        }
-        updateChronologyAlert()
-        return
+    const response = await axios.get(`/api/scene-tournage/scene/${sceneId}`)
+    if (response.data) {
+      const tournageInfo = {
+        ...response.data,
+        id: sceneId
       }
-    } catch (error) {
-      console.log(`Aucun tournage trouvé via scene-tournage pour la scène ${sceneId}`)
-    }
-
-    // Fallback: essayer avec planning-tournage
-    try {
-      const planningResponse = await axios.get(`/api/planning-tournage/scene/${sceneId}`)
-      if (planningResponse.data && planningResponse.data.length > 0) {
-        const tournageInfo = planningResponse.data[0]
-        const formattedInfo = {
-          dateTournage: tournageInfo.dateTournage,
-          statutTournage: tournageInfo.statut?.nomStatut || tournageInfo.statutTournage,
-          heureDebut: tournageInfo.heureDebut,
-          heureFin: tournageInfo.heureFin
-        }
-        
-        if (type === 'source') {
-          sceneSourceTournageInfo.value = formattedInfo
-        } else {
-          sceneCibleTournageInfo.value = formattedInfo
-        }
-        updateChronologyAlert()
-        return
+      
+      if (type === 'source') {
+        sceneSourceTournageInfo.value = tournageInfo
+      } else {
+        scenesCibleTournageInfo.value.push(tournageInfo)
       }
-    } catch (error) {
-      console.log(`Aucun planning trouvé pour la scène ${sceneId}`)
+      updateChronologyAlert()
+      return
     }
-
-    // Si aucun tournage trouvé
-    if (type === 'source') {
-      sceneSourceTournageInfo.value = null
-    } else {
-      sceneCibleTournageInfo.value = null
-    }
-    updateChronologyAlert()
-    
   } catch (error) {
-    console.error(`Erreur lors du chargement des infos de tournage pour la scène ${type}:`, error)
+    console.log(`Aucun tournage trouvé pour la scène ${sceneId}`)
+    
+    // Fallback ou valeur par défaut
+    const defaultInfo = {
+      id: sceneId,
+      dateTournage: null,
+      statutTournage: null
+    }
+    
     if (type === 'source') {
-      sceneSourceTournageInfo.value = null
+      sceneSourceTournageInfo.value = defaultInfo
     } else {
-      sceneCibleTournageInfo.value = null
+      scenesCibleTournageInfo.value.push(defaultInfo)
     }
     updateChronologyAlert()
   }
+}
+
+const removeSceneCible = (sceneId) => {
+  const index = raccordData.value.scenesCibleIds.indexOf(sceneId)
+  if (index !== -1) {
+    raccordData.value.scenesCibleIds.splice(index, 1)
+    
+    // Retirer les infos correspondantes
+    const infoIndex = scenesCibleInfo.value.findIndex(info => 
+      (info.idScene || info.id) === sceneId
+    )
+    if (infoIndex !== -1) {
+      scenesCibleInfo.value.splice(infoIndex, 1)
+    }
+    
+    const tournageIndex = scenesCibleTournageInfo.value.findIndex(info => 
+      info.id === sceneId
+    )
+    if (tournageIndex !== -1) {
+      scenesCibleTournageInfo.value.splice(tournageIndex, 1)
+    }
+    
+    onScenesCibleChange()
+  }
+}
+
+const getSceneInfo = (sceneId) => {
+  const scene = filteredScenesCible.value.find(s => 
+    (s.idScene || s.id) === sceneId
+  )
+  return scene ? `Scène ${scene.ordre}: ${scene.titre}` : `Scène ${sceneId}`
+}
+
+const getSceneOrder = (sceneId) => {
+  const scene = filteredScenesCible.value.find(s => 
+    (s.idScene || s.id) === sceneId
+  )
+  return scene ? scene.ordre : '?'
 }
 
 // Méthode pour mettre à jour le message d'alerte
@@ -882,13 +949,30 @@ const onTypeSelectionChange = () => {
   filterPhotosByType()
 }
 
+const onScenesCibleChange = async () => {
+  console.log('Scènes cibles changées:', raccordData.value.scenesCibleIds)
+  
+  // Charger les infos pour toutes les scènes cibles sélectionnées
+  scenesCibleInfo.value = []
+  scenesCibleTournageInfo.value = []
+  
+  for (const sceneId of raccordData.value.scenesCibleIds) {
+    await loadSceneInfo(sceneId, 'cible')
+  }
+  
+  await loadPhotosForScenes()
+}
+
 const loadSceneInfo = async (sceneId, type) => {
   try {
     const response = await axios.get(`/api/scenes/${sceneId}`)
+    const sceneData = response.data
+    
     if (type === 'source') {
-      sceneSourceInfo.value = response.data
+      sceneSourceInfo.value = sceneData
     } else {
-      sceneCibleInfo.value = response.data
+      // Ajouter à la liste des scènes cibles
+      scenesCibleInfo.value.push(sceneData)
     }
     
     // Charger les informations de tournage
@@ -1001,49 +1085,50 @@ const createRaccord = async () => {
   if (!canCreateRaccord.value) return
 
   try {
-    const raccordPayload = {
-      sceneSourceId: raccordData.value.sceneSourceId,
-      sceneCibleId: raccordData.value.sceneCibleId,
-      description: raccordData.value.description,
-      estCritique: raccordData.value.estCritique,
-      statutRaccordId: raccordData.value.statutRaccordId,
-      typesRaccord: raccordData.value.selectedTypes,
-      photosIds: selectedPhotos.value.map(photo => photo.id),
-      personnagesIds: raccordData.value.personnagesIds, 
-      comediensIds: raccordData.value.comediensIds    
-    }
+    // Créer un raccord pour chaque scène cible
+    for (const sceneCibleId of raccordData.value.scenesCibleIds) {
+      const raccordPayload = {
+        sceneSourceId: raccordData.value.sceneSourceId,
+        sceneCibleId: sceneCibleId, // Utiliser chaque scène cible individuellement
+        description: raccordData.value.description,
+        estCritique: raccordData.value.estCritique,
+        statutRaccordId: raccordData.value.statutRaccordId,
+        typesRaccord: raccordData.value.selectedTypes,
+        photosIds: selectedPhotos.value.map(photo => photo.id),
+        personnagesIds: raccordData.value.personnagesIds,
+        comediensIds: raccordData.value.comediensIds
+      }
 
-    // Utiliser le nouvel endpoint pour la création avec partage
-    const response = await axios.post('/api/raccords/scene-liaison-shared', raccordPayload)
-    
-    if (response.status === 201) {
-      alert('Raccord créé avec succès avec partage d\'images!')
-      emit('raccord-created', response.data)
-      closeModal()
+      // Créer le raccord
+      await axios.post('/api/raccords/scene-liaison-shared', raccordPayload)
     }
+    
+    alert(`${raccordData.value.scenesCibleIds.length} raccord(s) créé(s) avec succès!`)
+    emit('raccord-created')
+    closeModal()
+    
   } catch (error) {
-    console.error('Erreur lors de la création du raccord:', error)
-    alert('Erreur lors de la création du raccord: ' + (error.response?.data || error.message))
+    console.error('Erreur lors de la création des raccords:', error)
+    alert('Erreur lors de la création des raccords: ' + (error.response?.data || error.message))
   }
 }
+
+
 const resetForm = () => {
   raccordData.value = {
     sceneSourceId: props.sceneSourceId,
-    sceneCibleId: null,
+    scenesCibleIds: [], // Réinitialiser en tableau vide
     selectedTypes: [],
     description: '',
     estCritique: false,
     statutRaccordId: 1,
-    personnagesIds: [],    
-    comediensIds: []  
+    personnagesIds: [],
+    comediensIds: []
   }
   selectedPhotos.value = []
-  sceneCibleInfo.value = null
-  sceneCibleTournageInfo.value = null
+  scenesCibleInfo.value = [] // Réinitialiser en tableau vide
+  scenesCibleTournageInfo.value = [] // Réinitialiser en tableau vide
   sceneSourceTournageInfo.value = null
-  chronologyAlertMessage.value = ''
-  selectedPersonnagesInfo.value = []   
-  selectedComediens.value = []       
   
   // Mettre à jour le filtre avec accessibleScenes
   if (accessibleScenes.value.length > 0 && props.sceneSourceId) {
