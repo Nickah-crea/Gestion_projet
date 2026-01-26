@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global">
+  <div class="app-wrapper-global" style="background: #F5E8B2;">
     <!-- Sidebar gauche -->
     <LeftSidebar
       class="creation-sidebar-crea-comedien-screen-work left-sidebar-ecran-travail-screen-work"
@@ -89,86 +89,87 @@
     />
 
     <div 
-        class="header-ecran-travail-screen-work"
-        :class="{
-          'scene-mode-active': sidebarSelection.type === 'scene',
-          'sequence-mode-active': sidebarSelection.type === 'sequence',
-          'episode-mode-active': sidebarSelection.type === 'episode'
-        }"
-      >
-
-        <!-- Header navigation unique sur une même ligne -->
-        <div class="fixed-nav-container-screen-work">
-            <div class="nav-left-section-screen-work">
-                <!-- Navigation globale précédent/suivant -->
-                <div v-if="showNavButtons" class="global-navigation-buttons">
-                    <button 
-                        class="nav-btn-fixed-left-screen-work"
-                        @click="goToPrevPage" 
-                        :disabled="!hasPrev || isLoading"
-                    >
-                        <i class="fas fa-chevron-left"></i> Précédent
-                    </button>
-                </div>
-            </div>
-            
-            <div class="nav-center-section-screen-work">
-                <span v-if="currentEpisode || currentSequence || currentScene" class="current-context-screen-work">
-                    {{ getCurrentContext() }}
-                </span>
-            </div>
-            
-            <div class="nav-right-section-screen-work">
-                <!-- Navigation globale suivant -->
-                <div v-if="showNavButtons" class="global-navigation-buttons">
-                    <button 
-                        class="nav-btn-fixed-right-screen-work"
-                        @click="goToNextPage" 
-                        :disabled="!hasNext || isLoading"
-                    >
-                        Suivant <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                
-                <!-- Navigation scène (à côté du suivant global) -->
-                <div v-if="sidebarSelection.type === 'scene'" class="scene-navigation-buttons-screen-work">
-                    <button 
-                        class="nav-btn-ecran-travail-screen-work scene-nav-btn-screen-work"
-                        @click="goToPrevScene"
-                        :disabled="!hasPrevScene || isLoading"
-                        title="Scène précédente"
-                    >
-                        <i class="fas fa-chevron-left"></i> Scène Préc.
-                    </button>
-                    <button 
-                        class="nav-btn-ecran-travail-screen-work scene-nav-btn-screen-work"
-                        @click="goToNextScene"
-                        :disabled="!hasNextScene || isLoading"
-                        title="Scène suivante"
-                    >
-                        Scène Suiv. <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+      class="header-ecran-travail-screen-work-header-navigation"
+      :class="{
+          'scene-mode-active-header-navigation': sidebarSelection.type === 'scene',
+          'sequence-mode-active-header-navigation': sidebarSelection.type === 'sequence',
+          'episode-mode-active-header-navigation': sidebarSelection.type === 'episode'
+      }"
+  >
+      <!-- Header navigation unique sur une même ligne -->
+      <div class="fixed-nav-container-screen-work-header-navigation">
+          <!-- Bouton Précédent tout à gauche -->
+          <div class="left-section-header-navigation">
+              <div v-if="showNavButtons" class="global-navigation-buttons-header-navigation">
+                  <button 
+                      class="nav-btn-fixed-left-screen-work-header-navigation"
+                      @click="goToPrevPage" 
+                      :disabled="!hasPrev || isLoading"
+                  >
+                      <i class="fas fa-chevron-left"></i> Précédent
+                  </button>
+              </div>
+          </div>
+          
+          <!-- Navigation scène au centre-gauche -->
+          <div v-if="sidebarSelection.type === 'scene'" class="scene-section-header-navigation">
+              <div class="scene-navigation-buttons-screen-work-header-navigation">
+                  <button 
+                      class="nav-btn-ecran-travail-screen-work-header-navigation scene-nav-btn-screen-work-header-navigation"
+                      @click="goToPrevScene"
+                      :disabled="!hasPrevScene || isLoading"
+                      title="Scène précédente"
+                  >
+                      <i class="fas fa-chevron-left"></i> Scène Préc.
+                  </button>
+                  <button 
+                      class="nav-btn-ecran-travail-screen-work-header-navigation scene-nav-btn-screen-work-header-navigation"
+                      @click="goToNextScene"
+                      :disabled="!hasNextScene || isLoading"
+                      title="Scène suivante"
+                  >
+                      Scène Suiv. <i class="fas fa-chevron-right"></i>
+                  </button>
+              </div>
+          </div>
+          
+          <!-- Contexte au centre -->
+          <div class="center-section-header-navigation">
+              <span v-if="currentEpisode || currentSequence || currentScene" class="current-context-screen-work-header-navigation">
+                  {{ getCurrentContext() }}
+              </span>
+          </div>
+          
+          <!-- Bouton Suivant tout à droite -->
+          <div class="right-section-header-navigation">
+              <div v-if="showNavButtons" class="global-navigation-buttons-header-navigation">
+                  <button 
+                      class="nav-btn-fixed-right-screen-work-header-navigation"
+                      @click="goToNextPage" 
+                      :disabled="!hasNext || isLoading"
+                  >
+                      Suivant <i class="fas fa-chevron-right"></i>
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
 
     <!-- Contenu principal -->
-    <div 
-      class="ecran-travail-ecran-travail-screen-work"
+    <div
+      class="ecran-travail-ecran-travail-screen-work" 
       :class="{ 
         'with-tools-navbar': sidebarSelection.type === 'scene' && currentScene,
         'right-sidebar-open-screen-work': sidebarOpen,
-        'with-secondary-navbar': sidebarSelection.type === 'scene' && currentScene
+        'with-secondary-navbar': sidebarSelection.type === 'scene' && currentScene,
+        'project-view-mode': sidebarSelection.type === 'project' // AJOUT
       }"
       :style="getMainContentStyle()"
     >
-
       <!-- ==================== CONTENU DYNAMIQUE ==================== -->
       
       <!-- 1. VUE PROJET -->
-      <div v-if="sidebarSelection.type === 'project'" class="main-content-view-screen-work" >
+      <div v-if="sidebarSelection.type === 'project'" class="main-content-view-screen-work project-view-mode">
         <div class="project-view-screen-work">
           <div class="project-header-view-screen-work">
             <h1 class="project-title-view-screen-work">{{ store.projetTitle }}</h1>
@@ -177,57 +178,25 @@
             </div>
           </div>
           
-          <div class="project-stats-view-screen-work">
-              <div class="stat-card-screen-work">
-                  <div class="stat-icon-screen-work">
-                      <i class="fas fa-tv"></i>
-                  </div>
-                  <div class="stat-content-screen-work">
-                      <div class="stat-number-screen-work">{{ store.episodes.length }}</div>
-                      <div class="stat-label-screen-work">Épisodes</div>
-                  </div>
-              </div>
-              
-              <div class="stat-card-screen-work">
-                  <div class="stat-icon-screen-work">
-                      <i class="fas fa-list"></i>
-                  </div>
-                  <div class="stat-content-screen-work">
-                      <div class="stat-number-screen-work">{{ store.totalSequences }}</div>
-                      <div class="stat-label-screen-work">Séquences</div>
-                  </div>
-              </div>
-              
-              <div class="stat-card-screen-work">
-                  <div class="stat-icon-screen-work">
-                      <i class="fas fa-film"></i>
-                  </div>
-                  <div class="stat-content-screen-work">
-                      <div class="stat-number-screen-work">{{ totalScenes }}</div>
-                      <div class="stat-label-screen-work">Scènes</div>
-                  </div>
-              </div>
-          </div>
-
           <div class="project-details-view-screen-work">
             <div class="detail-section-header-screen-work">
-                <h3><i class="fas fa-align-left"></i> Synopsis</h3>
-                <button class="edit-project-title-btn" @click="startEditProjectModal">
-                    <i class="fas fa-pen"></i> Modifier le projet
-                </button>
+              <h3><i class="fas fa-align-left"></i> Synopsis</h3>
+              <button class="edit-project-title-btn" @click="startEditProjectModal">
+                <i class="fas fa-pen"></i> Modifier le projet
+              </button>
             </div>
             
             <div class="detail-section-content-screen-work">
-                <p class="synopsis-text-screen-work">{{ store.projetSynopsis || 'Aucun synopsis disponible.' }}</p>
+              <p class="synopsis-text-screen-work">{{ store.projetSynopsis || 'Aucun synopsis disponible.' }}</p>
             </div>
             
             <!-- Actions supplémentaires en dessous si besoin -->
             <div class="project-actions-view-screen-work" v-if="userPermissions.canCreateEpisode">
-                <button class="action-btn-secondary-screen-work" @click="goToAddEpisode">
-                    <i class="fas fa-plus"></i> Ajouter un épisode
-                </button>
+              <button class="action-btn-secondary-screen-work" @click="goToAddEpisode">
+                <i class="fas fa-plus"></i> Ajouter un épisode
+              </button>
             </div>
-        </div>
+          </div>
         </div>
       </div>
 
@@ -1884,14 +1853,6 @@ watch(() => store.currentEpisode, async (newEpisode) => {
     }
 });
 
-// Watch pour les changements de route
-watch(
-  () => route.query,
-  async (newQuery) => {
-    await initializeSelectionFromRoute();
-  },
-  { immediate: true, deep: true }
-);
 
 // Watch pour mettre à jour la sélection quand le store change
 watch(() => store.currentScene, (newScene) => {

@@ -11,53 +11,62 @@
         </button>
       </div>
       <form @submit.prevent="$emit('save', editingProject)" class="edit-form-ecran-travail">
-        <div class="form-group-ecran-travail">
-          <label for="edit-project-titre">Titre *</label>
-          <input
-            type="text"
-            id="edit-project-titre"
-            v-model="editingProject.titre"
-            required
-            class="form-input-ecran-travail"
-          />
+        <!-- Première ligne : Titre et Genre côte à côte -->
+        <div class="form-row-ecran-travail">
+          <div class="form-group-ecran-travail">
+            <label for="edit-project-titre">Titre</label>
+            <input
+              type="text"
+              id="edit-project-titre"
+              v-model="editingProject.titre"
+              required
+              class="form-input-ecran-travail"
+            />
+          </div>
+          <div class="form-group-ecran-travail">
+            <label for="edit-project-genre">Genre</label>
+            <select
+              id="edit-project-genre"
+              v-model="editingProject.genreId"
+              required
+              class="form-select-ecran-travail"
+            >
+              <option value="">Sélectionnez un genre</option>
+              <option v-for="genre in genres" :key="genre.idGenre" :value="genre.idGenre">
+                {{ genre.nomGenre }}
+              </option>
+            </select>
+          </div>
         </div>
-        <div class="form-group-ecran-travail">
-          <label for="edit-project-genre">Genre *</label>
-          <select
-            id="edit-project-genre"
-            v-model="editingProject.genreId"
-            required
-            class="form-select-ecran-travail"
-          >
-            <option value="">Sélectionnez un genre</option>
-            <option v-for="genre in genres" :key="genre.idGenre" :value="genre.idGenre">
-              {{ genre.nomGenre }}
-            </option>
-          </select>
+        
+        <!-- Deuxième ligne : Statut et Date de fin côte à côte -->
+        <div class="form-row-ecran-travail">
+          <div class="form-group-ecran-travail">
+            <label for="edit-project-statut">Statut</label>
+            <select
+              id="edit-project-statut"
+              v-model="editingProject.statutId"
+              required
+              class="form-select-ecran-travail"
+            >
+              <option value="">Sélectionnez un statut</option>
+              <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.idStatutProjet">
+                {{ statut.nomStatutsProjet }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group-ecran-travail">
+            <label for="edit-project-date-fin">Date de fin (optionnel)</label>
+            <input
+              type="date"
+              id="edit-project-date-fin"
+              v-model="editingProject.dateFin"
+              class="form-input-ecran-travail"
+            />
+          </div>
         </div>
-        <div class="form-group-ecran-travail">
-          <label for="edit-project-statut">Statut *</label>
-          <select
-            id="edit-project-statut"
-            v-model="editingProject.statutId"
-            required
-            class="form-select-ecran-travail"
-          >
-            <option value="">Sélectionnez un statut</option>
-            <option v-for="statut in statuts" :key="statut.idStatutProjet" :value="statut.idStatutProjet">
-              {{ statut.nomStatutsProjet }}
-            </option>
-          </select>
-        </div>
-        <div class="form-group-ecran-travail">
-          <label for="edit-project-date-fin">Date de fin (optionnel)</label>
-          <input
-            type="date"
-            id="edit-project-date-fin"
-            v-model="editingProject.dateFin"
-            class="form-input-ecran-travail"
-          />
-        </div>
+        
+        <!-- Synopsis en dessous sur toute la largeur -->
         <div class="form-group-ecran-travail">
           <label for="edit-project-synopsis">Synopsis (optionnel)</label>
           <textarea
@@ -68,6 +77,7 @@
             placeholder="Synopsis du projet..."
           ></textarea>
         </div>
+        
         <div v-if="error" class="error-message-ecran-travail">
           {{ error }}
         </div>
@@ -94,6 +104,4 @@ defineProps({
 
 defineEmits(['close', 'save'])
 </script>
-
-
 
