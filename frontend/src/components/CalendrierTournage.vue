@@ -1231,65 +1231,60 @@ async chargerEpisodesParProjet() {
         this.plateauxParLieu = [];
       }
     },
-    async verifierConflitsComediens() {
-        if (!this.formPlanning.sceneId || !this.formPlanning.dateTournage || 
-            !this.formPlanning.heureDebut || !this.formPlanning.heureFin) {
-            return true; // La validation normale gérera les champs manquants
+async verifierConflitsComediens() {
+  if (!this.formPlanning.sceneId || !this.formPlanning.dateTournage || 
+      !this.formPlanning.heureDebut || !this.formPlanning.heureFin) {
+    return { hasConflicts: false, conflicts: [] }; // Pas de conflits si données manquantes
+  }
+
+  try {
+    const response = await axios.get('/api/conflicts/check', {
+      params: {
+        sceneId: this.formPlanning.sceneId,
+        dateTournage: this.formPlanning.dateTournage,
+        heureDebut: this.formPlanning.heureDebut,
+        heureFin: this.formPlanning.heureFin
+      }
+    });
+
+    // Retourner les données de conflit directement
+    return response.data;
+  } catch (error) {
+    console.error('Erreur vérification conflits:', error);
+    // En cas d'erreur, on considère qu'il n'y a pas de conflit (pour ne pas bloquer inutilement)
+    return { hasConflicts: false, conflicts: [] };
+  }
+},
+
+async verifierConflitsTempsReel() {
+  if (this.formPlanning.sceneId && this.formPlanning.dateTournage && 
+      this.formPlanning.heureDebut && this.formPlanning.heureFin) {
+    try {
+      const response = await axios.get('/api/conflicts/check', {
+        params: {
+          sceneId: this.formPlanning.sceneId,
+          dateTournage: this.formPlanning.dateTournage,
+          heureDebut: this.formPlanning.heureDebut,
+          heureFin: this.formPlanning.heureFin
         }
+      });
 
-        try {
-            const response = await axios.get('/api/conflicts/check', {
-                params: {
-                    sceneId: this.formPlanning.sceneId,
-                    dateTournage: this.formPlanning.dateTournage,
-                    heureDebut: this.formPlanning.heureDebut,
-                    heureFin: this.formPlanning.heureFin
-                }
-            });
-
-            if (response.data.hasConflicts) {
-                const messages = response.data.conflicts.join('\n');
-                if (!confirm(`🚨 Conflits de comédiens détectés :\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
-                    return false;
-                }
-            }
-            
-            return true;
-        } catch (error) {
-            console.error('Erreur vérification conflits:', error);
-            // Continuer malgré l'erreur de vérification
-            return true;
-        }
-    },
-
-    async verifierConflitsTempsReel() {
-        if (this.formPlanning.sceneId && this.formPlanning.dateTournage && 
-            this.formPlanning.heureDebut && this.formPlanning.heureFin) {
-            try {
-                const response = await axios.get('/api/conflicts/check', {
-                    params: {
-                        sceneId: this.formPlanning.sceneId,
-                        dateTournage: this.formPlanning.dateTournage,
-                        heureDebut: this.formPlanning.heureDebut,
-                        heureFin: this.formPlanning.heureFin
-                    }
-                });
-
-                if (response.data.hasConflicts) {
-                    // Afficher les conflits dans l'interface
-                    this.erreurPlanning = '⚠️ Conflits détectés :\n' + response.data.conflicts.join('\n');
-                } else {
-                    this.erreurPlanning = '';
-                }
-            } catch (error) {
-                // Ne pas afficher d'erreur pour la vérification en temps réel
-                this.erreurPlanning = '';
-            }
-        }
-    },
+      if (response.data.hasConflicts) {
+        // Afficher les conflits en temps réel
+        this.erreurPlanning = '🚨 Conflits détectés. Impossible de créer le planning:\n' + 
+                             response.data.conflicts.join('\n');
+      } else {
+        this.erreurPlanning = '';
+      }
+    } catch (error) {
+      // Ne pas afficher d'erreur pour la vérification en temps réel
+      this.erreurPlanning = '';
+    }
+  }
+},
 
 async soumettrePlanning() {
-    // Vérifier les permissions
+  // Vérifier les permissions
   if (this.isModificationPlanning && !this.permissions.canEditPlanning) {
     this.showAccessError('Vous n\'avez pas les permissions pour modifier un planning.');
     return;
@@ -1305,41 +1300,46 @@ async soumettrePlanning() {
     const hasAccess = await this.checkEpisodeAccess(this.formPlanning.episodeId);
     if (!hasAccess) return;
   }
-        // Ne pas permettre la soumission pour les viewers
-        if (this.isViewer) return;
-        
-        if (!this.validerFormulairePlanning()) return;
-        
-        // Vérifier les conflits avant soumission
-        const peutContinuer = await this.verifierConflitsComediens();
-        if (!peutContinuer) return;
-        
-        this.chargementPlanning = true;
-        this.erreurPlanning = '';
-        try {
-            let response;
-            if (this.isModificationPlanning) {
-                response = await axios.put(`/api/scene-tournage/${this.formPlanning.id}`, this.formPlanning);
-            } else {
-                response = await axios.post('/api/scene-tournage', this.formPlanning);
-            }
-            await this.chargerTournages();
-            this.fermerModalPlanning();
-            alert(`✅ Planning ${this.isModificationPlanning ? 'modifié' : 'créé'} avec succès !`);
-        } catch (error) {
-            console.error('Erreur sauvegarde planning:', error);
-            
-            // Gérer spécifiquement les erreurs de conflit du backend
-            if (error.response?.status === 400 && error.response?.data?.message?.includes('Conflits détectés')) {
-                this.erreurPlanning = '🚨 Conflits de planning détectés : ' + error.response.data.message;
-            } else {
-                this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la sauvegarde du planning';
-            }
-        } finally {
-            this.chargementPlanning = false;
-        }
-    },
-
+  
+  // Ne pas permettre la soumission pour les viewers
+  if (this.isViewer) return;
+  
+  if (!this.validerFormulairePlanning()) return;
+  
+  // MODIFICATION ICI: Vérifier les conflits et BLOQUER si détectés
+  const conflictsResult = await this.verifierConflitsComediens();
+  if (conflictsResult && conflictsResult.hasConflicts) {
+    // Afficher les conflits et BLOQUER la création
+    this.erreurPlanning = 'Conflits de comédiens détectés. Impossible de créer le planning:\n' + 
+                         conflictsResult.conflicts.join('\n');
+    return; // Stop ici - ne pas continuer
+  }
+  
+  this.chargementPlanning = true;
+  this.erreurPlanning = '';
+  try {
+    let response;
+    if (this.isModificationPlanning) {
+      response = await axios.put(`/api/scene-tournage/${this.formPlanning.id}`, this.formPlanning);
+    } else {
+      response = await axios.post('/api/scene-tournage', this.formPlanning);
+    }
+    await this.chargerTournages();
+    this.fermerModalPlanning();
+    alert(`✅ Planning ${this.isModificationPlanning ? 'modifié' : 'créé'} avec succès !`);
+  } catch (error) {
+    console.error('Erreur sauvegarde planning:', error);
+    
+    // Gérer spécifiquement les erreurs de conflit du backend
+    if (error.response?.status === 400 && error.response?.data?.message?.includes('Conflits détectés')) {
+      this.erreurPlanning = '🚨 Conflits de planning détectés : ' + error.response.data.message;
+    } else {
+      this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la sauvegarde du planning';
+    }
+  } finally {
+    this.chargementPlanning = false;
+  }
+},
     async supprimerTournageDirect(tournage) {
       // Vérifier les permissions
       if (!this.permissions.canDeletePlanning) {
