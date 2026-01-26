@@ -140,7 +140,7 @@ position: fixed;
 
     label {
       @include typography-p4;
-      color: $color-text-light; // Changé: brun
+      color: $color-text-light; 
       font-weight: $font-weight-medium;
     }
   }
@@ -149,17 +149,17 @@ position: fixed;
     width: 100%;
     height: 34px;
     padding: 0 $padding-xs;
-    background: $color-background-alt; // Changé: blanc
-    border: 1px solid $color-border; // Changé: bordure dorée
+    background: $color-background-alt; 
+    border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary;
     cursor: pointer;
     box-sizing: border-box;
     
     &:focus {
       outline: none;
-      border-color: $color-primary; // Changé: doré
+      border-color: $color-primary; 
     }
   }
 
