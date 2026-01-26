@@ -486,6 +486,7 @@
         </div>
       </main>
     </div>
+    
     <!-- Modal de confirmation de suppression -->
       <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
         <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
