@@ -215,7 +215,7 @@
 
               <form @submit.prevent="submitForm" class="project-form">
                 <div class="form-group">
-                  <label for="titre">Titre du projet *</label>
+                  <label for="titre">Titre du projet </label>
                   <input 
                     type="text" 
                     id="titre"
@@ -239,7 +239,7 @@
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="genre">Genre *</label>
+                    <label for="genre">Genre </label>
                     <select 
                       id="genre"
                       v-model="form.genreId" 
@@ -254,7 +254,7 @@
                   </div>
 
                   <div class="form-group">
-                    <label for="statut">Statut *</label>
+                    <label for="statut">Statut </label>
                     <select 
                       id="statut"
                       v-model="form.statutId" 
@@ -271,7 +271,7 @@
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="dateDebut">Date de début estimée *</label>
+                    <label for="dateDebut">Date de début estimée </label>
                     <input 
                       type="date" 
                       id="dateDebut"
@@ -282,7 +282,7 @@
                   </div>
 
                   <div class="form-group">
-                    <label for="dateFin">Date de fin estimée *</label>
+                    <label for="dateFin">Date de fin estimée </label>
                     <input 
                       type="date" 
                       id="dateFin"

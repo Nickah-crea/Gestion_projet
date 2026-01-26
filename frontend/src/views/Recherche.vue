@@ -200,126 +200,124 @@
     <!-- Contenu principal à droite -->
     <div class="search-body-recherche">
       <div class="search-main-content-recherche">
-        <!-- En-tête principal -->
-        <div class="main-header-recherche">
-          <h1 class="page-title-recherche"><i class="fas fa-search"></i> Recherche Multiple</h1>
-          <p class="page-subtitle-recherche">Trouvez des scènes, personnages, lieux, plateaux, épisodes et séquences selon vos critères</p>
-        </div>
-
-        
-        <!-- Barre de recherche principale -->
-        <div class="search-bar-main-recherche">
-          <div class="search-input-container-recherche">
-            <input
-              v-model="criteres.termeRecherche"
-              type="text"
-              placeholder="Rechercher des personnages, lieux, dialogues, titres..."
-              class="search-input-large-recherche"
-              @keyup.enter="rechercher"
-            />
-            <!-- Bouton de recherche cliquable à droite -->
-            <button @click="rechercher" class="search-btn-main-recherche" :disabled="chargement">
-              <i :class="chargement ? 'fas fa-spinner fa-spin' : 'fas fa-search'"></i>
-            </button>
-            <button v-if="criteres.termeRecherche" @click="criteres.termeRecherche = ''" class="clear-search-btn-main-recherche">
-              <i class="fas fa-times"></i>
-            </button>
+        <!-- Section en-tête avec titre et barre de recherche -->
+        <div class="header-search-section">
+          <div class="main-header-recherche">
+            <h1 class="page-title-recherche"><i class="fas fa-search"></i> Recherche Multiple</h1>
+            <p class="page-subtitle-recherche">Trouvez des scènes, personnages, lieux, plateaux, épisodes et séquences selon vos critères</p>
           </div>
-        </div>
 
-        <!-- Dans le template, après la barre de recherche principale -->
-      <div v-if="!chargement && resultats.length > 0" class="sort-controls-recherche">
-        <div class="sort-options-recherche">
-          <label class="sort-label-recherche">
-            <i class="fas fa-sort-amount-down"></i> Trier par :
-          </label>
-          <select v-model="triSelectionne" class="sort-select-recherche" @change="trierResultats">
-            <option value="hierarchie">Hiérarchique (Épisode → Séquence → Scène)</option>
-            <option value="alphabetique">Alphabétique</option>
-            <option value="type">Type</option>
-            <option value="date">Date</option>
-          </select>
-          <button @click="toggleOrdreTri" class="sort-direction-recherche">
-            <i :class="ordreCroissant ? 'fas fa-sort-amount-up' : 'fas fa-sort-amount-down'"></i>
-          </button>
-        </div>
-      </div>
-
-        <!-- Indicateur de filtre projet actif -->
-        <div v-if="criteres.projetId" class="projet-filter-indicator-recherche">
-          <div class="projet-indicator-content-recherche">
-            <span class="projet-label-recherche">
-              <i class="fas fa-folder"></i> Projet sélectionné :
-            </span>
-            <span class="projet-nom-recherche">{{ getProjetNom() }}</span>
-            <button @click="reinitialiserProjet" class="clear-projet-btn-recherche">
-              <i class="fas fa-times"></i>
-              Changer de projet
-            </button>
-          </div>
-        </div>
-
-        <!-- Indicateur de filtre épisode actif -->
-        <div v-if="criteres.episodeId" class="projet-filter-indicator-recherche">
-          <div class="projet-indicator-content-recherche">
-            <span class="projet-label-recherche">
-              <i class="fas fa-play-circle"></i> Épisode sélectionné :
-            </span>
-            <span class="projet-nom-recherche">{{ getEpisodeNom() }}</span>
-            <button @click="reinitialiserEpisode" class="clear-projet-btn-recherche">
-              <i class="fas fa-times"></i>
-              Changer d'épisode
-            </button>
-          </div>
-        </div>
-
-        <!-- Indicateur de filtre séquence actif -->
-        <div v-if="criteres.sequenceId" class="projet-filter-indicator-recherche">
-          <div class="projet-indicator-content-recherche">
-            <span class="projet-label-recherche">
-              <i class="fas fa-layer-group"></i> Séquence sélectionnée :
-            </span>
-            <span class="projet-nom-recherche">{{ getSequenceNom() }}</span>
-            <button @click="reinitialiserSequence" class="clear-projet-btn-recherche">
-              <i class="fas fa-times"></i>
-              Changer de séquence
-            </button>
-          </div>
-        </div>
-
-        <!-- Résultats -->
-        <div class="results-section-recherche">
-          <div v-if="resultats.length === 0 && !chargement" class="empty-state-recherche">
-            <div class="empty-icon-recherche">
-              <i class="fas fa-search"></i>
+          <!-- Barre de recherche principale -->
+          <div class="search-bar-main-recherche">
+            <div class="search-input-container-recherche">
+              <input
+                v-model="criteres.termeRecherche"
+                type="text"
+                placeholder="Rechercher des personnages, lieux, dialogues, titres..."
+                class="search-input-large-recherche"
+                @keyup.enter="rechercher"
+              />
+              <!-- Bouton de recherche cliquable à droite -->
+              <button @click="rechercher" class="search-btn-main-recherche" :disabled="chargement">
+                <i :class="chargement ? 'fas fa-spinner fa-spin' : 'fas fa-search'"></i>
+              </button>
+              <button v-if="criteres.termeRecherche" @click="criteres.termeRecherche = ''" class="clear-search-btn-main-recherche">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
-            <h3>Aucun résultat</h3>
-            <p v-if="criteres.projetId">
-              Aucun résultat trouvé pour le projet "{{ getProjetNom() }}" avec les critères actuels
-            </p>
-            <p v-else>
-              Aucun résultat trouvé avec les critères de recherche actuels
-            </p>
           </div>
+        </div>
 
-          <div v-else-if="chargement" class="loading-state-recherche">
-            <div class="spinner-recherche">
-              <i class="fas fa-spinner fa-spin"></i>
+        <!-- Section filtres actifs et résultats -->
+        <div class="filters-results-section">
+          <!-- Filtres actifs (projet, épisode, séquence) -->
+          <div v-if="criteres.projetId || criteres.episodeId || criteres.sequenceId" class="active-filters-container">
+            <!-- Indicateur de filtre projet actif -->
+            <div v-if="criteres.projetId" class="projet-filter-indicator-recherche">
+              <div class="projet-indicator-content-recherche">
+                <span class="projet-label-recherche">
+                  <i class="fas fa-folder"></i> Projet :
+                </span>
+                <span class="projet-nom-recherche">{{ getProjetNom() }}</span>
+                <button @click="reinitialiserProjet" class="clear-projet-btn-recherche">
+                  <i class="fas fa-times"></i>
+                  Changer
+                </button>
+              </div>
             </div>
-            <p>Recherche en cours...</p>
+
+            <!-- Indicateur de filtre épisode actif -->
+            <div v-if="criteres.episodeId" class="projet-filter-indicator-recherche">
+              <div class="projet-indicator-content-recherche">
+                <span class="projet-label-recherche">
+                  <i class="fas fa-play-circle"></i> Épisode :
+                </span>
+                <span class="projet-nom-recherche">{{ getEpisodeNom() }}</span>
+                <button @click="reinitialiserEpisode" class="clear-projet-btn-recherche">
+                  <i class="fas fa-times"></i>
+                  Changer
+                </button>
+              </div>
+            </div>
+
+            <!-- Indicateur de filtre séquence actif -->
+            <div v-if="criteres.sequenceId" class="projet-filter-indicator-recherche">
+              <div class="projet-indicator-content-recherche">
+                <span class="projet-label-recherche">
+                  <i class="fas fa-layer-group"></i> Séquence :
+                </span>
+                <span class="projet-nom-recherche">{{ getSequenceNom() }}</span>
+                <button @click="reinitialiserSequence" class="clear-projet-btn-recherche">
+                  <i class="fas fa-times"></i>
+                  Changer
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div v-else class="results-container-recherche modern-results-recherche">
-            <div class="results-header-recherche">
+          <!-- Indicateur du nombre de résultats -->
+          <div v-if="!chargement && resultats.length > 0" class="result-count-indicator-Scenariste">
+            <i class="fas fa-check-circle"></i>
+            <span class="count-text-Scenariste">
+              <strong>{{ resultats.length }}</strong> résultat(s) trouvé(s)
+              <span v-if="criteres.projetId"> pour le projet "{{ getProjetNom() }}"</span>
+            </span>
+          </div>
+
+          <!-- Résultats -->
+          <div class="results-section-recherche">
+            <div v-if="resultats.length === 0 && !chargement" class="empty-state-recherche">
+              <div class="empty-icon-recherche">
+                <i class="fas fa-search"></i>
+              </div>
+              <h3>Aucun résultat</h3>
+              <p v-if="criteres.projetId">
+                Aucun résultat trouvé pour le projet "{{ getProjetNom() }}" avec les critères actuels
+              </p>
+              <p v-else>
+                Aucun résultat trouvé avec les critères de recherche actuels
+              </p>
+            </div>
+
+            <div v-else-if="chargement" class="loading-state-recherche">
+              <div class="spinner-recherche">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+              <p>Recherche en cours...</p>
+            </div>
+
+            <div v-else class="modern-results-recherche">
+              <!-- En-tête des résultats -->
+             <div class="results-header-recherche">
               <h2>
-                <i class="fas fa-list-alt"></i> Résultats ({{ resultats.length }})
+                <i class="fas fa-list-alt"></i> Résultats
               </h2>
               <div class="results-info-recherche">
                 <span v-if="criteres.projetId" class="projet-info-recherche">
                   <i class="fas fa-folder"></i> Projet : <strong>{{ getProjetNom() }}</strong> 
                 </span>
                 <span v-if="criteres.regroupement" class="regroupement-info-recherche">
-                  • <i class="fas fa-layer-group"></i> Groupés par : <strong>{{ getRegroupementLabel() }}</strong>
+                  <i class="fas fa-layer-group"></i> Groupés par : <strong>{{ getRegroupementLabel() }}</strong>
                 </span>
               </div>
               <button @click="reinitialiser" class="reset-all-btn-recherche">
@@ -327,412 +325,260 @@
                 Tout réinitialiser
               </button>
             </div>
-            
-            <!-- Liste des résultats groupés -->
-            <div class="results-list-recherche">
-              <div
-                v-for="(groupe, index) in resultatsGroupes"
-                :key="index"
-                class="result-group-recherche"
-              >
-                <!-- En-tête de groupe -->
-                <div
-                  v-if="groupe.estGroupe"
-                  class="group-header-recherche"
-                  :class="getGroupHeaderClass(groupe.type)"
-                >
-                  <span class="group-icon-recherche">{{ getGroupIcon(groupe.type) }}</span>
-                  <span class="group-title-recherche">{{ groupe.titre }}</span>
-                  <span class="group-count-recherche">({{ groupe.elements.length }} éléments)</span>
-                </div>
 
-                <!-- Éléments du groupe -->
+              <!-- Résultats groupés -->
+              <div v-if="criteres.regroupement" class="results-list-recherche">
                 <div
-                  v-for="(resultat, resultIndex) in groupe.elements"
-                  :key="resultat.id + '-' + resultIndex"
-                  class="result-item-recherche"
-                  :class="'type-' + resultat.type"
+                  v-for="(groupe, index) in resultatsGroupes"
+                  :key="index"
+                  class="result-group-recherche"
                 >
-                  <router-link 
-                    :to="getDetailLink(resultat)"
-                    class="result-link-recherche"
+                  <!-- En-tête de groupe -->
+                  <div
+                    v-if="groupe.estGroupe"
+                    class="group-header-recherche"
+                    :class="getGroupHeaderClass(groupe.type)"
                   >
-                    <div class="result-content-recherche">
-                      
-                      <!-- Scène -->
-                      <div v-if="resultat.type === 'scene'" class="scene-result-recherche">
-                        <div class="result-header-recherche">
-                          <span class="result-type-badge-recherche scene-badge-recherche">
-                            <i class="fas fa-film"></i> Scène
+                    <span class="group-icon-recherche">{{ getGroupIcon(groupe.type) }}</span>
+                    <span class="group-title-recherche">{{ groupe.titre }}</span>
+                    <span class="group-count-recherche">({{ groupe.elements.length }} éléments)</span>
+                  </div>
+
+                  <!-- Grille de cartes dans le groupe -->
+                  <div class="projects-library-Scenariste">
+                    <div
+                      v-for="(resultat, resultIndex) in groupe.elements"
+                      :key="resultat.id + '-' + resultIndex"
+                      class="movie-card-Scenariste"
+                      :class="'type-' + resultat.type"
+                      :style="{ '--index': resultIndex }"
+                      @click="voirDetails(resultat)"
+                    >
+                      <!-- En-tête de la carte -->
+                      <div class="movie-card-header-Scenariste">
+                        <!-- Badge de type -->
+                        <span class="type-badge-Scenariste" :class="'type-' + resultat.type">
+                          <i :class="getTypeIcon(resultat.type)"></i>
+                          {{ formatType(resultat.type) }}
+                        </span>
+                        
+                        <!-- Badge de statut (si disponible) -->
+                        <span v-if="resultat.statut" class="statut-badge-Scenariste" :class="'statut-' + resultat.statut">
+                          {{ formatStatut(resultat.statut) }}
+                        </span>
+                      </div>
+
+                      <!-- Contenu de la carte -->
+                      <div class="movie-info-Scenariste">
+                        <!-- Titre -->
+                        <h3 class="movie-title-Scenariste">{{ resultat.titre }}</h3>
+
+                        <!-- Description/synopsis -->
+                        <div v-if="resultat.description" class="movie-synopsis">
+                          <p>{{ truncateText(resultat.description, 120) }}</p>
+                        </div>
+
+                        <!-- Hiérarchie (projet > épisode > séquence) -->
+                        <div class="hierarchy-compact-Scenariste" v-if="resultat.projetTitre || resultat.episodeTitre || resultat.sequenceTitre">
+                          <span v-if="resultat.projetTitre" class="hierarchy-item-Scenariste projet-item">
+                            <i class="fas fa-folder"></i>
+                            <span>{{ resultat.projetTitre }}</span>
                           </span>
-                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
-                          <span class="result-status-recherche" :class="'status-' + resultat.statut">
-                            {{ formatStatut(resultat.statut) }}
+                          <span v-if="resultat.episodeTitre" class="hierarchy-item-Scenariste episode-item">
+                            <i class="fas fa-film"></i>
+                            <span>{{ resultat.episodeTitre }}</span>
+                          </span>
+                          <span v-if="resultat.sequenceTitre" class="hierarchy-item-Scenariste sequence-item">
+                            <i class="fas fa-layer-group"></i>
+                            <span>{{ resultat.sequenceTitre }}</span>
                           </span>
                         </div>
-                        
-                        <div class="result-details-recherche">
-                          <div class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-calendar-alt"></i> Date :
-                            </span>
+
+                        <!-- Informations spécifiques selon le type -->
+                        <div class="specific-info-Scenariste">
+                          <!-- Scène -->
+                          <div v-if="resultat.type === 'scene'" class="info-section-scene">
+                            <div v-if="resultat.dateTournage" class="info-row-Scenariste">
+                              <i class="fas fa-calendar-alt"></i>
+                              <span>{{ formatDate(resultat.dateTournage) }}</span>
+                            </div>
+                            <div v-if="resultat.lieuNom" class="info-row-Scenariste">
+                              <i class="fas fa-landmark"></i>
+                              <span>{{ resultat.lieuNom }}</span>
+                            </div>
+                            <div v-if="resultat.plateauNom" class="info-row-Scenariste">
+                              <i class="fas fa-theater-masks"></i>
+                              <span>{{ resultat.plateauNom }}</span>
+                            </div>
+                            <div v-if="resultat.personnageNom" class="info-row-Scenariste">
+                              <i class="fas fa-users"></i>
+                              <span>{{ resultat.personnageNom }}</span>
+                              <span v-if="resultat.comedienNom" class="comedien-text">
+                                ({{ resultat.comedienNom }})
+                              </span>
+                            </div>
+                          </div>
+
+                          <!-- Personnage -->
+                          <div v-if="resultat.type === 'personnage' && resultat.comedienNom" class="info-row-Scenariste">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Comédien : {{ resultat.comedienNom }}</span>
+                          </div>
+
+                          <!-- Lieu/Plateau -->
+                          <div v-if="(resultat.type === 'lieu' || resultat.type === 'plateau') && resultat.description" class="info-row-Scenariste">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{{ truncateText(resultat.description, 60) }}</span>
+                          </div>
+
+                          <!-- Épisode/Séquence -->
+                          <div v-if="(resultat.type === 'episode' || resultat.type === 'sequence') && resultat.description" class="info-row-Scenariste">
+                            <i class="fas fa-file-alt"></i>
+                            <span>{{ truncateText(resultat.description, 80) }}</span>
+                          </div>
+                        </div>
+
+                        <!-- Dialogues (pour scènes) -->
+                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-compact-Scenariste">
+                          <div v-for="(dialogue, idx) in resultat.dialogues.slice(0, 2)" :key="idx" class="dialogue-item-compact-Scenariste">
+                            "{{ truncateText(dialogue, 50) }}"
+                          </div>
+                          <div v-if="resultat.dialogues.length > 2" class="dialogue-more-Scenariste">
+                            + {{ resultat.dialogues.length - 2 }} autre(s) dialogue(s)
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Actions -->
+                      <div class="movie-actions-bottom-Scenariste">
+                        <div class="actions-top-Scenariste">
+                          <button class="action-btn-Scenariste primary-btn" @click.stop="voirDetails(resultat)">
+                            <i class="fas fa-eye"></i>
+                            <span>Détails</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Résultats sans regroupement -->
+              <div v-else class="results-grid-simple-recherche">
+                <div class="projects-library-Scenariste">
+                  <div
+                    v-for="(resultat, index) in resultats"
+                    :key="resultat.id"
+                    class="movie-card-Scenariste"
+                    :class="'type-' + resultat.type"
+                    :style="{ '--index': index }"
+                    @click="voirDetails(resultat)"
+                  >
+                    <!-- En-tête de la carte -->
+                    <div class="movie-card-header-Scenariste">
+                      <!-- Badge de type -->
+                      <span class="type-badge-Scenariste" :class="'type-' + resultat.type">
+                        <i :class="getTypeIcon(resultat.type)"></i>
+                        {{ formatType(resultat.type) }}
+                      </span>
+                      
+                      <!-- Badge de statut (si disponible) -->
+                      <span v-if="resultat.statut" class="statut-badge-Scenariste" :class="'statut-' + resultat.statut">
+                        {{ formatStatut(resultat.statut) }}
+                      </span>
+                    </div>
+
+                    <!-- Contenu de la carte -->
+                    <div class="movie-info-Scenariste">
+                      <!-- Titre -->
+                      <h3 class="movie-title-Scenariste">{{ resultat.titre }}</h3>
+
+                      <!-- Description/synopsis -->
+                      <div v-if="resultat.description" class="movie-synopsis">
+                        <p>{{ truncateText(resultat.description, 120) }}</p>
+                      </div>
+
+                      <!-- Hiérarchie (projet > épisode > séquence) -->
+                      <div class="hierarchy-compact-Scenariste" v-if="resultat.projetTitre || resultat.episodeTitre || resultat.sequenceTitre">
+                        <span v-if="resultat.projetTitre" class="hierarchy-item-Scenariste projet-item">
+                          <i class="fas fa-folder"></i>
+                          <span>{{ resultat.projetTitre }}</span>
+                        </span>
+                        <span v-if="resultat.episodeTitre" class="hierarchy-item-Scenariste episode-item">
+                          <i class="fas fa-film"></i>
+                          <span>{{ resultat.episodeTitre }}</span>
+                        </span>
+                        <span v-if="resultat.sequenceTitre" class="hierarchy-item-Scenariste sequence-item">
+                          <i class="fas fa-layer-group"></i>
+                          <span>{{ resultat.sequenceTitre }}</span>
+                        </span>
+                      </div>
+
+                      <!-- Informations spécifiques selon le type -->
+                      <div class="specific-info-Scenariste">
+                        <!-- Scène -->
+                        <div v-if="resultat.type === 'scene'" class="info-section-scene">
+                          <div v-if="resultat.dateTournage" class="info-row-Scenariste">
+                            <i class="fas fa-calendar-alt"></i>
                             <span>{{ formatDate(resultat.dateTournage) }}</span>
                           </div>
-                          <div class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-clock"></i> Heure :
-                            </span>
-                            <span>{{ resultat.heureDebut }} - {{ resultat.heureFin }}</span>
-                          </div>
-                          <div v-if="resultat.lieuNom" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-landmark"></i> Lieu :
-                            </span>
+                          <div v-if="resultat.lieuNom" class="info-row-Scenariste">
+                            <i class="fas fa-landmark"></i>
                             <span>{{ resultat.lieuNom }}</span>
                           </div>
-                          <div v-if="resultat.plateauNom" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-theater-masks"></i> Plateau :
-                            </span>
+                          <div v-if="resultat.plateauNom" class="info-row-Scenariste">
+                            <i class="fas fa-theater-masks"></i>
                             <span>{{ resultat.plateauNom }}</span>
                           </div>
-                          <div v-if="resultat.personnageNom" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-users"></i> Personnage :
-                            </span>
+                          <div v-if="resultat.personnageNom" class="info-row-Scenariste">
+                            <i class="fas fa-users"></i>
                             <span>{{ resultat.personnageNom }}</span>
-                            <span v-if="resultat.comedienNom" class="comedien-recherche">
+                            <span v-if="resultat.comedienNom" class="comedien-text">
                               ({{ resultat.comedienNom }})
                             </span>
                           </div>
                         </div>
 
-                        <!-- Dialogues -->
-                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
-                          <div class="dialogues-title-recherche">
-                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
-                          </div>
-                          <div class="dialogues-list-recherche">
-                            <div
-                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
-                              :key="dialogueIndex"
-                              class="dialogue-item-recherche"
-                            >
-                              "{{ dialogue }}"
-                            </div>
-                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
-                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
-                            </div>
-                          </div>
+                        <!-- Personnage -->
+                        <div v-if="resultat.type === 'personnage' && resultat.comedienNom" class="info-row-Scenariste">
+                          <i class="fas fa-user-tie"></i>
+                          <span>Comédien : {{ resultat.comedienNom }}</span>
                         </div>
 
-                        <!-- Hiérarchie -->
-                        <div class="hierarchy-recherche">
-                          <span v-if="resultat.projetTitre" class="hierarchy-item-recherche">
-                            <i class="fas fa-folder"></i> {{ resultat.projetTitre }}
-                          </span>
-                          <span v-else class="hierarchy-item-recherche sans-projet-recherche">
-                            <i class="fas fa-info-circle"></i> Sans projet
-                          </span>
-                          <span v-if="resultat.episodeTitre" class="hierarchy-item-recherche">
-                            <i class="fas fa-film"></i> {{ resultat.episodeTitre }}
-                          </span>
-                          <span v-if="resultat.sequenceTitre" class="hierarchy-item-recherche">
-                            <i class="fas fa-list-ol"></i> {{ resultat.sequenceTitre }}
-                          </span>
+                        <!-- Lieu/Plateau -->
+                        <div v-if="(resultat.type === 'lieu' || resultat.type === 'plateau') && resultat.description" class="info-row-Scenariste">
+                          <i class="fas fa-info-circle"></i>
+                          <span>{{ truncateText(resultat.description, 60) }}</span>
                         </div>
 
-                        <!-- Indicateur de clic -->
-                        <div class="view-details-recherche">
-                          <span class="view-details-text-recherche">
-                            <i class="fas fa-book-open"></i> Voir tous les détails →
-                          </span>
+                        <!-- Épisode/Séquence -->
+                        <div v-if="(resultat.type === 'episode' || resultat.type === 'sequence') && resultat.description" class="info-row-Scenariste">
+                          <i class="fas fa-file-alt"></i>
+                          <span>{{ truncateText(resultat.description, 80) }}</span>
                         </div>
                       </div>
 
-                      <!-- Personnage -->
-                      <div v-else-if="resultat.type === 'personnage'" class="personnage-result-recherche">
-                        <div class="result-header-recherche">
-                          <span class="result-type-badge-recherche personnage-badge-recherche">
-                            <i class="fas fa-users"></i> Personnage
-                          </span>
-                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
+                      <!-- Dialogues (pour scènes) -->
+                      <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-compact-Scenariste">
+                        <div v-for="(dialogue, idx) in resultat.dialogues.slice(0, 2)" :key="idx" class="dialogue-item-compact-Scenariste">
+                          "{{ truncateText(dialogue, 50) }}"
                         </div>
-                        <div class="result-details-recherche">
-                          <div v-if="resultat.description" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-file-alt"></i> Description :
-                            </span>
-                            <span>{{ resultat.description }}</span>
-                          </div>
-                          <div v-if="resultat.comedienNom" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-user-tie"></i> Comédien :
-                            </span>
-                            <span>{{ resultat.comedienNom }}</span>
-                          </div>
-                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-folder"></i> Projet :
-                            </span>
-                            <span>{{ resultat.projetTitre }}</span>
-                          </div>
-                          <div v-else class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-info-circle"></i> Projet :
-                            </span>
-                            <span class="sans-projet-recherche">Sans projet</span>
-                          </div>
-                        </div>
-
-                        <!-- Dialogues -->
-                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
-                          <div class="dialogues-title-recherche">
-                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
-                          </div>
-                          <div class="dialogues-list-recherche">
-                            <div
-                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
-                              :key="dialogueIndex"
-                              class="dialogue-item-recherche"
-                            >
-                              "{{ dialogue }}"
-                            </div>
-                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
-                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="view-details-recherche">
-                          <span class="view-details-text-recherche">
-                            <i class="fas fa-user-circle"></i> Voir fiche personnage →
-                          </span>
+                        <div v-if="resultat.dialogues.length > 2" class="dialogue-more-Scenariste">
+                          + {{ resultat.dialogues.length - 2 }} autre(s) dialogue(s)
                         </div>
                       </div>
-
-                      <!-- Lieu -->
-                      <div v-else-if="resultat.type === 'lieu'" class="lieu-result-recherche">
-                        <div class="result-header-recherche">
-                          <span class="result-type-badge-recherche lieu-badge-recherche">
-                            <i class="fas fa-landmark"></i> Lieu
-                          </span>
-                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
-                        </div>
-                        <div class="result-details-recherche">
-                          <div v-if="resultat.description" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-file-alt"></i> Description :
-                            </span>
-                            <span>{{ resultat.description }}</span>
-                          </div>
-                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-folder"></i> Projet :
-                            </span>
-                            <span>{{ resultat.projetTitre }}</span>
-                          </div>
-                          <div v-else class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-info-circle"></i> Projet :
-                            </span>
-                            <span class="sans-projet-recherche">Sans projet</span>
-                          </div>
-                        </div>
-
-                        <!-- Dialogues -->
-                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
-                          <div class="dialogues-title-recherche">
-                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
-                          </div>
-                          <div class="dialogues-list-recherche">
-                            <div
-                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
-                              :key="dialogueIndex"
-                              class="dialogue-item-recherche"
-                            >
-                              "{{ dialogue }}"
-                            </div>
-                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
-                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="view-details-recherche">
-                          <span class="view-details-text-recherche">
-                            <i class="fas fa-landmark"></i> Voir fiche lieu →
-                          </span>
-                        </div>
-                      </div>
-
-                      <!-- Plateau -->
-                      <div v-else-if="resultat.type === 'plateau'" class="plateau-result-recherche">
-                        <div class="result-header-recherche">
-                          <span class="result-type-badge-recherche plateau-badge-recherche">
-                            <i class="fas fa-theater-masks"></i> Plateau
-                          </span>
-                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
-                        </div>
-                        <div class="result-details-recherche">
-                          <div v-if="resultat.description" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-file-alt"></i> Description :
-                            </span>
-                            <span>{{ resultat.description }}</span>
-                          </div>
-                          <div v-if="resultat.lieuNom" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-landmark"></i> Lieu :
-                            </span>
-                            <span>{{ resultat.lieuNom }}</span>
-                          </div>
-                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-folder"></i> Projet :
-                            </span>
-                            <span>{{ resultat.projetTitre }}</span>
-                          </div>
-                          <div v-else class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-info-circle"></i> Projet :
-                            </span>
-                            <span class="sans-projet-recherche">Sans projet</span>
-                          </div>
-                        </div>
-
-                        <!-- Dialogues -->
-                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
-                          <div class="dialogues-title-recherche">
-                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
-                          </div>
-                          <div class="dialogues-list-recherche">
-                            <div
-                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
-                              :key="dialogueIndex"
-                              class="dialogue-item-recherche"
-                            >
-                              "{{ dialogue }}"
-                            </div>
-                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
-                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="view-details-recherche">
-                          <span class="view-details-text-recherche">
-                            <i class="fas fa-theater-masks"></i> Voir fiche plateau →
-                          </span>
-                        </div>
-                      </div>
-
-                      <!-- Épisode -->
-                      <div v-else-if="resultat.type === 'episode'" class="episode-result-recherche">
-                        <div class="result-header-recherche">
-                          <span class="result-type-badge-recherche episode-badge-recherche">
-                            <i class="fas fa-play-circle"></i> Épisode
-                          </span>
-                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
-                        </div>
-                        <div class="result-details-recherche">
-                          <div v-if="resultat.description" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-file-alt"></i> Synopsis :
-                            </span>
-                            <span>{{ resultat.description }}</span>
-                          </div>
-                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-folder"></i> Projet :
-                            </span>
-                            <span>{{ resultat.projetTitre }}</span>
-                          </div>
-                        </div>
-
-                        <!-- Dialogues -->
-                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
-                          <div class="dialogues-title-recherche">
-                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
-                          </div>
-                          <div class="dialogues-list-recherche">
-                            <div
-                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
-                              :key="dialogueIndex"
-                              class="dialogue-item-recherche"
-                            >
-                              "{{ dialogue }}"
-                            </div>
-                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
-                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="view-details-recherche">
-                          <span class="view-details-text-recherche">
-                            <i class="fas fa-play-circle"></i> Voir fiche épisode →
-                          </span>
-                        </div>
-                      </div>
-
-                      <!-- Séquence -->
-                      <div v-else-if="resultat.type === 'sequence'" class="sequence-result-recherche">
-                        <div class="result-header-recherche">
-                          <span class="result-type-badge-recherche sequence-badge-recherche">
-                            <i class="fas fa-layer-group"></i> Séquence
-                          </span>
-                          <h3 class="result-title-recherche">{{ resultat.titre }}</h3>
-                        </div>
-                        <div class="result-details-recherche">
-                          <div v-if="resultat.description" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-file-alt"></i> Synopsis :
-                            </span>
-                            <span>{{ resultat.description }}</span>
-                          </div>
-                          <div v-if="resultat.episodeTitre" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-film"></i> Épisode :
-                            </span>
-                            <span>{{ resultat.episodeTitre }}</span>
-                          </div>
-                          <div v-if="resultat.projetTitre" class="detail-row-recherche">
-                            <span class="detail-label-recherche">
-                              <i class="fas fa-folder"></i> Projet :
-                            </span>
-                            <span>{{ resultat.projetTitre }}</span>
-                          </div>
-                        </div>
-
-                        <!-- Dialogues -->
-                        <div v-if="resultat.dialogues && resultat.dialogues.length > 0" class="dialogues-section-recherche">
-                          <div class="dialogues-title-recherche">
-                            <i class="fas fa-comments"></i> Dialogues ({{ resultat.dialogues.length }}) :
-                          </div>
-                          <div class="dialogues-list-recherche">
-                            <div
-                              v-for="(dialogue, dialogueIndex) in resultat.dialogues.slice(0, 3)"
-                              :key="dialogueIndex"
-                              class="dialogue-item-recherche"
-                            >
-                              "{{ dialogue }}"
-                            </div>
-                            <div v-if="resultat.dialogues.length > 3" class="dialogues-more-recherche">
-                              + {{ resultat.dialogues.length - 3 }} autres dialogues...
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="view-details-recherche">
-                          <span class="view-details-text-recherche">
-                            <i class="fas fa-layer-group"></i> Voir fiche séquence →
-                          </span>
-                        </div>
-                      </div>
-
                     </div>
-                  </router-link>
+
+                    <!-- Actions -->
+                    <div class="movie-actions-bottom-Scenariste">
+                      <div class="actions-top-Scenariste">
+                        <button class="action-btn-Scenariste primary-btn" @click.stop="voirDetails(resultat)">
+                          <i class="fas fa-eye"></i>
+                          <span>Détails</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -801,22 +647,18 @@ export default {
         groupes[cleGroupe].push(resultat)
       })
 
-      // Organiser les groupes et les éléments dans les groupes
       return Object.entries(groupes)
-        .sort(([cleA], [cleB]) => cleA.localeCompare(cleB)) // Trier les groupes par nom
+        .sort(([cleA], [cleB]) => cleA.localeCompare(cleB))
         .map(([cle, elements]) => {
           const groupeHeader = this.resultats.find(r => 
             r.type === 'groupe' && r.groupeValeur === cle
           )
           
-          // Trier les éléments dans le groupe selon l'ordre hiérarchique
-          const elementsTries = this.organiserResultatsParHierarchie(elements)
-          
           return {
             estGroupe: true,
             type: this.criteres.regroupement,
-            titre: groupeHeader ? groupeHeader.titre : `Groupe: ${cle}`,
-            elements: elementsTries
+            titre: groupeHeader ? groupeHeader.titre : cle,
+            elements: this.organiserResultatsParHierarchie(elements)
           }
         })
     }
@@ -827,9 +669,11 @@ export default {
     await this.chargerStatuts()
     document.addEventListener('click', this.handleClickOutside)
   },
+  
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
   },
+  
   watch: {
     'criteres.projetId': async function(newProjetId) {
       if (newProjetId) {
@@ -842,6 +686,7 @@ export default {
         this.sequences = []
       }
     },
+    
     'criteres.episodeId': async function(newEpisodeId) {
       if (newEpisodeId) {
         await this.chargerSequences(newEpisodeId)
@@ -851,8 +696,50 @@ export default {
       }
     }
   },
+  
   methods: {
-    // Méthodes de chargement des données
+    // Méthodes utilitaires pour le template
+    truncateText(text, maxLength) {
+      if (!text) return ''
+      if (text.length <= maxLength) return text
+      return text.substring(0, maxLength) + '...'
+    },
+    
+    getTypeIcon(type) {
+      const icons = {
+        scene: 'fas fa-film',
+        personnage: 'fas fa-users',
+        lieu: 'fas fa-landmark',
+        plateau: 'fas fa-theater-masks',
+        episode: 'fas fa-play-circle',
+        sequence: 'fas fa-layer-group'
+      }
+      return icons[type] || 'fas fa-question-circle'
+    },
+    
+    formatType(type) {
+      const typesMap = {
+        scene: 'Scène',
+        personnage: 'Personnage',
+        lieu: 'Lieu',
+        plateau: 'Plateau',
+        episode: 'Épisode',
+        sequence: 'Séquence'
+      }
+      return typesMap[type] || type
+    },
+    
+    voirDetails(resultat) {
+      this.$router.push(this.getDetailLink(resultat))
+    },
+    
+    ouvrirScene(scene) {
+      // Implémentation pour ouvrir une scène
+      console.log('Ouvrir scène:', scene)
+      // Navigation vers l'éditeur de scène
+    },
+
+    // Méthodes existantes (à conserver)
     async chargerProjets() {
       try {
         this.projets = await getProjets()
@@ -889,8 +776,6 @@ export default {
       }
     },
 
-        
-    // Nouvelles méthodes
     trierResultats() {
       this.resultats = this.trierSelonCritere(this.resultats, this.triSelectionne, this.ordreCroissant)
     },
@@ -940,7 +825,7 @@ export default {
       
       return resultatsCopie
     },
-    // Méthodes de gestion des dropdowns
+
     toggleTypesDropdown() {
       this.showTypesDropdown = !this.showTypesDropdown
       this.showStatutsDropdown = false
@@ -978,7 +863,6 @@ export default {
       }
     },
 
-    // Méthodes d'affichage des textes
     getTypesDisplayText() {
       if (this.criteres.typesRecherche.length === 0) return 'Aucun type'
       if (this.criteres.typesRecherche.length === 6) return 'Tous les types'
@@ -1017,7 +901,6 @@ export default {
       return date.toLocaleDateString('fr-FR')
     },
 
-    // Méthodes de mise à jour des sélections
     updateTypesSelection() {
       this.$forceUpdate()
     },
@@ -1044,7 +927,6 @@ export default {
       this.showDateFinDropdown = false
     },
 
-    // Méthodes utilitaires
     getProjetNom() {
       if (!this.criteres.projetId) return ''
       const projet = this.projets.find(p => p.id === this.criteres.projetId)
@@ -1078,7 +960,6 @@ export default {
       this.criteres.sequenceId = null
     },
 
-    // Méthodes de recherche
     async rechercher() {
       this.chargement = true
       try {
@@ -1086,7 +967,6 @@ export default {
         const resultatsBruts = await rechercheAvancee(this.criteres)
         console.log('Résultats bruts reçus:', resultatsBruts.length)
         
-        // Organiser les résultats par ordre hiérarchique
         this.resultats = this.organiserResultatsParHierarchie(resultatsBruts)
         console.log('Résultats organisés:', this.resultats.length)
         
@@ -1098,22 +978,17 @@ export default {
       }
     },
 
-    // Nouvelle méthode pour organiser les résultats
     organiserResultatsParHierarchie(resultats) {
-      // Définir l'ordre hiérarchique souhaité
       const ordreHierarchique = ['episode', 'sequence', 'scene', 'personnage', 'lieu', 'plateau']
       
-      // Trier les résultats selon l'ordre hiérarchique
       return [...resultats].sort((a, b) => {
         const indexA = ordreHierarchique.indexOf(a.type)
         const indexB = ordreHierarchique.indexOf(b.type)
         
-        // Si les types sont différents, trier selon l'ordre hiérarchique
         if (indexA !== indexB) {
           return indexA - indexB
         }
         
-        // Si même type, trier par titre alphabétique
         if (a.titre && b.titre) {
           return a.titre.localeCompare(b.titre)
         }
@@ -1226,4 +1101,18 @@ export default {
 }
 </script>
 
+<style scoped>
+/* Styles spécifiques au composant si nécessaire */
+.comedien-text {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.dialogue-more-Scenariste {
+  font-size: 0.8em;
+  color: #666;
+  text-align: center;
+  padding: 4px 0;
+}
+</style>
 

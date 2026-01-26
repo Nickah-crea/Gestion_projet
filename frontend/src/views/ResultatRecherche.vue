@@ -605,32 +605,6 @@
             </div>
           </div>
 
-          <!-- Carte Structure du projet -->
-          <div class="section-card-resultat-recherche">
-            <div class="card-header-resultat-recherche">
-              <h3><i class="fas fa-folder"></i> Structure du projet</h3>
-            </div>
-            <div class="card-content-resultat-recherche">
-              <div class="hierarchy-path-resultat-recherche">
-                <div v-if="resultat.projetTitre" class="hierarchy-level-resultat-recherche">
-                  <span class="level-icon-resultat-recherche"><i class="fas fa-folder"></i></span>
-                  <span class="level-label-resultat-recherche">Projet :</span>
-                  <span class="level-value-resultat-recherche">{{ resultat.projetTitre }}</span>
-                </div>
-                <div v-if="resultat.episodeTitre" class="hierarchy-level-resultat-recherche">
-                  <span class="level-icon-resultat-recherche"><i class="fas fa-play-circle"></i></span>
-                  <span class="level-label-resultat-recherche">Épisode :</span>
-                  <span class="level-value-resultat-recherche">{{ resultat.episodeTitre }}</span>
-                </div>
-                <div v-if="resultat.sequenceTitre" class="hierarchy-level-resultat-recherche">
-                  <span class="level-icon-resultat-recherche"><i class="fas fa-layer-group"></i></span>
-                  <span class="level-label-resultat-recherche">Séquence :</span>
-                  <span class="level-value-resultat-recherche">{{ resultat.sequenceTitre }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Carte Personnages impliqués -->
           <div v-if="resultatDetails.personnages && resultatDetails.personnages.length > 0" class="section-card-resultat-recherche">
             <div class="card-header-resultat-recherche">

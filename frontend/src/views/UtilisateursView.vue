@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-utilisateurs">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale fixe à gauche -->
     <aside class="utilisateurs-sidebar">
       <div class="sidebar-header">
@@ -142,17 +142,16 @@
                     </thead>
                     <tbody>
                       <tr v-for="user in filteredUsers" :key="user.idUtilisateur || user.id">
-                        <td class="user-photo-cell">
-                          <div class="user-photo" @click="viewUserPhoto(user)">
+                        <td class="user-photo">
+                          <div class="photo-avatar" @click="showPhotoPopup(user)">
                             <img 
-                              v-if="getUserPhotoUrl(user)" 
-                              :src="getUserPhotoUrl(user)" 
+                              :src="getUserAvatar(user)" 
                               :alt="user.nom"
-                              @error="handlePhotoError"
-                              class="user-photo-img"
+                              @error="handleAvatarError"
+                              class="user-avatar-img clickable"
                             />
-                            <div v-else class="user-photo-placeholder">
-                              {{ getUserInitials(user.nom) }}
+                            <div v-if="!user.profilePhotoPath" class="avatar-placeholder clickable">
+                              <i class="fas fa-user"></i>
                             </div>
                           </div>
                         </td>
@@ -178,11 +177,11 @@
                             <button class="btn-edit" @click="editUser(user)" title="Modifier">
                               <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn-view" @click="viewUserDetails(user)" title="Voir détails">
-                              <i class="fas fa-eye"></i>
-                            </button>
                             <button class="btn-edit delete-btn" @click="confirmDelete(user)" title="Supprimer">
                               <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn-view" @click="manageUserPhoto(user)" title="Gérer la photo">
+                              <i class="fas fa-camera"></i>
                             </button>
                           </div>
                         </td>
@@ -199,7 +198,7 @@
               </div>
             </div>
 
-            <!-- Onglet 2: Formulaire d'ajout -->
+            <!-- Onglet 2: Formulaire d'ajout/modification -->
             <div v-if="activeTab === 'ajout'" class="tab-pane">
               <div class="form-header">
                 <h3>
@@ -212,130 +211,102 @@
                 </button>
               </div>
 
-              <form @submit.prevent="submitForm" class="user-form" enctype="multipart/form-data">
-                <div class="form-group photo-upload-group">
-                  <label>Photo de profil</label>
-                  <div class="photo-upload-container">
-                    <div class="photo-preview">
-                      <img 
-                        v-if="photoPreview || (editingUser && getUserPhotoUrl(editingUser))" 
-                        :src="photoPreview || getUserPhotoUrl(editingUser)" 
-                        alt="Photo de profil"
-                        @error="handlePreviewError"
-                        class="photo-preview-img"
+              <form @submit.prevent="submitForm" class="user-form">
+                <!-- Informations de l'utilisateur -->
+                <div class="form-section">
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="nom">Nom complet *</label>
+                      <input 
+                        type="text" 
+                        id="nom"
+                        v-model="formData.nom" 
+                        required 
+                        placeholder="Entrez le nom complet"
+                        class="form-input"
                       />
-                      <div v-else class="photo-placeholder">
-                        <i class="fas fa-user"></i>
-                        <span>Photo non définie</span>
-                      </div>
                     </div>
-                    <div class="photo-upload-actions">
-                      <label for="photo-upload" class="upload-btn">
-                        <i class="fas fa-camera"></i>
-                        {{ photoFile ? 'Changer la photo' : 'Choisir une photo' }}
-                        <input 
-                          type="file" 
-                          id="photo-upload"
-                          ref="photoInput"
-                          @change="handlePhotoUpload"
-                          accept="image/*"
-                          class="hidden-input"
-                        />
+
+                    <div class="form-group">
+                      <label for="email">Email *</label>
+                      <input 
+                        type="email" 
+                        id="email"
+                        v-model="formData.email" 
+                        required 
+                        placeholder="Entrez l'email"
+                        class="form-input"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="password">
+                        Mot de passe {{ editingUser ? '' : '*' }}
+                        <span v-if="editingUser" class="info-text">
+                          (Laisser vide pour ne pas modifier)
+                        </span>
                       </label>
-                      <button 
-                        v-if="photoPreview || (editingUser && editingUser.profilePhotoPath)" 
-                        type="button" 
-                        class="remove-btn"
-                        @click="removePhoto"
-                      >
-                        <i class="fas fa-trash"></i>
-                        Supprimer
-                      </button>
+                      <input 
+                        type="password" 
+                        id="password"
+                        v-model="formData.motDePasse" 
+                        :required="!editingUser"
+                        placeholder="Entrez le mot de passe"
+                        class="form-input"
+                      />
                     </div>
-                    <p class="photo-hint">Formats acceptés : JPG, PNG, GIF (max 2MB)</p>
+
+                    <div class="form-group">
+                      <label for="role">Rôle *</label>
+                      <select 
+                        id="role"
+                        v-model="formData.role" 
+                        required
+                        class="form-select"
+                      >
+                        <option value="">Sélectionnez un rôle</option>
+                        <option value="ADMIN">Administrateur</option>
+                        <option value="SCENARISTE">Scénariste</option>
+                        <option value="REALISATEUR">Réalisateur</option>
+                      </select>
+                    </div>
+
+                    <div v-if="formData.role === 'SCENARISTE' || formData.role === 'REALISATEUR'" class="form-group">
+                      <label for="specialite">Spécialité</label>
+                      <input 
+                        type="text" 
+                        id="specialite"
+                        v-model="formData.specialite" 
+                        placeholder="Entrez la spécialité"
+                        class="form-input"
+                      />
+                    </div>
+
+                    <div v-if="formData.role === 'SCENARISTE' || formData.role === 'REALISATEUR'" class="form-group full-width">
+                      <label for="biographie">Biographie</label>
+                      <textarea 
+                        id="biographie"
+                        v-model="formData.biographie" 
+                        placeholder="Entrez la biographie"
+                        rows="4"
+                        class="form-textarea"
+                      ></textarea>
+                    </div>
                   </div>
                 </div>
 
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="nom">Nom complet *</label>
-                    <input 
-                      type="text" 
-                      id="nom"
-                      v-model="formData.nom" 
-                      required 
-                      placeholder="Entrez le nom complet"
-                      class="form-input"
-                    />
+                <div v-if="editingUser" class="photo-management-section">
+                  <h4><i class="fas fa-camera"></i> Gestion de la photo de profil</h4>
+                  <div class="photo-management-info">
+                    <p>
+                      <i class="fas fa-info-circle"></i>
+                      Pour gérer la photo de profil, utilisez le bouton "Gérer la photo" dans la liste des utilisateurs.
+                    </p>
+                    <button type="button" class="cancel-btn" @click="goToListAndManagePhoto">
+                      <i class="fas fa-camera"></i>
+                      Aller gérer la photo
+                    </button>
                   </div>
-
-                  <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input 
-                      type="email" 
-                      id="email"
-                      v-model="formData.email" 
-                      required 
-                      placeholder="Entrez l'email"
-                      class="form-input"
-                    />
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="password">
-                      Mot de passe {{ editingUser ? '' : '*' }}
-                      <span v-if="editingUser" class="info-text">
-                        (Laisser vide pour ne pas modifier)
-                      </span>
-                    </label>
-                    <input 
-                      type="password" 
-                      id="password"
-                      v-model="formData.motDePasse" 
-                      :required="!editingUser"
-                      placeholder="Entrez le mot de passe"
-                      class="form-input"
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="role">Rôle *</label>
-                    <select 
-                      id="role"
-                      v-model="formData.role" 
-                      required
-                      class="form-select"
-                    >
-                      <option value="">Sélectionnez un rôle</option>
-                      <option value="ADMIN">Administrateur</option>
-                      <option value="SCENARISTE">Scénariste</option>
-                      <option value="REALISATEUR">Réalisateur</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div v-if="formData.role === 'SCENARISTE' || formData.role === 'REALISATEUR'" class="form-group">
-                  <label for="specialite">Spécialité</label>
-                  <input 
-                    type="text" 
-                    id="specialite"
-                    v-model="formData.specialite" 
-                    placeholder="Entrez la spécialité"
-                    class="form-input"
-                  />
-                </div>
-
-                <div v-if="formData.role === 'SCENARISTE' || formData.role === 'REALISATEUR'" class="form-group">
-                  <label for="biographie">Biographie</label>
-                  <textarea 
-                    id="biographie"
-                    v-model="formData.biographie" 
-                    placeholder="Entrez la biographie"
-                    rows="4"
-                    class="form-textarea"
-                  ></textarea>
                 </div>
 
                 <div v-if="formError" class="error-message">
@@ -360,34 +331,123 @@
       </main>
     </div>
 
-    <!-- Modal de visualisation de la photo -->
-    <div v-if="showPhotoModal" class="modal-overlay" @click="showPhotoModal = false">
+    <!-- Modal de visualisation de photo -->
+    <div v-if="showPhotoModal" class="modal-overlay" @click="closePhotoModal">
       <div class="modal-content photo-modal" @click.stop>
         <div class="modal-header">
-          <h2>Photo de {{ selectedUser?.nom }}</h2>
-          <button class="modal-close-btn" @click="showPhotoModal = false">
+          <h2>Photo de profil</h2>
+          <button class="modal-close-btn" @click="closePhotoModal">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div class="modal-body photo-modal-body">
-          <div class="photo-full-container">
+        <div class="modal-body">
+          <div class="photo-display">
             <img 
-              v-if="selectedUser && getUserPhotoUrl(selectedUser)" 
-              :src="getUserPhotoUrl(selectedUser)" 
-              :alt="selectedUser.nom"
-              class="photo-full-img"
+              :src="selectedUserPhoto" 
+              :alt="selectedUserName"
+              class="large-photo"
+              @error="handleLargePhotoError"
             />
-            <div v-else class="photo-full-placeholder">
-              <i class="fas fa-user"></i>
-              <span>Pas de photo de profil</span>
+            <div v-if="!selectedUserPhoto || photoError" class="no-photo">
+              <i class="fas fa-user-circle"></i>
+              <p>Aucune photo de profil</p>
             </div>
+          </div>
+          <div class="photo-info">
+            <h3>{{ selectedUserName }}</h3>
+            <p>{{ selectedUserEmail }}</p>
+            <p class="user-role">{{ getRoleLabel(selectedUserRole) }}</p>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="cancel-btn" @click="showPhotoModal = false">
-            <i class="fas fa-times"></i>
+          <button type="button" class="cancel-btn" @click="closePhotoModal">
             Fermer
           </button>
+          <button v-if="selectedUser && selectedUser.profilePhotoPath" type="button" class="submit-btn delete-btn" @click="deleteUserPhotoFromModal">
+            <i class="fas fa-trash"></i> Supprimer la photo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de gestion de photo -->
+    <div v-if="showPhotoManagementModal" class="modal-overlay" @click="closePhotoManagementModal">
+      <div class="modal-content photo-management-modal" @click.stop>
+        <div class="modal-header">
+          <h2>
+            <i class="fas fa-camera"></i>
+            Gestion de la photo de profil
+          </h2>
+          <button class="modal-close-btn" @click="closePhotoManagementModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="current-photo-section">
+            <h3>Photo actuelle</h3>
+            <div class="photo-preview">
+              <img 
+                :src="getUserAvatar(photoManagementUser)" 
+                :alt="photoManagementUser?.nom"
+                class="current-photo"
+                @error="handleManagementPhotoError"
+              />
+              <div v-if="!photoManagementUser?.profilePhotoPath || managementPhotoError" class="no-current-photo">
+                <i class="fas fa-user-circle"></i>
+                <p>Aucune photo</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="photo-upload-section">
+            <h3>Modifier la photo</h3>
+            <div class="upload-area" @dragover.prevent @drop="handleDrop">
+              <input 
+                type="file" 
+                id="photo-management-upload" 
+                accept="image/*" 
+                @change="handleManagementPhotoUpload"
+                hidden
+              />
+              <label for="photo-management-upload" class="upload-label-large">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Cliquez pour sélectionner une image</p>
+                <p class="hint">ou glissez-déposez ici</p>
+              </label>
+            </div>
+            
+            <div v-if="photoManagementFile" class="selected-photo">
+              <h4>Nouvelle photo sélectionnée :</h4>
+              <img :src="photoManagementPreview" alt="Nouvelle photo" class="new-photo-preview" />
+              <div class="photo-management-actions">
+                <button 
+                  @click="uploadManagementPhoto"
+                  class="submit-btn"
+                  :disabled="uploadingPhoto"
+                >
+                  <i v-if="uploadingPhoto" class="fas fa-spinner fa-spin"></i>
+                  <i v-else class="fas fa-upload"></i>
+                  {{ uploadingPhoto ? 'Upload en cours...' : 'Uploader la photo' }}
+                </button>
+                <button 
+                  @click="removeManagementPhoto"
+                  class="cancel-btn"
+                >
+                  <i class="fas fa-times"></i> Annuler
+                </button>
+              </div>
+            </div>
+            
+            <div class="photo-instructions">
+              <p><strong>Instructions :</strong></p>
+              <ul>
+                <li>Formats acceptés : JPEG, PNG, GIF</li>
+                <li>Taille maximum : 5 MB</li>
+                <li>Dimensions recommandées : 300x300 px</li>
+                <li>Aspect ratio carré recommandé</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -428,6 +488,7 @@
 
 <script>
 import axios from 'axios';
+import defaultProfileImage from '../assets/img/default-profile.jpg';
 
 export default {
   name: 'UtilisateursView',
@@ -436,15 +497,16 @@ export default {
       activeTab: 'liste',
       users: [],
       loading: false,
+      uploadingPhoto: false,
       searchQuery: '',
       filterRole: '',
       showDeleteModal: false,
       showPhotoModal: false,
+      showPhotoManagementModal: false,
       userToDelete: null,
-      selectedUser: null,
       editingUser: null,
-      photoFile: null,
-      photoPreview: null,
+      selectedUser: null,
+      photoManagementUser: null,
       formData: {
         nom: '',
         email: '',
@@ -453,6 +515,11 @@ export default {
         specialite: '',
         biographie: ''
       },
+      photoManagementFile: null,
+      photoManagementPreview: null,
+      managementPhotoError: false,
+      photoError: false,
+      defaultPhoto: defaultProfileImage,
       formError: '',
       toast: {
         show: false,
@@ -498,6 +565,22 @@ export default {
         width: `${100 / tabs.length}%`,
         transform: `translateX(${index * 100}%)`
       };
+    },
+    selectedUserPhoto() {
+      if (!this.selectedUser) return '';
+      if (this.selectedUser.profilePhotoPath) {
+        return `/api/profil/photo/${this.selectedUser.profilePhotoPath}`;
+      }
+      return '';
+    },
+    selectedUserName() {
+      return this.selectedUser ? this.selectedUser.nom : '';
+    },
+    selectedUserEmail() {
+      return this.selectedUser ? this.selectedUser.email : '';
+    },
+    selectedUserRole() {
+      return this.selectedUser ? this.selectedUser.role : '';
     }
   },
   async mounted() {
@@ -517,109 +600,29 @@ export default {
       }
     },
 
-    getUserPhotoUrl(user) {
-      if (!user) return null;
-      
-      // Si l'utilisateur a une photo de profil dans la base de données
-      if (user.profilePhotoPath) {
-        // Retourner l'URL complète de la photo
+    getUserAvatar(user) {
+      if (user && user.profilePhotoPath) {
         return `/api/profil/photo/${user.profilePhotoPath}`;
       }
-      
-      // Si l'utilisateur a un chemin de photo stocké
-      if (user.photo) {
-        // Gérer les chemins relatifs ou absolus
-        if (user.photo.startsWith('http')) {
-          return user.photo;
-        } else {
-          return `/uploads/profiles/${user.photo}`;
-        }
-      }
-      
-      return null;
+      return '';
     },
 
-    getUserInitials(nom) {
-      if (!nom) return '??';
-      return nom
-        .split(' ')
-        .map(word => word.charAt(0))
-        .join('')
-        .toUpperCase()
-        .substring(0, 2);
-    },
-
-    handlePhotoError(event) {
-      // En cas d'erreur de chargement, remplace par placeholder
-      const parent = event.target.parentElement;
-      if (parent.classList.contains('user-photo')) {
-        parent.innerHTML = `<div class="user-photo-placeholder">${this.getUserInitials(this.getUserFromPhoto(parent)?.nom)}</div>`;
-      }
-    },
-
-    handlePreviewError(event) {
-      // En cas d'erreur de prévisualisation
+    handleAvatarError(event) {
       event.target.style.display = 'none';
       const parent = event.target.parentElement;
-      parent.innerHTML = `
-        <div class="photo-placeholder">
-          <i class="fas fa-user"></i>
-          <span>Photo non disponible</span>
-        </div>
-      `;
-    },
-
-    getUserFromPhoto(element) {
-      // Trouver l'utilisateur correspondant à l'élément photo
-      const row = element.closest('tr');
-      if (!row) return null;
-      
-      const userId = row.dataset.userId || row.querySelector('td:nth-child(2)').textContent;
-      return this.users.find(u => u.idUtilisateur == userId || u.id == userId || u.nom === userId);
-    },
-
-    viewUserPhoto(user) {
-      this.selectedUser = user;
-      this.showPhotoModal = true;
-    },
-
-    viewUserDetails(user) {
-      this.selectedUser = user;
-      // Vous pouvez ajouter un modal pour les détails complets ici
-      alert(`Détails de ${user.nom}:\nEmail: ${user.email}\nRôle: ${this.getRoleLabel(user.role)}\nCrée le: ${this.formatDate(user.creeLe)}`);
-    },
-
-    handlePhotoUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      // Vérifier la taille (max 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        this.formError = 'La photo ne doit pas dépasser 2MB';
-        return;
+      if (parent) {
+        parent.querySelector('.avatar-placeholder').style.display = 'flex';
       }
-
-      // Vérifier le type
-      if (!file.type.match('image.*')) {
-        this.formError = 'Veuillez sélectionner une image valide';
-        return;
-      }
-
-      this.photoFile = file;
-      this.photoPreview = URL.createObjectURL(file);
-      this.formError = '';
     },
 
-    removePhoto() {
-      this.photoFile = null;
-      this.photoPreview = null;
-      if (this.editingUser) {
-        // Marquer la photo pour suppression
-        this.formData.removePhoto = true;
-      }
-      if (this.$refs.photoInput) {
-        this.$refs.photoInput.value = '';
-      }
+    handleLargePhotoError(event) {
+      this.photoError = true;
+      event.target.style.display = 'none';
+    },
+
+    handleManagementPhotoError(event) {
+      this.managementPhotoError = true;
+      event.target.style.display = 'none';
     },
 
     getRoleClass(role) {
@@ -649,8 +652,6 @@ export default {
     editUser(user) {
       this.activeTab = 'ajout';
       this.editingUser = user;
-      this.photoFile = null;
-      this.photoPreview = null;
       this.formData = {
         nom: user.nom,
         email: user.email,
@@ -659,6 +660,34 @@ export default {
         specialite: user.specialite || '',
         biographie: user.biographie || ''
       };
+    },
+
+    showPhotoPopup(user) {
+      this.selectedUser = user;
+      this.photoError = false;
+      this.showPhotoModal = true;
+    },
+
+    closePhotoModal() {
+      this.showPhotoModal = false;
+      this.selectedUser = null;
+      this.photoError = false;
+    },
+
+    manageUserPhoto(user) {
+      this.photoManagementUser = user;
+      this.photoManagementFile = null;
+      this.photoManagementPreview = null;
+      this.managementPhotoError = false;
+      this.showPhotoManagementModal = true;
+    },
+
+    closePhotoManagementModal() {
+      this.showPhotoManagementModal = false;
+      this.photoManagementUser = null;
+      this.photoManagementFile = null;
+      this.photoManagementPreview = null;
+      this.managementPhotoError = false;
     },
 
     confirmDelete(user) {
@@ -671,10 +700,20 @@ export default {
       this.resetForm();
     },
 
+    goToListAndManagePhoto() {
+      this.activeTab = 'liste';
+      this.resetForm();
+      // Ici, on pourrait ajouter un scroll vers l'utilisateur concerné
+      // ou ouvrir directement la modal de gestion
+      if (this.editingUser) {
+        setTimeout(() => {
+          this.manageUserPhoto(this.editingUser);
+        }, 100);
+      }
+    },
+
     resetForm() {
       this.editingUser = null;
-      this.photoFile = null;
-      this.photoPreview = null;
       this.formData = {
         nom: '',
         email: '',
@@ -684,50 +723,184 @@ export default {
         biographie: ''
       };
       this.formError = '';
-      if (this.$refs.photoInput) {
-        this.$refs.photoInput.value = '';
+    },
+
+    handleDrop(event) {
+      event.preventDefault();
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        this.handleManagementPhotoUpload({ target: { files } });
+      }
+    },
+
+    handleManagementPhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        this.showError('Veuillez sélectionner une image (JPEG, PNG, etc.)');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        this.showError('L\'image ne doit pas dépasser 5MB');
+        return;
+      }
+
+      this.photoManagementFile = file;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.photoManagementPreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+
+    removeManagementPhoto() {
+      this.photoManagementFile = null;
+      this.photoManagementPreview = null;
+      const fileInput = document.getElementById('photo-management-upload');
+      if (fileInput) {
+        fileInput.value = '';
+      }
+    },
+
+    async uploadManagementPhoto() {
+      if (!this.photoManagementFile || !this.photoManagementUser) {
+        this.showError('Veuillez d\'abord sélectionner une photo');
+        return;
+      }
+
+      this.uploadingPhoto = true;
+      this.formError = '';
+      
+      try {
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
+        formData.append('photo', this.photoManagementFile);
+
+        const response = await axios.post(
+          `/api/profil/${this.photoManagementUser.idUtilisateur || this.photoManagementUser.id}/photo`,
+          formData, 
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        );
+
+        // Mettre à jour l'utilisateur dans la liste
+        const userIndex = this.users.findIndex(u => 
+          u.idUtilisateur === this.photoManagementUser.idUtilisateur || 
+          u.id === this.photoManagementUser.id
+        );
+        
+        if (userIndex !== -1) {
+          this.users[userIndex].profilePhotoPath = response.data.profilePhotoPath;
+        }
+        
+        this.photoManagementFile = null;
+        this.photoManagementPreview = null;
+        this.managementPhotoError = false;
+        
+        this.showToast('Photo de profil mise à jour avec succès', 'success');
+        this.closePhotoManagementModal();
+        
+      } catch (error) {
+        console.error('Erreur lors de l\'upload:', error);
+        
+        if (error.response?.status === 400) {
+          this.formError = error.response.data?.message || 'Format d\'image invalide';
+          this.showToast(this.formError, 'error');
+        } else {
+          this.formError = error.response?.data?.message || 'Erreur lors de l\'upload de la photo';
+          this.showToast(this.formError, 'error');
+        }
+      } finally {
+        this.uploadingPhoto = false;
+      }
+    },
+
+    async deleteUserPhotoFromModal() {
+      if (!this.selectedUser) {
+        this.showError('Aucun utilisateur sélectionné');
+        return;
+      }
+
+      if (!confirm('Êtes-vous sûr de vouloir supprimer la photo de profil ?')) {
+        return;
+      }
+
+      this.loading = true;
+      this.formError = '';
+      
+      try {
+        const token = localStorage.getItem('token');
+        
+        await axios.delete(`/api/profil/${this.selectedUser.idUtilisateur || this.selectedUser.id}/photo`, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Mettre à jour l'utilisateur dans la liste
+        const userIndex = this.users.findIndex(u => 
+          u.idUtilisateur === this.selectedUser.idUtilisateur || 
+          u.id === this.selectedUser.id
+        );
+        
+        if (userIndex !== -1) {
+          this.users[userIndex].profilePhotoPath = null;
+        }
+        
+        this.selectedUser.profilePhotoPath = null;
+        this.photoError = false;
+        
+        this.showToast('Photo de profil supprimée avec succès', 'success');
+        this.closePhotoModal();
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        this.formError = 'Erreur lors de la suppression de la photo';
+        this.showToast(this.formError, 'error');
+      } finally {
+        this.loading = false;
       }
     },
 
     async submitForm() {
+      if (!this.formData.nom.trim()) {
+        this.showError('Le nom est requis');
+        return;
+      }
+
+      if (!this.formData.email.trim()) {
+        this.showError('L\'email est requis');
+        return;
+      }
+
+      if (!this.editingUser && !this.formData.motDePasse) {
+        this.showError('Le mot de passe est requis pour un nouvel utilisateur');
+        return;
+      }
+
       this.loading = true;
       this.formError = '';
 
       try {
-        const formData = new FormData();
-        
-        // Ajouter les champs texte
-        Object.keys(this.formData).forEach(key => {
-          if (this.formData[key]) {
-            formData.append(key, this.formData[key]);
-          }
-        });
-
-        // Ajouter la photo si sélectionnée
-        if (this.photoFile) {
-          formData.append('photo', this.photoFile);
-        }
-
-        // Ajouter l'indicateur de suppression de photo
-        if (this.formData.removePhoto) {
-          formData.append('removePhoto', 'true');
-        }
-
         if (this.editingUser) {
-          // Modification avec photo
-          await axios.put(`/api/utilisateurs/${this.editingUser.idUtilisateur || this.editingUser.id}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
+          // Modification - Ne pas envoyer le mot de passe s'il est vide
+          const updateData = { ...this.formData };
+          if (!updateData.motDePasse) {
+            delete updateData.motDePasse;
+          }
+          
+          await axios.put(`/api/utilisateurs/${this.editingUser.idUtilisateur || this.editingUser.id}`, updateData);
           this.showToast('Utilisateur modifié avec succès', 'success');
         } else {
-          // Création avec photo
-          await axios.post('/api/auth/register', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
+          // Création
+          await axios.post('/api/auth/register', this.formData);
           this.showToast('Utilisateur créé avec succès', 'success');
         }
 
@@ -763,6 +936,11 @@ export default {
       }
     },
 
+    showError(text) {
+      this.formError = text;
+      this.showToast(text, 'error');
+    },
+
     showToast(message, type = 'success') {
       this.toast = {
         show: true,
@@ -773,13 +951,12 @@ export default {
       
       setTimeout(() => {
         this.toast.show = false;
-      }, 3000);
-    }
-  },
-  beforeUnmount() {
-    // Nettoyer les URL d'objets blob pour éviter les fuites mémoire
-    if (this.photoPreview) {
-      URL.revokeObjectURL(this.photoPreview);
+      }, 5000);
+    },
+
+    clearMessage() {
+      this.formError = '';
+      this.toast.show = false;
     }
   }
 };
@@ -787,4 +964,5 @@ export default {
 
 <style scoped>
 </style>
+
 

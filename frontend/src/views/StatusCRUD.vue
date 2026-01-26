@@ -27,22 +27,6 @@
 
       <div class="sidebar-section">
         <h3 class="section-title">
-          <i class="fas fa-chart-pie"></i> Statistiques
-        </h3>
-        <div class="stats">
-          <div class="stat-item">
-            <span class="stat-number">{{ totalStatuts }}</span>
-            <span class="stat-label">Total statuts</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">{{ totalStatutsActifs }}</span>
-            <span class="stat-label">Statuts actifs</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <h3 class="section-title">
           <i class="fas fa-filter"></i> Filtres
         </h3>
         <div class="filter-group">
@@ -71,6 +55,22 @@
                 class="search-input"
               />
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-chart-pie"></i> Statistiques
+        </h3>
+        <div class="stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ totalStatuts }}</span>
+            <span class="stat-label">Total statuts</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ totalStatutsActifs }}</span>
+            <span class="stat-label">Statuts actifs</span>
           </div>
         </div>
       </div>
