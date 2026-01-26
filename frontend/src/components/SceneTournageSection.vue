@@ -399,17 +399,32 @@ export default {
         });
 
     // Méthodes
-    const chargerTournage = async () => {
-      try {
-        const response = await axios.get(`/api/scene-tournage/scene/${props.scene.idScene}`);
-        tournage.value = response.data;
-      } catch (error) {
-        // Si 404, c'est normal (pas de tournage)
-        if (error.response?.status !== 404) {
-          console.error('Erreur chargement tournage:', error);
-        }
+  const chargerTournage = async () => {
+    try {
+      const response = await axios.get(`/api/scene-tournage/scene/${props.scene.idScene}`);
+      
+      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+        // FORCER la mise à jour en créant un nouvel objet
+        tournage.value = { ...response.data[0] };
+      } else if (response.data && !Array.isArray(response.data)) {
+        // FORCER la mise à jour
+        tournage.value = { ...response.data };
+      } else {
+        tournage.value = null;
       }
-    };
+      
+      console.log('✅ Tournage chargé:', tournage.value);
+      return tournage.value;
+      
+    } catch (error) {
+      if (error.response?.status !== 404) {
+        console.error('Erreur chargement tournage:', error);
+      } else {
+        tournage.value = null;
+      }
+      return null;
+    }
+  };
 
     const chargerLieuxDisponibles = async () => {
       try {
@@ -491,25 +506,20 @@ export default {
     };
 
     const onReplanificationAppliquee = (data) => {
-        console.log('🔄 Replanification appliquée, mise à jour du tournage:', data)
-        
-        // Utiliser props.scene au lieu de scene
-        if (data.sceneId === props.scene.idScene && data.nouveauTournage) {
-          // Mettre à jour directement l'objet tournage avec les nouvelles données
-          tournage.value = {
-            ...tournage.value,
-            dateTournage: data.nouveauTournage.dateTournage,
-            heureDebut: data.nouveauTournage.heureDebut || tournage.value.heureDebut,
-            heureFin: data.nouveauTournage.heureFin || tournage.value.heureFin,
-            statutTournage: data.nouveauTournage.statutTournage || tournage.value.statutTournage
-          }
-          
+      console.log('🔄 Replanification appliquée, mise à jour du tournage:', data)
+      
+      // Utiliser props.scene au lieu de scene
+      if (data.sceneId === props.scene.idScene) {
+        // Forcer le rechargement du tournage depuis l'API
+        chargerTournage().then(() => {
+          console.log('✅ Tournage rechargé après replanification')
           // Émettre l'événement pour informer le parent
           emit('tournage-updated', tournage.value)
-          
-          console.log('✅ Tournage mis à jour sans rechargement:', tournage.value)
-        }
-      };
+        }).catch(error => {
+          console.error('❌ Erreur lors du rechargement:', error)
+        })
+      }
+    }
 
     const initialiserFormData = () => {
       if (isModification.value && tournage.value) {
