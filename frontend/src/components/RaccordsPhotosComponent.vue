@@ -41,7 +41,7 @@
           
           <!-- Sélection du type de raccord -->
           <div class="form-group-raccord-photo">
-            <label for="type-raccord">Type de raccord *</label>
+            <label for="type-raccord">Type de raccord</label>
             <select 
               id="type-raccord"
               v-model="newRaccord.typeId"
