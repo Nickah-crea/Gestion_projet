@@ -21,7 +21,7 @@
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
-  border-radius: 20px;
+  border-radius: 0 20px 20px 0;
 
   @media (max-width: 1400px) {
     width: 240px;
@@ -43,7 +43,7 @@
 
     .sidebar-title {
       @include typography-playfair-h4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
@@ -606,15 +606,14 @@
   background: $color-background-alt;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-xl;
-  max-width: 600px;
-  width: 100%;
+  width: 800px;
   max-height: 90vh;
   overflow-y: auto;
   animation: modalSlideIn 0.3s ease-out;
 }
 
 .confirmation-modal {
-  max-width: 500px;
+  width: 600px;
 }
 
 @keyframes modalSlideIn {

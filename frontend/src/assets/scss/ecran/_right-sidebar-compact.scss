@@ -1,143 +1,158 @@
-// _right_sidebar_compact.scss – CORRIGÉ avec toggle qui reste visible
+// _right-sidebar.scss – Style harmonisé avec le LeftSidebar
 @import '../base/variables';
 
 // =============================================
-// SIDEBAR LATÉRALE FIXE À DROITE
+// SIDEBAR DROITE - STYLE HARMONISÉ
 // =============================================
 .right-sidebar-ecran {
   position: fixed;
   top: 60px;
   right: 0;
-  width: 250px;
-  height: calc(100vh - 60px);
-  z-index: $z-index-fixed;
+  width: 70px;
+  height: calc(100vh - 50px);
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  padding: $padding-md;
-  background: $color-primary;
+  padding: $padding-sm $padding-xs;
+  background: $color-background-dark !important;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
-  border-radius: 20px 0 0 20px;
+  border-radius: 15px 0 0 15px;
   transition: all $transition-slow ease;
-  transform: translateX(100%);
 
-  // QUAND OUVERT
-  &.open {
-    transform: translateX(0);
-    
-    & ~ * {
-      margin-right: 250px;
-      transition: margin-right $transition-slow ease;
-    }
-  }
-
-  // QUAND FERMÉ
-  &:not(.open) {
-    width: 80px;
-    padding: $padding-sm;
-    transform: translateX(calc(100% - 80px));
-    
-    & ~ * {
-      margin-right: 90px;
-      transition: margin-right $transition-slow ease;
-    }
-    
-    .sidebar-section-title-ecran,
-    .sidebar-section-title {
-      display: none;
-    }
-    
-    .sidebar-btn,
-    .export-option,
-    .sidebar-btn-ecran {
-      justify-content: center !important;
-      padding: 0 !important;           // ← supprime tout padding parasite
-      width: 35px;                     // ← un peu plus large si tu veux
-      height: 35px;
-      margin: 0 auto;                  // ← centrage block si besoin
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      span {
-        display: none;
-      }
-      
-      i {
-        margin: 0 !important;
-        padding: 0 !important;
-        font-size: $font-size-p2;
-      }
-    }
+  // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-dark !important;
   }
 
   @media (max-width: 1400px) {
-    width: 240px;
-    padding: $padding-sm;
-    
-    &.open ~ * {
-      margin-right: 240px;
-    }
-    
-    &:not(.open) {
-      width: 80px;
-      transform: translateX(calc(100% - 80px));
-    }
+    width: 60px;
+    padding: $padding-xs;
   }
   
   @media (max-width: $breakpoint-lg) {
-    display: block;
-    
-    &.open {
-      transform: translateX(0);
-    }
-    
-    &:not(.open) {
-      transform: translateX(calc(100% - 70px));
-      width: 70px;
-      
-      & ~ * {
-        margin-right: 80px;
-      }
-    }
+    display: none;
   }
 
-  @media (max-width: $breakpoint-md) {
-    top: 50px;
-    height: calc(100vh - 50px);
+  // QUAND OUVERT
+  &.open {
+    width: 270px;
+    padding: $padding-md;
     
-    &.open {
-      width: 200px;
-      
-      & ~ * {
-        margin-right: 200px;
-      }
+    & ~ * {
+      margin-right: 270px;
+      transition: margin-right $transition-slow ease;
+    }
+  }
+  
+  // QUAND FERMÉ - STYLE SPÉCIFIQUE
+  &:not(.open) {
+    & ~ * {
+      margin-right: 70px;
+      transition: margin-right $transition-slow ease;
     }
     
-    &:not(.open) {
-      width: 60px;
-      transform: translateX(calc(100% - 60px));
-      
-      & ~ * {
-        margin-right: 70px;
-      }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: $padding-sm 0;
+    
+    .sidebar-content-ecran {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-md;
     }
   }
 }
 
 // =============================================
-// BOUTON TOGGLE - CORRECTION IMPORTANTE
+// BOUTON TOGGLE EN HAUT - CORRIGÉ
 // =============================================
-
 .sidebar-toggle-right {
+  width: 220px;
+  height: 42px;
+  background: rgba($color-text-light, 0.1) !important;
+  border: 1px solid rgba($color-text-light, 0.2) !important;
+  border-radius: $border-radius-xs;
+  color: $color-text-light !important;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: $font-weight-semibold;
+  box-sizing: border-box;
+  margin: 0 auto $spacing-md;
+
+  &:hover {
+    background: rgba($color-text-light, 0.2) !important;
+    border-color: $color-text-light !important;
+    transform: scale(1.05);
+  }
+
+  i {
+    transition: transform $transition;
+    color: $color-text-light !important;
+    font-size: $font-size-p3;
+  }
+  
+  .right-sidebar-ecran.open & i {
+    transform: rotate(180deg);
+  }
+  
+  // Mode fermé - centré et plus petit
+  .right-sidebar-ecran:not(.open) & {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-accent !important;
+    border-color: $color-accent !important;
+    
+    i {
+      color: $color-text-light !important;
+    }
+    
+    &:hover {
+      background: darken($color-accent, 10%) !important;
+      border-color: darken($color-accent, 10%) !important;
+    }
+  }
+}
+
+// =============================================
+// CONTENU DE LA SIDEBAR - CORRIGÉ
+// =============================================
+.sidebar-content-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  
+  .right-sidebar-ecran:not(.open) & {
+    width: 100%;
+    align-items: center;
+    gap: $spacing-md;
+  }
+}
+
+// =============================================
+// BOUTON CALENDRIER - COULEUR SPÉCIFIQUE
+// =============================================
+.sidebar-btn-ecran {
   width: 100%;
-  height: 32px;
-  padding: 0 $padding-sm;
-  background: $color-background-alt;
+  height: 42px;
+  padding: $padding-xs;
+  background: $color-background;
   border: 1px solid $color-border;
   border-radius: $border-radius-xs;
-  font-size: $font-size-p1;
-  color: $color-text-secondary;
+  font-size: $font-size-p4;
+  color: $color-primary !important;
   cursor: pointer;
   transition: $transition-fast;
   display: flex;
@@ -145,12 +160,11 @@
   font-weight: $font-weight-semibold;
   gap: $gap-xs;
   box-sizing: border-box;
-  margin-bottom: $spacing-sm;
 
   &:hover {
     background: $color-surface-hover;
     border-color: $color-primary;
-    color: $color-primary;
+    color: $color-primary !important;
   }
 
   &:focus-visible {
@@ -159,72 +173,67 @@
   }
   
   i {
-    transition: transform $transition;
+    color: $color-accent !important;
   }
   
-  .left-sidebar-compact.closed & i {
-    transform: rotate(180deg);
-  }
-}
-// =============================================
-// CONTENU DE LA SIDEBAR
-// =============================================
-.sidebar-content-ecran {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-  padding-top: $spacing-sm;
-}
-
-// =============================================
-// TITRES DES SECTIONS AVEC ICÔNES
-// =============================================
-.sidebar-section-title,
-.sidebar-section-title-ecran {
-  @include typography-p3;
-  color: $color-text-primary;
-  font-weight: $font-weight-semibold;
-  margin: 0 0 $margin-sm 0;
-  padding-bottom: $padding-xs;
-  border-bottom: 1px solid $color-border;
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  
-  i {
-    color: $color-primary;
-    font-size: $font-size-p2;
-    width: 20px;
-    text-align: center;
+  // Mode fermé - centré avec couleur du calendrier
+  .right-sidebar-ecran:not(.open) & {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    justify-content: center;
+    margin: 0;
+    background: $color-background;
+    border: 1px solid $color-border;
+    
+    span {
+      display: none;
+    }
+    
+    i {
+      color: $color-cool !important; // Bleu du calendrier
+      font-size: $font-size-p2;
+      margin: 0;
+    }
+    
+    &:hover {
+      background: $color-surface-hover;
+      border-color: $color-cool;
+      
+      i {
+        color: $color-cool !important;
+      }
+    }
   }
 }
 
 // =============================================
-// BOUTONS DE LA SIDEBAR
+// BOUTONS GÉNÉRAUX - COULEURS DE LA PALETTE
 // =============================================
-.sidebar-btn,
-.sidebar-btn-ecran {
-  display: flex;
-  align-items: center;
-  padding: $padding-sm;
+.sidebar-btn {
+  width: 100%;
+  height: 42px;
+  padding: $padding-xs;
   background: $color-background;
   border: 1px solid $color-border;
   border-radius: $border-radius-xs;
-  font-size: $font-size-p1;
-  font-weight: $font-weight-medium;
-  color: $color-text-secondary;
+  font-size: $font-size-p4;
   cursor: pointer;
   transition: $transition-fast;
-  gap: $gap-sm;
-  width: 100%;
+  display: flex;
+  align-items: center;
+  font-weight: $font-weight-semibold;
+  gap: $gap-xs;
   box-sizing: border-box;
-  margin-bottom: $gap-xs;
+  margin-bottom: 6px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   &:hover {
-    background: rgba($color-primary, 0.1);
+    background: $color-surface-hover;
     border-color: $color-primary;
-    color: $color-primary;
   }
 
   &:focus-visible {
@@ -232,122 +241,384 @@
     outline-offset: 1px;
   }
   
-  i {
-    color: inherit;
-    font-size: $font-size-p3;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-  
-  span {
-    @include typography-p3;
-    font-weight: $font-weight-medium;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: left;
-  }
-}
-
-// =============================================
-// SECTIONS
-// =============================================
-.export-section,
-.quick-links-section-ecran {
-  background: $color-background-alt;
-  border-radius: $border-radius-xs;
-  padding: $padding-xs;
-  box-shadow: $shadow-hover;
-}
-
-// =============================================
-// OPTIONS D'EXPORT
-// =============================================
-.export-options-ecran {
-  gap: $gap-xs;
-  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
-  overflow: hidden;               /* très important */
-  max-height: 500px;              /* valeur haute quand ouvert */
-  opacity: 1;
-  padding-top: $padding-sm;       /* ou la valeur que tu utilises normalement */
-  padding-bottom: $padding-sm;
-}
-
-.export-options-ecran.collapsed {
-  max-height: 0 !important;
-  opacity: 0 !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-/* Force visible quand la sidebar est fermée (priorité maximale) */
-.right-sidebar-ecran:not(.open) {
-
-  .sidebar-btn,
-  .sidebar-btn-ecran,
-  .export-option,
-  .section-icon {                     // ← ajoute .section-icon ici aussi !
-
-    position: relative;
-    width: 32px;                      // ou 36px / 44px selon tes préférences
-    height: 32px;
-    padding: 0 !important;
-    display: flex;
-    align-items: center;
+  // Mode fermé - icône seule avec couleur spécifique
+  .right-sidebar-ecran:not(.open) & {
+    width: 38px;
+    height: 38px;
+    padding: 0;
     justify-content: center;
-
-    i,
-    .section-icon {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      margin: 0 !important;
-      font-size: $font-size-p4;              // ajuste la taille si besoin
+    margin: 0 0 6px 0;
+    background: $color-background;
+    border: 1px solid $color-border;
+    
+    span {
+      display: none;
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
     }
   }
+}
 
-  // Si tu veux que la section-icon (Exporter/Ajouter) soit un peu plus grande
-  .section-icon {
-    font-size: 1.6rem;
+// =============================================
+// BOUTONS SPÉCIFIQUES AVEC LEURS COULEURS
+// =============================================
+
+// Bouton Épisode (TV)
+.sidebar-btn[title*="Épisode"],
+.sidebar-btn[title="Épisode"] {
+  color: $color-episode !important; // Rouge bordeaux
+  
+  i {
+    color: $color-episode !important;
+  }
+  
+  &:hover {
+    border-color: $color-episode;
+    color: $color-episode !important;
+    
+    i {
+      color: $color-episode !important;
+    }
+  }
+  
+  .right-sidebar-ecran:not(.open) & {
+    i {
+      color: $color-episode !important;
+    }
+    
+    &:hover {
+      border-color: $color-episode;
+      background: rgba($color-episode, 0.1);
+    }
+  }
+}
+
+// Bouton Séquence
+.sidebar-btn[title*="Séquence"],
+.sidebar-btn[title="Séquence"] {
+  color: $color-sequence !important; // Marron
+  
+  i {
+    color: $color-sequence !important;
+  }
+  
+  &:hover {
+    border-color: $color-sequence;
+    color: $color-sequence !important;
+    
+    i {
+      color: $color-sequence !important;
+    }
+  }
+  
+  .right-sidebar-ecran:not(.open) & {
+    i {
+      color: $color-sequence !important;
+    }
+    
+    &:hover {
+      border-color: $color-sequence;
+      background: rgba($color-sequence, 0.1);
+    }
+  }
+}
+
+// Bouton Lieu
+.sidebar-btn[title*="Lieu"],
+.sidebar-btn[title="Lieu"] {
+  color: $color-location !important; // Taupe
+  
+  i {
+    color: $color-location !important;
+  }
+  
+  &:hover {
+    border-color: $color-location;
+    color: $color-location !important;
+    
+    i {
+      color: $color-location !important;
+    }
+  }
+  
+  .right-sidebar-ecran:not(.open) & {
+    i {
+      color: $color-location !important;
+    }
+    
+    &:hover {
+      border-color: $color-location;
+      background: rgba($color-location, 0.1);
+    }
+  }
+}
+
+// Bouton Plateau
+.sidebar-btn[title*="Plateau"],
+.sidebar-btn[title="Plateau"] {
+  color: $color-set !important; // Or
+  
+  i {
+    color: $color-set !important;
+  }
+  
+  &:hover {
+    border-color: $color-set;
+    color: $color-set !important;
+    
+    i {
+      color: $color-set !important;
+    }
+  }
+  
+  .right-sidebar-ecran:not(.open) & {
+    i {
+      color: $color-set !important;
+    }
+    
+    &:hover {
+      border-color: $color-set;
+      background: rgba($color-set, 0.1);
+    }
+  }
+}
+
+// Bouton Comédien
+.sidebar-btn[title*="Comédien"],
+.sidebar-btn[title="Comédien"] {
+  color: $color-actor !important; // Orange
+  
+  i {
+    color: $color-actor !important;
+  }
+  
+  &:hover {
+    border-color: $color-actor;
+    color: $color-actor !important;
+    
+    i {
+      color: $color-actor !important;
+    }
+  }
+  
+  .right-sidebar-ecran:not(.open) & {
+    i {
+      color: $color-actor !important;
+    }
+    
+    &:hover {
+      border-color: $color-actor;
+      background: rgba($color-actor, 0.1);
+    }
+  }
+}
+
+// Bouton Personnage
+.sidebar-btn[title*="Personnage"],
+.sidebar-btn[title="Personnage"] {
+  color: $color-character !important; // Or foncé
+  
+  i {
+    color: $color-character !important;
+  }
+  
+  &:hover {
+    border-color: $color-character;
+    color: $color-character !important;
+    
+    i {
+      color: $color-character !important;
+    }
+  }
+  
+  .right-sidebar-ecran:not(.open) & {
+    i {
+      color: $color-character !important;
+    }
+    
+    &:hover {
+      border-color: $color-character;
+      background: rgba($color-character, 0.1);
+    }
+  }
+}
+
+// =============================================
+// SECTION EXPORT - CORRIGÉ
+// =============================================
+.export-section {
+  background: rgba($color-text-light, 0.1);
+  border-radius: $border-radius-xs;
+  padding: $padding-sm;
+  box-shadow: $shadow-hover;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-text-light, 0.15);
+  }
+  
+  // Mode fermé - centré comme bloc
+  .right-sidebar-ecran:not(.open) & {
+    width: 42px;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+  }
+}
+
+.section-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: $gap-sm;
+  padding: 6px;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-text-light, 0.05);
+  }
+  
+  // Mode fermé - centré comme icône seule
+  .right-sidebar-ecran:not(.open) & {
+    width: 42px;
+    height: 42px;
+    justify-content: center;
+    margin: 0 0 $spacing-xs 0;
+    padding: 0;
+    background: rgba($color-text-light, 0.1);
+    border: 1px solid rgba($color-text-light, 0.2);
+    border-radius: $border-radius-xs;
+    
+    .section-icon {
+      margin: 0;
+      color: $color-cool !important; // Bleu pour export
+      font-size: $font-size-p2;
+    }
+    
+    .sidebar-section-title,
+    .section-toggle-icon {
+      display: none;
+    }
+    
+    &:hover {
+      background: rgba($color-text-light, 0.2);
+      border-color: $color-cool;
+      
+      .section-icon {
+        color: $color-cool !important;
+      }
+    }
+  }
+}
+
+.section-icon {
+  color: $color-primary-light !important;
+  font-size: $font-size-p2;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-section-title {
+  @include typography-p4;
+  color: $color-text-light;
+  margin: 0;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section-toggle-icon {
+  transition: transform $transition;
+  color: $color-text-light !important;
+  font-size: $font-size-p4;
+  flex-shrink: 0;
+  opacity: 0.7;
+  
+  &.fa-chevron-up {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown-header {
+  justify-content: space-between;
+  margin-bottom: 0;
+  
+  &:hover {
+    .section-toggle-icon {
+      opacity: 1;
+    }
+  }
+}
+
+// =============================================
+// OPTIONS D'EXPORT - CORRIGÉ
+// =============================================
+.export-options-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+  transition: max-height $transition;
+  
+  &.collapsed {
+    max-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+  }
+  
+  // Mode fermé - centré comme colonne
+  .right-sidebar-ecran:not(.open) & {
+    margin-top: $spacing-xs;
+    align-items: center;
+    gap: 6px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 }
 
 .export-option {
   display: flex;
   align-items: center;
-  padding: $padding-sm;
-  background: rgba($color-accent, 0.1);
-  border: 1px solid rgba($color-accent, 0.3);
+  padding: 6px 10px;
+  background: rgba($color-text-light, 0.08);
+  border: 1px solid rgba($color-text-light, 0.15);
   border-radius: $border-radius-xs;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-medium;
-  color: $color-text-secondary;
+  font-size: $font-size-p3;
+  color: $color-text-light !important;
   cursor: pointer;
   transition: $transition-fast;
-  gap: $gap-sm;
-  width: 100%;
-  box-sizing: border-box;
+  gap: 8px;
+  text-align: left;
+  position: relative;
 
   &:hover {
-    background: rgba($color-accent, 0.2);
-    border-color: $color-accent;
-    color: $color-accent;
+    background: rgba($color-text-light, 0.12);
+    border-color: rgba($color-text-light, 0.25);
+    color: $color-text-light !important;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-accent;
+    outline: 2px solid $color-primary;
     outline-offset: 1px;
   }
   
   i {
-    color: $color-warning;
+    color: $color-text-light !important;
     font-size: $font-size-p3;
-    width: 20px;
+    width: 18px;
     text-align: center;
     flex-shrink: 0;
   }
@@ -355,57 +626,152 @@
   span {
     @include typography-p4;
     font-weight: $font-weight-medium;
-    flex: 1;
+    color: inherit;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: left;
+    flex: 1;
   }
-}
-
-// =============================================
-// LIENS RAPIDES
-// =============================================
-.quick-links {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-xs;
-}
-
-// =============================================
-// RESPONSIVE - CORRECTIONS POUR LE TOGGLE
-// =============================================
-@media (max-width: $breakpoint-xl) {
-  .right-sidebar-ecran {
-    width: 220px;
+  
+  // Mode fermé - icône centrée avec couleur spécifique
+  .right-sidebar-ecran:not(.open) & {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    justify-content: center;
+    margin: 0;
+    background: $color-background;
+    border: 1px solid $color-border;
     
-    &.open ~ * {
-      margin-right: 220px;
+    span {
+      display: none;
     }
     
-    &:not(.open) {
-      width: 70px;
-      transform: translateX(calc(100% - 70px));
+    // Scènes PDF (Film)
+    &[title*="Scènes"] i,
+    &[title="Scènes PDF"] i {
+      color: $color-scene !important; // Orange clair
+    }
+    
+    // Dialogues PDF (Commentaires)
+    &[title*="Dialogues"] i,
+    &[title="Dialogues PDF"] i {
+      color: $color-accent !important; // Orange
+    }
+    
+    // Séquence PDF (Layers)
+    &[title*="Séquence"] i,
+    &[title="Séquence PDF"] i {
+      color: $color-sequence !important; // Marron
+    }
+    
+    // Épisode PDF (TV)
+    &[title*="Épisode"] i,
+    &[title="Épisode PDF"] i {
+      color: $color-episode !important; // Rouge bordeaux
+    }
+    
+    &:hover {
+      background: $color-surface-hover;
       
-      & ~ * {
-        margin-right: 80px;
+      &[title*="Scènes"] {
+        border-color: $color-scene;
+      }
+      
+      &[title*="Dialogues"] {
+        border-color: $color-accent;
+      }
+      
+      &[title*="Séquence"] {
+        border-color: $color-sequence;
+      }
+      
+      &[title*="Épisode"] {
+        border-color: $color-episode;
       }
     }
   }
+}
+
+// =============================================
+// SECTION AJOUTER - CORRIGÉ
+// =============================================
+.quick-links-section-ecran {
+  background: rgba($color-text-light, 0.1);
+  border-radius: $border-radius-xs;
+  padding: $padding-sm;
+  box-shadow: $shadow-hover;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($color-text-light, 0.15);
+  }
   
-  .sidebar-toggle-right {
-    right: 220px;
-    
-    .right-sidebar-ecran:not(.open) ~ & {
-      right: 70px;
-    }
+  // Mode fermé - centré comme bloc
+  .right-sidebar-ecran:not(.open) & {
+    width: 38px;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
   }
 }
 
-@media (max-width: $breakpoint-lg) {
+.sidebar-section-title-ecran {
+  @extend .sidebar-section-title;
+}
+
+.quick-links {
+  .right-sidebar-ecran.open & {
+    margin-top: 8px;
+  }
+  
+  // Mode fermé - colonne centrée
+  .right-sidebar-ecran:not(.open) & {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: $spacing-xs;
+  }
+}
+
+// =============================================
+// RÈGLES POUR LE MODE FERMÉ
+// =============================================
+.right-sidebar-ecran:not(.open) {
+  // Icône Ajouter (Plus)
+  .quick-links-section-ecran .section-header .section-icon {
+    color: $color-primary !important;
+    
+    &:hover {
+      color: $color-primary !important;
+    }
+  }
+  
+  // Tous les textes restent blancs par défaut
+  color: $color-text-light;
+  
+  .sidebar-section-title,
+  .sidebar-section-title-ecran {
+    color: $color-text-light !important;
+  }
+}
+
+// =============================================
+// RESPONSIVE DESIGN - CORRIGÉ
+// =============================================
+@media (max-width: $breakpoint-xl) {
   .right-sidebar-ecran {
+    width: 60px;
+    
     &.open {
-      transform: translateX(0);
+      width: 220px;
+      padding: $padding-sm;
       
       & ~ * {
         margin-right: 220px;
@@ -413,152 +779,140 @@
     }
     
     &:not(.open) {
-      transform: translateX(calc(100% - 70px));
-      width: 70px;
-      
-      & ~ * {
-        margin-right: 80px;
-      }
-    }
-  }
-  
-  .sidebar-toggle-right {
-    right: 220px;
-    top: 70px;
-    
-    .right-sidebar-ecran:not(.open) ~ & {
-      right: 70px;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .right-sidebar-ecran {
-    top: 50px;
-    height: calc(100vh - 50px);
-    
-    &.open {
-      width: 200px;
-      
-      & ~ * {
-        margin-right: 200px;
-      }
-    }
-    
-    &:not(.open) {
       width: 60px;
-      transform: translateX(calc(100% - 60px));
-      
-      & ~ * {
-        margin-right: 70px;
-      }
-    }
-  }
-  
-  .sidebar-toggle-right {
-    right: 200px;
-    top: 60px;
-    width: 28px;
-    height: 28px;
-    
-    .right-sidebar-ecran:not(.open) ~ & {
-      right: 60px;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .right-sidebar-ecran {
-    &.open {
-      width: 180px;
-      
-      & ~ * {
-        margin-right: 180px;
-      }
-    }
-    
-    &:not(.open) {
-      width: 50px;
-      transform: translateX(calc(100% - 50px));
       
       & ~ * {
         margin-right: 60px;
       }
-      
-      .sidebar-btn,
-      .sidebar-btn-ecran,
-      .export-option {
-        width: 36px;
-        height: 36px;
-        padding: $padding-xs;
-        
-        i {
-          font-size: $font-size-p3;
-        }
-      }
+    }
+  }
+  
+  .sidebar-btn-ecran,
+  .sidebar-btn {
+    .right-sidebar-ecran:not(.open) & {
+      width: 34px;
+      height: 34px;
     }
   }
   
   .sidebar-toggle-right {
-    right: 180px;
-    top: 55px;
-    width: 24px;
-    height: 24px;
-    font-size: $font-size-p5;
+    .right-sidebar-ecran:not(.open) & {
+      width: 34px;
+      height: 34px;
+    }
     
-    .right-sidebar-ecran:not(.open) ~ & {
-      right: 50px;
+    .right-sidebar-ecran.open & {
+      width: 200px;
+    }
+  }
+  
+  .export-option {
+    .right-sidebar-ecran:not(.open) & {
+      width: 30px;
+      height: 30px;
+    }
+  }
+  
+  .section-header {
+    .right-sidebar-ecran:not(.open) & {
+      width: 34px;
+      height: 34px;
+    }
+  }
+  
+  .export-section,
+  .quick-links-section-ecran {
+    .right-sidebar-ecran:not(.open) & {
+      width: 34px;
     }
   }
 }
 
-// Icône de section visible en mode compact
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;     // centre en mode fermé
+// =============================================
+// ACCESSIBILITÉ
+// =============================================
+@media (prefers-reduced-motion: reduce) {
+  .right-sidebar-ecran,
+  .sidebar-toggle-right,
+  .sidebar-btn-ecran,
+  .sidebar-btn,
+  .export-option,
+  .section-toggle-icon,
+  .section-header,
+  .export-section,
+  .quick-links-section-ecran {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .export-options-ecran {
+    transition: none;
+  }
+}
 
-  .section-icon {
-    font-size: $font-size-p1;   // un peu plus grand que les icônes de boutons (ex: 1.5rem ou 24px)
-    color: $color-primary-dark;
-    width: 32px;
-    height: 32px;
+// =============================================
+// SCROLLBAR PERSONNALISÉE
+// =============================================
+.right-sidebar-ecran {
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-text-light, 0.1);
+    border-radius: $border-radius-pill;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-text-light, 0.3);
+    
+    &:hover {
+      background: rgba($color-text-light, 0.5);
+    }
+  }
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.export-options-ecran:not(.collapsed),
+.quick-links {
+  animation: slideInRight 0.2s ease-out;
+}
+
+// =============================================
+// CENTRAGE GÉNÉRAL POUR MODE FERMÉ
+// =============================================
+.right-sidebar-ecran:not(.open) {
+  .sidebar-content-ecran > * {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .sidebar-toggle-right i,
+  .sidebar-btn-ecran i,
+  .export-option i,
+  .section-header i,
+  .sidebar-btn i {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: $border-radius-sm;
-    background: rgba($color-primary, 0.1); // léger fond pour mieux voir
-    transition: all $transition-fast;
-  }
-
-  // Quand ouvert → on remet le style normal (titre + icône à gauche)
-  .right-sidebar-ecran.open & {
-    justify-content: flex-start;
-    margin-bottom: $margin-xs;
-
-    .section-icon {
-      width: auto;
-      height: auto;
-      background: none;
-      margin-right: $gap-xs;
-      font-size: $font-size-p2; // taille normale
-    }
   }
 }
-
-// On cache les titres en mode fermé (déjà fait, mais on renforce)
-.right-sidebar-ecran:not(.open) {
-  .sidebar-section-title,
-  .sidebar-section-title-ecran {
-    display: none !important;
-  }
-
-  // Optionnel : réduire un peu l'espace si tu veux encore plus compact
-  .export-section,
-  .quick-links-section-ecran {
-    padding: $padding-xs;
-  }
-}
-
-
 

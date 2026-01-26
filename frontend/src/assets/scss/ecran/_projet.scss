@@ -1,37 +1,129 @@
-// ============================================================================
-// main-content-view-screen-work (vue projet) – style harmonisé avec crea-comedien
-// Cohérent avec ProjetScenariste / Warm Luxe 2026
-// ============================================================================
-
 @import '../base/variables';
+
+// ==================== STRUCTURE PRINCIPALE ====================
 
 .main-content-view-screen-work {
   padding: $padding-xl $padding-lg;
-  background: $color-background-alt;
   min-height: 100vh;
   box-sizing: border-box;
+  margin-top: 60px; // Hauteur du header fixe
+  width: 100%;
+  position: relative;
 }
 
+// ==================== CONTENEUR DU PROJET - CORRECTION IMPORTANTE ====================
+
 .project-view-screen-work {
-  max-width: 1200px;
-  width: 100%;  // AJOUTE
+  max-width: 1400px; // Même largeur que le header
+  min-width: 800px; // IMPORTANT: largeur minimale pour éviter le rétrécissement
+  width: 100%;
   margin: 0 auto;
   background: $color-background;
   border-radius: $border-radius-lg;
   box-shadow: $shadow;
   padding: $padding-xl;
   position: relative;
-  box-sizing: border-box; // AJOUTE
+  box-sizing: border-box;
+  border: 3px solid $color-background-dark !important;
+  transition: margin $transition-medium, max-width $transition-medium, min-width $transition-medium;
+  animation: content-appear 0.3s ease-out;
+  
+  // Force le conteneur à prendre toute la largeur disponible
+  display: flex;
+  flex-direction: column;
 }
 
-// ────────────────────────────────────────────────
-// En-tête projet (titre + badge statut)
-// ────────────────────────────────────────────────
+// ==================== GESTION DES SIDEBARS - VERSION AMÉLIORÉE ====================
+.ecran-travail-ecran-travail-screen-work {
+  .project-view-screen-work {
+    // TOUJOURS la même largeur
+    max-width: min(1400px, calc(100% - #{$padding-xl} * 2));
+    min-width: min(800px, calc(100% - #{$padding-xl} * 2));
+    transition: margin $transition-medium;
+    
+    // Par défaut : centré
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  // Quand sidebar droite s'ouvre : décalé à gauche
+  &.right-sidebar-open-screen-work:not(.with-secondary-navbar) {
+    .project-view-screen-work {
+      margin-left: 0;
+      margin-right: calc(350px + 40px);
+    }
+  }
+  
+  // Quand sidebar gauche s'ouvre : décalé à droite  
+  &.with-secondary-navbar:not(.right-sidebar-open-screen-work) {
+    .project-view-screen-work {
+      margin-left: calc(250px + 40px);
+      margin-right: 0;
+    }
+  }
+  
+  // Quand les deux s'ouvrent : centré entre les deux
+  &.with-secondary-navbar.right-sidebar-open-screen-work {
+    .project-view-screen-work {
+      margin-left: calc(250px + 40px);
+      margin-right: calc(350px + 40px);
+    }
+  }
+}
+
+// ==================== CONTENU INTERNE - GARANTIR LA LARGEUR ====================
+
+// Force tous les éléments internes à prendre la largeur complète
+.project-header-view-screen-work,
+.project-details-view-screen-work,
+.detail-section-screen-work,
+.project-stats-view-screen-work,
+.project-actions-view-screen-work {
+  width: 100%;
+  box-sizing: border-box;
+  
+  // Assurer que le contenu ne rétrécit pas
+  min-width: 0; // Important pour flex
+}
+
+// Le synopsis doit toujours prendre toute la largeur
+.synopsis-text-screen-work {
+  @include typography-p1;
+  color: $color-text-secondary;
+  line-height: 1.68;
+  background: rgba($color-surface, 0.6);
+  padding: $padding-lg;
+  border-radius: $border-radius;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  
+  // Même pour un texte court, garder la largeur
+  display: block;
+  min-height: 120px; // Hauteur minimale pour éviter le rétrécissement
+}
+
+// ==================== ANIMATION ====================
+
+@keyframes content-appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ==================== EN-TÊTE PROJET ====================
+
 .project-header-view-screen-work {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $margin-lg; // Réduit pour rapprocher des stats
+  margin-bottom: $margin-lg;
   padding-bottom: $padding-md;
   position: relative;
 
@@ -54,6 +146,10 @@
   line-height: 1.2;
   letter-spacing: -0.3px;
   flex: 1;
+  min-width: 0; // Pour le text-overflow
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .project-status-badge-screen-work {
@@ -73,11 +169,11 @@
   min-width: 100px;
   justify-content: center;
   height: fit-content;
+  flex-shrink: 0; // Empêche le rétrécissement
 }
 
-// ────────────────────────────────────────────────
-// Statistiques HORIZONTALES - Style project-meta-spiral-Scenariste
-// ────────────────────────────────────────────────
+// ==================== STATISTIQUES ====================
+
 .project-stats-view-screen-work {
   display: flex;
   justify-content: space-between;
@@ -87,6 +183,7 @@
   padding: 0;
   background: transparent;
   min-height: auto;
+  width: 100%;
 }
 
 .stat-card-screen-work {
@@ -102,6 +199,7 @@
   line-height: normal;
   border: none;
   box-shadow: none;
+  min-width: 0; // Important pour flex
   
   &:hover {
     background: rgba($color-border, 0.2);
@@ -117,6 +215,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   
   i {
     font-size: 1.2em;
@@ -128,6 +227,7 @@
   flex-direction: column;
   gap: 2px;
   flex: 1;
+  min-width: 0;
 }
 
 .stat-number-screen-work {
@@ -137,6 +237,9 @@
   line-height: 1;
   margin: 0;
   font-size: $font-size-p1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stat-label-screen-work {
@@ -146,10 +249,173 @@
   margin: 0;
   text-transform: none;
   letter-spacing: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-// Responsive
+// ==================== SECTION SYNOPSIS ====================
+
+.detail-section-screen-work {
+  margin: $margin-xl 0;
+  background: $color-background-alt;
+  border-radius: $border-radius;
+  padding: $padding-lg;
+  box-shadow: $shadow;
+  transition: $transition;
+  width: 100%;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+  }
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0 0 $margin-md 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+
+    i {
+      color: $color-primary;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+// Section Synopsis avec bouton de modification
+.project-details-view-screen-work {
+  margin-bottom: $margin-xl;
+  background: $color-primary-light;
+  border-radius: 8px;
+  padding: 15px;
+  width: 100%;
+}
+
+.detail-section-header-screen-work {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-md;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid $color-border;
+  width: 100%;
+
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    min-width: 0;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+.edit-project-title-btn {
+  @include btn-cinema-primary;
+  padding: $padding-xs $padding-md;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  background: $color-background-light;
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.3);
+  flex-shrink: 0;
+  
+  i {
+    font-size: 0.9em;
+    margin-right: $gap-xs;
+  }
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-text-light;
+    transform: translateY(-1px);
+    box-shadow: $shadow;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.detail-section-content-screen-work {
+  margin-bottom: $margin-xl;
+  width: 100%;
+}
+
+// Actions supplémentaires (Ajouter un épisode)
+.project-actions-view-screen-work {
+  display: flex;
+  gap: $gap-lg;
+  flex-wrap: wrap;
+  margin-top: $margin-xl;
+  padding-top: $padding-xl;
+  border-top: 1px solid rgba($color-border, 0.35);
+  width: 100%;
+  
+  .action-btn-secondary-screen-work {
+    @include btn-cinema-accent;
+    padding: $padding-md $padding-xl;
+    font-size: $font-size-p2;
+    min-width: 200px;
+    justify-content: center;
+    
+    i {
+      margin-right: $gap-sm;
+      font-size: 1.1em;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, $color-accent, $color-accent-dark);
+    }
+  }
+}
+
+// ==================== RESPONSIVE GÉNÉRAL ====================
+
 @media (max-width: $breakpoint-lg) {
+  // Adaptation des sidebars
+  .ecran-travail-ecran-travail-screen-work {
+    &.right-sidebar-open-screen-work:not(.with-secondary-navbar) {
+      .project-view-screen-work {
+        margin-right: calc(300px + 30px);
+        max-width: min(1400px, calc(100% - 300px - 30px - #{$padding-lg} * 2));
+        min-width: min(800px, calc(100% - 300px - 30px - #{$padding-lg} * 2));
+      }
+    }
+    
+    &.with-secondary-navbar:not(.right-sidebar-open-screen-work) {
+      .project-view-screen-work {
+        margin-left: calc(200px + 30px);
+        max-width: min(1400px, calc(100% - 200px - 30px - #{$padding-lg} * 2));
+        min-width: min(800px, calc(100% - 200px - 30px - #{$padding-lg} * 2));
+      }
+    }
+    
+    &.with-secondary-navbar.right-sidebar-open-screen-work {
+      .project-view-screen-work {
+        margin-left: calc(200px + 30px);
+        margin-right: calc(300px + 30px);
+        max-width: min(1400px, calc(100% - 200px - 300px - 60px - #{$padding-lg} * 2));
+        min-width: min(800px, calc(100% - 200px - 300px - 60px - #{$padding-lg} * 2));
+      }
+    }
+  }
+  
+  // Ajustement des min-width sur tablette
+  .project-view-screen-work {
+    min-width: 700px;
+  }
+  
+  // Responsive général
   .project-stats-view-screen-work {
     gap: $gap-sm;
   }
@@ -171,9 +437,37 @@
   .stat-label-screen-work {
     font-size: $font-size-p4;
   }
+  
+  .main-content-view-screen-work {
+    padding: $padding-lg;
+    margin-top: 50px;
+  }
+  
+  .project-view-screen-work {
+    padding: $padding-lg;
+  }
+  
+  .synopsis-text-screen-work {
+    min-height: 100px;
+    padding: $padding-md;
+  }
 }
 
 @media (max-width: $breakpoint-md) {
+  // Sur tablette, on ignore les décalages de sidebars
+  .project-view-screen-work {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: calc(100% - #{$padding-md} * 2) !important;
+    min-width: calc(100% - #{$padding-md} * 2) !important;
+    width: calc(100% - #{$padding-md} * 2) !important;
+  }
+  
+  // Réduction du min-width sur tablette
+  .project-view-screen-work {
+    min-width: 600px;
+  }
+  
   .project-stats-view-screen-work {
     flex-direction: row;
     flex-wrap: wrap;
@@ -187,9 +481,49 @@
       flex: 0 0 100%;
     }
   }
+  
+  .detail-section-header-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .edit-project-title-btn {
+    align-self: flex-end;
+  }
+  
+  .project-actions-view-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-btn-secondary-screen-work {
+    width: 100%;
+  }
+  
+  .main-content-view-screen-work {
+    padding: $padding-md;
+    margin-top: 40px;
+  }
+  
+  .project-view-screen-work {
+    padding: $padding-md;
+  }
+  
+  .synopsis-text-screen-work {
+    min-height: 90px;
+    padding: $padding-sm;
+  }
 }
 
 @media (max-width: $breakpoint-sm) {
+  // Sur mobile, on supprime le min-width
+  .project-view-screen-work {
+    min-width: unset !important;
+    width: calc(100% - #{$padding-sm} * 2) !important;
+    max-width: 100% !important;
+  }
+  
   .project-stats-view-screen-work {
     flex-direction: column;
     gap: $gap-xs;
@@ -204,125 +538,25 @@
       margin-bottom: 0;
     }
   }
-}
-
-
-// ────────────────────────────────────────────────
-// Section synopsis
-// ────────────────────────────────────────────────
-.detail-section-screen-work {
-  margin: $margin-xl 0;
-  background: $color-background-alt;
-  border-radius: $border-radius;
-  padding: $padding-lg;
-  box-shadow: $shadow;
-  transition: $transition;
-
-  &:hover {
-    box-shadow: $shadow-hover;
+  
+  .main-content-view-screen-work {
+    padding: $padding-sm;
+    margin-top: 35px;
   }
-
-  h3 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0 0 $margin-md 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-
-    i {
-      color: $color-primary;
-      font-size: $font-size-h4;
-    }
+  
+  .project-view-screen-work {
+    padding: $padding-sm;
+    border: 2px solid $color-background-dark !important;
   }
-
+  
   .synopsis-text-screen-work {
-    @include typography-p3;
-    color: $color-text-secondary;
-    line-height: 1.7;
-    background: $color-background;
-    padding: $padding-lg;
-    border-radius: $border-radius-xs;
-    border: 1px solid $color-border;
-    margin: 0;
+    min-height: 80px;
+    padding: $padding-xs;
   }
 }
 
-// ────────────────────────────────────────────────
-// Responsive pour les statistiques
-// ────────────────────────────────────────────────
-@media (max-width: $breakpoint-lg) {
-  .project-stats-view-screen-work {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: $gap-sm !important;
-  }
-  
-  .stat-card-screen-work {
-    min-height: 70px !important;
-    padding: $padding-sm !important;
-  }
-  
-  .stat-icon-screen-work {
-    font-size: 1.3rem !important;
-  }
-  
-  .stat-number-screen-work {
-    font-size: calc(#{$font-size-h4} - 2px) !important;
-  }
-  
-  .stat-label-screen-work {
-    font-size: 0.8rem !important;
-  }
-}
+// ==================== STYLE FORCÉ POUR LES STATS ====================
 
-@media (max-width: $breakpoint-md) {
-  .project-stats-view-screen-work {
-    grid-template-columns: 1fr 1fr !important;
-    grid-template-rows: auto auto !important;
-    gap: $gap-sm !important;
-  }
-  
-  .stat-card-screen-work {
-    &:nth-child(3) {
-      grid-column: span 2 !important;
-      max-width: 300px !important;
-      margin: 0 auto !important;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .project-stats-view-screen-work {
-    grid-template-columns: 1fr !important;
-    grid-template-rows: repeat(3, auto) !important;
-    gap: $gap-xs !important;
-  }
-  
-  .stat-card-screen-work {
-    max-width: 100% !important;
-    min-height: 65px !important;
-    
-    &:nth-child(3) {
-      grid-column: 1 !important;
-    }
-  }
-  
-  .stat-icon-screen-work {
-    font-size: 1.2rem !important;
-  }
-  
-  .stat-number-screen-work {
-    font-size: calc(#{$font-size-h4} - 4px) !important;
-  }
-  
-  .stat-label-screen-work {
-    font-size: 0.75rem !important;
-  }
-}
-
-
-
-// Et ce style d'urgence si rien ne fonctionne :
 .forced-horizontal {
   display: flex !important;
   flex-direction: row !important;
@@ -348,128 +582,53 @@
   }
 }
 
+// ==================== POUR LES TRÈS GRANDS ÉCRANS ====================
 
-// ────────────────────────────────────────────────
-// Section Synopsis avec bouton de modification
-// ────────────────────────────────────────────────
-.project-details-view-screen-work {
-  margin-bottom: $margin-xl;
-  background: $color-background-alt;
-  border-radius: 8px;
-  padding: 15px;
-}
-
-.detail-section-header-screen-work {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $margin-md;
-  padding-bottom: $padding-md;
-  border-bottom: 1px solid $color-border;
+@media (min-width: 1600px) {
+  .project-view-screen-work {
+    max-width: 1500px;
+    min-width: 900px;
+  }
   
-  h3 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
+  .ecran-travail-ecran-travail-screen-work {
+    &.right-sidebar-open-screen-work:not(.with-secondary-navbar) {
+      .project-view-screen-work {
+        max-width: min(1500px, calc(100% - #{$padding-sm} * 2));
+        min-width: min(900px, calc(100% - #{$padding-sm} * 2));
+      }
+    }
     
-    i {
-      color: $color-primary;
-      font-size: $font-size-h4;
+    &.with-secondary-navbar:not(.right-sidebar-open-screen-work) {
+      .project-view-screen-work {
+        max-width: min(1500px, calc(100% - #{$padding-sm} * 2));
+        min-width: min(900px, calc(100% - #{$padding-sm} * 2));
+      }
+    }
+    
+    &.with-secondary-navbar.right-sidebar-open-screen-work {
+      .project-view-screen-work {
+        max-width: min(1500px, calc(100% - 250px - 350px - 80px - #{$padding-sm} * 2));
+        min-width: min(900px, calc(100% - 250px - 350px - 80px - #{$padding-sm} * 2));
+      }
     }
   }
 }
 
-.edit-project-title-btn {
-  @include btn-cinema-primary;
-  padding: $padding-xs $padding-md;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-medium;
-  background: $color-background-light;
-  color: $color-primary;
-  border: 1px solid rgba($color-primary, 0.3);
-  
-  i {
-    font-size: 0.9em;
-    margin-right: $gap-xs;
-  }
-  
-  &:hover {
-    background: $color-primary;
-    color: $color-text-light;
-    transform: translateY(-1px);
-    box-shadow: $shadow;
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
+// ==================== SOLUTION ALTERNATIVE : DISPLAY GRID ====================
+// Si le flex ne fonctionne pas bien, essaie cette version grid
 
-.detail-section-content-screen-work {
-  margin-bottom: $margin-xl;
-}
-
-.synopsis-text-screen-work {
-  @include typography-p1;
-  color: $color-text-secondary;
-  line-height: 1.68;
-  background: rgba($color-surface, 0.6);
-  padding: $padding-lg;
-  border-radius: $border-radius;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
-  margin: 0;
-}
-
-// Actions supplémentaires (Ajouter un épisode)
-.project-actions-view-screen-work {
-  display: flex;
-  gap: $gap-lg;
-  flex-wrap: wrap;
-  margin-top: $margin-xl;
-  padding-top: $padding-xl;
-  border-top: 1px solid rgba($color-border, 0.35);
+.project-view-screen-work.grid-version {
+  display: grid;
+  grid-template-columns: 1fr; // Une seule colonne qui prend toute la largeur
+  width: 100%;
   
-  .action-btn-secondary-screen-work {
-    @include btn-cinema-accent;
-    padding: $padding-md $padding-xl;
-    font-size: $font-size-p2;
-    min-width: 200px;
-    justify-content: center;
-    
-    i {
-      margin-right: $gap-sm;
-      font-size: 1.1em;
-    }
-    
-    &:hover {
-      background: linear-gradient(135deg, $color-accent, $color-accent-dark);
-    }
-  }
-}
-
-// Responsive
-@media (max-width: $breakpoint-md) {
-  .detail-section-header-screen-work {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $gap-md;
-  }
-  
-  .edit-project-title-btn {
-    align-self: flex-end;
-  }
-  
-  .project-actions-view-screen-work {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .action-btn-secondary-screen-work {
+  > * {
+    grid-column: 1;
     width: 100%;
   }
 }
 
+.synopsis-text-screen-work {
+  max-width: 1000px;   // largeur maximale
+  margin: 0 auto;      // centré si besoin
+}

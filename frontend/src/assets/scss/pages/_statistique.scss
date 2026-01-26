@@ -1,292 +1,367 @@
+// _stats.scss – Version cohérente avec projetScenariste
+@import '../base/variables';
+@import '../pages/acceuil';
+
 // =============================================
-// SIDEBAR STATISTIQUES - Style recherche
+// WRAPPER GLOBAL
 // =============================================
-.statistiques-sidebar-statistiques {
+.app-wrapper-global {
+  display: flex;
+  min-height: 100vh;
+  background: none;
+}
+
+// =============================================
+// SIDEBAR LATÉRALE FIXE À GAUCHE - Style ProjetScenariste
+// =============================================
+.creation-sidebar-stats-admin {
   position: fixed;
-  left: 0;
   top: 60px;
+  left: 0;
   width: 280px;
-  height: calc(100vh - 80px);
-  background: $color-primary;
-  padding: $spacing-md;
-  box-sizing: border-box;
-  z-index: $z-index-sticky;
+  height: calc(100vh - 50px);
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  border-right: 1px solid $color-border;
-  box-shadow: $shadow-md;
-  margin-right: 50px;
+  padding: $padding-lg;
+  background: $color-primary; // Même couleur que ProjetScenariste
+  box-sizing: border-box;
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
 
-  .sidebar-header-statistiques {
-    margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-md;
+  @media (max-width: 1400px) {
+    width: 240px;
+    padding: $padding-md;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+  }
+  
+  // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-dark !important;
+  }
+  
+  // Exception pour les boutons
+  .view-all-btn-compact-admin {
+    i {
+      color: $color-text-light !important;
+    }
+    
+    &:hover {
+      background: rgba($color-text-light, 0.1) !important;
+    }
+  }
+
+  .sidebar-header-stats-admin {
+    margin-bottom: $spacing-md;
     border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
 
-    .sidebar-title-statistiques {
+    .sidebar-title-stats-admin {
       @include typography-playfair-h4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin: 0 0 $gap-xs 0;
-      font-size: calc(#{$font-size-h4} - 1px);
+      font-size: calc(#{$font-size-h4} - 2px);
     }
 
-    .sidebar-subtitle-statistiques {
+    .sidebar-subtitle-stats-admin {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-light;
       margin: 0;
     }
   }
 
-  .filter-section-statistiques {
-    margin-bottom: $spacing-lg;
-    background: $color-background-alt;
+  .sidebar-section-stats-admin {
+    margin-bottom: $spacing-md;
+    background: rgba($color-text-light, 0.1) !important; 
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
-    .section-title-statistiques {
-      @include typography-p4;
-      color: $color-text-primary;
-      margin-bottom: $gap-md;
-      font-size: calc(#{$font-size-p4} + 1px);
-      display: flex;
-      align-items: center;
-      gap: $gap-xs;
-
-      i {
-        color: $color-primary;
-        font-size: $font-size-p3;
-      }
-    }
-
-    .filter-group-statistiques {
-      display: flex;
-      flex-direction: column;
-      gap: $gap-md;
-    }
-
-    .filter-select-group-statistiques {
-      display: flex;
-      flex-direction: column;
-      gap: $gap-xs;
-
-      label {
-        @include typography-p4;
-        color: $color-text-secondary;
-        font-weight: $font-weight-medium;
-      }
-
-      .filter-select-statistiques {
-        width: 100%;
-        height: 34px;
-        padding: 0 $padding-xs;
-        background: $color-background-alt;
-        border: 1px solid $color-border;
-        border-radius: $border-radius-xs;
-        font-size: $font-size-p4;
-        color: $color-text-primary;
-        cursor: pointer;
-        box-sizing: border-box;
-
-        &:focus {
-          outline: none;
-          border-color: $color-primary;
-        }
-
-        &:hover {
-          border-color: $color-primary-dark;
-        }
-      }
-    }
-  }
-
-  .kpi-sidebar-section-statistiques {
-    margin-bottom: $spacing-lg;
-
-    .section-title-statistiques {
+    .section-title-stats-admin {
       @include typography-p4;
       color: $color-text-light;
-      margin-bottom: $gap-md;
+      margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
       align-items: center;
       gap: $gap-xs;
-
-      i {
-        color: $color-text-light;
-        font-size: $font-size-p3;
-      }
-    }
-
-    .kpi-sidebar-grid-statistiques {
-      display: flex;
-      flex-direction: column;
-      gap: $gap-md;
-    }
-
-    .kpi-sidebar-card-statistiques {
-      background: $color-background-alt;
-      border-radius: $border-radius-xs;
-      padding: $padding-sm;
-      box-shadow: $shadow;
-      border: 1px solid $color-border;
-      transition: $transition-fast;
-      display: flex;
-      align-items: center;
-      gap: $gap-md;
-      min-height: 60px;
-
-      &:hover {
-        transform: translateY(-1px);
-        box-shadow: $shadow-md;
-        border-color: $color-primary;
-      }
-
-      .kpi-sidebar-icon-statistiques {
-        @include flex-center;
-        width: 40px;
-        height: 40px;
-        border-radius: $border-radius-xs;
-        font-size: $font-size-p1;
-        color: $color-text-light;
-        flex-shrink: 0;
-
-        i {
-          filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
-        }
-      }
-
-      .kpi-sidebar-content-statistiques {
-        flex: 1;
-
-        .kpi-sidebar-number-statistiques {
-          @include typography-playfair-h4;
-          color: $color-text-primary;
-          line-height: 1;
-          margin-bottom: $gap-xs;
-        }
-
-        .kpi-sidebar-label-statistiques {
-          @include typography-p4;
-          color: $color-text-secondary;
-          font-weight: $font-weight-medium;
-        }
-      }
-
-      // Couleurs spécifiques pour chaque carte KPI
-      &.total-projects-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
-      }
-
-      &.total-episodes-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, $color-secondary 0%, $color-secondary-dark 100%);
-      }
-
-      &.total-sequences-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, $color-tertiary 0%, $color-tertiary-dark 100%);
-      }
-
-      &.total-scenes-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, $color-accent 0%, $color-accent-dark 100%);
-      }
-
-      &.total-dialogues-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, $color-secondary 0%, $color-secondary-dark 100%);
-      }
-
-      &.team-members-statistiques .kpi-sidebar-icon-statistiques {
-        background: linear-gradient(135deg, $color-primary-dark 0%, darken($color-primary-dark, 10%) 100%);
-      }
     }
   }
 
-  .sidebar-footer-statistiques {
-    margin-top: auto;
-    padding-top: $spacing-md;
-    border-top: 1px solid $color-border;
+  .filter-group-stats-admin {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
 
-    .last-update-sidebar-statistiques {
+  .filter-item-stats-admin {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+
+    label {
+      @include typography-p4;
+      color: $color-text-light;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .filter-select-stats-admin {
+    width: 100%;
+    height: 34px;
+    padding: 0 $padding-xs;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    cursor: pointer;
+    box-sizing: border-box;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+
+  .stats-kpi-stats-admin {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-stats-admin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+
+    .stat-number-stats-admin {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-stats-admin {
       @include typography-p4;
       color: $color-text-muted;
-      display: flex;
-      align-items: center;
-      gap: $gap-xs;
-      justify-content: center;
-
-      i {
-        color: $color-primary;
-        font-size: $font-size-p4;
-      }
+      text-align: center;
+    }
+  }
+  
+  .sidebar-footer-stats-admin {
+    margin-top: auto;
+    padding-top: $spacing-md;
+    border-top: 1px solid rgba($color-text-light, 0.2);
+  }
+  
+  .last-update-stats-admin {
+    @include typography-p4;
+    color: $color-text-light;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    justify-content: center;
+    opacity: 0.8;
+    
+    i {
+      color: $color-text-light !important;
     }
   }
 }
 
 // =============================================
-// STRUCTURE GLOBALE
+// CONTENU PRINCIPAL À DROITE
 // =============================================
-.statistiques-globales {
-  min-height: 100vh;
-}
-
-.statistiques-body-statistiques {
+.creation-body-stats-admin {
   flex: 1;
   margin-left: 280px;
   min-height: 100vh;
+  background: none;
 }
 
-.statistiques-container-statistiques {
-  flex: 1;
-  padding: $spacing-md;
-  max-width: 1250px;
-  margin: 0 auto;
-}
-
-.statistiques-main-content-statistiques {
-  padding: $spacing-md;
+.creation-main-content-stats-admin {
+  padding: $spacing-lg;
   max-width: 1200px;
   margin: 0 auto;
 
-  .main-header-statistiques {
+  .main-header-stats-admin {
     text-align: center;
-    margin-bottom: $spacing-xl;
-    padding: $spacing-lg;
-    background: $color-background-alt;
-    border-radius: $border-radius-lg;
-    box-shadow: $shadow-md;
-    border: 1px solid $color-border;
+    margin-bottom: $spacing-lg;
+    background: $color-primary;
+    border-radius: $border-radius-sm;
+    padding: $spacing-xl;
+    box-shadow: $shadow-lg;
 
-    .page-title-statistiques {
-      @include typography-playfair-h2;
-      color: $color-text-primary;
+    .page-title-stats-admin {
+      @include typography-playfair-h3;
+      color: $color-text-light;
       margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h3} - 2px);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: $gap-md;
-
+      gap: $gap-sm;
+      
       i {
-        color: $color-primary;
+        color: $color-primary-light;
       }
     }
 
-    .page-subtitle-statistiques {
-      @include typography-p2;
-      color: $color-text-muted;
-      max-width: 500px;
+    .page-subtitle-stats-admin {
+      @include typography-p3;
+      color: $color-text-light;
+      opacity: 0.9;
+      max-width: 600px;
       margin: 0 auto;
     }
   }
 }
 
 // =============================================
-// GRID DES GRAPHIQUES
+// DÉTAILS DES STATISTIQUES AMÉLIORÉS
 // =============================================
-.charts-section-statistiques {
+.project-details-spiral-admin {
+  background: $color-primary;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  margin: $margin-xl 0 $margin-lg 0; 
+  padding: $padding-xl;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba($color-primary, 0.1);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $color-accent 0%, $color-primary-light 100%);
+  }
+}
+
+.project-info-spiral-admin {
+  display: flex;
+  position: relative;
+}
+
+.project-main-content-admin {
+  flex: 1;
+  padding: $padding-md 0;
+}
+
+.project-header-spiral-admin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  border-bottom: 1px solid rgba($color-text-light, 0.2);
+}
+
+.project-title-spiral-admin {
+  @include typography-playfair-h3;
+  color: $color-text-light;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  
+  i {
+    color: $color-primary-light;
+    font-size: $font-size-h4;
+  }
+}
+
+// =============================================
+// SECTION TOTAUX DU PROJET
+// =============================================
+.totals-section-stats-admin {
+  background: $color-primary;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  margin: $margin-lg 0;
+  padding: $padding-xl;
+  position: relative;
+  overflow: hidden;
+  
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-light;
+    margin-bottom: $margin-lg;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary-light;
+    }
+  }
+  
+  .totals-grid-stats-admin {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $gap-md;
+    
+    .total-card-stats-admin {
+      @include flex-center;
+      flex-direction: column;
+      padding: $padding-lg;
+      background: rgba($color-text-light, 0.1);
+      border-radius: $border-radius-sm;
+      transition: $transition-fast;
+      
+      &:hover {
+        background: rgba($color-text-light, 0.15);
+        transform: translateY(-2px);
+      }
+      
+      i {
+        font-size: $font-size-h2;
+        color: $color-text-light;
+        margin-bottom: $gap-md;
+        opacity: 0.9;
+      }
+      
+      .total-number-stats-admin {
+        @include typography-playfair-h2;
+        color: $color-text-light;
+        margin-bottom: $gap-xs;
+        line-height: 1;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      
+      .total-label-stats-admin {
+        @include typography-p2;
+        color: $color-text-light;
+        opacity: 0.9;
+        font-weight: $font-weight-medium;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// =============================================
+// GRID DES GRAPHIQUES (Comme ProjetScenariste)
+// =============================================
+.charts-section-stats-admin {
   display: flex;
   flex-direction: column;
   gap: $spacing-xl;
   margin-bottom: $spacing-xl;
 }
 
-.chart-row-statistiques {
+.chart-row-stats-admin {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: $spacing-lg;
@@ -294,40 +369,45 @@
 }
 
 // =============================================
-// COMPOSANTS COMMUNS
+// COMPOSANTS COMMUNS DES GRAPHIQUES
 // =============================================
-.chart-container-statistiques {
+.chart-container-stats-admin {
   background: $color-background-alt;
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-md;
+  box-shadow: $shadow-lg;
   border: 1px solid $color-border;
   margin-bottom: $spacing-lg;
   overflow: hidden;
-  animation: fadeInUp-statistiques 0.6s $ease-out-cinema;
-
-  &.full-width-statistiques {
+  transition: $transition;
+  
+  &:hover {
+    box-shadow: $shadow-xl;
+    transform: translateY(-2px);
+  }
+  
+  &.full-width-stats-admin {
     grid-column: 1 / -1;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     min-height: 400px;
-
-    .chart-content-statistiques {
+    
+    .chart-content-stats-admin {
       flex: 1;
       display: flex;
       flex-direction: column;
     }
-
-    .ranking-list-statistiques,
-    .timeline-chart-statistiques,
-    .team-distribution-statistiques {
+    
+    .ranking-list-stats-admin,
+    .timeline-chart-stats-admin,
+    .team-distribution-stats-admin {
       flex: 1;
       display: flex;
       flex-direction: column;
     }
-
-    .pie-charts-grid-statistiques {
+    
+    .pie-charts-grid-stats-admin {
       flex: 1;
       display: flex;
       justify-content: space-around;
@@ -335,12 +415,12 @@
       gap: $spacing-md;
     }
   }
-
-  .chart-header-statistiques {
+  
+  .chart-header-stats-admin {
     padding: $spacing-lg;
     border-bottom: 1px solid $color-border;
-    background: $color-surface;
-
+    background: linear-gradient(135deg, $color-surface 0%, $color-surface-hover 100%);
+    
     h3 {
       @include typography-playfair-h3;
       color: $color-text-primary;
@@ -348,151 +428,86 @@
       display: flex;
       align-items: center;
       gap: $gap-md;
-
+      
       i {
         color: $color-primary;
       }
     }
-
-    .chart-legend-statistiques {
+    
+    .chart-legend-stats-admin {
       display: flex;
       gap: $spacing-md;
       margin-top: $spacing-sm;
       flex-wrap: wrap;
-
-      .legend-item-statistiques {
+      
+      .legend-item-stats-admin {
         @include typography-p3;
         color: $color-text-secondary;
         display: flex;
         align-items: center;
         gap: $gap-xs;
-
-        .legend-color-statistiques {
+        
+        .legend-color-stats-admin {
           width: 12px;
           height: 12px;
           border-radius: 50%;
           display: inline-block;
-
-          &.completed-statistiques { background: $color-primary; }
-          &.in-progress-statistiques { background: $color-accent; }
-          &.planned-statistiques { background: $color-warning; }
-          &.to-do-statistiques { background: $color-border; }
-          &.episodes-statistiques { background: $color-secondary; }
-          &.sequences-statistiques { background: $color-primary; }
-          &.scenes-statistiques { background: $color-accent; }
+          
+          &.completed-stats-admin { background: $color-primary; }
+          &.in-progress-stats-admin { background: $color-accent; }
+          &.planned-stats-admin { background: $color-warning; }
+          &.to-do-stats-admin { background: $color-border; }
+          &.episodes-stats-admin { background: $color-secondary; }
+          &.sequences-stats-admin { background: $color-primary; }
+          &.scenes-stats-admin { background: $color-accent; }
         }
       }
     }
   }
-
-  .chart-content-statistiques {
+  
+  .chart-content-stats-admin {
     padding: $spacing-lg;
-  }
-}
-
-// =============================================
-// TOTAUX DU PROJET
-// =============================================
-.totals-section-statistiques {
-  background: $color-background-alt;
-  border-radius: $border-radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-md;
-  border: 1px solid $color-border;
-  margin-bottom: $spacing-xl;
-
-  h3 {
-    @include typography-playfair-h3;
-    color: $color-text-primary;
-    margin-bottom: $spacing-md;
-    display: flex;
-    align-items: center;
-    gap: $gap-md;
-
-    i {
-      color: $color-primary;
-    }
-  }
-
-  .totals-grid-statistiques {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: $spacing-md;
-
-    .total-card-statistiques {
-      @include flex-center;
-      flex-direction: column;
-      padding: $spacing-lg;
-      background: $color-surface;
-      border-radius: $border-radius;
-      border: 1px solid $color-border;
-      transition: $transition-fast;
-
-      &:hover {
-        background: $color-surface-hover;
-        transform: translateY(-1px);
-      }
-
-      i {
-        font-size: $font-size-h3;
-        color: $color-primary;
-        margin-bottom: $gap-md;
-      }
-
-      .total-number-statistiques {
-        @include typography-playfair-h2;
-        color: $color-text-primary;
-        margin-bottom: $gap-xs;
-        line-height: 1;
-      }
-
-      .total-label-statistiques {
-        @include typography-p2;
-        color: $color-text-secondary;
-        font-weight: $font-weight-medium;
-      }
-    }
   }
 }
 
 // =============================================
 // RÉPARTITION PAR TYPE
 // =============================================
-.type-distribution-statistiques {
+.type-distribution-stats-admin {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
-
-  .type-item-statistiques {
+  
+  .type-item-stats-admin {
     display: flex;
     align-items: center;
     gap: $spacing-md;
     padding: $spacing-sm;
-
-    .type-name-statistiques {
+    
+    .type-name-stats-admin {
       @include typography-p2;
       color: $color-text-primary;
       font-weight: $font-weight-medium;
       min-width: 100px;
     }
-
-    .type-bar-statistiques {
+    
+    .type-bar-stats-admin {
       flex: 1;
       height: 20px;
       background: rgba($color-border, 0.3);
       border-radius: $border-radius-pill;
       overflow: hidden;
       position: relative;
-
-      .type-fill-statistiques {
+      
+      .type-fill-stats-admin {
         height: 100%;
         background: linear-gradient(90deg, $color-primary 0%, $color-primary-dark 100%);
         border-radius: $border-radius-pill;
         transition: width 0.8s $ease-out-cinema;
       }
     }
-
-    .type-value-statistiques {
+    
+    .type-value-stats-admin {
       @include typography-p2;
       color: $color-text-secondary;
       font-weight: $font-weight-medium;
@@ -503,47 +518,17 @@
 }
 
 // =============================================
-// ACTIVITÉ RÉCENTE
-// =============================================
-.activity-stats-statistiques {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-
-  .activity-item-statistiques {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: $spacing-sm;
-    background: $color-surface;
-    border-radius: $border-radius-xs;
-    border-left: 3px solid $color-primary;
-
-    .activity-label-statistiques {
-      @include typography-p2;
-      color: $color-text-secondary;
-    }
-
-    .activity-value-statistiques {
-      @include typography-playfair-h4;
-      color: $color-text-primary;
-      font-weight: $font-weight-bold;
-    }
-  }
-}
-
-// =============================================
 // CAMEMBERTS STATUTS
 // =============================================
-.pie-charts-grid-statistiques {
+.pie-charts-grid-stats-admin {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: $spacing-xl;
   justify-items: center;
-
-  .pie-chart-item-statistiques {
+  
+  .pie-chart-item-stats-admin {
     position: relative;
-
+    
     h4 {
       @include typography-p2;
       color: $color-text-secondary;
@@ -552,8 +537,8 @@
       position: relative;
       z-index: 1;
     }
-
-    .pie-chart-statistiques {
+    
+    .pie-chart-stats-admin {
       position: relative;
       width: 120px;
       height: 120px;
@@ -561,8 +546,8 @@
       background: $color-border;
       margin: 0 auto;
       z-index: 1;
-        
-      .pie-slice-statistiques {
+      
+      .pie-slice-stats-admin {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -570,28 +555,28 @@
         clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
         transform: rotate(calc(var(--percentage) * 3.6deg));
         
-        &.completed-statistiques {
+        &.completed-stats-admin {
           background: $color-primary;
           z-index: 4;
         }
         
-        &.in-progress-statistiques {
+        &.in-progress-stats-admin {
           background: $color-accent;
           z-index: 3;
         }
         
-        &.planned-statistiques {
+        &.planned-stats-admin {
           background: $color-warning;
           z-index: 2;
         }
         
-        &.to-do-statistiques {
+        &.to-do-stats-admin {
           background: $color-border;
           z-index: 1;
         }
       }
-
-      .pie-center-statistiques {
+      
+      .pie-center-stats-admin {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -604,18 +589,18 @@
         flex-direction: column;
         box-shadow: $shadow-inset;
         z-index: 5;
-
-        .pie-total-statistiques {
+        
+        .pie-total-stats-admin {
           @include typography-playfair-h4;
           color: $color-text-primary;
           line-height: 1;
         }
-
-        .pie-label-statistiques {
+        
+        .pie-label-stats-admin {
           @include typography-p4;
           color: $color-text-muted;
           text-transform: uppercase;
-          letter-spacing: 0.5px; 
+          letter-spacing: 0.5px;
           z-index: 6;
         }
       }
@@ -626,64 +611,67 @@
 // =============================================
 // TIMELINE PROGRESSION
 // =============================================
-.timeline-chart-statistiques {
-  .timeline-bars-statistiques {
+.timeline-chart-stats-admin {
+  .timeline-bars-stats-admin {
     display: flex;
     align-items: flex-end;
     gap: $spacing-md;
     height: 200px;
     padding: $spacing-lg 0;
     border-bottom: 1px solid $color-border;
-
-    .timeline-item-statistiques {
+    
+    .timeline-item-stats-admin {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: $spacing-sm;
-
-      .timeline-label-statistiques {
+      
+      .timeline-label-stats-admin {
         @include typography-p3;
         color: $color-text-muted;
         text-align: center;
         font-weight: $font-weight-medium;
       }
-
-      .timeline-bar-statistiques {
+      
+      .timeline-bar-stats-admin {
         width: 100%;
         height: 150px;
         display: flex;
         align-items: flex-end;
         gap: 2px;
         position: relative;
-
-        .bar-segment-statistiques {
+        
+        .bar-segment-stats-admin {
           flex: 1;
           border-radius: $border-radius-xs $border-radius-xs 0 0;
           transition: $transition;
           position: relative;
           min-height: 5px;
-
-          &.episodes-statistiques {
+          
+          &.episodes-stats-admin {
             background: $color-secondary;
-            &:hover { 
-              background: $color-secondary-dark; 
+            
+            &:hover {
+              background: $color-secondary-dark;
               transform: scaleY(1.05);
             }
           }
           
-          &.sequences-statistiques {
+          &.sequences-stats-admin {
             background: $color-primary;
-            &:hover { 
-              background: $color-primary-dark; 
+            
+            &:hover {
+              background: $color-primary-dark;
               transform: scaleY(1.05);
             }
           }
           
-          &.scenes-statistiques {
+          &.scenes-stats-admin {
             background: $color-accent;
-            &:hover { 
-              background: $color-accent-dark; 
+            
+            &:hover {
+              background: $color-accent-dark;
               transform: scaleY(1.05);
             }
           }
@@ -691,30 +679,30 @@
       }
     }
   }
-
-  .timeline-legend-statistiques {
+  
+  .timeline-legend-stats-admin {
     display: flex;
     justify-content: center;
     gap: $spacing-lg;
     margin-top: $spacing-md;
     flex-wrap: wrap;
-
-    .legend-item-statistiques {
+    
+    .legend-item-stats-admin {
       @include typography-p3;
       color: $color-text-secondary;
       display: flex;
       align-items: center;
       gap: $gap-xs;
-
-      .legend-color-statistiques {
+      
+      .legend-color-stats-admin {
         width: 12px;
         height: 12px;
         border-radius: 50%;
         display: inline-block;
-
-        &.episodes-statistiques { background: $color-secondary; }
-        &.sequences-statistiques { background: $color-primary; }
-        &.scenes-statistiques { background: $color-accent; }
+        
+        &.episodes-stats-admin { background: $color-secondary; }
+        &.sequences-stats-admin { background: $color-primary; }
+        &.scenes-stats-admin { background: $color-accent; }
       }
     }
   }
@@ -723,27 +711,28 @@
 // =============================================
 // TOP PROJETS RANKING
 // =============================================
-.ranking-list-statistiques {
+.ranking-list-stats-admin {
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
-
-  .ranking-item-statistiques {
+  
+  .ranking-item-stats-admin {
     display: flex;
     align-items: center;
     gap: $spacing-md;
     padding: $spacing-md;
     background: $color-surface;
-    border-radius: $border-radius;
+    border-radius: $border-radius-sm;
     border: 1px solid $color-border;
     transition: $transition-fast;
-
+    
     &:hover {
       background: $color-surface-hover;
       transform: translateX(4px);
+      border-color: $color-primary;
     }
-
-    .rank-number-statistiques {
+    
+    .rank-number-stats-admin {
       @include flex-center;
       width: 32px;
       height: 32px;
@@ -754,23 +743,23 @@
       font-weight: $font-weight-bold;
       flex-shrink: 0;
     }
-
-    .project-info-statistiques {
+    
+    .project-info-stats-admin {
       flex: 1;
-
-      .project-name-statistiques {
+      
+      .project-name-stats-admin {
         @include typography-p1;
         color: $color-text-primary;
         font-weight: $font-weight-semibold;
         margin-bottom: $gap-xs;
       }
-
-      .project-stats-statistiques {
+      
+      .project-stats-stats-admin {
         display: flex;
         gap: $spacing-md;
         flex-wrap: wrap;
-
-        .stat-statistiques {
+        
+        .stat-stats-admin {
           @include typography-p3;
           color: $color-text-muted;
           background: rgba($color-border, 0.3);
@@ -779,8 +768,8 @@
         }
       }
     }
-
-    .progress-circle-statistiques {
+    
+    .progress-circle-stats-admin {
       @include flex-center;
       width: 50px;
       height: 50px;
@@ -788,7 +777,7 @@
       background: conic-gradient($color-primary 0% calc(var(--progress) * 1%), $color-border 0% 100%);
       position: relative;
       flex-shrink: 0;
-
+      
       &::before {
         content: '';
         position: absolute;
@@ -797,7 +786,7 @@
         background: $color-background-alt;
         border-radius: 50%;
       }
-
+      
       span {
         @include typography-p3;
         color: $color-text-primary;
@@ -811,53 +800,53 @@
 // =============================================
 // DISTRIBUTION ÉQUIPE
 // =============================================
-.team-distribution-statistiques {
-  .distribution-chart-statistiques {
+.team-distribution-stats-admin {
+  .distribution-chart-stats-admin {
     display: flex;
     flex-direction: column;
     gap: $spacing-md;
-
-    .distribution-item-statistiques {
+    
+    .distribution-item-stats-admin {
       display: flex;
       align-items: center;
       gap: $spacing-md;
       padding: $spacing-sm;
-
-      .role-info-statistiques {
+      
+      .role-info-stats-admin {
         display: flex;
         flex-direction: column;
         gap: $gap-xs;
         min-width: 150px;
-
-        .role-name-statistiques {
+        
+        .role-name-stats-admin {
           @include typography-p2;
           color: $color-text-primary;
           font-weight: $font-weight-medium;
         }
-
-        .role-count-statistiques {
+        
+        .role-count-stats-admin {
           @include typography-p3;
           color: $color-text-muted;
         }
       }
-
-      .distribution-bar-statistiques {
+      
+      .distribution-bar-stats-admin {
         flex: 1;
         height: 16px;
         background: rgba($color-border, 0.3);
         border-radius: $border-radius-pill;
         overflow: hidden;
         position: relative;
-
-        .distribution-fill-statistiques {
+        
+        .distribution-fill-stats-admin {
           height: 100%;
           background: linear-gradient(90deg, $color-secondary 0%, $color-secondary-dark 100%);
           border-radius: $border-radius-pill;
           transition: width 0.8s $ease-out-cinema;
         }
       }
-
-      .role-percentage-statistiques {
+      
+      .role-percentage-stats-admin {
         @include typography-p2;
         color: $color-text-secondary;
         font-weight: $font-weight-semibold;
@@ -871,14 +860,14 @@
 // =============================================
 // TABLEAU DÉTAIL PROJETS
 // =============================================
-.projects-table-section-statistiques {
+.projects-table-section-stats-admin {
   background: $color-background-alt;
   border-radius: $border-radius-lg;
   padding: $spacing-lg;
-  box-shadow: $shadow-md;
+  box-shadow: $shadow-lg;
   border: 1px solid $color-border;
   margin-bottom: $spacing-xl;
-
+  
   h3 {
     @include typography-playfair-h3;
     color: $color-text-primary;
@@ -886,26 +875,26 @@
     display: flex;
     align-items: center;
     gap: $gap-md;
-
+    
     i {
       color: $color-primary;
     }
   }
-
-  .table-container-statistiques {
+  
+  .table-container-stats-admin {
     overflow-x: auto;
     border-radius: $border-radius;
     border: 1px solid $color-border;
-
-    .projects-table-statistiques {
+    
+    .projects-table-stats-admin {
       width: 100%;
       border-collapse: collapse;
       background: $color-background-alt;
-
+      
       thead {
         background: $color-surface;
         border-bottom: 2px solid $color-border;
-
+        
         tr th {
           @include typography-p2;
           color: $color-text-primary;
@@ -913,38 +902,38 @@
           padding: $spacing-md;
           text-align: left;
           border-right: 1px solid $color-border;
-
+          
           &:last-child {
             border-right: none;
           }
         }
       }
-
+      
       tbody {
         tr {
           border-bottom: 1px solid $color-border;
           transition: $transition-fast;
-
+          
           &:hover {
             background: $color-surface;
           }
-
+          
           &:last-child {
             border-bottom: none;
           }
-
+          
           td {
             padding: $spacing-md;
             border-right: 1px solid rgba($color-border, 0.5);
-
+            
             &:last-child {
               border-right: none;
             }
           }
         }
       }
-
-      .project-name-cell-statistiques {
+      
+      .project-name-cell-stats-admin {
         strong {
           @include typography-p1;
           color: $color-text-primary;
@@ -952,57 +941,51 @@
           display: block;
           margin-bottom: $gap-xs;
         }
-
-        .project-description-statistiques {
-          @include typography-p3;
-          color: $color-text-muted;
-          line-height: $line-height-tight;
-        }
       }
-
-      .number-cell-statistiques {
-        .stat-number-statistiques {
+      
+      .number-cell-stats-admin {
+        .stat-number-stats-admin {
           @include typography-p1;
           color: $color-text-primary;
           font-weight: $font-weight-semibold;
           display: block;
         }
-
-        .stat-detail-statistiques {
+        
+        .stat-detail-stats-admin {
           margin-top: $gap-xs;
-
-          .stat-badge-statistiques {
+          
+          .stat-badge-stats-admin {
             @include typography-p4;
             padding: $gap-xs $gap-sm;
             border-radius: $border-radius-xs;
             font-weight: $font-weight-medium;
-
-            &.completed-statistiques {
+            
+            &.completed-stats-admin {
               background: rgba($color-primary, 0.1);
               color: $color-primary;
             }
           }
         }
       }
-
-      .progress-cell-statistiques {
-        .progress-bar-statistiques {
+      
+      .progress-cell-stats-admin {
+        .progress-bar-stats-admin {
           width: 100%;
           height: 8px;
           background: rgba($color-border, 0.3);
           border-radius: $border-radius-pill;
           overflow: hidden;
           margin-bottom: $gap-xs;
-
-          .progress-fill-statistiques {
+          
+          .progress-fill-stats-admin {
             height: 100%;
             background: linear-gradient(90deg, $color-primary 0%, $color-primary-dark 100%);
             border-radius: $border-radius-pill;
             transition: width 0.8s $ease-out-cinema;
           }
         }
-
-        .progress-text-statistiques {
+        
+        .progress-text-stats-admin {
           @include typography-p3;
           color: $color-text-secondary;
           font-weight: $font-weight-semibold;
@@ -1010,14 +993,14 @@
           display: block;
         }
       }
-
-      .team-cell-statistiques {
-        .team-avatars-statistiques {
+      
+      .team-cell-stats-admin {
+        .team-avatars-stats-admin {
           display: flex;
           gap: $gap-xs;
           flex-wrap: wrap;
-
-          .avatar-statistiques {
+          
+          .avatar-stats-admin {
             @include flex-center;
             width: 32px;
             height: 32px;
@@ -1029,16 +1012,16 @@
             border: 2px solid $color-background-alt;
             box-shadow: $shadow;
           }
-
-          .no-team-statistiques {
+          
+          .no-team-stats-admin {
             @include typography-p3;
             color: $color-text-muted;
             font-style: italic;
           }
         }
       }
-
-      .date-cell-statistiques {
+      
+      .date-cell-stats-admin {
         @include typography-p2;
         color: $color-text-secondary;
         white-space: nowrap;
@@ -1048,27 +1031,27 @@
 }
 
 // =============================================
-// ÉTATS
+// ÉTATS (LOADING, ERROR, NO DATA)
 // =============================================
-.loading-statistiques {
+.loading-stats-admin {
   @include flex-center;
   gap: $gap-md;
   padding: $spacing-xl;
   background: $color-background-alt;
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-md;
+  box-shadow: $shadow-lg;
   margin-bottom: $spacing-lg;
-
+  
   i {
     color: $color-primary;
     font-size: $font-size-h3;
   }
-
+  
   @include typography-p1;
   color: $color-text-secondary;
 }
 
-.error-message-statistiques {
+.error-message-stats-admin {
   padding: $spacing-md;
   background: rgba($color-error, 0.1);
   border: 1px solid rgba($color-error, 0.3);
@@ -1080,21 +1063,99 @@
   font-weight: $font-weight-medium;
 }
 
-.no-data-statistiques {
+.no-data-stats-admin {
   @include flex-center;
   padding: $spacing-xl;
   background: $color-background-alt;
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-md;
+  box-shadow: $shadow-lg;
   @include typography-p2;
   color: $color-text-muted;
   font-style: italic;
 }
 
 // =============================================
+// RESPONSIVE DESIGN
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .creation-sidebar-stats-admin {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid $color-border;
+    top: auto;
+  }
+  
+  .creation-body-stats-admin {
+    margin-left: 0;
+  }
+  
+  .chart-row-stats-admin {
+    grid-template-columns: 1fr;
+  }
+  
+  .pie-charts-grid-stats-admin {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-md;
+  }
+  
+  .totals-grid-stats-admin {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .timeline-bars-stats-admin {
+    overflow-x: auto;
+    
+    .timeline-item-stats-admin {
+      min-width: 80px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .creation-main-content-stats-admin {
+    padding: $spacing-sm;
+  }
+  
+  .pie-charts-grid-stats-admin {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+  
+  .totals-grid-stats-admin {
+    grid-template-columns: 1fr;
+  }
+  
+  .ranking-item-stats-admin {
+    flex-direction: column;
+    text-align: center;
+    gap: $spacing-sm;
+    
+    .project-stats-stats-admin {
+      justify-content: center;
+    }
+  }
+  
+  .distribution-item-stats-admin {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-sm;
+    
+    .role-info-stats-admin {
+      min-width: auto !important;
+    }
+  }
+  
+  .chart-container-stats-admin.full-width-stats-admin {
+    min-height: auto;
+  }
+}
+
+// =============================================
 // ANIMATIONS
 // =============================================
-@keyframes fadeInUp-statistiques {
+@keyframes fadeInUp-stats-admin {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -1105,127 +1166,27 @@
   }
 }
 
-.kpi-sidebar-card-statistiques {
-  animation: fadeInUp-statistiques 0.4s $ease-out-cinema;
+// Animation pour les cartes de stats
+.total-card-stats-admin {
+  animation: fadeInUp 0.5s ease-out;
+  animation-fill-mode: both;
   
-  &:nth-child(1) { animation-delay: 0.1s; }
-  &:nth-child(2) { animation-delay: 0.2s; }
-  &:nth-child(3) { animation-delay: 0.3s; }
-  &:nth-child(4) { animation-delay: 0.4s; }
-  &:nth-child(5) { animation-delay: 0.5s; }
-  &:nth-child(6) { animation-delay: 0.6s; }
-}
-
-// =============================================
-// RESPONSIVE
-// =============================================
-@media (max-width: $breakpoint-lg) {
-  .statistiques-sidebar-statistiques {
-    position: relative;
-    width: 100%;
-    height: auto;
-    top: 0;
-  }
-  
-  .statistiques-body-statistiques {
-    margin-left: 0;
-  }
-  
-  .kpi-sidebar-grid-statistiques {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: $spacing-sm;
-  }
-
-  .chart-row-statistiques {
-    grid-template-columns: 1fr;
-  }
-
-  .pie-charts-grid-statistiques {
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-md;
-  }
-
-  .statistiques-container-statistiques {
-    padding: $spacing-sm;
-  }
-
-  .totals-grid-statistiques {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .timeline-bars-statistiques {
-    overflow-x: auto;
-    
-    .timeline-item-statistiques {
-      min-width: 80px;
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
     }
-  }
-
-  .table-container-statistiques {
-    font-size: $font-size-p3;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .kpi-sidebar-grid-statistiques {
-    grid-template-columns: 1fr;
-  }
-  
-  .statistiques-main-content-statistiques {
-    padding: $spacing-sm;
-  }
-
-  .pie-charts-grid-statistiques {
-    grid-template-columns: 1fr;
-    gap: $spacing-lg;
-  }
-
-  .totals-grid-statistiques {
-    grid-template-columns: 1fr;
-  }
-
-  .ranking-item-statistiques {
-    flex-direction: column;
-    text-align: center;
-    gap: $spacing-sm;
-
-    .project-stats-statistiques {
-      justify-content: center;
-    }
-  }
-
-  .distribution-item-statistiques {
-    flex-direction: column;
-    align-items: stretch;
-    gap: $spacing-sm;
-
-    .role-info-statistiques {
-      min-width: auto !important;
-    }
-  }
-
-  .projects-table-statistiques {
-    thead th,
-    tbody td {
-      padding: $spacing-sm !important;
-    }
-  }
-
-  .chart-container-statistiques.full-width-statistiques {
-    min-height: auto;
   }
 }
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-  .kpi-sidebar-card-statistiques,
-  .total-card-statistiques,
-  .ranking-item-statistiques,
-  .distribution-item-statistiques,
-  .type-fill-statistiques,
-  .distribution-fill-statistiques,
-  .progress-fill-statistiques {
+  .total-card-stats-admin,
+  .chart-container-stats-admin,
+  .ranking-item-stats-admin,
+  .distribution-item-stats-admin,
+  .type-fill-stats-admin,
+  .distribution-fill-stats-admin,
+  .progress-fill-stats-admin {
     transition: none;
     
     &:hover {
@@ -1233,14 +1194,4 @@
     }
   }
 }
-
-// =============================================
-// SUPPRIMER L'ANCIENNE GRILLE KPI
-// =============================================
-.kpi-grid-statistiques {
-  display: none;
-}
-
-
-
 

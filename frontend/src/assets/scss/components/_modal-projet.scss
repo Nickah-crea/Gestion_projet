@@ -13,6 +13,7 @@
   z-index: $z-index-modal;
 }
 
+
 .modal-content-ecran-travail {
   background: $color-background-alt;
   padding: $padding-xl;
@@ -22,6 +23,18 @@
   max-width: 700px;
   max-height: 90vh;
   overflow-y: auto;
+}
+
+/* Ajoutez cette classe pour la disposition côte à côte */
+.form-row-ecran-travail {
+  display: flex;
+  gap: $margin-md;
+  margin-bottom: $margin-md;
+  
+  .form-group-ecran-travail {
+    flex: 1;
+    margin-bottom: 0;
+  }
 }
 
 .modal-header-ecran-travail {
@@ -169,12 +182,12 @@
 }
 
 .save-btn-ecran-travail {
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  background: $color-primary; /* Remplace le gradient par une couleur unie */
   color: $color-text-primary;
   border: 1.5px solid $color-primary;
   
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+    background: $color-primary-dark; /* Couleur unie au survol aussi */
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba($color-primary, 0.3);
     color: $color-white;

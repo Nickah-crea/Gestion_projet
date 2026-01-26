@@ -1,23 +1,23 @@
-// _left_sidebar_compact.scss – Corrections UI avec dropdown à droite et statut en dessous
+// _new-recherche.scss – Sidebar harmonisée avec ProjetScenariste.vue (réduit de 10px)
 @import '../base/variables';
 
 // =============================================
-// SIDEBAR LATÉRALE FIXE À GAUCHE - NOUVEAU STYLE PRINCIPAL
+// SIDEBAR LATÉRALE - STYLE HARMONISÉ
 // =============================================
-.left-sidebar-compact {
+.left-sidebar-projet-scenariste {
   position: fixed;
   top: 60px;
   left: 0;
-  width: 250px;
-  height: calc(100vh - 60px);
+  width: 270px;
+  height: calc(100vh - 50px);
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-md;
-  background: $color-secondary-black !important; // <-- COULEUR PRINCIPALE
+  background: $color-background-dark !important;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
-  border-radius: 0 20px 20px 0;
+  border-radius: 0 15px 15px 0;
   transition: all $transition-slow ease;
 
   // Texte en blanc pour contraste
@@ -31,7 +31,7 @@
   }
 
   @media (max-width: 1400px) {
-    width: 240px;
+    width: 230px;
     padding: $padding-sm;
   }
   
@@ -39,105 +39,256 @@
     display: none;
   }
 
-  // QUAND FERMÉ (mode compact) - AJUSTÉ POUR LE NOUVEAU STYLE
+  // QUAND FERMÉ (mode compact)
   &.closed {
-    width: 80px;
-    padding: $padding-sm;
+    width: 60px;
+    padding: $padding-xs;
     
     & ~ * {
-      margin-left: 100px;
+      margin-left: 60px;
       transition: margin-left $transition-slow ease;
     }
     
-    .sidebar-header,
-    .sidebar-footer {
+    .sidebar-header-projet-scenariste,
+    .sidebar-toggle-btn-projet-scenariste span,
+    .project-details-sidebar-projet-scenariste,
+    .sidebar-section-projet-scenariste,
+    .navigation-sections-projet-scenariste {
       display: none;
     }
     
-    .category-header {
-      justify-content: center;
-      padding: $padding-xs;
-      margin-bottom: $gap-xs;
-      background: rgba($color-text-light, 0.1) !important; // Fond clair
-      border-radius: $border-radius-xs;
-      
-      .category-info {
-        justify-content: center;
-        
-        i {
-          margin: 0;
-          font-size: $font-size-p2;
-          color: $color-text-light !important; // Icône en blanc
-        }
-        
-        span {
-          display: none;
-        }
-      }
-      
-      .dropdown-icon {
-        display: none;
-      }
-    }
-    
-    .category-items {
-      display: none !important;
-    }
-    
-    .nav-item {
-      justify-content: center;
-      padding: $padding-xs;
-      margin-bottom: $gap-xs;
-      border-radius: $border-radius-xs;
-      background: rgba($color-text-light, 0.1) !important; // Fond clair
-      border: 1px solid rgba($color-text-light, 0.2) !important;
-      width: 40px;
-      height: 40px;
-      
-      i {
-        margin: 0;
-        font-size: $font-size-p2;
-        color: $color-text-light !important; // Icône en blanc
-      }
-      
-      .item-text,
-      .item-title {
-        display: none;
-      }
-      
-      .has-details-indicator {
-        position: absolute;
-        top: 3px;
-        right: 3px;
-        width: 6px;
-        height: 6px;
-        background: $color-accent-dark !important; // Accent dark
-        border-radius: 50%;
-      }
+    .quick-actions-closed-projet-scenariste {
+      display: flex;
     }
   }
   
   // QUAND OUVERT
   &:not(.closed) {
     & ~ * {
-      margin-left: 250px;
+      margin-left: 270px;
       transition: margin-left $transition-slow ease;
+    }
+    
+    .quick-actions-closed-projet-scenariste {
+      display: none;
     }
   }
 }
 
 // =============================================
-// BOUTON TOGGLE - ADAPTÉ POUR LE NOUVEAU STYLE
+// EN-TÊTE DE LA SIDEBAR
 // =============================================
-.sidebar-toggle {
+.sidebar-header-projet-scenariste {
+  margin-bottom: $spacing-md;
+  border-bottom: 1px solid rgba($color-text-light, 0.2);
+  padding-bottom: $padding-sm;
+
+  .sidebar-title-projet-scenariste {
+    @include typography-playfair-h4;
+    color: $color-text-light;
+    margin: 0 0 5px 0;
+    font-size: $font-size-h4 - 2px;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary-light;
+      font-size: $font-size-h4 - 2px;
+    }
+  }
+
+  .sidebar-subtitle-projet-scenariste {
+    @include typography-p4;
+    color: $color-text-light;
+    margin: 5px 0 0 0;
+    opacity: 0.8;
+  }
+}
+
+// =============================================
+// BOUTON TOGGLE
+// =============================================
+.sidebar-toggle-btn-projet-scenariste {
   width: 100%;
   height: 32px;
   padding: 0 $padding-sm;
-  background: rgba($color-text-light, 0.1) !important; // Fond clair
-  border: 1px solid rgba($color-text-light, 0.2) !important; // Bordure claire
+  background: rgba($color-text-light, 0.1) !important;
+  border: 1px solid rgba($color-text-light, 0.2) !important;
   border-radius: $border-radius-xs;
   font-size: $font-size-p4;
-  color: $color-text-light !important; // Texte en blanc
+  color: $color-text-light !important;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: $font-weight-semibold;
+  gap: $gap-xs;
+  box-sizing: border-box;
+  margin-bottom: $spacing-md;
+
+  &:hover {
+    background: rgba($color-text-light, 0.2) !important;
+    border-color: $color-text-light !important;
+  }
+
+  i {
+    transition: transform $transition;
+    color: $color-text-light !important;
+  }
+  
+  .left-sidebar-projet-scenariste.closed & i {
+    transform: rotate(180deg);
+  }
+}
+
+// =============================================
+// DÉTAILS DU PROJET DANS LA SIDEBAR
+// =============================================
+.project-details-sidebar-projet-scenariste {
+  background: rgba($color-text-light, 0.1);
+  border-radius: $border-radius-xs;
+  padding: $padding-sm;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-hover;
+  transition: $transition-fast;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba($color-text-light, 0.15);
+  }
+}
+
+.project-header-sidebar-projet-scenariste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $gap-sm;
+}
+
+.project-title-container-sidebar {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  flex: 1;
+  
+  i.fa-project-diagram {
+    color: $color-primary-light !important;
+    font-size: $font-size-p2;
+  }
+}
+
+.project-info-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.project-title-sidebar {
+  @include typography-playfair-h4;
+  color: $color-text-light !important;
+  margin: 0;
+  font-weight: $font-weight-semibold;
+  line-height: 1.2;
+  font-size: $font-size-p2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-status-sidebar {
+  @include typography-p4;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: $border-radius-xs;
+  
+  &.statut-en-cours { 
+    background: rgba($color-accent-light, 0.3);
+    color: $color-text-light !important;
+  }
+  &.statut-termine { 
+    background: rgba($color-success, 0.3);
+    color: $color-text-light !important;
+  }
+  &.statut-attente { 
+    background: rgba($color-warning, 0.3);
+    color: $color-text-light !important;
+  }
+  &.statut-annule { 
+    background: rgba($color-error, 0.3);
+    color: $color-text-light !important;
+  }
+  &.statut-planifie { 
+    background: rgba($color-accent, 0.3);
+    color: $color-text-light !important;
+  }
+}
+
+.project-chevron {
+  color: $color-text-light !important;
+  font-size: $font-size-p4;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+// =============================================
+// SECTIONS DE LA SIDEBAR
+// =============================================
+.sidebar-section-projet-scenariste {
+  margin-bottom: $spacing-md;
+  background: rgba($color-text-light, 0.1);
+  border-radius: $border-radius-xs;
+  padding: $padding-sm;
+  box-shadow: $shadow-hover;
+
+  .section-title-projet-scenariste {
+    @include typography-p4;
+    color: $color-text-light;
+    margin-bottom: 8px;
+    font-size: $font-size-p4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $gap-xs;
+    
+    i {
+      color: $color-primary-light;
+      font-size: $font-size-p4;
+    }
+    
+    .item-count {
+      background: $color-text-light;
+      color: $color-primary;
+      font-size: $font-size-p5;
+      padding: 1px 5px;
+      border-radius: $border-radius-pill;
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+// =============================================
+// ACTIONS RAPIDES
+// =============================================
+.sidebar-actions-projet-scenariste {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-btn-projet-scenariste {
+  width: 100%;
+  height: 34px;
+  padding: 0 $padding-sm;
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  color: $color-text-secondary;
   cursor: pointer;
   transition: $transition-fast;
   display: flex;
@@ -145,502 +296,134 @@
   font-weight: $font-weight-semibold;
   gap: $gap-xs;
   box-sizing: border-box;
-  margin-bottom: $spacing-sm;
 
   &:hover {
-    background: rgba($color-text-light, 0.2) !important; // Fond plus clair
-    border-color: $color-text-light !important; // Bordure blanche
-    color: $color-text-light !important;
+    background: $color-surface-hover;
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+
+  &.active {
+    background: $color-accent-dark;
+    border-color: $color-primary;
+    color: $color-text-light;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-text-light !important; // Outline blanc
+    outline: 2px solid $color-primary;
     outline-offset: 1px;
   }
   
-  i {
-    transition: transform $transition;
-    color: $color-text-light !important; // Icône en blanc
-  }
-  
-  .left-sidebar-compact.closed & i {
-    transform: rotate(180deg);
-  }
-}
-
-// =============================================
-// EN-TÊTE DU PROJET - NOUVEAU STYLE
-// =============================================
-.sidebar-header {
-  margin-bottom: $spacing-sm;
-  border-bottom: 1px solid rgba($color-text-light, 0.2); // Bordure claire
-
-  .project-header {
-    cursor: pointer;
-    padding: $padding-sm;
-    border-radius: $border-radius-xs;
-    transition: $transition-fast;
-    background: rgba($color-text-light, 0.1) !important; // Fond clair
-    
-    &:hover {
-      background: rgba($color-text-light, 0.2) !important; // Fond plus clair
-    }
-    
-    .project-title-container {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: $gap-xs;
-      position: relative;
-      min-height: 40px;
-    }
-    
-    i.fa-project-diagram {
-      font-size: $font-size-h4;
-      color: $color-text-light !important; // Icône en blanc
-      margin-top: 2px;
-      margin-right: $gap-sm;
-      flex-shrink: 0;
-    }
-    
-    .project-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      
-      .project-title {
-        @include typography-playfair-h4;
-        color: $color-text-light !important; // Texte en blanc
-        margin: 0;
-        font-weight: $font-weight-semibold;
-        line-height: 1.2;
-      }
-      
-      // CORRECTION: Statut EN DESSOUS - ADAPTÉ
-      .project-status {
-        @include typography-p4;
-        font-size: $font-size-p4;
-        font-weight: $font-weight-medium;
-        margin-top: 2px;
-        display: inline-block;
-        
-        &.statut-en-cours { 
-          color: $color-text-light !important; // Texte en blanc
-          background: rgba($color-text-light, 0.2) !important; // Fond clair
-          padding: 1px 6px;
-          border-radius: $border-radius-xs;
-        }
-        &.statut-termine { 
-          color: $color-text-light !important; // Texte en blanc
-          background: rgba($color-success, 0.3) !important; // Fond vert clair
-          padding: 1px 6px;
-          border-radius: $border-radius-xs;
-        }
-        &.statut-attente { 
-          color: $color-text-light !important; // Texte en blanc
-          background: rgba($color-warning, 0.3) !important; // Fond orange clair
-          padding: 1px 6px;
-          border-radius: $border-radius-xs;
-        }
-      }
-    }
-    
-    // CORRECTION: V à l'extrémité DROITE
-    .dropdown-icon {
-      position: absolute;
-      right: 0;
-      top: 2px;
-      transition: transform $transition;
-      color: $color-text-light !important; // Icône en blanc
-      font-size: $font-size-p3;
-      
-      &.rotated {
-        transform: rotate(180deg);
-      }
-    }
-  }
-  
-  .project-details {
-    padding: $padding-sm;
-    background: rgba($color-text-light, 0.1) !important; // Fond clair
-    border-radius: $border-radius-xs;
-    border: 1px solid rgba($color-text-light, 0.2) !important; // Bordure claire
-    margin-top: $gap-sm;
-    box-shadow: $shadow;
-    
-    .synopsis {
-      @include typography-p3;
-      color: rgba($color-text-light, 0.9) !important; // Texte légèrement transparent
-      margin: 0 0 $margin-sm 0;
-      line-height: 1.5;
-    }
-    
-    .project-stats {
-      display: flex;
-      gap: $gap-lg;
-      margin-bottom: $margin-sm;
-      
-      span {
-        @include typography-p4;
-        color: rgba($color-text-light, 0.8) !important; // Texte plus transparent
-        font-size: $font-size-p4;
-        display: flex;
-        align-items: center;
-        gap: $gap-xs;
-        
-        i {
-          color: $color-text-light !important; // Icône en blanc
-        }
-      }
-    }
-    
-    .project-actions {
-      display: flex;
-      gap: $gap-sm;
-      justify-content: flex-end;
-      
-      .icon-btn {
-        width: 32px;
-        height: 32px;
-        border: 1px solid rgba($color-text-light, 0.3) !important; // Bordure claire
-        background: rgba($color-text-light, 0.1) !important; // Fond clair
-        border-radius: $border-radius-xs;
-        color: $color-text-light !important; // Icône en blanc
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: $transition-fast;
-        
-        &:hover {
-          background: rgba($color-text-light, 0.2) !important; // Fond plus clair
-          border-color: $color-text-light !important; // Bordure blanche
-          color: $color-text-light !important; // Icône en blanc
-          transform: scale(1.05);
-        }
-        
-        &.delete:hover {
-          background: rgba($color-error, 0.3) !important; // Fond rouge clair
-          border-color: rgba($color-error, 0.5) !important; // Bordure rouge
-          color: $color-text-light !important; // Icône en blanc
-        }
-      }
-    }
-  }
-}
-
-// =============================================
-// NAVIGATION - Catégories avec V à droite - NOUVEAU STYLE
-// =============================================
-.compact-nav {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-}
-
-.nav-category {
-  background: rgba($color-text-light, 0.1) !important; // Fond clair
-  border-radius: $border-radius-xs;
-  box-shadow: $shadow-hover;
-  margin-bottom: $spacing-xs;
-  overflow: hidden;
-
-  // CORRECTION: Header avec V à l'extrémité droite
-  .category-header {
-    display: flex;
-    align-items: center;
-    padding: $padding-sm $padding-md;
-    cursor: pointer;
-    transition: $transition-fast;
-    background: rgba($color-text-light, 0.1) !important; // Fond clair
-    border-bottom: 1px solid transparent;
-    position: relative;
-    min-height: 44px;
-    
-    &:hover {
-      background: rgba($color-text-light, 0.2) !important; // Fond plus clair
-    }
-    
-    .category-info {
-      display: flex;
-      align-items: center;
-      gap: $gap-sm;
-      flex: 1;
-      
-      i {
-        color: $color-text-light !important; // Icône en blanc
-        font-size: $font-size-p2;
-        width: 20px;
-        text-align: center;
-        flex-shrink: 0;
-      }
-      
-      span {
-        @include typography-p4;
-        color: $color-text-light !important; // Texte en blanc
-        font-weight: $font-weight-semibold;
-        flex: 1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .item-count {
-        background: $color-text-light !important; // Fond blanc
-        color: $color-primary !important; // Texte couleur principale
-        font-size: $font-size-p5;
-        padding: 1px 5px;
-        border-radius: $border-radius-pill;
-        font-weight: $font-weight-semibold;
-        margin-left: auto;
-        margin-right: 8px;
-        flex-shrink: 0;
-      }
-    }
-    
-    // CORRECTION: V à l'extrémité DROITE (absolu)
-    .dropdown-icon {
-      position: absolute;
-      right: $padding-sm;
-      top: 50%;
-      transform: translateY(-50%);
-      transition: transform $transition;
-      color: $color-text-light !important; // Icône en blanc
-      font-size: $font-size-p3;
-      
-      &.rotated {
-        transform: translateY(-50%) rotate(180deg);
-      }
-    }
-  }
-  
-  .category-content {
-    overflow: hidden;
-    transition: max-height $transition;
-    
-    .category-items {
-      padding: $padding-sm;
-      display: flex;
-      flex-direction: column;
-      gap: $gap-xs;
-      background: rgba($color-text-light, 0.05) !important; // Fond très clair
-      border-top: 1px solid rgba($color-text-light, 0.1); // Bordure très claire
-    }
-  }
-  
-  .empty-state {
-    @include typography-p3;
-    color: rgba($color-text-light, 0.7) !important; // Texte transparent
-    text-align: center;
-    padding: $padding-sm;
-    font-style: italic;
-    background: rgba($color-text-light, 0.1) !important; // Fond clair
-    border-radius: $border-radius-xs;
-  }
-}
-
-// =============================================
-// ITEMS DE NAVIGATION - NOUVEAU STYLE
-// =============================================
-.nav-item {
-  display: flex;
-  align-items: center;
-  padding: $padding-xs $padding-sm;
-  background: rgba($color-text-light, 0.1) !important; // Fond clair
-  border: 1px solid rgba($color-text-light, 0.2) !important; // Bordure claire
-  border-radius: $border-radius-xs;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-medium;
-  color: $color-text-light !important; // Texte en blanc
-  cursor: pointer;
-  transition: $transition-fast;
-  gap: $gap-xs;
-  position: relative;
-  min-height: 32px;
-
-  &:hover {
-    background: rgba($color-text-light, 0.2) !important; // Fond plus clair
-    border-color: $color-text-light !important; // Bordure blanche
-    color: $color-text-light !important; // Texte en blanc
-  }
-
-  &.active {
-    background: rgba($color-text-light, 0.25) !important; // Fond encore plus clair
-    border-color: $color-text-light !important; // Bordure blanche
-    color: $color-text-light !important; // Texte en blanc
+  &.nouvel-episode-btn {
+    background: $color-accent-dark;
+    color: $color-white;
     font-weight: $font-weight-semibold;
-  }
-
-  &.current {
-    background: rgba($color-accent-dark, 0.3) !important; // Fond accent dark
-    border-color: rgba($color-accent-dark, 0.5) !important; // Bordure accent dark
-    color: $color-text-light !important; // Texte en blanc
-  }
-  
-  i {
-    color: inherit !important; // Hérite la couleur du texte
-    font-size: $font-size-p4;
-    width: 18px;
-    text-align: center;
-    flex-shrink: 0;
+    
+    &:hover {
+      background: darken($color-accent-dark, 10%);
+    }
+    
+    i {
+      color: $color-text-light;
+    }
   }
   
-  .item-text {
-    @include typography-p4;
-    font-weight: inherit;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .item-title {
-    @include typography-p4;
-    color: inherit !important;
-    opacity: 0.9;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .has-details-indicator {
-    width: 6px;
-    height: 6px;
-    background: $color-accent-dark !important; // Accent dark
-    border-radius: 50%;
-    box-shadow: 0 0 3px rgba($color-accent-dark, 0.5);
-    margin-left: auto;
-    flex-shrink: 0;
+  &.back-btn {
+    background: rgba($color-text-light, 0.1);
+    border-color: rgba($color-text-light, 0.2);
+    color: $color-text-light;
+    
+    &:hover {
+      background: rgba($color-text-light, 0.2);
+      border-color: $color-text-light;
+    }
   }
 }
 
 // =============================================
-// MENUS DÉROULANTS (DROPDOWNS) - NOUVEAU STYLE
+// CATÉGORIES DE NAVIGATION
 // =============================================
-.dropdown-section {
-  background: rgba($color-text-light, 0.1) !important; // Fond clair
-  border-radius: $border-radius-xs;
-  box-shadow: $shadow-hover;
-  margin-bottom: $spacing-sm;
-  overflow: hidden;
-  transition: $transition-fast;
-  
-  &:hover {
-    box-shadow: $shadow-accent;
-  }
-}
-
-.dropdown-header {
+.category-header-projet-scenariste {
+  cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: $padding-sm $padding-md;
-  cursor: pointer;
-  transition: $transition-fast;
-  background: rgba($color-text-light, 0.1) !important; // Fond clair
-  border-bottom: 1px solid transparent;
-  min-height: 44px;
+  align-items: center;
+  margin-bottom: 6px;
   
   &:hover {
-    background: rgba($color-text-light, 0.2) !important; // Fond plus clair
-    
-    .dropdown-chevron {
-      color: $color-text-light !important; // Icône en blanc
+    .section-title-projet-scenariste {
+      color: $color-primary-light;
     }
   }
-  
-  &.active {
-    border-bottom-color: rgba($color-text-light, 0.2); // Bordure claire
-  }
 }
 
-.dropdown-header-content {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  flex: 1;
-  
-  i:first-child {
-    color: $color-text-light !important; // Icône en blanc
-    font-size: $font-size-p2;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-  
-  .sidebar-section-title,
-  .sidebar-section-title-ecran {
-    margin: 0;
-    padding: 0;
-    border: none;
-    color: $color-text-light !important; // Texte en blanc
-    font-weight: $font-weight-semibold;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-.dropdown-chevron {
+.dropdown-icon {
   transition: transform $transition;
-  color: $color-text-light !important; // Icône en blanc
-  font-size: $font-size-p3;
-  margin-left: $gap-xs;
+  color: $color-text-light !important;
+  font-size: $font-size-p4;
   flex-shrink: 0;
+  opacity: 0.7;
   
   &.rotated {
     transform: rotate(180deg);
   }
 }
 
-.dropdown-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height $transition;
-  background: rgba($color-text-light, 0.05) !important; // Fond très clair
+.category-items-projet-scenariste {
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 6px 8px;
+  margin-top: 4px;
+  background: rgba($color-text-light, 0.05);
+  border-radius: $border-radius-xs;
   
-  &.open {
-    max-height: 500px;
-    border-top: 1px solid rgba($color-text-light, 0.1); // Bordure très claire
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-text-light, 0.1);
+    border-radius: $border-radius-pill;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-text-light, 0.3);
+    border-radius: $border-radius-pill;
+    
+    &:hover {
+      background: rgba($color-text-light, 0.5);
+    }
   }
 }
 
 // =============================================
-// ITEMS DE DROPDOWN - NOUVEAU STYLE
+// ITEMS DE NAVIGATION
 // =============================================
-.dropdown-item {
+.nav-item-projet-scenariste {
   display: flex;
   align-items: center;
-  padding: $padding-sm $padding-md;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-medium;
-  color: rgba($color-text-light, 0.9) !important; // Texte légèrement transparent
+  padding: 6px 10px;
+  background: rgba($color-text-light, 0.08);
+  border: 1px solid rgba($color-text-light, 0.15);
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p3;
+  color: rgba($color-text-light, 0.9);
   cursor: pointer;
   transition: $transition-fast;
-  gap: $gap-sm;
-  width: 100%;
-  box-sizing: border-box;
+  gap: 8px;
+  margin-bottom: 5px;
   position: relative;
-  text-align: left;
-  
+
   &:hover {
-    background: rgba($color-text-light, 0.1) !important; // Fond clair
-    color: $color-text-light !important; // Texte en blanc
-    
-    .dropdown-item-icon i {
-      transform: scale(1.1);
-    }
+    background: rgba($color-text-light, 0.12);
+    border-color: rgba($color-text-light, 0.25);
+    color: $color-text-light;
   }
-  
+
   &.active {
-    background: rgba($color-text-light, 0.15) !important; // Fond plus clair
-    color: $color-text-light !important; // Texte en blanc
+    background: rgba($color-accent-dark, 0.3);
+    border-color: rgba($color-accent-dark, 0.5);
+    color: $color-text-light;
     font-weight: $font-weight-semibold;
     
     &::before {
@@ -650,123 +433,344 @@
       top: 0;
       bottom: 0;
       width: 3px;
-      background: $color-text-light !important; // Bordure blanche
+      background: $color-accent-dark;
+      border-radius: $border-radius-xs 0 0 $border-radius-xs;
     }
   }
-  
-  &.highlight {
-    background: rgba($color-accent-dark, 0.2) !important; // Fond accent dark
+
+  &.current {
+    background: rgba($color-primary-light, 0.2);
+    border-color: rgba($color-primary-light, 0.4);
     
     &:hover {
-      background: rgba($color-accent-dark, 0.3) !important; // Fond accent dark plus fort
-      color: $color-text-light !important; // Texte en blanc
+      background: rgba($color-primary-light, 0.3);
     }
   }
-}
-
-.dropdown-item-icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
   
   i {
-    color: inherit !important; // Hérite la couleur du texte
+    color: inherit;
     font-size: $font-size-p3;
-    transition: transform $transition-fast;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
   }
 }
 
-.dropdown-item span {
-  @include typography-p4;
-  font-weight: $font-weight-medium;
+.nav-item-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nav-item-title {
+  @include typography-p3;
+  font-weight: $font-weight-medium;
+  color: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: left;
+  font-size: $font-size-p3;
 }
 
-.dropdown-item-badge {
-  background: $color-text-light !important; // Fond blanc
-  color: $color-primary !important; // Texte couleur principale
-  font-size: $font-size-p5;
-  padding: 1px 5px;
-  border-radius: $border-radius-pill;
-  font-weight: $font-weight-bold;
-  margin-left: $gap-xs;
+.nav-item-subtitle {
+  @include typography-p4;
+  color: rgba($color-text-light, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: $font-size-p4;
+}
+
+.has-details-indicator {
+  width: 6px;
+  height: 6px;
+  background: $color-accent-dark;
+  border-radius: 50%;
+  box-shadow: 0 0 3px rgba($color-accent-dark, 0.5);
   flex-shrink: 0;
-  min-width: 20px;
-  text-align: center;
+  margin-left: auto;
+}
+
+// =============================================
+// ACTIONS RAPIDES EN MODE FERMÉ
+// =============================================
+.quick-actions-closed-projet-scenariste {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: $gap-md;
+  padding-top: $spacing-md;
+}
+
+.icon-btn-closed {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba($color-text-light, 0.3);
+  background: rgba($color-text-light, 0.1);
+  border-radius: $border-radius-xs;
+  color: $color-text-light;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-fast;
   
-  &.premium {
-    background: linear-gradient(135deg, $color-warning, $color-accent) !important;
-    color: $color-text-light !important; // Texte en blanc
+  &:hover {
+    background: rgba($color-text-light, 0.2);
+    border-color: $color-text-light;
+    transform: scale(1.05);
   }
   
-  &.new {
-    background: $color-success !important;
-    color: $color-text-light !important; // Texte en blanc
-  }
-  
-  &.hot {
-    background: $color-error !important;
-    color: $color-text-light !important; // Texte en blanc
+  &.toggle-btn-closed {
+    background: $color-accent-dark;
+    border-color: $color-accent-dark;
+    
+    &:hover {
+      background: darken($color-accent-dark, 10%);
+    }
   }
   
   i {
-    font-size: $font-size-p5;
+    color: inherit;
+    font-size: $font-size-p2;
   }
 }
 
 // =============================================
-// STYLES SPÉCIFIQUES POUR LES OPTIONS D'EXPORT - ADAPTÉ
+// COMPOSANTS POUR MODE FERMÉ
 // =============================================
-.export-options-ecran {
+.icon-item-closed {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba($color-text-light, 0.3);
+  background: rgba($color-text-light, 0.1);
+  border-radius: $border-radius-xs;
+  color: $color-text-light;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-fast;
+  position: relative;
+  margin: 0 auto 12px;
+  
+  &:hover {
+    background: rgba($color-text-light, 0.2);
+    border-color: $color-text-light;
+    transform: scale(1.05);
+  }
+  
+  &.active {
+    background: rgba($color-accent-dark, 0.3);
+    border-color: rgba($color-accent-dark, 0.5);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      right: -2px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 5px;
+      background: $color-accent-dark;
+      border-radius: 50%;
+    }
+  }
+  
+  i {
+    color: inherit;
+    font-size: $font-size-p2;
+  }
+}
+
+.icon-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  
+  &.statut-en-cours { 
+    background: $color-accent-light;
+  }
+  &.statut-termine { 
+    background: $color-success;
+  }
+  &.statut-attente { 
+    background: $color-warning;
+  }
+  &.statut-annule { 
+    background: $color-error;
+  }
+  &.statut-planifie { 
+    background: $color-accent;
+  }
+}
+
+.closed-spacer {
+  height: 15px;
+}
+
+.closed-spacer-small {
+  height: 10px;
+}
+
+.category-closed {
+  margin-bottom: 15px;
+}
+
+.category-header-closed {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba($color-text-light, 0.3);
+  background: rgba($color-text-light, 0.1);
+  border-radius: $border-radius-xs;
+  color: $color-text-light;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-fast;
+  position: relative;
+  margin: 0 auto 8px;
+  
+  &:hover {
+    background: rgba($color-text-light, 0.2);
+    border-color: $color-text-light;
+  }
+  
+  i {
+    color: inherit;
+    font-size: $font-size-p2;
+  }
+}
+
+.item-count-closed {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  background: $color-text-light;
+  color: $color-primary;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-bold;
+  border-radius: $border-radius-pill;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+.category-items-closed {
   display: flex;
   flex-direction: column;
-  padding: $padding-xs 0;
-}
-
-.export-option.dropdown-item {
-  border-left: 3px solid transparent;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding: 4px;
   
-  &:nth-child(1) { border-left-color: rgba($color-text-light, 0.5); }
-  &:nth-child(2) { border-left-color: rgba($color-text-light, 0.5); }
-  &:nth-child(3) { border-left-color: rgba($color-text-light, 0.5); }
-  &:nth-child(4) { border-left-color: rgba($color-text-light, 0.5); }
-  &:nth-child(5) { border-left-color: rgba($color-text-light, 0.5); }
-}
-
-// =============================================
-// SCROLLBAR PERSONNALISÉE POUR LA SIDEBAR
-// =============================================
-.left-sidebar-compact {
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 2px;
   }
   
   &::-webkit-scrollbar-track {
-    background: rgba($color-text-light, 0.1); // Piste claire
+    background: rgba($color-text-light, 0.1);
     border-radius: $border-radius-pill;
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba($color-text-light, 0.3); // Curseur clair
-    
-    &:hover {
-      background: rgba($color-text-light, 0.5); // Curseur plus clair au hover
-    }
+    background: rgba($color-text-light, 0.3);
+    border-radius: $border-radius-pill;
   }
 }
 
+.nav-item-closed {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba($color-text-light, 0.25);
+  background: rgba($color-text-light, 0.08);
+  border-radius: $border-radius-xs;
+  color: rgba($color-text-light, 0.9);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-fast;
+  position: relative;
+  
+  &:hover {
+    background: rgba($color-text-light, 0.15);
+    border-color: rgba($color-text-light, 0.35);
+    color: $color-text-light;
+    transform: scale(1.05);
+  }
+  
+  &.active {
+    background: rgba($color-accent-dark, 0.3);
+    border-color: rgba($color-accent-dark, 0.5);
+    color: $color-text-light;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      right: -2px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 5px;
+      background: $color-accent-dark;
+      border-radius: 50%;
+    }
+  }
+  
+  &.current {
+    background: rgba($color-primary-light, 0.25);
+    border-color: rgba($color-primary-light, 0.4);
+  }
+  
+  i {
+    color: inherit;
+    font-size: $font-size-p3;
+  }
+}
+
+.item-order-closed {
+  position: absolute;
+  bottom: -6px;
+  font-size: $font-size-p5;
+  font-weight: $font-weight-bold;
+  color: $color-text-light;
+  background: rgba($color-primary, 0.9);
+  border-radius: $border-radius-pill;
+  min-width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px;
+}
+
+.has-details-indicator-closed {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 5px;
+  height: 5px;
+  background: $color-accent-dark;
+  border-radius: 50%;
+}
+
 // =============================================
-// RESPONSIVE
+// RESPONSIVE DESIGN
 // =============================================
 @media (max-width: $breakpoint-xl) {
-  .left-sidebar-compact {
+  .left-sidebar-projet-scenariste {
     width: 220px;
     
     &:not(.closed) ~ * {
@@ -774,235 +778,100 @@
     }
     
     &.closed {
-      width: 70px;
+      width: 55px;
+      padding: $padding-xs;
       
       & ~ * {
-        margin-left: 70px;
+        margin-left: 55px;
+      }
+      
+      .icon-btn-closed,
+      .icon-item-closed,
+      .category-header-closed {
+        width: 34px;
+        height: 34px;
+      }
+      
+      .nav-item-closed {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .item-order-closed {
+        font-size: $font-size-p6;
+        min-width: 12px;
+        height: 12px;
       }
     }
   }
 }
 
-@media (max-width: $breakpoint-md) {
-  .left-sidebar-compact {
-    .sidebar-header {
-      .project-header {
-        .project-title-container {
-          min-height: 36px;
-        }
-        
-        .project-info {
-          .project-title {
-            font-size: $font-size-p1;
-          }
-          
-          .project-status {
-            font-size: $font-size-p5;
-          }
-        }
-        
-        .dropdown-icon {
-          font-size: $font-size-p4;
-        }
-      }
-    }
-    
-    .nav-category {
-      .category-header {
-        min-height: 40px;
-        padding: $padding-xs $padding-sm;
-        
-        .dropdown-icon {
-          right: $padding-xs;
-          font-size: $font-size-p4;
-        }
-      }
-    }
-  }
-}
-
-// =============================================
-// MODE COMPACT (SIDEBAR FERMÉE) - AJUSTÉ
-// =============================================
-.right-sidebar-ecran:not(.open) {
-  .dropdown-section {
-    background: transparent !important;
-    box-shadow: none;
-    margin-bottom: $spacing-xs;
-  }
-  
-  .dropdown-header {
-    justify-content: center;
-    padding: $padding-xs;
-    min-height: auto;
-    
-    .dropdown-header-content {
-      justify-content: center;
-      
-      i:first-child {
-        margin: 0;
-        font-size: $font-size-p2;
-        color: $color-text-light !important; // Icône en blanc
-      }
-      
-      .sidebar-section-title,
-      .sidebar-section-title-ecran {
-        display: none;
-      }
-    }
-    
-    .dropdown-chevron {
-      display: none;
-    }
-  }
-  
-  .dropdown-content {
-    display: none !important;
-  }
-  
-  .dropdown-item {
-    justify-content: center;
-    padding: $padding-xs;
-    width: 40px;
-    height: 40px;
-    border-radius: $border-radius-xs;
-    background: rgba($color-text-light, 0.1) !important; // Fond clair
-    margin-bottom: $gap-xs;
-    
-    .dropdown-item-icon {
-      margin: 0;
-      
-      i {
-        font-size: $font-size-p2;
-        color: $color-text-light !important; // Icône en blanc
-      }
-    }
-    
-    span,
-    .dropdown-item-badge {
-      display: none;
-    }
-  }
-}
-
-// =============================================
-// RESPONSIVE POUR LES DROPDOWNS
-// =============================================
-@media (max-width: $breakpoint-md) {
-  .dropdown-header {
-    padding: $padding-xs $padding-sm;
-    min-height: 40px;
-    
-    .dropdown-header-content {
-      i:first-child {
-        font-size: $font-size-p3;
-      }
-      
-      .sidebar-section-title,
-      .sidebar-section-title-ecran {
-        font-size: $font-size-p4;
-      }
-    }
-    
-    .dropdown-chevron {
-      font-size: $font-size-p4;
-    }
-  }
-  
-  .dropdown-item {
-    padding: $padding-xs $padding-sm;
-    min-height: 36px;
-    
-    .dropdown-item-icon {
-      width: 20px;
-      height: 20px;
-      
-      i {
-        font-size: $font-size-p4;
-      }
-    }
-    
-    span {
-      font-size: $font-size-p5;
-    }
-  }
-}
-
-// =============================================
-// AJUSTEMENTS POUR LE THÈME SOMBRE SUR MOBILE
-// =============================================
 @media (max-width: $breakpoint-lg) {
-  .left-sidebar-compact {
-    *:not(i) {
-      color: $color-text-primary !important;
-    }
+  .left-sidebar-projet-scenariste {
+    display: none;
     
-    background: $color-background-alt !important;
-    
-    .sidebar-toggle {
-      background: $color-background-alt !important;
-      border: 1px solid $color-border !important;
-      color: $color-text-primary !important;
-      
-      i {
-        color: $color-primary !important;
-      }
-      
-      &:hover {
-        background: $color-surface-hover !important;
-        border-color: $color-primary !important;
-        color: $color-primary !important;
-      }
-    }
-    
-    .project-header {
-      background: $color-background-alt !important;
-      
-      .project-title {
-        color: $color-text-primary !important;
-      }
-      
-      .project-status {
-        &.statut-en-cours { 
-          color: $color-primary !important;
-          background: rgba($color-primary, 0.1) !important;
-        }
-        &.statut-termine { 
-          color: $color-success !important;
-          background: rgba($color-success, 0.1) !important;
-        }
-        &.statut-attente { 
-          color: $color-warning !important;
-          background: rgba($color-warning, 0.1) !important;
-        }
-      }
-    }
-    
-    .nav-category {
-      background: $color-background-alt !important;
-      
-      .category-header {
-        background: $color-background-alt !important;
-        
-        span {
-          color: $color-text-primary !important;
-        }
-      }
-    }
-    
-    .nav-item {
-      background: $color-background-alt !important;
-      border: 1px solid $color-border !important;
-      color: $color-text-primary !important;
-      
-      &:hover {
-        background: rgba($color-primary, 0.1) !important;
-        border-color: $color-primary !important;
-        color: $color-primary !important;
-      }
+    &:not(.closed) ~ *,
+    &.closed ~ * {
+      margin-left: 0;
     }
   }
 }
 
+// =============================================
+// ACCESSIBILITÉ
+// =============================================
+@media (prefers-reduced-motion: reduce) {
+  .left-sidebar-projet-scenariste,
+  .sidebar-toggle-btn-projet-scenariste,
+  .sidebar-btn-projet-scenariste,
+  .nav-item-projet-scenariste,
+  .icon-item-closed,
+  .icon-btn-closed,
+  .nav-item-closed,
+  .dropdown-icon {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}
 
+// =============================================
+// SCROLLBAR PERSONNALISÉE
+// =============================================
+.left-sidebar-projet-scenariste {
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-text-light, 0.1);
+    border-radius: $border-radius-pill;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-text-light, 0.3);
+    
+    &:hover {
+      background: rgba($color-text-light, 0.5);
+    }
+  }
+}
+
+// =============================================
+// ESPACEMENT GÉNÉRAL AMÉLIORÉ
+// =============================================
+.navigation-sections-projet-scenariste {
+  margin-top: $spacing-md;
+}
+
+// Espacement entre sections
+.sidebar-section-projet-scenariste + .sidebar-section-projet-scenariste {
+  margin-top: $spacing-md;
+}
+
+.project-details-sidebar-projet-scenariste + .navigation-sections-projet-scenariste {
+  margin-top: $spacing-lg;
+}
 

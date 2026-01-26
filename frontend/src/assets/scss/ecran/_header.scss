@@ -1,130 +1,188 @@
-
+// _header.scss
 @import '../base/variables';
 
-// _header-ecran.scss
- 
-.header-ecran-travail-screen-work {
+// =============================================
+// HEADER ÉCRAN DE TRAVAIL - TOUT SUR UNE LIGNE
+// =============================================
+.header-ecran-travail-screen-work-header-navigation {
   position: fixed;
   left: 0;
   right: 0;
   z-index: $z-index-sticky;
-  background: $color-secondary-black;
+  background: $color-primary;
   border-bottom: 1px solid $color-border;
   box-shadow: $shadow-md;
-  height: 60psx;
+  height: 60px;
   transition: $transition-medium;
   border-radius: 0 0 20px 20px;
+  top: 50px;
 
-  // Position par défaut - collé à la navbar principale
-  top: 70px; // Positionné juste en dessous de la navbar principale
-
-  // Mode scène actif - ajuste la position car il y a déjà une navbar au-dessus
-  &.scene-mode-active {
-    top: 120px; // 60px (navbar principale) + 60px (navbar scène)
+  &.scene-mode-active-header-navigation {
+    top: 120px;
     background: $color-background-dark;
   }
 
-  // Mode séquence actif
-  &.sequence-mode-active {
-    background: $color-background-dark;
-  }
-
-  // Mode épisode actif
-  &.episode-mode-active {
+  &.sequence-mode-active-header-navigation,
+  &.episode-mode-active-header-navigation {
     background: $color-background-dark;
   }
 }
 
-// Conteneur de navigation fixe
-.fixed-nav-container-screen-work {
-  @include flex-between;
+// =============================================
+// CONTENEUR PRINCIPAL - UNE SEULE LIGNE
+// =============================================
+.fixed-nav-container-screen-work-header-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   height: 100%;
-  padding: 0 $padding-sm;
+  padding: 0 $padding-md;
   max-width: 1400px;
   margin: 0 auto;
-  gap: $gap-sm;
-
-  // Sections de navigation
-  .nav-left-section-screen-work,
-  .nav-center-section-screen-work,
-  .nav-right-section-screen-work {
-    flex: 1;
-    @include flex-center;
-  }
-
-  .nav-left-section-screen-work {
-    justify-content: flex-start;
-  }
-
-  .nav-center-section-screen-work {
-    justify-content: center;
-  }
-
-  .nav-right-section-screen-work {
-    justify-content: flex-end;
+  width: 100%;
+  box-sizing: border-box;
+  
+  // Structure en 3 colonnes fixes
+  > * {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
 }
 
-// Navigation globale (précédent/suivant)
-.global-navigation-buttons {
+// =============================================
+// DISPOSITION DES COLONNES
+// =============================================
+// Colonne gauche - Précédent
+.left-section-header-navigation {
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  width: 150px;
+  
+  .global-navigation-buttons-header-navigation {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
+
+// Colonne centre-gauche - Navigation scène (conditionnelle)
+.scene-section-header-navigation {
+  flex: 0 0 auto;
+  justify-content: center;
+  margin: 0 10px;
+  
+  .scene-navigation-buttons-screen-work-header-navigation {
+    gap: 8px;
+  }
+}
+
+// Colonne centre - Contexte
+.center-section-header-navigation {
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  
+  // Forcer le centrage
   display: flex;
-  gap: $gap-xs;
   align-items: center;
+  justify-content: center;
+}
 
+// Colonne droite - Suivant
+.right-section-header-navigation {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  width: 150px;
+  
+  .global-navigation-buttons-header-navigation {
+    justify-content: flex-end;
+    width: 100%;
+  }
+}
+
+// =============================================
+// BOUTONS DE NAVIGATION
+// =============================================
+.global-navigation-buttons-header-navigation,
+.scene-navigation-buttons-screen-work-header-navigation {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  
   button {
-    @include btn-cinema-primary;
-    padding: 6px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
     font-size: $font-size-p4;
-    min-width: 90px;
+    font-weight: $font-weight-medium;
     height: 36px;
+    min-width: 110px;
     border-radius: $border-radius-xs;
-
+    border: 1px solid $color-border;
+    background: $color-surface;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+    
+    &:hover:not(:disabled) {
+      background: $color-surface-hover;
+      border-color: $color-primary;
+      color: $color-primary;
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+    
     &:disabled {
-      opacity: 0.4;
+      opacity: 0.5;
       cursor: not-allowed;
       background: rgba($color-text-muted, 0.1);
       color: $color-text-muted;
-      box-shadow: none;
-
+      
       &:hover {
         transform: none;
         box-shadow: none;
       }
     }
-
+    
     i {
-      font-size: $font-size-p5;
-    }
-  }
-
-  .nav-btn-fixed-left-screen-work {
-    background: linear-gradient(135deg, $color-tertiary-light, $color-tertiary);
-    
-    &:hover:not(:disabled) {
-      background: linear-gradient(135deg, $color-tertiary, $color-tertiary-dark);
-    }
-  }
-
-  .nav-btn-fixed-right-screen-work {
-    background: linear-gradient(135deg, $color-primary, $color-primary-dark);
-    
-    &:hover:not(:disabled) {
-      background: linear-gradient(135deg, $color-primary-dark, $color-primary);
+      font-size: $font-size-p4;
     }
   }
 }
 
-// Indicateur de contexte actuel
-.current-context-screen-work {
+// Style spécifique pour les boutons scène
+.scene-navigation-buttons-screen-work-header-navigation {
+  gap: 8px;
+  
+  .scene-nav-btn-screen-work-header-navigation {
+    min-width: 120px;
+    background: $color-background;
+    
+    &:hover:not(:disabled) {
+      border-color: $color-secondary;
+      color: $color-secondary;
+    }
+  }
+}
+
+// =============================================
+// CONTEXTE ACTUEL
+// =============================================
+.current-context-screen-work-header-navigation {
   @include typography-playfair-h4;
   font-size: $font-size-p2;
   color: $color-text-light;
   background: $color-surface;
-  padding: 4px 12px;
+  padding: 8px 24px;
   border-radius: $border-radius-pill;
   border: 1px solid $color-border;
   white-space: nowrap;
-  max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
@@ -133,196 +191,352 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  .scene-mode-active & {
-    background: $color-background;
-    border-color: rgba($color-tertiary-dark, 0.3);
-    color: darken($color-text-primary, 20%);
+  max-width: 100%;
+  box-shadow: $shadow;
+  line-height: 1;
+  flex-shrink: 1;
+  min-width: 0;
+  
+  // Séparateurs entre éléments
+  span:not(:last-child)::after {
+    content: " • ";
+    margin: 0 6px;
+    color: $color-text-muted;
+    font-weight: $font-weight-regular;
   }
-
-  .sequence-mode-active & {
+  
+  // Styles spécifiques selon le mode
+  .scene-mode-active-header-navigation & {
+    background: rgba($color-tertiary, 0.1);
+    border-color: rgba($color-tertiary, 0.3);
+    color: $color-tertiary-dark;
+  }
+  
+  .sequence-mode-active-header-navigation & {
     background: rgba($color-sequence, 0.1);
     border-color: rgba($color-sequence, 0.3);
     color: darken($color-sequence, 20%);
   }
-
-  .episode-mode-active & {
+  
+  .episode-mode-active-header-navigation & {
     background: rgba($color-episode, 0.1);
     border-color: rgba($color-episode, 0.3);
     color: darken($color-episode, 20%);
   }
 }
 
-// Navigation spécifique aux scènes
-.scene-navigation-buttons-screen-work {
-  display: flex;
-  gap: $gap-xs;
-  margin-left: $margin-xs;
-
-  .scene-nav-btn-screen-work {
-    @include btn-cinema-accent;
-    padding: 6px 10px;
-    font-size: $font-size-p4;
-    min-width: 100px;
-    height: 36px;
-    background: linear-gradient(135deg, $color-secondary, $color-secondary-dark);
-    border-radius: $border-radius-xs;
-    
-    &:hover:not(:disabled) {
-      background: linear-gradient(135deg, $color-secondary-dark, $color-secondary);
-    }
-
-    &:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      background: rgba($color-text-muted, 0.1);
-      color: $color-text-muted;
-      box-shadow: none;
-
-      &:hover {
-        transform: none;
-        box-shadow: none;
-      }
-    }
-
-    i {
-      font-size: $font-size-p5;
-    }
+// =============================================
+// DISPOSITION SPÉCIFIQUE SANS NAVIGATION SCÈNE
+// =============================================
+.fixed-nav-container-screen-work-header-navigation:not(:has(.scene-section-header-navigation)) {
+  .left-section-header-navigation {
+    width: 200px;
+  }
+  
+  .center-section-header-navigation {
+    flex: 2;
+  }
+  
+  .right-section-header-navigation {
+    width: 200px;
   }
 }
 
-// Boutons génériques de navigation
-.nav-btn-ecran-travail-screen-work {
-  @include flex-center;
-  gap: $gap-xs;
-  border: none;
-  border-radius: $border-radius-xs;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: $transition-fast;
-  position: relative;
-  overflow: hidden;
-
-  &:focus-visible {
-    outline: 2px solid $color-primary;
-    outline-offset: 2px;
+// =============================================
+// RESPONSIVE DESIGN
+// =============================================
+@include respond-to($breakpoint-lg) {
+  .fixed-nav-container-screen-work-header-navigation {
+    padding: 0 $padding-lg;
+  }
+  
+  .left-section-header-navigation,
+  .right-section-header-navigation {
+    width: 160px;
+  }
+  
+  .scene-section-header-navigation {
+    margin: 0 15px;
+  }
+  
+  .current-context-screen-work-header-navigation {
+    font-size: $font-size-p1;
+    padding: 10px 28px;
+  }
+  
+  .global-navigation-buttons-header-navigation button,
+  .scene-navigation-buttons-screen-work-header-navigation .scene-nav-btn-screen-work-header-navigation {
+    min-width: 130px;
+    padding: 10px 18px;
+    font-size: $font-size-p3;
   }
 }
 
-// Responsive
 @include respond-to($breakpoint-md) {
-  .header-ecran-travail-screen-work {
-    &.scene-mode-active {
+  .fixed-nav-container-screen-work-header-navigation {
+    padding: 0 $padding-md;
+  }
+  
+  .left-section-header-navigation,
+  .right-section-header-navigation {
+    width: 140px;
+  }
+  
+  .scene-section-header-navigation {
+    margin: 0 8px;
+  }
+  
+  .current-context-screen-work-header-navigation {
+    font-size: $font-size-p2;
+    padding: 6px 20px;
+  }
+  
+  .global-navigation-buttons-header-navigation button,
+  .scene-navigation-buttons-screen-work-header-navigation .scene-nav-btn-screen-work-header-navigation {
+    min-width: 115px;
+    padding: 7px 14px;
+    font-size: $font-size-p4;
+  }
+}
+
+@include respond-to($breakpoint-sm) {
+  .header-ecran-travail-screen-work-header-navigation {
+    height: auto;
+    min-height: 80px;
+    top: 60px;
+    padding: 5px 0;
+    
+    &.scene-mode-active-header-navigation {
       top: 120px;
     }
   }
-
-  .fixed-nav-container-screen-work {
-    padding: 0 $padding-md;
-    gap: $gap-md;
+  
+  .fixed-nav-container-screen-work-header-navigation {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 0 $padding-sm;
+    gap: 8px;
+    height: auto;
+    min-height: 70px;
+    justify-content: center;
+    
+    > * {
+      width: 100% !important;
+      margin: 0 !important;
+      justify-content: center !important;
+      height: auto;
+    }
+    
+    // Réorganisation mobile
+    .center-section-header-navigation {
+      order: 1;
+    }
+    
+    .scene-section-header-navigation {
+      order: 2;
+    }
+    
+    .left-section-header-navigation,
+    .right-section-header-navigation {
+      order: 3;
+    }
   }
-
-  .global-navigation-buttons button,
-  .scene-nav-btn-screen-work {
-    min-width: 110px;
-    padding: 8px 14px;
+  
+  .current-context-screen-work-header-navigation {
+    height: 34px;
     font-size: $font-size-p3;
-  }
-
-  .current-context-screen-work {
-    font-size: $font-size-p2;
-    max-width: 400px;
     padding: 6px 16px;
+    max-width: 95%;
+    margin: 2px 0;
   }
-}
-
-@include respond-to($breakpoint-lg) {
-  .fixed-nav-container-screen-work {
-    gap: $gap-lg;
+  
+  .global-navigation-buttons-header-navigation,
+  .scene-navigation-buttons-screen-work-header-navigation {
+    justify-content: center;
+    width: 100%;
+    
+    button {
+      min-width: 48%;
+      max-width: 48%;
+      height: 34px;
+      padding: 6px 10px;
+      font-size: $font-size-p4;
+    }
   }
-
-  .current-context-screen-work {
-    max-width: 500px;
-    font-size: $font-size-p1;
+  
+  .scene-navigation-buttons-screen-work-header-navigation {
+    justify-content: space-between;
+    
+    button {
+      min-width: 48%;
+      max-width: 48%;
+    }
   }
-
-  .global-navigation-buttons button,
-  .scene-nav-btn-screen-work {
-    min-width: 120px;
-    padding: 8px 16px;
+  
+  // Pour la navigation globale sur mobile
+  .left-section-header-navigation .global-navigation-buttons-header-navigation,
+  .right-section-header-navigation .global-navigation-buttons-header-navigation {
+    justify-content: center;
+    
+    button {
+      min-width: 48%;
+      max-width: 48%;
+    }
   }
 }
 
 @include respond-to($breakpoint-xs) {
-  .header-ecran-travail-screen-work {
-    top: 60px;
-    height: auto;
-    min-height: 60px;
-    
-    &.scene-mode-active {
-      top: 120px;
-    }
+  .header-ecran-travail-screen-work-header-navigation {
+    min-height: 85px;
   }
-
-  .fixed-nav-container-screen-work {
-    padding: 8px $padding-sm;
-    flex-wrap: wrap;
-    height: auto;
-    min-height: 60px;
+  
+  .fixed-nav-container-screen-work-header-navigation {
+    padding: 0 $padding-xs;
+    gap: 6px;
   }
-
-  .nav-left-section-screen-work,
-  .nav-center-section-screen-work,
-  .nav-right-section-screen-work {
-    flex: 100%;
-    justify-content: center;
-    margin: 4px 0;
+  
+  .global-navigation-buttons-header-navigation button,
+  .scene-navigation-buttons-screen-work-header-navigation .scene-nav-btn-screen-work-header-navigation {
+    min-width: 46%;
+    font-size: $font-size-p5;
+    padding: 5px 8px;
   }
-
-  .current-context-screen-work {
-    order: 1;
-    max-width: 90%;
+  
+  .current-context-screen-work-header-navigation {
+    font-size: $font-size-p4;
+    padding: 5px 14px;
     height: 32px;
-    font-size: $font-size-p3;
-    margin: 4px auto;
   }
+}
 
-  .nav-left-section-screen-work {
-    order: 2;
-  }
-
-  .nav-right-section-screen-work {
-    order: 3;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: $gap-xs;
-    margin-top: 4px;
-  }
-
-  .global-navigation-buttons,
-  .scene-navigation-buttons-screen-work {
-    width: auto;
-    justify-content: center;
-  }
-
-  .global-navigation-buttons {
-    button {
-      min-width: 80px;
-      height: 32px;
-      padding: 4px 8px;
-      font-size: $font-size-p5;
+// =============================================
+// AJUSTEMENTS SPÉCIFIQUES
+// =============================================
+// Assurer que Précédent reste à gauche et Suivant à droite
+@media (min-width: $breakpoint-sm) {
+  .fixed-nav-container-screen-work-header-navigation {
+    .left-section-header-navigation {
+      justify-content: flex-start !important;
+    }
+    
+    .right-section-header-navigation {
+      justify-content: flex-end !important;
+    }
+    
+    .center-section-header-navigation {
+      position: relative;
+      
+      // Séparateurs visuels
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 1px;
+        height: 24px;
+        background: rgba($color-border, 0.4);
+        transform: translateY(-50%);
+      }
+      
+      &::before {
+        left: -12px;
+      }
+      
+      &::after {
+        right: -12px;
+      }
     }
   }
+}
 
-  .scene-navigation-buttons-screen-work {
-    margin-left: 0;
+// Pour les très larges écrans
+@media (min-width: 1600px) {
+  .fixed-nav-container-screen-work-header-navigation {
+    max-width: 1500px;
     
-    .scene-nav-btn-screen-work {
-      min-width: 90px;
-      height: 32px;
-      padding: 4px 8px;
-      font-size: $font-size-p5;
+    .left-section-header-navigation,
+    .right-section-header-navigation {
+      width: 180px;
+    }
+    
+    .current-context-screen-work-header-navigation {
+      font-size: $font-size-h4;
+      padding: 10px 30px;
+    }
+  }
+}
+
+@include respond-to($breakpoint-sm) {
+  .header-ecran-travail-screen-work-header-navigation {
+    height: 60px !important; // Garder la même hauteur
+    min-height: 60px !important;
+    top: 70px !important;
+    
+    &.scene-mode-active-header-navigation {
+      top: 120px !important;
+    }
+  }
+  
+  .fixed-nav-container-screen-work-header-navigation {
+    flex-direction: row !important; // FORCER en ligne
+    flex-wrap: nowrap !important;
+    padding: 0 $padding-md !important;
+    gap: 10px !important;
+    height: 100% !important;
+    min-height: auto !important;
+    justify-content: space-between !important;
+    
+    > * {
+      width: auto !important;
+      margin: 0 !important;
+      height: 100% !important;
+    }
+    
+    // Garder l'ordre desktop
+    .left-section-header-navigation {
+      order: 1 !important;
+      width: 130px !important;
+      justify-content: flex-start !important;
+    }
+    
+    .scene-section-header-navigation {
+      order: 2 !important;
+      margin: 0 5px !important;
+      justify-content: center !important;
+    }
+    
+    .center-section-header-navigation {
+      order: 3 !important;
+      padding: 0 10px !important;
+      justify-content: center !important;
+    }
+    
+    .right-section-header-navigation {
+      order: 4 !important;
+      width: 130px !important;
+      justify-content: flex-end !important;
+    }
+  }
+  
+  .current-context-screen-work-header-navigation {
+    height: 36px !important;
+    font-size: $font-size-p3 !important;
+    padding: 6px 16px !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+  
+  .global-navigation-buttons-header-navigation,
+  .scene-navigation-buttons-screen-work-header-navigation {
+    justify-content: center !important;
+    width: auto !important;
+    
+    button {
+      min-width: 110px !important;
+      max-width: none !important;
+      height: 36px !important;
+      padding: 8px 12px !important;
+      font-size: $font-size-p4 !important;
     }
   }
 }
