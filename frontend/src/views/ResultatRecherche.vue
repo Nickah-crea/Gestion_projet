@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper-global">
-    <!-- Sidebar latérale à gauche -->
-    <div class="sidebar-right-resultat-recherche">
+    <!-- Sidebar latérale à GAUCHE -->
+    <div class="sidebar-left-resultat-recherche">
       <div class="sidebar-header-resultat-recherche">
         <h3 class="sidebar-title-resultat-recherche">
           <i class="fas fa-info-circle"></i>
@@ -139,60 +139,44 @@
       </div>
     </div>
 
-    <!-- Contenu principal à droite -->
+    <!-- Contenu principal à DROITE -->
     <div class="main-content-resultat-recherche">
       <div class="resultat-recherche-container">
-        <!-- NAVBAR STICKY POUR LES BOUTONS D'EXPORT -->
-        <div v-if="resultat" class="sticky-export-navbar-resultat-recherche">
-          <div class="navbar-content-resultat-recherche">
-            <div class="navbar-title-resultat-recherche">
-              <h3>{{ resultat.titre }}</h3>
-              <span class="navbar-subtitle-resultat-recherche">
-                <i class="fas" :class="'fa-' + getTypeIconClass(resultat.type)"></i>
-                {{ getTypeLabel(resultat.type) }}
-              </span>
-            </div>
-            
-            <div class="navbar-actions-resultat-recherche">
-              <button @click="naviguerVersEcranTravail" class="btn-ecran-travail-resultat-recherche">
-                <i class="fas fa-external-link-alt"></i>
-                {{ getEcranTravailButtonText() }}
-              </button>
-              
-              <button @click="exporterPDF" class="btn-export-pdf-resultat-recherche" :disabled="exportEnCours">
-                <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
-                {{ exportEnCours ? 'Génération...' : 'Télécharger PDF' }}
-              </button>
-              
-              <button @click="ouvrirDialogueEmail" class="btn-send-email-resultat-recherche" :disabled="exportEnCours">
-                <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-envelope'"></i>
-                {{ exportEnCours ? 'Envoi...' : 'Envoyer par email' }}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- En-tête avec navigation -->
-        <div class="header-resultat-recherche">
-          <router-link to="/recherche" class="back-link-resultat-recherche">
-            <i class="fas fa-arrow-left"></i> Retour aux résultats
-          </router-link>
-          <h1 class="page-title-resultat-recherche">
-            <i class="fas fa-file-alt"></i> Détails du résultat
-          </h1>
+        <!-- Actions à droite -->
+        <div class="header-actions-resultat-recherche standalone">
           <div v-if="resultat" class="result-type-header-resultat-recherche" :class="'type-' + resultat.type">
-            <div class="type-badge-resultat-recherche">
-              <span class="type-icon-resultat-recherche">{{ getTypeIcon(resultat.type) }}</span>
+            <div class="#">
+              <!-- Combinez les deux classes -->
+              <i :class="[getTypeIcon(resultat.type), 'type-icon-resultat-recherche']"></i>
               <span class="type-label-resultat-recherche">{{ getTypeLabel(resultat.type) }}</span>
             </div>
           </div>
+
+          <button @click="naviguerVersEcranTravail" class="btn-ecran-travail-resultat-recherche" :title="getEcranTravailButtonText()">
+            <i class="fas fa-external-link-alt"></i>
+            {{ getEcranTravailButtonText() }}
+          </button>
+          
+          <button @click="exporterPDF" class="btn-export-pdf-resultat-recherche" :disabled="exportEnCours">
+            <i class="fas" :class="exportEnCours ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
+            {{ exportEnCours ? 'Génération...' : 'Exporter PDF' }}
+          </button>
+          
+          <button @click="ouvrirDialogueEmail" class="btn-send-email-resultat-recherche" :disabled="exportEnCours">
+            <i class="fas fa-envelope"></i>
+            Envoyer par email
+          </button>
+
+          <!-- Bouton retour placé en dehors du header -->
+          <router-link to="/recherche" class="back-link-resultat-recherche standalone">
+            <i class="fas fa-arrow-left"></i> Retour aux résultats
+          </router-link>
         </div>
 
         <!-- Dialogue d'envoi d'email -->
-        <!-- Remplacer la section du dialogue d'envoi d'email par cette version -->
         <div v-if="emailDialogVisible" class="modal-overlay-resultat-recherche">
           <div class="modal-content-resultat-recherche">
-            <div class="modal-header-resultat-recherche">
+            <!-- <div class="modal-header-resultat-recherche">
               <h3>
                 <i class="fas fa-envelope"></i>
                 Envoyer le PDF par email
@@ -200,7 +184,7 @@
               <button @click="fermerDialogueEmail" class="modal-close-btn-resultat-recherche">
                 <i class="fas fa-times"></i>
               </button>
-            </div>
+            </div> -->
             
             <div class="modal-body-resultat-recherche">
               <!-- Type de destinataire simple -->
@@ -862,37 +846,6 @@
             </div>
           </div>
 
-          <!-- Carte Critères de recherche -->
-          <!-- <div v-if="criteresRecherche" class="section-card-resultat-recherche">
-            <div class="card-header-resultat-recherche">
-              <h3><i class="fas fa-search"></i> Critères de recherche utilisés</h3>
-            </div>
-            <div class="card-content-resultat-recherche">
-              <div class="criteria-list-resultat-recherche">
-                <div v-if="criteresRecherche.termeRecherche" class="criterion-resultat-recherche">
-                  <span class="criterion-label-resultat-recherche">Mot-clé :</span>
-                  <span class="criterion-value-resultat-recherche">{{ criteresRecherche.termeRecherche }}</span>
-                </div>
-                <div v-if="criteresRecherche.typesRecherche && criteresRecherche.typesRecherche.length" class="criterion-resultat-recherche">
-                  <span class="criterion-label-resultat-recherche">Types recherchés :</span>
-                  <span class="criterion-value-resultat-recherche">{{ formatTypes(criteresRecherche.typesRecherche) }}</span>
-                </div>
-                <div v-if="criteresRecherche.dateDebut || criteresRecherche.dateFin" class="criterion-resultat-recherche">
-                  <span class="criterion-label-resultat-recherche">Période :</span>
-                  <span class="criterion-value-resultat-recherche">
-                    {{ formatDate(criteresRecherche.dateDebut) || 'Début non spécifié' }}
-                    → 
-                    {{ formatDate(criteresRecherche.dateFin) || 'Fin non spécifiée' }}
-                  </span>
-                </div>
-                <div v-if="criteresRecherche.statuts && criteresRecherche.statuts.length" class="criterion-resultat-recherche">
-                  <span class="criterion-label-resultat-recherche">Statuts :</span>
-                  <span class="criterion-value-resultat-recherche">{{ criteresRecherche.statuts.join(', ') }}</span>
-                </div>
-              </div>
-            </div>
-          </div> -->
-
         </div>
 
         <!-- État vide si pas de résultat -->
@@ -905,7 +858,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 // IMPORT DES VRAIS SERVICES
@@ -937,7 +889,6 @@ export default {
       nouvelEmail: '',
       generatedPdfBlob: null,
       recipientType: 'manual',
-      selectedComedienId: '',
       selectedComedienIds: [],
       comediensList: [],
       loadingComediens: false,
@@ -1035,7 +986,7 @@ export default {
       }
       return icons[type] || 'file'
     },
-    // NOUVELLE MÉTHODE : Copier le lien
+
     copierLien() {
       const url = window.location.href;
       navigator.clipboard.writeText(url).then(() => {
@@ -1046,7 +997,6 @@ export default {
       });
     },
 
-    // NOUVELLE MÉTHODE : Navigation vers écran de travail
     naviguerVersEcranTravail() {
       if (!this.resultat) return
       
@@ -1162,7 +1112,6 @@ export default {
       const pdfBlob = pdf.output('blob');
       this.generatedPdfBlob = pdfBlob;
       
-      // Réinitialiser le formulaire
       this.resetEmailForm();
       
       this.emailDialogVisible = true;
@@ -1176,7 +1125,6 @@ export default {
   },
 
     async loadComediens() {
-        // Ne charger que si on est en mode comédien
         if (this.recipientType === 'comedien' && this.comediensList.length === 0) {
           this.loadingComediens = true;
           try {
@@ -1229,14 +1177,12 @@ removeRecipient(index) {
   const recipient = this.currentRecipients[index];
   
   if (this.recipientType === 'manual') {
-    // Supprimer de la liste des emails manuels
     const emailIndex = this.emailForm.toEmails.indexOf(recipient.email);
     if (emailIndex !== -1) {
       this.emailForm.toEmails.splice(emailIndex, 1);
     }
   } 
   else if (this.recipientType === 'comedien') {
-    // Supprimer de la liste des comédiens sélectionnés
     this.selectedComedienIds = this.selectedComedienIds.filter(id => id !== recipient.id);
   }
 },
@@ -1313,7 +1259,6 @@ removeRecipient(index) {
     this.exportEnCours = true;
     
     try {
-      // Préparer les emails selon le type de destinataire
       const recipientEmails = this.currentRecipients.map(r => r.email);
       
       const reader = new FileReader();
@@ -1323,14 +1268,13 @@ removeRecipient(index) {
         const base64Data = reader.result.split(',')[1];
         const pdfData = this.base64ToArrayBuffer(base64Data);
         
-        // Envoyer les emails
         const promises = recipientEmails.map(async (email, index) => {
          const emailRequest = {
             toEmail: email,
             subject: this.emailForm.subject,
             message: this.emailForm.message,
             attachmentName: `${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`,
-            pdfData: base64Data  // Envoie directement la chaîne Base64
+            pdfData: base64Data
           };
 
           const response = await fetch('/api/export/send-pdf-email', {
@@ -1349,7 +1293,6 @@ removeRecipient(index) {
 
         const results = await Promise.allSettled(promises);
         
-        // Gérer les résultats comme avant...
         const succes = results.filter(result => result.status === 'fulfilled' && result.value.success);
         const echecs = results.filter(result => result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.success));
         
@@ -1396,6 +1339,7 @@ removeRecipient(index) {
     }
     return bytes;
   },
+  
   resetEmailForm() {
     this.emailForm = {
       toEmails: [],
@@ -1410,11 +1354,9 @@ removeRecipient(index) {
     this.loadingComediens = false;
   },
 
-    // Méthodes d'export PDF (restaurées depuis l'original)
     exporterPDFPersonnage(pdf, margin, yPosition, contentWidth) {
       let currentY = yPosition;
       
-      // Informations du personnage
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('👤 Informations du personnage', margin, currentY);
@@ -1437,7 +1379,6 @@ removeRecipient(index) {
       
       currentY += 5;
       
-      // Structure du projet
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('📁 Projet', margin, currentY);
@@ -1451,7 +1392,6 @@ removeRecipient(index) {
       }
       currentY += 5;
       
-      // Statistiques
       if (this.resultatDetails.statistiques) {
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
@@ -1485,7 +1425,6 @@ removeRecipient(index) {
         currentY += 5;
       }
       
-      // Planning de tournage
       if (this.scenesAvecPlanning.length > 0) {
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
@@ -1530,7 +1469,6 @@ removeRecipient(index) {
         currentY += 5;
       }
       
-      // Dialogues
       if (this.resultatDetails.dialogues && this.resultatDetails.dialogues.length > 0) {
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
@@ -1569,7 +1507,6 @@ removeRecipient(index) {
     exporterPDFScene(pdf, margin, yPosition, contentWidth) {
       let currentY = yPosition;
       
-      // Informations de tournage
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('🎬 Informations de tournage', margin, currentY);
@@ -1588,7 +1525,6 @@ removeRecipient(index) {
       pdf.text(`Durée estimée : ${this.calculerDureeScene(this.resultat.heureDebut, this.resultat.heureFin)}`, margin, currentY);
       currentY += 10;
       
-      // Structure du projet
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('📁 Structure du projet', margin, currentY);
@@ -1610,7 +1546,6 @@ removeRecipient(index) {
       }
       currentY += 5;
       
-      // Localisation
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('📍 Localisation', margin, currentY);
@@ -1628,7 +1563,6 @@ removeRecipient(index) {
       }
       currentY += 5;
       
-      // Personnages
       if (this.resultatDetails.personnages && this.resultatDetails.personnages.length > 0) {
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
@@ -1646,7 +1580,6 @@ removeRecipient(index) {
         currentY += 5;
       }
       
-      // Dialogues complets
       if (this.resultatDetails.dialoguesComplets && this.resultatDetails.dialoguesComplets.length > 0) {
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
@@ -1683,7 +1616,6 @@ removeRecipient(index) {
     exporterPDFLieu(pdf, margin, yPosition, contentWidth) {
       let currentY = yPosition;
       
-      // Informations du lieu
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('🏛️ Informations du lieu', margin, currentY);
@@ -1700,7 +1632,6 @@ removeRecipient(index) {
       }
       currentY += 5;
       
-      // Scènes associées
       if (this.resultatDetails.scenes && this.resultatDetails.scenes.length > 0) {
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
@@ -1729,7 +1660,6 @@ removeRecipient(index) {
     exporterPDFPlateau(pdf, margin, yPosition, contentWidth) {
       let currentY = yPosition;
       
-      // Informations du plateau
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('🎭 Informations du plateau', margin, currentY);
@@ -1746,7 +1676,6 @@ removeRecipient(index) {
       }
       currentY += 5;
       
-      // Scènes associées
       if (this.resultatDetails.scenes && this.resultatDetails.scenes.length > 0) {
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
@@ -1772,16 +1701,15 @@ removeRecipient(index) {
       }
     },
 
-    // Méthodes utilitaires
-    getTypeIcon(type) {
-      const icons = {
-        scene: '🎬',
-        personnage: '👤',
-        lieu: '🏛️',
-        plateau: '🎭'
-      }
-      return icons[type] || '📄'
-    },
+   getTypeIcon(type) {
+    const icons = {
+      scene: 'fas fa-video',
+      personnage: 'fas fa-user',
+      lieu: 'fas fa-map-marker-alt',
+      plateau: 'fas fa-film'
+    }
+    return icons[type] || 'fas fa-file-alt'
+  },
     
     getTypeLabel(type) {
       const labels = {
@@ -1927,3 +1855,4 @@ removeRecipient(index) {
   }
 }
 </script>
+

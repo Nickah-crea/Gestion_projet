@@ -1,344 +1,313 @@
 <!-- TypesRaccordCRUD.vue -->
 <template>
-  <div class="app-wrapper-global-type-raccord">
-    <!-- Sidebar latérale -->
-    <div class="creation-sidebar-type-raccord">
-      <div class="sidebar-header-type-raccord">
-        <h2 class="sidebar-title-type-raccord">
-          <i class="fas fa-tags"></i> Gestion des Types de Raccord
-        </h2>
-        <p class="sidebar-subtitle-type-raccord">
-          Gérez tous les types de raccords de continuité
-        </p>
+  <div class="app-wrapper-global">
+    <!-- Sidebar latérale fixe à gauche -->
+    <aside class="utilisateurs-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Types de Raccord</h2>
+        <p class="sidebar-subtitle">Gestion des catégories de raccords</p>
       </div>
 
-      <!-- Statistiques -->
-      <div class="sidebar-section-type-raccord">
-        <h3 class="section-title-type-raccord">
-          <i class="fas fa-chart-bar"></i> Statistiques
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-users"></i> Navigation
         </h3>
-        <div class="stats-type-raccord">
-          <div class="stat-item-type-raccord">
-            <span class="stat-number-type-raccord">{{ totalTypes }}</span>
-            <span class="stat-label-type-raccord">Total types</span>
-          </div>
+        <div class="sidebar-actions">
+          <button 
+            class="sidebar-btn" 
+            :class="{ active: activeTab === 'liste' }"
+            @click="activeTab = 'liste'"
+          >
+            <i class="fas fa-list"></i>
+            Liste des Types
+          </button>
+          <button 
+            class="sidebar-btn" 
+            :class="{ active: activeTab === 'ajout' }"
+            @click="activeTab = 'ajout'"
+          >
+            <i class="fas fa-plus"></i>
+            Ajouter un Type
+          </button>
         </div>
       </div>
 
-      <!-- Filtres -->
-      <div class="sidebar-section-type-raccord">
-        <h3 class="section-title-type-raccord">
+      <div class="sidebar-section" v-if="activeTab === 'liste'">
+        <h3 class="section-title">
           <i class="fas fa-filter"></i> Filtres
         </h3>
-        <div class="filter-group-type-raccord">
-          <div class="filter-item-type-raccord">
-            <label for="searchFilter">Recherche</label>
-            <div class="search-input-container-type-raccord">
-              <i class="fas fa-search search-icon-type-raccord"></i>
-              <input
-                type="text"
-                id="searchFilter"
-                v-model="searchTerm"
-                @input="applyFilter"
+        <div class="filter-group">
+          <div class="filter-item">
+            <label>Recherche</label>
+            <div class="search-input-container">
+              <i class="fas fa-search search-icon"></i>
+              <input 
+                type="text" 
+                v-model="searchTerm" 
                 placeholder="Rechercher un type..."
-                class="search-input-type-raccord"
+                class="search-input-large"
               />
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Actions rapides -->
-      <div class="sidebar-section-type-raccord">
-        <h3 class="section-title-type-raccord">
-          <i class="fas fa-bolt"></i> Actions Rapides
+      <div class="sidebar-section">
+        <h3 class="section-title">
+          <i class="fas fa-chart-pie"></i> Statistiques
         </h3>
-        <div class="sidebar-actions-type-raccord">
-          <button 
-            @click="openCreateModal"
-            class="sidebar-btn-type-raccord"
-          >
-            <i class="fas fa-plus"></i> Nouveau type
-          </button>
-          <button 
-            @click="loadTypes"
-            class="sidebar-btn-type-raccord"
-          >
-            <i class="fas fa-sync-alt"></i> Actualiser
-          </button>
+        <div class="stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ totalTypes }}</span>
+            <span class="stat-label">Types totaux</span>
+          </div>
         </div>
       </div>
 
-      <!-- Types prédéfinis -->
-      <div class="sidebar-section-type-raccord">
-        <h3 class="section-title-type-raccord">
+      <div class="sidebar-section">
+        <h3 class="section-title">
           <i class="fas fa-star"></i> Types courants
         </h3>
-        <div class="common-types-type-raccord">
+        <div class="common-types">
           <div 
             v-for="commonType in commonTypes" 
             :key="commonType.code"
-            class="common-type-item-type-raccord"
+            class="common-type-item"
             @click="prefillForm(commonType)"
           >
-            <span class="common-type-code-type-raccord">{{ commonType.code }}</span>
-            <span class="common-type-name-type-raccord">{{ commonType.nom }}</span>
+            <span class="common-type-code">{{ commonType.code }}</span>
+            <span class="common-type-name">{{ commonType.nom }}</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Contenu principal -->
-    <div class="creation-body-type-raccord">
-      <div class="creation-main-content-type-raccord">
-        
-        <!-- En-tête principal -->
-        <div class="main-header-type-raccord">
-          <h1 class="page-title-type-raccord">
-            <i class="fas fa-link"></i> Types de Raccord
-          </h1>
-          <p class="page-subtitle-type-raccord">
-            Gérez les catégories de raccords pour assurer la continuité dans vos productions
-          </p>
-        </div>
+    </aside>
 
-        <!-- Liste des types -->
-        <div class="types-container-type-raccord">
-          <!-- En-tête de la liste -->
-          <div class="types-header-type-raccord">
-            <div class="types-title-type-raccord">
-              <h3><i class="fas fa-list"></i> Liste des types de raccord</h3>
-              <p class="types-description-type-raccord">
-                {{ filteredTypes.length }} type(s) trouvé(s)
-              </p>
-            </div>
+    <!-- Contenu principal à droite -->
+    <div class="utilisateurs-body">
+      <main class="utilisateurs-main-content">
+        <!-- Système d'onglets -->
+        <div class="tabs-container">
+          <div class="tabs-header">
             <button 
-              @click="openCreateModal"
-              class="btn-create-type-raccord"
+              class="tab-btn" 
+              :class="{ active: activeTab === 'liste' }"
+              @click="activeTab = 'liste'"
             >
-              <i class="fas fa-plus"></i> Ajouter un type
+              <i class="fas fa-list"></i>
+              Liste des Types
             </button>
-          </div>
-
-          <!-- État de chargement -->
-          <div v-if="loading" class="loading-state-type-raccord">
-            <i class="fas fa-spinner fa-spin"></i> Chargement des types...
-          </div>
-
-          <!-- État vide -->
-          <div v-else-if="filteredTypes.length === 0" class="empty-state-type-raccord">
-            <i class="fas fa-inbox"></i>
-            <div v-if="searchTerm">
-              Aucun type ne correspond à votre recherche.
-            </div>
-            <div v-else>
-              Aucun type de raccord défini. Commencez par en créer un !
-            </div>
-          </div>
-
-          <!-- Grille des types -->
-          <div v-else class="types-grid-type-raccord">
-            <div 
-              v-for="type in filteredTypes" 
-              :key="type.id"
-              class="type-card-type-raccord"
+            <button 
+              class="tab-btn" 
+              :class="{ active: activeTab === 'ajout' }"
+              @click="activeTab = 'ajout'"
             >
-              <div class="type-card-header-type-raccord">
-                <div class="type-code-type-raccord" :class="getTypeColorClass(type)">
-                  <span class="code-badge-type-raccord">{{ type.code }}</span>
-                  <span class="type-date-type-raccord">
-                    <i class="far fa-calendar"></i>
-                    {{ formatDate(type.creeLe) }}
-                  </span>
+              <i class="fas fa-plus"></i>
+              Ajouter un Type
+            </button>
+            <div class="tab-indicator" :style="tabIndicatorStyle"></div>
+          </div>
+
+          <div class="tabs-content">
+            <!-- Onglet 1: Liste des types -->
+            <div v-if="activeTab === 'liste'" class="tab-pane">
+              <div class="content-header">
+                <div>
+                  <h3>
+                    <i class="fas fa-link"></i>
+                    Gestion des Types de Raccord
+                  </h3>
+                  <p>Administrez les catégories de raccords pour assurer la continuité dans vos productions</p>
                 </div>
-                <div class="type-actions-type-raccord">
-                  <button 
-                    @click="editType(type)" 
-                    class="btn-action-type-raccord edit" 
-                    title="Modifier"
-                  >
-                    <i class="fas fa-marker"></i>
-                  </button>
-                  <button 
-                    @click="deleteType(type)" 
-                    class="btn-action-type-raccord delete" 
-                    title="Supprimer"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
+                
+                <div class="search-section">
+                  <div class="search-group">
+                    <label>Recherche rapide</label>
+                    <div class="search-input-container">
+                      <i class="fas fa-search search-icon"></i>
+                      <input 
+                        type="text" 
+                        v-model="searchQuery" 
+                        placeholder="Rechercher un type..." 
+                        class="search-input-large"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              
-              <div class="type-card-body-type-raccord">
-                <h4 class="type-name-type-raccord">{{ type.nomType }}</h4>
-                <p class="type-description-type-raccord">
-                  {{ type.description || 'Aucune description' }}
-                </p>
+
+              <!-- Grille des types -->
+              <div class="types-grid-container">
+                <div v-if="loading" class="loading-state">
+                  <i class="fas fa-spinner fa-spin"></i> Chargement des types...
+                </div>
+
+                <div v-else-if="filteredTypes.length === 0" class="empty-state">
+                  <i class="fas fa-inbox"></i>
+                  <h3>Aucun type trouvé</h3>
+                  <p v-if="searchQuery">Aucun type ne correspond à votre recherche</p>
+                  <p v-else>Ajoutez votre premier type pour commencer</p>
+                </div>
+
+                <div v-else class="types-grid">
+                  <div 
+                    v-for="type in filteredTypes" 
+                    :key="type.id"
+                    class="type-card"
+                  >
+                    <div class="type-card-header">
+                      <div class="type-code" :class="getTypeColorClass(type)">
+                        <span class="code-badge">{{ type.code }}</span>
+                        <span class="type-date">
+                          <i class="far fa-calendar"></i>
+                          {{ formatDate(type.creeLe) }}
+                        </span>
+                      </div>
+                      <div class="type-actions">
+                        <button 
+                          @click="editType(type)" 
+                          class="btn-edit" 
+                          title="Modifier"
+                        >
+                          <i class="fas fa-marker"></i>
+                        </button>
+                        <button 
+                          @click="deleteType(type)" 
+                          class="btn-edit delete-btn" 
+                          title="Supprimer"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="type-card-body">
+                      <h4 class="type-name">{{ type.nomType }}</h4>
+                      <p class="type-description">
+                        {{ type.description || 'Aucune description' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            <!-- Onglet 2: Formulaire d'ajout/modification -->
+            <div v-if="activeTab === 'ajout'" class="tab-pane">
+              <div class="form-header">
+                <h3>
+                  <i class="fas" :class="isEditing ? 'fa-edit' : 'fa-plus'"></i>
+                  {{ isEditing ? 'Modifier le type' : 'Ajouter un nouveau type' }}
+                </h3>
+                <button @click="goToList" class="back-btn">
+                  <i class="fas fa-arrow-left"></i>
+                  Retour à la liste
+                </button>
+              </div>
+
+              <form @submit.prevent="submitType" class="user-form">
+                <!-- Informations du type -->
+                <div class="form-section">
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="code">Code </label>
+                      <input 
+                        type="text" 
+                        id="code"
+                        v-model="formData.code" 
+                        required 
+                        placeholder="ex: decor, costume, etc."
+                        class="form-input"
+                        :class="{ 'error-input': errors.code }"
+                      />
+                      <div v-if="errors.code" class="error-message">{{ errors.code }}</div>
+                      <div class="input-hint">
+                        Doit être unique, en minuscules, sans espaces
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="nomType">Nom </label>
+                      <input 
+                        type="text" 
+                        id="nomType"
+                        v-model="formData.nomType" 
+                        required 
+                        placeholder="Nom du type de raccord"
+                        class="form-input"
+                        :class="{ 'error-input': errors.nomType }"
+                      />
+                      <div v-if="errors.nomType" class="error-message">{{ errors.nomType }}</div>
+                    </div>
+
+                    <div class="form-group full-width">
+                      <label for="description">Description</label>
+                      <textarea 
+                        id="description"
+                        v-model="formData.description" 
+                        placeholder="Description détaillée du type de raccord..."
+                        rows="4"
+                        class="form-textarea"
+                      ></textarea>
+                      <div class="input-hint">
+                        Décrivez les caractéristiques de ce type de raccord
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="formError" class="error-message">
+                  <i class="fas fa-exclamation-circle"></i>
+                  {{ formError }}
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" @click="resetForm" class="cancel-btn">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                  </button>
+                  <button type="submit" class="submit-btn" :disabled="isSubmitting">
+                    <i class="fas" :class="isSubmitting ? 'fa-spinner fa-spin' : (isEditing ? 'fa-save' : 'fa-check')"></i>
+                    {{ isSubmitting ? 'Enregistrement...' : (isEditing ? 'Modifier le type' : 'Créer le type') }}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
 
-    <!-- Modal de création/modification -->
-    <div v-if="showModal" class="modal-overlay-type-raccord" @click="closeModal">
-      <div class="modal-content-type-raccord" @click.stop>
-        <div class="modal-header-type-raccord">
-          <h3>
-            <i :class="isEditing ? 'fas fa-edit' : 'fas fa-plus'"></i>
-            {{ isEditing ? 'Modifier le type' : 'Créer un nouveau type' }}
-          </h3>
-          <button @click="closeModal" class="modal-close-btn-type-raccord">
+    <!-- Modal de confirmation de suppression -->
+    <div v-if="showDeleteModal" class="modal-overlay" @click="showDeleteModal = false">
+      <div class="modal-content delete-modal" @click.stop>
+        <div class="modal-header">
+          <h2>Confirmer la suppression</h2>
+          <button class="modal-close-btn" @click="showDeleteModal = false">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        
-        <div class="modal-body-type-raccord">
-          <form @submit.prevent="submitType" class="type-form-type-raccord">
-            <div class="form-row-type-raccord">
-              <div class="form-group-type-raccord">
-                <label for="code">Code *</label>
-                <input
-                  type="text"
-                  id="code"
-                  v-model="formData.code"
-                  required
-                  placeholder="ex: decor, costume, etc."
-                  class="form-input-type-raccord"
-                  :class="{ 'error': errors.code }"
-                />
-                <div v-if="errors.code" class="error-message-type-raccord">{{ errors.code }}</div>
-                <div class="input-hint-type-raccord">
-                  Doit être unique, en minuscules, sans espaces
-                </div>
-              </div>
-
-              <div class="form-group-type-raccord">
-                <label for="nomType">Nom *</label>
-                <input
-                  type="text"
-                  id="nomType"
-                  v-model="formData.nomType"
-                  required
-                  placeholder="Nom du type de raccord"
-                  class="form-input-type-raccord"
-                  :class="{ 'error': errors.nomType }"
-                />
-                <div v-if="errors.nomType" class="error-message-type-raccord">{{ errors.nomType }}</div>
-              </div>
-            </div>
-
-            <div class="form-group-type-raccord">
-              <label for="description">Description</label>
-              <textarea
-                id="description"
-                v-model="formData.description"
-                rows="4"
-                placeholder="Description détaillée du type de raccord..."
-                class="form-textarea-type-raccord"
-              ></textarea>
-              <div class="input-hint-type-raccord">
-                Décrivez les caractéristiques de ce type de raccord
-              </div>
-            </div>
-
-            <div v-if="formError" class="form-error-type-raccord">
-              <i class="fas fa-exclamation-triangle"></i> {{ formError }}
-            </div>
-
-            <div class="form-actions-type-raccord">
-              <button
-                type="button"
-                @click="closeModal"
-                class="cancel-btn-type-raccord"
-              >
-                <i class="fas fa-times"></i> Annuler
-              </button>
-              <button
-                type="submit"
-                :disabled="isSubmitting"
-                class="submit-btn-type-raccord"
-              >
-                <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
-                <i v-else :class="isEditing ? 'fas fa-save' : 'fas fa-plus'"></i>
-                {{ isSubmitting ? 'Enregistrement...' : (isEditing ? 'Enregistrer' : 'Créer') }}
-              </button>
-            </div>
-          </form>
+        <div class="modal-body">
+          <i class="fas fa-exclamation-triangle warning-icon"></i>
+          <p>Êtes-vous sûr de vouloir supprimer le type <strong>{{ typeToDelete?.nomType }}</strong> ?</p>
+          <p class="warning-text">Cette action est irréversible.</p>
         </div>
-      </div>
-    </div>
-
-    <!-- Modal de confirmation -->
-    <div v-if="showConfirmModal" class="modal-overlay-type-raccord" @click="closeConfirmModal">
-      <div class="modal-content-type-raccord confirmation-modal-type-raccord" @click.stop>
-        <div class="modal-header-type-raccord">
-          <h3>
-            <i class="fas fa-exclamation-triangle"></i>
-            Confirmer la suppression
-          </h3>
-          <button @click="closeConfirmModal" class="modal-close-btn-type-raccord">
-            <i class="fas fa-times"></i>
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" @click="showDeleteModal = false">
+            Annuler
+          </button>
+          <button type="button" class="submit-btn delete-btn" @click="confirmDelete" :disabled="isDeleting">
+            <i class="fas" :class="isDeleting ? 'fa-spinner fa-spin' : 'fa-trash'"></i>
+            {{ isDeleting ? 'Suppression...' : 'Supprimer' }}
           </button>
         </div>
-        
-        <div class="modal-body-type-raccord">
-          <div class="confirmation-content-type-raccord">
-            <p class="confirmation-message-type-raccord">
-              Êtes-vous sûr de vouloir supprimer le type "{{ typeToDelete?.nomType }}" ?
-              Cette action est irréversible.
-            </p>
-            
-            <div class="confirmation-actions-type-raccord">
-              <button
-                type="button"
-                @click="closeConfirmModal"
-                class="cancel-btn-type-raccord"
-              >
-                <i class="fas fa-times"></i> Annuler
-              </button>
-              <button
-                type="button"
-                @click="confirmDelete"
-                class="confirm-btn-type-raccord confirm-danger"
-                :disabled="isDeleting"
-              >
-                <i v-if="isDeleting" class="fas fa-spinner fa-spin"></i>
-                <i v-else class="fas fa-trash"></i>
-                {{ isDeleting ? 'Suppression...' : 'Supprimer' }}
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
-    <!-- Notifications -->
-    <div class="notifications-container-type-raccord">
-      <div 
-        v-for="notification in notifications" 
-        :key="notification.id"
-        :class="['notification-type-raccord', `notification-${notification.type}`]"
-        @click="removeNotification(notification.id)"
-      >
-        <div class="notification-icon-type-raccord">
-          <i :class="getNotificationIcon(notification.type)"></i>
-        </div>
-        <div class="notification-content-type-raccord">
-          <p class="notification-message-type-raccord">{{ notification.message }}</p>
-        </div>
-        <button 
-          @click.stop="removeNotification(notification.id)"
-          class="notification-close-type-raccord"
-        >
-          <i class="fas fa-times"></i>
-        </button>
-        <div 
-          class="notification-progress-type-raccord" 
-          :style="{ animationDuration: `${notification.duration}ms` }"
-        ></div>
-      </div>
+    <!-- Toast de notification -->
+    <div v-if="toast.show" class="toast" :class="toast.type">
+      <i class="fas" :class="toast.icon"></i>
+      <span>{{ toast.message }}</span>
     </div>
   </div>
 </template>
@@ -350,39 +319,30 @@ export default {
   name: 'TypesRaccordCRUD',
   data() {
     return {
-      // Données
+      activeTab: 'liste',
       types: [],
-      
-      // Filtres
+      loading: false,
+      isSubmitting: false,
+      isDeleting: false,
       searchTerm: '',
-      
-      // Modal
-      showModal: false,
+      searchQuery: '',
+      showDeleteModal: false,
+      typeToDelete: null,
       isEditing: false,
       editingId: null,
-      isSubmitting: false,
-      formError: '',
-      
-      // Formulaire
       formData: {
         code: '',
         nomType: '',
         description: ''
       },
       errors: {},
-      
-      // Modal de confirmation
-      showConfirmModal: false,
-      typeToDelete: null,
-      isDeleting: false,
-      
-      // États
-      loading: false,
-      
-      // Notifications
-      notifications: [],
-      notificationId: 0,
-      
+      formError: '',
+      toast: {
+        show: false,
+        message: '',
+        type: 'success',
+        icon: 'fa-check'
+      },
       // Types courants prédéfinis
       commonTypes: [
         { code: 'decor', nom: 'Décor', description: 'Raccord de décor et environnement' },
@@ -398,21 +358,33 @@ export default {
     };
   },
   computed: {
+    filteredTypes() {
+      let filtered = this.types;
+      
+      const searchTerm = this.searchQuery || this.searchTerm;
+      if (searchTerm.trim()) {
+        const search = searchTerm.toLowerCase();
+        filtered = filtered.filter(type => 
+          type.code.toLowerCase().includes(search) ||
+          type.nomType.toLowerCase().includes(search) ||
+          (type.description && type.description.toLowerCase().includes(search))
+        );
+      }
+      
+      return filtered.sort((a, b) => a.code.localeCompare(b.code));
+    },
+    
     totalTypes() {
       return this.types.length;
     },
     
-    filteredTypes() {
-      if (!this.searchTerm.trim()) {
-        return this.types.sort((a, b) => a.code.localeCompare(b.code));
-      }
-      
-      const search = this.searchTerm.toLowerCase();
-      return this.types.filter(type => 
-        type.code.toLowerCase().includes(search) ||
-        type.nomType.toLowerCase().includes(search) ||
-        (type.description && type.description.toLowerCase().includes(search))
-      ).sort((a, b) => a.code.localeCompare(b.code));
+    tabIndicatorStyle() {
+      const tabs = ['liste', 'ajout'];
+      const index = tabs.indexOf(this.activeTab);
+      return {
+        width: `${100 / tabs.length}%`,
+        transform: `translateX(${index * 100}%)`
+      };
     }
   },
   async mounted() {
@@ -427,7 +399,7 @@ export default {
         this.types = response.data;
       } catch (error) {
         console.error('Erreur lors du chargement des types:', error);
-        this.showError('Erreur lors du chargement des types');
+        this.showToast('Erreur lors du chargement des types', 'error');
       } finally {
         this.loading = false;
       }
@@ -463,11 +435,6 @@ export default {
       }
     },
     
-    // Filtres
-    applyFilter() {
-      // Le filtrage se fait dans la computed property
-    },
-    
     // Pré-remplir avec un type courant
     prefillForm(commonType) {
       this.resetForm();
@@ -476,20 +443,22 @@ export default {
         nomType: commonType.nom,
         description: commonType.description
       };
-      this.openCreateModal();
+      this.activeTab = 'ajout';
+      this.isEditing = false;
     },
     
     // Modal
     openCreateModal() {
       this.resetForm();
       this.isEditing = false;
-      this.showModal = true;
+      this.activeTab = 'ajout';
     },
     
     editType(type) {
       this.resetForm();
       this.isEditing = true;
       this.editingId = type.id;
+      this.activeTab = 'ajout';
       
       // Remplir le formulaire
       this.formData = {
@@ -497,12 +466,10 @@ export default {
         nomType: type.nomType,
         description: type.description || ''
       };
-      
-      this.showModal = true;
     },
     
-    closeModal() {
-      this.showModal = false;
+    goToList() {
+      this.activeTab = 'liste';
       this.resetForm();
     },
     
@@ -551,14 +518,15 @@ export default {
         
         if (this.isEditing) {
           await axios.put(`${endpoint}/${this.editingId}`, this.formData);
-          this.showSuccess('Type modifié avec succès');
+          this.showToast('Type modifié avec succès', 'success');
         } else {
           await axios.post(endpoint, this.formData);
-          this.showSuccess('Type créé avec succès');
+          this.showToast('Type créé avec succès', 'success');
         }
         
         await this.loadTypes();
-        this.closeModal();
+        this.activeTab = 'liste';
+        this.resetForm();
         
       } catch (error) {
         console.error('Erreur lors de la sauvegarde:', error);
@@ -570,7 +538,7 @@ export default {
           errorMessage = error.response.data.error;
         }
         
-        this.showError(errorMessage);
+        this.showToast(errorMessage, 'error');
         this.formError = errorMessage;
         
       } finally {
@@ -579,19 +547,9 @@ export default {
     },
     
     // Confirmation de suppression
-    openDeleteConfirm(type) {
+    deleteType(type) {
       this.typeToDelete = type;
-      this.showConfirmModal = true;
-    },
-    
-    closeConfirmModal() {
-      this.showConfirmModal = false;
-      this.typeToDelete = null;
-      this.isDeleting = false;
-    },
-    
-    async deleteType(type) {
-      this.openDeleteConfirm(type);
+      this.showDeleteModal = true;
     },
     
     async confirmDelete() {
@@ -608,8 +566,9 @@ export default {
           this.types.splice(index, 1);
         }
         
-        this.showSuccess('Type supprimé avec succès');
-        this.closeConfirmModal();
+        this.showToast('Type supprimé avec succès', 'success');
+        this.showDeleteModal = false;
+        this.typeToDelete = null;
         
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
@@ -619,64 +578,32 @@ export default {
           errorMessage = error.response.data.message;
         }
         
-        this.showError(errorMessage);
+        this.showToast(errorMessage, 'error');
         
       } finally {
         this.isDeleting = false;
       }
     },
     
-    // Notifications
-    addNotification(type, message, duration = 5000) {
-      const id = ++this.notificationId;
-      const notification = {
-        id,
-        type,
+    // Toast notifications
+    showToast(message, type = 'success') {
+      this.toast = {
+        show: true,
         message,
-        duration
+        type,
+        icon: type === 'success' ? 'fa-check' : 'fa-exclamation-circle'
       };
-      
-      this.notifications.push(notification);
       
       setTimeout(() => {
-        this.removeNotification(id);
-      }, duration);
-      
-      return id;
+        this.toast.show = false;
+      }, 5000);
     },
     
-    removeNotification(id) {
-      const index = this.notifications.findIndex(n => n.id === id);
-      if (index !== -1) {
-        this.notifications.splice(index, 1);
-      }
-    },
-    
-    showSuccess(message) {
-      this.addNotification('success', message);
-    },
-    
-    showError(message) {
-      this.addNotification('error', message);
-    },
-    
-    showWarning(message) {
-      this.addNotification('warning', message);
-    },
-    
-    showInfo(message) {
-      this.addNotification('info', message);
-    },
-    
-    getNotificationIcon(type) {
-      const icons = {
-        success: 'fas fa-check-circle',
-        error: 'fas fa-exclamation-circle',
-        warning: 'fas fa-exclamation-triangle',
-        info: 'fas fa-info-circle'
-      };
-      return icons[type] || 'fas fa-info-circle';
+    clearMessage() {
+      this.formError = '';
+      this.toast.show = false;
     }
   }
 };
 </script>
+

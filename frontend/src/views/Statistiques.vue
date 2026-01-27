@@ -37,27 +37,39 @@
         <h3 class="section-title-stats-admin"><i class="fas fa-chart-line"></i> KPI Globaux</h3>
         <div class="stats-kpi-stats-admin">
           <div class="stat-item-stats-admin">
-            <span class="stat-number-stats-admin">{{ statistics.kpi?.totalProjets || 0 }}</span>
+            <span class="stat-number-stats-admin">
+              <i class="fas fa-project-diagram"></i> {{ statistics.kpi?.totalProjets || 0 }}
+            </span>
             <span class="stat-label-stats-admin">Projets Actifs</span>
           </div>
           <div class="stat-item-stats-admin">
-            <span class="stat-number-stats-admin">{{ statistics.kpi?.totalEpisodes || 0 }}</span>
+            <span class="stat-number-stats-admin">
+              <i class="fas fa-film"></i> {{ statistics.kpi?.totalEpisodes || 0 }}
+            </span>
             <span class="stat-label-stats-admin">Épisodes</span>
           </div>
           <div class="stat-item-stats-admin">
-            <span class="stat-number-stats-admin">{{ statistics.kpi?.totalSequences || 0 }}</span>
+            <span class="stat-number-stats-admin">
+              <i class="fas fa-list-ol"></i> {{ statistics.kpi?.totalSequences || 0 }}
+            </span>
             <span class="stat-label-stats-admin">Séquences</span>
           </div>
           <div class="stat-item-stats-admin">
-            <span class="stat-number-stats-admin">{{ statistics.kpi?.totalScenes || 0 }}</span>
+            <span class="stat-number-stats-admin">
+              <i class="fas fa-clapperboard"></i> {{ statistics.kpi?.totalScenes || 0 }}
+            </span>
             <span class="stat-label-stats-admin">Scènes</span>
           </div>
           <div class="stat-item-stats-admin">
-            <span class="stat-number-stats-admin">{{ statistics.kpi?.totalDialogues || 0 }}</span>
+            <span class="stat-number-stats-admin">
+              <i class="fas fa-comment-dots"></i> {{ statistics.kpi?.totalDialogues || 0 }}
+            </span>
             <span class="stat-label-stats-admin">Dialogues</span>
           </div>
           <div class="stat-item-stats-admin">
-            <span class="stat-number-stats-admin">{{ statistics.kpi?.totalEquipe || 0 }}</span>
+            <span class="stat-number-stats-admin">
+              <i class="fas fa-users"></i> {{ statistics.kpi?.totalEquipe || 0 }}
+            </span>
             <span class="stat-label-stats-admin">Équipe</span>
           </div>
         </div>
@@ -156,7 +168,7 @@
               <div class="chart-content-stats-admin">
                 <div class="ranking-list-stats-admin">
                   <div v-for="(project, index) in statistics.topProjects || []" :key="project.id" class="ranking-item-stats-admin">
-                    <div class="rank-number-stats-admin">{{ index + 1 }}</div>
+                    <div class="rank-number-stats-admin" style="color: #f1f1f1;">{{ index + 1 }}</div>
                     <div class="project-info-stats-admin">
                       <div class="project-name-stats-admin">{{ project.nom }}</div>
                       <div class="project-stats-stats-admin">

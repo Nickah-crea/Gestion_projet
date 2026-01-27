@@ -13,7 +13,7 @@
         <form @submit.prevent="submitForm">
           <!-- Sélection de la scène -->
           <div class="form-group">
-            <label>Scène *</label>
+            <label>Scène </label>
             <div class="scene-selection">
               <div class="filter-row">
                 <select v-model="filters.projetId" @change="onProjetChange" class="filter-select">
@@ -50,7 +50,7 @@
           <!-- Date et heures -->
           <div class="form-row">
             <div class="form-group">
-              <label>Date de tournage *</label>
+              <label>Date de tournage </label>
               <input type="date" v-model="formData.dateTournage" required>
             </div>
             
@@ -67,7 +67,7 @@
 
           <!-- Statut -->
           <div class="form-group">
-            <label>Statut *</label>
+            <label>Statut </label>
             <select v-model="formData.statutId" required>
               <option value="">Sélectionner un statut</option>
               <option v-for="statut in statuts" :key="statut.id" :value="statut.id">
