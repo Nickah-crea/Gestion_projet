@@ -8,23 +8,23 @@
   position: fixed;
   left: 0;
   right: 0;
+  top: 60px; // Position par défaut
   z-index: $z-index-sticky;
-  background: $color-primary;
+  background: $color-primary; // COULEUR SOLIDE - 100% OPACITÉ
   border-bottom: 1px solid $color-border;
   box-shadow: $shadow-md;
   height: 60px;
   transition: $transition-medium;
   border-radius: 0 0 20px 20px;
-  top: 50px;
 
   &.scene-mode-active-header-navigation {
-    top: 120px;
-    background: $color-background-dark;
+    top: 120px; // MODIFIÉ: 120px pour le mode scène
+    background: $color-background-dark; // COULEUR SOLIDE
   }
 
   &.sequence-mode-active-header-navigation,
   &.episode-mode-active-header-navigation {
-    background: $color-background-dark;
+    background: $color-background-dark; // COULEUR SOLIDE
   }
 }
 
@@ -104,7 +104,7 @@
 }
 
 // =============================================
-// BOUTONS DE NAVIGATION
+// BOUTONS DE NAVIGATION - MODIFIÉS
 // =============================================
 .global-navigation-buttons-header-navigation,
 .scene-navigation-buttons-screen-work-header-navigation {
@@ -124,16 +124,16 @@
     min-width: 110px;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
-    background: $color-surface;
-    color: $color-text-primary;
+    background: $color-surface; // COULEUR SOLIDE - 100% OPACITÉ
+    color: $color-text-light;
     cursor: pointer;
     transition: all $transition-fast;
     white-space: nowrap;
     
     &:hover:not(:disabled) {
-      background: $color-surface-hover;
-      border-color: $color-primary;
-      color: $color-primary;
+      background: $color-surface-hover; // COULEUR SOLIDE
+      border-color: $color-accent;
+      color: $color-text-light;
       transform: translateY(-1px);
       box-shadow: $shadow;
     }
@@ -141,7 +141,7 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      background: rgba($color-text-muted, 0.1);
+      background: rgba($color-text-muted, 0.1); // MODIFIÉ: opacité réduite
       color: $color-text-muted;
       
       &:hover {
@@ -162,23 +162,25 @@
   
   .scene-nav-btn-screen-work-header-navigation {
     min-width: 120px;
-    background: $color-background;
+    background: $color-background; // COULEUR SOLIDE
+    color: $color-primary;
     
     &:hover:not(:disabled) {
       border-color: $color-secondary;
       color: $color-secondary;
+      background: lighten($color-background, 5%); // COULEUR SOLIDE
     }
   }
 }
 
 // =============================================
-// CONTEXTE ACTUEL
+// CONTEXTE ACTUEL - MODIFIÉ
 // =============================================
 .current-context-screen-work-header-navigation {
   @include typography-playfair-h4;
   font-size: $font-size-p2;
   color: $color-text-light;
-  background: $color-surface;
+  background: $color-surface; // COULEUR SOLIDE
   padding: 8px 24px;
   border-radius: $border-radius-pill;
   border: 1px solid $color-border;
@@ -205,23 +207,23 @@
     font-weight: $font-weight-regular;
   }
   
-  // Styles spécifiques selon le mode
+  // Styles spécifiques selon le mode - MODIFIÉS
   .scene-mode-active-header-navigation & {
-    background: rgba($color-tertiary, 0.1);
-    border-color: rgba($color-tertiary, 0.3);
-    color: $color-tertiary-dark;
+    background: $color-tertiary; // COULEUR SOLIDE
+    border-color: darken($color-tertiary, 10%);
+    color: $color-text-light;
   }
   
   .sequence-mode-active-header-navigation & {
-    background: rgba($color-sequence, 0.1);
-    border-color: rgba($color-sequence, 0.3);
-    color: darken($color-sequence, 20%);
+    background: $color-sequence; // COULEUR SOLIDE
+    border-color: darken($color-sequence, 10%);
+    color: $color-text-light;
   }
   
   .episode-mode-active-header-navigation & {
-    background: rgba($color-episode, 0.1);
-    border-color: rgba($color-episode, 0.3);
-    color: darken($color-episode, 20%);
+    background: $color-episode; // COULEUR SOLIDE
+    border-color: darken($color-episode, 10%);
+    color: $color-text-light;
   }
 }
 
@@ -303,11 +305,10 @@
   .header-ecran-travail-screen-work-header-navigation {
     height: auto;
     min-height: 80px;
-    top: 60px;
-    padding: 5px 0;
+    top: 60px !important; // Position normale sur mobile
     
     &.scene-mode-active-header-navigation {
-      top: 120px;
+      top: 120px !important; // MODIFIÉ: 120px pour scène sur mobile
     }
   }
   
@@ -388,6 +389,10 @@
 @include respond-to($breakpoint-xs) {
   .header-ecran-travail-screen-work-header-navigation {
     min-height: 85px;
+    
+    &.scene-mode-active-header-navigation {
+      top: 120px !important; // MODIFIÉ: 120px pour scène sur très petit écran
+    }
   }
   
   .fixed-nav-container-screen-work-header-navigation {
@@ -470,10 +475,10 @@
   .header-ecran-travail-screen-work-header-navigation {
     height: 60px !important; // Garder la même hauteur
     min-height: 60px !important;
-    top: 70px !important;
+    top: 60px !important; // Position normale
     
     &.scene-mode-active-header-navigation {
-      top: 120px !important;
+      top: 120px !important; // MODIFIÉ: 120px pour scène
     }
   }
   

@@ -15,20 +15,6 @@
   z-index: $z-index-fixed;
   box-shadow: $shadow-lg;
   transition: $transition;
-  
-  // Adaptation à la sidebar droite
-  &.with-right-sidebar {
-    right: 250px;
-    transition: right $transition-slow ease;
-    
-    @media (max-width: $breakpoint-lg) {
-      right: 220px;
-    }
-    
-    @media (max-width: $breakpoint-md) {
-      right: 200px;
-    }
-  }
 }
 
 /* Sections de la navbar */
@@ -45,7 +31,7 @@
   display: flex;
   align-items: center;
   gap: $gap-xs;
-  color: $color-primary;
+  color: $color-background-dark;
   font-family: $font-family-primary;
   font-size: $font-size-p1;
   font-weight: $font-weight-semibold;
@@ -305,7 +291,7 @@
     left: 50%;
     transform: translateX(-50%);
     background: $color-background-dark;
-    border: 1px solid rgba($color-primary, 0.3);
+    border: 1px solid rgba($color-accent, 0.3);
     border-radius: $border-radius-sm;
     padding: $padding-lg;
     width: 90%;
@@ -389,17 +375,18 @@
   min-height: 100px;
   text-align: center;
   position: relative;
+  border: 1px solid $color-accent;
   
   &:hover {
-    background: rgba($color-primary, 0.2);
-    border-color: rgba($color-primary, 0.4);
-    color: $color-primary;
+    background: rgba($color-white, 0.2);
+    border-color: rgba($color-primary-light, 0.4);
+    color: $color-primary-light;
     transform: translateY(-3px) scale(1.02);
     box-shadow: $shadow-md;
     
     i {
       transform: scale(1.2);
-      color: $color-primary;
+      color: $color-primary-light;
     }
   }
   

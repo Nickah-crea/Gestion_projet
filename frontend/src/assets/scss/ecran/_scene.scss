@@ -1119,3 +1119,515 @@
   }
 }
 
+// =============================================
+// EN-TÊTE SCÈNE RÉORGANISÉ
+// =============================================
+.scene-header-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  position: relative;
+  flex-wrap: wrap;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba($color-border, 0.3);
+  }
+}
+
+.scene-header-left-screen-work {
+  flex: 1;
+  min-width: 300px;
+}
+
+// Titre principal
+.scene-title-view-screen-work {
+  @include typography-playfair-h2;
+  color: $color-text-primary;
+  margin: 0 0 $margin-sm 0;
+  font-size: calc(#{$font-size-h2} - 4px);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  display: block;
+}
+
+// Informations parents (séquence/épisode)
+.scene-parent-info-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  flex-wrap: wrap;
+  margin-top: $margin-xs;
+}
+
+.parent-item-screen-work {
+  @include typography-p3;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  strong {
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+}
+
+.parent-separator-screen-work {
+  color: $color-text-muted;
+  font-size: $font-size-p3;
+}
+
+// Partie droite de l'en-tête
+.scene-header-right-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+// =============================================
+// BARRE D'ACTIONS ALIGNÉE À DROITE
+// =============================================
+.scene-actions-bar-screen-work {
+  display: flex;
+  justify-content: flex-end; // Aligne tout à droite
+  margin: $margin-lg 0;
+  padding: 0;
+  background: transparent;
+}
+
+.scene-actions-right-screen-work {
+  display: flex;
+  gap: $gap-sm;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  
+  @media (max-width: $breakpoint-md) {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR L'EN-TÊTE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .scene-header-right-screen-work {
+    gap: $gap-sm;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .scene-header-view-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .scene-header-right-screen-work {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: $margin-sm;
+  }
+  
+  .scene-parent-info-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+  
+  .parent-separator-screen-work {
+    display: none;
+  }
+  
+  .scene-actions-bar-screen-work {
+    justify-content: flex-start;
+  }
+  
+  .scene-actions-right-screen-work {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .scene-header-right-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-sm;
+  }
+  
+  .scene-status-badge-screen-work,
+  .comment-badge-screen-work {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .scene-actions-right-screen-work {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// AJOUTEZ CE CODE À LA SECTION COMMENTAIRES DANS VOTRE FICHIER _scene.scss
+// =============================================
+// SECTION COMMENTAIRES SCÈNE (POPUP)
+// =============================================
+
+// Conteneur principal des commentaires dans la modal
+.detail-section-screen-work.comment-section-screen-work {
+  margin: $margin-xl 0;
+  padding: $padding-lg;
+  background: rgba($color-accent, 0.03);
+  border: 1px solid rgba($color-accent, 0.1);
+  border-radius: $border-radius-lg;
+  
+  .detail-section-header-screen-work {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $margin-lg;
+    padding-bottom: $padding-md;
+    border-bottom: 1px solid rgba($color-accent, 0.2);
+    
+    h3 {
+      @include typography-playfair-h4;
+      color: $color-text-primary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+      
+      i {
+        color: $color-accent;
+        font-size: 1.1em;
+      }
+    }
+  }
+  
+  // Formulaire d'ajout de commentaire
+  .add-comment-screen-work {
+    margin-bottom: $margin-xl;
+    padding: $padding-lg;
+    background: $color-background;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-border, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    textarea {
+      width: 100%;
+      padding: $padding-md;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-sm;
+      font-family: $font-family-primary;
+      font-size: $font-size-p3;
+      color: $color-text-primary;
+      resize: vertical;
+      min-height: 100px;
+      margin-bottom: $margin-md;
+      background: $color-background-alt;
+      transition: $transition-fast;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-accent;
+        box-shadow: 0 0 0 3px rgba($color-accent, 0.1);
+        background: $color-background;
+      }
+      
+      &::placeholder {
+        color: $color-text-muted;
+        font-style: italic;
+      }
+    }
+    
+    .add-comment-btn-screen-work {
+      background: $color-accent;
+      color: $color-text-light;
+      border: none;
+      padding: $padding-sm $padding-lg;
+      border-radius: $border-radius-sm;
+      font-size: $font-size-p3;
+      font-weight: $font-weight-medium;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: $gap-xs;
+      transition: $transition-fast;
+      
+      &:hover {
+        background: darken($color-accent, 10%);
+        transform: translateY(-2px);
+        box-shadow: $shadow;
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+      
+      i {
+        font-size: 1em;
+      }
+    }
+  }
+  
+  // Liste des commentaires
+  .comments-list-screen-work {
+    display: flex;
+    flex-direction: column;
+    gap: $margin-md;
+  }
+  
+  // Item de commentaire
+  .comment-item-screen-work {
+    background: $color-background;
+    padding: $padding-lg;
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-border, 0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    transition: $transition-fast;
+    
+    &:hover {
+      border-color: rgba($color-accent, 0.3);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+    
+    .comment-header-screen-work {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $margin-sm;
+      padding-bottom: $padding-xs;
+      border-bottom: 1px solid rgba($color-border, 0.1);
+      
+      .comment-author-screen-work {
+        @include typography-p3;
+        color: $color-text-primary;
+        font-weight: $font-weight-semibold;
+        display: flex;
+        align-items: center;
+        gap: $gap-xs;
+        
+        &::before {
+          content: '';
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: $color-accent;
+        }
+      }
+      
+      .comment-date-screen-work {
+        @include typography-p4;
+        color: $color-text-muted;
+        font-style: italic;
+      }
+    }
+    
+    .comment-content-screen-work {
+      @include typography-p3;
+      color: $color-text-secondary;
+      line-height: 1.6;
+      padding: $padding-sm;
+      background: rgba($color-border, 0.05);
+      border-radius: $border-radius-xs;
+      margin-bottom: $margin-sm;
+    }
+    
+    .comment-actions-screen-work {
+      text-align: right;
+      
+      .delete-comment-btn-screen-work {
+        @include typography-p4;
+        color: $color-error;
+        background: none;
+        border: 1px solid rgba($color-error, 0.3);
+        border-radius: $border-radius-xs;
+        padding: $padding-xs $padding-sm;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: $transition-fast;
+        
+        &:hover {
+          background: rgba($color-error, 0.1);
+          transform: translateY(-1px);
+        }
+        
+        i {
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+}
+
+// ────────────────────────────────────────────────
+// État vide pour les commentaires
+// ────────────────────────────────────────────────
+.comments-empty-state-screen-work {
+  text-align: center;
+  padding: $padding-xl;
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  border: 2px dashed rgba($color-border, 0.3);
+  margin: $margin-lg 0;
+  
+  .empty-comments-icon-screen-work {
+    color: $color-text-muted;
+    font-size: $font-size-h2;
+    margin-bottom: $margin-md;
+    opacity: 0.5;
+  }
+  
+  .empty-comments-message-screen-work {
+    @include typography-p2;
+    color: $color-text-muted;
+    margin-bottom: $margin-lg;
+  }
+  
+  .empty-comments-hint-screen-work {
+    @include typography-p3;
+    color: $color-text-secondary;
+    font-style: italic;
+  }
+}
+
+// ────────────────────────────────────────────────
+// Responsive pour la section commentaires
+// ────────────────────────────────────────────────
+@media (max-width: $breakpoint-lg) {
+  .detail-section-screen-work.comment-section-screen-work {
+    padding: $padding-md;
+    
+    .add-comment-screen-work {
+      padding: $padding-md;
+      
+      textarea {
+        min-height: 80px;
+      }
+    }
+    
+    .comment-item-screen-work {
+      padding: $padding-md;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .detail-section-screen-work.comment-section-screen-work {
+    .comment-header-screen-work {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $gap-xs;
+      
+      .comment-date-screen-work {
+        font-size: $font-size-p4;
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .detail-section-screen-work.comment-section-screen-work {
+    .add-comment-btn-screen-work {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .comment-actions-screen-work {
+      .delete-comment-btn-screen-work {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// Animation pour l'apparition des nouveaux commentaires
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comment-item-screen-work {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+// Amélioration de l'accessibilité
+@media (prefers-reduced-motion: reduce) {
+  .detail-section-screen-work.comment-section-screen-work .add-comment-btn-screen-work,
+  .comment-item-screen-work,
+  .delete-comment-btn-screen-work {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  .comment-item-screen-work {
+    animation: none;
+  }
+}
+
+// Badge de notification de commentaires dans l'en-tête
+.comment-badge-screen-work.has-comments {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $color-warning;
+    border: 2px solid $color-background-alt;
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba($color-warning, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba($color-warning, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba($color-warning, 0);
+  }
+}
+

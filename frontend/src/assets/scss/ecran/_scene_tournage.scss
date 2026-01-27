@@ -2,7 +2,7 @@
 @import '../base/variables';
 
 // =============================================
-// SECTION TOURNAGE
+// SECTION TOURNAGE - LARGEUR COMPLÈTE
 // =============================================
 .tournage-section {
   background: $color-background-alt;
@@ -11,6 +11,8 @@
   box-shadow: $shadow;
   border: 1px solid rgba($color-border, 0.2);
   margin-bottom: $margin-xl;
+  width: 100%;
+  max-width: 100%;
 }
 
 // ────────────────────────────────────────────────
@@ -20,9 +22,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $margin-lg;
+  margin-bottom: $margin-md;
   flex-wrap: wrap;
   gap: $gap-md;
+  width: 100%;
   
   h4 {
     @include typography-playfair-h4;
@@ -43,12 +46,11 @@
 // Indicateur de statut
 .statut-indicator {
   @include typography-p4;
-  padding: 4px 12px;
+  padding: 6px 16px;
   border-radius: $border-radius-pill;
   font-weight: $font-weight-semibold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-left: $gap-sm;
   
   &.statut-planifie {
     background: rgba($color-info, 0.1);
@@ -81,114 +83,144 @@
   }
 }
 
-// ────────────────────────────────────────────────
-// Actions tournage
-// ────────────────────────────────────────────────
-.tournage-actions {
+// Conteneur du statut à droite
+.statut-container {
   display: flex;
-  gap: $gap-sm;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+// ────────────────────────────────────────────────
+// Ligne des boutons d'action - STYLES CORRIGÉS
+// ────────────────────────────────────────────────
+.action-buttons-row {
+  margin: $margin-md 0 $margin-lg 0;
+  border-top: 1px solid rgba($color-border, 0.2);
+  padding-top: $padding-md;
+  width: 100%;
   
-  button {
-    padding: $padding-xs $padding-sm;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition: $transition-fast;
+  .tournage-actions {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid $color-border;
-    background: $color-background;
-    white-space: nowrap;
+    gap: $gap-sm;
+    flex-wrap: wrap;
+    width: 100%;
     
-    i {
-      font-size: 0.9em;
+    button {
+      padding: $padding-sm $padding-md;
+      border-radius: $border-radius-sm;
+      font-size: $font-size-p3;
+      font-weight: $font-weight-medium;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      min-height: 40px;
+      min-width: 120px;
+      
+      i {
+        font-size: 1em;
+      }
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+      }
     }
     
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: $shadow;
+    // BOUTONS SPÉCIFIQUES AVEC COULEURS VISIBLES
+    .btn-confirmer {
+      background: $color-success;
+      color: white;
+      border-color: $color-success;
+      
+      &:hover:not(:disabled) {
+        background: darken($color-success, 10%);
+        border-color: darken($color-success, 10%);
+        color: white;
+      }
     }
     
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    .btn-reporter {
+      background: $color-error;
+      color: white;
+      border-color: $color-error;
+      
+      &:hover:not(:disabled) {
+        background: darken($color-error, 10%);
+        border-color: darken($color-error, 10%);
+        color: white;
+      }
     }
-  }
-  
-  // Boutons spécifiques
-  .btn-planifier {
-    background: $color-primary;
-    color: $color-text-light;
-    border-color: $color-primary;
     
-    &:hover {
-      background: $color-primary-dark;
-      border-color: $color-primary-dark;
+    .btn-commencer {
+      background: $color-warning;
+      color: white;
+      border-color: $color-warning;
+      
+      &:hover:not(:disabled) {
+        background: darken($color-warning, 10%);
+        border-color: darken($color-warning, 10%);
+        color: white;
+      }
     }
-  }
-  
-  .btn-confirmer {
-    background: $color-success;
-    color: $color-text-light;
-    border-color: $color-success;
     
-    &:hover {
-      background: darken($color-success, 10%);
-      border-color: darken($color-success, 10%);
+    .btn-terminer {
+      background: $color-primary;
+      color: white;
+      border-color: $color-primary;
+      
+      &:hover:not(:disabled) {
+        background: darken($color-primary, 10%);
+        border-color: darken($color-primary, 10%);
+        color: white;
+      }
     }
-  }
-  
-  .btn-commencer {
-    background: $color-warning;
-    color: $color-text-light;
-    border-color: $color-warning;
     
-    &:hover {
-      background: darken($color-warning, 10%);
-      border-color: darken($color-warning, 10%);
+    .btn-planifier {
+      background: $color-primary;
+      color: white;
+      border-color: $color-primary;
+      
+      &:hover:not(:disabled) {
+        background: darken($color-primary, 10%);
+        border-color: darken($color-primary, 10%);
+        color: white;
+      }
     }
-  }
-  
-  .btn-terminer {
-    background: $color-primary;
-    color: $color-text-light;
-    border-color: $color-primary;
     
-    &:hover {
-      background: $color-primary-dark;
-      border-color: $color-primary-dark;
+    .btn-modifier {
+      background: $color-info;
+      color: white;
+      border-color: $color-info;
+      
+      &:hover:not(:disabled) {
+        background: darken($color-info, 10%);
+        border-color: darken($color-info, 10%);
+        color: white;
+      }
     }
-  }
-  
-  .btn-reporter {
-    background: $color-error;
-    color: $color-text-light;
-    border-color: $color-error;
     
-    &:hover {
-      background: darken($color-error, 10%);
-      border-color: darken($color-error, 10%);
-    }
-  }
-  
-  .btn-modifier {
-    color: $color-info;
-    border-color: rgba($color-info, 0.3);
-    
-    &:hover {
-      background: rgba($color-info, 0.1);
-    }
-  }
-  
-  .btn-supprimer {
-    color: $color-error;
-    border-color: rgba($color-error, 0.3);
-    
-    &:hover {
-      background: rgba($color-error, 0.1);
+    .btn-supprimer {
+      background: $color-error;
+      color: white;
+      border-color: $color-error;
+      
+      &:hover:not(:disabled) {
+        background: darken($color-error, 10%);
+        border-color: darken($color-error, 10%);
+        color: white;
+      }
     }
   }
 }
@@ -198,63 +230,77 @@
 // ────────────────────────────────────────────────
 .tournage-info {
   background: $color-background;
-  border-radius: $border-radius-sm;
-  padding: $padding-lg;
-  border: 1px solid rgba($color-border, 0.1);
+  border-radius: $border-radius-lg;
+  padding: $padding-xl;
+  border: 1px solid rgba($color-border, 0.2);
   margin-bottom: $margin-lg;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-.tournage-details {
+// Grille simple pour les détails - STYLES CORRIGÉS
+.tournage-details.simple-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $gap-lg;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: $gap-md;
+  margin-top: $margin-sm;
+  width: 100%;
 }
 
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-xs;
-  padding: $padding-sm;
-  background: rgba($color-background-alt, 0.5);
-  border-radius: $border-radius-xs;
-  border: 1px solid rgba($color-border, 0.1);
-  transition: $transition-fast;
+.detail-item.simple {
+  background: $color-background;
+  border-radius: $border-radius-sm;
+  padding: $padding-md $padding-lg;
+  border: 1px solid rgba($color-border, 0.3);
+  margin: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   
   &:hover {
     border-color: $color-primary;
-    background: rgba($color-primary, 0.03);
+    background: rgba($color-primary, 0.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
   strong {
-    @include typography-p4;
-    color: $color-text-muted;
-    font-weight: $font-weight-medium;
+    @include typography-p3;
+    color: $color-text-secondary;
+    font-weight: $font-weight-semibold;
     display: flex;
     align-items: center;
     gap: $gap-xs;
+    margin-bottom: 6px;
     
     i {
       color: $color-primary;
-      font-size: 0.9em;
+      font-size: 1em;
     }
   }
   
   span {
     @include typography-p2;
     color: $color-text-primary;
-    font-weight: $font-weight-semibold;
+    font-weight: $font-weight-bold;
+    display: block;
   }
   
   // Cas spécial pour les notes
   &.notes {
     grid-column: 1 / -1;
-    padding: $padding-md;
+    background: rgba($color-warning, 0.08);
+    border-color: rgba($color-warning, 0.3);
+    
+    strong {
+      i {
+        color: $color-warning;
+      }
+    }
     
     span {
       @include typography-p3;
       color: $color-text-secondary;
       font-weight: $font-weight-medium;
-      line-height: 1.5;
+      line-height: 1.6;
     }
   }
 }
@@ -419,7 +465,7 @@
   background: $color-background-alt;
   border-radius: $border-radius-lg;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: $shadow-xl;
@@ -677,13 +723,42 @@
     padding: $padding-lg;
   }
   
-  .tournage-actions {
-    flex-direction: column;
+  .section-header {
+    flex-direction: row;
+    align-items: center;
+    gap: $gap-md;
     
-    button {
-      width: 100%;
-      justify-content: center;
+    h4 {
+      width: auto;
+      flex: 1;
     }
+  }
+  
+  .statut-container {
+    align-self: center;
+    justify-content: flex-end;
+    margin-top: 0;
+  }
+  
+  .action-buttons-row {
+    .tournage-actions {
+      justify-content: flex-start;
+      
+      button {
+        flex: 1 1 calc(50% - #{$gap-sm});
+        min-width: 160px;
+        justify-content: center;
+      }
+    }
+  }
+  
+  .tournage-details.simple-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $gap-md;
+  }
+  
+  .detail-item.simple {
+    padding: $padding-sm;
   }
   
   .historique-item .historique-header {
@@ -706,11 +781,55 @@
     padding: $padding-md;
   }
   
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-sm;
+    
+    h4 {
+      width: 100%;
+      margin-bottom: $gap-sm;
+    }
+  }
+  
+  .statut-container {
+    align-self: flex-start;
+    justify-content: flex-start;
+    margin-top: 0;
+    margin-bottom: $gap-md;
+  }
+  
+  .action-buttons-row {
+    .tournage-actions {
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+        min-width: auto;
+        justify-content: center;
+        margin-bottom: $gap-xs;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+  
   .tournage-info {
     padding: $padding-md;
   }
   
   .detail-item {
+    padding: $padding-sm;
+  }
+  
+  .tournage-details.simple-grid {
+    grid-template-columns: 1fr;
+    gap: $gap-sm;
+  }
+  
+  .detail-item.simple {
     padding: $padding-sm;
   }
   
@@ -754,4 +873,10 @@
     }
   }
 }
+
+// Assurer que tous les éléments prennent toute la largeur
+.tournage-section * {
+  box-sizing: border-box;
+}
+
 

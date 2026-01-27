@@ -945,3 +945,266 @@
 }
 
 
+// =============================================
+// EN-TÊTE ÉPISODE RÉORGANISÉ
+// =============================================
+.episode-header-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  position: relative;
+  flex-wrap: wrap;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba($color-border, 0.3);
+  }
+}
+
+.episode-header-left-screen-work {
+  flex: 1;
+  min-width: 300px;
+}
+
+// Titre principal
+.episode-title-view-screen-work {
+  @include typography-playfair-h2;
+  color: $color-text-primary;
+  margin: 0 0 $margin-sm 0;
+  font-size: calc(#{$font-size-h2} - 4px);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  display: block;
+}
+
+// Informations équipe (réalisation/scénariste)
+.episode-crew-info-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  flex-wrap: wrap;
+  margin-top: $margin-xs;
+}
+
+.crew-item-screen-work {
+  @include typography-p3;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  strong {
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+}
+
+.crew-separator-screen-work {
+  color: $color-text-muted;
+  font-size: $font-size-p3;
+}
+
+// Partie droite de l'en-tête
+.episode-header-right-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+// Badge statut à droite
+.episode-status-badge-screen-work {
+  padding: 6px 16px;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $color-text-light;
+  background: linear-gradient(135deg, $color-primary, darken($color-primary, 10%));
+  box-shadow: $shadow;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+  min-width: 100px;
+  justify-content: center;
+  height: fit-content;
+}
+
+// Badge commentaire à droite
+.comment-badge-screen-work {
+  @include typography-p4;
+  color: $color-accent;
+  background: rgba($color-accent, 0.1);
+  padding: 4px 12px;
+  border-radius: $border-radius-pill;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: $transition-fast;
+  border: 1px solid rgba($color-accent, 0.3);
+  
+  &:hover {
+    background: rgba($color-accent, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  i {
+    font-size: 0.9em;
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR L'EN-TÊTE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .episode-header-right-screen-work {
+    gap: $gap-sm;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .episode-header-view-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .episode-header-right-screen-work {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: $margin-sm;
+  }
+  
+  .episode-crew-info-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+  
+  .crew-separator-screen-work {
+    display: none;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .episode-header-right-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-sm;
+  }
+  
+  .episode-status-badge-screen-work,
+  .comment-badge-screen-work {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// =============================================
+// BARRE D'ACTIONS ALIGNÉE À DROITE
+// =============================================
+.episode-actions-bar-screen-work {
+  display: flex;
+  justify-content: flex-end; // Aligne tout à droite
+  margin: $margin-lg 0;
+  padding: 0;
+  background: transparent;
+}
+
+.episode-actions-right-screen-work {
+  display: flex;
+  gap: $gap-sm;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  
+  @media (max-width: $breakpoint-md) {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+}
+
+// Styles des boutons (conservés)
+.details-btn-screen-work,
+.edit-btn-screen-work,
+.delete-btn-screen-work,
+.add-btn-screen-work {
+  padding: $padding-xs $padding-md;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid $color-border;
+  background: $color-background;
+  
+  i {
+    font-size: 0.9em;
+  }
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $shadow;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.details-btn-screen-work {
+  color: $color-primary;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+  }
+}
+
+.edit-btn-screen-work {
+  color: $color-primary;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+  }
+}
+
+.delete-btn-screen-work {
+  color: $color-error;
+  
+  &:hover {
+    background: rgba($color-error, 0.1);
+    border-color: $color-error;
+  }
+}
+
+.add-btn-screen-work {
+  background: $color-primary;
+  color: $color-text-light;
+  border-color: $color-primary;
+  
+  &:hover {
+    background: $color-primary-dark;
+    border-color: $color-primary-dark;
+  }
+}
+

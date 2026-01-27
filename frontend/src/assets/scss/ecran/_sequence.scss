@@ -1106,3 +1106,163 @@
 }
 
 
+// =============================================
+// EN-TÊTE SÉQUENCE RÉORGANISÉ
+// =============================================
+.sequence-header-view-screen-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $margin-lg;
+  padding-bottom: $padding-md;
+  position: relative;
+  flex-wrap: wrap;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba($color-border, 0.3);
+  }
+}
+
+.sequence-header-left-screen-work {
+  flex: 1;
+  min-width: 300px;
+}
+
+// Titre principal
+.sequence-title-view-screen-work {
+  @include typography-playfair-h2;
+  color: $color-text-primary;
+  margin: 0 0 $margin-sm 0;
+  font-size: calc(#{$font-size-h2} - 4px);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  display: block;
+}
+
+// Informations parent (épisode)
+.sequence-parent-info-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  flex-wrap: wrap;
+  margin-top: $margin-xs;
+}
+
+.parent-item-screen-work {
+  @include typography-p3;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  strong {
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+}
+
+// Partie droite de l'en-tête
+.sequence-header-right-screen-work {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+// =============================================
+// BARRE D'ACTIONS ALIGNÉE À DROITE
+// =============================================
+.sequence-actions-bar-screen-work {
+  display: flex;
+  justify-content: flex-end; // Aligne tout à droite
+  margin: $margin-lg 0;
+  padding: 0;
+  background: transparent;
+}
+
+.sequence-actions-right-screen-work {
+  display: flex;
+  gap: $gap-sm;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  
+  @media (max-width: $breakpoint-md) {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR L'EN-TÊTE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .sequence-header-right-screen-work {
+    gap: $gap-sm;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .sequence-header-view-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-md;
+  }
+  
+  .sequence-header-right-screen-work {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: $margin-sm;
+  }
+  
+  .sequence-parent-info-screen-work {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-xs;
+  }
+  
+  .sequence-actions-bar-screen-work {
+    justify-content: flex-start;
+  }
+  
+  .sequence-actions-right-screen-work {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .sequence-header-right-screen-work {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-sm;
+  }
+  
+  .sequence-status-badge-screen-work,
+  .comment-badge-screen-work {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .sequence-actions-right-screen-work {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+

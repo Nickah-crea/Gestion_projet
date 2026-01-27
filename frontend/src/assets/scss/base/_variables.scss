@@ -454,8 +454,8 @@ $z-index-toast: 1070;
 
 // Mixin pour les boutons cinéma primaires
 @mixin btn-cinema-primary {
-  padding: $padding-sm $padding-lg;
-  background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+  padding: $padding-sm $padding-sm;
+  background: $color-accent;
   color: $color-background-alt;  // Changé ici
   border: none;
   border-radius: $border-radius-xs;
@@ -476,7 +476,7 @@ $z-index-toast: 1070;
   &:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: $shadow-hover;
-    background: linear-gradient(135deg, $color-primary-dark, $color-primary);
+    background: $color-accent;
   }
   
   &:active:not(:disabled) {
