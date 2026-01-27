@@ -10,7 +10,7 @@
       <div class="navbar-left-section">
         <div class="navbar-title">
           <i class="fas fa-tools"></i>
-          <span>Outils Scène</span>
+          <span style="color: #f5f4f5;">Outils Scène</span>
         </div>
         <!-- Affichage conditionnel pour les utilisateurs sans permissions -->
         <div v-if="!hasAnyPermissions" class="navbar-permission-notice">

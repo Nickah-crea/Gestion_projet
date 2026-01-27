@@ -205,68 +205,89 @@
         <!-- Conteneur principal identique à projet -->
         <div class="episode-view-container-screen-work">
           
-          <!-- En-tête épisode (même structure que projet) -->
+          <!-- En-tête épisode réorganisé -->
           <div class="episode-header-view-screen-work">
             <div class="episode-header-left-screen-work">
+              <!-- Titre principal à gauche -->
               <h1 class="episode-title-view-screen-work">
                 Épisode {{ currentEpisode.ordre }} : {{ currentEpisode.titre }}
-                <div class="episode-status-badge-screen-work">
-                  {{ currentEpisode.statutNom || 'Non défini' }}
-                </div>
-                <span class="comment-badge-screen-work" @click="toggleEpisodeCommentSection">
-                  <i class="fas fa-comments"></i> 
-                  {{ getEpisodeCommentCount(currentEpisode.idEpisode) }} commentaire(s)
-                </span>
               </h1>
+              
+              <!-- Réalisateur et Scénariste en dessous du titre -->
+              <div class="episode-crew-info-screen-work" v-if="currentEpisode.realisateur || currentEpisode.scenariste">
+                <span v-if="currentEpisode.realisateur" class="crew-item-screen-work">
+                  <strong>Réalisateur :</strong> {{ currentEpisode.realisateur.nom }}
+                </span>
+                <span v-if="currentEpisode.realisateur && currentEpisode.scenariste" class="crew-separator-screen-work">•</span>
+                <span v-if="currentEpisode.scenariste" class="crew-item-screen-work">
+                  <strong>Scénariste :</strong> {{ currentEpisode.scenariste.nom }}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Statut et commentaire à droite -->
+            <div class="episode-header-right-screen-work">
+              <!-- Badge statut -->
+              <div class="episode-status-badge-screen-work">
+                {{ currentEpisode.statutNom || 'Non défini' }}
+              </div>
+              
+              <!-- Badge commentaire -->
+              <span class="comment-badge-screen-work" @click="toggleEpisodeCommentSection">
+                <i class="fas fa-comments"></i> 
+                {{ getEpisodeCommentCount(currentEpisode.idEpisode) }} commentaire(s)
+              </span>
             </div>
           </div>
 
-          <!-- Barre d'actions (sous les stats) -->
+          <!-- Barre d'actions alignée à droite -->
           <div class="episode-actions-bar-screen-work">
-            <button class="details-btn-screen-work" @click="showEpisodeDetailsModal = true">
-              <i class="fas fa-info-circle"></i> Voir détails
-            </button>
-            
-            <button v-if="userPermissions.canEditEpisode" class="edit-btn-screen-work" @click="startEditEpisode">
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            
-            <button v-if="userPermissions.canCreateEpisode" class="delete-btn-screen-work" @click="confirmDeleteEpisode">
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-            
-            <button v-if="userPermissions.canCreateSequence" class="add-btn-screen-work" @click="goToAddSequence">
-              <i class="fas fa-plus"></i> Ajouter une séquence
-            </button>
+            <div class="episode-actions-right-screen-work">
+              <button class="details-btn-screen-work" @click="showEpisodeDetailsModal = true">
+                <i class="fas fa-info-circle"></i> Voir détails
+              </button>
+              
+              <button v-if="userPermissions.canEditEpisode" class="edit-btn-screen-work" @click="startEditEpisode">
+                <i class="fas fa-pen"></i> Modifier
+              </button>
+              
+              <button v-if="userPermissions.canCreateEpisode" class="delete-btn-screen-work" @click="confirmDeleteEpisode">
+                <i class="fas fa-trash"></i> Supprimer
+              </button>
+              
+              <button v-if="userPermissions.canCreateSequence" class="add-btn-screen-work" @click="goToAddSequence">
+                <i class="fas fa-plus"></i> Ajouter une séquence
+              </button>
+            </div>
           </div>
 
           <!-- Section Commentaires (optionnelle, comme action supplémentaire) -->
-            <div v-if="showEpisodeCommentSection" class="detail-section-screen-work comment-section-screen-work">
-              <h3><i class="fas fa-comments"></i> Commentaires de l'épisode</h3>
-              <div class="add-comment-screen-work">
-                <textarea v-model="newEpisodeComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-                <button @click="addEpisodeComment" class="add-comment-btn-screen-work">
-                  <i class="fas fa-plus-circle"></i> Ajouter
-                </button>
-              </div>
-              
-              <div class="comments-list-screen-work">
-                <div v-for="comment in episodeComments" :key="comment.id" class="comment-item-screen-work">
-                  <div class="comment-header-screen-work">
-                    <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
-                    <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
-                  </div>
-                  <div class="comment-content-screen-work">
-                    {{ comment.contenu }}
-                  </div>
-                  <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
-                    <button @click="deleteEpisodeComment(comment.id)" class="delete-comment-btn-screen-work">
-                      <i class="fas fa-trash"></i> Supprimer
-                    </button>
-                  </div>
+          <div v-if="showEpisodeCommentSection" class="detail-section-screen-work comment-section-screen-work">
+            <h3><i class="fas fa-comments"></i> Commentaires de l'épisode</h3>
+            <div class="add-comment-screen-work">
+              <textarea v-model="newEpisodeComment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
+              <button @click="addEpisodeComment" class="add-comment-btn-screen-work">
+                <i class="fas fa-plus-circle"></i> Ajouter
+              </button>
+            </div>
+            
+            <div class="comments-list-screen-work">
+              <div v-for="comment in episodeComments" :key="comment.id" class="comment-item-screen-work">
+                <div class="comment-header-screen-work">
+                  <span class="comment-author-screen-work">{{ comment.utilisateurNom }}</span>
+                  <span class="comment-date-screen-work">{{ formatDate(comment.creeLe) }}</span>
+                </div>
+                <div class="comment-content-screen-work">
+                  {{ comment.contenu }}
+                </div>
+                <div class="comment-actions-screen-work" v-if="comment.utilisateurId === user.id">
+                  <button @click="deleteEpisodeComment(comment.id)" class="delete-comment-btn-screen-work">
+                    <i class="fas fa-trash"></i> Supprimer
+                  </button>
                 </div>
               </div>
             </div>
+          </div>
           
           <!-- Section détails (structure projet) -->
           <div class="episode-details-view-screen-work">
@@ -278,28 +299,6 @@
                 </button> -->
               
               <div class="detail-section-content-screen-work">
-                <!-- Équipe -->
-                <div v-if="currentEpisode.realisateur || currentEpisode.scenariste" 
-                    class="team-section-screen-work">
-                  <h4><i class="fas fa-users"></i> Équipe</h4>
-                  <div class="team-grid-screen-work">
-                    <div v-if="currentEpisode.realisateur" class="team-member-screen-work">
-                      <i class="fas fa-video"></i>
-                      <div class="team-member-info-screen-work">
-                        <span class="team-role-screen-work">Réalisateur</span>
-                        <span class="team-name-screen-work">{{ currentEpisode.realisateur.nom }}</span>
-                      </div>
-                    </div>
-                    <div v-if="currentEpisode.scenariste" class="team-member-screen-work">
-                      <i class="fas fa-pen"></i>
-                      <div class="team-member-info-screen-work">
-                        <span class="team-role-screen-work">Scénariste</span>
-                        <span class="team-name-screen-work">{{ currentEpisode.scenariste.nom }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
                 <!-- Synopsis -->
                 <div v-if="currentEpisode.synopsis" class="synopsis-section-screen-work">
                   <h4><i class="fas fa-align-left"></i> Synopsis</h4>
@@ -412,51 +411,60 @@
       </div>
 
       <!-- 3. VUE SÉQUENCE -->
-      <div v-else-if="sidebarSelection.type === 'sequence'" class="main-content-view-screen-work">
+     <div v-else-if="sidebarSelection.type === 'sequence'" class="main-content-view-screen-work">
         <!-- Conteneur principal identique à projet -->
         <div class="sequence-view-container-screen-work">
           
-          <!-- En-tête séquence (même structure que projet) -->
+          <!-- En-tête séquence réorganisé -->
           <div class="sequence-header-view-screen-work">
             <div class="sequence-header-left-screen-work">
+              <!-- Titre principal à gauche -->
               <h1 class="sequence-title-view-screen-work">
-                <span class="sequence-order-badge-screen-work">
-                  <i class="fas fa-list-ol"></i> Séquence {{ currentSequence.ordre }}
-                </span>
-                {{ currentSequence.titre }}
-                <div class="sequence-status-badge-screen-work" :class="getStatusClass(currentSequence.statutNom)">
-                  {{ currentSequence.statutNom || 'Non défini' }}
-                </div>
-                <span class="comment-badge-screen-work" @click="toggleSequenceCommentSection">
-                  <i class="fas fa-comments"></i> 
-                  {{ sequenceCommentCount }} commentaire(s)
-                </span>
+                Séquence {{ currentSequence.ordre }} : {{ currentSequence.titre }}
               </h1>
+              
+              <!-- Épisode parent en dessous du titre -->
+              <div class="sequence-parent-info-screen-work" v-if="currentEpisode">
+                <span class="parent-item-screen-work">
+                  <strong>Épisode parent :</strong> Épisode {{ currentEpisode.ordre }} - {{ currentEpisode.titre }}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Statut et commentaire à droite -->
+            <div class="sequence-header-right-screen-work">
+              <!-- Badge statut -->
+              <div class="sequence-status-badge-screen-work" :class="getStatusClass(currentSequence.statutNom)">
+                {{ currentSequence.statutNom || 'Non défini' }}
+              </div>
+              
+              <!-- Badge commentaire -->
+              <span class="comment-badge-screen-work" @click="toggleSequenceCommentSection">
+                <i class="fas fa-comments"></i> 
+                {{ sequenceCommentCount }} commentaire(s)
+              </span>
             </div>
           </div>
           
-          <!-- Barre d'actions (sous les stats) -->
+          <!-- Barre d'actions alignée à droite -->
           <div class="sequence-actions-bar-screen-work">
-            <button class="details-btn-screen-work" @click="showSequenceDetails = true">
-              <i class="fas fa-info-circle"></i> Voir détails
-            </button>
-            
-            <button v-if="userPermissions.canCreateSequence" class="edit-btn-screen-work" @click="startEditSequence(currentSequence)">
-              <i class="fas fa-pen"></i> Modifier
-            </button>
-            
-            <button v-if="userPermissions.canCreateSequence" class="delete-btn-screen-work" @click="deleteSequence(currentSequence.idSequence)">
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-            
-            <button v-if="userPermissions.canCreateScene" class="add-btn-screen-work" @click="goToAddScene">
-              <i class="fas fa-plus"></i> Ajouter une scène
-            </button>
-            
-            <button class="comments-btn-screen-work" @click="toggleSequenceCommentSection">
-              <i class="fas fa-comments"></i> 
-              {{ showSequenceCommentSection ? 'Masquer' : 'Afficher' }} les commentaires
-            </button>
+            <div class="sequence-actions-right-screen-work">
+              <button class="details-btn-screen-work" @click="showSequenceDetails = true">
+                <i class="fas fa-info-circle"></i> Voir détails
+              </button>
+              
+              <button v-if="userPermissions.canCreateSequence" class="edit-btn-screen-work" @click="startEditSequence(currentSequence)">
+                <i class="fas fa-pen"></i> Modifier
+              </button>
+              
+              <button v-if="userPermissions.canCreateSequence" class="delete-btn-screen-work" @click="deleteSequence(currentSequence.idSequence)">
+                <i class="fas fa-trash"></i> Supprimer
+              </button>
+              
+              <button v-if="userPermissions.canCreateScene" class="add-btn-screen-work" @click="goToAddScene">
+                <i class="fas fa-plus"></i> Ajouter une scène
+              </button>
+            </div>
           </div>
           
           <!-- Section Commentaires (optionnelle) -->
@@ -494,7 +502,7 @@
           <div class="sequence-details-view-screen-work">
             
             <!-- Section Synopsis -->
-            <div v-if="currentSequence.synopsis" class="detail-section-screen-work">
+            <div v-if="currentSequence.synopsis">
               <div class="detail-section-header-screen-work">
                 <h3><i class="fas fa-align-left"></i> Synopsis</h3>
                 <button v-if="userPermissions.canCreateSequence" class="edit-sequence-btn-screen-work" @click="startEditSequence(currentSequence)">
@@ -561,14 +569,6 @@
                 </div>
               </div>
             </div>
-            
-            <!-- Actions supplémentaires (style projet) -->
-            <div class="sequence-actions-view-screen-work">
-              <button class="action-btn-secondary-screen-work" @click="showSequenceDetails = true">
-                <i class="fas fa-chart-bar"></i> 
-                Voir les statistiques détaillées
-              </button>
-            </div>
           </div>
         </div>
         
@@ -626,47 +626,6 @@
                   </div>
                 </div>
               </div>
-
-              
-              <!-- Section Statistiques -->
-              <div class="details-section-screen-work">
-                <h3 class="details-section-title-screen-work">
-                  <i class="fas fa-chart-bar"></i> Statistiques
-                </h3>
-                <div class="stats-grid-screen-work">
-                  <div class="stat-item-screen-work">
-                    <div class="stat-icon-screen-work">
-                      <i class="fas fa-film"></i>
-                    </div>
-                    <div class="stat-content-screen-work">
-                      <div class="stat-number-screen-work">{{ scenes.length }}</div>
-                      <div class="stat-label-screen-work">Scènes</div>
-                    </div>
-                  </div>
-                  <div class="stat-item-screen-work">
-                    <div class="stat-icon-screen-work">
-                      <i class="fas fa-comment"></i>
-                    </div>
-                    <div class="stat-content-screen-work">
-                      <div class="stat-number-screen-work">
-                        {{ scenes.reduce((total, scene) => total + (scene.dialogues?.length || 0), 0) }}
-                      </div>
-                      <div class="stat-label-screen-work">Dialogues total</div>
-                    </div>
-                  </div>
-                  <div class="stat-item-screen-work">
-                    <div class="stat-icon-screen-work">
-                      <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-content-screen-work">
-                      <div class="stat-number-screen-work">
-                        {{ scenes.reduce((total, scene) => total + (scene.dureeEstimee || 0), 0) }} min
-                      </div>
-                      <div class="stat-label-screen-work">Durée estimée</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -677,51 +636,60 @@
         <!-- Conteneur principal identique à projet -->
         <div class="scene-view-container-screen-work" v-if="currentScene">
           
-          <!-- En-tête scène (même structure que projet) -->
+          <!-- En-tête scène réorganisé -->
           <div class="scene-header-view-screen-work">
             <div class="scene-header-left-screen-work">
+              <!-- Titre principal à gauche -->
               <h1 class="scene-title-view-screen-work">
-                <span class="scene-order-badge-screen-work">
-                  <i class="fas fa-film"></i> Scène {{ currentScene.ordre }}
-                </span>
-                {{ currentScene.titre }}
-                <div class="scene-status-badge-screen-work">
-                  {{ currentScene.statutNom || 'Non défini' }}
-                </div>
-                <span class="comment-badge-screen-work" @click="toggleSceneCommentSection(currentScene)">
-                  <i class="fas fa-comments"></i> 
-                  {{ getSceneCommentCount(currentScene.idScene) }} commentaire(s)
-                </span>
+                Scène {{ currentScene.ordre }} : {{ currentScene.titre }}
               </h1>
+              
+              <!-- Séquence et Épisode parents en dessous du titre -->
+              <div class="scene-parent-info-screen-work" v-if="currentSequence || currentEpisode">
+                <span v-if="currentSequence" class="parent-item-screen-work">
+                  <strong>Séquence parent :</strong> Séquence {{ currentSequence.ordre }} - {{ currentSequence.titre }}
+                </span>
+                <span v-if="currentSequence && currentEpisode" class="parent-separator-screen-work">•</span>
+                <span v-if="currentEpisode" class="parent-item-screen-work">
+                  <strong>Épisode :</strong> Épisode {{ currentEpisode.ordre }} - {{ currentEpisode.titre }}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Statut et commentaire à droite -->
+            <div class="scene-header-right-screen-work">
+              <!-- Badge statut -->
+              <div class="scene-status-badge-screen-work">
+                {{ currentScene.statutNom || 'Non défini' }}
+              </div>
+              
+              <!-- Badge commentaire -->
+              <span class="comment-badge-screen-work" @click="toggleSceneCommentSection(currentScene)">
+                <i class="fas fa-comments"></i> 
+                {{ getSceneCommentCount(currentScene.idScene) }} commentaire(s)
+              </span>
             </div>
           </div>
           
-          <!-- Barre d'actions (sous les stats) -->
+          <!-- Barre d'actions alignée à droite -->
           <div class="scene-actions-bar-screen-work">
-            <button class="details-btn-screen-work" @click="showSceneDetailsModal = true">
-              <i class="fas fa-info-circle"></i> Voir informations
-            </button>
-            
-            <button v-if="userPermissions.canCreateScene" class="edit-btn-screen-work" @click="startEditScene(currentScene)">
-              <i class="fas fa-pen"></i> Modifier la scène
-            </button>
-            
-            <button v-if="userPermissions.canCreateScene" class="delete-btn-screen-work" @click="deleteScene(currentScene.idScene)">
-              <i class="fas fa-trash"></i> Supprimer la scène
-            </button>
-            
-            <button v-if="userPermissions.canCreateDialogue" class="add-btn-screen-work" @click="startAddDialogue(currentScene)">
-              <i class="fas fa-plus"></i> Ajouter un dialogue
-            </button>
-            
-            <button class="comments-btn-screen-work" @click="toggleSceneCommentSection(currentScene)">
-              <i class="fas fa-comments"></i> 
-              {{ showSceneCommentModal && selectedSceneForComments?.idScene === currentScene.idScene ? 'Masquer' : 'Afficher' }} les commentaires
-            </button>
-            
-            <button class="back-btn-screen-work" @click="handleSidebarSelection({ type: 'sequence', id: currentSequence?.idSequence })">
-              <i class="fas fa-arrow-left"></i> Retour à la séquence
-            </button>
+            <div class="scene-actions-right-screen-work">
+              <button class="details-btn-screen-work" @click="showSceneDetailsModal = true">
+                <i class="fas fa-info-circle"></i> Voir informations
+              </button>
+              
+              <button v-if="userPermissions.canCreateScene" class="edit-btn-screen-work" @click="startEditScene(currentScene)">
+                <i class="fas fa-pen"></i> Modifier la scène
+              </button>
+              
+              <button v-if="userPermissions.canCreateScene" class="delete-btn-screen-work" @click="deleteScene(currentScene.idScene)">
+                <i class="fas fa-trash"></i> Supprimer la scène
+              </button>
+              
+              <button class="back-btn-screen-work" @click="handleSidebarSelection({ type: 'sequence', id: currentSequence?.idSequence })">
+                <i class="fas fa-arrow-left"></i> Retour à la séquence
+              </button>
+            </div>
           </div>
 
           <!-- Section Commentaires (optionnelle) -->
@@ -766,15 +734,14 @@
           <!-- Section Planning de Tournage -->
           <div class="scene-planning-section-screen-work">
             <div class="section-header-screen-work">
-              <h3><i class="fas fa-video"></i> Planning de Tournage</h3>
-            <SceneTournageSection 
-              v-if="currentScene"
-              :scene="currentScene"
-              :projet-id="currentProjet?.idProjet || projetId"
-              :user-permissions="userPermissions"
-              @tournage-updated="onTournageUpdated"
-            />
-          </div>
+              <SceneTournageSection 
+                v-if="currentScene"
+                :scene="currentScene"
+                :projet-id="currentProjet?.idProjet || projetId"
+                :user-permissions="userPermissions"
+                @tournage-updated="onTournageUpdated"
+              />
+            </div>
         </div>  
           <!-- Section principale : Dialogues -->
           <div class="scene-details-view-screen-work">
@@ -826,9 +793,6 @@
                     </button>
                     <button class="action-icon-screen-work comment-icon-screen-work" @click="toggleDialogueCommentSection(dialogue)" title="Commentaires">
                       <i class="fas fa-comment"></i> {{ getDialogueCommentCount(dialogue.id) }}
-                    </button>
-                    <button v-if="userPermissions.canCreateDialogue" class="action-icon-screen-work highlight-icon-screen-work" @click="openHighlightModal(dialogue, $event)" title="Surligner">
-                      <i class="fas fa-highlighter"></i>
                     </button>
                   </div>
                 </div>

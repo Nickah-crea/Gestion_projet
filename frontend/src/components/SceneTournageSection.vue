@@ -1,25 +1,26 @@
 <template>
   <div class="tournage-section">
+    <!-- En-tête réorganisé -->
     <div class="section-header">
+      <!-- Titre à gauche -->
       <h4>
         <i class="fas fa-video" style="color: #007bff;"></i>
-        Planning de tournage
-        <span v-if="tournage" class="statut-indicator" :class="`statut-${tournage.statutTournage}`">
-          {{ getStatutLibelle(tournage.statutTournage) }}
-        </span>
+        Planning de tournage - {{ scene.titre }}
       </h4>
       
-      <!-- Boutons d'action conditionnels -->
-      <div class="tournage-actions">
-        <!-- Planifier - seulement si pas de tournage existant -->
-        <button v-if="!tournage && userPermissions.canCreateScene" 
-                @click="ouvrirModalPlanification" 
-                class="btn-planifier">
-          <i class="fas fa-calendar-plus"></i> Planifier
-        </button>
+      <!-- Statut à droite -->
+      <div v-if="tournage" class="statut-container">
+        <span class="statut-indicator" :class="`statut-${tournage.statutTournage}`">
+          {{ getStatutLibelle(tournage.statutTournage) }}
+        </span>
+      </div>
+    </div>
 
-       <!-- Replanifier - seulement si tournage existe -->
-       <ReplanificationComponent 
+    <!-- Boutons d'action en dessous -->
+    <div class="action-buttons-row">
+      <div class="tournage-actions">
+        <!-- Replanifier - seulement si tournage existe -->
+        <ReplanificationComponent 
           :sceneId="scene.idScene"
           :showTriggerButton="true"
           :sceneInfo="scene"
@@ -27,13 +28,21 @@
           @tournage-updated="chargerTournage"
           @replanification-appliquee="onReplanificationAppliquee"
         />
-        <!-- Boutons de changement de statut rapide -->
+        
+        <!-- Boutons de changement de statut -->
         <template v-if="tournage && userPermissions.canCreateScene">
           <!-- Confirmer - seulement si planifié -->
           <button v-if="tournage.statutTournage === 'planifie'" 
                   @click="modifierStatutRapide('confirme')" 
                   class="btn-confirmer">
             <i class="fas fa-check-circle"></i> Confirmer
+          </button>
+          
+          <!-- Reporter - pas possible si terminé -->
+          <button v-if="tournage.statutTournage !== 'termine'" 
+                  @click="modifierStatutRapide('reporte')" 
+                  class="btn-reporter">
+            <i class="fas fa-calendar-times"></i> Reporter
           </button>
           
           <!-- Commencer - seulement si confirmé -->
@@ -49,16 +58,15 @@
                   class="btn-terminer">
             <i class="fas fa-stop-circle"></i> Terminer
           </button>
-          
-          <!-- Reporter - pas possible si terminé -->
-          <button v-if="tournage.statutTournage !== 'termine'" 
-                  @click="modifierStatutRapide('reporte')" 
-                  class="btn-reporter">
-            <i class="fas fa-calendar-times"></i> Reporter
-          </button>
         </template>
         
-       
+        <!-- Planifier - seulement si pas de tournage existant -->
+        <button v-if="!tournage && userPermissions.canCreateScene" 
+                @click="ouvrirModalPlanification" 
+                class="btn-planifier">
+          <i class="fas fa-calendar-plus"></i> Planifier
+        </button>
+        
         <button v-if="tournage && tournage.statutTournage !== 'termine' && userPermissions.canCreateScene" 
                 @click="ouvrirModalModification" 
                 class="btn-modifier">
@@ -74,29 +82,28 @@
 
     <!-- Affichage des informations du tournage -->
     <div v-if="tournage" class="tournage-info">
-      <div class="tournage-details">
-        <div class="detail-item">
+      <div class="tournage-details simple-grid">
+        <div class="detail-item simple">
           <strong><i class="fas fa-calendar-day"></i> Date:</strong>
           <span>{{ formatDate(tournage.dateTournage) }}</span>
         </div>
         
-        <div class="detail-item">
+        <div class="detail-item simple">
           <strong><i class="fas fa-clock"></i> Heure:</strong>
           <span>{{ formatHeure(tournage.heureDebut) }} - {{ formatHeure(tournage.heureFin) }}</span>
         </div>
         
-        <div v-if="tournage.lieuNom" class="detail-item">
+        <div v-if="tournage.lieuNom" class="detail-item simple">
           <strong><i class="fas fa-map-marker-alt"></i> Lieu:</strong>
           <span>{{ tournage.lieuNom }}</span>
         </div>
         
-        <div v-if="tournage.plateauNom" class="detail-item">
+        <div v-if="tournage.plateauNom" class="detail-item simple">
           <strong><i class="fas fa-film"></i> Plateau:</strong>
           <span>{{ tournage.plateauNom }}</span>
         </div>
-      
         
-        <div v-if="tournage.notes" class="detail-item notes">
+        <div v-if="tournage.notes" class="detail-item simple notes">
           <strong><i class="fas fa-sticky-note"></i> Notes:</strong>
           <span>{{ tournage.notes }}</span>
         </div>
@@ -112,7 +119,7 @@
     </div>
 
     <!-- bouton pour masquer l'historique -->
-     <div v-if="historiqueReplanifications.length > 0" class="historique-toggle">
+    <div v-if="historiqueReplanifications.length > 0" class="historique-toggle">
       <button 
         @click="afficherHistorique = !afficherHistorique" 
         class="btn-historique"
@@ -124,8 +131,7 @@
       </button>
     </div>
 
-
-     <!-- Nouvelle section pour l'historique des replanifications -->
+    <!-- Nouvelle section pour l'historique des replanifications -->
     <div v-if="afficherHistorique && historiqueReplanifications.length > 0" class="historique-section">
       <h5>
         <i class="fas fa-history"></i>
@@ -150,7 +156,6 @@
         </div>
       </div>
     </div>
-
 
     <!-- Modal de planification/modification -->
     <div v-if="showModal" class="modal-overlay" @click="fermerModal">
@@ -202,7 +207,6 @@
             </div>
           </div>
           
-        
           <div class="form-row">
             <div class="form-group">
               <label for="lieuId">Lieu</label>
@@ -252,7 +256,7 @@
             </div>
           </div>
 
-          <!-- NOUVEAU : Sélection du statut dans le formulaire -->
+          <!-- Sélection du statut dans le formulaire -->
           <div class="form-row" v-if="isModification">
             <div class="form-group">
               <label for="statutTournage">Statut du tournage *</label>
@@ -360,13 +364,9 @@ export default {
       heureFin: '12:00',
       lieuId: null,
       plateauId: null,
-      statutTournage: 'planifie', // NOUVEAU : champ pour le statut
+      statutTournage: 'planifie',
       notes: ''
     });
-
-    // const minDate = computed(() => {
-    //   return new Date().toISOString().split('T')[0];
-    // });
 
     // Charger les données initiales
     onMounted(async () => {
@@ -390,10 +390,8 @@ export default {
 
        watch(() => formData.value.lieuId, (newLieuId) => {
           if (newLieuId && !hasSceneLieu.value) {
-            // Charger les plateaux seulement si l'utilisateur peut modifier le lieu
             chargerPlateaux();
           } else if (!newLieuId) {
-            // Si aucun lieu sélectionné, vider la liste des plateaux
             plateauxDisponibles.value = [];
           }
         });
@@ -404,10 +402,8 @@ export default {
       const response = await axios.get(`/api/scene-tournage/scene/${props.scene.idScene}`);
       
       if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-        // FORCER la mise à jour en créant un nouvel objet
         tournage.value = { ...response.data[0] };
       } else if (response.data && !Array.isArray(response.data)) {
-        // FORCER la mise à jour
         tournage.value = { ...response.data };
       } else {
         tournage.value = null;
@@ -491,7 +487,6 @@ export default {
         chargement.value = true;
         await axios.delete(`/api/scene-tournage/${tournage.value.id}`);
         
-        // Réinitialiser les données
         tournage.value = null;
         emit('tournage-updated', null);
         
@@ -508,12 +503,9 @@ export default {
     const onReplanificationAppliquee = (data) => {
       console.log('🔄 Replanification appliquée, mise à jour du tournage:', data)
       
-      // Utiliser props.scene au lieu de scene
       if (data.sceneId === props.scene.idScene) {
-        // Forcer le rechargement du tournage depuis l'API
         chargerTournage().then(() => {
           console.log('✅ Tournage rechargé après replanification')
-          // Émettre l'événement pour informer le parent
           emit('tournage-updated', tournage.value)
         }).catch(error => {
           console.error('❌ Erreur lors du rechargement:', error)
@@ -523,7 +515,6 @@ export default {
 
     const initialiserFormData = () => {
       if (isModification.value && tournage.value) {
-       
         formData.value = {
            sceneId: props.scene.idScene,
           dateTournage: tournage.value.dateTournage,
@@ -535,12 +526,10 @@ export default {
           notes: tournage.value.notes || ''
         };
         
-        // Charger les plateaux pour le lieu sélectionné
         if (tournage.value.lieuId) {
           chargerPlateaux();
         }
       } else {
-       
         formData.value = {
             sceneId: props.scene.idScene,
             dateTournage: '',
@@ -552,7 +541,6 @@ export default {
             notes: ''
         };
 
-        // Charger les plateaux si un lieu est pré-sélectionné
         if (hasSceneLieu.value && sceneLieuData.value.lieuId) {
           chargerPlateaux();
         }
@@ -585,162 +573,150 @@ export default {
       plateauxDisponibles.value = [];
     };
 
-
-const chargerSceneLieus = async () => {
-  try {
-    const response = await axios.get(`/api/scene-tournage/scene-lieux/scene/${props.scene.idScene}`);
-    sceneLieus.value = response.data;
-    
-    // Vérifier si la scène a des lieux associés
-    if (sceneLieus.value.length > 0) {
-      hasSceneLieu.value = true;
-      // Prendre le premier lieu associé
-      const premierLieu = sceneLieus.value[0];
-      sceneLieuData.value = {
-        lieuId: premierLieu.lieuId,
-        plateauId: premierLieu.plateauId
-      };
-    } else {
-      hasSceneLieu.value = false;
-      sceneLieuData.value = {
-        lieuId: null,
-        plateauId: null
-      };
-    }
-  } catch (error) {
-    console.error('Erreur chargement lieux scène:', error);
-    sceneLieus.value = [];
-    hasSceneLieu.value = false;
-  }
-};
-
-const verifierConflits = async () => {
-  if (!formData.value.dateTournage || !formData.value.heureDebut || !formData.value.heureFin) {
-    return true;
-  }
-
-  try {
-    // Vérifier d'abord les disponibilités (sans les horaires)
-    const disponibilitesResponse = await axios.get('/api/conflicts/check-disponibilites', {
-      params: {
-        sceneId: props.scene.idScene,
-        dateTournage: formData.value.dateTournage
-      }
-    });
-
-    if (disponibilitesResponse.data.hasConflicts) {
-      const messages = disponibilitesResponse.data.conflicts.join('\n');
-      if (!confirm(`Problèmes de disponibilité détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
-        return false;
-      }
-    }
-
-    // Ensuite vérifier les conflits horaires
-    const conflitsResponse = await axios.get('/api/conflicts/check', {
-      params: {
-        sceneId: props.scene.idScene,
-        dateTournage: formData.value.dateTournage,
-        heureDebut: formData.value.heureDebut,
-        heureFin: formData.value.heureFin
-      }
-    });
-
-    if (conflitsResponse.data.hasConflicts) {
-      const messages = conflitsResponse.data.conflicts.join('\n');
-      if (!confirm(`Conflits de planning détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
-        return false;
-      }
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Erreur vérification conflits:', error);
-    // Continuer malgré l'erreur de vérification
-    return true;
-  }
-};
-
-const verifierConflitsTempsReel = async () => {
-  if (formData.value.dateTournage && formData.value.heureDebut && formData.value.heureFin) {
-    try {
-      // Vérifier les disponibilités en temps réel
-      const disponibilitesResponse = await axios.get('/api/conflicts/check-disponibilites', {
-        params: {
-          sceneId: props.scene.idScene,
-          dateTournage: formData.value.dateTournage
+    const chargerSceneLieus = async () => {
+      try {
+        const response = await axios.get(`/api/scene-tournage/scene-lieux/scene/${props.scene.idScene}`);
+        sceneLieus.value = response.data;
+        
+        if (sceneLieus.value.length > 0) {
+          hasSceneLieu.value = true;
+          const premierLieu = sceneLieus.value[0];
+          sceneLieuData.value = {
+            lieuId: premierLieu.lieuId,
+            plateauId: premierLieu.plateauId
+          };
+        } else {
+          hasSceneLieu.value = false;
+          sceneLieuData.value = {
+            lieuId: null,
+            plateauId: null
+          };
         }
-      });
-
-      // Vérifier les conflits horaires en temps réel
-      const conflitsResponse = await axios.get('/api/conflicts/check', {
-        params: {
-          sceneId: props.scene.idScene,
-          dateTournage: formData.value.dateTournage,
-          heureDebut: formData.value.heureDebut,
-          heureFin: formData.value.heureFin
-        }
-      });
-
-      // Combiner les messages d'erreur
-      const allConflicts = [
-        ...(disponibilitesResponse.data.conflicts || []),
-        ...(conflitsResponse.data.conflicts || [])
-      ];
-
-      if (allConflicts.length > 0) {
-        erreur.value = 'Conflits détectés:\n' + allConflicts.join('\n');
-      } else {
-        erreur.value = '';
+      } catch (error) {
+        console.error('Erreur chargement lieux scène:', error);
+        sceneLieus.value = [];
+        hasSceneLieu.value = false;
       }
-    } catch (error) {
-      // Ne pas afficher d'erreur pour la vérification en temps réel
-    }
-  }
-};
+    };
 
-watch(() => formData.value.dateTournage, verifierConflitsTempsReel);
-watch(() => formData.value.heureDebut, verifierConflitsTempsReel);
-watch(() => formData.value.heureFin, verifierConflitsTempsReel);
+    const verifierConflits = async () => {
+      if (!formData.value.dateTournage || !formData.value.heureDebut || !formData.value.heureFin) {
+        return true;
+      }
 
+      try {
+        const disponibilitesResponse = await axios.get('/api/conflicts/check-disponibilites', {
+          params: {
+            sceneId: props.scene.idScene,
+            dateTournage: formData.value.dateTournage
+          }
+        });
 
-  const soumettreTournage = async () => {
-  if (!validerFormulaire()) return;
-  
-  // Vérifier les conflits avant soumission
-  const peutContinuer = await verifierConflits();
-  if (!peutContinuer) return;
-  
-  chargement.value = true;
-  erreur.value = '';
-  
-  try {
-    let response;
-    
-    if (isModification.value) {
-      response = await axios.put(`/api/scene-tournage/${tournage.value.id}`, formData.value);
-    } else {
-      response = await axios.post('/api/scene-tournage', formData.value);
-    }
-    
-    tournage.value = response.data;
-    showModal.value = false;
-    emit('tournage-updated', tournage.value);
-    
-    alert(`Tournage ${isModification.value ? 'modifié' : 'planifié'} avec succès!`);
-    
-  } catch (error) {
-    console.error('Erreur sauvegarde tournage:', error);
-    
-    // Gérer spécifiquement les erreurs de conflit du backend
-    if (error.response?.status === 400 && error.response?.data?.message?.includes('Conflits détectés')) {
-      erreur.value = 'Conflits de planning détectés: ' + error.response.data.message;
-    } else {
-      erreur.value = error.response?.data?.message || 'Erreur lors de la sauvegarde du tournage';
-    }
-  } finally {
-    chargement.value = false;
-  }
-};
+        if (disponibilitesResponse.data.hasConflicts) {
+          const messages = disponibilitesResponse.data.conflicts.join('\n');
+          if (!confirm(`Problèmes de disponibilité détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
+            return false;
+          }
+        }
+
+        const conflitsResponse = await axios.get('/api/conflicts/check', {
+          params: {
+            sceneId: props.scene.idScene,
+            dateTournage: formData.value.dateTournage,
+            heureDebut: formData.value.heureDebut,
+            heureFin: formData.value.heureFin
+          }
+        });
+
+        if (conflitsResponse.data.hasConflicts) {
+          const messages = conflitsResponse.data.conflicts.join('\n');
+          if (!confirm(`Conflits de planning détectés:\n\n${messages}\n\nVoulez-vous quand même continuer ?`)) {
+            return false;
+          }
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('Erreur vérification conflits:', error);
+        return true;
+      }
+    };
+
+    const verifierConflitsTempsReel = async () => {
+      if (formData.value.dateTournage && formData.value.heureDebut && formData.value.heureFin) {
+        try {
+          const disponibilitesResponse = await axios.get('/api/conflicts/check-disponibilites', {
+            params: {
+              sceneId: props.scene.idScene,
+              dateTournage: formData.value.dateTournage
+            }
+          });
+
+          const conflitsResponse = await axios.get('/api/conflicts/check', {
+            params: {
+              sceneId: props.scene.idScene,
+              dateTournage: formData.value.dateTournage,
+              heureDebut: formData.value.heureDebut,
+              heureFin: formData.value.heureFin
+            }
+          });
+
+          const allConflicts = [
+            ...(disponibilitesResponse.data.conflicts || []),
+            ...(conflitsResponse.data.conflicts || [])
+          ];
+
+          if (allConflicts.length > 0) {
+            erreur.value = 'Conflits détectés:\n' + allConflicts.join('\n');
+          } else {
+            erreur.value = '';
+          }
+        } catch (error) {
+          // Ne pas afficher d'erreur pour la vérification en temps réel
+        }
+      }
+    };
+
+    watch(() => formData.value.dateTournage, verifierConflitsTempsReel);
+    watch(() => formData.value.heureDebut, verifierConflitsTempsReel);
+    watch(() => formData.value.heureFin, verifierConflitsTempsReel);
+
+    const soumettreTournage = async () => {
+      if (!validerFormulaire()) return;
+      
+      const peutContinuer = await verifierConflits();
+      if (!peutContinuer) return;
+      
+      chargement.value = true;
+      erreur.value = '';
+      
+      try {
+        let response;
+        
+        if (isModification.value) {
+          response = await axios.put(`/api/scene-tournage/${tournage.value.id}`, formData.value);
+        } else {
+          response = await axios.post('/api/scene-tournage', formData.value);
+        }
+        
+        tournage.value = response.data;
+        showModal.value = false;
+        emit('tournage-updated', tournage.value);
+        
+        alert(`Tournage ${isModification.value ? 'modifié' : 'planifié'} avec succès!`);
+        
+      } catch (error) {
+        console.error('Erreur sauvegarde tournage:', error);
+        
+        if (error.response?.status === 400 && error.response?.data?.message?.includes('Conflits détectés')) {
+          erreur.value = 'Conflits de planning détectés: ' + error.response.data.message;
+        } else {
+          erreur.value = error.response?.data?.message || 'Erreur lors de la sauvegarde du tournage';
+        }
+      } finally {
+        chargement.value = false;
+      }
+    };
 
     const validerFormulaire = () => {
       if (!formData.value.dateTournage) {
@@ -768,7 +744,6 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       return true;
     };
 
-    
     const modifierStatutRapide = async (nouveauStatut) => {
       if (!props.userPermissions.canCreateScene) {
         alert('Vous n\'êtes pas autorisé à modifier le statut des tournages.');
@@ -828,12 +803,10 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
     const formatHeure = (heureString) => {
       if (!heureString) return '';
       
-      // Si c'est déjà au format HH:mm, retourner tel quel
       if (heureString.length === 5 && heureString.includes(':')) {
         return heureString;
       }
       
-      // Si c'est au format HH:mm:ss, extraire seulement HH:mm
       if (heureString.length >= 8) {
         return heureString.substring(0, 5);
       }
@@ -841,7 +814,6 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       return heureString;
     };
 
-    // Méthode pour charger l'historique
     const chargerHistoriqueReplanifications = async () => {
       try {
         const response = await axios.get(`/api/historique-planning/scene/${props.scene.idScene}`);
@@ -852,7 +824,6 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
       }
     };
 
-    // Charger l'historique au montage
     onMounted(() => {
       chargerHistoriqueReplanifications();
     });
@@ -892,4 +863,5 @@ watch(() => formData.value.heureFin, verifierConflitsTempsReel);
   }
 };
 </script>
+
 
