@@ -1103,7 +1103,7 @@ const createRaccord = async () => {
       await axios.post('/api/raccords/scene-liaison-shared', raccordPayload)
     }
     
-    alert(`${raccordData.value.scenesCibleIds.length} raccord(s) créé(s) avec succès!`)
+    // alert(`${raccordData.value.scenesCibleIds.length} raccord(s) créé(s) avec succès!`)
     emit('raccord-created')
     closeModal()
     
