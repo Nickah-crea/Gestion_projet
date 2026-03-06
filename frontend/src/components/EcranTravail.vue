@@ -759,14 +759,14 @@
                 <div v-for="dialogue in currentScene.dialogues" :key="dialogue.id" class="dialogue-item-screen-work">
                   <div class="dialogue-header-screen-work">
                     <span class="dialogue-character-screen-work">
-                      <strong>{{ dialogue.personnageNom || 'Narrateur' }} :</strong>
+                      <strong>{{ dialogue.personnageNom || 'Narrateur' }} :</strong><span class="dialogue-content-screen-work">{{ dialogue.texte }}</span>
                     </span>
                     <span class="dialogue-order-screen-work">#{{ dialogue.ordre }}</span>
                   </div>
-                  <div class="dialogue-content-screen-work" @mouseup="openHighlightModal(dialogue, $event)">
+                  <!-- <div class="dialogue-content-screen-work" @mouseup="openHighlightModal(dialogue, $event)">
                     {{ dialogue.texte }}
                     
-                    <!-- Surlignages -->
+                    
                     <template v-if="dialogueHighlights[dialogue.id]">
                       <span 
                         v-for="highlight in dialogueHighlights[dialogue.id]" 
@@ -778,7 +778,7 @@
                         {{ highlight.texteSurligne }}
                       </span>
                     </template>
-                  </div>
+                  </div> -->
                   
                   <div v-if="dialogue.observation" class="dialogue-observation-screen-work">
                     <i class="fas fa-sticky-note"></i> {{ dialogue.observation }}
@@ -2004,7 +2004,7 @@ const createDialogueDirect = async (sceneId) => {
     if (response.status === 201) {
       await store.fetchSequenceDetails(store.currentSequence.idSequence);
       cancelAddDialogue();
-      alert('Dialogue ajouté avec succès!');
+     //alert('Dialogue ajouté avec succès!');
     }
   } catch (error) {
     console.error('Erreur lors de la création du dialogue:', error);
@@ -2121,7 +2121,7 @@ const confirmDeleteEpisode = async () => {
     sidebarSelection.value = { type: 'project', id: null };
     router.push({ query: {} });
     
-    alert('Épisode supprimé avec succès! Les ordres ont été recalculés automatiquement.');
+    // alert('Épisode supprimé avec succès! Les ordres ont été recalculés automatiquement.');
     
   } catch (error) {
     console.error('Erreur lors de la suppression de l\'épisode:', error);
@@ -2342,7 +2342,7 @@ const saveEditedDialogue = async () => {
     if (response.status === 200) {
       await store.fetchSequenceDetails(store.currentSequence.idSequence);
       closeEditDialogueModal();
-      alert('Dialogue modifié avec succès!');
+      // alert('Dialogue modifié avec succès!');
     }
   } catch (error) {
     console.error('Erreur lors de la mise à jour du dialogue:', error);
