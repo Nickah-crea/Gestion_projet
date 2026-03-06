@@ -788,8 +788,7 @@ watch: {
         this.projets = [];
       }
     },
-
-     async chargerSceneLieus(sceneId) {
+    async chargerSceneLieus(sceneId) {
       try {
         const response = await axios.get(`/api/scene-tournage/scene-lieux/scene/${sceneId}`);
         this.sceneLieus = response.data;
@@ -808,7 +807,12 @@ watch: {
           this.formPlanning.lieuId = premierLieu.lieuId;
           this.formPlanning.plateauId = premierLieu.plateauId;
           
-          // Charger les plateaux pour ce lieu
+          console.log('Lieu et plateau pré-définis:', {
+            lieuId: premierLieu.lieuId,
+            plateauId: premierLieu.plateauId
+          });
+          
+          // Charger les plateaux pour ce lieu SANS EFFACER LE PLATEAU PRÉ-DÉFINI
           if (premierLieu.lieuId) {
             await this.chargerPlateauxParLieu();
           }
@@ -1217,7 +1221,7 @@ async chargerEpisodesParProjet() {
         this.lieuxDisponibles = [];
       }
     },
-    async chargerPlateauxParLieu() {
+   async chargerPlateauxParLieu() {
       if (!this.formPlanning.lieuId) {
         this.plateauxParLieu = [];
         return;
@@ -1225,7 +1229,15 @@ async chargerEpisodesParProjet() {
       try {
         const response = await axios.get(`/api/plateaux/lieux/${this.formPlanning.lieuId}`);
         this.plateauxParLieu = response.data;
-        this.formPlanning.plateauId = '';
+        
+        // NE PAS RÉINITIALISER LE PLATEAU SI C'EST UNE CRÉATION AVEC LIEU PRÉ-DÉFINI
+        if (!this.isModificationPlanning && this.hasSceneLieu) {
+          // Conserver la valeur pré-définie
+          console.log('Conservation du plateau pré-défini:', this.formPlanning.plateauId);
+        } else {
+          // Réinitialiser seulement si pas de lieu pré-défini
+          this.formPlanning.plateauId = '';
+        }
       } catch (error) {
         console.error('Erreur chargement plateaux:', error);
         this.plateauxParLieu = [];
@@ -1326,7 +1338,7 @@ async soumettrePlanning() {
     }
     await this.chargerTournages();
     this.fermerModalPlanning();
-    alert(`✅ Planning ${this.isModificationPlanning ? 'modifié' : 'créé'} avec succès !`);
+    //alert(`✅ Planning ${this.isModificationPlanning ? 'modifié' : 'créé'} avec succès !`);
   } catch (error) {
     console.error('Erreur sauvegarde planning:', error);
     
@@ -1365,7 +1377,7 @@ async soumettrePlanning() {
           headers: { 'X-User-Id': this.currentUserId }
         });
         await this.chargerTournages();
-        alert(' Tournage supprimé avec succès !');
+       // alert(' Tournage supprimé avec succès !');
       } catch (error) {
         console.error('Erreur suppression tournage:', error);
         
