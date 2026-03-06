@@ -227,7 +227,7 @@
 }
 
 // =============================================
-// GROUPES DE FORMULAIRES
+// GROUPES DE FORMULAIRES - AMÉLIORATIONS POUR SÉLECTION MULTIPLE
 // =============================================
 .form-row-raccord-scene {
   display: grid;
@@ -263,8 +263,8 @@
   }
 }
 
-.form-select-raccord-scene,
-.form-textarea-raccord-scene {
+// Styles améliorés pour les sélections multiples
+.form-select-raccord-scene {
   width: 100%;
   padding: $padding-sm;
   border: 1px solid $color-border;
@@ -275,6 +275,58 @@
   transition: $transition-fast;
   box-sizing: border-box;
   font-family: $font-family-primary;
+  
+  // Styles spécifiques pour les sélections multiples
+  &[multiple] {
+    min-height: 120px;
+    padding: $gap-sm;
+    
+    option {
+      padding: $gap-xs $gap-sm;
+      margin-bottom: 2px;
+      border-radius: $border-radius-xs;
+      transition: $transition-fast;
+      cursor: pointer;
+      
+      &:hover {
+        background: rgba($color-primary, 0.1);
+      }
+      
+      &:checked {
+        background: linear-gradient(135deg, rgba($color-primary, 0.2), rgba($color-primary, 0.3));
+        color: $color-text-primary;
+        font-weight: $font-weight-semibold;
+        position: relative;
+        
+        &::after {
+          content: '✓';
+          position: absolute;
+          right: $gap-sm;
+          color: $color-primary;
+          font-weight: bold;
+        }
+      }
+    }
+    
+    // Scrollbar personnalisée
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: $color-background;
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba($color-primary, 0.3);
+      border-radius: 4px;
+      
+      &:hover {
+        background: rgba($color-primary, 0.5);
+      }
+    }
+  }
   
   &:focus {
     outline: none;
@@ -294,6 +346,7 @@
 }
 
 .form-textarea-raccord-scene {
+  @extend .form-select-raccord-scene;
   resize: vertical;
   min-height: 100px;
 }
@@ -303,6 +356,85 @@
   color: $color-text-muted;
   display: block;
   margin-top: $gap-xs;
+}
+
+// =============================================
+// LISTE DES SCÈNES SÉLECTIONNÉES
+// =============================================
+.selected-scenes-raccord-scene {
+  margin-top: $spacing-md;
+  grid-column: 1 / -1;
+  
+  h5 {
+    @include typography-playfair-p4;
+    color: $color-text-primary;
+    margin: 0 0 $spacing-sm 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      background: $color-secondary;
+      border-radius: 50%;
+    }
+  }
+}
+
+.scenes-list-raccord-scene {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  margin-bottom: $spacing-md;
+}
+
+.scene-item-raccord-scene {
+  @include flex-between;
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-xs;
+  padding: $gap-sm $padding-sm;
+  gap: $gap-xs;
+  transition: $transition-fast;
+  animation: fadeIn 0.3s ease-out;
+  
+  &:hover {
+    border-color: $color-secondary;
+    background: rgba($color-secondary, 0.05);
+  }
+  
+  span {
+    @include typography-p4;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.remove-scene-btn-raccord-scene {
+  background: transparent;
+  border: none;
+  color: $color-error;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-xs;
+  transition: $transition-fast;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: rgba($color-error, 0.1);
+    transform: scale(1.1);
+  }
+  
+  i {
+    font-size: $font-size-p4;
+  }
 }
 
 // =============================================
@@ -324,6 +456,12 @@
   border: 1px solid $color-border;
   border-radius: $border-radius-xs;
   padding: $spacing-md;
+  transition: $transition-fast;
+  
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow;
+  }
   
   h5 {
     @include typography-playfair-p4;
@@ -340,6 +478,7 @@
       height: 8px;
       background: $color-primary;
       border-radius: 50%;
+      flex-shrink: 0;
     }
     
     &:nth-child(2):before {
@@ -352,10 +491,18 @@
     color: $color-text-secondary;
     margin: 0 0 $gap-xs 0;
     line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: $gap-xs;
     
     strong {
       color: $color-text-primary;
       font-weight: $font-weight-semibold;
+      min-width: 120px;
+    }
+    
+    span {
+      flex: 1;
     }
   }
 }
@@ -363,15 +510,21 @@
 .date-warning-raccord-scene {
   color: $color-warning !important;
   font-weight: $font-weight-semibold !important;
+  padding: 2px 6px;
+  background: rgba($color-warning, 0.1);
+  border-radius: $border-radius-xs;
 }
 
 .date-error-raccord-scene {
   color: $color-error !important;
   font-weight: $font-weight-bold !important;
+  padding: 2px 6px;
+  background: rgba($color-error, 0.1);
+  border-radius: $border-radius-xs;
 }
 
 // =============================================
-// PERSONNAGES ET COMÉDIENS
+// PERSONNAGES ET COMÉDIENS - AMÉLIORATIONS
 // =============================================
 .selected-comediens-raccord-scene,
 .personnages-info-raccord-scene {
@@ -381,6 +534,18 @@
     @include typography-playfair-p4;
     color: $color-text-primary;
     margin: 0 0 $spacing-sm 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      background: $color-accent;
+      border-radius: 50%;
+    }
   }
 }
 
@@ -399,20 +564,29 @@
   padding: $gap-sm $padding-sm;
   gap: $gap-xs;
   transition: $transition-fast;
+  animation: fadeIn 0.3s ease-out;
+  
+  &:hover {
+    border-color: $color-accent;
+    background: rgba($color-accent, 0.05);
+  }
   
   i {
     color: $color-tertiary;
+    flex-shrink: 0;
   }
   
   span {
     @include typography-p4;
     color: $color-text-secondary;
+    font-weight: $font-weight-medium;
   }
 }
 
 .personnage-associe-raccord-scene {
   color: $color-text-muted !important;
   font-style: italic;
+  font-size: $font-size-p5;
 }
 
 .remove-comedien-btn-raccord-scene,
@@ -428,9 +602,15 @@
   justify-content: center;
   border-radius: $border-radius-xs;
   transition: $transition-fast;
+  flex-shrink: 0;
   
   &:hover {
     background: rgba($color-error, 0.1);
+    transform: scale(1.1);
+  }
+  
+  i {
+    font-size: $font-size-p4;
   }
 }
 
@@ -450,9 +630,12 @@
   border-radius: $border-radius-xs;
   padding: $spacing-md;
   transition: $transition-fast;
+  animation: fadeIn 0.3s ease-out;
   
   &:hover {
     border-color: $color-primary;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
   }
 }
 
@@ -469,17 +652,27 @@
 .personnage-details-raccord-scene {
   display: flex;
   flex-direction: column;
-  gap: $gap-xs;
+  gap: $gap-sm;
 }
 
 .detail-raccord-scene {
   @include typography-p4;
   color: $color-text-secondary;
   line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   
   strong {
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
+    font-size: $font-size-p5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  span {
+    color: $color-text-secondary;
   }
 }
 
@@ -502,6 +695,13 @@
     gap: $gap-xs;
     cursor: pointer;
     margin-bottom: $gap-xs;
+    padding: $gap-xs;
+    border-radius: $border-radius-xs;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: rgba($color-primary, 0.05);
+    }
     
     input[type="checkbox"] {
       display: none;
@@ -514,6 +714,7 @@
         display: inline-block;
         position: relative;
         transition: $transition-fast;
+        flex-shrink: 0;
         
         &:after {
           content: '';
@@ -546,6 +747,7 @@
   color: $color-text-muted;
   display: block;
   margin-left: 26px;
+  line-height: 1.4;
 }
 
 // =============================================
@@ -582,6 +784,11 @@
   to { transform: rotate(360deg); }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .photos-filter-raccord-scene {
   display: flex;
   align-items: center;
@@ -592,6 +799,7 @@
     @include typography-p4;
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
+    white-space: nowrap;
   }
   
   select {
@@ -615,6 +823,7 @@
   overflow: hidden;
   cursor: pointer;
   transition: $transition-fast;
+  animation: fadeIn 0.3s ease-out;
   
   &.selected {
     border-color: $color-primary;
@@ -627,11 +836,16 @@
   
   &.shared {
     border-style: dashed;
+    border-color: $color-info;
   }
   
   &:hover {
     transform: translateY(-2px);
     box-shadow: $shadow-md;
+    
+    .photo-image-raccord-scene img {
+      transform: scale(1.05);
+    }
   }
 }
 
@@ -645,10 +859,6 @@
     height: 100%;
     object-fit: cover;
     transition: $transition-medium;
-  }
-  
-  &:hover img {
-    transform: scale(1.05);
   }
 }
 
@@ -684,6 +894,7 @@
   align-items: center;
   justify-content: center;
   font-size: $font-size-p4;
+  z-index: 1;
 }
 
 .photo-info-raccord-scene {
@@ -749,6 +960,7 @@
   border-radius: $border-radius-xs;
   overflow: hidden;
   border: 2px solid $color-primary;
+  animation: fadeIn 0.3s ease-out;
   
   img {
     width: 100%;
@@ -788,6 +1000,7 @@
   
   &:hover {
     color: $color-error;
+    transform: scale(1.1);
   }
 }
 
@@ -813,6 +1026,7 @@
   @include typography-p5;
   color: $color-text-muted;
   margin-left: 26px;
+  line-height: 1.4;
 }
 
 // =============================================
@@ -870,6 +1084,7 @@
     background: $color-surface-hover;
     border-color: $color-primary;
     color: $color-primary;
+    transform: translateY(-1px);
   }
 }
 
@@ -917,6 +1132,17 @@
   .photos-grid-raccord-scene {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
+  
+  .scene-info-raccord-scene p {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    
+    strong {
+      min-width: auto;
+      margin-bottom: 2px;
+    }
+  }
 }
 
 @media (max-width: $breakpoint-sm) {
@@ -936,6 +1162,10 @@
   .types-selection-raccord-scene {
     grid-template-columns: 1fr;
   }
+  
+  .form-select-raccord-scene[multiple] {
+    min-height: 100px;
+  }
 }
 
 // =============================================
@@ -950,6 +1180,7 @@
   .comedien-item-raccord-scene,
   .personnage-info-card-raccord-scene,
   .photo-item-raccord-scene,
+  .scene-item-raccord-scene,
   .loading-raccord-scene i {
     transition: none;
     animation: none;
@@ -958,7 +1189,6 @@
       transform: none;
     }
   }
-  
 }
 
 // =============================================
@@ -973,13 +1203,44 @@
 .remove-comedien-btn-raccord-scene:focus-visible,
 .remove-personnage-btn-raccord-scene:focus-visible,
 .remove-btn-raccord-scene:focus-visible,
-.photo-item-raccord-scene:focus-visible {
+.photo-item-raccord-scene:focus-visible,
+.remove-scene-btn-raccord-scene:focus-visible {
   outline: 2px solid $color-primary;
   outline-offset: 2px;
 }
 
+// =============================================
+// INDICATEUR DE SÉLECTION POUR OPTIONS MULTIPLES
+// =============================================
+.selection-counter-raccord-scene {
+  @include typography-p5;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  i {
+    color: $color-primary;
+  }
+}
 
-
-
-
-
+// =============================================
+// BADGES POUR ÉLÉMENTS SÉLECTIONNÉS
+// =============================================
+.selection-badge-raccord-scene {
+  @include typography-p5;
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  padding: 2px 8px;
+  border-radius: $border-radius-pill;
+  font-weight: $font-weight-medium;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  
+  i {
+    font-size: 10px;
+  }
+}
