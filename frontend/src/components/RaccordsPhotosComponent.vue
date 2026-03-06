@@ -27,13 +27,13 @@
         </div>
 
         <!-- Informations de la scène -->
-        <div class="scene-info-section-raccord-photo">
+        <!-- <div class="scene-info-section-raccord-photo">
           <div class="scene-details-raccord-photo">
             <h4>{{ sceneInfo?.titre }}</h4>
             <p><strong>Synopsis:</strong> {{ sceneInfo?.synopsis || 'Aucun synopsis' }}</p>
             <p><strong>Statut:</strong> {{ sceneInfo?.statutNom || 'Non défini' }}</p>
           </div>
-        </div>
+        </div> -->
 
         <!-- Section d'ajout de nouveaux raccords -->
         <div class="add-raccord-section-raccord-photo">
@@ -550,7 +550,7 @@ const addRaccord = async () => {
     })
 
     if (response.status === 201) {
-      alert('Raccords sauvegardés avec succès!')
+      // alert('Raccords sauvegardés avec succès!')
       resetNewRaccord()
       await loadExistingRaccords()
       emit('raccords-updated')
@@ -604,7 +604,7 @@ const deleteRaccord = async (raccordId) => {
     })
     await loadExistingRaccords()
     emit('raccords-updated')
-    alert('Raccord supprimé avec succès!')
+    // alert('Raccord supprimé avec succès!')
   } catch (error) {
     console.error('Erreur lors de la suppression du raccord:', error)
     
