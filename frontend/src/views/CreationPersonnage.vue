@@ -670,7 +670,7 @@ export default {
           await axios.put(`/api/personnages/${this.editingId}`, this.formData);
         } else {
           await axios.post('/api/personnages', this.formData);
-          alert('Personnage créé avec succès');
+          //alert('Personnage créé avec succès');
         }
 
         this.resetForm();
