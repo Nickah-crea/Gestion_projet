@@ -606,3 +606,28 @@
 }
 
 
+// Styles pour les icônes de toggle (si pas déjà définis dans _connexion.scss)
+.password-toggle-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $color-primary;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: $color-accent;
+  }
+}
+
+// Responsive
+@media (max-width: 767px) {
+  .password-toggle-icon {
+    right: 12px;
+    font-size: 14px;
+  }
+}
+

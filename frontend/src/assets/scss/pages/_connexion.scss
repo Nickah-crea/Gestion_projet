@@ -742,3 +742,52 @@
   text-decoration: underline;
 }
 
+
+
+
+
+// Style pour l'icône de toggle du mot de passe
+.password-toggle-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $color-primary;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: $color-accent;
+  }
+  
+  // Ajustement quand il y a déjà un indicateur email
+  .email-status-cinema + & {
+    right: 80px; // Décaler pour ne pas chevaucher l'indicateur email
+  }
+}
+
+// Ajustement pour le wrapper d'input
+.input-wrapper {
+  position: relative;
+  
+  // S'assurer que l'icône de toggle ne chevauche pas l'icône d'input
+  .input-icon {
+    z-index: 1;
+  }
+}
+
+// Responsive
+@media (max-width: 767px) {
+  .password-toggle-icon {
+    right: 12px;
+    font-size: 14px;
+  }
+}
+
+// Pour les champs avec vérification d'email
+.email-status-cinema {
+  right: 45px; // Réduire pour laisser place à l'icône œil
+}
+

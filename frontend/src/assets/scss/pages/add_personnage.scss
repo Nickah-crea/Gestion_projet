@@ -1,6 +1,6 @@
 @import '../base/variables';
 
-.app-wrapper-global-add-scene {
+.app-wrapper-global-add-personnage {
   display: flex;
   min-height: 100vh;
 }
@@ -8,7 +8,7 @@
 // =============================================
 // SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
-.creation-sidebar-add-scene {
+.creation-sidebar-add-personnage {
   position: fixed;
   top: 60px;
   left: 0;
@@ -36,33 +36,33 @@
     color: $color-primary-dark !important;
   }
   
-  .sidebar-header-add-scene {
+  .sidebar-header-add-personnage {
     margin-bottom: $spacing-md;
     border-bottom: 1px solid $color-border;
     padding-bottom: $spacing-sm;
 
-    .sidebar-title-add-scene {
+    .sidebar-title-add-personnage {
       @include typography-playfair-h4;
       color: $color-text-light;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
-    .sidebar-subtitle-add-scene {
+    .sidebar-subtitle-add-personnage {
       @include typography-p4;
       color: $color-text-light;
       margin: 0;
     }
   }
 
-  .sidebar-section-add-scene {
+  .sidebar-section-add-personnage {
     margin-bottom: $spacing-md;
     background: rgba($color-text-light, 0.1) !important;
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
-    .section-title-add-scene {
+    .section-title-add-personnage {
       @include typography-p4;
       color: $color-text-light;
       margin-bottom: $gap-sm;
@@ -73,13 +73,13 @@
     }
   }
 
-  .sidebar-actions-add-scene {
+  .sidebar-actions-add-personnage {
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
   }
 
-  .sidebar-btn-add-scene {
+  .sidebar-btn-add-personnage {
     width: 100%;
     height: 36px;
     padding: 0 $padding-sm;
@@ -114,13 +114,13 @@
     }
   }
 
-  .filter-group-add-scene {
+  .filter-group-add-personnage {
     display: flex;
     flex-direction: column;
     gap: $gap-sm;
   }
 
-  .filter-item-add-scene {
+  .filter-item-add-personnage {
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
@@ -132,7 +132,7 @@
     }
   }
 
-  .sequence-info-add-scene {
+  .projet-info-add-personnage {
     display: flex;
     align-items: center;
     gap: $gap-sm;
@@ -154,13 +154,13 @@
     }
   }
 
-  .stats-add-scene {
+  .stats-add-personnage {
     display: flex;
     flex-direction: column;
     gap: $gap-sm;
   }
 
-  .stat-item-add-scene {
+  .stat-item-add-personnage {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -169,22 +169,22 @@
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
 
-    .stat-number-add-scene {
+    .stat-number-add-personnage {
       @include typography-playfair-h4;
       color: $color-primary;
       font-size: calc(#{$font-size-h4} - 4px);
       font-weight: $font-weight-bold;
     }
 
-    .stat-label-add-scene {
+    .stat-label-add-personnage {
       @include typography-p4;
       color: $color-text-muted;
       text-align: center;
     }
   }
 
-  .aide-content-add-scene {
-    .aide-text-add-scene {
+  .aide-content-add-personnage {
+    .aide-text-add-personnage {
       @include typography-p4;
       color: $color-text-light;
       font-size: calc(#{$font-size-p4} - 1px);
@@ -203,14 +203,14 @@
 // =============================================
 // CONTENU PRINCIPAL À DROITE
 // =============================================
-.creation-body-add-scene {
+.creation-body-add-personnage {
   flex: 1;
   margin-left: 280px;
   min-height: 100vh;
   background: none;
 }
 
-.creation-main-content-add-scene {
+.creation-main-content-add-personnage {
   padding: $spacing-lg;
   max-width: 1200px;
   margin: 0 auto;
@@ -219,17 +219,15 @@
 // =============================================
 // FORMULAIRE DE CRÉATION
 // =============================================
-.form-container-add-scene {
+.form-container-add-personnage {
   background: $color-background-alt;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0;
+  border-radius: $border-radius-sm;
+  padding: $spacing-lg;
   margin-bottom: 0;
-  padding: $padding-lg;
-  border-radius: 20px;
+  box-shadow: $shadow-md;
 }
 
-.form-header-add-scene {
+.form-header-add-personnage {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -247,7 +245,7 @@
     margin: 0;
   }
 
-  .back-btn-add-scene {
+  .back-btn-add-personnage {
     padding: $gap-xs $padding-sm;
     background: transparent;
     border: 1px solid $color-border;
@@ -268,13 +266,13 @@
   }
 }
 
-.scene-form-add-scene {
+.personnage-form-add-personnage {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
 }
 
-.form-row-add-scene {
+.form-row-add-personnage {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
@@ -285,10 +283,11 @@
   }
 }
 
-.form-group-add-scene {
+.form-group-add-personnage {
   display: flex;
   flex-direction: column;
   gap: $gap-xs;
+  position: relative;
 
   label {
     @include typography-p4;
@@ -309,9 +308,8 @@
     }
   }
 
-  .form-input-add-scene,
-  .form-select-add-scene,
-  .form-textarea-add-scene {
+  .form-input-add-personnage,
+  .form-textarea-add-personnage {
     width: 100%;
     padding: $gap-sm $padding-sm;
     border: 1px solid $color-border;
@@ -339,111 +337,125 @@
     }
   }
 
-  .form-input-add-scene {
+  .form-input-add-personnage {
     height: 42px;
-    
-    &.error-input {
-      border-color: $color-error;
-      background: rgba($color-error, 0.05);
-    }
   }
 
-  .form-select-add-scene {
-    height: 42px;
-    cursor: pointer;
-  }
-
-  .form-textarea-add-scene {
+  .form-textarea-add-personnage {
     resize: vertical;
-    min-height: 120px;
+    min-height: 100px;
     font-family: inherit;
     line-height: $line-height-base;
   }
 }
 
 // =============================================
-// AFFICHAGE DE LA SÉQUENCE PARENTE
+// COMBOBOX STYLES
 // =============================================
-.sequence-display-add-scene {
-  .sequence-display-content-add-scene {
+.combobox-container-add-personnage {
+  position: relative;
+  width: 100%;
+
+  .combobox-input-add-personnage {
+    width: 100%;
+    padding: $gap-sm $padding-sm;
+    padding-right: 40px; // Pour le bouton clear
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+
+    &:hover {
+      border-color: darken($color-border, 10%);
+    }
+
+    &:disabled {
+      background: $color-background;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  .clear-button-add-personnage {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: $color-error;
+    color: $color-white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 12px;
     display: flex;
     align-items: center;
-    gap: $gap-sm;
-    padding: $gap-sm $padding-sm;
-    background: rgba($color-primary, 0.05);
-    border: 1px solid rgba($color-primary, 0.2);
-    border-radius: $border-radius-xs;
-    min-height: 42px;
-    
-    i {
-      color: $color-primary;
-      font-size: $font-size-p3;
-    }
-    
-    span {
-      flex: 1;
-      font-size: $font-size-p4;
-      color: $color-text-primary;
-    }
-  }
-}
+    justify-content: center;
+    transition: $transition-fast;
 
-// =============================================
-// MESSAGES D'ERREUR ET SUGGESTIONS
-// =============================================
-.error-text-add-scene {
-  @include typography-p4;
-  color: $color-error;
-  margin-top: $gap-xs;
-  display: block;
-}
-
-.info-text-add-scene {
-  @include typography-p4;
-  color: $color-text-muted;
-  margin-top: $gap-xs;
-  display: block;
-  font-style: italic;
-}
-
-.suggestion-text-add-scene {
-  @include typography-p4;
-  color: $color-text-muted;
-  margin-top: $gap-xs;
-  display: block;
-  
-  .suggestion-btn-add-scene {
-    background: transparent;
-    border: none;
-    color: $color-primary;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: $font-size-p4;
-    margin-left: $gap-xs;
-    
     &:hover {
-      color: darken($color-primary, 10%);
+      background: darken($color-error, 10%);
+      transform: translateY(-50%) scale(1.1);
     }
   }
 }
 
-.error-message-add-scene {
-  padding: $padding-sm;
-  background: rgba($color-error, 0.1);
-  border: 1px solid $color-error;
-  border-radius: $border-radius-xs;
-  color: $color-error;
-  font-size: $font-size-p4;
-  font-weight: $font-weight-medium;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
+// =============================================
+// SUGGESTIONS LIST
+// =============================================
+.suggestions-list-add-personnage {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: $color-background-alt;
+  border: 1px solid $color-border;
+  border-top: none;
+  border-radius: 0 0 $border-radius-xs $border-radius-xs;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  box-shadow: $shadow-md;
+
+  .suggestion-item-add-personnage {
+    padding: $gap-sm $padding-sm;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+
+    &:hover {
+      background-color: rgba($color-primary, 0.1);
+    }
+
+    &.no-results-add-personnage {
+      color: $color-text-muted;
+      cursor: default;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
 }
 
 // =============================================
 // ACTIONS DU FORMULAIRE
 // =============================================
-.form-actions-add-scene {
+.form-actions-add-personnage {
   display: flex;
   gap: $spacing-sm;
   justify-content: flex-end;
@@ -455,8 +467,8 @@
     flex-direction: column;
   }
 
-  .cancel-btn-add-scene,
-  .submit-btn-add-scene {
+  .btn-secondary-add-personnage,
+  .btn-primary-add-personnage {
     padding: $gap-sm $spacing-md;
     border: none;
     border-radius: $border-radius-xs;
@@ -487,7 +499,7 @@
     }
   }
 
-  .cancel-btn-add-scene {
+  .btn-secondary-add-personnage {
     background: transparent;
     border: 1px solid $color-border;
     color: $color-text-secondary;
@@ -499,7 +511,7 @@
     }
   }
 
-  .submit-btn-add-scene {
+  .btn-primary-add-personnage {
     background: $color-primary;
     color: $color-white;
 
@@ -519,27 +531,27 @@
 // RESPONSIVE
 // =============================================
 @media (max-width: $breakpoint-xl) {
-  .creation-sidebar-add-scene {
+  .creation-sidebar-add-personnage {
     width: 250px;
   }
   
-  .creation-body-add-scene {
+  .creation-body-add-personnage {
     margin-left: 250px;
   }
 }
 
 @media (max-width: $breakpoint-lg) {
-  .creation-sidebar-add-scene {
+  .creation-sidebar-add-personnage {
     position: relative;
     width: 100%;
     height: auto;
   }
   
-  .creation-body-add-scene {
+  .creation-body-add-personnage {
     margin-left: 0;
   }
   
-  .form-header-add-scene {
+  .form-header-add-personnage {
     flex-direction: column;
     gap: $spacing-sm;
     align-items: flex-start;
@@ -547,17 +559,17 @@
 }
 
 @media (max-width: $breakpoint-md) {
-  .creation-main-content-add-scene {
+  .creation-main-content-add-personnage {
     padding: $spacing-sm;
   }
 }
 
 // Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
-  .sidebar-btn-add-scene,
-  .form-input-add-scene,
-  .submit-btn-add-scene,
-  .cancel-btn-add-scene {
+  .sidebar-btn-add-personnage,
+  .form-input-add-personnage,
+  .btn-primary-add-personnage,
+  .btn-secondary-add-personnage {
     transition: none;
     
     &:hover {

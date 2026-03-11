@@ -3460,3 +3460,27 @@ nav.fixed-bottom,
     }
   }
 }
+
+
+.visibility-badge-Scenariste {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 8px;
+  border: 1px solid #bbdefb;
+}
+
+.visibility-badge-Scenariste i {
+  font-size: 0.7rem;
+}
+
+.visibility-badge-Scenariste:hover {
+  background-color: #bbdefb;
+}
+
