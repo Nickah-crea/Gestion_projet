@@ -124,7 +124,7 @@
 }
 
 .quick-action-btn-resultat-recherche {
-  background: rgba($color-text-light, 0.1);
+  background: rgba($color-primary, 0.1);
   border: 1px solid rgba($color-text-light, 0.2);
   border-radius: $border-radius-sm;
   color: $color-text-light !important;
@@ -1985,4 +1985,1078 @@
 }
 
 
+
+// =============================================
+// STYLES SPÉCIFIQUES POUR LA SECTION EMAIL - SÉLECTION COMÉDIENS
+// =============================================
+
+.recipient-section-resultat-recherche {
+  margin-top: $spacing-md;
+}
+
+.comedien-selection-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .form-label-resultat-recherche {
+    margin-bottom: 0;
+    font-size: $font-size-p2;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+}
+
+.comedien-selection-stats-resultat-recherche {
+  font-size: $font-size-p3;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+  padding: $padding-xs $padding-sm;
+  background: rgba($color-primary, 0.1);
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-primary, 0.2);
+}
+
+.comedien-search-resultat-recherche {
+  margin-bottom: $spacing-md;
+}
+
+.search-input-container-resultat-recherche {
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  .search-icon-resultat-recherche {
+    position: absolute;
+    left: $padding-md;
+    color: $color-text-muted;
+    font-size: $font-size-p2;
+    z-index: 1;
+  }
+  
+  .search-input-resultat-recherche {
+    width: 100%;
+    padding: $padding-sm $padding-md $padding-sm ($padding-xl + $padding-sm);
+    border: 1.5px solid $color-border;
+    border-radius: $border-radius-sm;
+    background: $color-background;
+    font-size: $font-size-p2;
+    font-family: $font-family-primary;
+    transition: $transition;
+    box-sizing: border-box;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      
+      + .search-icon-resultat-recherche {
+        color: $color-primary;
+      }
+    }
+    
+    &::placeholder {
+      color: $color-text-muted;
+    }
+  }
+}
+
+.comedien-quick-actions-resultat-recherche {
+  display: flex;
+  gap: $gap-sm;
+  margin-bottom: $spacing-md;
+  
+  .quick-action-btn-resultat-recherche {
+    background: rgba($color-primary, 0.1);
+    border: 1.5px solid rgba($color-primary, 0.2);
+    border-radius: $border-radius-sm;
+    color: $color-primary;
+    padding: $padding-xs $padding-sm;
+    font-size: $font-size-p3;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.2);
+      transform: translateY(-1px);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+.comedien-checkbox-list-resultat-recherche {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1.5px solid $color-border;
+  border-radius: $border-radius;
+  padding: $spacing-sm;
+  background: $color-background;
+  margin-bottom: $spacing-md;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-primary, 0.2);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-primary, 0.05);
+  }
+}
+
+.comedien-checkbox-item-resultat-recherche {
+  padding: $spacing-sm;
+  margin-bottom: $gap-xs;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  &.no-email {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.checkbox-label-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  cursor: pointer;
+  width: 100%;
+}
+
+.checkbox-input-resultat-recherche {
+  display: none;
+  
+  &:checked + .checkbox-custom-resultat-recherche {
+    background: $color-primary;
+    border-color: $color-primary;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 10px;
+      border: solid $color-text-light;
+      border-width: 0 2px 2px 0;
+      transform: translate(-50%, -60%) rotate(45deg);
+    }
+  }
+  
+  &:disabled + .checkbox-custom-resultat-recherche {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.checkbox-custom-resultat-recherche {
+  width: 20px;
+  height: 20px;
+  border: 2px solid $color-border;
+  border-radius: $border-radius-sm;
+  position: relative;
+  flex-shrink: 0;
+  transition: $transition-fast;
+  background: $color-background-alt;
+  
+  &:hover {
+    border-color: $color-primary;
+  }
+}
+
+.comedien-info-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.comedien-name-resultat-recherche {
+  font-size: $font-size-p2;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.comedien-email-resultat-recherche {
+  font-size: $font-size-p3;
+  color: $color-text-secondary;
+  
+  .comedien-checkbox-item-resultat-recherche.no-email & {
+    color: $color-text-muted;
+    font-style: italic;
+  }
+}
+
+.loading-indicator-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $spacing-md;
+  color: $color-primary;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+  background: rgba($color-primary, 0.05);
+  border-radius: $border-radius;
+  border: 1px dashed rgba($color-primary, 0.2);
+  justify-content: center;
+  
+  i {
+    font-size: $font-size-p1;
+  }
+}
+
+.no-comediens-resultat-recherche {
+  text-align: center;
+  padding: $spacing-lg;
+  color: $color-text-muted;
+  font-size: $font-size-p2;
+  background: rgba($color-text-muted, 0.05);
+  border-radius: $border-radius;
+  border: 1px dashed $color-border;
+  margin: $spacing-md 0;
+}
+
+.destinataires-list-resultat-recherche {
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.05);
+  border-radius: $border-radius;
+  border: 1px solid rgba($color-primary, 0.1);
+  
+  h4 {
+    font-size: $font-size-p1;
+    color: $color-text-primary;
+    margin: 0 0 $spacing-sm 0;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+.emails-list-resultat-recherche {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.email-item-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-sm $padding-md;
+  margin-bottom: $gap-xs;
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-primary, 0.1);
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.email-address-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  font-size: $font-size-p2;
+  color: $color-text-primary;
+  
+  .recipient-icon-resultat-recherche {
+    color: $color-primary;
+    font-size: $font-size-p2;
+  }
+}
+
+.recipient-name-resultat-recherche {
+  color: $color-text-secondary;
+  font-size: $font-size-p3;
+}
+
+.email-remove-btn-resultat-recherche {
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  padding: $gap-xs;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  
+  &:hover {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+  
+  i {
+    font-size: $font-size-p3;
+  }
+}
+
+.help-text-resultat-recherche {
+  display: block;
+  margin-top: $gap-xs;
+  color: $color-text-muted;
+  font-size: $font-size-p4;
+}
+
+// =============================================
+// RESPONSIVE POUR LA SECTION COMÉDIENS
+// =============================================
+@media (max-width: $breakpoint-sm) {
+  .comedien-selection-header-resultat-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-sm;
+  }
+  
+  .comedien-quick-actions-resultat-recherche {
+    flex-direction: column;
+    
+    .quick-action-btn-resultat-recherche {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .email-item-resultat-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap-sm;
+  }
+  
+  .email-remove-btn-resultat-recherche {
+    align-self: flex-end;
+  }
+}
+
+
+// =============================================
+// STYLES POUR LES CARTES SPÉCIFIQUES
+// =============================================
+
+// Description
+.description-content-resultat-recherche {
+  font-size: $font-size-p2;
+  color: $color-text-primary;
+  line-height: $line-height-base;
+  padding: $padding-sm 0;
+  white-space: pre-line;
+}
+
+// Liste détaillée des personnages
+.personnages-detailed-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.personnage-detailed-item-resultat-recherche {
+  background: rgba($color-primary, 0.05);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius-sm;
+  padding: $spacing-sm;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    transform: translateX(2px);
+  }
+}
+
+.personnage-main-info-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: $gap-xs;
+  
+  .personnage-nom-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .personnage-comedien-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-secondary;
+  }
+}
+
+.personnage-stats-resultat-recherche {
+  .personnage-dialogues-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &::before {
+      content: '•';
+      color: $color-primary;
+    }
+  }
+}
+
+// Statistiques des dialogues
+.dialogues-stats-resultat-recherche {
+  display: flex;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+  
+  .stat-item-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    font-size: $font-size-p3;
+    color: $color-text-secondary;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+// Dialogues complets
+.dialogues-complets-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.dialogue-complet-item-resultat-recherche {
+  background: rgba($color-primary, 0.03);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+  }
+}
+
+.dialogue-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-sm;
+  
+  .dialogue-personnage-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-text-primary;
+  }
+  
+  .dialogue-ordre-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+    background: rgba($color-primary, 0.1);
+    padding: 2px $padding-xs;
+    border-radius: $border-radius-xs;
+  }
+}
+
+.dialogue-text-resultat-recherche {
+  font-size: $font-size-p2;
+  color: $color-text-secondary;
+  line-height: $line-height-base;
+  font-style: italic;
+  padding: $padding-sm 0;
+  border-left: 3px solid $color-primary;
+  padding-left: $padding-md;
+}
+
+.dialogue-observation-resultat-recherche {
+  font-size: $font-size-p3;
+  color: $color-text-muted;
+  margin-top: $gap-sm;
+  padding-top: $gap-sm;
+  border-top: 1px dashed $color-border;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  i {
+    color: $color-accent;
+  }
+}
+
+// Contrôles des dialogues
+.dialogues-controls-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+  
+  .filter-group-resultat-recherche,
+  .search-group-resultat-recherche {
+    flex: 1;
+    min-width: 200px;
+    
+    label {
+      display: block;
+      margin-bottom: $gap-xs;
+      font-size: $font-size-p3;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+  
+  .search-input-container-resultat-recherche {
+    position: relative;
+    
+    .search-icon-resultat-recherche {
+      position: absolute;
+      left: $padding-sm;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $color-text-muted;
+      font-size: $font-size-p2;
+    }
+    
+    .search-input-resultat-recherche {
+      width: 100%;
+      padding: $padding-sm $padding-sm $padding-sm ($padding-xl + $padding-xs);
+      border: 1px solid $color-border;
+      border-radius: $border-radius-sm;
+      background: $color-background;
+      font-size: $font-size-p2;
+      transition: $transition-fast;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+      }
+    }
+  }
+}
+
+// Liste des dialogues avec pagination
+.dialogues-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.dialogue-item-resultat-recherche {
+  background: rgba($color-primary, 0.03);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+  }
+}
+
+.dialogue-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-md;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .dialogue-number-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+    background: rgba($color-primary, 0.1);
+    padding: $gap-xs $padding-sm;
+    border-radius: $border-radius-xs;
+  }
+  
+  .dialogue-context-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-secondary;
+    
+    strong {
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+.dialogue-footer-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $gap-md;
+  padding-top: $gap-sm;
+  border-top: 1px solid rgba($color-border, 0.5);
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .dialogue-info-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+// Pagination
+.pagination-resultat-recherche {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $spacing-lg;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+  
+  .pagination-btn-resultat-recherche {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+    padding: $padding-sm $padding-md;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-p3;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Planning de tournage
+.scenes-planning-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.scene-planning-item-resultat-recherche {
+  background: rgba($color-primary, 0.03);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+  }
+}
+
+.scene-planning-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .scene-titre-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .scene-statut-resultat-recherche {
+    @extend .status-badge-small-resultat-recherche;
+  }
+}
+
+.planning-info-grid-resultat-recherche {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $gap-md;
+  margin-bottom: $spacing-sm;
+}
+
+.planning-info-item-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  
+  .detail-label-resultat-recherche {
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+  
+  .detail-value-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+  }
+}
+
+.scene-planning-location-resultat-recherche {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-sm;
+  
+  .location-item-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    font-size: $font-size-p3;
+    color: $color-text-secondary;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+.scene-dialogues-info-resultat-recherche {
+  .dialogues-count-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-primary;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.no-planning-resultat-recherche {
+  text-align: center;
+  padding: $spacing-lg;
+  color: $color-text-muted;
+  font-size: $font-size-p2;
+  
+  p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+}
+
+// Listes de scènes (lieux et plateaux)
+.scenes-list-resultat-recherche {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-md;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scene-item-resultat-recherche {
+  background: rgba($color-primary, 0.03);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+    transform: translateY(-2px);
+  }
+}
+
+.scene-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .scene-titre-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .scene-statut-resultat-recherche {
+    @extend .status-badge-small-resultat-recherche;
+  }
+}
+
+.scene-details-resultat-recherche {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  font-size: $font-size-p3;
+  color: $color-text-secondary;
+  
+  .scene-date-resultat-recherche,
+  .scene-heure-resultat-recherche,
+  .scene-personnages-resultat-recherche,
+  .scene-dialogues-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+// État vide
+.no-planning-resultat-recherche,
+.no-structure-resultat-recherche,
+.no-criteria-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-sm;
+  background: rgba($color-text-light, 0.05);
+  border-radius: $border-radius-sm;
+  border: 1px dashed rgba($color-text-light, 0.2);
+  color: rgba($color-text-light, 0.7) !important;
+  font-size: $font-size-p3;
+  
+  i {
+    color: rgba($color-text-light, 0.5) !important;
+  }
+}
+
+// Pour la sidebar (classes existantes mais sans styles)
+.no-structure-resultat-recherche,
+.no-criteria-resultat-recherche {
+  // Déjà défini dans la partie sidebar
+}
+
+// Responsive pour la sidebar
+@media (max-width: $breakpoint-lg) {
+  .sidebar-left-resultat-recherche {
+    display: none;
+  }
+  
+  .main-content-resultat-recherche {
+    margin-left: 0;
+  }
+  
+  .dialogues-controls-resultat-recherche {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .filter-group-resultat-recherche,
+    .search-group-resultat-recherche {
+      min-width: auto;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .planning-info-grid-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+  
+  .scene-details-resultat-recherche {
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+  
+  .dialogue-header-resultat-recherche,
+  .dialogue-footer-resultat-recherche,
+  .scene-planning-header-resultat-recherche {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+// Animation pour les cartes
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-card-resultat-recherche {
+  animation: fadeInUp 0.5s ease-out forwards;
+  animation-delay: calc(var(--card-index, 0) * 0.1s);
+  opacity: 0;
+}
+
+// Personnalisation du bouton Retour standalone
+.back-link-resultat-recherche.standalone {
+  align-items: center;
+  gap: $gap-xs;
+  color: $color-primary;
+  text-decoration: none;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-medium;
+  padding: $padding-sm $padding-md;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-sm;
+  background: rgba($color-primary, 0.05);
+  transition: $transition-fast;
+  margin-left: auto;
+  white-space: nowrap;
+  display: inline-flex;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    text-decoration: none;
+    transform: translateX(-2px);
+    box-shadow: $shadow;
+  }
+  
+  i {
+    transition: transform $transition-fast;
+  }
+  
+  &:hover i {
+    transform: translateX(-3px);
+  }
+}
+
+// Correction pour les boutons d'action dans la header
+.header-actions-resultat-recherche.standalone {
+  display: flex;
+  gap: $gap-md;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: $spacing-md;
+  margin-bottom: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $gap-sm;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    .btn-ecran-travail-resultat-recherche,
+    .btn-export-pdf-resultat-recherche,
+    .btn-send-email-resultat-recherche,
+    .back-link-resultat-recherche.standalone {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Correction pour le badge de type dans la header
+.result-type-header-resultat-recherche {
+  margin-right: auto;
+  
+  @media (max-width: $breakpoint-md) {
+    margin-right: 0;
+    align-self: flex-start;
+  }
+}
+
+// Espacement entre les sections
+.detail-section-resultat-recherche {
+  margin-bottom: $spacing-lg;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Labels de formulaire
+.form-label-resultat-recherche {
+  display: block;
+  margin-bottom: $gap-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  font-size: $font-size-p2;
+}
+
+// Styles spécifiques pour les cartes de détails
+.scene-details-resultat-recherche,
+.personnage-details-resultat-recherche,
+.lieu-details-resultat-recherche,
+.plateau-details-resultat-recherche {
+  .detail-section-resultat-recherche:not(:last-child) {
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-lg;
+    border-bottom: 1px solid rgba($color-border, 0.5);
+  }
+}
+
+// Boutons d'action spécifiques dans les cartes
+.header-actions-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  
+  .last-modified-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+// Animation pour les éléments de liste
+.personnage-detailed-item-resultat-recherche,
+.dialogue-complet-item-resultat-recherche,
+.dialogue-item-resultat-recherche,
+.scene-planning-item-resultat-recherche,
+.scene-item-resultat-recherche {
+  animation: fadeInUp 0.3s ease-out forwards;
+  animation-delay: calc(var(--item-index, 0) * 0.05s);
+  opacity: 0;
+}
 
