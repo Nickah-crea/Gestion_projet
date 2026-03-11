@@ -193,11 +193,12 @@
         </div>
 
         <form @submit.prevent="resetPassword" class="cinema-form">
+          <!-- Champ Nouveau mot de passe avec toggle -->
           <div class="form-group-cinema">
             <div class="input-wrapper">
               <i class="input-icon fas fa-key"></i>
               <input 
-                type="password" 
+                :type="showNewPassword ? 'text' : 'password'"
                 v-model="newPassword" 
                 required
                 placeholder="Nouveau mot de passe"
@@ -205,18 +206,24 @@
                 :class="{ 'error': newPassword.length > 0 && newPassword.length < 6 }"
                 :disabled="loading"
               />
+              <i 
+                class="password-toggle-icon fas" 
+                :class="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"
+                @click="toggleNewPassword"
+              ></i>
             </div>
             <div v-if="newPassword.length > 0 && newPassword.length < 6" 
-                 class="password-hint-cinema">
+                class="password-hint-cinema">
               Min. 6 caractères
             </div>
           </div>
 
+          <!-- Champ Confirmation mot de passe avec toggle -->
           <div class="form-group-cinema">
             <div class="input-wrapper">
               <i class="input-icon fas fa-shield-alt"></i>
               <input 
-                type="password" 
+                :type="showConfirmPassword ? 'text' : 'password'"
                 v-model="confirmPassword" 
                 required
                 placeholder="Confirmer le mot de passe"
@@ -224,13 +231,19 @@
                 :class="{ 'error': confirmPassword.length > 0 && newPassword !== confirmPassword }"
                 :disabled="loading"
               />
+              <i 
+                class="password-toggle-icon fas" 
+                :class="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"
+                @click="toggleConfirmPassword"
+              ></i>
             </div>
             <div v-if="confirmPassword.length > 0 && newPassword !== confirmPassword" 
-                 class="password-hint-cinema">
+                class="password-hint-cinema">
               Les mots de passe ne correspondent pas
             </div>
           </div>
 
+          <!-- Le reste du formulaire reste identique -->
           <div class="password-strength" v-if="newPassword">
             <div class="strength-bar" :class="passwordStrengthClass"></div>
             <div class="strength-label">
@@ -342,7 +355,10 @@ export default {
       
       // Étape 4
       countdown: 5,
-      userRole: null
+      userRole: null,
+
+      showNewPassword: false,
+      showConfirmPassword: false
     };
   },
   computed: {
@@ -450,6 +466,13 @@ export default {
       }
     },
     
+    toggleNewPassword() {
+      this.showNewPassword = !this.showNewPassword;
+    },
+    
+    toggleConfirmPassword() {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    },
     // Gestion de l'entrée du code
     onCodeInput(event, index) {
       const value = event.target.value;

@@ -349,7 +349,16 @@
                 <span class="statut-badge-Scenariste" :class="getStatutClass(project.statutNom)">
                   {{ project.statutNom }}
                 </span>
+
+                 <!-- NOUVEAU : Indicateur de visibilité pour tous les scénaristes -->
+                <span v-if="project.visibleParTousScenaristes" 
+                      class="visibility-badge-Scenariste" 
+                      title="Projet visible par tous les scénaristes">
+                  <i class="fas fa-eye"></i>
+                  <span>Tous scénaristes</span>
+                </span>
               </div>
+
               <div class="movie-actions-Scenariste" v-if="!isViewer">
                 <button class="action-btn-Scenariste edit-btn-Scenariste" @click.stop="startEdit(project)" title="Modifier">
                   <i class="fas fa-marker"></i>
@@ -902,11 +911,69 @@ initializeComponent() {
     
     async fetchProjects() {
       try {
-        const response = await axios.get('/api/projets');
-        this.projects = response.data;
+        const userId = this.getUserId();
+        const response = await axios.get(`/api/projets/user/${userId}`);
+        
+        // Enrichir les projets avec l'information de visibilité
+        this.projects = response.data.map(project => ({
+          ...project,
+          // Marquer si c'est un projet personnel ou partagé
+          estProjetPersonnel: this.isUserProject(project, userId),
+          visibleParTousScenaristes: project.visibleParTousScenaristes || false
+        }));
+        
+        console.log("Projets chargés:", this.projects.length);
+        
       } catch (error) {
         console.error('Erreur lors du chargement des projets:', error);
+        // Fallback à l'ancienne méthode si la nouvelle échoue
+        this.fetchProjectsLegacy();
       }
+    },
+
+    async fetchProjectsLegacy() {
+      try {
+        const response = await axios.get('/api/projets');
+        const userId = this.getUserId();
+        
+        this.projects = response.data.map(project => ({
+          ...project,
+          visibleParTousScenaristes: this.isProjectVisibleToAllScenaristes(project),
+          estProjetPersonnel: this.isUserProject(project, userId)
+        }));
+      } catch (error) {
+        console.error('Erreur:', error);
+      }
+    },
+
+    isUserProject(project, userId) {
+      // Logique pour déterminer si l'utilisateur est scénariste sur ce projet
+      // À adapter selon vos données
+      return project.scenaristeIds?.includes(userId) || false;
+    },
+
+    // Méthode pour déterminer si un projet est visible par tous les scénaristes
+    isProjectVisibleToAllScenaristes(project) {
+      // TODO: Implémenter la logique métier
+      // Par exemple, basé sur le statut du projet ou une configuration spécifique
+      // Pour l'instant, on utilise des règles simples :
+      
+      // Règle 1 : Les projets avec statut "En cours" sont visibles par tous
+      if (project.statutNom === 'En cours') return true;
+      
+      // Règle 2 : Les projets de type "Documentaire" sont visibles par tous
+      if (project.genreNom === 'Documentaire') return true;
+      
+      // Règle 3 : Les projets créés il y a moins de 7 jours sont visibles par tous
+      if (project.creeLe) {
+        const createdDate = new Date(project.creeLe);
+        const now = new Date();
+        const diffDays = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
+        if (diffDays <= 7) return true;
+      }
+      
+      // Par défaut, non visible par tous
+      return false;
     },
     
     async fetchGenres() {

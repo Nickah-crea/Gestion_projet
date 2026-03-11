@@ -82,18 +82,23 @@
                   </div>
                   
                   <div class="form-group-cinema">
-                    <div class="input-wrapper">
-                      <i class="input-icon fas fa-lock"></i>
-                      <input 
-                        type="password" 
-                        id="password-connexion-conn"
-                        v-model="loginPassword" 
-                        required 
-                        placeholder="Votre mot de passe"
-                        class="cinema-input"
-                      />
-                    </div>
+                  <div class="input-wrapper">
+                    <i class="input-icon fas fa-lock"></i>
+                    <input 
+                      :type="showLoginPassword ? 'text' : 'password'"
+                      id="password-connexion-conn"
+                      v-model="loginPassword" 
+                      required 
+                      placeholder="Votre mot de passe"
+                      class="cinema-input"
+                    />
+                    <i 
+                      class="password-toggle-icon fas" 
+                      :class="showLoginPassword ? 'fa-eye-slash' : 'fa-eye'"
+                      @click="toggleLoginPassword"
+                    ></i>
                   </div>
+                </div>
                   
                   <div class="form-options-cinema">
                       <router-link to="/forgot-password" class="forgot-password-link">
@@ -169,13 +174,18 @@
                       <div class="input-wrapper">
                         <i class="input-icon fas fa-key"></i>
                         <input 
-                          type="password" 
+                          :type="showRegisterPassword ? 'text' : 'password'"
                           v-model="registerPassword" 
                           required 
                           placeholder="Mot de passe"
                           class="cinema-input"
                           :class="{ 'error': registerPassword.length > 0 && registerPassword.length < 6 }"
                         />
+                        <i 
+                          class="password-toggle-icon fas" 
+                          :class="showRegisterPassword ? 'fa-eye-slash' : 'fa-eye'"
+                          @click="toggleRegisterPassword"
+                        ></i>
                       </div>
                       <div v-if="registerPassword.length > 0 && registerPassword.length < 6" class="password-hint-cinema">
                         Min. 6 caractères
@@ -187,13 +197,18 @@
                       <div class="input-wrapper">
                         <i class="input-icon fas fa-shield-alt"></i>
                         <input 
-                          type="password" 
+                          :type="showRegisterConfirmPassword ? 'text' : 'password'"
                           v-model="registerConfirmPassword" 
                           required 
                           placeholder="Confirmer mot de passe"
                           class="cinema-input"
                           :class="{ 'error': registerConfirmPassword.length > 0 && registerPassword !== registerConfirmPassword }"
                         />
+                        <i 
+                          class="password-toggle-icon fas" 
+                          :class="showRegisterConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"
+                          @click="toggleRegisterConfirmPassword"
+                        ></i>
                       </div>
                       <div v-if="registerConfirmPassword.length > 0 && registerPassword !== registerConfirmPassword" class="password-hint-cinema">
                         Mots de passe différents
@@ -320,7 +335,12 @@ export default {
       registerLoading: false,
       registerError: '',
       emailVerifie: false,
-      emailExiste: false
+      emailExiste: false,
+
+      // États pour afficher/masquer les mots de passe
+      showLoginPassword: false,
+      showRegisterPassword: false,
+      showRegisterConfirmPassword: false
     };
   },
   mounted() {
@@ -360,6 +380,18 @@ export default {
         this.registerError = '';
         this.switchingToLogin = false;
       }, 400);
+    },
+    
+    toggleLoginPassword() {
+      this.showLoginPassword = !this.showLoginPassword;
+    },
+    
+    toggleRegisterPassword() {
+      this.showRegisterPassword = !this.showRegisterPassword;
+    },
+    
+    toggleRegisterConfirmPassword() {
+      this.showRegisterConfirmPassword = !this.showRegisterConfirmPassword;
     },
     
     switchToRegister() {

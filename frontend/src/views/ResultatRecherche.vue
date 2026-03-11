@@ -265,7 +265,7 @@
               </div>
 
               <!-- Sélection de comédiens -->
-              <div v-if="recipientType === 'comedien'" class="recipient-section-resultat-recherche">
+              <div v-if="recipientType === 'comedien'" class="recipient-section-resultat-recherche">a
                 <div class="form-group-resultat-recherche">
                   <div v-if="loadingComediens" class="loading-indicator-resultat-recherche">
                     <i class="fas fa-spinner fa-spin"></i> Chargement de la liste des comédiens...
@@ -298,7 +298,7 @@
                       <button 
                         @click="selectAllComediens" 
                         type="button" 
-                        class="quick-action-btn-resultat-recherche"
+                        class="quick-action-btn-resultat-recherche" style="background: #731613;"
                         :disabled="filteredComediensWithEmail.length === 0"
                       >
                         Tout sélectionner
@@ -306,7 +306,7 @@
                       <button 
                         @click="clearAllComediens" 
                         type="button" 
-                        class="quick-action-btn-resultat-recherche"
+                        class="quick-action-btn-resultat-recherche" style="background: #B94A55;"
                         :disabled="selectedComedienIds.length === 0"
                       >
                         Tout effacer
