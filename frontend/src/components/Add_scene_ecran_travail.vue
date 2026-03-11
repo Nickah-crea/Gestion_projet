@@ -1,75 +1,192 @@
 <template>
-  <div class="add-scene-container">
-
-    <main class="main-content">
-      <div class="scene-header">
-        <button @click="goBack" class="back-btn">← Retour</button>
-        <h2>Ajouter une Scène</h2>
+  <div class="app-wrapper-global">
+    <!-- Sidebar latérale fixe à gauche -->
+    <div class="creation-sidebar-add-scene">
+      <div class="sidebar-header-add-scene">
+        <h2 class="sidebar-title-add-scene">Création de Scène</h2>
+        <p class="sidebar-subtitle-add-scene">Ajoutez une nouvelle scène à la séquence</p>
       </div>
 
-      <div class="scene-form">
-        <form @submit.prevent="submitScene">
-          <div class="form-group">
-            <label>Titre de la scène *</label>
-            <input v-model="scene.titre" type="text" required />
+      <!-- Section Actions Rapides -->
+      <div class="sidebar-section-add-scene">
+        <h3 class="section-title-add-scene"><i class="fas fa-bolt"></i> Navigation</h3>
+        <div class="sidebar-actions-add-scene">
+          <button 
+            @click="goToEcranTravail" 
+            class="sidebar-btn-add-scene"
+          >
+            <i class="fas fa-desktop"></i>
+            Écran de travail
+          </button>
+          <button @click="goBack" class="sidebar-btn-add-scene">
+            <i class="fas fa-arrow-left"></i>
+            Retour
+          </button>
+        </div>
+      </div>
+
+      <!-- Section Informations Séquences -->
+      <div class="sidebar-section-add-scene">
+        <h3 class="section-title-add-scene"><i class="fas fa-info-circle"></i> Informations</h3>
+        <div class="filter-group-add-scene">
+          <div class="filter-item-add-scene">
+            <label>Séquence parente</label>
+            <div class="sequence-info-add-scene">
+              <i class="fas fa-film"></i>
+              <span>{{ sequenceTitre || 'Chargement...' }}</span>
+            </div>
           </div>
           
-          <div class="form-group">
-            <label>Ordre dans la séquence *</label>
-            <input 
-              v-model="scene.ordre" 
-              type="number" 
-              min="1" 
-              required 
-              @blur="validateOrder"
-              :class="{ 'error-input': orderError }"
-            />
-            <div v-if="suggestedOrder" class="suggestion-text">
-              Suggestion: Le prochain ordre disponible est {{ suggestedOrder }}
-              <button type="button" @click="useSuggestedOrder" class="suggestion-btn">
-                Utiliser cette valeur
+          <div class="filter-item-add-scene">
+            <label>Épisode associé</label>
+            <div class="sequence-info-add-scene">
+              <i class="fas fa-project-diagram"></i>
+              <span>{{ episodeTitre || 'Non spécifié' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Statistiques -->
+      <div class="sidebar-section-add-scene">
+        <h3 class="section-title-add-scene"><i class="fas fa-chart-bar"></i> Statistiques</h3>
+        <div class="stats-add-scene">
+          <div class="stat-item-add-scene">
+            <span class="stat-number-add-scene">{{ scenesInSequence }}</span>
+            <span class="stat-label-add-scene">Scènes existantes</span>
+          </div>
+          <div class="stat-item-add-scene">
+            <span class="stat-number-add-scene">{{ suggestedOrder || '?' }}</span>
+            <span class="stat-label-add-scene">Ordre suggéré</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Aide -->
+      <div class="sidebar-section-add-scene">
+        <h3 class="section-title-add-scene"><i class="fas fa-question-circle"></i> Aide</h3>
+        <div class="aide-content-add-scene">
+          <p class="aide-text-add-scene">
+            • L'ordre doit être unique pour chaque scène dans la séquence.<br>
+            • La scène sera créée dans la séquence actuelle.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenu principal à droite -->
+    <div class="creation-body-add-scene">
+      <div class="creation-main-content-add-scene">
+        <div class="form-container-add-scene">
+          <!-- En-tête de formulaire -->
+          <div class="form-header-add-scene">
+            <h2><i class="fas fa-plus-circle"></i> Ajouter une nouvelle scène</h2>
+          </div>
+
+          <form @submit.prevent="submitScene" class="scene-form-add-scene">
+            <!-- Ligne 1 : Titre + Ordre -->
+            <div class="form-row-add-scene">
+              <div class="form-group-add-scene">
+                <label for="titre">Titre de la scène</label>
+                <input 
+                  type="text" 
+                  id="titre"
+                  v-model="scene.titre" 
+                  required 
+                  placeholder="Entrez le titre de la scène"
+                  class="form-input-add-scene"
+                />
+              </div>
+
+              <div class="form-group-add-scene">
+                <label for="ordre">Ordre dans la séquence</label>
+                <input 
+                  type="number" 
+                  id="ordre"
+                  v-model="scene.ordre" 
+                  required 
+                  placeholder="Numéro d'ordre"
+                  min="1"
+                  class="form-input-add-scene"
+                  :class="{ 'error-input': orderError }"
+                  @blur="validateOrder"
+                />
+                <span v-if="orderError" class="error-text-add-scene">{{ orderError }}</span>
+                <span v-if="suggestedOrder" class="suggestion-text-add-scene">
+                  Suggestion: Le prochain ordre disponible est {{ suggestedOrder }}
+                  <button type="button" @click="useSuggestedOrder" class="suggestion-btn-add-scene">
+                    Utiliser cette valeur
+                  </button>
+                </span>
+              </div>
+            </div>
+
+            <!-- Synopsis -->
+            <div class="form-group-add-scene">
+              <label for="synopsis">Synopsis</label>
+              <textarea 
+                id="synopsis"
+                v-model="scene.synopsis" 
+                required 
+                rows="5"
+                placeholder="Décrivez le contenu de cette scène"
+                class="form-textarea-add-scene"
+              ></textarea>
+            </div>
+
+            <!-- Ligne 2 : Séquence + Statut -->
+            <div class="form-row-add-scene">
+              <div class="form-group-add-scene">
+                <label for="sequence">Séquence liée</label>
+                <div class="sequence-display-add-scene">
+                  <div class="sequence-display-content-add-scene">
+                    <i class="fas fa-film"></i>
+                    <span>{{ sequenceTitre || 'Séquence non spécifiée' }}</span>
+                  </div>
+                </div>
+                <span class="info-text-add-scene">
+                  La scène sera ajoutée à cette séquence
+                </span>
+              </div>
+
+              <div class="form-group-add-scene">
+                <label for="statut">Statut</label>
+                <select 
+                  id="statut"
+                  v-model="scene.statutId" 
+                  required
+                  class="form-select-add-scene"
+                >
+                  <option value="" disabled>Sélectionnez un statut</option>
+                  <option 
+                    v-for="statut in statutsScene" 
+                    :key="statut.id" 
+                    :value="statut.id"
+                  >
+                    {{ statut.nomStatutsScene }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div v-if="errorMessage" class="error-message-add-scene">
+              <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+            </div>
+
+            <div class="form-actions-add-scene">
+              <button type="button" @click="goBack" class="cancel-btn-add-scene">
+                <i class="fas fa-times"></i> Annuler
+              </button>
+              <button type="submit" class="submit-btn-add-scene" :disabled="loading || orderError !== ''">
+                <i v-if="loading" class="fas fa-spinner fa-spin"></i>
+                <i v-else class="fas fa-plus-circle"></i>
+                {{ loading ? 'Création en cours...' : 'Créer la scène' }}
               </button>
             </div>
-            <div v-if="orderError" class="error-text">
-              {{ orderError }}
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label>Synopsis *</label>
-            <textarea v-model="scene.synopsis" required></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label>Séquence liée</label>
-            <input :value="sequenceTitre" type="text" disabled />
-          </div>
-          
-          <div class="form-group">
-            <label>Statut *</label>
-            <select v-model="scene.statutId" required>
-              <option value="">Sélectionnez un statut</option>
-              <option v-for="statut in statutsScene" :key="statut.id" :value="statut.id">
-                {{ statut.nomStatutsScene }}
-              </option>
-            </select>
-          </div>
-          
-          <div v-if="errorMessage" class="error-message">
-            {{ errorMessage }}
-          </div>
-          
-          <div class="form-actions">
-            <button type="submit" class="submit-btn" :disabled="loading || orderError !== ''">
-              {{ loading ? 'Création en cours...' : 'Créer la Scène' }}
-            </button>
-            <button type="button" @click="goBack" class="cancel-btn">
-              Annuler
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
@@ -89,12 +206,14 @@ export default {
       },
       statutsScene: [],
       sequenceTitre: '',
+      episodeTitre: '',
       loading: false,
       errorMessage: '',
-      existingOrders: [], // Liste des ordres existants
-      suggestedOrder: null, // Ordre suggéré
+      existingOrders: [],
+      suggestedOrder: null,
       orderError: '',
-      backUrl: null // Erreur spécifique à l'ordre
+      backUrl: null,
+      scenesInSequence: 0
     };
   },
   computed: {
@@ -143,6 +262,12 @@ export default {
         const sequenceResponse = await axios.get(`/api/sequences/${this.sequenceId}`, { headers });
         const sequence = sequenceResponse.data;
         this.sequenceTitre = sequence.titre;
+        
+        // Récupérer les détails de l'épisode parent
+        if (sequence.episodeId) {
+          const episodeResponse = await axios.get(`/api/episodes/${sequence.episodeId}`, { headers });
+          this.episodeTitre = episodeResponse.data.titre;
+        }
       } catch (error) {
         console.error('Erreur lors du chargement de la séquence:', error);
         this.errorMessage = 'Impossible de charger les détails de la séquence';
@@ -156,6 +281,7 @@ export default {
         // Récupérer toutes les scènes de cette séquence pour vérifier les ordres existants
         const response = await axios.get(`/api/scenes/sequences/${this.sequenceId}`, { headers });
         this.existingOrders = response.data.map(scene => scene.ordre);
+        this.scenesInSequence = response.data.length;
         
         // Calculer le prochain ordre disponible
         this.calculateSuggestedOrder();
@@ -248,6 +374,14 @@ export default {
         this.loading = false;
       }
     },
+    goToEcranTravail() {
+      if (this.episodeId) {
+        this.$router.push(`/projet/${this.episodeId}/ecran-travail`);
+      } else {
+        // Fallback vers la page précédente
+        this.$router.go(-1);
+      }
+    },
     goBack() {
       // Utiliser l'URL de retour sauvegardée
       this.$router.push(this.backUrl);
@@ -270,263 +404,6 @@ export default {
 </script>
 
 <style scoped>
-/* Import Font Awesome pour les icônes */
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-
-/* Conteneur principal */
-.add-scene-container {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #1a2639 0%, #0f172a 100%); /* Bleu nuit */
-  padding: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: fadeIn 1s ease-in-out;
-}
-
-/* Contenu principal */
-.main-content {
-  max-width: 800px;
-  width: 100%;
-  background: rgba(30, 41, 59, 0.3); /* Bleu nuit semi-transparent */
-  border-radius: 15px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  margin-top: 2rem;
-  animation: slideIn 0.7s ease-out;
-}
-
-/* En-tête du formulaire */
-.scene-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.scene-header h2 {
-  color: #e2e8f0; /* Gris clair */
-  margin: 0;
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.back-btn {
-  background: linear-gradient(135deg, #4b5563 0%, #374151 100%); /* Gris bleu */
-  color: #ffffff;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.back-btn:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-}
-
-/* Formulaire */
-.scene-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.scene-form form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: #e2e8f0; /* Gris clair */
-  font-size: 1.1rem;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  padding: 0.8rem;
-  border: none;
-  border-radius: 10px;
-  background: rgba(30, 41, 59, 0.5); /* Bleu nuit sombre */
-  color: #e2e8f0;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-
-.form-group input.error-input {
-  border: 2px solid #ef4444;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: #94a3b8; /* Gris bleu pâle */
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  background: rgba(30, 41, 59, 0.7);
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); /* Halo bleu */
-}
-
-.form-group textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.form-group input[disabled] {
-  background: rgba(30, 41, 59, 0.7);
-  color: #94a3b8;
-  cursor: not-allowed;
-}
-
-.suggestion-text {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #93c5fd; /* Bleu clair */
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.suggestion-btn {
-  background: transparent;
-  color: #93c5fd;
-  border: 1px solid #93c5fd;
-  padding: 0.2rem 0.5rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: all 0.2s ease;
-}
-
-.suggestion-btn:hover {
-  background: rgba(147, 197, 253, 0.1);
-}
-
-.error-text {
-  margin-top: 0.5rem;
-  color: #ef4444; /* Rouge */
-  font-size: 0.9rem;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.submit-btn {
-  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); /* Bleu nuit */
-  color: #ffffff;
-  padding: 0.8rem 1.8rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-}
-
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.cancel-btn {
-  background: linear-gradient(135deg, #4b5563 0%, #374151 100%); /* Gris bleu */
-  color: #ffffff;
-  padding: 0.8rem 1.8rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.cancel-btn:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-}
-
-.error-message {
-  background: rgba(239, 68, 68, 0.2); /* Rouge semi-transparent */
-  color: #ef4444;
-  padding: 1rem;
-  border-radius: 10px;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  margin-top: 1rem;
-  animation: shake 0.3s ease-in-out;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { transform: translateY(-30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .add-scene-container {
-    padding: 1rem;
-  }
-
-  .main-content {
-    padding: 1.2rem;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .submit-btn,
-  .cancel-btn {
-    width: 100%;
-  }
-  
-  .suggestion-text {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3rem;
-  }
-}
+/* Suppression des anciens styles et import du nouveau fichier CSS */
 </style>
+

@@ -55,7 +55,7 @@
         <div v-if="activeDropdown === 'actions'" class="dropdown-content quick-actions-dropdown" @click.stop>
           <div class="quick-actions-grid">
             <!-- MODIFICATION : Conditions sur chaque bouton -->
-            <button 
+            <!-- <button 
               class="action-btn" 
               @click="openAddLieuModal" 
               title="Ajouter un lieu/plateau"
@@ -63,7 +63,7 @@
             >
               <i class="fas fa-map-marker-alt"></i>
               <span>Lieu/Plateau</span>
-            </button>
+            </button> -->
             
             <button 
               class="action-btn" 
