@@ -19,7 +19,6 @@ export function usePDFExporter(emits) {
     }
 
     try {
-      // Essayer d'abord le serveur statique
       const staticUrl = `http://localhost:8080/api/images/raccords/${filename}`;
       
       const staticResponse = await axios.get(staticUrl, {
