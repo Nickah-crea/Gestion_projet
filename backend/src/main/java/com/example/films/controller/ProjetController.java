@@ -75,4 +75,14 @@ public class ProjetController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ProjetDTO>> getProjetsForUser(@PathVariable Long userId) {
+        try {
+            List<ProjetDTO> projets = projetService.getProjetsForUser(userId);
+            return ResponseEntity.ok(projets);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

@@ -7,12 +7,14 @@ import com.example.films.entity.Utilisateur;
 import com.example.films.repository.PasswordResetTokenRepository;
 import com.example.films.repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -102,8 +104,6 @@ public class PasswordResetService {
         
         // NE PAS marquer comme utilisé ici - seulement après réinitialisation
         // Le token reste valide pour l'étape 3
-        // token.setUsed(true);
-        // tokenRepository.save(token);
         
         return new ForgotPasswordResponse(true, 
             "Code vérifié avec succès. Vous pouvez maintenant définir votre nouveau mot de passe.", 
@@ -183,33 +183,113 @@ public class PasswordResetService {
     }
     
     /**
-     * Envoie l'email avec le code de vérification
+     * Envoie l'email avec le code de vérification en HTML (centré et en gras)
      */
     private void sendVerificationEmail(String email, String code) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(email);
-            message.setSubject("Réinitialisation de votre mot de passe - Plateforme Cinématographique");
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
-            String emailContent = String.format(
+            helper.setTo(email);
+            helper.setSubject("Réinitialisation de votre mot de passe - VDFI Prod");
+            
+            // Email en HTML avec code centré et en gras
+            String htmlContent = String.format(
+                "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "    <meta charset='UTF-8'>" +
+                "    <style>" +
+                "        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }" +
+                "        .container { padding: 20px; }" +
+                "        .header { background-color: #731613; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }" +
+                "        .content { background-color: #fffcfc; padding: 30px; border: 1px solid #ddd; border-radius: 0 0 10px 10px; }" +
+                "        .code-container { margin: 30px 0; text-align: center; }" +
+                "        .verification-code { " +
+                "            font-size: 36px; " +
+                "            font-weight: bold; " +
+                "            letter-spacing: 10px; " +
+                "            color: #731613; " +
+                "            background-color: #f5f5f5; " +
+                "            padding: 20px; " +
+                "            border-radius: 10px; " +
+                "            display: inline-block; " +
+                "            border: 2px dashed #731613; " +
+                "        }" +
+                "        .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }" +
+                "        .warning { background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; }" +
+                "    </style>" +
+                "</head>" +
+                "<body>" +
+                "    <div class='container'>" +
+                "        <div class='header'>" +
+                "            <h2>Réinitialisation de mot de passe</h2>" +
+                "        </div>" +
+                "        <div class='content'>" +
+                "            <p>Bonjour,</p>" +
+                "            <p>Vous avez demandé à réinitialiser votre mot de passe sur <strong>VDFI Prod</strong>.</p>" +
+                "            <div class='code-container'>" +
+                "                <p>Votre code de vérification est :</p>" +
+                "                <div class='verification-code'>%s</div>" +
+                "                <p style='margin-top: 15px;'>Ce code est valable pendant <strong>%d minutes</strong>.</p>" +
+                "            </div>" +
+                "            <div class='warning'>" +
+                "                <p><strong>⚠ Important :</strong> Ne partagez jamais ce code avec qui que ce soit.</p>" +
+                "            </div>" +
+                "            <p>Si vous n'avez pas fait cette demande, veuillez ignorer cet email.</p>" +
+                "            <p>Cordialement,<br>L'équipe de <strong>VDFI Prod</strong></p>" +
+                "        </div>" +
+                "        <div class='footer'>" +
+                "            <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>" +
+                "        </div>" +
+                "    </div>" +
+                "</body>" +
+                "</html>",
+                code, expiryMinutes
+            );
+            
+            helper.setText(htmlContent, true); // true pour HTML
+            
+            mailSender.send(message);
+            
+            System.out.println("📧 Email HTML envoyé à " + email + " avec le code: " + code);
+            
+        } catch (MessagingException e) {
+            System.err.println("❌ Erreur lors de l'envoi de l'email HTML: " + e.getMessage());
+            // En cas d'erreur HTML, essayer avec un email texte simple
+            sendSimpleVerificationEmail(email, code);
+        }
+    }
+    
+    /**
+     * Méthode de secours pour envoyer un email texte simple
+     */
+    private void sendSimpleVerificationEmail(String email, String code) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+            
+            helper.setTo(email);
+            helper.setSubject("Réinitialisation de votre mot de passe - VDFI Prod");
+            
+            String textContent = String.format(
                 "Bonjour,\n\n" +
                 "Vous avez demandé à réinitialiser votre mot de passe.\n\n" +
                 "Votre code de vérification est : %s\n\n" +
                 "Ce code est valable pendant %d minutes.\n\n" +
                 "Si vous n'avez pas fait cette demande, veuillez ignorer cet email.\n\n" +
                 "Cordialement,\n" +
-                "L'équipe de la Plateforme Cinématographique",
+                "L'équipe de VDFI Prod",
                 code, expiryMinutes
             );
             
-            message.setText(emailContent);
+            helper.setText(textContent);
             mailSender.send(message);
             
-            System.out.println("📧 Email envoyé à " + email + " avec le code: " + code);
+            System.out.println("📧 Email texte envoyé à " + email);
             
         } catch (Exception e) {
-            System.err.println("❌ Erreur lors de l'envoi de l'email: " + e.getMessage());
-            // Ne pas propager l'erreur pour des raisons de sécurité
+            System.err.println("❌ Erreur lors de l'envoi de l'email texte: " + e.getMessage());
         }
     }
     
@@ -221,6 +301,4 @@ public class PasswordResetService {
         tokenRepository.deleteExpiredTokens(LocalDateTime.now());
     }
 }
-
-
 

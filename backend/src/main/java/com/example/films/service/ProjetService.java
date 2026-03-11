@@ -90,13 +90,36 @@ public class ProjetService {
         
         // Récupérer le statut le plus récent
         Optional<ProjetStatut> statutOpt = projetStatutRepository.findLatestStatutByProjetId(projet.getId());
-            if (statutOpt.isPresent()) {
-                dto.setStatutNom(statutOpt.get().getStatut().getNomStatutsProjet());
-            } else {
-                dto.setStatutNom("Non défini");
-            }
-            
-            return dto;
+        if (statutOpt.isPresent()) {
+            dto.setStatutNom(statutOpt.get().getStatut().getNomStatutsProjet());
+        } else {
+            dto.setStatutNom("Non défini");
+        }
+        
+        // NOUVEAU : Définir la visibilité
+        dto.setVisibleParTousScenaristes(determinerVisibiliteProjet(projet, dto.getStatutNom()));
+        
+        return dto;
+    }
+
+    // NOUVELLE MÉTHODE : Logique de détermination de visibilité
+    private boolean determinerVisibiliteProjet(Projet projet, String statutNom) {
+        // TODO: Implémenter votre logique métier ici
+        // Par exemple :
+        
+        // Règle 1 : Projets avec statut "En cours" sont visibles
+        if ("En cours".equals(statutNom)) return true;
+        
+        // Règle 2 : Projets de genre "Documentaire" sont visibles
+        if (projet.getGenre() != null && "Documentaire".equals(projet.getGenre().getNomGenre())) return true;
+        
+        // Règle 3 : Projets récents (moins de 7 jours)
+        if (projet.getCreeLe() != null) {
+            LocalDateTime now = LocalDateTime.now();
+            if (projet.getCreeLe().plusDays(7).isAfter(now)) return true;
+        }
+        
+        return false;
     }
     
     // Méthode pour mettre à jour un projet
@@ -156,5 +179,59 @@ public class ProjetService {
         Projet projet = projetRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Projet non trouvé"));
         return convertToDTO(projet);
+    }
+
+    public List<ProjetDTO> getProjetsForUser(Long userId) {
+        // Récupérer tous les projets
+        List<Projet> allProjets = projetRepository.findAllWithGenre();
+        
+        // Récupérer les projets de l'utilisateur (où il est scénariste)
+        List<Long> userProjetIds = getProjetIdsForUser(userId);
+        
+        return allProjets.stream()
+            .filter(projet -> {
+                // Garder le projet si :
+                // 1. L'utilisateur est scénariste sur ce projet
+                // 2. OU le projet est visible par tous les scénaristes
+                return userProjetIds.contains(projet.getId()) || 
+                    isProjetVisibleForAllScenaristes(projet);
+            })
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    private List<Long> getProjetIdsForUser(Long userId) {
+        // Récupérer les IDs des projets où l'utilisateur est scénariste
+        // À adapter selon votre structure de données
+        String sql = """
+            SELECT DISTINCT p.id_projet 
+            FROM projets p
+            JOIN episodes e ON p.id_projet = e.id_projet
+            JOIN episode_scenaristes es ON e.id_episode = es.id_episode
+            JOIN scenaristes s ON es.id_scenariste = s.id_scenariste
+            WHERE s.id_utilisateur = :userId
+        """;
+        
+        // Ou via votre repository existant
+        return projetRepository.findProjetIdsByScenaristeUserId(userId);
+    }
+
+    private boolean isProjetVisibleForAllScenaristes(Projet projet) {
+        // Logique pour déterminer si un projet est visible par tous les scénaristes
+        // Par exemple : statut "En cours", genre spécifique, etc.
+        
+        // Récupérer le statut actuel du projet
+        String statutNom = projetStatutRepository.findLatestStatutByProjetId(projet.getId())
+            .map(ps -> ps.getStatut().getNomStatutsProjet())
+            .orElse("");
+        
+        // Règles de visibilité
+        boolean estEnCours = "En cours".equals(statutNom);
+        boolean estDocumentaire = projet.getGenre() != null && 
+                                "Documentaire".equals(projet.getGenre().getNomGenre());
+        boolean estRecent = projet.getCreeLe() != null && 
+                            projet.getCreeLe().plusDays(7).isAfter(LocalDateTime.now());
+        
+        return estEnCours || estDocumentaire || estRecent;
     }
 }

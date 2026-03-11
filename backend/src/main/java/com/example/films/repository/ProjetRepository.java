@@ -20,4 +20,11 @@ public interface ProjetRepository extends JpaRepository<Projet, Long> {
     
     @Query("SELECT p FROM Projet p LEFT JOIN FETCH p.genre WHERE p.id = :id")
     Optional<Projet> findByIdWithGenre(@Param("id") Long id);
+
+    @Query("SELECT DISTINCT p.id FROM Projet p " +
+       "JOIN Episode e ON e.projet.id = p.id " +
+       "JOIN EpisodeScenariste es ON es.episode.id = e.id " +
+       "JOIN Scenariste s ON s.id = es.scenariste.id " +
+       "WHERE s.utilisateur.id = :userId")
+    List<Long> findProjetIdsByScenaristeUserId(@Param("userId") Long userId);
 }

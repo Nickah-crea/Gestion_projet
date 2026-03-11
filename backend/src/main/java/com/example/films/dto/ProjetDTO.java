@@ -16,4 +16,7 @@ public class ProjetDTO {
     private LocalDateTime creeLe;
     private LocalDateTime modifieLe;
     private String statutNom;
+    
+    // NOUVEAU : Champ pour indiquer la visibilité
+    private boolean visibleParTousScenaristes;
 }
