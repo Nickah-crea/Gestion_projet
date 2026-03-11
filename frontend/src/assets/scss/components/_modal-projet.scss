@@ -155,6 +155,7 @@
   cursor: pointer;
   transition: $transition;
   min-width: 120px;
+  color:$color-background-alt;
   
   &:focus {
     outline: none;
