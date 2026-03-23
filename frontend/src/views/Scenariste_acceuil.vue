@@ -355,7 +355,7 @@
                       class="visibility-badge-Scenariste" 
                       title="Projet visible par tous les scénaristes">
                   <i class="fas fa-eye"></i>
-                  <span>Tous scénaristes</span>
+                  <span>Tous</span>
                 </span>
               </div>
 
