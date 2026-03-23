@@ -9,6 +9,11 @@
 @import 'base/variables';
 @import 'base/reset';
 @import 'base/typography';
+@import 'base/_variables-02';
+@import 'base/utilities';
+
+//home 
+@import 'home/scenariste-home';
 
 // Components
 @import 'components/navbar';

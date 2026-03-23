@@ -1,0 +1,63 @@
+// _variables-02.scss
+// Style Guide VDFI - Moderne & Chaleureux
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+// 1. COULEURS PRINCIPALES DE LA MARQUE
+$vdfi-v-primary: #FFEA4F; // V - Primaire - Énergie créative
+$vdfi-d-secondary: #FF8C2F; // D - Secondaire - Chaleur
+$vdfi-f-accent: #E83C3C; // F - Accent - Actions
+$vdfi-i-dark-text: #5C2A2A; // I - Texte sombre & Profondeur
+
+// 2. COULEURS DE FOND ET NEUTRES
+$vdfi-warm-beige: #F5F0E5; // Warm Beige
+$vdfi-light-gray: #F8F6F0; // Light Gray
+$vdfi-white: #FFFFFF; // White
+$vdfi-black: #000000; // Black
+
+// 3. ESPACEMENTS
+$spacing-unit: 0.25rem; // 4px
+$spacing-1: $spacing-unit;      // 4px
+$spacing-2: $spacing-unit * 2;  // 8px
+$spacing-3: $spacing-unit * 3;  // 12px
+$spacing-4: $spacing-unit * 4;  // 16px
+$spacing-5: $spacing-unit * 5;  // 20px
+$spacing-6: $spacing-unit * 6;  // 24px
+$spacing-8: $spacing-unit * 8;  // 32px
+$spacing-10: $spacing-unit * 10; // 40px
+$spacing-12: $spacing-unit * 12; // 48px
+$spacing-16: $spacing-unit * 16; // 64px
+
+// 4. TYPOGRAPHIE
+$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+$font-size-xs: 0.75rem;   // 12px
+$font-size-sm: 0.875rem;  // 14px
+$font-size-base: 1rem;     // 16px
+$font-size-lg: 1.125rem;   // 18px
+$font-size-xl: 1.25rem;    // 20px
+$font-size-2xl: 1.5rem;    // 24px
+$font-size-3xl: 1.875rem;  // 30px
+
+// 5. BORDURES
+$border-radius-sm: 0.25rem;  // 4px
+$border-radius-md: 0.5rem;    // 8px
+$border-radius-lg: 1rem;      // 16px
+$border-radius-full: 9999px;
+
+// 6. OMBRES
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+// 7. TRANSITIONS
+$transition-fast: 150ms ease;
+$transition-base: 250ms ease;
+$transition-slow: 350ms ease;
+
+// 8. Z-INDEX
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+$z-toast: 1080;
+
