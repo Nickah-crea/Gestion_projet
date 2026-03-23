@@ -156,6 +156,9 @@
                 <span class="statut-badge-Scenariste" :class="getStatutClass(episode.statutNom)">
                   {{ episode.statutNom }}
                 </span>
+                 <span v-if="episode.canAccess && userRole === 'SCENARISTE'" class="access-star" title="Vous avez accès à cet épisode">
+                  <i class="fas fa-star"></i>
+                </span>
               </div>
               
               <!-- Boutons d'actions - masqués pour UTILISATEUR -->
@@ -377,25 +380,25 @@ export default {
         ordre: null,
         statutId: null,
       },
-     editError: '',
-    orderError: '', 
-    suggestedOrder: null, 
-    existingOrders: [],
-    originalOrder: null,
-    showDeleteModal: false,
-    episodeToDelete: null,
-    isDeleting: false,
-    deleteError: '' ,
+      editError: '',
+      orderError: '', 
+      suggestedOrder: null, 
+      existingOrders: [],
+      originalOrder: null,
+      showDeleteModal: false,
+      episodeToDelete: null,
+      isDeleting: false,
+      deleteError: '',
       notification: {
-      show: false,
-      message: '',
-      type: 'success' 
-    },
-    notificationTimeout: null,
-     editLoading: false, 
+        show: false,
+        message: '',
+        type: 'success' 
+      },
+      notificationTimeout: null,
+      editLoading: false, 
       itemsPerPage: 6, 
       showLoadMore: false,
-
+      accessChecked: false, // Ajout d'un flag pour suivre si les accès ont été vérifiés
     };
   },
   computed: {
@@ -484,10 +487,70 @@ export default {
       try {
         const response = await axios.get(`/api/episodes/projet/${this.$route.params.id}`);
         this.episodes = response.data;
+        
+        // Initialiser canAccess à false par défaut pour tous
+        this.episodes.forEach(episode => {
+          episode.canAccess = false;
+        });
+        
+        // Vérifier les permissions d'accès pour chaque épisode
+        await this.checkEpisodesAccess();
       } catch (error) {
         console.error('Erreur lors du chargement des épisodes:', error);
       }
     },
+    
+    /**
+     * Vérifie l'accès de l'utilisateur à chaque épisode
+     */
+    async checkEpisodesAccess() {
+      // Si pas d'utilisateur connecté, tous les épisodes sont inaccessibles
+      if (!this.user || !this.user.id) {
+        console.warn('Utilisateur non connecté');
+        return;
+      }
+      
+      // Pour ADMIN et REALISATEUR, tous les épisodes sont accessibles
+      if (this.userRole === 'ADMIN' || this.userRole === 'REALISATEUR') {
+        this.episodes.forEach(episode => {
+          episode.canAccess = true;
+        });
+        this.accessChecked = true;
+        return;
+      }
+      
+      // Pour UTILISATEUR (simple viewer), tous les épisodes sont en lecture seule
+      if (this.userRole === 'UTILISATEUR') {
+        this.episodes.forEach(episode => {
+          episode.canAccess = false;
+        });
+        this.accessChecked = true;
+        return;
+      }
+      
+      // Pour SCENARISTE, vérifier chaque épisode individuellement
+      if (this.userRole === 'SCENARISTE') {
+        // Vérifier l'accès pour chaque épisode
+        const accessPromises = this.episodes.map(async (episode) => {
+          try {
+            const response = await axios.get(`/api/episodes/${episode.idEpisode}/access-check`, {
+              headers: {
+                'X-User-Id': this.user.id
+              }
+            });
+            episode.canAccess = response.data;
+            console.log(`Épisode ${episode.idEpisode} (${episode.titre}) - Accès: ${episode.canAccess}`);
+          } catch (error) {
+            console.error(`Erreur lors de la vérification de l'accès à l'épisode ${episode.idEpisode}:`, error);
+            episode.canAccess = false;
+          }
+        });
+        
+        await Promise.all(accessPromises);
+        this.accessChecked = true;
+      }
+    },
+    
     async loadStatutsEpisode() {
       try {
         const response = await axios.get('/api/statuts-episode');
@@ -497,6 +560,12 @@ export default {
       }
     }, 
     startEditEpisode(episode) {
+      // Vérifier d'abord si l'utilisateur a accès à cet épisode
+      if ((this.userRole === 'SCENARISTE' || this.userRole === 'UTILISATEUR') && !episode.canAccess) {
+        this.showNotification('Vous n\'avez pas les droits nécessaires pour modifier cet épisode.', 'error');
+        return;
+      }
+      
       this.editingEpisode = {
         idEpisode: episode.idEpisode,
         titre: episode.titre,
@@ -558,78 +627,85 @@ export default {
       const statut = this.statutsEpisode.find(s => s.nomStatutsEpisode === nom);
       return statut ? statut.idStatutEpisode : null;
     },
-  async saveEditedEpisode() {
-        this.validateOrder();
-    if (this.orderError) {
-      return;
-    }
-  
-   this.editLoading = true; 
-    
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.id) {
-        this.editError = 'Utilisateur non connecté';
-        this.showNotification('Utilisateur non connecté', 'error');
+    async saveEditedEpisode() {
+      this.validateOrder();
+      if (this.orderError) {
         return;
       }
-
-      const response = await axios.put(`/api/episodes/${this.editingEpisode.idEpisode}`, {
-        titre: this.editingEpisode.titre,
-        synopsis: this.editingEpisode.synopsis,
-        ordre: parseInt(this.editingEpisode.ordre),
-        statutId: this.editingEpisode.statutId,
-      }, {
-        headers: {
-          'X-User-Id': user.id
-        }
-      });
       
+      this.editLoading = true; 
+      
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+          this.editError = 'Utilisateur non connecté';
+          this.showNotification('Utilisateur non connecté', 'error');
+          return;
+        }
+
+        const response = await axios.put(`/api/episodes/${this.editingEpisode.idEpisode}`, {
+          titre: this.editingEpisode.titre,
+          synopsis: this.editingEpisode.synopsis,
+          ordre: parseInt(this.editingEpisode.ordre),
+          statutId: this.editingEpisode.statutId,
+        }, {
+          headers: {
+            'X-User-Id': user.id
+          }
+        });
+        
+        this.showEditModal = false;
+        this.editError = '';
+        this.orderError = '';
+        await this.loadEpisodes();
+        this.showNotification('Épisode modifié avec succès', 'success');
+        
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour de l épisode:', error);
+        
+        if (error.response?.status === 403) {
+          this.showNotification('Modification refusée. Vous n\'avez pas les droits nécessaires.', 'error');
+        } else if (error.response?.status === 400 && 
+            error.response?.data?.message?.includes('ordre')) {
+          this.orderError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
+          this.editError = 'Erreur de validation: ' + this.orderError;
+          this.showNotification(this.orderError, 'error');
+        } else if (error.response?.status === 401) {
+          this.editError = 'Session expirée. Veuillez vous reconnecter.';
+          this.showNotification('Session expirée. Veuillez vous reconnecter.', 'error');
+        } else {
+          this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
+          this.showNotification(this.editError, 'error');
+        }
+      } finally {
+        this.editLoading = false;
+      }
+    },
+    closeEditModal() {
       this.showEditModal = false;
+      this.editingEpisode = {
+        idEpisode: null,
+        titre: '',
+        synopsis: '',
+        ordre: null,
+        statutId: null,
+      };
       this.editError = '';
       this.orderError = '';
-      await this.loadEpisodes();
-      
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour de l épisode:', error);
-      
-      if (error.response?.status === 403) {
-        this.showNotification('Modification refusée. Vous n\'avez pas les droits nécessaires.', 'error');
-      } else if (error.response?.status === 400 && 
-          error.response?.data?.message?.includes('ordre')) {
-        this.orderError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
-        this.editError = 'Erreur de validation: ' + this.orderError;
-        this.showNotification(this.orderError, 'error');
-      } else if (error.response?.status === 401) {
-        this.editError = 'Session expirée. Veuillez vous reconnecter.';
-        this.showNotification('Session expirée. Veuillez vous reconnecter.', 'error');
-      } else {
-        this.editError = error.response?.data?.message || 'Erreur lors de la mise à jour de l\'épisode';
-        this.showNotification(this.editError, 'error');
-      }
-    } finally {
-      this.editLoading = false;
-    }
-  },
-closeEditModal() {
-  this.showEditModal = false;
-  this.editingEpisode = {
-    idEpisode: null,
-    titre: '',
-    synopsis: '',
-    ordre: null,
-    statutId: null,
-  };
-  this.editError = '';
-  this.orderError = '';
-  this.suggestedOrder = null;
-  this.existingOrders = [];
-  this.originalOrder = null;
-  this.hideNotification(); 
-},
+      this.suggestedOrder = null;
+      this.existingOrders = [];
+      this.originalOrder = null;
+      this.hideNotification(); 
+    },
     async confirmDeleteEpisode(episodeId) {
       const episode = this.episodes.find(ep => ep.idEpisode === episodeId);
       if (!episode) return;
+      
+      // Vérifier l'accès avant la suppression
+      if ((this.userRole === 'SCENARISTE' || this.userRole === 'UTILISATEUR') && !episode.canAccess) {
+        this.showNotification('Vous n\'avez pas les droits nécessaires pour supprimer cet épisode.', 'error');
+        return;
+      }
       
       this.episodeToDelete = episode;
       this.showDeleteModal = true;
@@ -643,7 +719,7 @@ closeEditModal() {
       this.deleteError = '';
     },
 
-     showNotification(message, type = 'success') {
+    showNotification(message, type = 'success') {
       this.notification = {
         show: true,
         message: message,
@@ -684,58 +760,63 @@ closeEditModal() {
       this.showNotification(message, 'success');
     },
 
-
-
     async executeDeleteEpisode() {
-    if (!this.episodeToDelete) return;
-    
-    this.isDeleting = true;
-    this.deleteError = '';
-    
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.id) {
-        this.deleteError = 'Utilisateur non connecté';
-        this.showNotification('Utilisateur non connecté', 'error');
-        this.isDeleting = false;
-        return;
-      }
+      if (!this.episodeToDelete) return;
+      
+      this.isDeleting = true;
+      this.deleteError = '';
+      
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+          this.deleteError = 'Utilisateur non connecté';
+          this.showNotification('Utilisateur non connecté', 'error');
+          this.isDeleting = false;
+          return;
+        }
 
-      await axios.delete(`/api/episodes/${this.episodeToDelete.idEpisode}`, {
-        headers: {
-          'X-User-Id': user.id
+        await axios.delete(`/api/episodes/${this.episodeToDelete.idEpisode}`, {
+          headers: {
+            'X-User-Id': user.id
+          }
+        });
+        
+        await this.loadEpisodes();
+        this.closeDeleteModal();
+        this.showNotification('Épisode supprimé avec succès', 'success');
+        
+      } catch (error) {
+        console.error('Erreur lors de la suppression de l\'épisode:', error);
+        
+        let errorMessage = 'Erreur lors de la suppression de l\'épisode';
+        
+        if (error.response) {
+          if (error.response.status === 403) {
+            errorMessage = 'Suppression refusée. Vous n\'avez pas les droits nécessaires pour supprimer cet épisode.';
+          } else if (error.response.status === 401) {
+            errorMessage = 'Session expirée. Veuillez vous reconnecter.';
+          } else {
+            errorMessage = error.response.data?.message || `Erreur serveur (${error.response.status})`;
+          }
+        } else if (error.request) {
+          errorMessage = 'Pas de réponse du serveur. Vérifiez votre connexion.';
         }
-      });
-      
-      await this.loadEpisodes();
-      this.closeDeleteModal();
-      
-    } catch (error) {
-      console.error('Erreur lors de la suppression de l\'épisode:', error);
-      
-      let errorMessage = 'Erreur lors de la suppression de l\'épisode';
-      
-      if (error.response) {
-        if (error.response.status === 403) {
-          errorMessage = 'Suppression refusée. Vous n\'avez pas les droits nécessaires pour supprimer cet épisode.';
-        } else if (error.response.status === 401) {
-          errorMessage = 'Session expirée. Veuillez vous reconnecter.';
-        } else {
-          errorMessage = error.response.data?.message || `Erreur serveur (${error.response.status})`;
-        }
-      } else if (error.request) {
-        errorMessage = 'Pas de réponse du serveur. Vérifiez votre connexion.';
+        
+        this.deleteError = errorMessage;
+        this.showNotification(errorMessage, 'error');
+        this.isDeleting = false;
       }
-      
-      this.deleteError = errorMessage;
-      this.showNotification(errorMessage, 'error');
-      this.isDeleting = false;
-    }
-  },
+    },
     goToAddEpisode() {
       this.$router.push(`/projet/${this.$route.params.id}/add-episode`);
     },
     goToDetails(episodeId) {
+      const episode = this.episodes.find(ep => ep.idEpisode === episodeId);
+      // Si c'est un scénariste sans accès, afficher un message
+      if ((this.userRole === 'SCENARISTE' || this.userRole === 'UTILISATEUR') && episode && !episode.canAccess) {
+        this.showNotification('Vous n\'avez pas accès à cet épisode.', 'error');
+        return;
+      }
       this.$router.push(`/episode/${episodeId}/detail-episode`);
     },
 
@@ -765,13 +846,13 @@ closeEditModal() {
   },
 
   watch: {
-  filterTimePeriod() {
-    this.resetPagination();
+    filterTimePeriod() {
+      this.resetPagination();
+    },
+    filterStatut() {
+      this.resetPagination();
+    }
   },
-  filterStatut() {
-    this.resetPagination();
-  }
-},
 };
 </script>
 

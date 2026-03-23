@@ -1295,3 +1295,52 @@ position: fixed;
 }
 
 
+// =============================================
+// STYLES POUR L'ÉTOILE D'ACCÈS
+// =============================================
+
+.movie-statut-Scenariste {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.access-star {
+  color: #ffc107;
+  font-size: 14px;
+  cursor: help;
+  animation: starPulse 2s ease-in-out infinite;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  i {
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+  }
+}
+
+@keyframes starPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+.access-star:hover {
+  transform: scale(1.2);
+  transition: transform 0.2s ease;
+}
+
+// Style pour les cartes sans accès (optionnel)
+.movie-card-Scenariste {
+  // Si l'épisode n'est pas accessible et que l'utilisateur est scénariste
+  &:has(.access-star:not(.visible)) {
+    // Style optionnel pour les épisodes sans accès
+    opacity: 0.9;
+  }
+}
