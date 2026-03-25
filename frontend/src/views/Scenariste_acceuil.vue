@@ -350,7 +350,15 @@
                   {{ project.statutNom }}
                 </span>
 
-                 <!-- NOUVEAU : Indicateur de visibilité pour tous les scénaristes -->
+                <!-- NOUVEAU : Icône étoile pour les projets où l'utilisateur participe -->
+                <span v-if="project.userParticipates" 
+                      class="participation-badge-Scenariste" 
+                      title="Vous participez à ce projet">
+                  <i class="fas fa-star"></i>
+                  <span>Participant</span>
+                </span>
+
+                <!-- NOUVEAU : Indicateur de visibilité pour tous les scénaristes -->
                 <span v-if="project.visibleParTousScenaristes" 
                       class="visibility-badge-Scenariste" 
                       title="Projet visible par tous les scénaristes">
@@ -660,33 +668,35 @@ export default {
       deleteError: '',
       message: null,
       notificationTimeout: null,
-      activityRefreshInterval: null
+      activityRefreshInterval: null,
+      
+      // NOUVEAU : Set des projets où l'utilisateur participe
+      userParticipatingProjects: new Set()
     };
   },
   
   computed: {
-
-  isViewer() {
-    return this.user?.role === 'UTILISATEUR';
-  },
-   isScenariste() {
-    return this.user?.role === 'SCENARISTE';
-  },
-  
-  isRealisateur() {
-    return this.user?.role === 'REALISATEUR';
-  },
-  
-  userInitials() {
-    if (!this.user?.nom) return '?';
-    const initials = this.user.nom
-      .split(' ')
-      .map(name => name.charAt(0))
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
-    return this.isViewer ? `${initials} (V)` : initials;
-  },
+    isViewer() {
+      return this.user?.role === 'UTILISATEUR';
+    },
+    isScenariste() {
+      return this.user?.role === 'SCENARISTE';
+    },
+    
+    isRealisateur() {
+      return this.user?.role === 'REALISATEUR';
+    },
+    
+    userInitials() {
+      if (!this.user?.nom) return '?';
+      const initials = this.user.nom
+        .split(' ')
+        .map(name => name.charAt(0))
+        .join('')
+        .toUpperCase()
+        .substring(0, 2);
+      return this.isViewer ? `${initials} (V)` : initials;
+    },
     
     totalResults() {
       return this.globalSearchResults.projets.length + this.globalSearchResults.autres.length;
@@ -707,38 +717,42 @@ export default {
         list = this.filterByTimePeriod(list);
       }
       
-      return list;
+      // Enrichir les projets avec l'information de participation
+      return list.map(project => ({
+        ...project,
+        userParticipates: this.userParticipatingProjects.has(project.id)
+      }));
     }
   },
   
-mounted() {
-  this.initializeComponent();
-  const userStr = localStorage.getItem('user');
-  if (userStr) {
-    try {
-      const user = JSON.parse(userStr);
-      const allowedRoles = ['SCENARISTE', 'REALISATEUR', 'UTILISATEUR'];
-      
-      if (!user.role || !allowedRoles.includes(user.role)) {
-        console.log(`Rôle ${user.role} non autorisé, redirection vers /accueil`);
-        this.$router.push('/accueil');
+  mounted() {
+    this.initializeComponent();
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        const allowedRoles = ['SCENARISTE', 'REALISATEUR', 'UTILISATEUR'];
+        
+        if (!user.role || !allowedRoles.includes(user.role)) {
+          console.log(`Rôle ${user.role} non autorisé, redirection vers /accueil`);
+          this.$router.push('/accueil');
+          return;
+        }
+      } catch (error) {
+        console.error("Erreur parsing user:", error);
+        this.$router.push('/');
         return;
       }
-    } catch (error) {
-      console.error("Erreur parsing user:", error);
-      this.$router.push('/');
-      return;
     }
-  }
-  
-  // Rafraîchir les activités toutes les 30 secondes
-  this.activityRefreshInterval = setInterval(() => {
-    if (this.user && this.user.id_utilisateur) {
-      console.log("🔄 Rafraîchissement automatique des activités");
-      this.loadRecentActivities();
-    }
-  }, 30000); // 30 secondes
-},
+    
+    // Rafraîchir les activités toutes les 30 secondes
+    this.activityRefreshInterval = setInterval(() => {
+      if (this.user && this.user.id_utilisateur) {
+        console.log("🔄 Rafraîchissement automatique des activités");
+        this.loadRecentActivities();
+      }
+    }, 30000); // 30 secondes
+  },
   
   beforeUnmount() {
     this.cleanupComponent();
@@ -754,49 +768,53 @@ mounted() {
     // INITIALISATION ET NETTOYAGE
     // =============================================
     
-initializeComponent() {
-  this.loadUser();
-  this.fetchGenres();
-  this.fetchStatuts();
-  
-  // Charger les projets selon le rôle
-  if (this.isViewer) {
-    this.fetchProjectsForViewer();
-  } else {
-    this.fetchProjects();
-  }
-  
-  this.loadAllStatuts();
-  
-  // Charger les statistiques après un petit délai
-  setTimeout(async () => {
-    await this.loadStats();
-    
-    // Charger d'abord les données de démo pour tester
-    console.log("🔄 Chargement des activités (démo d'abord)");
-    await this.loadRecentActivities();
-    
-    // Pour les viewers, ne pas charger les statistiques avancées
-    if (!this.isViewer) {
-      await this.loadPriorityProjects();
-      await this.loadUserStatistics();
-      await this.loadWritingStats();
-    }
-  }, 100);
-  
-  // Ajouter les écouteurs d'événements
-  document.addEventListener('click', this.handleClickOutside);
-  document.addEventListener('click', this.handleClickOutsideSearch);
-  
-  // Rafraîchir les stats toutes les 10 minutes (seulement pour non-viewers)
-  if (!this.isViewer) {
-    setInterval(() => {
-      if (this.user && this.user.id_utilisateur) {
-        this.loadWritingStats();
+    initializeComponent() {
+      this.loadUser();
+      this.fetchGenres();
+      this.fetchStatuts();
+      
+      // Charger les projets selon le rôle
+      if (this.isViewer) {
+        this.fetchProjectsForViewer().then(() => {
+          // Après chargement des projets, charger la participation
+          this.loadUserParticipatingProjects();
+        });
+      } else {
+        this.fetchProjects().then(() => {
+          // Après chargement des projets, charger la participation
+          this.loadUserParticipatingProjects();
+        });
       }
-    }, 600000);
-  }
-},
+      
+      this.loadAllStatuts();
+      
+      // Charger les statistiques après un petit délai
+      setTimeout(async () => {
+        await this.loadStats();
+        console.log("🔄 Chargement des activités (démo d'abord)");
+        await this.loadRecentActivities();
+        
+        // Pour les viewers, ne pas charger les statistiques avancées
+        if (!this.isViewer) {
+          await this.loadPriorityProjects();
+          await this.loadUserStatistics();
+          await this.loadWritingStats();
+        }
+      }, 100);
+      
+      // Ajouter les écouteurs d'événements
+      document.addEventListener('click', this.handleClickOutside);
+      document.addEventListener('click', this.handleClickOutsideSearch);
+      
+      // Rafraîchir les stats toutes les 10 minutes (seulement pour non-viewers)
+      if (!this.isViewer) {
+        setInterval(() => {
+          if (this.user && this.user.id_utilisateur) {
+            this.loadWritingStats();
+          }
+        }, 600000);
+      }
+    },
     
     cleanupComponent() {
       // Arrêter le timer d'écriture
@@ -873,22 +891,22 @@ initializeComponent() {
             return;
           }
           
-           const allowedRoles = ['SCENARISTE', 'REALISATEUR', 'UTILISATEUR'];
-            if (!allowedRoles.includes(this.user.role)) {
-              console.log(`Rôle ${this.user.role} non autorisé, redirection vers /accueil`);
-              this.$router.push('/accueil');
-            }
-          } catch (error) {
-            console.error("Erreur parsing user:", error);
-            localStorage.removeItem('user');
-            this.$router.push('/');
+          const allowedRoles = ['SCENARISTE', 'REALISATEUR', 'UTILISATEUR'];
+          if (!allowedRoles.includes(this.user.role)) {
+            console.log(`Rôle ${this.user.role} non autorisé, redirection vers /accueil`);
+            this.$router.push('/accueil');
           }
-        } else {
-          console.log("Pas d'utilisateur en localStorage, redirection");
+        } catch (error) {
+          console.error("Erreur parsing user:", error);
+          localStorage.removeItem('user');
           this.$router.push('/');
         }
-      },
-          
+      } else {
+        console.log("Pas d'utilisateur en localStorage, redirection");
+        this.$router.push('/');
+      }
+    },
+    
     toggleProfileMenu() {
       this.showProfileMenu = !this.showProfileMenu;
     },
@@ -954,10 +972,6 @@ initializeComponent() {
 
     // Méthode pour déterminer si un projet est visible par tous les scénaristes
     isProjectVisibleToAllScenaristes(project) {
-      // TODO: Implémenter la logique métier
-      // Par exemple, basé sur le statut du projet ou une configuration spécifique
-      // Pour l'instant, on utilise des règles simples :
-      
       // Règle 1 : Les projets avec statut "En cours" sont visibles par tous
       if (project.statutNom === 'En cours') return true;
       
@@ -1417,124 +1431,124 @@ initializeComponent() {
     // STATISTIQUES
     // =============================================
     
- async loadStats() {
-  try {
-    console.log("🔍 DEBUG: Chargement stats générales pour userId:", this.user?.id_utilisateur);
-    console.log("👤 Rôle utilisateur:", this.user?.role);
-    console.log("📊 Mode viewer:", this.isViewer);
-    
-    const userId = this.getUserId();
-    
-    // Pour les viewers, utiliser une API différente ou calculer localement
-    if (this.isViewer) {
-      console.log("👁️ Mode VIEWER - Chargement stats simplifiées");
-      await this.loadViewerStats();
-      return;
-    }
-    
-    // Pour SCENARISTE et REALISATEUR, utiliser l'API normale
-    const response = await axios.get('/api/scenariste/stats', {
-      params: { userId: userId }
-    });
-    
-    console.log("📊 DEBUG: Réponse API stats générales:", response.data);
-    
-    if (response.data && typeof response.data === 'object') {
-      this.stats = {
-        projetsActifs: response.data.projetsActifs || 0,
-        projetsVariation: response.data.projetsVariation || 0,
-        scenesEcrites: response.data.scenesEcrites || 0,
-        scenesVariation: response.data.scenesVariation || 0,
-        collaborations: response.data.collaborations || 0,
-        realisateursActifs: response.data.realisateursActifs || 0,
-        echeancesProches: response.data.echeancesProches || 0,
-        urgentCount: response.data.urgentCount || 0,
-        tempsEcriture: response.data.tempsEcriture || '0h 00mn'
-      };
-      console.log("✅ DEBUG: stats générales mises à jour:", this.stats);
-    } else {
-      console.warn("⚠️ DEBUG: Format de réponse inattendu, calcul local");
-      this.calculateLocalStats();
-    }
-  } catch (error) {
-    console.error('❌ DEBUG: Erreur chargement stats générales:', error.response?.data || error.message);
-    this.calculateLocalStats();
-  }
-},
-
-async loadViewerStats() {
-  console.log("👁️ Calcul des statistiques pour viewer...");
-  
-  try {
-    // 1. Charger tous les projets
-    await this.fetchProjects();
-    
-    // 2. Calculer les statistiques basiques
-    const totalProjets = this.projects.length;
-    
-    // 3. Charger les scènes pour chaque projet
-    let totalScenes = 0;
-    
-    // Utiliser Promise.all pour charger les scènes en parallèle
-    const scenePromises = this.projects.map(async (project) => {
+    async loadStats() {
       try {
-        const response = await axios.get(`/api/scenes/projet/${project.id}`);
-        return response.data.length || 0;
+        console.log("🔍 DEBUG: Chargement stats générales pour userId:", this.user?.id_utilisateur);
+        console.log("👤 Rôle utilisateur:", this.user?.role);
+        console.log("📊 Mode viewer:", this.isViewer);
+        
+        const userId = this.getUserId();
+        
+        // Pour les viewers, utiliser une API différente ou calculer localement
+        if (this.isViewer) {
+          console.log("👁️ Mode VIEWER - Chargement stats simplifiées");
+          await this.loadViewerStats();
+          return;
+        }
+        
+        // Pour SCENARISTE et REALISATEUR, utiliser l'API normale
+        const response = await axios.get('/api/scenariste/stats', {
+          params: { userId: userId }
+        });
+        
+        console.log("📊 DEBUG: Réponse API stats générales:", response.data);
+        
+        if (response.data && typeof response.data === 'object') {
+          this.stats = {
+            projetsActifs: response.data.projetsActifs || 0,
+            projetsVariation: response.data.projetsVariation || 0,
+            scenesEcrites: response.data.scenesEcrites || 0,
+            scenesVariation: response.data.scenesVariation || 0,
+            collaborations: response.data.collaborations || 0,
+            realisateursActifs: response.data.realisateursActifs || 0,
+            echeancesProches: response.data.echeancesProches || 0,
+            urgentCount: response.data.urgentCount || 0,
+            tempsEcriture: response.data.tempsEcriture || '0h 00mn'
+          };
+          console.log("✅ DEBUG: stats générales mises à jour:", this.stats);
+        } else {
+          console.warn("⚠️ DEBUG: Format de réponse inattendu, calcul local");
+          this.calculateLocalStats();
+        }
       } catch (error) {
-        console.warn(`❌ Erreur chargement scènes projet ${project.id}:`, error.message);
-        return 0;
+        console.error('❌ DEBUG: Erreur chargement stats générales:', error.response?.data || error.message);
+        this.calculateLocalStats();
       }
-    });
-    
-    const sceneCounts = await Promise.all(scenePromises);
-    totalScenes = sceneCounts.reduce((sum, count) => sum + count, 0);
-    
-    // 4. Mettre à jour les stats
-    this.stats = {
-      projetsActifs: totalProjets,
-      projetsVariation: 0,
-      scenesEcrites: totalScenes,
-      scenesVariation: 0,
-      collaborations: 0,
-      realisateursActifs: 0,
-      echeancesProches: 0,
-      urgentCount: 0,
-      tempsEcriture: '0h 00mn'
-    };
-    
-    console.log("✅ Statistiques viewer:", this.stats);
-    console.log(`📊 ${totalProjets} projets, ${totalScenes} scènes`);
-    
-  } catch (error) {
-    console.error('❌ Erreur chargement stats viewer:', error);
-    // Fallback: calcul basique
-    this.calculateViewerStatsFromProjects();
-  }
-},
+    },
 
-calculateViewerStatsFromProjects() {
-  // Calcul basique à partir des projets déjà chargés
-  const totalProjets = this.projects.length;
-  
-  // Estimer le nombre de scènes (par exemple, 5 scènes par projet en moyenne)
-  const estimatedScenes = this.projects.reduce((total, p) => {
-    return total + (p.nombreScenes || 5); // Utiliser nombreScenes si disponible, sinon estimer 5
-  }, 0);
-  
-  this.stats = {
-    projetsActifs: totalProjets,
-    projetsVariation: 0,
-    scenesEcrites: estimatedScenes,
-    scenesVariation: 0,
-    collaborations: 0,
-    realisateursActifs: 0,
-    echeancesProches: 0,
-    urgentCount: 0,
-    tempsEcriture: '0h 00mn'
-  };
-  
-  console.log("📊 Statistiques estimées viewer:", this.stats);
-},
+    async loadViewerStats() {
+      console.log("👁️ Calcul des statistiques pour viewer...");
+      
+      try {
+        // 1. Charger tous les projets
+        await this.fetchProjects();
+        
+        // 2. Calculer les statistiques basiques
+        const totalProjets = this.projects.length;
+        
+        // 3. Charger les scènes pour chaque projet
+        let totalScenes = 0;
+        
+        // Utiliser Promise.all pour charger les scènes en parallèle
+        const scenePromises = this.projects.map(async (project) => {
+          try {
+            const response = await axios.get(`/api/scenes/projet/${project.id}`);
+            return response.data.length || 0;
+          } catch (error) {
+            console.warn(`❌ Erreur chargement scènes projet ${project.id}:`, error.message);
+            return 0;
+          }
+        });
+        
+        const sceneCounts = await Promise.all(scenePromises);
+        totalScenes = sceneCounts.reduce((sum, count) => sum + count, 0);
+        
+        // 4. Mettre à jour les stats
+        this.stats = {
+          projetsActifs: totalProjets,
+          projetsVariation: 0,
+          scenesEcrites: totalScenes,
+          scenesVariation: 0,
+          collaborations: 0,
+          realisateursActifs: 0,
+          echeancesProches: 0,
+          urgentCount: 0,
+          tempsEcriture: '0h 00mn'
+        };
+        
+        console.log("✅ Statistiques viewer:", this.stats);
+        console.log(`📊 ${totalProjets} projets, ${totalScenes} scènes`);
+        
+      } catch (error) {
+        console.error('❌ Erreur chargement stats viewer:', error);
+        // Fallback: calcul basique
+        this.calculateViewerStatsFromProjects();
+      }
+    },
+
+    calculateViewerStatsFromProjects() {
+      // Calcul basique à partir des projets déjà chargés
+      const totalProjets = this.projects.length;
+      
+      // Estimer le nombre de scènes (par exemple, 5 scènes par projet en moyenne)
+      const estimatedScenes = this.projects.reduce((total, p) => {
+        return total + (p.nombreScenes || 5); // Utiliser nombreScenes si disponible, sinon estimer 5
+      }, 0);
+      
+      this.stats = {
+        projetsActifs: totalProjets,
+        projetsVariation: 0,
+        scenesEcrites: estimatedScenes,
+        scenesVariation: 0,
+        collaborations: 0,
+        realisateursActifs: 0,
+        echeancesProches: 0,
+        urgentCount: 0,
+        tempsEcriture: '0h 00mn'
+      };
+      
+      console.log("📊 Statistiques estimées viewer:", this.stats);
+    },
     
     calculateLocalStats() {
       const now = new Date();
@@ -1577,28 +1591,27 @@ calculateViewerStatsFromProjects() {
     },
     
     async loadUserStatistics() {
-      
       try {
-    // Pour les viewers, charger des statistiques simplifiées
-    if (this.isViewer) {
-      this.userStats = {
-        productivite: 0,
-        scenesModifiees7j: 0,
-        tendanceScenes: 0,
-        tempsTotalMinutes: 0,
-        moyenneQuotidienneMinutes: 0,
-        sessionMoyenneMinutes: 0,
-        objectifs: {
-          scenesCompletees: 0,
-          scenesCibles: 0,
-          dialoguesEcrits: 0,
-          dialoguesCibles: 0,
-          progressionScenes: 0,
-          progressionDialogues: 0
+        // Pour les viewers, charger des statistiques simplifiées
+        if (this.isViewer) {
+          this.userStats = {
+            productivite: 0,
+            scenesModifiees7j: 0,
+            tendanceScenes: 0,
+            tempsTotalMinutes: 0,
+            moyenneQuotidienneMinutes: 0,
+            sessionMoyenneMinutes: 0,
+            objectifs: {
+              scenesCompletees: 0,
+              scenesCibles: 0,
+              dialoguesEcrits: 0,
+              dialoguesCibles: 0,
+              progressionScenes: 0,
+              progressionDialogues: 0
+            }
+          };
+          return;
         }
-      };
-      return;
-    }
         
         console.log("✅ DEBUG: userStats mis à jour:", this.userStats);
         
@@ -1779,25 +1792,140 @@ calculateViewerStatsFromProjects() {
     },
     
     async fetchProjectsForViewer() {
+      try {
+        const response = await axios.get('/api/projets');
+        
+        // Enrichir les projets avec plus d'informations pour les viewers
+        this.projects = response.data.map(project => ({
+          ...project,
+          // S'assurer que les propriétés nécessaires sont présentes
+          nombreScenes: project.nombreScenes || 0,
+          // Autres propriétés...
+        }));
+        
+        console.log("📋 Projets chargés pour viewer:", this.projects.length);
+        return this.projects;
+      } catch (error) {
+        console.error('Erreur lors du chargement des projets:', error);
+        this.projects = [];
+        return [];
+      }
+    },
+    
+    // =============================================
+    // NOUVEAU : GESTION DE LA PARTICIPATION AUX PROJETS
+    // =============================================
+    // Remplacez la méthode loadUserParticipatingProjects par celle-ci :
+
+async loadUserParticipatingProjects() {
   try {
-    const response = await axios.get('/api/projets');
+    const userId = this.getUserId();
+    console.log("🔍 Chargement des projets où l'utilisateur participe (userId:", userId, ")");
     
-    // Enrichir les projets avec plus d'informations pour les viewers
-    this.projects = response.data.map(project => ({
-      ...project,
-      // S'assurer que les propriétés nécessaires sont présentes
-      nombreScenes: project.nombreScenes || 0,
-      // Autres propriétés...
-    }));
+    // Étape 1: Récupérer le scénariste à partir de l'ID utilisateur
+    const scenaristeResponse = await axios.get(`/api/scenaristes/user/${userId}`);
+    const scenaristeId = scenaristeResponse.data.idScenariste;
+    console.log("📝 Scénariste ID trouvé:", scenaristeId);
     
-    console.log("📋 Projets chargés pour viewer:", this.projects.length);
-    return this.projects;
+    // Étape 2: Récupérer tous les épisodes de ce scénariste
+    const response = await axios.get(`/api/episodes/scenariste/${scenaristeId}`);
+    
+    // Étape 3: Extraire les IDs des projets uniques à partir des épisodes
+    const projectIds = new Set();
+    
+    if (response.data && Array.isArray(response.data)) {
+      response.data.forEach(episode => {
+        if (episode.projetId) {
+          projectIds.add(episode.projetId);
+          console.log(`📌 Épisode "${episode.titre}" → Projet ID: ${episode.projetId}`);
+        }
+      });
+    }
+    
+    this.userParticipatingProjects = projectIds;
+    console.log("✅ Projets de participation chargés:", Array.from(projectIds));
+    console.log(`📊 Total: ${projectIds.size} projet(s) où l'utilisateur participe`);
+    
+    // Mettre à jour les projets existants avec l'information de participation
+    this.updateProjectsParticipation();
+    
   } catch (error) {
-    console.error('Erreur lors du chargement des projets:', error);
-    this.projects = [];
-    return [];
+    console.error('❌ Erreur lors du chargement des projets de participation:', error);
+    console.error('Détails:', error.response?.data || error.message);
+    
+    // En cas d'erreur, utiliser la méthode fallback
+    await this.loadUserParticipatingProjectsFallback();
   }
 },
+
+// Méthode fallback si la première échoue
+async loadUserParticipatingProjectsFallback() {
+  try {
+    const userId = this.getUserId();
+    console.log("🔄 Tentative fallback...");
+    
+    // Alternative: utiliser l'API des épisodes par utilisateur
+    const response = await axios.get(`/api/episodes/utilisateur/${userId}`);
+    
+    const projectIds = new Set();
+    
+    if (response.data && Array.isArray(response.data)) {
+      response.data.forEach(episode => {
+        if (episode.projetId) {
+          projectIds.add(episode.projetId);
+        }
+      });
+    }
+    
+    this.userParticipatingProjects = projectIds;
+    console.log("✅ Projets de participation (fallback):", Array.from(projectIds));
+    
+    this.updateProjectsParticipation();
+    
+  } catch (error) {
+    console.error('❌ Erreur fallback:', error);
+    // Dernier recours: utiliser les données locales
+    this.detectLocalParticipation();
+  }
+},
+
+// Détection locale basée sur les données déjà chargées
+detectLocalParticipation() {
+  console.log("🔍 Détection locale de participation...");
+  const userId = this.getUserId();
+  const projectIds = new Set();
+  
+  // Parcourir les projets et vérifier s'ils ont des épisodes avec ce scénariste
+  this.projects.forEach(project => {
+    // Si le projet a une propriété scenaristeIds
+    if (project.scenaristeIds && project.scenaristeIds.includes(userId)) {
+      projectIds.add(project.id);
+    }
+    
+    // Si l'utilisateur est le créateur
+    if (project.createurId === userId) {
+      projectIds.add(project.id);
+    }
+  });
+  
+  this.userParticipatingProjects = projectIds;
+  this.updateProjectsParticipation();
+  console.log("🎯 Participation locale détectée:", Array.from(projectIds));
+},
+
+// Mettre à jour les projets existants avec l'information de participation
+updateProjectsParticipation() {
+  if (this.projects && this.projects.length > 0) {
+    this.projects = this.projects.map(project => ({
+      ...project,
+      userParticipates: this.userParticipatingProjects.has(project.id)
+    }));
+    console.log("📊 Projets mis à jour avec participation:", 
+                this.projects.filter(p => p.userParticipates).length,
+                "projet(s) sur", this.projects.length);
+  }
+},
+    
     // =============================================
     // ACTIVITÉS ET PROJETS PRIORITAIRES
     // =============================================
@@ -2297,6 +2425,7 @@ calculateViewerStatsFromProjects() {
       console.log('Définir rappel pour:', project.titre);
       alert(`Rappel défini pour "${project.titre}" dans 1 jour`);
     },
+    
     // Méthode pour naviguer vers l'écran de travail
     goToEcranTravail(project) {
       // Pour les viewers, ajouter un paramètre 'viewer=true'
@@ -2312,4 +2441,65 @@ calculateViewerStatsFromProjects() {
   }
 };
 </script>
+
+<style scoped>
+/* ... Vos styles existants ... */
+
+/* NOUVEAU : Badge de participation (étoile) */
+.participation-badge-Scenariste {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #FFD700, #FFB800);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: starGlow 2s ease-in-out infinite;
+}
+
+.participation-badge-Scenariste i {
+  font-size: 0.7rem;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes starGlow {
+  0%, 100% {
+    box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.6);
+  }
+}
+
+/* Tooltip personnalisé */
+.participation-badge-Scenariste:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+  cursor: help;
+}
+
+/* Ajustement pour mobile */
+@media (max-width: 768px) {
+  .participation-badge-Scenariste {
+    padding: 2px 6px;
+    font-size: 0.7rem;
+  }
+  
+  .participation-badge-Scenariste i {
+    font-size: 0.6rem;
+  }
+  
+  .participation-badge-Scenariste span {
+    display: none; /* Cacher le texte sur mobile, garder seulement l'icône */
+  }
+  
+  .participation-badge-Scenariste i {
+    margin-right: 0;
+  }
+}
+</style>
 
