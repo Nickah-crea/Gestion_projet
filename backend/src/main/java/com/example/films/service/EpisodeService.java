@@ -350,5 +350,20 @@ public class EpisodeService {
         return episodeRepository.rechercherEpisodes(query.toLowerCase());
     }
         
+        // Ajoutez cette méthode dans EpisodeService.java
+
+    public List<EpisodeDTO> getEpisodesByScenaristeId(Long scenaristeId) {
+        // Vérifier que le scénariste existe
+        Scenariste scenariste = scenaristeRepository.findById(scenaristeId)
+                .orElseThrow(() -> new RuntimeException("Scénariste non trouvé"));
+        
+        // Récupérer tous les épisodes où ce scénariste est associé
+        List<EpisodeScenariste> episodeScenaristes = episodeScenaristeRepository.findByScenaristeId(scenaristeId);
+        
+        // Convertir en DTO
+        return episodeScenaristes.stream()
+                .map(es -> convertToDTO(es.getEpisode()))
+                .collect(Collectors.toList());
+    }
 }
 

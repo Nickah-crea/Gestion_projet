@@ -76,7 +76,7 @@ public class ProjetController {
         }
     }
 
-    @GetMapping("/user/{userId}")
+   @GetMapping("/user/{userId}")
     public ResponseEntity<List<ProjetDTO>> getProjetsForUser(@PathVariable Long userId) {
         try {
             List<ProjetDTO> projets = projetService.getProjetsForUser(userId);

@@ -158,4 +158,14 @@ public class EpisodeController {
         }
     }
 
+        @GetMapping("/scenariste/{scenaristeId}")
+        public ResponseEntity<List<EpisodeDTO>> getEpisodesByScenaristeId(@PathVariable Long scenaristeId) {
+            try {
+                List<EpisodeDTO> episodes = episodeService.getEpisodesByScenaristeId(scenaristeId);
+                return ResponseEntity.ok(episodes);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
 }
