@@ -146,7 +146,6 @@
         <div class="header-actions-resultat-recherche standalone">
           <div v-if="resultat" class="result-type-header-resultat-recherche" :class="'type-' + resultat.type">
             <div class="#">
-              <!-- Combinez les deux classes -->
               <i :class="[getTypeIcon(resultat.type), 'type-icon-resultat-recherche']"></i>
               <span class="type-label-resultat-recherche">{{ getTypeLabel(resultat.type) }}</span>
             </div>
@@ -167,7 +166,6 @@
             Envoyer par email
           </button>
 
-          <!-- Bouton retour placé en dehors du header -->
           <router-link to="/recherche" class="back-link-resultat-recherche standalone">
             <i class="fas fa-arrow-left"></i> Retour aux résultats
           </router-link>
@@ -860,11 +858,12 @@
 </template>
 
 <script>
-// IMPORT DES VRAIS SERVICES
-import { getResultatDetails, getResultatDetailsComplets } from '../service/rechercheService'
+// IMPORT DES SERVICES
+import { getResultatDetails, getResultatDetailsComplets } from '../service/rechercheService';
 
-// Import pour l'export PDF
-import jsPDF from 'jspdf';
+// IMPORT DES FONCTIONS D'EXPORT
+import { genererPDF, genererPDFBlob } from '../export/pdfExport';
+import { envoyerPDFParEmail } from '../export/emailExport';
 
 export default {
   name: 'ResultatRecherche',
@@ -893,100 +892,94 @@ export default {
       comediensList: [],
       loadingComediens: false,
       comedienSearch: '',
-    }
+    };
   },
-  computed: {
-      dialoguesFiltres() {
-        let dialogues = this.resultatDetails.dialogues || [];
-        
-        // Filtre par recherche
-        if (this.rechercheDialogue) {
-          const terme = this.rechercheDialogue.toLowerCase();
-          dialogues = dialogues.filter(d => 
-            d.texte.toLowerCase().includes(terme) ||
-            (d.observation && d.observation.toLowerCase().includes(terme)) ||
-            (d.sceneTitre && d.sceneTitre.toLowerCase().includes(terme))
-          );
-        }
-        
-        // Tri
-        switch (this.triDialogues) {
-          case 'scene':
-            dialogues.sort((a, b) => (a.sceneTitre || '').localeCompare(b.sceneTitre || ''));
-            break;
-          case 'longueur':
-            dialogues.sort((a, b) => this.compterMots(b.texte) - this.compterMots(a.texte));
-            break;
-          case 'ordre':
-          default:
-            dialogues.sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
-            break;
-        }
-        
-        // Pagination
-        const start = (this.pageDialogues - 1) * this.dialoguesParPage;
-        const end = start + this.dialoguesParPage;
-        return dialogues.slice(start, end);
-      },
-      
-      totalPagesDialogues() {
-        const total = this.resultatDetails.dialogues?.length || 0;
-        return Math.ceil(total / this.dialoguesParPage);
-      },
-
-      scenesAvecPlanning() {
-        if (!this.resultatDetails.scenes) return [];
-        return this.resultatDetails.scenes.filter(scene => scene.dateTournage);
-      },
-      filteredComediens() {
-        if (!this.comedienSearch) return this.comediensList;
-        
-        const searchTerm = this.comedienSearch.toLowerCase();
-        return this.comediensList.filter(comedien => 
-          comedien.nom.toLowerCase().includes(searchTerm) ||
-          (comedien.email && comedien.email.toLowerCase().includes(searchTerm))
-        );
-      },
-      currentRecipients() {
-          if (this.recipientType === 'manual') {
-            return this.emailForm.toEmails.map(email => ({ 
-              email, 
-              type: 'manual' 
-            }));
-          } 
-          else if (this.recipientType === 'comedien') {
-            return this.selectedComedienIds
-              .map(id => this.comediensList.find(c => c.id === id))
-              .filter(comedien => comedien && comedien.email)
-              .map(comedien => ({
-                email: comedien.email,
-                name: comedien.nom,
-                id: comedien.id,
-                type: 'comedien'
-              }));
-          }
-          return [];
-        },
-      filteredComediensWithEmail() {
-        return this.filteredComediens.filter(comedien => comedien.email && comedien.email.trim() !== '');
-      }
-  },
-  async mounted() {
-    await this.chargerDetails()
-  },
-
   
-  methods: {
-    getTypeIconClass(type) {
-      const icons = {
-        scene: 'film',
-        personnage: 'user',
-        lieu: 'landmark',
-        plateau: 'theater-masks'
+  computed: {
+    dialoguesFiltres() {
+      let dialogues = this.resultatDetails.dialogues || [];
+      
+      if (this.rechercheDialogue) {
+        const terme = this.rechercheDialogue.toLowerCase();
+        dialogues = dialogues.filter(d => 
+          d.texte.toLowerCase().includes(terme) ||
+          (d.observation && d.observation.toLowerCase().includes(terme)) ||
+          (d.sceneTitre && d.sceneTitre.toLowerCase().includes(terme))
+        );
       }
-      return icons[type] || 'file'
+      
+      switch (this.triDialogues) {
+        case 'scene':
+          dialogues.sort((a, b) => (a.sceneTitre || '').localeCompare(b.sceneTitre || ''));
+          break;
+        case 'longueur':
+          dialogues.sort((a, b) => this.compterMots(b.texte) - this.compterMots(a.texte));
+          break;
+        case 'ordre':
+        default:
+          dialogues.sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
+          break;
+      }
+      
+      const start = (this.pageDialogues - 1) * this.dialoguesParPage;
+      const end = start + this.dialoguesParPage;
+      return dialogues.slice(start, end);
+    },
+    
+    totalPagesDialogues() {
+      const total = this.resultatDetails.dialogues?.length || 0;
+      return Math.ceil(total / this.dialoguesParPage);
     },
 
+    scenesAvecPlanning() {
+      if (!this.resultatDetails.scenes) return [];
+      return this.resultatDetails.scenes.filter(scene => scene.dateTournage);
+    },
+    
+    filteredComediens() {
+      if (!this.comedienSearch) return this.comediensList;
+      const searchTerm = this.comedienSearch.toLowerCase();
+      return this.comediensList.filter(comedien => 
+        comedien.nom.toLowerCase().includes(searchTerm) ||
+        (comedien.email && comedien.email.toLowerCase().includes(searchTerm))
+      );
+    },
+    
+    currentRecipients() {
+      if (this.recipientType === 'manual') {
+        return this.emailForm.toEmails.map(email => ({ 
+          email, 
+          type: 'manual' 
+        }));
+      } 
+      else if (this.recipientType === 'comedien') {
+        return this.selectedComedienIds
+          .map(id => this.comediensList.find(c => c.id === id))
+          .filter(comedien => comedien && comedien.email)
+          .map(comedien => ({
+            email: comedien.email,
+            name: comedien.nom,
+            id: comedien.id,
+            type: 'comedien'
+          }));
+      }
+      return [];
+    },
+    
+    filteredComediensWithEmail() {
+      return this.filteredComediens.filter(comedien => comedien.email && comedien.email.trim() !== '');
+    }
+  },
+  
+  async mounted() {
+    await this.chargerDetails();
+  },
+  
+  methods: {
+    // =============================================
+    // NAVIGATION
+    // =============================================
+    
     copierLien() {
       const url = window.location.href;
       navigator.clipboard.writeText(url).then(() => {
@@ -998,90 +991,98 @@ export default {
     },
 
     naviguerVersEcranTravail() {
-      if (!this.resultat) return
+      if (!this.resultat) return;
       
-      let routePath = ''
-      let queryParams = {}
+      let routePath = '';
+      let queryParams = {};
       
       switch (this.resultat.type) {
         case 'scene':
-          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`;
           queryParams = {
             episodeId: this.resultat.episodeId,
             sequenceId: this.resultat.sequenceId
-          }
-          break
+          };
+          break;
           
         case 'personnage':
-          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`;
           queryParams = {
             filterPersonnage: this.resultat.id
-          }
-          break
+          };
+          break;
           
         case 'lieu':
-          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`;
           queryParams = {
             filterLieu: this.resultat.id
-          }
-          break
+          };
+          break;
           
         case 'plateau':
-          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`;
           queryParams = {
             filterPlateau: this.resultat.id
-          }
-          break
+          };
+          break;
           
         default:
-          routePath = `/projet/${this.resultat.projetId}/ecran-travail`
+          routePath = `/projet/${this.resultat.projetId}/ecran-travail`;
       }
       
       this.$router.push({
         path: routePath,
         query: queryParams
-      })
+      });
     },
 
     getEcranTravailButtonText() {
-      if (!this.resultat) return 'Voir dans le projet'
+      if (!this.resultat) return 'Voir dans le projet';
       
       switch (this.resultat.type) {
-        case 'scene': return 'Voir la scène dans le projet'
-        case 'personnage': return 'Voir le personnage dans le projet'
-        case 'lieu': return 'Voir le lieu dans le projet'
-        case 'plateau': return 'Voir le plateau dans le projet'
-        default: return 'Voir dans le projet'
+        case 'scene': return 'Voir la scène dans le projet';
+        case 'personnage': return 'Voir le personnage dans le projet';
+        case 'lieu': return 'Voir le lieu dans le projet';
+        case 'plateau': return 'Voir le plateau dans le projet';
+        default: return 'Voir dans le projet';
       }
     },
 
+    // =============================================
+    // CHARGEMENT DES DONNÉES
+    // =============================================
+    
     async chargerDetails() {
-      this.chargement = true
-      this.erreur = null
+      this.chargement = true;
+      this.erreur = null;
       
       try {
-        const { type, id } = this.$route.params
+        const { type, id } = this.$route.params;
         
         if (this.$route.query.recherche) {
           try {
-            this.criteresRecherche = JSON.parse(this.$route.query.recherche)
+            this.criteresRecherche = JSON.parse(this.$route.query.recherche);
           } catch (e) {
-            console.warn('Erreur parsing critères recherche:', e)
-            this.criteresRecherche = null
+            console.warn('Erreur parsing critères recherche:', e);
+            this.criteresRecherche = null;
           }
         }
         
-        this.resultat = await getResultatDetails(type, id)
-        this.resultatDetails = await getResultatDetailsComplets(type, id)
+        this.resultat = await getResultatDetails(type, id);
+        this.resultatDetails = await getResultatDetailsComplets(type, id);
         
       } catch (error) {
-        console.error('Erreur lors du chargement des détails:', error)
-        this.erreur = error.message || 'Erreur lors du chargement des détails'
+        console.error('Erreur lors du chargement des détails:', error);
+        this.erreur = error.message || 'Erreur lors du chargement des détails';
       } finally {
-        this.chargement = false
+        this.chargement = false;
       }
     },
 
+    // =============================================
+    // GESTION DES EMAILS
+    // =============================================
+    
     ajouterEmail() {
       if (this.nouvelEmail && this.estEmailValide(this.nouvelEmail)) {
         if (!this.emailForm.toEmails.includes(this.nouvelEmail.trim().toLowerCase())) {
@@ -1104,99 +1105,101 @@ export default {
       return emailRegex.test(email);
     },
     
-  async ouvrirDialogueEmail() {
-    this.exportEnCours = true;
-    
-    try {
-      const pdf = this.genererPDF();
-      const pdfBlob = pdf.output('blob');
-      this.generatedPdfBlob = pdfBlob;
-      
-      this.resetEmailForm();
-      
-      this.emailDialogVisible = true;
-      
-    } catch (error) {
-      console.error('Erreur lors de la génération du PDF:', error);
-      alert('Erreur lors de la préparation du PDF pour l\'envoi');
-    } finally {
-      this.exportEnCours = false;
-    }
-  },
-
-    async loadComediens() {
-        if (this.recipientType === 'comedien' && this.comediensList.length === 0) {
-          this.loadingComediens = true;
-          try {
-            const projetId = this.resultat?.projetId;
-            
-            if (projetId) {
-              try {
-                const response = await fetch(`/api/comediens/projet/${projetId}`);
-                if (response.ok) {
-                  this.comediensList = await response.json();
-                }
-              } catch (error) {
-                console.warn('Erreur API projet, tentative API générale:', error);
-              }
-            }
-            
-            if (this.comediensList.length === 0) {
-              const response = await fetch('/api/comediens');
-              if (response.ok) {
-                this.comediensList = await response.json();
-              }
-            }
-            
-            this.comediensList = this.comediensList.map(comedien => ({
-              id: comedien.id || comedien.idComedien || comedien._id,
-              nom: comedien.nom || comedien.prenomNom || `${comedien.prenom} ${comedien.nom}`,
-              email: comedien.email || comedien.courriel || ''
-            }));
-            
-          } catch (error) {
-            console.error('Erreur lors du chargement des comédiens:', error);
-            this.comediensList = [];
-          } finally {
-            this.loadingComediens = false;
-          }
-        }
-      },
-
-    selectAllComediens() {
-    this.selectedComedienIds = this.filteredComediens
-      .filter(comedien => comedien.email && comedien.email.trim() !== '')
-      .map(comedien => comedien.id);
-  },
-  
-  clearAllComediens() {
-    this.selectedComedienIds = [];
-  },
-
-removeRecipient(index) {
-  const recipient = this.currentRecipients[index];
-  
-  if (this.recipientType === 'manual') {
-    const emailIndex = this.emailForm.toEmails.indexOf(recipient.email);
-    if (emailIndex !== -1) {
-      this.emailForm.toEmails.splice(emailIndex, 1);
-    }
-  } 
-  else if (this.recipientType === 'comedien') {
-    this.selectedComedienIds = this.selectedComedienIds.filter(id => id !== recipient.id);
-  }
-},
+    resetEmailForm() {
+      this.emailForm = {
+        toEmails: [],
+        subject: 'Export PDF - Détails du résultat',
+        message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
+      };
+      this.nouvelEmail = '';
+      this.recipientType = 'manual';
+      this.selectedComedienIds = [];
+      this.comediensList = [];
+      this.comedienSearch = '';
+      this.loadingComediens = false;
+    },
     
     fermerDialogueEmail() {
       this.emailDialogVisible = false;
       this.resetEmailForm();
     },
- 
+    
+    removeRecipient(index) {
+      const recipient = this.currentRecipients[index];
+      
+      if (this.recipientType === 'manual') {
+        const emailIndex = this.emailForm.toEmails.indexOf(recipient.email);
+        if (emailIndex !== -1) {
+          this.emailForm.toEmails.splice(emailIndex, 1);
+        }
+      } 
+      else if (this.recipientType === 'comedien') {
+        this.selectedComedienIds = this.selectedComedienIds.filter(id => id !== recipient.id);
+      }
+    },
+    
+    // =============================================
+    // GESTION DES COMÉDIENS
+    // =============================================
+    
+    async loadComediens() {
+      if (this.recipientType === 'comedien' && this.comediensList.length === 0) {
+        this.loadingComediens = true;
+        try {
+          const projetId = this.resultat?.projetId;
+          
+          if (projetId) {
+            try {
+              const response = await fetch(`/api/comediens/projet/${projetId}`);
+              if (response.ok) {
+                this.comediensList = await response.json();
+              }
+            } catch (error) {
+              console.warn('Erreur API projet, tentative API générale:', error);
+            }
+          }
+          
+          if (this.comediensList.length === 0) {
+            const response = await fetch('/api/comediens');
+            if (response.ok) {
+              this.comediensList = await response.json();
+            }
+          }
+          
+          this.comediensList = this.comediensList.map(comedien => ({
+            id: comedien.id || comedien.idComedien || comedien._id,
+            nom: comedien.nom || comedien.prenomNom || `${comedien.prenom} ${comedien.nom}`,
+            email: comedien.email || comedien.courriel || ''
+          }));
+          
+        } catch (error) {
+          console.error('Erreur lors du chargement des comédiens:', error);
+          this.comediensList = [];
+        } finally {
+          this.loadingComediens = false;
+        }
+      }
+    },
+
+    selectAllComediens() {
+      this.selectedComedienIds = this.filteredComediens
+        .filter(comedien => comedien.email && comedien.email.trim() !== '')
+        .map(comedien => comedien.id);
+    },
+    
+    clearAllComediens() {
+      this.selectedComedienIds = [];
+    },
+    
+    // =============================================
+    // EXPORT PDF
+    // =============================================
+    
     async exporterPDF() {
       this.exportEnCours = true;
       
       try {
-        const pdf = this.genererPDF();
+        const pdf = genererPDF(this.resultat, this.resultatDetails);
         pdf.save(`${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`);
       } catch (error) {
         console.error('Erreur lors de l\'export PDF:', error);
@@ -1205,511 +1208,73 @@ removeRecipient(index) {
         this.exportEnCours = false;
       }
     },
-     
-    genererPDF() {
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      let yPosition = 20;
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const margin = 20;
-      const contentWidth = pageWidth - (2 * margin);
-      
-      pdf.setFontSize(20);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`Détails du ${this.getTypeLabel(this.resultat.type)}`, margin, yPosition);
-      yPosition += 10;
-      
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Export généré le ${new Date().toLocaleDateString('fr-FR')}`, margin, yPosition);
-      yPosition += 15;
-      
-      pdf.setFontSize(16);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Informations principales', margin, yPosition);
-      yPosition += 10;
-      
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Titre : ${this.resultat.titre}`, margin, yPosition);
-      yPosition += 7;
-      pdf.text(`Type : ${this.getTypeLabel(this.resultat.type)}`, margin, yPosition);
-      yPosition += 7;
-      pdf.text(`Dernière modification : ${this.formatDateTime(this.resultat.modifieLe)}`, margin, yPosition);
-      yPosition += 15;
-      
-      if (this.resultat.type === 'personnage') {
-        this.exporterPDFPersonnage(pdf, margin, yPosition, contentWidth);
-      } else if (this.resultat.type === 'scene') {
-        this.exporterPDFScene(pdf, margin, yPosition, contentWidth);
-      } else if (this.resultat.type === 'lieu') {
-        this.exporterPDFLieu(pdf, margin, yPosition, contentWidth);
-      } else if (this.resultat.type === 'plateau') {
-        this.exporterPDFPlateau(pdf, margin, yPosition, contentWidth);
-      }
-      
-      return pdf;
-    },
-
-  async envoyerEmailAvecPDF() {
-    if (this.currentRecipients.length === 0) {
-      alert('Veuillez sélectionner au moins un destinataire');
-      return;
-    }
-
-    this.exportEnCours = true;
     
-    try {
-      const recipientEmails = this.currentRecipients.map(r => r.email);
+    async ouvrirDialogueEmail() {
+      this.exportEnCours = true;
       
-      const reader = new FileReader();
-      reader.readAsDataURL(this.generatedPdfBlob);
+      try {
+        this.generatedPdfBlob = genererPDFBlob(this.resultat, this.resultatDetails);
+        this.resetEmailForm();
+        this.emailDialogVisible = true;
+      } catch (error) {
+        console.error('Erreur lors de la génération du PDF:', error);
+        alert('Erreur lors de la préparation du PDF pour l\'envoi');
+      } finally {
+        this.exportEnCours = false;
+      }
+    },
+    
+    async envoyerEmailAvecPDF() {
+      if (this.currentRecipients.length === 0) {
+        alert('Veuillez sélectionner au moins un destinataire');
+        return;
+      }
+
+      this.exportEnCours = true;
       
-      reader.onload = async () => {
-        const base64Data = reader.result.split(',')[1];
-        const pdfData = this.base64ToArrayBuffer(base64Data);
+      try {
+        const result = await envoyerPDFParEmail(
+          this.generatedPdfBlob,
+          this.currentRecipients,
+          this.emailForm,
+          this.resultat.type,
+          this.resultat.titre
+        );
         
-        const promises = recipientEmails.map(async (email, index) => {
-         const emailRequest = {
-            toEmail: email,
-            subject: this.emailForm.subject,
-            message: this.emailForm.message,
-            attachmentName: `${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`,
-            pdfData: base64Data
-          };
-
-          const response = await fetch('/api/export/send-pdf-email', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(emailRequest)
-          });
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status} pour ${email}`);
-          }
-
-          return response.json();
-        });
-
-        const results = await Promise.allSettled(promises);
-        
-        const succes = results.filter(result => result.status === 'fulfilled' && result.value.success);
-        const echecs = results.filter(result => result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.success));
-        
-        if (echecs.length === 0) {
-          alert(`✅ PDF envoyé avec succès à ${succes.length} destinataire(s) !`);
+        if (result.echecs === 0) {
+          alert(`✅ PDF envoyé avec succès à ${result.succes} destinataire(s) !`);
           this.fermerDialogueEmail();
         } else {
           let message = `📧 Résultat de l'envoi :\n`;
-          message += `✅ ${succes.length} email(s) envoyé(s) avec succès\n`;
-          message += `❌ ${echecs.length} email(s) en échec\n\n`;
-          
-          if (echecs.length > 0) {
-            message += `Échecs :\n`;
-            echecs.forEach((echec, index) => {
-              if (echec.status === 'rejected') {
-                message += `${index + 1}. ${recipientEmails[index]} - ${echec.reason}\n`;
-              } else {
-                message += `${index + 1}. ${recipientEmails[index]} - ${echec.value.message}\n`;
-              }
-            });
-          }
-          
+          message += `✅ ${result.succes} email(s) envoyé(s) avec succès\n`;
+          message += `❌ ${result.echecs} email(s) en échec\n`;
           alert(message);
           
-          if (succes.length > 0) {
+          if (result.succes > 0) {
             this.fermerDialogueEmail();
           }
         }
+      } catch (error) {
+        console.error('Erreur lors de l\'envoi des emails:', error);
+        alert('Erreur lors de l\'envoi des emails: ' + error.message);
+      } finally {
+        this.exportEnCours = false;
+      }
+    },
+    
+    // =============================================
+    // FONCTIONS UTILITAIRES (utilisées dans le template)
+    // =============================================
+    
+    getTypeIcon(type) {
+      const icons = {
+        scene: 'fas fa-video',
+        personnage: 'fas fa-user',
+        lieu: 'fas fa-map-marker-alt',
+        plateau: 'fas fa-film'
       };
-      
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi des emails:', error);
-      alert('Erreur lors de l\'envoi des emails: ' + error.message);
-    } finally {
-      this.exportEnCours = false;
-    }
-  },
-
-  base64ToArrayBuffer(base64) {
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
-  },
-  
-  resetEmailForm() {
-    this.emailForm = {
-      toEmails: [],
-      subject: 'Export PDF - Détails du résultat',
-      message: 'Veuillez trouver ci-joint le PDF contenant les détails du résultat de recherche.'
-    };
-    this.nouvelEmail = '';
-    this.recipientType = 'manual';
-    this.selectedComedienIds = [];
-    this.comediensList = [];
-    this.comedienSearch = '';
-    this.loadingComediens = false;
-  },
-
-    exporterPDFPersonnage(pdf, margin, yPosition, contentWidth) {
-      let currentY = yPosition;
-      
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('👤 Informations du personnage', margin, currentY);
-      currentY += 10;
-      
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Comédien : ${this.resultat.comedienNom || 'Non spécifié'}`, margin, currentY);
-      currentY += 5;
-      
-      if (this.resultatDetails.informationsComplementaires?.age) {
-        pdf.text(`Âge : ${this.resultatDetails.informationsComplementaires.age}`, margin, currentY);
-        currentY += 5;
-      }
-      
-      if (this.resultatDetails.informationsComplementaires?.typePersonnage) {
-        pdf.text(`Type : ${this.resultatDetails.informationsComplementaires.typePersonnage}`, margin, currentY);
-        currentY += 5;
-      }
-      
-      currentY += 5;
-      
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('📁 Projet', margin, currentY);
-      currentY += 10;
-      
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      if (this.resultat.projetTitre) {
-        pdf.text(`Projet : ${this.resultat.projetTitre}`, margin, currentY);
-        currentY += 5;
-      }
-      currentY += 5;
-      
-      if (this.resultatDetails.statistiques) {
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('📊 Statistiques', margin, currentY);
-        currentY += 10;
-        
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        
-        const stats = this.resultatDetails.statistiques;
-        if (stats.nbScenes) {
-          pdf.text(`Scènes : ${stats.nbScenes}`, margin, currentY);
-          currentY += 5;
-        }
-        if (stats.nbDialogues) {
-          pdf.text(`Dialogues : ${stats.nbDialogues}`, margin, currentY);
-          currentY += 5;
-        }
-        if (stats.totalMots) {
-          pdf.text(`Total mots : ${stats.totalMots}`, margin, currentY);
-          currentY += 5;
-        }
-        if (stats.pourcentageDialogues) {
-          pdf.text(`Part des dialogues : ${Math.round(stats.pourcentageDialogues * 100) / 100}%`, margin, currentY);
-          currentY += 5;
-        }
-        if (stats.dureeTotale) {
-          pdf.text(`Durée totale : ${stats.dureeTotale}`, margin, currentY);
-          currentY += 5;
-        }
-        currentY += 5;
-      }
-      
-      if (this.scenesAvecPlanning.length > 0) {
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('🎬 Planning de tournage des scènes', margin, currentY);
-        currentY += 10;
-        
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        
-        for (const scene of this.scenesAvecPlanning) {
-          if (currentY > 250) {
-            pdf.addPage();
-            currentY = 20;
-          }
-          
-          pdf.setFont('helvetica', 'bold');
-          pdf.text(`• ${scene.titre}`, margin, currentY);
-          currentY += 5;
-          
-          pdf.setFont('helvetica', 'normal');
-          pdf.text(`  Statut : ${this.formatStatut(scene.statut || 'planifie')}`, margin, currentY);
-          currentY += 4;
-          pdf.text(`  Date : ${this.formatDate(scene.dateTournage)}`, margin, currentY);
-          currentY += 4;
-          pdf.text(`  Heure : ${scene.heureDebut || 'N/A'} - ${scene.heureFin || 'N/A'}`, margin, currentY);
-          currentY += 4;
-          pdf.text(`  Durée : ${this.calculerDureeScene(scene.heureDebut, scene.heureFin)}`, margin, currentY);
-          currentY += 4;
-          
-          if (scene.lieuNom) {
-            pdf.text(`  Lieu : ${scene.lieuNom}`, margin, currentY);
-            currentY += 4;
-          }
-          
-          if (scene.nbDialogues) {
-            pdf.text(`  Dialogues : ${scene.nbDialogues}`, margin, currentY);
-            currentY += 4;
-          }
-          
-          currentY += 5;
-        }
-        currentY += 5;
-      }
-      
-      if (this.resultatDetails.dialogues && this.resultatDetails.dialogues.length > 0) {
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('💬 Tous les dialogues', margin, currentY);
-        currentY += 10;
-        
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'normal');
-        
-        for (const dialogue of this.resultatDetails.dialogues.slice(0, 50)) {
-          if (currentY > 250) {
-            pdf.addPage();
-            currentY = 20;
-          }
-          
-          const sceneInfo = dialogue.sceneTitre ? ` (Scène: ${dialogue.sceneTitre})` : '';
-          const dialogueText = `"${dialogue.texte}"`;
-          
-          const lines = pdf.splitTextToSize(`${dialogue.personnageNom || 'Narrateur'}: ${dialogueText}${sceneInfo}`, contentWidth);
-          
-          lines.forEach(line => {
-            pdf.text(line, margin, currentY);
-            currentY += 4;
-          });
-          
-          currentY += 3;
-        }
-        
-        if (this.resultatDetails.dialogues.length > 50) {
-          pdf.text(`... et ${this.resultatDetails.dialogues.length - 50} dialogues supplémentaires`, margin, currentY);
-          currentY += 5;
-        }
-      }
+      return icons[type] || 'fas fa-file-alt';
     },
-
-    exporterPDFScene(pdf, margin, yPosition, contentWidth) {
-      let currentY = yPosition;
-      
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('🎬 Informations de tournage', margin, currentY);
-      currentY += 10;
-      
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Date : ${this.formatDate(this.resultat.dateTournage)}`, margin, currentY);
-      currentY += 5;
-      pdf.text(`Heure début : ${this.resultat.heureDebut || 'Non spécifiée'}`, margin, currentY);
-      currentY += 5;
-      pdf.text(`Heure fin : ${this.resultat.heureFin || 'Non spécifiée'}`, margin, currentY);
-      currentY += 5;
-      pdf.text(`Statut : ${this.formatStatut(this.resultat.statut)}`, margin, currentY);
-      currentY += 5;
-      pdf.text(`Durée estimée : ${this.calculerDureeScene(this.resultat.heureDebut, this.resultat.heureFin)}`, margin, currentY);
-      currentY += 10;
-      
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('📁 Structure du projet', margin, currentY);
-      currentY += 10;
-      
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      if (this.resultat.projetTitre) {
-        pdf.text(`Projet : ${this.resultat.projetTitre}`, margin, currentY);
-        currentY += 5;
-      }
-      if (this.resultat.episodeTitre) {
-        pdf.text(`Épisode : ${this.resultat.episodeTitre}`, margin, currentY);
-        currentY += 5;
-      }
-      if (this.resultat.sequenceTitre) {
-        pdf.text(`Séquence : ${this.resultat.sequenceTitre}`, margin, currentY);
-        currentY += 5;
-      }
-      currentY += 5;
-      
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('📍 Localisation', margin, currentY);
-      currentY += 10;
-      
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      if (this.resultat.lieuNom) {
-        pdf.text(`Lieu : ${this.resultat.lieuNom}`, margin, currentY);
-        currentY += 5;
-      }
-      if (this.resultat.plateauNom) {
-        pdf.text(`Plateau : ${this.resultat.plateauNom}`, margin, currentY);
-        currentY += 5;
-      }
-      currentY += 5;
-      
-      if (this.resultatDetails.personnages && this.resultatDetails.personnages.length > 0) {
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('👥 Personnages impliqués', margin, currentY);
-        currentY += 10;
-        
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        
-        for (const personnage of this.resultatDetails.personnages) {
-          const info = `${personnage.nom}${personnage.comedien ? ` (${personnage.comedien})` : ''} - ${personnage.nbDialogues} dialogues`;
-          pdf.text(`• ${info}`, margin, currentY);
-          currentY += 5;
-        }
-        currentY += 5;
-      }
-      
-      if (this.resultatDetails.dialoguesComplets && this.resultatDetails.dialoguesComplets.length > 0) {
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('💬 Dialogues complets', margin, currentY);
-        currentY += 10;
-        
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'normal');
-        
-        for (const dialogue of this.resultatDetails.dialoguesComplets) {
-          if (currentY > 250) {
-            pdf.addPage();
-            currentY = 20;
-          }
-          
-          const dialogueText = `"${dialogue.texte}"`;
-          const lines = pdf.splitTextToSize(`${dialogue.personnageNom || 'Narrateur'}: ${dialogueText}`, contentWidth);
-          
-          lines.forEach(line => {
-            pdf.text(line, margin, currentY);
-            currentY += 4;
-          });
-          
-          if (dialogue.observation) {
-            pdf.text(`💡 ${dialogue.observation}`, margin, currentY);
-            currentY += 4;
-          }
-          
-          currentY += 5;
-        }
-      }
-    },
-
-    exporterPDFLieu(pdf, margin, yPosition, contentWidth) {
-      let currentY = yPosition;
-      
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('🏛️ Informations du lieu', margin, currentY);
-      currentY += 10;
-      
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Type : ${this.resultat.description ? this.getTypeFromDescription(this.resultat.description) : 'Non spécifié'}`, margin, currentY);
-      currentY += 5;
-      
-      if (this.resultatDetails.informationsComplementaires?.adresse) {
-        pdf.text(`Adresse : ${this.resultatDetails.informationsComplementaires.adresse}`, margin, currentY);
-        currentY += 5;
-      }
-      currentY += 5;
-      
-      if (this.resultatDetails.scenes && this.resultatDetails.scenes.length > 0) {
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('🎬 Scènes tournées ici', margin, currentY);
-        currentY += 10;
-        
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        
-        for (const scene of this.resultatDetails.scenes.slice(0, 20)) {
-          if (currentY > 250) {
-            pdf.addPage();
-            currentY = 20;
-          }
-          
-          pdf.text(`• ${scene.titre}`, margin, currentY);
-          currentY += 4;
-          pdf.text(`  Date: ${this.formatDate(scene.dateTournage)} | Statut: ${this.formatStatut(scene.statut)}`, margin, currentY);
-          currentY += 4;
-          pdf.text(`  Personnages: ${scene.nbPersonnages} | Heure: ${scene.heureDebut}-${scene.heureFin}`, margin, currentY);
-          currentY += 6;
-        }
-      }
-    },
-
-    exporterPDFPlateau(pdf, margin, yPosition, contentWidth) {
-      let currentY = yPosition;
-      
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('🎭 Informations du plateau', margin, currentY);
-      currentY += 10;
-      
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Type : ${this.resultat.description ? this.getTypeFromDescription(this.resultat.description) : 'Non spécifié'}`, margin, currentY);
-      currentY += 5;
-      
-      if (this.resultat.lieuNom) {
-        pdf.text(`Lieu : ${this.resultat.lieuNom}`, margin, currentY);
-        currentY += 5;
-      }
-      currentY += 5;
-      
-      if (this.resultatDetails.scenes && this.resultatDetails.scenes.length > 0) {
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('🎬 Scènes tournées ici', margin, currentY);
-        currentY += 10;
-        
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        
-        for (const scene of this.resultatDetails.scenes.slice(0, 20)) {
-          if (currentY > 250) {
-            pdf.addPage();
-            currentY = 20;
-          }
-          
-          pdf.text(`• ${scene.titre}`, margin, currentY);
-          currentY += 4;
-          pdf.text(`  Date: ${this.formatDate(scene.dateTournage)} | Statut: ${this.formatStatut(scene.statut)}`, margin, currentY);
-          currentY += 4;
-          pdf.text(`  Dialogues: ${scene.nbDialogues} | Heure: ${scene.heureDebut}-${scene.heureFin}`, margin, currentY);
-          currentY += 6;
-        }
-      }
-    },
-
-   getTypeIcon(type) {
-    const icons = {
-      scene: 'fas fa-video',
-      personnage: 'fas fa-user',
-      lieu: 'fas fa-map-marker-alt',
-      plateau: 'fas fa-film'
-    }
-    return icons[type] || 'fas fa-file-alt'
-  },
     
     getTypeLabel(type) {
       const labels = {
@@ -1717,25 +1282,25 @@ removeRecipient(index) {
         personnage: 'Personnage',
         lieu: 'Lieu',
         plateau: 'Plateau'
-      }
-      return labels[type] || type
+      };
+      return labels[type] || type;
     },
     
     formatDate(date) {
-      if (!date) return 'Non spécifiée'
+      if (!date) return 'Non spécifiée';
       try {
-        return new Date(date).toLocaleDateString('fr-FR')
+        return new Date(date).toLocaleDateString('fr-FR');
       } catch (error) {
-        return 'Date invalide'
+        return 'Date invalide';
       }
     },
     
     formatDateTime(dateTime) {
-      if (!dateTime) return 'Non spécifié'
+      if (!dateTime) return 'Non spécifié';
       try {
-        return new Date(dateTime).toLocaleString('fr-FR')
+        return new Date(dateTime).toLocaleString('fr-FR');
       } catch (error) {
-        return 'Date invalide'
+        return 'Date invalide';
       }
     },
     
@@ -1751,8 +1316,8 @@ removeRecipient(index) {
         'monte': 'Monté',
         'valide': 'Validé',
         'a_planifier': 'À planifier'
-      }
-      return statuts[statut] || statut
+      };
+      return statuts[statut] || statut;
     },
     
     formatTypes(types) {
@@ -1761,84 +1326,85 @@ removeRecipient(index) {
         'personnages': 'Personnages', 
         'lieux': 'Lieux',
         'plateaux': 'Plateaux'
-      }
-      return types.map(type => labels[type] || type).join(', ')
+      };
+      return types.map(type => labels[type] || type).join(', ');
     },
     
     calculerDureeScene(debut, fin) {
-      if (!debut || !fin) return 'Non spécifiée'
+      if (!debut || !fin) return 'Non spécifiée';
       try {
-        const [debutHeures, debutMinutes] = debut.split(':').map(Number)
-        const [finHeures, finMinutes] = fin.split(':').map(Number)
+        const [debutHeures, debutMinutes] = debut.split(':').map(Number);
+        const [finHeures, finMinutes] = fin.split(':').map(Number);
         
-        const debutTotalMinutes = debutHeures * 60 + debutMinutes
-        const finTotalMinutes = finHeures * 60 + finMinutes
-        const dureeMinutes = finTotalMinutes - debutTotalMinutes
+        const debutTotalMinutes = debutHeures * 60 + debutMinutes;
+        const finTotalMinutes = finHeures * 60 + finMinutes;
+        const dureeMinutes = finTotalMinutes - debutTotalMinutes;
         
-        if (dureeMinutes <= 0) return 'Non spécifiée'
+        if (dureeMinutes <= 0) return 'Non spécifiée';
         
-        const heures = Math.floor(dureeMinutes / 60)
-        const minutes = dureeMinutes % 60
+        const heures = Math.floor(dureeMinutes / 60);
+        const minutes = dureeMinutes % 60;
         
         if (heures > 0) {
-          return `${heures}h ${minutes}min`
+          return `${heures}h ${minutes}min`;
         } else {
-          return `${minutes}min`
+          return `${minutes}min`;
         }
       } catch (error) {
-        return 'Non spécifiée'
+        return 'Non spécifiée';
       }
     },
     
     compterMots(texte) {
-      if (!texte) return 0
-      return texte.split(/\s+/).filter(word => word.length > 0).length
+      if (!texte) return 0;
+      return texte.split(/\s+/).filter(word => word.length > 0).length;
     },
     
     compterMotsDialoguesComplets(dialogues) {
-      if (!dialogues) return 0
-      return dialogues.reduce((total, dialogue) => total + this.compterMots(dialogue.texte), 0)
+      if (!dialogues) return 0;
+      return dialogues.reduce((total, dialogue) => total + this.compterMots(dialogue.texte), 0);
     },
     
     compterMotsDialoguesPersonnage(dialogues) {
-      if (!dialogues) return 0
-      return dialogues.reduce((total, dialogue) => total + this.compterMots(dialogue.texte), 0)
+      if (!dialogues) return 0;
+      return dialogues.reduce((total, dialogue) => total + this.compterMots(dialogue.texte), 0);
     },
     
     estimerDuree(texte) {
-      const mots = this.compterMots(texte)
-      const minutes = Math.ceil(mots / 150)
-      return minutes > 0 ? `${minutes}min` : '< 1min'
+      const mots = this.compterMots(texte);
+      const minutes = Math.ceil(mots / 150);
+      return minutes > 0 ? `${minutes}min` : '< 1min';
     },
     
     estimerDureeDialoguesComplets(dialogues) {
-      const totalMots = this.compterMotsDialoguesComplets(dialogues)
-      const minutes = Math.ceil(totalMots / 150)
+      const totalMots = this.compterMotsDialoguesComplets(dialogues);
+      const minutes = Math.ceil(totalMots / 150);
       return minutes > 60 
         ? `${Math.floor(minutes / 60)}h ${minutes % 60}min`
-        : `${minutes}min`
+        : `${minutes}min`;
     },
     
     estimerDureeDialoguesPersonnage(dialogues) {
-      const totalMots = this.compterMotsDialoguesPersonnage(dialogues)
-      const minutes = Math.ceil(totalMots / 150)
+      const totalMots = this.compterMotsDialoguesPersonnage(dialogues);
+      const minutes = Math.ceil(totalMots / 150);
       return minutes > 60 
         ? `${Math.floor(minutes / 60)}h ${minutes % 60}min`
-        : `${minutes}min`
+        : `${minutes}min`;
     },
     
     getTypeFromDescription(description) {
-      if (!description) return 'Non spécifié'
-      if (description.toLowerCase().includes('intérieur')) return 'Intérieur'
-      if (description.toLowerCase().includes('extérieur')) return 'Extérieur'
-      if (description.toLowerCase().includes('studio')) return 'Studio'
-      return 'Non spécifié'
+      if (!description) return 'Non spécifié';
+      if (description.toLowerCase().includes('intérieur')) return 'Intérieur';
+      if (description.toLowerCase().includes('extérieur')) return 'Extérieur';
+      if (description.toLowerCase().includes('studio')) return 'Studio';
+      return 'Non spécifié';
     },
     
     trierDialogues() {
-      this.pageDialogues = 1
+      this.pageDialogues = 1;
     }
   },
+  
   watch: {
     recipientType(newType) {
       if (newType === 'comedien') {
@@ -1850,9 +1416,9 @@ removeRecipient(index) {
       deep: true
     },
     rechercheDialogue() {
-      this.pageDialogues = 1
+      this.pageDialogues = 1;
     }
   }
-}
+};
 </script>
 
