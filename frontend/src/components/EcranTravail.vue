@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global" style="background: #F5E8B2;">
+  <div class="app-wrapper-global">
     <!-- Sidebar gauche -->
     <LeftSidebar
       class="creation-sidebar-crea-comedien-screen-work left-sidebar-ecran-travail-screen-work"
