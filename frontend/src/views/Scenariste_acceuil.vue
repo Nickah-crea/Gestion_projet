@@ -355,15 +355,6 @@
                       class="participation-badge-Scenariste" 
                       title="Vous participez à ce projet">
                   <i class="fas fa-star"></i>
-                  <span>Participant</span>
-                </span>
-
-                <!-- NOUVEAU : Indicateur de visibilité pour tous les scénaristes -->
-                <span v-if="project.visibleParTousScenaristes" 
-                      class="visibility-badge-Scenariste" 
-                      title="Projet visible par tous les scénaristes">
-                  <i class="fas fa-eye"></i>
-                  <span>Tous</span>
                 </span>
               </div>
 
@@ -2502,4 +2493,5 @@ updateProjectsParticipation() {
   }
 }
 </style>
+
 
