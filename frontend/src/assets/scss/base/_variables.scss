@@ -52,75 +52,76 @@ $line-height-loose: 1.7;
 // =============================================
 
 // === Primaries (Logo Core – Energetic & Positive) ===
-$color-primary: #731613;
-$color-second-prim : #E1DC49;      // Golden yellow – main brand, success, highlights
-$color-primary-light: #F5E8B2;      // Soft champagne glow – hovers, gradients
-$color-primary-dark:  #D4A832;      // Deep gold – shadows, pressed states
+$color-primary: #5F7E96;      // Chambray – main brand, success, highlights
+$color-second-prim : #DCCFB8;      // Sandstone – cheerful accent, highlights
 
-// === Accents (Dynamic, Cinematic Passion) ===
-$color-accent:        #E67E22;      // Warm orange – CTAs, active states, warnings
-$color-accent-light:  #F4A05A;      // Lighter orange – subtle accents
-$color-accent-dark:   #C45F00;      // Deep burnt orange – borders, dark hovers
+$color-primary-light: #F1EFE6;      // Muslin – hovers, gradients
+$color-primary-dark:  #53443D;      // Clove – shadows, pressed states
 
-$color-secondary:      #E01F34;      // Soft wine red – alerts, episodes, emotion
-$color-secondary-light:#EC7784;      // Deeper wine – errors, depth
-$color-secondary-dark: #B94A55;      // Deeper wine – errors, depth
-$color-secondary-black:#731613;      // Deeper wine – errors, depth
+// === Accents (Coastal Warmth) ===
+$color-accent:        #AD7556;      // Terracotta – CTAs, active states, warnings
+$color-accent-light:  #C69272;      // Light terracotta – subtle accents
+$color-accent-dark:   #8C5A42;      // Deep terracotta – borders, dark hovers
 
-$color-tertiary:      #8D695D;      // Rich brown – grounding, sequences/sets, elegance
-$color-tertiary-light:#B08E7F;      // Warm taupe – surfaces, cards
-$color-tertiary-dark: #5C3F34;      // Deep chocolate – text on light, dark mode bg
+$color-secondary:      #C47A6B;      // Dusty rose – alerts, episodes, emotion
+$color-secondary-light:#D99A8A;      // Soft dusty rose – errors, depth
+$color-secondary-dark: #A55E4F;      // Deeper rose – errors, depth
+$color-secondary-black:#7A4A3E;      // Warm earth – errors, depth
 
-// === Cool Accent (Very Limited – Organizational Only) ===
-$color-cool:          #81a3c5;     // Muted blue – calendars, projects (use sparingly!)
-$color-cool-light:    #E9EFFF; 
+$color-tertiary:      #B8A99A;      // Warm taupe – grounding, sequences/sets, elegance
+$color-tertiary-light:#DACFBF;      // Light sandstone – surfaces, cards
+$color-tertiary-dark: #8E7B6B;      // Muted brown – text on light, dark mode bg
 
-$color-green:         #d6ed8c;     
-$color-green-light:   #b5c779;     
-$color-green-dark:    #828F58;     
+// === Cool Accent (Coastal Breeze) ===
+$color-cool:          #9BB7C9;      // Soft chambray blue – calendars, projects (use sparingly!)
+$color-cool-light:    #E3ECF2;      // Light coastal mist
 
-// === Neutrals (Warm & Luxurious) ===
-$color-background:    #FAF7F2;      // Champagne beige – main bg, soft & welcoming
-$color-background-light:    #ffffff;      // Champagne beige – main bg, soft & welcoming
-$color-background-alt:#fffcfc;      // Clean white – cards, sections
-$color-background-dark:#3A2A24;     // Warm dark brown – future dark mode
-$color-white:         #f5f4f5; 
-$color-black:         #000000;      
+$color-green:         #B8C9A8;      // Coastal sage     
+$color-green-light:   #D9E5CC;      // Soft sage     
+$color-green-dark:    #8A9B78;      // Deep sage
 
-$color-text-primary:  #2D1A1A;      // Warm near-black – main text
-$color-text-secondary:#5C3F34;      // Brown – subtitles, muted
-$color-text-muted:    #8D695D;      // Taupe – inactive, hints
-$color-text-light:    #f5f4f5;      // White on accents
+// === Neutrals (Warm & Fresh) ===
+$color-background:    #FFFBF5;      // Creamy vanilla – main bg, soft & welcoming
+$color-background-light:    #FFFFFF;      // Pure white – cards, sections
+$color-background-alt:#FFF9EF;      // Warm cream – cards, sections
+$color-background-dark:#4A3B2F;     // Warm taupe – future dark mode
+$color-white:         #FEFCF8;      // Soft white
+$color-black:         #2A241F;      // Soft charcoal
+
+$color-text-primary:  #2C241E;      // Warm near-black – main text
+$color-text-secondary:#6B5A4E;      // Taupe – subtitles, muted
+$color-text-muted:    #9B8A7A;      // Light taupe – inactive, hints
+$color-text-light:    #FEFCF8;      // Soft white on accents
 
 // === Interface & States ===
-$color-border:        rgba(237, 202, 73, 0.25);  // Golden yellow tint – subtle borders
-$color-border-dark:   rgba(140, 105, 93, 0.4);   // Brown tint – stronger borders
-$color-surface:       rgba(237, 202, 73, 0.12);  // Soft golden overlay – cards
-$color-surface-hover: rgba(237, 202, 73, 0.25);  // Hover depth
+$color-border:        rgba(249, 213, 110, 0.35);  // Buttercup tint – subtle borders
+$color-border-dark:   rgba(107, 90, 78, 0.25);    // Taupe tint – stronger borders
+$color-surface:       rgba(249, 213, 110, 0.12);  // Soft buttercup overlay – cards
+$color-surface-hover: rgba(249, 213, 110, 0.25);  // Hover depth
 
-$color-success:       $color-primary;           // Golden – positive, done
-$color-warning:       $color-accent;            // Orange – in progress
-$color-error:         $color-secondary;         // Wine red – issues
-$color-info:          $color-cool;            // Blue – info only
+$color-success:       $color-primary;           // Sage green – positive, done
+$color-warning:       $color-accent;            // Peach – in progress
+$color-error:         $color-secondary;         // Coral pink – issues
+$color-info:          $color-cool;              // Sky blue – info only
 
-// === Category-Specific (Harmonized) ===
-$color-calendar:      $color-cool;              // Blue – calm organization
-$color-project:       $color-primary-dark;      // Deep gold – projects
-$color-episode:       $color-secondary;         // Wine red – episodes
-$color-sequence:      $color-tertiary;          // Brown – sequences
-$color-scene:         $color-accent-light;      // Soft orange – scenes (energetic writing)
-$color-location:      $color-tertiary-light;    // Taupe – locations
-$color-set:           $color-primary;           // Gold – sets
-$color-actor:         $color-accent;            // Orange – actors
-$color-character:     #D4A832;                  // Deep gold variant – characters
+// === Category-Specific (Fresh & Harmonized) ===
+$color-calendar:      $color-cool;              // Sky blue – calm organization
+$color-project:       $color-primary-dark;      // Deep eucalyptus – projects
+$color-episode:       $color-secondary;         // Coral pink – episodes
+$color-sequence:      $color-tertiary;          // Lavender – sequences
+$color-scene:         $color-accent-light;      // Light peach – scenes (energetic writing)
+$color-location:      $color-tertiary-light;    // Pale lavender – locations
+$color-set:           $color-primary;           // Sage green – sets
+$color-actor:         $color-accent;            // Peach – actors
+$color-character:     #F9B56E;                  // Warm apricot – characters
 
-// === Shadows & Pastels (Soft Depth) ===
-$shadow-primary:      0 4px 20px rgba(237, 202, 73, 0.22);  // Golden soft glow
-$shadow-accent:       0 6px 24px rgba(230, 126, 34, 0.18);  // Orange warmth
+// === Shadows & Pastels (Soft & Airy) ===
+$shadow-primary:      0 4px 20px rgba(46, 139, 110, 0.12);   // Sage soft glow
+$shadow-accent:       0 6px 24px rgba(255, 159, 110, 0.12);   // Peach warmth
 
-$color-pastel-gold:   rgba(237, 202, 73, 0.15);
-$color-pastel-wine:   rgba(236, 119, 132, 0.12);
-$color-pastel-brown:  rgba(141, 105, 93, 0.1);
+$color-pastel-gold:   rgba(249, 213, 110, 0.12);
+$color-pastel-wine:   rgba(255, 138, 138, 0.10);
+$color-pastel-brown:  rgba(180, 165, 217, 0.08);
 
 // CHANGEMENT: Ajout de mixins pour pastels (déjà présents, mais explicités)
 @mixin pastel-gold {

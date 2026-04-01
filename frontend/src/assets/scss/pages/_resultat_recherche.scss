@@ -11,13 +11,13 @@
 }
 
 // =============================================
-// SIDEBAR LEFT - MÊME STYLE QUE LA RECHERCHE
+// SIDEBAR LEFT - STYLE IDENTIQUE À L'ACCUEIL
 // =============================================
 .sidebar-left-resultat-recherche {
   position: fixed;
   top: 60px;
   left: 0;
-  width: 300px;
+  width: 280px;
   height: calc(100vh - 60px);
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
@@ -29,7 +29,7 @@
   border-radius: 0 20px 20px 0;
 
   @media (max-width: 1400px) {
-    width: 260px;
+    width: 240px;
     padding: $padding-md;
   }
   
@@ -46,6 +46,23 @@
   i {
     color: $color-primary-dark !important;
   }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-text-light, 0.1);
+    border-radius: $border-radius-pill;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-text-light, 0.3);
+    
+    &:hover {
+      background: rgba($color-text-light, 0.5);
+    }
+  }
 }
 
 .sidebar-header-resultat-recherche {
@@ -54,12 +71,13 @@
   border-bottom: 1px solid rgba($color-text-light, 0.2);
   
   .sidebar-title-resultat-recherche {
-    font-size: $font-size-h4;
+    font-size: $font-size-p1;
     color: $color-text-light !important;
     margin: 0;
     display: flex;
     align-items: center;
     gap: $gap-sm;
+    font-weight: $font-weight-semibold;
     @include typography-playfair-h4;
     
     i {
@@ -81,10 +99,14 @@
     display: flex;
     align-items: center;
     gap: $gap-sm;
+    font-weight: $font-weight-semibold;
     @include typography-cinzel-h4;
     
     i {
       color: $color-text-light !important;
+      background: rgba($color-text-light, 0.2);
+      padding: $padding-xs;
+      border-radius: $border-radius-sm;
     }
   }
 }
@@ -117,6 +139,85 @@
   }
 }
 
+// Structure du projet dans la sidebar
+.project-structure-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.structure-item-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-sm;
+  background: rgba($color-text-light, 0.05);
+  border-radius: $border-radius-sm;
+  border: 1px solid rgba($color-text-light, 0.1);
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-text-light, 0.1);
+    transform: translateX(2px);
+  }
+}
+
+.structure-icon-resultat-recherche {
+  font-size: $font-size-p2;
+  color: $color-text-light !important;
+  width: 24px;
+  text-align: center;
+}
+
+.structure-info-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.structure-type-resultat-recherche {
+  font-size: $font-size-p4;
+  color: rgba($color-text-light, 0.7) !important;
+}
+
+.structure-name-resultat-recherche {
+  font-size: $font-size-p3;
+  color: $color-text-light !important;
+  font-weight: $font-weight-medium;
+}
+
+// Métadonnées dans la sidebar
+.metadata-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.metadata-item-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $padding-xs 0;
+  border-bottom: 1px solid rgba($color-text-light, 0.1);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.metadata-label-resultat-recherche {
+  font-size: $font-size-p4;
+  color: rgba($color-text-light, 0.7) !important;
+}
+
+.metadata-value-resultat-recherche {
+  font-size: $font-size-p3;
+  color: $color-text-light !important;
+  font-weight: $font-weight-medium;
+  text-align: right;
+}
+
+// Actions rapides
 .quick-actions-resultat-recherche {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -124,7 +225,7 @@
 }
 
 .quick-action-btn-resultat-recherche {
-  background: rgba($color-primary, 0.1);
+  background: rgba($color-text-light, 0.1);
   border: 1px solid rgba($color-text-light, 0.2);
   border-radius: $border-radius-sm;
   color: $color-text-light !important;
@@ -153,86 +254,145 @@
   }
 }
 
-// =============================================
-// NAVBAR FIXE SECONDARIE (EN DESSOUS DE LA PRINCIPALE)
-// =============================================
-// =============================================
-// NAVBAR FIXE DANS LA PAGE (EN HAUT DU CONTENU)
-// =============================================
-.sticky-export-navbar-resultat-recherche {
-  position: fixed;
-  top: 60px; // Positionné en haut du contenu de la page
-  z-index: $z-index-fixed - 1;
-  background: $color-background-alt;
-  border-bottom: 1px solid $color-border;
-  box-shadow: $shadow-md;
-  margin: 0 (-$spacing-lg);
-  padding: 0 $spacing-lg;
-  margin-bottom: $spacing-xl;
+// États vides dans la sidebar
+.no-structure-resultat-recherche,
+.no-criteria-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $padding-sm;
+  background: rgba($color-text-light, 0.05);
+  border-radius: $border-radius-sm;
+  border: 1px dashed rgba($color-text-light, 0.2);
+  color: rgba($color-text-light, 0.7) !important;
+  font-size: $font-size-p3;
   
-  @media (max-width: $breakpoint-md) {
-    margin: 0 (-$spacing-md);
-    padding: 0 $spacing-md;
+  i {
+    color: rgba($color-text-light, 0.5) !important;
   }
 }
 
-.navbar-content-resultat-recherche {
+// =============================================
+// CONTENU PRINCIPAL À DROITE
+// =============================================
+.main-content-resultat-recherche {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+  
+  @media (max-width: 1400px) {
+    margin-left: 240px;
+  }
+  
+  @media (max-width: $breakpoint-lg) {
+    margin-left: 0;
+  }
+}
+
+.resultat-recherche-container {
+  padding: $spacing-lg;
+  max-width: 1400px;
+  margin: 0 auto;
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-sm;
+  }
+}
+
+// =============================================
+// HEADER ACTIONS (STYLE IDENTIQUE À L'ACCUEIL)
+// =============================================
+.header-actions-resultat-recherche.standalone {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: $spacing-md 0;
+  justify-content: flex-end;
+  gap: $gap-md;
   flex-wrap: wrap;
-  gap: $spacing-md;
+  margin-bottom: $margin-xl;
+  padding: $padding-md 0;
+  border-bottom: 1px solid $color-border;
   
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
     align-items: stretch;
-    gap: $spacing-sm;
-  }
-}
-
-.navbar-title-resultat-recherche {
-  flex: 1;
-  min-width: 300px;
-  
-  h3 {
-    font-size: $font-size-h3;
-    color: $color-text-primary;
-    margin: 0 0 $gap-xs 0;
-    @include typography-playfair-h3;
-    line-height: 1.2;
-  }
-  
-  .navbar-subtitle-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-text-muted;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    
-    i {
-      color: $color-primary;
-    }
-  }
-}
-
-.navbar-actions-resultat-recherche {
-  display: flex;
-  gap: $gap-md;
-  align-items: center;
-  flex-wrap: wrap;
-  
-  @media (max-width: $breakpoint-md) {
-    justify-content: stretch;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
     gap: $gap-sm;
   }
 }
 
-// Boutons de la navbar
+// Badge type amélioré
+.result-type-header-resultat-recherche {
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-md;
+  padding: $padding-sm $padding-lg;
+  border-radius: $border-radius-pill;
+  background: rgba($color-primary, 0.1);
+  border: 2px solid $color-primary;
+  margin-right: auto;
+  
+  .type-badge-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    .type-icon-resultat-recherche {
+      font-size: $font-size-h4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .type-label-resultat-recherche {
+      font-size: $font-size-p2;
+      font-weight: $font-weight-semibold;
+      color: $color-primary;
+      @include typography-cinzel-h4;
+    }
+  }
+  
+  &.type-scene {
+    background: rgba($color-scene, 0.1);
+    border-color: $color-scene;
+    
+    .type-label-resultat-recherche {
+      color: $color-scene;
+    }
+  }
+  
+  &.type-personnage {
+    background: rgba($color-character, 0.1);
+    border-color: $color-character;
+    
+    .type-label-resultat-recherche {
+      color: $color-character;
+    }
+  }
+  
+  &.type-lieu {
+    background: rgba($color-location, 0.1);
+    border-color: $color-location;
+    
+    .type-label-resultat-recherche {
+      color: $color-location;
+    }
+  }
+  
+  &.type-plateau {
+    background: rgba($color-set, 0.1);
+    border-color: $color-set;
+    
+    .type-label-resultat-recherche {
+      color: $color-set;
+    }
+  }
+}
+
+// Boutons d'action
 .btn-ecran-travail-resultat-recherche,
 .btn-export-pdf-resultat-recherche,
 .btn-send-email-resultat-recherche {
@@ -247,6 +407,7 @@
   transition: $transition-fast;
   white-space: nowrap;
   border: none;
+  min-height: 44px;
   
   i {
     font-size: $font-size-p2;
@@ -260,6 +421,11 @@
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -290,47 +456,8 @@
   }
 }
 
-// =============================================
-// CONTENU PRINCIPAL À DROITE
-// =============================================
-.main-content-resultat-recherche {
-  flex: 1;
-  margin-left: 300px;
-  min-height: 100vh;
-  background: none;
-  
-  @media (max-width: $breakpoint-lg) {
-    margin-left: 0;
-  }
-}
-
-.resultat-recherche-container {
-  padding: $spacing-lg;
-  max-width: 1200px;
-  margin: 0 auto;
-  
-  @media (max-width: $breakpoint-md) {
-    padding: $spacing-md;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    padding: $spacing-sm;
-  }
-}
-
-// =============================================
-// EN-TÊTE DE PAGE
-// =============================================
-.header-resultat-recherche {
-  margin-bottom: $spacing-xl;
-  text-align: center;
-  
-  @media (max-width: $breakpoint-md) {
-    margin-bottom: $spacing-lg;
-  }
-}
-
-.back-link-resultat-recherche {
+// Bouton retour
+.back-link-resultat-recherche.standalone {
   display: inline-flex;
   align-items: center;
   gap: $gap-xs;
@@ -338,10 +465,18 @@
   text-decoration: none;
   font-size: $font-size-p3;
   font-weight: $font-weight-medium;
-  margin-bottom: $spacing-lg;
+  padding: $padding-sm $padding-md;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-sm;
+  background: rgba($color-primary, 0.05);
+  transition: $transition-fast;
+  white-space: nowrap;
   
   &:hover {
-    text-decoration: underline;
+    background: rgba($color-primary, 0.1);
+    text-decoration: none;
+    transform: translateX(-2px);
+    box-shadow: $shadow;
   }
   
   i {
@@ -351,61 +486,15 @@
   &:hover i {
     transform: translateX(-3px);
   }
-}
-
-.page-title-resultat-recherche {
-  font-size: $font-size-h2;
-  color: $color-text-primary;
-  margin: 0 0 $spacing-md 0;
-  @include typography-playfair-h2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $gap-md;
   
-  @media (max-width: $breakpoint-md) {
-    font-size: $font-size-h3;
-    flex-direction: column;
-    gap: $gap-sm;
-  }
-  
-  i {
-    color: $color-primary;
-    background: rgba($color-primary, 0.1);
-    padding: $padding-sm;
-    border-radius: $border-radius;
-  }
-}
-
-.result-type-header-resultat-recherche {
-  display: inline-flex;
-  align-items: center;
-  gap: $gap-md;
-  padding: $padding-sm $padding-lg;
-  border-radius: $border-radius-pill;
-  background: rgba($color-primary, 0.1);
-  border: 2px solid $color-primary;
-  
-  .type-badge-resultat-recherche {
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-    
-    .type-icon-resultat-recherche {
-      font-size: $font-size-h4;
-    }
-    
-    .type-label-resultat-recherche {
-      font-size: $font-size-p1;
-      font-weight: $font-weight-semibold;
-      color: $color-primary;
-      @include typography-cinzel-h4;
-    }
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+    justify-content: center;
   }
 }
 
 // =============================================
-// CARTES DE CONTENU (MÊME STYLE QUE L'ACCUEIL)
+// CARTES DE CONTENU (STYLE IDENTIQUE À L'ACCUEIL)
 // =============================================
 .details-container-resultat-recherche {
   display: flex;
@@ -420,9 +509,12 @@
   overflow: hidden;
   transition: all $transition-medium;
   border: 1px solid $color-border;
+  animation: fadeInUp 0.5s ease-out forwards;
+  animation-delay: calc(var(--card-index, 0) * 0.1s);
+  opacity: 0;
   
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
     box-shadow: $shadow-xl;
   }
   
@@ -491,7 +583,7 @@
 }
 
 // =============================================
-// GRID D'INFORMATIONS (MÊME STYLE QUE L'ACCUEIL)
+// GRID D'INFORMATIONS
 // =============================================
 .details-grid-resultat-recherche {
   display: grid;
@@ -511,6 +603,12 @@
   display: flex;
   flex-direction: column;
   gap: $gap-xs;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+    transform: translateY(-2px);
+  }
   
   .detail-label-resultat-recherche {
     font-size: $font-size-p3;
@@ -534,7 +632,7 @@
 }
 
 // =============================================
-// BADGES (MÊME STYLE QUE L'ACCUEIL)
+// BADGES
 // =============================================
 .status-badge-resultat-recherche,
 .type-badge-small-resultat-recherche,
@@ -586,6 +684,36 @@
   }
 }
 
+.status-badge-small-resultat-recherche {
+  padding: 2px $padding-xs;
+  font-size: $font-size-p5;
+  
+  &.status-planifie { 
+    background: rgba($color-warning, 0.2); 
+    color: $color-warning; 
+  }
+  &.status-confirme { 
+    background: rgba($color-primary, 0.2); 
+    color: $color-primary; 
+  }
+  &.status-en_cours { 
+    background: rgba($color-accent, 0.2); 
+    color: $color-accent-dark; 
+  }
+  &.status-termine { 
+    background: rgba($color-success, 0.2); 
+    color: $color-success; 
+  }
+  &.status-reporte { 
+    background: rgba($color-warning, 0.2); 
+    color: darken($color-warning, 20%); 
+  }
+  &.status-annule { 
+    background: rgba($color-error, 0.2); 
+    color: $color-error; 
+  }
+}
+
 .type-badge-small-resultat-recherche {
   &.type-scene {
     background: rgba($color-scene, 0.1);
@@ -610,34 +738,24 @@
 }
 
 // =============================================
-// DIALOGUES (MÊME STYLE QUE L'ACCUEIL)
+// DIALOGUES
 // =============================================
-.dialogues-compact-resultat-recherche {
-  background: rgba($color-primary, 0.05);
-  border-radius: $border-radius;
-  padding: $spacing-md;
-  max-height: 150px;
-  overflow-y: auto;
-  
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba($color-primary, 0.2);
-    border-radius: 3px;
-  }
+.dialogues-list-compact-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
 }
 
-.dialogue-item-compact-resultat-recherche {
+.dialogue-compact-item-resultat-recherche {
   padding: $spacing-sm;
-  margin-bottom: $gap-sm;
-  background: $color-background-alt;
+  background: rgba($color-primary, 0.05);
   border-radius: $border-radius-sm;
   border-left: 3px solid $color-primary;
+  transition: $transition-fast;
   
-  &:last-child {
-    margin-bottom: 0;
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    transform: translateX(2px);
   }
   
   .dialogue-text-compact-resultat-recherche {
@@ -645,6 +763,7 @@
     color: $color-text-secondary;
     font-style: italic;
     line-height: 1.5;
+    margin: 0;
   }
 }
 
@@ -659,8 +778,442 @@
   }
 }
 
+// Dialogues complets
+.dialogues-complets-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.dialogue-complet-item-resultat-recherche {
+  background: rgba($color-primary, 0.03);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+    transform: translateX(2px);
+  }
+}
+
+.dialogue-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-sm;
+  
+  .dialogue-personnage-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-text-primary;
+  }
+  
+  .dialogue-ordre-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+    background: rgba($color-primary, 0.1);
+    padding: 2px $padding-xs;
+    border-radius: $border-radius-xs;
+  }
+}
+
+.dialogue-text-resultat-recherche {
+  font-size: $font-size-p2;
+  color: $color-text-secondary;
+  line-height: $line-height-base;
+  font-style: italic;
+  padding: $padding-sm 0;
+  border-left: 3px solid $color-primary;
+  padding-left: $padding-md;
+}
+
+.dialogue-observation-resultat-recherche {
+  font-size: $font-size-p3;
+  color: $color-text-muted;
+  margin-top: $gap-sm;
+  padding-top: $gap-sm;
+  border-top: 1px dashed $color-border;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  
+  i {
+    color: $color-accent;
+  }
+}
+
+// Statistiques des dialogues
+.dialogues-stats-resultat-recherche {
+  display: flex;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+  
+  .stat-item-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    font-size: $font-size-p3;
+    color: $color-text-secondary;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+// Contrôles des dialogues
+.dialogues-controls-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+  
+  .filter-group-resultat-recherche,
+  .search-group-resultat-recherche {
+    flex: 1;
+    min-width: 200px;
+    
+    label {
+      display: block;
+      margin-bottom: $gap-xs;
+      font-size: $font-size-p3;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+// Liste des dialogues avec pagination
+.dialogues-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.dialogue-item-resultat-recherche {
+  background: rgba($color-primary, 0.03);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+    transform: translateX(2px);
+  }
+}
+
+.dialogue-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $gap-md;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .dialogue-number-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+    background: rgba($color-primary, 0.1);
+    padding: $gap-xs $padding-sm;
+    border-radius: $border-radius-xs;
+  }
+  
+  .dialogue-context-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-secondary;
+    
+    strong {
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+.dialogue-footer-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $gap-md;
+  padding-top: $gap-sm;
+  border-top: 1px solid rgba($color-border, 0.5);
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .dialogue-info-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+// Pagination
+.pagination-resultat-recherche {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $spacing-lg;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+  
+  .pagination-btn-resultat-recherche {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+    padding: $padding-sm $padding-md;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-p3;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
 // =============================================
-// MODAL D'EMAIL (MÊME STYLE QUE L'ACCUEIL)
+// PERSONNAGES LISTE DÉTAILLÉE
+// =============================================
+.personnages-detailed-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.personnage-detailed-item-resultat-recherche {
+  background: rgba($color-primary, 0.05);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius-sm;
+  padding: $spacing-sm;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.1);
+    transform: translateX(2px);
+  }
+}
+
+.personnage-main-info-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  margin-bottom: $gap-xs;
+  
+  .personnage-nom-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .personnage-comedien-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-secondary;
+  }
+}
+
+.personnage-stats-resultat-recherche {
+  .personnage-dialogues-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-muted;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    &::before {
+      content: '•';
+      color: $color-primary;
+    }
+  }
+}
+
+// =============================================
+// PLANNING DE TOURNAGE
+// =============================================
+.scenes-planning-list-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.scene-planning-item-resultat-recherche {
+  background: rgba($color-primary, 0.03);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+    transform: translateY(-2px);
+  }
+}
+
+.scene-planning-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .scene-titre-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .scene-statut-resultat-recherche {
+    @extend .status-badge-small-resultat-recherche;
+  }
+}
+
+.planning-info-grid-resultat-recherche {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $gap-md;
+  margin-bottom: $spacing-sm;
+}
+
+.planning-info-item-resultat-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  
+  .detail-label-resultat-recherche {
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+  }
+  
+  .detail-value-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-text-primary;
+  }
+}
+
+.scene-planning-location-resultat-recherche {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-sm;
+  
+  .location-item-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    font-size: $font-size-p3;
+    color: $color-text-secondary;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+.scene-dialogues-info-resultat-recherche {
+  .dialogues-count-resultat-recherche {
+    font-size: $font-size-p3;
+    color: $color-primary;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    font-weight: $font-weight-medium;
+  }
+}
+
+// Listes de scènes
+.scenes-list-resultat-recherche {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-md;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scene-item-resultat-recherche {
+  background: rgba($color-primary, 0.03);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  transition: $transition-fast;
+  
+  &:hover {
+    background: rgba($color-primary, 0.05);
+    transform: translateY(-2px);
+  }
+}
+
+.scene-header-resultat-recherche {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+  flex-wrap: wrap;
+  gap: $gap-sm;
+  
+  .scene-titre-resultat-recherche {
+    font-size: $font-size-p2;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .scene-statut-resultat-recherche {
+    @extend .status-badge-small-resultat-recherche;
+  }
+}
+
+.scene-details-resultat-recherche {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  font-size: $font-size-p3;
+  color: $color-text-secondary;
+  
+  .scene-date-resultat-recherche,
+  .scene-heure-resultat-recherche,
+  .scene-personnages-resultat-recherche,
+  .scene-dialogues-resultat-recherche {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    
+    i {
+      color: $color-primary;
+    }
+  }
+}
+
+// =============================================
+// MODAL D'EMAIL
 // =============================================
 .modal-overlay-resultat-recherche {
   position: fixed;
@@ -762,7 +1315,7 @@
 }
 
 // =============================================
-// FORMULAIRES (MÊME STYLE QUE L'ACCUEIL)
+// FORMULAIRES
 // =============================================
 .form-group-resultat-recherche {
   margin-bottom: $spacing-lg;
@@ -803,7 +1356,7 @@
 }
 
 // =============================================
-// BOUTONS DU MODAL (MÊME STYLE QUE L'ACCUEIL)
+// BOUTONS DU MODAL
 // =============================================
 .cancel-btn-resultat-recherche,
 .submit-btn-resultat-recherche {
@@ -926,1074 +1479,7 @@
   }
 }
 
-.emails-input-container-resultat-recherche {
-  border: 1.5px solid $color-border;
-  border-radius: $border-radius-sm;
-  padding: $padding-sm;
-  background: $color-background-alt;
-  
-  &:focus-within {
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
-  }
-}
-
-.email-tags-resultat-recherche {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $gap-xs;
-  margin-bottom: $gap-sm;
-}
-
-.email-tag-resultat-recherche {
-  background: rgba($color-primary, 0.1);
-  color: $color-primary;
-  padding: $gap-xs $padding-sm;
-  border-radius: $border-radius-pill;
-  font-size: $font-size-p4;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-}
-
-.email-tag-remove-resultat-recherche {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  padding: 0;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &:hover {
-    color: $color-error;
-  }
-}
-
-.email-input-multiple-resultat-recherche {
-  width: 100%;
-  border: none;
-  background: none;
-  padding: 0;
-  font-size: $font-size-p2;
-  color: $color-text-primary;
-  
-  &:focus {
-    outline: none;
-  }
-}
-
-// =============================================
-// ÉTATS DE CHARGEMENT ET ERREUR
-// =============================================
-.loading-state-resultat-recherche,
-.error-state-resultat-recherche,
-.empty-state-resultat-recherche {
-  text-align: center;
-  padding: $spacing-xl;
-  background: $color-background-alt;
-  border-radius: $border-radius-lg;
-  border: 2px dashed $color-border;
-  
-  i {
-    font-size: 48px;
-    margin-bottom: $spacing-md;
-  }
-  
-  h3 {
-    @include typography-playfair-h4;
-    color: $color-text-primary;
-    margin-bottom: $gap-sm;
-  }
-  
-  p {
-    @include typography-p2;
-    color: $color-text-secondary;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-}
-
-.loading-state-resultat-recherche {
-  i {
-    color: $color-primary;
-  }
-}
-
-.error-state-resultat-recherche {
-  i {
-    color: $color-error;
-  }
-}
-
-.btn-retry-resultat-recherche {
-  margin-top: $spacing-md;
-  padding: $padding-sm $padding-lg;
-  background: $color-primary;
-  color: $color-text-light;
-  border: none;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition;
-  display: inline-flex;
-  align-items: center;
-  gap: $gap-sm;
-  
-  &:hover {
-    background: darken($color-primary, 10%);
-    transform: translateY(-2px);
-  }
-}
-
-// =============================================
-// RESPONSIVE
-// =============================================
-@media (max-width: $breakpoint-lg) {
-  .sidebar-left-resultat-recherche {
-    display: none;
-  }
-  
-  .main-content-resultat-recherche {
-    margin-left: 0;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .sticky-export-navbar-resultat-recherche {
-    margin: 0 (-$spacing-md);
-    padding: 0 $spacing-md;
-  }
-  
-  .resultat-recherche-container {
-    padding: $spacing-md;
-  }
-  
-  .navbar-title-resultat-recherche {
-    min-width: auto;
-  }
-  
-  .page-title-resultat-recherche {
-    font-size: $font-size-h3;
-  }
-  
-  .card-header-resultat-recherche {
-    padding: $spacing-md;
-  }
-  
-  .card-content-resultat-recherche {
-    padding: $spacing-md;
-  }
-  
-  .details-grid-resultat-recherche {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .navbar-actions-resultat-recherche {
-    flex-direction: column;
-    
-    button {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-  
-  .modal-footer-resultat-recherche {
-    flex-direction: column;
-    
-    .cancel-btn-resultat-recherche,
-    .submit-btn-resultat-recherche {
-      width: 100%;
-      min-width: auto;
-    }
-  }
-  
-  .recipient-type-label-resultat-recherche {
-    flex-direction: column;
-    text-align: center;
-    gap: $gap-sm;
-  }
-}
-
-// =============================================
-// ANIMATIONS
-// =============================================
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.section-card-resultat-recherche {
-  animation: fadeInUp 0.5s ease-out forwards;
-  animation-delay: calc(var(--card-index, 0) * 0.1s);
-  opacity: 0;
-}
-
-// =============================================
-// HEADER STICKY AVEC TOUS LES ÉLÉMENTS EN LIGNE
-// =============================================
-.header-with-nav-resultat-recherche {
-  position: sticky;
-  top: 60px;
-  z-index: $z-index-fixed - 1;
-  background: $color-background;
-  border-bottom: 1px solid $color-border;
-  box-shadow: $shadow-md;
-  padding: $spacing-lg 0;
-  margin: 0 0 $spacing-xl;
-  transition: all $transition-fast;
-  
-  // Effet au défilement
-  &.scrolled {
-    padding: $spacing-md 0;
-    box-shadow: $shadow-lg;
-  }
-  
-  @media (max-width: $breakpoint-md) {
-    padding: $spacing-md 0;
-    margin: 0 0 $spacing-lg;
-  }
-}
-
-// Conteneur principal en ligne
-.header-content-resultat-recherche {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $spacing-lg;
-  
-  @media (max-width: $breakpoint-lg) {
-    gap: $spacing-md;
-  }
-  
-  @media (max-width: $breakpoint-md) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: $spacing-sm;
-  }
-}
-
-// Section titre + type sur la même ligne
-.header-title-type-container {
-  display: flex;
-  align-items: center;
-  gap: $spacing-lg;
-  flex: 1;
-  
-  @media (max-width: $breakpoint-lg) {
-    gap: $spacing-md;
-  }
-  
-  @media (max-width: $breakpoint-md) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-sm;
-    width: 100%;
-  }
-}
-
-// Titre de la page
-.page-title-resultat-recherche {
-  font-size: $font-size-h2;
-  color: $color-text-primary;
-  margin: 0;
-  @include typography-playfair-h2;
-  display: flex;
-  align-items: center;
-  gap: $gap-md;
-  white-space: nowrap;
-  
-  @media (max-width: $breakpoint-lg) {
-    font-size: $font-size-h3;
-  }
-  
-  @media (max-width: $breakpoint-md) {
-    font-size: $font-size-h4;
-    white-space: normal;
-  }
-  
-  i {
-    color: $color-primary;
-    background: rgba($color-primary, 0.1);
-    padding: $padding-sm;
-    border-radius: $border-radius;
-    flex-shrink: 0;
-  }
-}
-
-// Badge type amélioré
-.result-type-header-resultat-recherche {
-  display: inline-flex;
-  align-items: center;
-  gap: $gap-md;
-  padding: $padding-sm $padding-lg;
-  border-radius: $border-radius-pill;
-  background: rgba($color-primary, 0.1);
-  border: 2px solid $color-primary;
-  white-space: nowrap;
-  flex-shrink: 0;
-  
-  // Pour s'assurer que l'icône et le texte sont sur la même ligne
-  .type-badge-resultat-recherche {
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-    
-    .type-icon-resultat-recherche {
-      font-size: $font-size-h4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      
-      // Styles spécifiques pour chaque type
-      &.fa-film { color: $color-scene; }
-      &.fa-user { color: $color-character; }
-      &.fa-map-marker-alt { color: $color-location; }
-      &.fa-video { color: $color-set; }
-      &.fa-question-circle { color: $color-text-muted; }
-    }
-    
-    .type-label-resultat-recherche {
-      font-size: $font-size-p2;
-      font-weight: $font-weight-semibold;
-      color: $color-primary;
-      @include typography-cinzel-h4;
-    }
-  }
-  
-  // Variantes de couleur selon le type
-  &.type-scene {
-    background: rgba($color-scene, 0.1);
-    border-color: $color-scene;
-    
-    .type-label-resultat-recherche {
-      color: $color-scene;
-    }
-  }
-  
-  &.type-personnage {
-    background: rgba($color-character, 0.1);
-    border-color: $color-character;
-    
-    .type-label-resultat-recherche {
-      color: $color-character;
-    }
-  }
-  
-  &.type-lieu {
-    background: rgba($color-location, 0.1);
-    border-color: $color-location;
-    
-    .type-label-resultat-recherche {
-      color: $color-location;
-    }
-  }
-  
-  &.type-plateau {
-    background: rgba($color-set, 0.1);
-    border-color: $color-set;
-    
-    .type-label-resultat-recherche {
-      color: $color-set;
-    }
-  }
-}
-
-// Section actions + bouton retour
-.header-actions-container {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-  flex-wrap: wrap;
-  
-  @media (max-width: $breakpoint-lg) {
-    gap: $spacing-sm;
-  }
-  
-  @media (max-width: $breakpoint-md) {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
-    gap: $spacing-sm;
-  }
-}
-
-// Boutons d'action groupés
-.action-buttons-group {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  flex-wrap: wrap;
-  
-  @media (max-width: $breakpoint-sm) {
-    width: 100%;
-    justify-content: space-between;
-  }
-}
-
-// Bouton retour intégré dans la ligne
-.back-link-resultat-recherche.inline {
-  display: inline-flex;
-  align-items: center;
-  gap: $gap-xs;
-  color: $color-primary;
-  text-decoration: none;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-medium;
-  padding: $padding-sm $padding-md;
-  border: 1px solid rgba($color-primary, 0.2);
-  border-radius: $border-radius-sm;
-  background: rgba($color-primary, 0.05);
-  transition: $transition-fast;
-  white-space: nowrap;
-  flex-shrink: 0;
-  
-  &:hover {
-    background: rgba($color-primary, 0.1);
-    text-decoration: none;
-    transform: translateX(-2px);
-    box-shadow: $shadow;
-  }
-  
-  i {
-    transition: transform $transition-fast;
-  }
-  
-  &:hover i {
-    transform: translateX(-3px);
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-// =============================================
-// BOUTONS D'ACTION
-// =============================================
-.btn-ecran-travail-resultat-recherche,
-.btn-export-pdf-resultat-recherche,
-.btn-send-email-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  padding: $padding-sm $padding-md;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-semibold;
-  cursor: pointer;
-  transition: $transition-fast;
-  white-space: nowrap;
-  border: none;
-  flex-shrink: 0;
-  
-  i {
-    font-size: $font-size-p2;
-  }
-  
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: $shadow-md;
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    flex: 1;
-    justify-content: center;
-  }
-}
-
-// =============================================
-// RESPONSIVE
-// =============================================
-@media (max-width: $breakpoint-md) {
-  .header-content-resultat-recherche {
-    flex-direction: column;
-    align-items: stretch;
-    gap: $spacing-md;
-  }
-  
-  .header-title-type-container {
-    order: 1;
-  }
-  
-  .header-actions-container {
-    order: 2;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .action-buttons-group {
-    flex-direction: column;
-    width: 100%;
-    
-    .btn-ecran-travail-resultat-recherche,
-    .btn-export-pdf-resultat-recherche,
-    .btn-send-email-resultat-recherche,
-    .back-link-resultat-recherche.inline {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-  
-  .header-actions-container {
-    flex-direction: column;
-  }
-}
-
-// =============================================
-// STYLES POUR LES ÉLÉMENTS MANQUANTS
-// =============================================
-
-// Badge de type dans l'en-tête
-.result-type-header-resultat-recherche {
-  display: inline-flex;
-  align-items: center;
-  gap: $gap-md;
-  padding: $padding-sm $padding-lg;
-  border-radius: $border-radius-pill;
-  background: rgba($color-primary, 0.1);
-  border: 2px solid $color-primary;
-  
-  .type-badge-resultat-recherche {
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-    
-    .type-icon-resultat-recherche {
-      font-size: $font-size-h4;
-    }
-    
-    .type-label-resultat-recherche {
-      font-size: $font-size-p1;
-      font-weight: $font-weight-semibold;
-      color: $color-primary;
-      @include typography-cinzel-h4;
-    }
-  }
-  
-  &.type-scene {
-    background: rgba($color-scene, 0.1);
-    border-color: $color-scene;
-    
-    .type-label-resultat-recherche {
-      color: $color-scene;
-    }
-  }
-  
-  &.type-personnage {
-    background: rgba($color-character, 0.1);
-    border-color: $color-character;
-    
-    .type-label-resultat-recherche {
-      color: $color-character;
-    }
-  }
-  
-  &.type-lieu {
-    background: rgba($color-location, 0.1);
-    border-color: $color-location;
-    
-    .type-label-resultat-recherche {
-      color: $color-location;
-    }
-  }
-  
-  &.type-plateau {
-    background: rgba($color-set, 0.1);
-    border-color: $color-set;
-    
-    .type-label-resultat-recherche {
-      color: $color-set;
-    }
-  }
-}
-
-// Dialogues compacts
-.dialogues-list-compact-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.dialogue-compact-item-resultat-recherche {
-  padding: $spacing-sm;
-  background: rgba($color-primary, 0.05);
-  border-radius: $border-radius-sm;
-  border-left: 3px solid $color-primary;
-  
-  .dialogue-text-compact-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-text-secondary;
-    font-style: italic;
-    line-height: 1.5;
-    margin: 0;
-  }
-}
-
-// Structure du projet dans la sidebar
-.project-structure-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.structure-item-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  padding: $padding-sm;
-  background: rgba($color-text-light, 0.05);
-  border-radius: $border-radius-sm;
-  border: 1px solid rgba($color-text-light, 0.1);
-}
-
-.structure-icon-resultat-recherche {
-  font-size: $font-size-p2;
-  color: $color-text-light !important;
-  width: 24px;
-  text-align: center;
-}
-
-.structure-info-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.structure-type-resultat-recherche {
-  font-size: $font-size-p4;
-  color: rgba($color-text-light, 0.7) !important;
-}
-
-.structure-name-resultat-recherche {
-  font-size: $font-size-p3;
-  color: $color-text-light !important;
-  font-weight: $font-weight-medium;
-}
-
-.no-structure-resultat-recherche,
-.no-criteria-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  padding: $padding-sm;
-  background: rgba($color-text-light, 0.05);
-  border-radius: $border-radius-sm;
-  border: 1px dashed rgba($color-text-light, 0.2);
-  color: rgba($color-text-light, 0.7) !important;
-  font-size: $font-size-p3;
-  
-  i {
-    color: rgba($color-text-light, 0.5) !important;
-  }
-}
-
-// Métadonnées dans la sidebar
-.metadata-list-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.metadata-item-resultat-recherche {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $padding-xs 0;
-  border-bottom: 1px solid rgba($color-text-light, 0.1);
-  
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.metadata-label-resultat-recherche {
-  font-size: $font-size-p4;
-  color: rgba($color-text-light, 0.7) !important;
-}
-
-.metadata-value-resultat-recherche {
-  font-size: $font-size-p3;
-  color: $color-text-light !important;
-  font-weight: $font-weight-medium;
-  text-align: right;
-}
-
-.status-badge-small-resultat-recherche {
-  padding: 2px $padding-xs;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-p5;
-  font-weight: $font-weight-bold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  
-  &.status-planifie { 
-    background: rgba($color-warning, 0.2); 
-    color: $color-warning; 
-  }
-  &.status-confirme { 
-    background: rgba($color-primary, 0.2); 
-    color: $color-primary; 
-  }
-  &.status-en_cours { 
-    background: rgba($color-accent, 0.2); 
-    color: $color-accent-dark; 
-  }
-  &.status-termine { 
-    background: rgba($color-success, 0.2); 
-    color: $color-success; 
-  }
-  &.status-reporte { 
-    background: rgba($color-warning, 0.2); 
-    color: darken($color-warning, 20%); 
-  }
-  &.status-annule { 
-    background: rgba($color-error, 0.2); 
-    color: $color-error; 
-  }
-}
-
-// =============================================
-// RÉORGANISATION DE L'EN-TÊTE PRINCIPAL
-// =============================================
-.header-main-compact-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $spacing-lg;
-  width: 100%;
-  flex-wrap: wrap;
-  
-  @media (max-width: $breakpoint-lg) {
-    gap: $spacing-md;
-  }
-  
-  @media (max-width: $breakpoint-md) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-sm;
-  }
-}
-
-.header-navigation-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $spacing-lg;
-  flex: 1;
-  
-  @media (max-width: $breakpoint-md) {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-sm;
-  }
-}
-
-.header-title-section-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $spacing-lg;
-  flex: 2;
-  min-width: 300px;
-  
-  @media (max-width: $breakpoint-md) {
-    min-width: auto;
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-sm;
-  }
-}
-
-.header-actions-section-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-  flex-wrap: wrap;
-  
-  @media (max-width: $breakpoint-md) {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
-    gap: $spacing-sm;
-  }
-}
-
-// =============================================
-// STYLES RESPONSIVE SUPPLÉMENTAIRES
-// =============================================
-@media (max-width: $breakpoint-lg) {
-  .header-content-resultat-recherche {
-    gap: $spacing-md;
-  }
-  
-  .header-left-resultat-recherche {
-    gap: $spacing-md;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .header-with-nav-resultat-recherche {
-    padding: $spacing-md 0;
-    margin: 0 (-$spacing-md) $spacing-lg;
-  }
-  
-  .header-content-resultat-recherche {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .header-left-resultat-recherche {
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .header-navigation-resultat-recherche,
-  .header-title-section-resultat-recherche {
-    flex-direction: column;
-    width: 100%;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .header-actions-section-resultat-recherche {
-    flex-direction: column;
-    
-    .btn-ecran-travail-resultat-recherche,
-    .btn-export-pdf-resultat-recherche,
-    .btn-send-email-resultat-recherche {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-  
-  .header-main-compact-resultat-recherche {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-
-// =============================================
-// BOUTON RETOUR STANDALONE
-// =============================================
-.back-link-resultat-recherche.standalone {
-  align-items: center;
-  gap: $gap-xs;
-  color: $color-primary;
-  text-decoration: none;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-medium;
-  padding: $padding-sm $padding-md;
-  border: 1px solid rgba($color-primary, 0.2);
-  border-radius: $border-radius-sm;
-  background: rgba($color-primary, 0.05);
-  transition: $transition-fast;
-  margin-left: 200px;
-  
-  &:hover {
-    background: rgba($color-primary, 0.1);
-    text-decoration: none;
-    transform: translateX(-2px);
-    box-shadow: $shadow;
-  }
-  
-  i {
-    transition: transform $transition-fast;
-  }
-  
-  &:hover i {
-    transform: translateX(-3px);
-  }
-}
-
-// =============================================
-// EN-TÊTE PRINCIPAL RÉORGANISÉ
-// =============================================
-.header-with-nav-resultat-recherche {
-  position: sticky;
-  top: 60px;
-  z-index: $z-index-fixed - 1;
-  background: $color-background;
-  border-bottom: 1px solid $color-border;
-  box-shadow: $shadow-md;
-  padding: $spacing-lg 0;
-  margin: 0 0 $spacing-xl;
-  
-  @media (max-width: $breakpoint-md) {
-    padding: $spacing-md 0;
-    margin: 0 0 $spacing-lg;
-  }
-}
-
-.header-content-resultat-recherche {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: $spacing-lg;
-  flex-wrap: wrap;
-  
-  @media (max-width: $breakpoint-md) {
-    gap: $spacing-md;
-  }
-}
-
-// Section titre à gauche
-.header-title-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  flex: 1;
-  min-width: 300px;
-  
-  @media (max-width: $breakpoint-md) {
-    min-width: auto;
-    width: 100%;
-  }
-}
-
-.page-title-resultat-recherche {
-  font-size: $font-size-h2;
-  color: $color-text-primary;
-  margin: 0;
-  @include typography-playfair-h2;
-  display: flex;
-  align-items: center;
-  gap: $gap-md;
-  
-  @media (max-width: $breakpoint-md) {
-    font-size: $font-size-h3;
-  }
-  
-  i {
-    color: $color-primary;
-    background: rgba($color-primary, 0.1);
-    padding: $padding-sm;
-    border-radius: $border-radius;
-  }
-}
-
-// Badge type aligné sous le titre
-.result-type-header-resultat-recherche {
-  display: inline-flex;
-  align-items: center;
-  gap: $gap-md;
-  padding: $padding-sm;
-  border-radius: $border-radius-pill;
-  background: rgba($color-primary, 0.1);
-  border: 2px solid $color-primary;
-  align-self: flex-start;
-  
-  .type-badge-resultat-recherche {
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-    
-    .type-icon-resultat-recherche {
-      font-size: $font-size-h3;
-    }
-    
-    .type-label-resultat-recherche {
-      font-size: $font-size-p1;
-      font-weight: $font-weight-semibold;
-      color: $color-primary;
-      @include typography-cinzel-h4;
-    }
-  }
-}
-
-// Section actions à droite
-.header-actions-resultat-recherche {
-  display: flex;
-  gap: $gap-md;
-  align-items: center;
-  flex-wrap: wrap;
-  
-  @media (max-width: $breakpoint-md) {
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
-  @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
-    gap: $gap-sm;
-  }
-}
-
-// =============================================
-// RESPONSIVE SPÉCIFIQUE
-// =============================================
-@media (max-width: $breakpoint-md) {
-  .header-content-resultat-recherche {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .header-title-resultat-recherche {
-    order: 1;
-  }
-  
-  .header-actions-resultat-recherche {
-    order: 2;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .header-actions-resultat-recherche {
-    flex-direction: column;
-    
-    .btn-ecran-travail-resultat-recherche,
-    .btn-export-pdf-resultat-recherche,
-    .btn-send-email-resultat-recherche {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-}
-
-
-
-// =============================================
-// STYLES SPÉCIFIQUES POUR LA SECTION EMAIL - SÉLECTION COMÉDIENS
-// =============================================
-
-.recipient-section-resultat-recherche {
-  margin-top: $spacing-md;
-}
-
+// Sélection comédiens
 .comedien-selection-header-resultat-recherche {
   display: flex;
   justify-content: space-between;
@@ -2001,13 +1487,6 @@
   margin-bottom: $spacing-md;
   flex-wrap: wrap;
   gap: $gap-sm;
-  
-  .form-label-resultat-recherche {
-    margin-bottom: 0;
-    font-size: $font-size-p2;
-    font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-  }
 }
 
 .comedien-selection-stats-resultat-recherche {
@@ -2211,35 +1690,7 @@
   }
 }
 
-.loading-indicator-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  padding: $spacing-md;
-  color: $color-primary;
-  font-size: $font-size-p2;
-  font-weight: $font-weight-medium;
-  background: rgba($color-primary, 0.05);
-  border-radius: $border-radius;
-  border: 1px dashed rgba($color-primary, 0.2);
-  justify-content: center;
-  
-  i {
-    font-size: $font-size-p1;
-  }
-}
-
-.no-comediens-resultat-recherche {
-  text-align: center;
-  padding: $spacing-lg;
-  color: $color-text-muted;
-  font-size: $font-size-p2;
-  background: rgba($color-text-muted, 0.05);
-  border-radius: $border-radius;
-  border: 1px dashed $color-border;
-  margin: $spacing-md 0;
-}
-
+// Destinataires list
 .destinataires-list-resultat-recherche {
   margin-top: $spacing-lg;
   padding: $spacing-md;
@@ -2329,6 +1780,66 @@
   }
 }
 
+.emails-input-container-resultat-recherche {
+  border: 1.5px solid $color-border;
+  border-radius: $border-radius-sm;
+  padding: $padding-sm;
+  background: $color-background-alt;
+  
+  &:focus-within {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+}
+
+.email-tags-resultat-recherche {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-xs;
+  margin-bottom: $gap-sm;
+}
+
+.email-tag-resultat-recherche {
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  padding: $gap-xs $padding-sm;
+  border-radius: $border-radius-pill;
+  font-size: $font-size-p4;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.email-tag-remove-resultat-recherche {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    color: $color-error;
+  }
+}
+
+.email-input-multiple-resultat-recherche {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: $font-size-p2;
+  color: $color-text-primary;
+  
+  &:focus {
+    outline: none;
+  }
+}
+
 .help-text-resultat-recherche {
   display: block;
   margin-top: $gap-xs;
@@ -2336,10 +1847,183 @@
   font-size: $font-size-p4;
 }
 
+.loading-indicator-resultat-recherche {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  padding: $spacing-md;
+  color: $color-primary;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-medium;
+  background: rgba($color-primary, 0.05);
+  border-radius: $border-radius;
+  border: 1px dashed rgba($color-primary, 0.2);
+  justify-content: center;
+  
+  i {
+    font-size: $font-size-p1;
+  }
+}
+
+.no-comediens-resultat-recherche {
+  text-align: center;
+  padding: $spacing-lg;
+  color: $color-text-muted;
+  font-size: $font-size-p2;
+  background: rgba($color-text-muted, 0.05);
+  border-radius: $border-radius;
+  border: 1px dashed $color-border;
+  margin: $spacing-md 0;
+}
+
 // =============================================
-// RESPONSIVE POUR LA SECTION COMÉDIENS
+// ÉTATS DE CHARGEMENT ET ERREUR
 // =============================================
+.loading-state-resultat-recherche,
+.error-state-resultat-recherche,
+.empty-state-resultat-recherche {
+  text-align: center;
+  padding: $spacing-xl;
+  background: $color-background-alt;
+  border-radius: $border-radius-lg;
+  border: 2px dashed $color-border;
+  
+  i {
+    font-size: 48px;
+    margin-bottom: $spacing-md;
+  }
+  
+  h3 {
+    @include typography-playfair-h4;
+    color: $color-text-primary;
+    margin-bottom: $gap-sm;
+  }
+  
+  p {
+    @include typography-p2;
+    color: $color-text-secondary;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+.loading-state-resultat-recherche {
+  i {
+    color: $color-primary;
+  }
+}
+
+.error-state-resultat-recherche {
+  i {
+    color: $color-error;
+  }
+}
+
+.btn-retry-resultat-recherche {
+  margin-top: $spacing-md;
+  padding: $padding-sm $padding-lg;
+  background: $color-primary;
+  color: $color-text-light;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-p2;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition;
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-sm;
+  
+  &:hover {
+    background: darken($color-primary, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .sidebar-left-resultat-recherche {
+    display: none;
+  }
+  
+  .main-content-resultat-recherche {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .resultat-recherche-container {
+    padding: $spacing-md;
+  }
+  
+  .details-grid-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-header-resultat-recherche {
+    padding: $spacing-md;
+  }
+  
+  .card-content-resultat-recherche {
+    padding: $spacing-md;
+  }
+  
+  .planning-info-grid-resultat-recherche {
+    grid-template-columns: 1fr;
+  }
+  
+  .dialogues-controls-resultat-recherche {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .filter-group-resultat-recherche,
+    .search-group-resultat-recherche {
+      min-width: auto;
+    }
+  }
+}
+
 @media (max-width: $breakpoint-sm) {
+  .resultat-recherche-container {
+    padding: $spacing-sm;
+  }
+  
+  .actions-top-Scenariste {
+    flex-direction: column;
+  }
+  
+  .modal-footer-resultat-recherche {
+    flex-direction: column;
+    
+    .cancel-btn-resultat-recherche,
+    .submit-btn-resultat-recherche {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+  
+  .recipient-type-label-resultat-recherche {
+    flex-direction: column;
+    text-align: center;
+    gap: $gap-sm;
+  }
+  
   .comedien-selection-header-resultat-recherche {
     flex-direction: column;
     align-items: flex-start;
@@ -2364,545 +2048,6 @@
   .email-remove-btn-resultat-recherche {
     align-self: flex-end;
   }
-}
-
-
-// =============================================
-// STYLES POUR LES CARTES SPÉCIFIQUES
-// =============================================
-
-// Description
-.description-content-resultat-recherche {
-  font-size: $font-size-p2;
-  color: $color-text-primary;
-  line-height: $line-height-base;
-  padding: $padding-sm 0;
-  white-space: pre-line;
-}
-
-// Liste détaillée des personnages
-.personnages-detailed-list-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $gap-sm;
-}
-
-.personnage-detailed-item-resultat-recherche {
-  background: rgba($color-primary, 0.05);
-  border: 1px solid rgba($color-primary, 0.1);
-  border-radius: $border-radius-sm;
-  padding: $spacing-sm;
-  transition: $transition-fast;
-  
-  &:hover {
-    background: rgba($color-primary, 0.1);
-    transform: translateX(2px);
-  }
-}
-
-.personnage-main-info-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  margin-bottom: $gap-xs;
-  
-  .personnage-nom-resultat-recherche {
-    font-size: $font-size-p2;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-  }
-  
-  .personnage-comedien-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-text-secondary;
-  }
-}
-
-.personnage-stats-resultat-recherche {
-  .personnage-dialogues-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-text-muted;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    
-    &::before {
-      content: '•';
-      color: $color-primary;
-    }
-  }
-}
-
-// Statistiques des dialogues
-.dialogues-stats-resultat-recherche {
-  display: flex;
-  gap: $spacing-lg;
-  margin-bottom: $spacing-md;
-  padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $color-border;
-  
-  .stat-item-resultat-recherche {
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-    font-size: $font-size-p3;
-    color: $color-text-secondary;
-    
-    i {
-      color: $color-primary;
-    }
-  }
-}
-
-// Dialogues complets
-.dialogues-complets-list-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.dialogue-complet-item-resultat-recherche {
-  background: rgba($color-primary, 0.03);
-  border: 1px solid rgba($color-primary, 0.1);
-  border-radius: $border-radius;
-  padding: $spacing-md;
-  
-  &:hover {
-    background: rgba($color-primary, 0.05);
-  }
-}
-
-.dialogue-header-resultat-recherche {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $gap-sm;
-  
-  .dialogue-personnage-resultat-recherche {
-    font-size: $font-size-p2;
-    color: $color-text-primary;
-  }
-  
-  .dialogue-ordre-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-primary;
-    font-weight: $font-weight-bold;
-    background: rgba($color-primary, 0.1);
-    padding: 2px $padding-xs;
-    border-radius: $border-radius-xs;
-  }
-}
-
-.dialogue-text-resultat-recherche {
-  font-size: $font-size-p2;
-  color: $color-text-secondary;
-  line-height: $line-height-base;
-  font-style: italic;
-  padding: $padding-sm 0;
-  border-left: 3px solid $color-primary;
-  padding-left: $padding-md;
-}
-
-.dialogue-observation-resultat-recherche {
-  font-size: $font-size-p3;
-  color: $color-text-muted;
-  margin-top: $gap-sm;
-  padding-top: $gap-sm;
-  border-top: 1px dashed $color-border;
-  display: flex;
-  align-items: center;
-  gap: $gap-xs;
-  
-  i {
-    color: $color-accent;
-  }
-}
-
-// Contrôles des dialogues
-.dialogues-controls-resultat-recherche {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: $spacing-lg;
-  margin-bottom: $spacing-lg;
-  flex-wrap: wrap;
-  
-  .filter-group-resultat-recherche,
-  .search-group-resultat-recherche {
-    flex: 1;
-    min-width: 200px;
-    
-    label {
-      display: block;
-      margin-bottom: $gap-xs;
-      font-size: $font-size-p3;
-      color: $color-text-secondary;
-      font-weight: $font-weight-medium;
-    }
-  }
-  
-  .search-input-container-resultat-recherche {
-    position: relative;
-    
-    .search-icon-resultat-recherche {
-      position: absolute;
-      left: $padding-sm;
-      top: 50%;
-      transform: translateY(-50%);
-      color: $color-text-muted;
-      font-size: $font-size-p2;
-    }
-    
-    .search-input-resultat-recherche {
-      width: 100%;
-      padding: $padding-sm $padding-sm $padding-sm ($padding-xl + $padding-xs);
-      border: 1px solid $color-border;
-      border-radius: $border-radius-sm;
-      background: $color-background;
-      font-size: $font-size-p2;
-      transition: $transition-fast;
-      
-      &:focus {
-        outline: none;
-        border-color: $color-primary;
-        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
-      }
-    }
-  }
-}
-
-// Liste des dialogues avec pagination
-.dialogues-list-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.dialogue-item-resultat-recherche {
-  background: rgba($color-primary, 0.03);
-  border: 1px solid rgba($color-primary, 0.1);
-  border-radius: $border-radius;
-  padding: $spacing-md;
-  
-  &:hover {
-    background: rgba($color-primary, 0.05);
-  }
-}
-
-.dialogue-header-resultat-recherche {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $gap-md;
-  flex-wrap: wrap;
-  gap: $gap-sm;
-  
-  .dialogue-number-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-primary;
-    font-weight: $font-weight-semibold;
-    background: rgba($color-primary, 0.1);
-    padding: $gap-xs $padding-sm;
-    border-radius: $border-radius-xs;
-  }
-  
-  .dialogue-context-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-text-secondary;
-    
-    strong {
-      color: $color-text-primary;
-      font-weight: $font-weight-semibold;
-    }
-  }
-}
-
-.dialogue-footer-resultat-recherche {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: $gap-md;
-  padding-top: $gap-sm;
-  border-top: 1px solid rgba($color-border, 0.5);
-  flex-wrap: wrap;
-  gap: $gap-sm;
-  
-  .dialogue-info-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-text-muted;
-    display: flex;
-    align-items: center;
-    gap: $gap-sm;
-    
-    i {
-      color: $color-primary;
-    }
-  }
-}
-
-// Pagination
-.pagination-resultat-recherche {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: $spacing-lg;
-  margin-top: $spacing-lg;
-  padding-top: $spacing-md;
-  border-top: 1px solid $color-border;
-  
-  .pagination-btn-resultat-recherche {
-    background: transparent;
-    border: 1px solid $color-border;
-    color: $color-text-secondary;
-    padding: $padding-sm $padding-md;
-    border-radius: $border-radius-sm;
-    font-size: $font-size-p3;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    
-    &:hover:not(:disabled) {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
-      color: $color-primary;
-    }
-    
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-}
-
-// Planning de tournage
-.scenes-planning-list-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.scene-planning-item-resultat-recherche {
-  background: rgba($color-primary, 0.03);
-  border: 1px solid rgba($color-primary, 0.1);
-  border-radius: $border-radius;
-  padding: $spacing-md;
-  
-  &:hover {
-    background: rgba($color-primary, 0.05);
-  }
-}
-
-.scene-planning-header-resultat-recherche {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-sm;
-  flex-wrap: wrap;
-  gap: $gap-sm;
-  
-  .scene-titre-resultat-recherche {
-    font-size: $font-size-p2;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-  }
-  
-  .scene-statut-resultat-recherche {
-    @extend .status-badge-small-resultat-recherche;
-  }
-}
-
-.planning-info-grid-resultat-recherche {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: $gap-md;
-  margin-bottom: $spacing-sm;
-}
-
-.planning-info-item-resultat-recherche {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  
-  .detail-label-resultat-recherche {
-    font-size: $font-size-p4;
-    color: $color-text-secondary;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-  }
-  
-  .detail-value-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-text-primary;
-  }
-}
-
-.scene-planning-location-resultat-recherche {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-md;
-  margin-bottom: $spacing-sm;
-  
-  .location-item-resultat-recherche {
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    font-size: $font-size-p3;
-    color: $color-text-secondary;
-    
-    i {
-      color: $color-primary;
-    }
-  }
-}
-
-.scene-dialogues-info-resultat-recherche {
-  .dialogues-count-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-primary;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    font-weight: $font-weight-medium;
-  }
-}
-
-.no-planning-resultat-recherche {
-  text-align: center;
-  padding: $spacing-lg;
-  color: $color-text-muted;
-  font-size: $font-size-p2;
-  
-  p {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $gap-sm;
-    margin: 0;
-  }
-}
-
-// Listes de scènes (lieux et plateaux)
-.scenes-list-resultat-recherche {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: $spacing-md;
-  
-  @media (max-width: $breakpoint-sm) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.scene-item-resultat-recherche {
-  background: rgba($color-primary, 0.03);
-  border: 1px solid rgba($color-primary, 0.1);
-  border-radius: $border-radius;
-  padding: $spacing-md;
-  transition: $transition-fast;
-  
-  &:hover {
-    background: rgba($color-primary, 0.05);
-    transform: translateY(-2px);
-  }
-}
-
-.scene-header-resultat-recherche {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-sm;
-  flex-wrap: wrap;
-  gap: $gap-sm;
-  
-  .scene-titre-resultat-recherche {
-    font-size: $font-size-p2;
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
-  }
-  
-  .scene-statut-resultat-recherche {
-    @extend .status-badge-small-resultat-recherche;
-  }
-}
-
-.scene-details-resultat-recherche {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-md;
-  font-size: $font-size-p3;
-  color: $color-text-secondary;
-  
-  .scene-date-resultat-recherche,
-  .scene-heure-resultat-recherche,
-  .scene-personnages-resultat-recherche,
-  .scene-dialogues-resultat-recherche {
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    
-    i {
-      color: $color-primary;
-    }
-  }
-}
-
-// État vide
-.no-planning-resultat-recherche,
-.no-structure-resultat-recherche,
-.no-criteria-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $gap-sm;
-  padding: $padding-sm;
-  background: rgba($color-text-light, 0.05);
-  border-radius: $border-radius-sm;
-  border: 1px dashed rgba($color-text-light, 0.2);
-  color: rgba($color-text-light, 0.7) !important;
-  font-size: $font-size-p3;
-  
-  i {
-    color: rgba($color-text-light, 0.5) !important;
-  }
-}
-
-// Pour la sidebar (classes existantes mais sans styles)
-.no-structure-resultat-recherche,
-.no-criteria-resultat-recherche {
-  // Déjà défini dans la partie sidebar
-}
-
-// Responsive pour la sidebar
-@media (max-width: $breakpoint-lg) {
-  .sidebar-left-resultat-recherche {
-    display: none;
-  }
-  
-  .main-content-resultat-recherche {
-    margin-left: 0;
-  }
-  
-  .dialogues-controls-resultat-recherche {
-    flex-direction: column;
-    align-items: stretch;
-    
-    .filter-group-resultat-recherche,
-    .search-group-resultat-recherche {
-      min-width: auto;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .planning-info-grid-resultat-recherche {
-    grid-template-columns: 1fr;
-  }
-  
-  .scene-details-resultat-recherche {
-    flex-direction: column;
-    gap: $gap-sm;
-  }
   
   .dialogue-header-resultat-recherche,
   .dialogue-footer-resultat-recherche,
@@ -2910,153 +2055,10 @@
     flex-direction: column;
     align-items: flex-start;
   }
-}
-
-// Animation pour les cartes
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.section-card-resultat-recherche {
-  animation: fadeInUp 0.5s ease-out forwards;
-  animation-delay: calc(var(--card-index, 0) * 0.1s);
-  opacity: 0;
-}
-
-// Personnalisation du bouton Retour standalone
-.back-link-resultat-recherche.standalone {
-  align-items: center;
-  gap: $gap-xs;
-  color: $color-primary;
-  text-decoration: none;
-  font-size: $font-size-p3;
-  font-weight: $font-weight-medium;
-  padding: $padding-sm $padding-md;
-  border: 1px solid rgba($color-primary, 0.2);
-  border-radius: $border-radius-sm;
-  background: rgba($color-primary, 0.05);
-  transition: $transition-fast;
-  margin-left: auto;
-  white-space: nowrap;
-  display: inline-flex;
   
-  &:hover {
-    background: rgba($color-primary, 0.1);
-    text-decoration: none;
-    transform: translateX(-2px);
-    box-shadow: $shadow;
-  }
-  
-  i {
-    transition: transform $transition-fast;
-  }
-  
-  &:hover i {
-    transform: translateX(-3px);
-  }
-}
-
-// Correction pour les boutons d'action dans la header
-.header-actions-resultat-recherche.standalone {
-  display: flex;
-  gap: $gap-md;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  margin-top: $spacing-md;
-  margin-bottom: $spacing-lg;
-  
-  @media (max-width: $breakpoint-md) {
+  .scene-details-resultat-recherche {
     flex-direction: column;
-    align-items: stretch;
     gap: $gap-sm;
   }
-  
-  @media (max-width: $breakpoint-sm) {
-    .btn-ecran-travail-resultat-recherche,
-    .btn-export-pdf-resultat-recherche,
-    .btn-send-email-resultat-recherche,
-    .back-link-resultat-recherche.standalone {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-}
-
-// Correction pour le badge de type dans la header
-.result-type-header-resultat-recherche {
-  margin-right: auto;
-  
-  @media (max-width: $breakpoint-md) {
-    margin-right: 0;
-    align-self: flex-start;
-  }
-}
-
-// Espacement entre les sections
-.detail-section-resultat-recherche {
-  margin-bottom: $spacing-lg;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-// Labels de formulaire
-.form-label-resultat-recherche {
-  display: block;
-  margin-bottom: $gap-sm;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  font-size: $font-size-p2;
-}
-
-// Styles spécifiques pour les cartes de détails
-.scene-details-resultat-recherche,
-.personnage-details-resultat-recherche,
-.lieu-details-resultat-recherche,
-.plateau-details-resultat-recherche {
-  .detail-section-resultat-recherche:not(:last-child) {
-    margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-lg;
-    border-bottom: 1px solid rgba($color-border, 0.5);
-  }
-}
-
-// Boutons d'action spécifiques dans les cartes
-.header-actions-resultat-recherche {
-  display: flex;
-  align-items: center;
-  gap: $gap-md;
-  
-  .last-modified-resultat-recherche {
-    font-size: $font-size-p3;
-    color: $color-text-muted;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-    
-    i {
-      color: $color-primary;
-    }
-  }
-}
-
-// Animation pour les éléments de liste
-.personnage-detailed-item-resultat-recherche,
-.dialogue-complet-item-resultat-recherche,
-.dialogue-item-resultat-recherche,
-.scene-planning-item-resultat-recherche,
-.scene-item-resultat-recherche {
-  animation: fadeInUp 0.3s ease-out forwards;
-  animation-delay: calc(var(--item-index, 0) * 0.05s);
-  opacity: 0;
 }
 
