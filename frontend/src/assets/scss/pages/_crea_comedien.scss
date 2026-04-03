@@ -37,7 +37,7 @@ position: fixed;
   
   // Icônes avec couleur primaire foncée
   i {
-    color: $color-primary-dark !important;
+    color: $color-primary-light !important;
   }
   
   // Exception pour les boutons
@@ -53,12 +53,12 @@ position: fixed;
 
   .sidebar-header-crea-comedien {
     margin-bottom: $spacing-md;
-    border-bottom: 1px solid $color-border; // Changé: bordure dorée
+    border-bottom: 1px solid $color-border; 
     padding-bottom: $spacing-sm;
 
     .sidebar-title-crea-comedien {
       @include typography-playfair-h4;
-      color: $color-text-light; // Changé: brun foncé
+      color: $color-text-light; 
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
@@ -123,9 +123,58 @@ position: fixed;
       color: $color-text-light;
     }
 
+      &.list-view-btn i {
+    color: $color-primary-dark !important;
+  }
+
+
     &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
+      outline: 2px solid $color-primary; 
       outline-offset: 1px;
+    }
+
+    &.nouvel-episode-btn {
+        background:$color-accent-dark;
+        // border-color: $color-primary;
+        color: $color-white;
+        font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-text-light;
+      }
+    }
+
+    &.nouvelle-sequence-btn {
+        background:$color-accent-dark;
+        // border-color: $color-primary;
+        color: $color-white;
+        font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-text-light;
+      }
+    }
+
+    &.nouvelle-scene-btn {
+        background:$color-accent-dark;
+        // border-color: $color-primary;
+        color: $color-white;
+        font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-text-light;
+      }
+    
+    }
+    
+     &.retour-btn {
+      i {
+        color: $color-primary-dark !important;
+      }
+      
+      &:hover i {
+        color: $color-text-light !important;
+      }
     }
   }
 

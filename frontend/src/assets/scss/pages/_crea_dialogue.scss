@@ -35,7 +35,7 @@ position: fixed;
   
   // Icônes avec couleur primaire foncée
   i {
-    color: $color-primary-dark !important;
+    color: $color-primary-light !important;
   }
   
   // Exception pour les boutons
@@ -120,6 +120,9 @@ position: fixed;
       border-color: $color-primary;
       color: $color-text-light;
     }
+       &.list-view-btn i {
+    color: $color-primary-dark !important;
+  }
 
     &:focus-visible {
       outline: 2px solid $color-primary; // Changé: doré

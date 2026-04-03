@@ -10,19 +10,19 @@
 // SIDEBAR LATÉRALE
 // =============================================
 .creation-sidebar-crea-plateau {
-  position: fixed;
-  top: 60px; /* Modifié de 80px à 60px pour cohérence */
+ position: fixed;
+  top: 60px; // 50px de marge en haut
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); /* Modifié pour cohérence */
-  z-index: $z-index-fixed - 1; /* Modifié pour cohérence */
+  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  z-index: $z-index-fixed - 1;
   overflow-y: auto;
-  padding: $padding-lg; /* Modifié de $spacing-md à $padding-lg */
-  background: rgba($color-border, 0.1); /* Ajouté pour cohérence */
+  padding: $padding-lg;
+  background: $color-primary; // <-- CHANGÉ: couleur principale
   box-sizing: border-box;
-  border: none !important; /* Ajouté pour cohérence */
-  box-shadow: $shadow-accent; /* Modifié de $shadow-md à $shadow-accent */
-  border-radius: 20px; /* Ajouté pour cohérence */
+  border: none !important;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
 
   @media (max-width: 1400px) {
     width: 240px;
@@ -30,38 +30,56 @@
   }
   
   @media (max-width: $breakpoint-lg) {
-    display: none; /* Ajouté pour cohérence */
+    display: none;
+  }
+  
+  
+  // Icônes avec couleur primaire foncée
+  i {
+    color: $color-primary-light !important;
+  }
+
+  // Exception pour les boutons
+  .view-all-btn-compact-Scenariste {
+    i {
+      color: $color-text-light !important;
+    }
+    
+    &:hover {
+      background: rgba($color-text-light, 0.1) !important;
+    }
   }
 
   .sidebar-header-crea-plateau {
     margin-bottom: $spacing-md;
-    border-bottom: 1px solid $color-border;
-    padding-bottom: $spacing-sm; /* Ajouté pour cohérence */
+    border-bottom: 1px solid $color-border; // Changé: bordure dorée
+    padding-bottom: $spacing-sm;
 
     .sidebar-title-crea-plateau {
-      @include typography-playfair-h4;
-      color: $color-text-primary;
-      margin: 0 0 $gap-xs 0; /* Ajouté pour cohérence */
-      font-size: calc(#{$font-size-h4} - 2px); /* Ajouté pour cohérence */
+     @include typography-playfair-h4;
+      color: $color-text-light; 
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle-crea-plateau {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-light; 
       margin: 0;
     }
   }
 
   .sidebar-section-crea-plateau {
     margin-bottom: $spacing-md;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important; 
     border-radius: $border-radius-xs;
-    padding: $padding-sm; /* Modifié de $padding-sm (identique) */
-    box-shadow: $shadow-hover; /* Ajouté pour cohérence */
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
 
     .section-title-crea-plateau {
-      @include typography-p4;
-      color: $color-text-primary;
+     @include typography-p4;
+      color: $color-text-light;
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
@@ -74,6 +92,7 @@
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
+    
   }
 
   .sidebar-btn-crea-plateau {
@@ -84,28 +103,32 @@
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    font-weight: $font-weight-semibold; /* Ajouté pour cohérence */
     color: $color-text-secondary;
     cursor: pointer;
     transition: $transition-fast;
     display: flex;
     align-items: center;
+    font-weight: $font-weight-semibold;
     gap: $gap-xs;
     box-sizing: border-box;
 
     &:hover {
-      background: $color-surface-hover;
+       background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
     }
-
     &.active {
-      background: $color-tertiary-dark; /* Modifié de $color-primary à $color-tertiary-dark */
-      color: $color-text-light; /* Modifié pour cohérence */
+      background: $color-accent-dark;
+      border-color: $color-primary;
+      color: $color-text-light;
     }
 
+    &.list-view-btn i {
+    color: $color-primary-dark !important;
+  }
+
     &:focus-visible {
-      outline: 2px solid $color-primary;
+      outline: 2px solid $color-primary; // Changé: doré
       outline-offset: 1px;
     }
   }
@@ -123,7 +146,7 @@
 
     label {
       @include typography-p4;
-      color: $color-text-secondary;
+       color: $color-text-light;
       font-weight: $font-weight-medium;
     }
   }
@@ -155,7 +178,7 @@
 
   .stat-item-crea-plateau {
     display: flex;
-    flex-direction: column;
+   flex-direction: column;
     align-items: center;
     padding: $padding-sm;
     background: $color-background-alt;

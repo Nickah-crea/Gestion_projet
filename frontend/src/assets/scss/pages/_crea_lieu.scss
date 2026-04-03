@@ -36,7 +36,7 @@ position: fixed;
   
   // Icônes avec couleur primaire foncée
   i {
-    color: $color-primary-dark !important;
+    color: $color-primary-light !important;
   }
   
   // Exception pour les boutons
@@ -57,14 +57,14 @@ position: fixed;
 
     .sidebar-title-crea-lieu {
      @include typography-playfair-h4;
-      color: $color-text-light; // Changé: brun foncé
+      color: $color-text-light; 
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle-crea-lieu {
       @include typography-p4;
-      color: $color-text-light; // Changé: taupe
+      color: $color-text-light; 
       margin: 0;
     }
   }
@@ -88,7 +88,7 @@ position: fixed;
   }
 
   .sidebar-actions-crea-lieu {
-  display: flex;
+    display: flex;
     flex-direction: column;
     gap: $gap-xs;
   }
@@ -121,6 +121,10 @@ position: fixed;
       border-color: $color-primary;
       color: $color-text-light;
     }
+
+      &.list-view-btn i {
+        color: $color-primary-dark !important;
+      }
 
     &:focus-visible {
       outline: 2px solid $color-primary; // Changé: doré
