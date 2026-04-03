@@ -23,7 +23,7 @@
             <i class="fas fa-plus"></i>
             Ajouter un tournage
           </button>
-          <button @click="reinitialiserFiltres" class="sidebar-btn-add-tournage">
+          <button @click="reinitialiserFiltres" class="sidebar-btn-add-tournage reinitialiser-filtres-btn">
             <i class="fas fa-times"></i>
             Réinitialiser filtres
           </button>
