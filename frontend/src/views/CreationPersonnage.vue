@@ -13,7 +13,7 @@
         <div class="sidebar-actions-crea-personnage">
           <button 
             @click="goToForm" 
-            class="sidebar-btn-crea-personnage" 
+            class="sidebar-btn-crea-personnage " 
             :class="{ active: activeTab === 'form' && !isEditing }"
           >
             <i class="fas fa-plus"></i>
@@ -21,7 +21,7 @@
           </button>
           <button 
             @click="goToList" 
-            class="sidebar-btn-crea-personnage"
+            class="sidebar-btn-crea-personnage list-view-btn"
             :class="{ active: activeTab === 'list' }"
           >
             <i class="fas fa-list"></i>

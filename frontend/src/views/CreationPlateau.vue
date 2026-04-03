@@ -21,7 +21,7 @@
           </button>
           <button 
             @click="goToList" 
-            class="sidebar-btn-crea-plateau"
+            class="sidebar-btn-crea-plateau list-view-btn"
             :class="{ active: activeTab === 'list' }"
           >
             <i class="fas fa-list"></i>

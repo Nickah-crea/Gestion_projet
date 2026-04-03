@@ -1,45 +1,35 @@
 <template>
   <div class="app-wrapper-global">
-    <!-- Sidebar latérale originale - inchangée -->
-    <div class="creation-sidebar-projet-scenariste">
-      <div class="sidebar-header-projet-scenariste">
-        <h2 class="sidebar-title-projet-scenariste">Gestion Projets</h2>
-        <p class="sidebar-subtitle-projet-scenariste">Gérez vos projets et épisodes</p>
-      </div>
+    <!-- Sidebar latérale originale -->
+    <div class="creation-sidebar-crea-comedien">
+  <div class="sidebar-header-crea-comedien">
+    <h2 class="sidebar-title-crea-comedien">Gestion Projets</h2>
+    <p class="sidebar-subtitle-crea-comedien">Gérez vos projets et épisodes</p>
+  </div>
 
-      
-        <!-- Section Actions Rapides -->
-        <div class="sidebar-section-projet-scenariste">
-          <h3 class="section-title-projet-scenariste"><i class="fas fa-bolt"></i> Actions Rapides</h3>
-          <div class="sidebar-actions-projet-scenariste">
-            <button 
-              v-if="userRole !== 'UTILISATEUR'"
-              @click="goToAddEpisode" 
-              class="sidebar-btn-projet-scenariste nouvel-episode-btn" 
-            >
-              <i class="fas fa-plus"></i>
-              Nouvel épisode
-            </button>
-            <button 
-              @click="goBack" 
-              class="sidebar-btn-projet-scenariste"
-            >
-              <i class="fas fa-arrow-left"></i>
-              Retour
-            </button>
-          </div>
-        </div>
+  <!-- Section Actions Rapides -->
+  <div class="sidebar-section-crea-comedien">
+    <h3 class="section-title-crea-comedien"><i class="fas fa-bolt"></i> Actions Rapides</h3>
+    <div class="sidebar-actions-crea-comedien">
+      <button v-if="userRole !== 'UTILISATEUR'" @click="goToAddEpisode" class="sidebar-btn-crea-comedien nouvel-episode-btn">
+        <i class="fas fa-plus"></i> Nouvel épisode
+      </button>
+      <button @click="goBack" class="sidebar-btn-crea-comedien retour-btn">
+        <i class="fas fa-arrow-left"></i> Retour
+      </button>
+    </div>
+  </div>
 
       <!-- Section Filtres -->
-      <div class="sidebar-section-projet-scenariste">
-        <h3 class="section-title-projet-scenariste"><i class="fas fa-filter"></i> Filtres</h3>
-        <div class="filter-group-projet-scenariste">
-          <div class="filter-item-projet-scenariste">
+      <div class="sidebar-section-crea-comedien">
+        <h3 class="section-title-crea-comedien"><i class="fas fa-filter"></i> Filtres</h3>
+        <div class="filter-group-crea-comedien">
+          <div class="filter-item-crea-comedien">
             <label for="timePeriodFilter">Période</label>
             <select 
               id="timePeriodFilter" 
               v-model="filterTimePeriod" 
-              class="filter-select-projet-scenariste"
+              class="filter-select-crea-comedien"
             >
               <option value="all">Toutes les périodes</option>
               <option value="today">Aujourd'hui</option>
@@ -50,12 +40,12 @@
             </select>
           </div>
           
-          <div class="filter-item-projet-scenariste">
+          <div class="filter-item-crea-comedien">
             <label for="statutFilter">Statut</label>
             <select 
               id="statutFilter" 
               v-model="filterStatut" 
-              class="filter-select-projet-scenariste"
+              class="filter-select-crea-comedien"
             >
               <option value="">Tous</option>
               <option v-for="statut in statutsEpisode" :key="statut.idStatutEpisode" :value="statut.nomStatutsEpisode">
@@ -67,16 +57,16 @@
       </div>
 
       <!-- Section Statistiques -->
-      <div class="sidebar-section-projet-scenariste">
-        <h3 class="section-title-projet-scenariste"><i class="fas fa-chart-bar"></i> Statistiques</h3>
-        <div class="stats-projet-scenariste">
-          <div class="stat-item-projet-scenariste">
-            <span class="stat-number-projet-scenariste">{{ episodes.length }}</span>
-            <span class="stat-label-projet-scenariste">Total épisodes</span>
+      <div class="sidebar-section-crea-comedien">
+        <h3 class="section-title-crea-comedien"><i class="fas fa-chart-bar"></i> Statistiques</h3>
+        <div class="stats-crea-comedien">
+          <div class="stat-item-crea-comedien">
+            <span class="stat-number-crea-comedien">{{ episodes.length }}</span>
+            <span class="stat-label-crea-comedien">Total épisodes</span>
           </div>
-          <div class="stat-item-projet-scenariste">
-            <span class="stat-number-projet-scenariste">{{ filteredEpisodes.length }}</span>
-            <span class="stat-label-projet-scenariste">Épisodes filtrés</span>
+          <div class="stat-item-crea-comedien">
+            <span class="stat-number-crea-comedien">{{ filteredEpisodes.length }}</span>
+            <span class="stat-label-crea-comedien">Épisodes filtrés</span>
           </div>
         </div>
       </div>

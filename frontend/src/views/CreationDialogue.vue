@@ -22,7 +22,7 @@
           </button>
           <button 
             @click="goToList" 
-            class="sidebar-btn-crea-dialogue"
+            class="sidebar-btn-crea-dialogue list-view-btn"
             :class="{ active: activeTab === 'list' }"
           >
             <i class="fas fa-list"></i>

@@ -1,23 +1,23 @@
 <template>
   <div class="sequence-scenariste-details-page">
     <div class="app-wrapper-global">
-      <!-- Sidebar latérale - Même structure que EpisodeScenaristeDetails.vue -->
-      <div class="creation-sidebar-projet-scenariste">
-        <div class="sidebar-header-projet-scenariste">
-          <h2 class="sidebar-title-projet-scenariste">Détails Séquence</h2>
-          <p class="sidebar-subtitle-projet-scenariste">Gérez votre séquence et ses scènes</p>
+      <!-- Sidebar latérale -->
+      <div class="creation-sidebar-crea-comedien">
+        <div class="sidebar-header-crea-comedien">
+          <h2 class="sidebar-title-crea-comedien">Détails Séquence</h2>
+          <p class="sidebar-subtitle-crea-comedien">Gérez votre séquence et ses scènes</p>
         </div>
 
         <!-- Section Actions Rapides -->
-        <div class="sidebar-section-projet-scenariste">
-          <h3 class="section-title-projet-scenariste">
+        <div class="sidebar-section-crea-comedien">
+          <h3 class="section-title-crea-comedien">
             <i class="fas fa-bolt"></i> Actions Rapides
           </h3>
-          <div class="sidebar-actions-projet-scenariste">
+          <div class="sidebar-actions-crea-comedien">
             <!-- Bouton "Nouvelle scène" seulement si pas viewer -->
             <button 
               @click="goToAddScene" 
-              class="sidebar-btn-projet-scenariste nouvelle-scene-btn"
+              class="sidebar-btn-crea-comedien nouvelle-scene-btn"
               v-if="!isViewer"
             >
               <i class="fas fa-plus"></i>
@@ -25,7 +25,7 @@
             </button>
             <button 
               @click="goBack" 
-              class="sidebar-btn-projet-scenariste"
+              class="sidebar-btn-crea-comedien retour-btn"
             >
               <i class="fas fa-arrow-left"></i>
               Retour
@@ -34,17 +34,17 @@
         </div>
 
         <!-- Section Filtres -->
-        <div class="sidebar-section-projet-scenariste">
-          <h3 class="section-title-projet-scenariste">
-            <i class="fas fa-filter"></i> Filtres Scènes
+        <div class="sidebar-section-crea-comedien">
+          <h3 class="section-title-crea-comedien">
+            <i class="fas fa-filter"></i> Filtres
           </h3>
-          <div class="filter-group-projet-scenariste">
-            <div class="filter-item-projet-scenariste">
+          <div class="filter-group-crea-comedien">
+            <div class="filter-item-crea-comedien">
               <label for="timePeriodFilter">Période de mise à jour</label>
               <select 
                 id="timePeriodFilter" 
                 v-model="filterTimePeriod" 
-                class="filter-select-projet-scenariste"
+                class="filter-select-crea-comedien"
               >
                 <option value="all">Toutes les périodes</option>
                 <option value="today">Aujourd'hui</option>
@@ -55,12 +55,12 @@
               </select>
             </div>
             
-            <div class="filter-item-projet-scenariste">
+            <div class="filter-item-crea-comedien">
               <label for="statutFilter">Statut</label>
               <select 
                 id="statutFilter" 
                 v-model="filterStatut" 
-                class="filter-select-projet-scenariste"
+                class="filter-select-crea-comedien"
               >
                 <option value="">Tous</option>
                 <option v-for="statut in statutsScene" :key="statut.id" :value="statut.nomStatutsScene">
@@ -72,22 +72,22 @@
         </div>
 
         <!-- Section Statistiques -->
-        <div class="sidebar-section-projet-scenariste">
-          <h3 class="section-title-projet-scenariste">
+        <div class="sidebar-section-crea-comedien">
+          <h3 class="section-title-crea-comedien">
             <i class="fas fa-chart-bar"></i> Statistiques
           </h3>
-          <div class="stats-projet-scenariste">
-            <div class="stat-item-projet-scenariste">
-              <span class="stat-number-projet-scenariste">{{ scenes.length }}</span>
-              <span class="stat-label-projet-scenariste">Total scènes</span>
+          <div class="stats-crea-comedien">
+            <div class="stat-item-crea-comedien">
+              <span class="stat-number-crea-comedien">{{ scenes.length }}</span>
+              <span class="stat-label-crea-comedien">Total scènes</span>
             </div>
-            <div class="stat-item-projet-scenariste">
-              <span class="stat-number-projet-scenariste">{{ filteredScenes.length }}</span>
-              <span class="stat-label-projet-scenariste">Scènes filtrées</span>
+            <div class="stat-item-crea-comedien">
+              <span class="stat-number-crea-comedien">{{ filteredScenes.length }}</span>
+              <span class="stat-label-crea-comedien">Scènes filtrées</span>
             </div>
-            <div class="stat-item-projet-scenariste">
-              <span class="stat-number-projet-scenariste">{{ commentCount }}</span>
-              <span class="stat-label-projet-scenariste">Commentaires</span>
+            <div class="stat-item-crea-comedien">
+              <span class="stat-number-crea-comedien">{{ commentCount }}</span>
+              <span class="stat-label-crea-comedien">Commentaires</span>
             </div>
           </div>
         </div>

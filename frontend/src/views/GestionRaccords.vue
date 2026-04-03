@@ -21,7 +21,7 @@
           </button>
           <button 
             @click="goToList" 
-            class="sidebar-btn-crea-raccord"
+            class="sidebar-btn-crea-raccord list-view-btn"
             :class="{ active: activeTab === 'list' }"
           >
             <i class="fas fa-list"></i>
