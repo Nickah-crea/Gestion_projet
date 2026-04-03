@@ -73,7 +73,6 @@
 
           <!-- Upload de photos -->
           <div class="upload-section-raccord-photo">
-            <label>Photos pour ce type de raccord *</label>
             <input 
               type="file" 
               multiple 
