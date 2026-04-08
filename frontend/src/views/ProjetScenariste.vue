@@ -77,7 +77,7 @@
       <div class="creation-main-content-projet-scenariste">
 
 
-        <!-- Détails du projet avec design amélioré -->
+        <!-- Détails du projet -->
         <div class="project-details-spiral-Scenariste">
           <div class="project-info-spiral-Scenariste">
             <div class="project-main-content-Scenariste">
