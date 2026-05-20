@@ -55,7 +55,7 @@
 
             <div class="form-row-raccord-scene">
               <div class="form-group-raccord-scene">
-                <label for="scene-source">Scène Source *</label>
+                <label for="scene-source">Scène Source</label>
                 <select 
                   id="scene-source"
                   v-model="raccordData.sceneSourceId"
@@ -79,7 +79,7 @@
               </div>
 
               <div class="form-group-raccord-scene">
-                <label for="scene-cible">Scènes Cibles *</label>
+                <label for="scene-cible">Scènes Cibles</label>
                 <select 
                   id="scene-cible"
                   v-model="raccordData.scenesCibleIds"
