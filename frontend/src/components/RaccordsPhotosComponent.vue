@@ -73,20 +73,33 @@
 
           <!-- Upload de photos -->
           <div class="upload-section-raccord-photo">
-            <input 
-              type="file" 
-              multiple 
-              accept="image/*" 
-              @change="handleImageUpload"
-              class="file-input-raccord-photo"
-            >
+            <div class="upload-title-raccord-photo">
+              <i class="fas fa-images"></i>
+              <span>Sélectionner les images</span>
+            </div>
+            
+            <div class="file-input-wrapper-raccord-photo">
+              <input 
+                type="file" 
+                multiple 
+                accept="image/*" 
+                @change="handleImageUpload"
+                class="file-input-raccord-photo"
+                id="image-upload-input"
+              >
+              <label for="image-upload-input" class="upload-button-raccord-photo">
+                <i class="fas fa-cloud-upload-alt upload-emoji-raccord-photo"></i>
+                <span class="upload-text-raccord-photo">Cliquez ou glissez vos images ici</span>
+                <span class="upload-subtext-raccord-photo">JPG, PNG, JPEG</span>
+              </label>
+            </div>
+            
             <div v-if="previewImages.length" class="image-previews-raccord-photo">
               <div v-for="(preview, index) in previewImages" :key="index" class="image-preview-raccord-photo">
                 <img :src="preview" alt="Preview">
                 <button @click="removePreview(index)" class="remove-btn-raccord-photo">×</button>
               </div>
             </div>
-            <small class="field-note-raccord-photo">Formats supportés: JPG, PNG, JPEG</small>
           </div>
 
           <!-- Options supplémentaires -->
