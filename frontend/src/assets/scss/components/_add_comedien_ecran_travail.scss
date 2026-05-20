@@ -1,0 +1,808 @@
+// _add_comedien_ecran_travail.scss
+// Style unifié pour l'écran de création de comédiens
+// Palette : Coastal Breeze + Coastal Sage
+
+@import '../base/variables';
+
+// =============================================
+// VARIABLES LOCALES (override palette)
+// =============================================
+$primary-green: #8A9B78;      // Coastal sage - principal
+$primary-green-dark: #6B7A5C; // Sage profond
+$primary-green-light: #B8C9A8; // Sage clair
+
+$primary-blue: #9BB7C9;       // Soft chambray blue - accent secondaire
+$primary-blue-dark: #7A9BB3;  // Blue profond
+$primary-blue-light: #E3ECF2; // Blue clair
+
+$neutral-warm: #DCCFB8;       // Sandstone
+$neutral-dark: #53443D;       // Clove
+$neutral-light: #F1EFE6;      // Muslin
+
+$success: #8A9B78;            // Vert pour succès
+$warning: #AD7556;            // Terracotta pour warning
+$error: #C47A6B;              // Dusty rose pour erreur
+$info: #9BB7C9;               // Bleu pour info
+
+// =============================================
+// CONTENEUR PRINCIPAL
+// =============================================
+.creation-comedien {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  background: $neutral-light;
+  min-height: 100vh;
+
+  @media (max-width: $breakpoint-lg) {
+    padding: $spacing-md;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-sm;
+  }
+}
+
+// =============================================
+// EN-TÊTE DU FORMULAIRE
+// =============================================
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  padding-bottom: $spacing-md;
+  border-bottom: 2px solid $primary-blue-light;
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+    padding: $gap-sm $spacing-md;
+    background: transparent;
+    border: 1px solid $primary-blue;
+    border-radius: $border-radius-xs;
+    color: $primary-blue-dark;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+
+    .icon {
+      font-size: $font-size-p3;
+    }
+
+    &:hover {
+      background: $primary-blue-light;
+      border-color: $primary-blue-dark;
+      color: $neutral-dark;
+      transform: translateX(-2px);
+    }
+  }
+
+  h2 {
+    @include typography-playfair-h2;
+    color: $neutral-dark;
+    margin: 0;
+    background: linear-gradient(135deg, $primary-green, $primary-blue);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    
+    @media (max-width: $breakpoint-sm) {
+      font-size: calc(#{$font-size-h2} - 8px);
+    }
+  }
+}
+
+// =============================================
+// CONTENEUR DU FORMULAIRE
+// =============================================
+.form-container {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-xl;
+  box-shadow: $shadow-md;
+  border: 1px solid rgba($primary-green, 0.1);
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-md;
+  }
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $neutral-dark;
+    margin-bottom: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    
+    &::before {
+      content: '🎭';
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+// =============================================
+// FORMULAIRE
+// =============================================
+.comedien-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $neutral-dark;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $error;
+      margin-left: 2px;
+    }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
+  }
+
+  input:not([type="file"]),
+  select,
+  textarea {
+    width: 100%;
+    height: 44px;
+    padding: 0 $padding-md;
+    border: 1.5px solid $color-border;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-white;
+    transition: $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-green;
+      box-shadow: 0 0 0 3px rgba($primary-green, 0.1);
+    }
+
+    &:hover:not(:focus) {
+      border-color: $primary-blue;
+    }
+  }
+
+  .disabled-input {
+    background: $neutral-light;
+    color: $neutral-dark;
+    cursor: not-allowed;
+    opacity: 0.8;
+    border-color: $color-border;
+  }
+}
+
+// =============================================
+// UPLOAD PHOTO
+// =============================================
+.photo-upload {
+  .photo-input {
+    display: none;
+  }
+
+  .photo-label {
+    display: inline-flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $gap-sm $spacing-md;
+    background: $primary-blue-light;
+    border: 1.5px dashed $primary-blue;
+    border-radius: $border-radius-sm;
+    color: $primary-blue-dark;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+
+    &:hover {
+      background: rgba($primary-blue, 0.2);
+      border-color: $primary-blue-dark;
+      transform: translateY(-1px);
+    }
+  }
+
+  .photo-preview {
+    position: relative;
+    margin-top: $gap-md;
+    display: inline-block;
+
+    .preview-image {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: $border-radius-md;
+      border: 3px solid $primary-green;
+      box-shadow: $shadow-sm;
+    }
+
+    .remove-photo-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 32px;
+      height: 32px;
+      background: $error;
+      color: $color-white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-size-p3;
+      transition: $transition-fast;
+
+      &:hover {
+        background: $error;
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+// =============================================
+// DISPONIBILITÉS
+// =============================================
+.disponibilites-section {
+  .disponibilites-list {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+    margin-bottom: $gap-md;
+  }
+
+  .disponibilite-item {
+    .disponibilite-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: $gap-sm;
+      align-items: center;
+
+      @media (max-width: $breakpoint-sm) {
+        grid-template-columns: 1fr;
+        gap: $gap-xs;
+      }
+    }
+
+    .date-input,
+    .statut-select {
+      height: 40px;
+      padding: 0 $padding-sm;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-xs;
+      font-size: $font-size-p4;
+      background: $color-white;
+    }
+
+    .remove-dispo-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba($error, 0.1);
+      border: 1px solid $error;
+      border-radius: $border-radius-xs;
+      color: $error;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-size-h4;
+      transition: $transition-fast;
+
+      &:hover {
+        background: $error;
+        color: $color-white;
+      }
+    }
+  }
+
+  .btn-add-dispo {
+    width: 100%;
+    height: 40px;
+    background: transparent;
+    border: 1.5px dashed $primary-green;
+    border-radius: $border-radius-sm;
+    color: $primary-green;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: rgba($primary-green, 0.1);
+      border-color: $primary-green-dark;
+      color: $primary-green-dark;
+    }
+  }
+}
+
+// =============================================
+// ACTIONS DU FORMULAIRE
+// =============================================
+.form-actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  button {
+    padding: $gap-sm $spacing-xl;
+    border: none;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+
+    @media (max-width: $breakpoint-md) {
+      justify-content: center;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, $primary-green, $primary-blue);
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: $shadow-hover;
+      background: linear-gradient(135deg, $primary-green-dark, $primary-blue-dark);
+    }
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $neutral-dark;
+
+    &:hover:not(:disabled) {
+      background: $neutral-light;
+      border-color: $primary-green;
+      color: $primary-green;
+    }
+  }
+}
+
+// =============================================
+// LISTE DES COMÉDIENS
+// =============================================
+.comediens-list {
+  margin-top: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-md;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg;
+  }
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $neutral-dark;
+    margin-bottom: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+
+    &::before {
+      content: '📋';
+      font-size: $font-size-h4;
+    }
+  }
+}
+
+// États de chargement et vide
+.loading,
+.empty-state {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $color-text-muted;
+  font-size: $font-size-p3;
+}
+
+.loading {
+  &::before {
+    content: '⏳';
+    display: inline-block;
+    animation: spin 1s linear infinite;
+    margin-right: $gap-sm;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Grille des comédiens
+.comediens-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-md;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Carte comédien
+.comedien-card {
+  background: $color-white;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  box-shadow: $shadow;
+  transition: $transition-medium;
+  border: 1px solid rgba($primary-green, 0.1);
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+    border-color: rgba($primary-blue, 0.3);
+  }
+
+  .comedien-photo {
+    height: 200px;
+    overflow: hidden;
+    background: $neutral-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: $transition-medium;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    .photo-placeholder {
+      font-size: 64px;
+      opacity: 0.5;
+    }
+  }
+
+  .comedien-info {
+    padding: $spacing-md;
+    flex: 1;
+
+    h4 {
+      @include typography-playfair-h4;
+      color: $primary-green-dark;
+      margin: 0 0 $gap-sm 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    p {
+      @include typography-p4;
+      color: $color-text-secondary;
+      margin: $gap-xs 0;
+    }
+
+    .date-info {
+      font-size: $font-size-p5;
+      color: $color-text-muted;
+      margin-top: $gap-sm;
+    }
+  }
+
+  .comedien-actions {
+    display: flex;
+    gap: $gap-sm;
+    padding: $spacing-md;
+    border-top: 1px solid $color-border;
+    background: $neutral-light;
+
+    button {
+      flex: 1;
+      padding: $gap-sm;
+      border: none;
+      border-radius: $border-radius-xs;
+      cursor: pointer;
+      transition: $transition-fast;
+      font-size: $font-size-p3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-xs;
+    }
+
+    .btn-edit {
+      background: rgba($info, 0.1);
+      color: $info;
+
+      &:hover {
+        background: $info;
+        color: $color-white;
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn-delete {
+      background: rgba($error, 0.1);
+      color: $error;
+
+      &:hover {
+        background: $error;
+        color: $color-white;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// =============================================
+// DISPONIBILITÉS DANS LA LISTE
+// =============================================
+.disponibilites-display {
+  margin: $gap-sm 0;
+
+  strong {
+    @include typography-p4;
+    color: $neutral-dark;
+    display: block;
+    margin-bottom: $gap-xs;
+  }
+
+  .dispo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $gap-xs;
+    margin: $gap-xs 0;
+    background: $neutral-light;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p5;
+
+    .dispo-date {
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+
+    .dispo-statut {
+      padding: 2px 8px;
+      border-radius: $border-radius-pill;
+      font-weight: $font-weight-semibold;
+      font-size: $font-size-p5;
+    }
+  }
+}
+
+.no-disponibilites {
+  @include typography-p4;
+  color: $color-text-muted;
+  font-style: italic;
+  margin: $gap-sm 0;
+}
+
+// =============================================
+// BADGES DE STATUT
+// =============================================
+.statut-disponible {
+  background: rgba($success, 0.2);
+  color: darken($success, 15%);
+}
+
+.statut-indisponible {
+  background: rgba($error, 0.2);
+  color: $error;
+}
+
+.statut-occupe {
+  background: rgba($warning, 0.2);
+  color: darken($warning, 15%);
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comedien-card {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-md) {
+  .creation-comedien {
+    padding: $spacing-md;
+  }
+
+  .form-container,
+  .comediens-list {
+    padding: $spacing-lg;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// =============================================
+// ACCESSIBILITÉ
+// =============================================
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .comedien-card:hover {
+    transform: none;
+  }
+}
+
+// =============================================
+// MODAL DE CONFIRMATION (si nécessaire)
+// =============================================
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($neutral-dark, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content-confirm {
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  max-width: 500px;
+  width: 90%;
+  animation: fadeInUp 0.2s ease-out;
+  box-shadow: $shadow-xl;
+
+  .modal-header-confirm {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg;
+    border-bottom: 1px solid $color-border;
+    background: linear-gradient(135deg, rgba($error, 0.1), transparent);
+
+    h3 {
+      color: $error;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+    }
+  }
+
+  .modal-body-confirm {
+    padding: $spacing-lg;
+    text-align: center;
+
+    .warning-icon {
+      font-size: 48px;
+      margin-bottom: $spacing-md;
+    }
+
+    .warning-text {
+      font-size: $font-size-p3;
+      color: $color-text-primary;
+      margin-bottom: $gap-sm;
+    }
+
+    .warning-subtext {
+      font-size: $font-size-p4;
+      color: $color-text-muted;
+    }
+  }
+
+  .modal-footer-confirm {
+    padding: $spacing-lg;
+    border-top: 1px solid $color-border;
+    display: flex;
+    gap: $spacing-md;
+    justify-content: flex-end;
+
+    button {
+      padding: $gap-sm $spacing-lg;
+      border: none;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      font-weight: $font-weight-semibold;
+      transition: $transition-fast;
+    }
+
+    .cancel-confirm-btn {
+      background: transparent;
+      border: 1px solid $color-border;
+      color: $neutral-dark;
+
+      &:hover {
+        background: $neutral-light;
+      }
+    }
+
+    .delete-confirm-btn {
+      background: $error;
+      color: $color-white;
+
+      &:hover {
+        background: darken($error, 10%);
+      }
+    }
+  }
+}
+
+

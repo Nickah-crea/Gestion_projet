@@ -11,12 +11,233 @@
 // =============================================
 // BOUTON D'OUVERTURE DU MODAL
 // =============================================
-.btn-open-raccord-raccord-scene {
-  @include btn-cinema-primary;
+@import '../base/variables';
+
+// =============================================
+// BARRE DE NAVIGATION PRINCIPALE
+// =============================================
+
+.scene-tools-navbar {
+  position: fixed;
+  top: 60px; 
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: $color-primary;
+  border-bottom: 1px solid rgba($color-primary-dark, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $padding-md;
+  z-index: $z-index-fixed;
+  box-shadow: $shadow-lg;
+  transition: $transition;
+}
+
+/* Sections de la navbar */
+.navbar-left-section,
+.navbar-center-section,
+.navbar-right-section {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+}
+
+/* Titre de la navbar */
+.navbar-title {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  color: $color-primary-dark;
+  font-family: $font-family-primary;
+  font-size: $font-size-p1;
+  font-weight: $font-weight-semibold;
+  
+  i {
+    font-size: $font-size-p2;
+    color: $color-accent;
+  }
+}
+
+/* Permission notice */
+.navbar-permission-notice {
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+  background: rgba($color-accent, 0.15);
+  border-radius: $border-radius-xs;
+  padding: $padding-xs $padding-sm;
+  font-size: $font-size-p4;
+  color: $color-primary-dark;
+  
+  i {
+    font-size: $font-size-p4;
+    color: $color-accent;
+  }
+}
+
+// =============================================
+// STYLES DE BASE DES BOUTONS NAVBAR
+// =============================================
+
+@mixin nav-button-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-xs;
+  background: $color-background-alt;
+  border: 1px solid rgba($color-primary-dark, 0.2);
+  border-radius: $border-radius-xs;
+  padding: $padding-sm $padding-md;
+  color: $color-primary-dark;
+  font-family: $font-family-primary;
+  font-size: $font-size-p3;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-fast;
+  position: relative;
+  overflow: hidden;
+  min-width: 140px;
+  white-space: nowrap;
+  
+  i {
+    font-size: $font-size-p2;
+    transition: all $transition-fast;
+    margin-right: $gap-xs;
+  }
+  
+  span {
+    transition: color $transition-fast;
+  }
+  
+  &:hover:not(:disabled) {
+    background: darken($color-background-alt, 5%);
+    border-color: rgba($color-primary-dark, 0.4);
+    color: $color-primary-dark;
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+    
+    i {
+      transform: scale(1.1);
+    }
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    background: darken($color-background-alt, 8%);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba($color-primary-light, 0.15) 50%,
+      transparent 70%
+    );
+    transform: rotate(30deg);
+    transition: $transition-fast;
+    opacity: 0;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+    transform: rotate(30deg) translate(10%, 10%);
+  }
+  
+  .badge {
+    background: $color-accent;
+    color: $color-primary-light;
+    border-radius: $border-radius-pill;
+    padding: 2px 6px;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-bold;
+    margin-left: $gap-xs;
+    min-width: 20px;
+    text-align: center;
+  }
+}
+
+// =============================================
+// VARIANTES DE BOUTONS PAR ICÔNE
+// =============================================
+
+.nav-tool-btn {
+  @include nav-button-base;
+  
+  &.btn-pdf i {
+    color: $color-accent;
+  }
+  
+  &.btn-pdf:hover i {
+    color: $color-accent-dark;
+  }
+  
+  &.btn-images i {
+    color: $color-green-dark;
+  }
+  
+  &.btn-images:hover i {
+    color: $color-green;
+  }
+  
+  &.btn-dialogue i {
+    color: $color-secondary;
+  }
+  
+  &.btn-dialogue:hover i {
+    color: $color-secondary-dark;
+  }
+  
+  &.btn-comments i {
+    color: $color-tertiary;
+  }
+  
+  &.btn-comments:hover i {
+    color: $color-tertiary-dark;
+  }
+  
+  &.btn-email i {
+    color: $color-cool;
+  }
+  
+  &.btn-email:hover i {
+    color: darken($color-cool, 15%);
+  }
+}
+
+// =============================================
+// STYLE SPÉCIFIQUE POUR .btn-open-raccords-raccord-photo
+// =============================================
+
+.btn-open-raccords-raccord-photo {
+  @include nav-button-base;
   padding: $padding-sm $padding-lg;
   font-size: $font-size-p3;
   text-transform: none;
   letter-spacing: normal;
+  background: $color-background-alt;
   
   i {
     font-size: $font-size-p2;
@@ -30,9 +251,349 @@
     
     &:hover {
       transform: none;
-      box-shadow: $shadow-primary;
+      box-shadow: none;
     }
   }
+}
+
+// =============================================
+// STYLE SPÉCIFIQUE POUR .btn-open-raccord-raccord-scene
+// =============================================
+
+.btn-open-raccord-raccord-scene {
+  @include nav-button-base;
+  padding: $padding-sm $padding-lg;
+  font-size: $font-size-p3;
+  text-transform: none;
+  letter-spacing: normal;
+  background: $color-background-alt;
+  
+  i {
+    font-size: $font-size-p2;
+    margin-right: $gap-xs;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVE POUR LES BOUTONS SPÉCIFIQUES
+// =============================================
+
+// Desktop large (max-width: 1200px)
+@media (max-width: $breakpoint-xl) {
+  .btn-open-raccords-raccord-photo,
+  .btn-open-raccord-raccord-scene {
+    min-width: 120px;
+    padding: $padding-sm $padding-md;
+  }
+}
+
+// Desktop small (max-width: 992px)
+@media (max-width: $breakpoint-lg) {
+  .btn-open-raccords-raccord-photo,
+  .btn-open-raccord-raccord-scene {
+    min-width: 50px;
+    width: 50px;
+    padding: $padding-sm;
+    
+    span {
+      display: none;
+    }
+    
+    i {
+      margin: 0;
+      font-size: $font-size-p1;
+    }
+  }
+}
+
+// Tablette (max-width: 768px)
+@media (max-width: $breakpoint-md) {
+  .btn-open-raccords-raccord-photo,
+  .btn-open-raccord-raccord-scene {
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    
+    i {
+      font-size: $font-size-p2;
+      margin: 0;
+    }
+  }
+}
+
+// Mobile (max-width: 576px)
+@media (max-width: $breakpoint-sm) {
+  .btn-open-raccords-raccord-photo,
+  .btn-open-raccord-raccord-scene {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    
+    i {
+      font-size: $font-size-p3;
+      margin: 0;
+    }
+  }
+}
+
+// =============================================
+// SECTION CENTRALE
+// =============================================
+
+.navbar-center-section {
+  flex: 1;
+  justify-content: center;
+  gap: $gap-lg;
+  
+  .nav-tool-item {
+    position: relative;
+    
+    :deep(.raccords-photos-container),
+    :deep(.raccord-scene-container) {
+      display: inline-block;
+      
+      button {
+        @include nav-button-base;
+        
+        .badge-count {
+          background: $color-accent;
+          color: $color-primary-light;
+          border-radius: $border-radius-pill;
+          padding: 2px 6px;
+          font-size: $font-size-p4;
+          font-weight: $font-weight-bold;
+          margin-left: $gap-xs;
+        }
+      }
+    }
+  }
+}
+
+// =============================================
+// BOUTON FERMER
+// =============================================
+
+.close-navbar-btn {
+  @include nav-button-base;
+  background: rgba($color-background-alt, 0.9);
+  border-color: rgba($color-primary-dark, 0.3);
+  color: $color-accent;
+  min-width: auto;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  
+  i {
+    color: $color-accent;
+    margin-right: 0;
+  }
+  
+  &:hover {
+    background: $color-background-alt;
+    border-color: $color-accent;
+    transform: rotate(90deg);
+    
+    i {
+      color: $color-accent-dark;
+    }
+  }
+}
+
+// =============================================
+// EFFET DE BRILLANCE SUR LA NAVBAR
+// =============================================
+
+.scene-tools-navbar::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba($color-accent, 0.4), 
+    transparent
+  );
+}
+
+// =============================================
+// RESPONSIVE GLOBAL
+// =============================================
+
+@media (max-width: $breakpoint-xl) {
+  .scene-tools-navbar {
+    padding: 0 $padding-sm;
+  }
+  
+  .navbar-left-section,
+  .navbar-center-section,
+  .navbar-right-section {
+    gap: $gap-sm;
+  }
+  
+  .navbar-center-section {
+    gap: $gap-md;
+  }
+  
+  .nav-tool-btn {
+    min-width: 120px;
+    padding: $padding-sm $padding-md;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .navbar-center-section {
+    gap: $gap-sm;
+    
+    .nav-tool-btn {
+      min-width: 100px;
+      
+      span {
+        display: none;
+      }
+      
+      i {
+        font-size: $font-size-p1;
+        margin: 0;
+      }
+      
+      .badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        margin-left: 0;
+      }
+    }
+    
+    :deep(.raccords-photos-container button),
+    :deep(.raccord-scene-container button) {
+      min-width: 50px;
+      width: 50px;
+      padding: $padding-sm;
+      
+      span {
+        display: none;
+      }
+      
+      i {
+        margin: 0;
+        font-size: $font-size-p1;
+      }
+      
+      .badge-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+      }
+    }
+  }
+  
+  .navbar-title span {
+    display: none;
+  }
+  
+  .navbar-permission-notice span {
+    display: none;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .scene-tools-navbar {
+    height: 50px;
+    padding: 0 $padding-xs;
+    top: 55px;
+    
+    &.with-right-sidebar {
+      right: 200px;
+    }
+  }
+  
+  .navbar-center-section {
+    gap: $gap-xs;
+    
+    .nav-tool-btn {
+      min-width: 40px;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      
+      i {
+        font-size: $font-size-p2;
+      }
+    }
+    
+    :deep(.raccords-photos-container button),
+    :deep(.raccord-scene-container button) {
+      min-width: 40px;
+      width: 40px;
+      height: 40px;
+    }
+  }
+  
+  .close-navbar-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .navbar-center-section {
+    gap: 4px;
+  }
+  
+  .nav-tool-btn {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    
+    i {
+      font-size: $font-size-p3;
+    }
+  }
+  
+  :deep(.raccords-photos-container button),
+  :deep(.raccord-scene-container button) {
+    min-width: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+  }
+  
+  .close-navbar-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+// =============================================
+// ANIMATIONS
+// =============================================
+
+@keyframes pulseBadge {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.nav-tool-btn .badge,
+:deep(.nav-tool-btn .badge-count) {
+  animation: pulseBadge 2s infinite;
 }
 
 // =============================================

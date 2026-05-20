@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <!-- Section centrale : outils principaux (boutons normaux) -->
+    <!-- Section centrale : outils principaux -->
     <div class="navbar-center-section">
       <!-- Raccords Photos -->
       <div class="nav-tool-item" v-if="userPermissions.canViewRaccords">
@@ -44,45 +44,49 @@
         />
       </div>
       
-      <!-- Actions Rapides - boutons normaux (plus dropdown) -->
+      <!-- PDF Scène -->
       <div class="nav-tool-item" v-if="userPermissions.canExport">
-        <button class="nav-tool-btn" @click="exportScenePDF">
+        <button class="nav-tool-btn btn-pdf" @click="exportScenePDF">
           <i class="fas fa-file-pdf"></i>
           <span>PDF Scène</span>
         </button>
       </div>
       
+      <!-- Raccords + Images -->
       <div class="nav-tool-item" v-if="userPermissions.canExport && userPermissions.canViewRaccords">
-        <button class="nav-tool-btn" @click="exportRaccordsWithImages">
+        <button class="nav-tool-btn btn-images" @click="exportRaccordsWithImages">
           <i class="fas fa-file-image"></i>
           <span>Raccords + Images</span>
         </button>
       </div>
       
+      <!-- Nouveau dialogue -->
       <div class="nav-tool-item" v-if="userPermissions.canCreateDialogue">
-        <button class="nav-tool-btn" @click="startAddDialogue">
+        <button class="nav-tool-btn btn-dialogue" @click="startAddDialogue">
           <i class="fas fa-comment-medical"></i>
           <span>Nouveau dialogue</span>
         </button>
       </div>
       
+      <!-- Commentaires -->
       <div class="nav-tool-item">
-        <button class="nav-tool-btn" @click="toggleComments">
+        <button class="nav-tool-btn btn-comments" @click="toggleComments">
           <i class="fas fa-comments"></i>
           <span>Commentaires</span>
           <span class="badge" v-if="commentCount > 0">{{ commentCount }}</span>
         </button>
       </div>
       
-      <div class="nav-tool-item">
-        <button class="nav-tool-btn" @click="openEmailModal">
+      <!-- Email -->
+      <div class="nav-tool-item" v-if="userPermissions.canSendEmail">
+        <button class="nav-tool-btn btn-email" @click="openEmailModal">
           <i class="fas fa-envelope"></i>
           <span>Email</span>
         </button>
       </div>
     </div>
 
-    <!-- Section droite : bouton fermer uniquement -->
+    <!-- Section droite : bouton fermer -->
     <div class="navbar-right-section">
       <button class="close-navbar-btn" @click="closeNavbar" title="Masquer les outils">
         <i class="fas fa-times"></i>

@@ -10,12 +10,17 @@
 // =============================================
 // BOUTON D'OUVERTURE DU MODAL
 // =============================================
+// =============================================
+// STYLE SPÉCIFIQUE POUR .btn-open-raccords-raccord-photo
+// =============================================
+
 .btn-open-raccords-raccord-photo {
-  @include btn-cinema-primary;
+  @include nav-button-base;
   padding: $padding-sm $padding-lg;
   font-size: $font-size-p3;
   text-transform: none;
   letter-spacing: normal;
+  background: $color-background-alt;
   
   i {
     font-size: $font-size-p2;
@@ -29,10 +34,71 @@
     
     &:hover {
       transform: none;
-      box-shadow: $shadow-primary;
+      box-shadow: none;
     }
   }
 }
+
+// =============================================
+// RESPONSIVE POUR .btn-open-raccords-raccord-photo
+// =============================================
+
+// Tablette (max-width: 1200px)
+@media (max-width: $breakpoint-xl) {
+  .btn-open-raccords-raccord-photo {
+    min-width: 120px;
+    padding: $padding-sm $padding-md;
+  }
+}
+
+// Desktop small (max-width: 992px)
+@media (max-width: $breakpoint-lg) {
+  .btn-open-raccords-raccord-photo {
+    min-width: 50px;
+    width: 50px;
+    padding: $padding-sm;
+    
+    span {
+      display: none;
+    }
+    
+    i {
+      margin: 0;
+      font-size: $font-size-p1;
+    }
+  }
+}
+
+// Tablette (max-width: 768px)
+@media (max-width: $breakpoint-md) {
+  .btn-open-raccords-raccord-photo {
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    
+    i {
+      font-size: $font-size-p2;
+      margin: 0;
+    }
+  }
+}
+
+// Mobile (max-width: 576px)
+@media (max-width: $breakpoint-sm) {
+  .btn-open-raccords-raccord-photo {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    
+    i {
+      font-size: $font-size-p3;
+      margin: 0;
+    }
+  }
+}
+
 
 // =============================================
 // MODAL OVERLAY
