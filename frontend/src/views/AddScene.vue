@@ -13,20 +13,20 @@
         <div class="sidebar-actions-add-scene">
           <button 
             @click="goToForm" 
-            class="sidebar-btn-add-scene" 
+            class="sidebar-btn-add-scene nouvelle-scene-btn" 
             :class="{ active: activeTab === 'form' && !isEditing }"
           >
             <i class="fas fa-plus"></i>
             Nouvelle scène
           </button>
-          <button @click="goBack" class="sidebar-btn-add-scene">
+          <button @click="goBack" class="sidebar-btn-add-scene retour-btn">
             <i class="fas fa-arrow-left"></i>
             Retourner à la séquence
           </button>
         </div>
       </div>
 
-      <!-- Section Filtres -->
+      <!-- Section Informations -->
       <div class="sidebar-section-add-scene">
         <h3 class="section-title-add-scene"><i class="fas fa-filter"></i> Informations</h3>
         <div class="filter-group-add-scene">

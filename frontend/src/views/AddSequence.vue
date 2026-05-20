@@ -14,19 +14,18 @@
         <div class="sidebar-actions-add-sequence">
           <button 
             @click="goToForm" 
-            class="sidebar-btn-add-sequence" 
+            class="sidebar-btn-add-sequence nouvelle-sequence-btn" 
             :class="{ active: activeTab === 'form' && !isEditing }"
           >
             <i class="fas fa-plus"></i>
             Nouvelle séquence
           </button>
-          <button @click="goBack" class="sidebar-btn-add-sequence">
-                  <i class="fas fa-arrow-left"></i>
-                  Retourner à l'épisode
+          <button @click="goBack" class="sidebar-btn-add-sequence retour-btn">
+            <i class="fas fa-arrow-left"></i>
+            Retourner à l'épisode
           </button>
         </div>
       </div>
-
       <!-- Section Filtres -->
       <div class="sidebar-section-add-sequence">
         <h3 class="section-title-add-sequence"><i class="fas fa-filter"></i> Informations</h3>

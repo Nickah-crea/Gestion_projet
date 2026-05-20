@@ -20,18 +20,15 @@
             <i class="fas fa-plus"></i>
             Nouvel épisode
           </button>
-          <button 
-            @click="goToList" 
-            class="sidebar-btn-add-episode"
-            :class="{ active: activeTab === 'list' }"
-          >
+          <button @click="goToList" class="sidebar-btn-add-episode list-view-btn">
             <i class="fas fa-list"></i>
             Voir la liste
           </button>
-          <button @click="goBack" class="sidebar-btn-add-episode">
-                  <i class="fas fa-arrow-left"></i>
-                  Retour
-          </button>
+
+          <button @click="goBack" class="sidebar-btn-add-episode retour-btn">
+            <i class="fas fa-arrow-left"></i>
+            Retour
+</button>
         </div>
       </div>
 
