@@ -2,34 +2,34 @@
 @import '../base/variables';
 
 // =============================================
-// HEADER ÉCRAN DE TRAVAIL - TOUT SUR UNE LIGNE
+// HEADER ÉCRAN DE TRAVAIL
 // =============================================
 .header-ecran-travail-screen-work-header-navigation {
   position: fixed;
   left: 0;
   right: 0;
-  top: 60px; // Position par défaut
+  top: 60px;
   z-index: $z-index-sticky;
-  background: $color-primary; // COULEUR SOLIDE - 100% OPACITÉ
-  border-bottom: 1px solid $color-border;
+  background: $color-primary;
+  border-bottom: 1px solid rgba($color-text-light, 0.2);
   box-shadow: $shadow-md;
   height: 60px;
   transition: $transition-medium;
   border-radius: 0 0 20px 20px;
 
   &.scene-mode-active-header-navigation {
-    top: 120px; // MODIFIÉ: 120px pour le mode scène
-    background: $color-background-dark; // COULEUR SOLIDE
+    top: 120px;
+    background: $color-primary-dark;
   }
 
   &.sequence-mode-active-header-navigation,
   &.episode-mode-active-header-navigation {
-    background: $color-background-dark; // COULEUR SOLIDE
+    background: $color-primary;
   }
 }
 
 // =============================================
-// CONTENEUR PRINCIPAL - UNE SEULE LIGNE
+// CONTENEUR PRINCIPAL
 // =============================================
 .fixed-nav-container-screen-work-header-navigation {
   display: flex;
@@ -37,117 +37,149 @@
   justify-content: space-between;
   height: 100%;
   padding: 0 $padding-md;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
-  
-  // Structure en 3 colonnes fixes
-  > * {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    height: 100%;
-  }
 }
 
 // =============================================
-// DISPOSITION DES COLONNES
+// COLONNE GAUCHE - Navigation globale Précédent
 // =============================================
-// Colonne gauche - Précédent
 .left-section-header-navigation {
   flex: 0 0 auto;
-  justify-content: flex-start;
-  width: 150px;
+  min-width: 140px;
   
   .global-navigation-buttons-header-navigation {
+    display: flex;
     justify-content: flex-start;
-    width: 100%;
   }
 }
 
-// Colonne centre-gauche - Navigation scène (conditionnelle)
-.scene-section-header-navigation {
-  flex: 0 0 auto;
-  justify-content: center;
-  margin: 0 10px;
-  
-  .scene-navigation-buttons-screen-work-header-navigation {
-    gap: 8px;
-  }
-}
-
-// Colonne centre - Contexte
+// =============================================
+// COLONNE CENTRE - Navigation scène + Contexte
+// =============================================
 .center-section-header-navigation {
   flex: 1;
-  justify-content: center;
-  min-width: 0;
-  overflow: hidden;
-  padding: 0 20px;
-  
-  // Forcer le centrage
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 20px;
+  min-width: 0;
+  padding: 0 20px;
 }
 
-// Colonne droite - Suivant
-.right-section-header-navigation {
-  flex: 0 0 auto;
-  justify-content: flex-end;
-  width: 150px;
+// Navigation scène (boutons Préc. Scène / Suiv. Scène)
+.scene-nav-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.scene-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  height: 36px;
+  border-radius: $border-radius-xs;
+  border: none;
+  background: $color-background-light;
+  color: $color-primary-dark;
+  cursor: pointer;
+  transition: all $transition-fast;
+  white-space: nowrap;
   
-  .global-navigation-buttons-header-navigation {
-    justify-content: flex-end;
-    width: 100%;
+  &:hover:not(:disabled) {
+    background: $color-primary-light;
+    color: $color-primary-dark;
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  
+  i {
+    font-size: $font-size-p4;
+  }
+}
+
+// Contexte actuel (Épisode X • Séquence Y • Scène Z)
+.current-context-screen-work-header-navigation {
+  @include typography-playfair-p3;
+  font-size: $font-size-p2;
+  color: $color-text-light;
+  background: rgba($color-text-light, 0.15);
+  padding: 6px 20px;
+  border-radius: $border-radius-pill;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  line-height: 1.3;
+  flex-shrink: 1;
+  min-width: 0;
+  backdrop-filter: blur(4px);
+  
+  .scene-mode-active-header-navigation & {
+    background: rgba($color-accent, 0.3);
+    color: $color-text-light;
   }
 }
 
 // =============================================
-// BOUTONS DE NAVIGATION - MODIFIÉS
+// COLONNE DROITE - Navigation globale Suivant
 // =============================================
-.global-navigation-buttons-header-navigation,
-.scene-navigation-buttons-screen-work-header-navigation {
+.right-section-header-navigation {
+  flex: 0 0 auto;
+  min-width: 140px;
+  
+  .global-navigation-buttons-header-navigation {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+// =============================================
+// BOUTONS GLOBAUX
+// =============================================
+.global-navigation-buttons-header-navigation {
   display: flex;
   align-items: center;
-  flex-shrink: 0;
+  gap: 12px;
   
   button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 8px 16px;
+    gap: 8px;
+    padding: 8px 18px;
     font-size: $font-size-p4;
     font-weight: $font-weight-medium;
-    height: 36px;
-    min-width: 110px;
+    height: 38px;
     border-radius: $border-radius-xs;
-    border: 1px solid $color-border;
-    background: $color-surface; // COULEUR SOLIDE - 100% OPACITÉ
-    color: $color-text-light;
+    border: none;
+    background: $color-background-light;
+    color: $color-primary-dark;
     cursor: pointer;
     transition: all $transition-fast;
     white-space: nowrap;
     
     &:hover:not(:disabled) {
-      background: $color-surface-hover; // COULEUR SOLIDE
-      border-color: $color-accent;
-      color: $color-text-light;
+      background: $color-primary-light;
       transform: translateY(-1px);
-      box-shadow: $shadow;
+      box-shadow: $shadow-sm;
     }
     
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
-      background: rgba($color-text-muted, 0.1); // MODIFIÉ: opacité réduite
-      color: $color-text-muted;
-      
-      &:hover {
-        transform: none;
-        box-shadow: none;
-      }
     }
     
     i {
@@ -156,392 +188,128 @@
   }
 }
 
-// Style spécifique pour les boutons scène
-.scene-navigation-buttons-screen-work-header-navigation {
-  gap: 8px;
-  
-  .scene-nav-btn-screen-work-header-navigation {
+// =============================================
+// MODE SANS NAVIGATION SCÈNE
+// =============================================
+.fixed-nav-container-screen-work-header-navigation:not(:has(.scene-nav-wrapper)) {
+  .center-section-header-navigation {
+    justify-content: center;
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: $breakpoint-lg) {
+  .left-section-header-navigation,
+  .right-section-header-navigation {
     min-width: 120px;
-    background: $color-background; // COULEUR SOLIDE
-    color: $color-primary;
-    
-    &:hover:not(:disabled) {
-      border-color: $color-secondary;
-      color: $color-secondary;
-      background: lighten($color-background, 5%); // COULEUR SOLIDE
-    }
+  }
+  
+  .scene-nav-btn {
+    padding: 5px 12px;
+    font-size: $font-size-p5;
+  }
+  
+  .current-context-screen-work-header-navigation {
+    font-size: $font-size-p3;
+    padding: 5px 16px;
+  }
+  
+  .global-navigation-buttons-header-navigation button {
+    padding: 6px 14px;
+    font-size: $font-size-p5;
   }
 }
 
-// =============================================
-// CONTEXTE ACTUEL - MODIFIÉ
-// =============================================
-.current-context-screen-work-header-navigation {
-  @include typography-playfair-h4;
-  font-size: $font-size-p2;
-  color: $color-text-light;
-  background: $color-surface; // COULEUR SOLIDE
-  padding: 8px 24px;
-  border-radius: $border-radius-pill;
-  border: 1px solid $color-border;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-  transition: $transition-fast;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 100%;
-  box-shadow: $shadow;
-  line-height: 1;
-  flex-shrink: 1;
-  min-width: 0;
-  
-  // Séparateurs entre éléments
-  span:not(:last-child)::after {
-    content: " • ";
-    margin: 0 6px;
-    color: $color-text-muted;
-    font-weight: $font-weight-regular;
+@media (max-width: $breakpoint-md) {
+  .fixed-nav-container-screen-work-header-navigation {
+    padding: 0 $padding-sm;
   }
   
-  // Styles spécifiques selon le mode - MODIFIÉS
-  .scene-mode-active-header-navigation & {
-    background: $color-tertiary; // COULEUR SOLIDE
-    border-color: darken($color-tertiary, 10%);
-    color: $color-text-light;
-  }
-  
-  .sequence-mode-active-header-navigation & {
-    background: $color-sequence; // COULEUR SOLIDE
-    border-color: darken($color-sequence, 10%);
-    color: $color-text-light;
-  }
-  
-  .episode-mode-active-header-navigation & {
-    background: $color-episode; // COULEUR SOLIDE
-    border-color: darken($color-episode, 10%);
-    color: $color-text-light;
-  }
-}
-
-// =============================================
-// DISPOSITION SPÉCIFIQUE SANS NAVIGATION SCÈNE
-// =============================================
-.fixed-nav-container-screen-work-header-navigation:not(:has(.scene-section-header-navigation)) {
-  .left-section-header-navigation {
-    width: 200px;
+  .left-section-header-navigation,
+  .right-section-header-navigation {
+    min-width: 100px;
   }
   
   .center-section-header-navigation {
-    flex: 2;
+    gap: 10px;
   }
   
-  .right-section-header-navigation {
-    width: 200px;
-  }
-}
-
-// =============================================
-// RESPONSIVE DESIGN
-// =============================================
-@include respond-to($breakpoint-lg) {
-  .fixed-nav-container-screen-work-header-navigation {
-    padding: 0 $padding-lg;
-  }
-  
-  .left-section-header-navigation,
-  .right-section-header-navigation {
-    width: 160px;
-  }
-  
-  .scene-section-header-navigation {
-    margin: 0 15px;
+  .scene-nav-btn {
+    padding: 4px 10px;
+    
+    span {
+      display: none;
+    }
+    
+    i {
+      font-size: $font-size-p3;
+    }
   }
   
   .current-context-screen-work-header-navigation {
-    font-size: $font-size-p1;
-    padding: 10px 28px;
-  }
-  
-  .global-navigation-buttons-header-navigation button,
-  .scene-navigation-buttons-screen-work-header-navigation .scene-nav-btn-screen-work-header-navigation {
-    min-width: 130px;
-    padding: 10px 18px;
-    font-size: $font-size-p3;
-  }
-}
-
-@include respond-to($breakpoint-md) {
-  .fixed-nav-container-screen-work-header-navigation {
-    padding: 0 $padding-md;
-  }
-  
-  .left-section-header-navigation,
-  .right-section-header-navigation {
-    width: 140px;
-  }
-  
-  .scene-section-header-navigation {
-    margin: 0 8px;
-  }
-  
-  .current-context-screen-work-header-navigation {
-    font-size: $font-size-p2;
-    padding: 6px 20px;
-  }
-  
-  .global-navigation-buttons-header-navigation button,
-  .scene-navigation-buttons-screen-work-header-navigation .scene-nav-btn-screen-work-header-navigation {
-    min-width: 115px;
-    padding: 7px 14px;
     font-size: $font-size-p4;
-  }
-}
-
-@include respond-to($breakpoint-sm) {
-  .header-ecran-travail-screen-work-header-navigation {
-    height: auto;
-    min-height: 80px;
-    top: 60px !important; // Position normale sur mobile
-    
-    &.scene-mode-active-header-navigation {
-      top: 120px !important; // MODIFIÉ: 120px pour scène sur mobile
-    }
+    padding: 4px 12px;
   }
   
-  .fixed-nav-container-screen-work-header-navigation {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    padding: 0 $padding-sm;
-    gap: 8px;
-    height: auto;
-    min-height: 70px;
-    justify-content: center;
+  .global-navigation-buttons-header-navigation button {
+    padding: 5px 10px;
     
-    > * {
-      width: 100% !important;
-      margin: 0 !important;
-      justify-content: center !important;
-      height: auto;
+    span {
+      display: none;
     }
     
-    // Réorganisation mobile
-    .center-section-header-navigation {
-      order: 1;
-    }
-    
-    .scene-section-header-navigation {
-      order: 2;
-    }
-    
-    .left-section-header-navigation,
-    .right-section-header-navigation {
-      order: 3;
-    }
-  }
-  
-  .current-context-screen-work-header-navigation {
-    height: 34px;
-    font-size: $font-size-p3;
-    padding: 6px 16px;
-    max-width: 95%;
-    margin: 2px 0;
-  }
-  
-  .global-navigation-buttons-header-navigation,
-  .scene-navigation-buttons-screen-work-header-navigation {
-    justify-content: center;
-    width: 100%;
-    
-    button {
-      min-width: 48%;
-      max-width: 48%;
-      height: 34px;
-      padding: 6px 10px;
-      font-size: $font-size-p4;
-    }
-  }
-  
-  .scene-navigation-buttons-screen-work-header-navigation {
-    justify-content: space-between;
-    
-    button {
-      min-width: 48%;
-      max-width: 48%;
-    }
-  }
-  
-  // Pour la navigation globale sur mobile
-  .left-section-header-navigation .global-navigation-buttons-header-navigation,
-  .right-section-header-navigation .global-navigation-buttons-header-navigation {
-    justify-content: center;
-    
-    button {
-      min-width: 48%;
-      max-width: 48%;
+    i {
+      font-size: $font-size-p3;
     }
   }
 }
 
-@include respond-to($breakpoint-xs) {
+@media (max-width: $breakpoint-sm) {
   .header-ecran-travail-screen-work-header-navigation {
-    min-height: 85px;
+    height: 50px;
+    top: 60px;
     
     &.scene-mode-active-header-navigation {
-      top: 120px !important; // MODIFIÉ: 120px pour scène sur très petit écran
+      top: 110px;
     }
   }
   
   .fixed-nav-container-screen-work-header-navigation {
     padding: 0 $padding-xs;
+  }
+  
+  .center-section-header-navigation {
     gap: 6px;
   }
   
-  .global-navigation-buttons-header-navigation button,
-  .scene-navigation-buttons-screen-work-header-navigation .scene-nav-btn-screen-work-header-navigation {
-    min-width: 46%;
+  .scene-nav-btn {
+    padding: 4px 8px;
+    min-width: 32px;
+  }
+  
+  .current-context-screen-work-header-navigation {
     font-size: $font-size-p5;
-    padding: 5px 8px;
-  }
-  
-  .current-context-screen-work-header-navigation {
-    font-size: $font-size-p4;
-    padding: 5px 14px;
-    height: 32px;
+    padding: 3px 8px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
 // =============================================
-// AJUSTEMENTS SPÉCIFIQUES
+// ACCESSIBILITÉ
 // =============================================
-// Assurer que Précédent reste à gauche et Suivant à droite
-@media (min-width: $breakpoint-sm) {
-  .fixed-nav-container-screen-work-header-navigation {
-    .left-section-header-navigation {
-      justify-content: flex-start !important;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .header-ecran-travail-screen-work-header-navigation,
+  .scene-nav-btn,
+  .global-navigation-buttons-header-navigation button {
+    transition: none;
     
-    .right-section-header-navigation {
-      justify-content: flex-end !important;
-    }
-    
-    .center-section-header-navigation {
-      position: relative;
-      
-      // Séparateurs visuels
-      &::before,
-      &::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        width: 1px;
-        height: 24px;
-        background: rgba($color-border, 0.4);
-        transform: translateY(-50%);
-      }
-      
-      &::before {
-        left: -12px;
-      }
-      
-      &::after {
-        right: -12px;
-      }
-    }
-  }
-}
-
-// Pour les très larges écrans
-@media (min-width: 1600px) {
-  .fixed-nav-container-screen-work-header-navigation {
-    max-width: 1500px;
-    
-    .left-section-header-navigation,
-    .right-section-header-navigation {
-      width: 180px;
-    }
-    
-    .current-context-screen-work-header-navigation {
-      font-size: $font-size-h4;
-      padding: 10px 30px;
-    }
-  }
-}
-
-@include respond-to($breakpoint-sm) {
-  .header-ecran-travail-screen-work-header-navigation {
-    height: 60px !important; // Garder la même hauteur
-    min-height: 60px !important;
-    top: 60px !important; // Position normale
-    
-    &.scene-mode-active-header-navigation {
-      top: 120px !important; // MODIFIÉ: 120px pour scène
-    }
-  }
-  
-  .fixed-nav-container-screen-work-header-navigation {
-    flex-direction: row !important; // FORCER en ligne
-    flex-wrap: nowrap !important;
-    padding: 0 $padding-md !important;
-    gap: 10px !important;
-    height: 100% !important;
-    min-height: auto !important;
-    justify-content: space-between !important;
-    
-    > * {
-      width: auto !important;
-      margin: 0 !important;
-      height: 100% !important;
-    }
-    
-    // Garder l'ordre desktop
-    .left-section-header-navigation {
-      order: 1 !important;
-      width: 130px !important;
-      justify-content: flex-start !important;
-    }
-    
-    .scene-section-header-navigation {
-      order: 2 !important;
-      margin: 0 5px !important;
-      justify-content: center !important;
-    }
-    
-    .center-section-header-navigation {
-      order: 3 !important;
-      padding: 0 10px !important;
-      justify-content: center !important;
-    }
-    
-    .right-section-header-navigation {
-      order: 4 !important;
-      width: 130px !important;
-      justify-content: flex-end !important;
-    }
-  }
-  
-  .current-context-screen-work-header-navigation {
-    height: 36px !important;
-    font-size: $font-size-p3 !important;
-    padding: 6px 16px !important;
-    max-width: none !important;
-    margin: 0 !important;
-  }
-  
-  .global-navigation-buttons-header-navigation,
-  .scene-navigation-buttons-screen-work-header-navigation {
-    justify-content: center !important;
-    width: auto !important;
-    
-    button {
-      min-width: 110px !important;
-      max-width: none !important;
-      height: 36px !important;
-      padding: 8px 12px !important;
-      font-size: $font-size-p4 !important;
+    &:hover {
+      transform: none;
     }
   }
 }
