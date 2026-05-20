@@ -1,7 +1,7 @@
 // export/pdfExportScene.js
 
 const COLORS = {
-  primary: '#5F7E96',
+  primary: '#808E72',
   primaryDark: '#53443D',
   accent: '#AD7556',
   textDark: '#2C241E',

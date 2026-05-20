@@ -23,8 +23,10 @@
       <!-- Section Actions Rapides -->
       <div class="sidebar-section-projet-scenariste">
         <h3 class="section-title-projet-scenariste">
-          <i class="fas fa-bolt"></i> 
-          <span>Actions</span>
+          <span class="title-left">
+            <i class="fas fa-bolt"></i> 
+            <span>Actions</span>
+          </span>
         </h3>
         <div class="sidebar-actions-projet-scenariste">
           <button 
@@ -45,8 +47,11 @@
         </div>
       </div>
 
-      <!-- Détails du projet -->
-      <div class="project-details-sidebar-projet-scenariste" @click="selectItem('project', null)">
+      <!-- Bouton PROJET - simple, pas de dropdown -->
+      <div 
+        class="project-details-sidebar-projet-scenariste" 
+        @click="selectItem('project', null)"
+      >
         <div class="project-header-sidebar-projet-scenariste">
           <div class="project-title-container-sidebar">
             <i class="fas fa-project-diagram"></i>
@@ -57,21 +62,23 @@
               </span>
             </div>
           </div>
-          <i class="fas fa-chevron-right project-chevron"></i>
         </div>
       </div>
 
-      <!-- Navigation par catégories -->
+      <!-- Navigation par catégories (DROPDOWNS avec icône à droite) -->
       <div class="navigation-sections-projet-scenariste">
+        
         <!-- ÉPISODES -->
         <div class="sidebar-section-projet-scenariste">
           <div class="category-header-projet-scenariste" @click="toggleEpisodesDropdown">
             <h3 class="section-title-projet-scenariste">
-              <i class="fas fa-tv"></i>
-              <span>Épisodes</span>
-              <span class="item-count">{{ episodes?.length || 0 }}</span>
+              <span class="title-left">
+                <i class="fas fa-tv"></i>
+                <span>Épisodes</span>
+                <span class="item-count">{{ episodes?.length || 0 }}</span>
+              </span>
+              <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': episodesDropdownOpen }"></i>
             </h3>
-            <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': episodesDropdownOpen }"></i>
           </div>
           
           <div v-if="episodesDropdownOpen && episodes?.length" class="category-items-projet-scenariste">
@@ -99,11 +106,13 @@
         <div class="sidebar-section-projet-scenariste">
           <div class="category-header-projet-scenariste" @click="toggleSequencesDropdown">
             <h3 class="section-title-projet-scenariste">
-              <i class="fas fa-list-ol"></i>
-              <span>Séquences</span>
-              <span class="item-count">{{ sequences?.length || 0 }}</span>
+              <span class="title-left">
+                <i class="fas fa-list-ol"></i>
+                <span>Séquences</span>
+                <span class="item-count">{{ sequences?.length || 0 }}</span>
+              </span>
+              <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': sequencesDropdownOpen }"></i>
             </h3>
-            <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': sequencesDropdownOpen }"></i>
           </div>
           
           <div v-if="sequencesDropdownOpen && sequences?.length" class="category-items-projet-scenariste">
@@ -131,11 +140,13 @@
         <div class="sidebar-section-projet-scenariste">
           <div class="category-header-projet-scenariste" @click="toggleScenesDropdown">
             <h3 class="section-title-projet-scenariste">
-              <i class="fas fa-film"></i>
-              <span>Scènes</span>
-              <span class="item-count">{{ scenes?.length || 0 }}</span>
+              <span class="title-left">
+                <i class="fas fa-film"></i>
+                <span>Scènes</span>
+                <span class="item-count">{{ scenes?.length || 0 }}</span>
+              </span>
+              <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': scenesDropdownOpen }"></i>
             </h3>
-            <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotated': scenesDropdownOpen }"></i>
           </div>
           
           <div v-if="scenesDropdownOpen && scenes?.length" class="category-items-projet-scenariste">
@@ -163,7 +174,7 @@
 
     <!-- Mode fermé -->
     <template v-else>
-      <!-- Bouton pour rouvrir la sidebar -->
+      <!-- Bouton pour rouvrir -->
       <button 
         class="sidebar-toggle-btn-projet-scenariste closed-mode" 
         @click="$emit('toggle-left')"
@@ -172,7 +183,7 @@
         <i class="fas fa-chevron-right"></i>
       </button>
 
-      <!-- Projet en mode icône -->
+      <!-- Projet en icône -->
       <div 
         class="icon-item-closed" 
         @click="selectItem('project', null)"
@@ -183,10 +194,9 @@
         <span class="icon-badge" v-if="projetStatus" :class="getStatutClass(projetStatus)"></span>
       </div>
 
-      <!-- Espacement -->
       <div class="closed-spacer"></div>
 
-      <!-- Actions rapides en mode icône -->
+      <!-- Actions rapides icônes -->
       <div class="quick-actions-closed-projet-scenariste">
         <button 
           v-if="userRole !== 'UTILISATEUR'"
@@ -205,7 +215,7 @@
         </button>
       </div>
 
-      <!-- Épisodes en mode icône -->
+      <!-- Épisodes icônes -->
       <div v-if="episodes?.length" class="category-closed">
         <div class="category-header-closed" @click="toggleEpisodesDropdown" :title="`${episodes.length} épisode(s)`">
           <i class="fas fa-tv"></i>
@@ -231,10 +241,9 @@
         </div>
       </div>
 
-      <!-- Espacement -->
       <div v-if="episodes?.length" class="closed-spacer-small"></div>
 
-      <!-- Séquences en mode icône -->
+      <!-- Séquences icônes -->
       <div v-if="sequences?.length" class="category-closed">
         <div class="category-header-closed" @click="toggleSequencesDropdown" :title="`${sequences.length} séquence(s)`">
           <i class="fas fa-list-ol"></i>
@@ -260,10 +269,9 @@
         </div>
       </div>
 
-      <!-- Espacement -->
       <div v-if="sequences?.length" class="closed-spacer-small"></div>
 
-      <!-- Scènes en mode icône -->
+      <!-- Scènes icônes -->
       <div v-if="scenes?.length" class="category-closed">
         <div class="category-header-closed" @click="toggleScenesDropdown" :title="`${scenes.length} scène(s)`">
           <i class="fas fa-film"></i>
@@ -293,10 +301,11 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, defineProps, computed } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+
 const props = defineProps({
   open: {
     type: Boolean,
@@ -316,26 +325,21 @@ const props = defineProps({
   },
   sidebarSelection: {
     type: Object,
-    default: () => ({})
+    default: () => ({ type: null, id: null })
   }
 });
 
 const emit = defineEmits([
   'toggle-left',
-  'edit-project',
-  'delete-project',
   'add-episode',
-  'add-sequence',
-  'add-scene',
   'select-item'
 ]);
 
-// État local
+// Dropdowns state
 const episodesDropdownOpen = ref(false);
 const sequencesDropdownOpen = ref(false);
 const scenesDropdownOpen = ref(false);
 
-// Méthodes
 const toggleEpisodesDropdown = () => {
   episodesDropdownOpen.value = !episodesDropdownOpen.value;
   if (episodesDropdownOpen.value) {
@@ -396,9 +400,8 @@ const getStatutClass = (statutNom) => {
     return 'statut-annule';
   } else if (statut.includes('planifié') || statut.includes('planification')) {
     return 'statut-planifie';
-  } else {
-    return 'statut-attente';
   }
+  return 'statut-attente';
 };
 
 const goToDashboard = () => {

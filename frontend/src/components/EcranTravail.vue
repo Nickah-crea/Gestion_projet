@@ -88,72 +88,66 @@
       @go-to-next-scene="goToNextScene"
     />
 
-    <div 
+    <div
       class="header-ecran-travail-screen-work-header-navigation"
       :class="{
-          'scene-mode-active-header-navigation': sidebarSelection.type === 'scene',
-          'sequence-mode-active-header-navigation': sidebarSelection.type === 'sequence',
-          'episode-mode-active-header-navigation': sidebarSelection.type === 'episode'
+        'scene-mode-active-header-navigation': sidebarSelection.type === 'scene',
+        'sequence-mode-active-header-navigation': sidebarSelection.type === 'sequence',
+        'episode-mode-active-header-navigation': sidebarSelection.type === 'episode'
       }"
-  >
-      <!-- Header navigation unique sur une même ligne -->
+    >
       <div class="fixed-nav-container-screen-work-header-navigation">
-          <!-- Bouton Précédent tout à gauche -->
-          <div class="left-section-header-navigation">
-              <div v-if="showNavButtons" class="global-navigation-buttons-header-navigation">
-                  <button 
-                      class="nav-btn-fixed-left-screen-work-header-navigation"
-                      @click="goToPrevPage" 
-                      :disabled="!hasPrev || isLoading"
-                  >
-                      <i class="fas fa-chevron-left"></i> Précédent
-                  </button>
-              </div>
+        <!-- Colonne gauche : Précédent -->
+        <div class="left-section-header-navigation">
+          <div v-if="showNavButtons" class="global-navigation-buttons-header-navigation">
+            <button @click="goToPrevPage" :disabled="!hasPrev || isLoading">
+              <i class="fas fa-chevron-left"></i>
+              <span>Précédent</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Colonne centre : Navigation scène + Contexte -->
+        <div class="center-section-header-navigation">
+          <!-- Navigation scène (visible uniquement en mode scène) -->
+          <div v-if="sidebarSelection.type === 'scene'" class="scene-nav-wrapper">
+            <button 
+              class="scene-nav-btn"
+              @click="goToPrevScene"
+              :disabled="!hasPrevScene || isLoading"
+              title="Scène précédente"
+            >
+              <i class="fas fa-chevron-left"></i>
+              <span>Préc.</span>
+            </button>
+            <button 
+              class="scene-nav-btn"
+              @click="goToNextScene"
+              :disabled="!hasNextScene || isLoading"
+              title="Scène suivante"
+            >
+              <span>Suiv.</span>
+              <i class="fas fa-chevron-right"></i>
+            </button>
           </div>
           
-          <!-- Navigation scène au centre-gauche -->
-          <div v-if="sidebarSelection.type === 'scene'" class="scene-section-header-navigation">
-              <div class="scene-navigation-buttons-screen-work-header-navigation">
-                  <button 
-                      class="nav-btn-ecran-travail-screen-work-header-navigation scene-nav-btn-screen-work-header-navigation"
-                      @click="goToPrevScene"
-                      :disabled="!hasPrevScene || isLoading"
-                      title="Scène précédente"
-                  >
-                      <i class="fas fa-chevron-left"></i> Scène Préc.
-                  </button>
-                  <button 
-                      class="nav-btn-ecran-travail-screen-work-header-navigation scene-nav-btn-screen-work-header-navigation"
-                      @click="goToNextScene"
-                      :disabled="!hasNextScene || isLoading"
-                      title="Scène suivante"
-                  >
-                      Scène Suiv. <i class="fas fa-chevron-right"></i>
-                  </button>
-              </div>
+          <!-- Contexte actuel -->
+          <div class="current-context-screen-work-header-navigation">
+            {{ getCurrentContext() }}
           </div>
-          
-          <!-- Contexte au centre -->
-          <div class="center-section-header-navigation">
-              <span v-if="currentEpisode || currentSequence || currentScene" class="current-context-screen-work-header-navigation">
-                  {{ getCurrentContext() }}
-              </span>
+        </div>
+    
+        <!-- Colonne droite : Suivant -->
+        <div class="right-section-header-navigation">
+          <div v-if="showNavButtons" class="global-navigation-buttons-header-navigation">
+            <button @click="goToNextPage" :disabled="!hasNext || isLoading">
+              <span>Suivant</span>
+              <i class="fas fa-chevron-right"></i>
+            </button>
           </div>
-          
-          <!-- Bouton Suivant tout à droite -->
-          <div class="right-section-header-navigation">
-              <div v-if="showNavButtons" class="global-navigation-buttons-header-navigation">
-                  <button 
-                      class="nav-btn-fixed-right-screen-work-header-navigation"
-                      @click="goToNextPage" 
-                      :disabled="!hasNext || isLoading"
-                  >
-                      Suivant <i class="fas fa-chevron-right"></i>
-                  </button>
-              </div>
-          </div>
+        </div>
       </div>
-  </div>
+    </div>      
 
     <!-- Contenu principal -->
     <div
