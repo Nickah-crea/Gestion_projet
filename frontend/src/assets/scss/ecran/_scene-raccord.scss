@@ -813,15 +813,15 @@
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
     
-    &::after {
-      content: '*';
-      color: $color-error;
-      margin-left: 2px;
-    }
+    // &::after {
+    //   content: '*';
+    //   color: $color-error;
+    //   margin-left: 2px;
+    // }
     
-    &:not([for*="scene-source"]):not([for*="scene-cible"]):not([for*="personnages"])::after {
-      content: '';
-    }
+    // &:not([for*="scene-source"]):not([for*="scene-cible"]):not([for*="personnages"])::after {
+    //   content: '';
+    // }
   }
 }
 
