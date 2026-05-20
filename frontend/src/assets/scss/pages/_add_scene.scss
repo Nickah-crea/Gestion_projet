@@ -32,8 +32,19 @@
     display: none;
   }
   
+  // Style général pour les icônes - BLANC par défaut
   i {
+    color: $color-text-light !important;
+  }
+  
+  // Exception pour le bouton Retour - garder la couleur marron
+  .sidebar-btn-add-scene:not(.nouvelle-scene-btn) i {
     color: $color-primary-dark !important;
+  }
+  
+  // Au survol, tous les boutons mettent leurs icônes en blanc
+  .sidebar-btn-add-scene:hover i {
+    color: $color-text-light !important;
   }
   
   .sidebar-header-add-scene {
@@ -70,6 +81,10 @@
       display: flex;
       align-items: center;
       gap: $gap-xs;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
   }
 
@@ -100,17 +115,43 @@
       background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
+      
+      i {
+        color: $color-primary !important;
+      }
     }
 
     &.active {
       background: $color-accent-dark;
       border-color: $color-primary;
       color: $color-text-light;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
 
     &:focus-visible {
       outline: 2px solid $color-primary;
       outline-offset: 1px;
+    }
+
+    &.nouvelle-scene-btn {
+      background: $color-accent-dark;
+      color: $color-white;
+      font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-text-light !important;
+      }
+    }
+    
+    &.retour-btn i {
+      color: $color-primary-dark !important;
+    }
+    
+    &.retour-btn:hover i {
+      color: $color-text-light !important;
     }
   }
 
@@ -124,33 +165,50 @@
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
+    margin-bottom: $gap-sm;
 
     label {
       @include typography-p4;
       color: $color-text-light;
       font-weight: $font-weight-medium;
+      margin-bottom: $gap-xs;
     }
   }
 
+  // Style pour les cartes d'information (séquence parente et épisode associé)
   .sequence-info-add-scene {
     display: flex;
     align-items: center;
     gap: $gap-sm;
-    padding: $gap-xs $padding-xs;
-    background: rgba($color-primary, 0.05);
-    border: 1px solid rgba($color-primary, 0.2);
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
+    transition: $transition-fast;
     
     i {
-      color: $color-primary;
+      color: $color-primary-dark !important;
       font-size: $font-size-p3;
+      transition: $transition-fast;
     }
     
     span {
       flex: 1;
       @include text-truncate;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+    
+    &:hover {
+      border-color: $color-primary;
+      background: $color-surface-hover;
+      
+      i {
+        color: $color-primary !important;
+        transform: scale(1.05);
+      }
     }
   }
 
@@ -168,6 +226,13 @@
     background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
+    transition: $transition-fast;
+
+    &:hover {
+      border-color: $color-primary;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
 
     .stat-number-add-scene {
       @include typography-playfair-h4;
@@ -217,19 +282,97 @@
 }
 
 // =============================================
-// FORMULAIRE DE CRÉATION
+// SYSTÈME D'ONGLETS
+// =============================================
+.tabs-container-add-scene {
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-add-scene {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-add-scene {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-add-scene {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-add-scene {
+  position: relative;
+}
+
+.tab-pane-add-scene {
+  padding: $spacing-lg;
+  animation: fadeInUp-add-scene 0.3s ease-out;
+}
+
+@keyframes fadeInUp-add-scene {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION/MODIFICATION
 // =============================================
 .form-container-add-scene {
-  background: $color-background-alt;
+  background: transparent;
   border-radius: 0;
   box-shadow: none;
   padding: 0;
   margin-bottom: 0;
-  padding: $padding-lg;
-  border-radius: 20px;
 }
 
-.form-header-add-scene {
+// EN-TÊTE DU FORMULAIRE
+.tab-pane-add-scene .form-header-add-scene {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -237,7 +380,7 @@
   padding-bottom: $spacing-md;
   border-bottom: 1px solid $color-border;
 
-  h2 {
+  h3 {
     @include typography-playfair-h3;
     color: $color-text-primary;
     font-size: calc(#{$font-size-h3} - 4px);
@@ -245,26 +388,6 @@
     align-items: center;
     gap: $gap-sm;
     margin: 0;
-  }
-
-  .back-btn-add-scene {
-    padding: $gap-xs $padding-sm;
-    background: transparent;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    color: $color-text-secondary;
-    cursor: pointer;
-    transition: $transition-fast;
-    display: flex;
-    align-items: center;
-    gap: $gap-xs;
-
-    &:hover {
-      background: rgba($color-primary, 0.1);
-      border-color: $color-primary;
-      color: $color-primary;
-    }
   }
 }
 
@@ -539,6 +662,23 @@
     margin-left: 0;
   }
   
+  .tabs-header-add-scene {
+    flex-direction: column;
+  }
+
+  .tab-btn-add-scene {
+    padding: $spacing-sm $spacing-md;
+    justify-content: flex-start;
+  }
+
+  .tab-indicator-add-scene {
+    display: none;
+  }
+
+  .tab-pane-add-scene {
+    padding: $spacing-md;
+  }
+  
   .form-header-add-scene {
     flex-direction: column;
     gap: $spacing-sm;
@@ -557,12 +697,17 @@
   .sidebar-btn-add-scene,
   .form-input-add-scene,
   .submit-btn-add-scene,
-  .cancel-btn-add-scene {
+  .cancel-btn-add-scene,
+  .tab-btn-add-scene,
+  .tab-indicator-add-scene {
     transition: none;
     
     &:hover {
       transform: none;
     }
   }
+  
+  .tab-pane-add-scene {
+    animation: none;
+  }
 }
-

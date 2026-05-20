@@ -9,15 +9,15 @@
 // SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
 .creation-sidebar-add-sequence {
-position: fixed;
-  top: 60px; // 50px de marge en haut
+  position: fixed;
+  top: 60px;
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px);
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // <-- CHANGÉ: couleur principale
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -32,26 +32,24 @@ position: fixed;
     display: none;
   }
   
-  
-  // Icônes avec couleur primaire foncée
+  // Style général pour les icônes - BLANC par défaut
   i {
+    color: $color-text-light !important;
+  }
+  
+  // Exception pour le bouton Retour - garder la couleur marron
+  .sidebar-btn-add-sequence:not(.nouvelle-sequence-btn) i {
     color: $color-primary-dark !important;
   }
   
-  // Exception pour les boutons
-  .view-all-btn-compact-Scenariste {
-    i {
-      color: $color-text-light !important;
-    }
-    
-    &:hover {
-      background: rgba($color-text-light, 0.1) !important;
-    }
+  // Au survol, tous les boutons mettent leurs icônes en blanc
+  .sidebar-btn-add-sequence:hover i {
+    color: $color-text-light !important;
   }
   
   .sidebar-header-add-sequence {
     margin-bottom: $spacing-md;
-    border-bottom: 1px solid $color-border; // Changé: bordure dorée
+    border-bottom: 1px solid $color-border;
     padding-bottom: $spacing-sm;
 
     .sidebar-title-add-sequence {
@@ -63,7 +61,7 @@ position: fixed;
 
     .sidebar-subtitle-add-sequence {
       @include typography-p4;
-     color: $color-text-light; // Changé: taupe
+      color: $color-text-light;
       margin: 0;
     }
   }
@@ -76,13 +74,17 @@ position: fixed;
     box-shadow: $shadow-hover;
 
     .section-title-add-sequence {
-       @include typography-p4;
+      @include typography-p4;
       color: $color-text-light;
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
       align-items: center;
       gap: $gap-xs;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
   }
 
@@ -110,23 +112,48 @@ position: fixed;
     box-sizing: border-box;
 
     &:hover {
-       background: $color-surface-hover;
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
+      
+      i {
+        color: $color-primary !important;
+      }
     }
 
     &.active {
       background: $color-accent-dark;
       border-color: $color-primary;
       color: $color-text-light;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
 
     &:focus-visible {
       outline: 2px solid $color-primary;
       outline-offset: 1px;
     }
-  }
 
+    &.nouvelle-sequence-btn {
+      background: $color-accent-dark;
+      color: $color-white;
+      font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-text-light !important;
+      }
+    }
+    
+    &.retour-btn i {
+      color: $color-primary-dark !important;
+    }
+    
+    &.retour-btn:hover i {
+      color: $color-text-light !important;
+    }
+  }
 
   .filter-group-add-sequence {
     display: flex;
@@ -138,33 +165,50 @@ position: fixed;
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
+    margin-bottom: $gap-sm;
 
     label {
       @include typography-p4;
-      color: $color-text-light; 
+      color: $color-text-light;
       font-weight: $font-weight-medium;
+      margin-bottom: $gap-xs;
     }
   }
 
+  // Style pour les cartes d'information (épisode parent et projet associé)
   .episode-info-add-sequence {
     display: flex;
     align-items: center;
     gap: $gap-sm;
-    padding: $gap-xs $padding-xs;
-    background: rgba($color-primary, 0.05);
-    border: 1px solid rgba($color-primary, 0.2);
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
+    transition: $transition-fast;
     
     i {
-      color: $color-primary;
+      color: $color-primary-dark !important;
       font-size: $font-size-p3;
+      transition: $transition-fast;
     }
     
     span {
       flex: 1;
       @include text-truncate;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+    
+    &:hover {
+      border-color: $color-primary;
+      background: $color-surface-hover;
+      
+      i {
+        color: $color-primary !important;
+        transform: scale(1.05);
+      }
     }
   }
 
@@ -182,6 +226,13 @@ position: fixed;
     background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
+    transition: $transition-fast;
+
+    &:hover {
+      border-color: $color-primary;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
 
     .stat-number-add-sequence {
       @include typography-playfair-h4;

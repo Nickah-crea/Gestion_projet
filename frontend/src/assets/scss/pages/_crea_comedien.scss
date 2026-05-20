@@ -12,14 +12,14 @@
 // =============================================
 .creation-sidebar-crea-comedien {
 position: fixed;
-  top: 60px; // 50px de marge en haut
+  top: 60px; 
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px); 
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // <-- CHANGÉ: couleur principale
+  background: $color-primary; 
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -65,7 +65,7 @@ position: fixed;
 
     .sidebar-subtitle-crea-comedien {
      @include typography-p4;
-      color: $color-text-light; // Changé: taupe
+      color: $color-text-light; 
       margin: 0;
     }
   }
@@ -113,8 +113,8 @@ position: fixed;
 
     &:hover {
        background: $color-surface-hover;
-      border-color: $color-primary;
-      color: $color-primary;
+       border-color: $color-primary;
+       color: $color-primary;
     }
 
     &.active {
@@ -123,9 +123,9 @@ position: fixed;
       color: $color-text-light;
     }
 
-      &.list-view-btn i {
-    color: $color-primary-dark !important;
-  }
+    &.list-view-btn i {
+      color: $color-primary-dark !important;
+    }
 
 
     &:focus-visible {

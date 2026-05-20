@@ -9,15 +9,15 @@
 // SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
 .creation-sidebar-add-episode {
-position: fixed;
-  top: 60px; // 50px de marge en haut
+  position: fixed;
+  top: 60px;
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px);
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // <-- CHANGÉ: couleur principale
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -32,38 +32,36 @@ position: fixed;
     display: none;
   }
   
-  
-  // Icônes avec couleur primaire foncée
+  // Style général pour les icônes - BLANC par défaut
   i {
+    color: $color-text-light !important;
+  }
+  
+  // Exception pour les boutons Retour et Voir liste - garder la couleur marron
+  .sidebar-btn-add-episode:not(.nouvel-episode-btn) i {
     color: $color-primary-dark !important;
   }
   
-  // Exception pour les boutons
-  .view-all-btn-compact-Scenariste {
-    i {
-      color: $color-text-light !important;
-    }
-    
-    &:hover {
-      background: rgba($color-text-light, 0.1) !important;
-    }
+  // Au survol, tous les boutons mettent leurs icônes en blanc
+  .sidebar-btn-add-episode:hover i {
+    color: $color-text-light !important;
   }
 
   .sidebar-header-add-episode {
     margin-bottom: $spacing-md;
-    border-bottom: 1px solid $color-border; // Changé: bordure dorée
+    border-bottom: 1px solid $color-border;
     padding-bottom: $spacing-sm;
 
     .sidebar-title-add-episode {
       @include typography-playfair-h4;
-      color: $color-text-light; // Changé: brun foncé
+      color: $color-text-light;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle-add-episode {
       @include typography-p4;
-      color: $color-text-light; // Changé: taupe
+      color: $color-text-light;
       margin: 0;
     }
   }
@@ -76,13 +74,17 @@ position: fixed;
     box-shadow: $shadow-hover;
 
     .section-title-add-episode {
-       @include typography-p4;
+      @include typography-p4;
       color: $color-text-light;
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
       align-items: center;
       gap: $gap-xs;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
   }
 
@@ -110,20 +112,47 @@ position: fixed;
     box-sizing: border-box;
 
     &:hover {
-       background: $color-surface-hover;
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
+      
+      i {
+        color: $color-primary !important;
+      }
     }
 
     &.active {
       background: $color-accent-dark;
       border-color: $color-primary;
       color: $color-text-light;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
+      outline: 2px solid $color-primary; 
       outline-offset: 1px;
+    }
+    &.nouvel-episode-btn {
+      background: $color-accent-dark;
+      color: $color-white;
+      font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-text-light !important;
+      }
+    }
+    
+    &.retour-btn i,
+    &.list-view-btn i {
+      color: $color-primary-dark !important;
+    }
+    
+    &.retour-btn:hover i,
+    &.list-view-btn:hover i {
+      color: $color-text-light !important;
     }
   }
 
@@ -140,7 +169,7 @@ position: fixed;
 
     label {
       @include typography-p4;
-      color: $color-text-light; 
+      color: $color-text-light;
       font-weight: $font-weight-medium;
     }
   }
@@ -149,7 +178,7 @@ position: fixed;
     width: 100%;
     height: 34px;
     padding: 0 $padding-xs;
-    background: $color-background-alt; 
+    background: $color-background-alt;
     border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
@@ -159,7 +188,7 @@ position: fixed;
     
     &:focus {
       outline: none;
-      border-color: $color-primary; 
+      border-color: $color-primary;
     }
   }
 
@@ -174,20 +203,20 @@ position: fixed;
     flex-direction: column;
     align-items: center;
     padding: $padding-sm;
-    background: $color-background-alt; // Changé: blanc
+    background: $color-background-alt;
     border-radius: $border-radius-xs;
-    border: 1px solid $color-border; // Changé: bordure dorée
+    border: 1px solid $color-border;
 
     .stat-number-add-episode {
       @include typography-playfair-h4;
-      color: $color-primary; // Changé: doré
+      color: $color-primary;
       font-size: calc(#{$font-size-h4} - 4px);
       font-weight: $font-weight-bold;
     }
 
     .stat-label-add-episode {
       @include typography-p4;
-      color: $color-text-muted; // Changé: taupe
+      color: $color-text-muted;
       text-align: center;
     }
   }
