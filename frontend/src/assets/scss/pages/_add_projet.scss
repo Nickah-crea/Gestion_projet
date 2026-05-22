@@ -1,4 +1,3 @@
-// _add-projet.scss – Design cohérent avec le style recherche
 @import '../base/variables';
 
 .add-project-container-add-projet {
@@ -12,7 +11,7 @@
 // EN-TÊTE DU FORMULAIRE
 // =============================================
 .main-content-add-projet {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt; 
   border-radius: $border-radius-sm;
   box-shadow: $shadow-md;
   padding: $spacing-lg;
@@ -24,11 +23,11 @@
   align-items: center;
   margin-bottom: $spacing-lg;
   padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  border-bottom: 1px solid $color-border; 
 
   h2 {
     @include typography-playfair-h3;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary;
     margin: 0;
     font-size: calc(#{$font-size-h3} - 2px);
   }
@@ -36,10 +35,10 @@
   .back-btn-add-projet {
     padding: $gap-xs $padding-sm;
     background: transparent;
-    border: 1px solid $color-border; // Changé: bordure dorée
+    border: 1px solid $color-border; 
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-secondary; // Changé: brun
+    color: $color-text-secondary;
     cursor: pointer;
     transition: $transition-fast;
     display: flex;
@@ -47,13 +46,13 @@
     gap: $gap-xs;
 
     &:hover {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
-      border-color: $color-primary; // Changé: doré
-      color: $color-primary; // Changé: doré
+      background: rgba($color-primary, 0.1); 
+      border-color: $color-primary;
+      color: $color-primary;
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
+      outline: 2px solid $color-primary;
       outline-offset: 1px;
     }
   }
@@ -75,7 +74,7 @@
 
   label {
     @include typography-p4;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary;
     font-weight: $font-weight-semibold;
     display: flex;
     align-items: center;
@@ -83,7 +82,7 @@
 
     &::after {
       content: '*';
-      color: $color-error; // Changé: rouge bordeaux
+      color: $color-error; 
       margin-left: 2px;
     }
 
@@ -97,22 +96,22 @@
   .form-select-add-projet {
     width: 100%;
     padding: $gap-sm $padding-sm;
-    border: 1px solid $color-border; // Changé: bordure dorée
+    border: 1px solid $color-border; 
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
-    color: $color-text-primary; // Changé: brun foncé
-    background: $color-background-alt; // Changé: blanc
+    color: $color-text-primary;
+    background: $color-background-alt; 
     transition: $transition-fast;
     box-sizing: border-box;
 
     &:focus {
       outline: none;
-      border-color: $color-primary; // Changé: doré
-      box-shadow: 0 0 0 2px rgba($color-primary, 0.1); // Changé: doré
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
 
     &:hover {
-      border-color: rgba($color-primary, 0.5); // Changé: doré
+      border-color: rgba($color-primary, 0.5);
     }
   }
 
@@ -162,10 +161,10 @@
 // =============================================
 .error-message-add-projet {
   padding: $padding-sm;
-  background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-  border: 1px solid $color-error; // Changé: rouge bordeaux
+  background: rgba($color-error, 0.1);  
+  border: 1px solid $color-error; 
   border-radius: $border-radius-xs;
-  color: $color-error; // Changé: rouge bordeaux
+  color: $color-error; 
   font-size: $font-size-p4;
   font-weight: $font-weight-medium;
   display: flex;
@@ -187,7 +186,7 @@
   justify-content: flex-end;
   margin-top: $spacing-lg;
   padding-top: $spacing-sm;
-  border-top: 1px solid $color-border; // Changé: bordure dorée
+  border-top: 1px solid $color-border; 
 
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
@@ -214,7 +213,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
+      outline: 2px solid $color-primary;
       outline-offset: 1px;
     }
 
@@ -227,22 +226,22 @@
 
   .cancel-btn-add-projet {
     background: transparent;
-    border: 1px solid $color-border; // Changé: bordure dorée
-    color: $color-text-secondary; // Changé: brun
+    border: 1px solid $color-border; 
+    color: $color-text-secondary;
 
     &:hover:not(:disabled) {
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
-      border-color: $color-primary; // Changé: doré
-      color: $color-primary; // Changé: doré
+      background: rgba($color-primary, 0.1); 
+      border-color: $color-primary;
+      color: $color-primary;
     }
   }
 
   .submit-btn-add-projet {
-    background: $color-primary; // Changé: doré
-    color: $color-text-light; // Changé: blanc
+    background: $color-primary;
+    color: $color-text-light; 
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%); // Changé: doré plus foncé
+      background: darken($color-primary, 10%); 
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -267,7 +266,7 @@
       width: 16px;
       height: 16px;
       border: 2px solid transparent;
-      border-top: 2px solid $color-text-light; // Changé: blanc
+      border-top: 2px solid $color-text-light; 
       border-radius: 50%;
       animation: spin-add-projet 1s linear infinite;
     }
@@ -287,16 +286,16 @@
     .form-input-add-projet,
     .form-textarea-add-projet,
     .form-select-add-projet {
-      border-color: $color-error; // Changé: rouge bordeaux
+      border-color: $color-error; 
       
       &:focus {
-        box-shadow: 0 0 0 2px rgba($color-error, 0.1); // Changé: rouge bordeaux
+        box-shadow: 0 0 0 2px rgba($color-error, 0.1); 
       }
     }
 
     .error-text-add-projet {
       font-size: $font-size-p5;
-      color: $color-error; // Changé: rouge bordeaux
+      color: $color-error; 
       display: flex;
       align-items: center;
       gap: $gap-xs;
@@ -314,7 +313,7 @@
     .form-input-add-projet,
     .form-textarea-add-projet,
     .form-select-add-projet {
-      border-color: $color-success; // Changé: doré
+      border-color: $color-success;
     }
   }
 }
@@ -399,15 +398,15 @@
   }
 }
 
-// Focus visible amélioré
+
 .form-input-add-projet:focus-visible,
 .form-textarea-add-projet:focus-visible,
 .form-select-add-projet:focus-visible {
-  outline: 2px solid $color-primary; // Changé: doré
+  outline: 2px solid $color-primary;
   outline-offset: 1px;
 }
 
-// Support des modes de contraste élevé
+
 @media (prefers-contrast: high) {
   .form-input-add-projet,
   .form-textarea-add-projet,

@@ -9,14 +9,14 @@
 
 .calendar-sidebar {
 position: fixed;
-  top: 60px; // 50px de marge en haut
+  top: 60px; 
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px); 
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // <-- CHANGÉ: couleur principale
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -136,7 +136,7 @@ position: fixed;
       }
 
     &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
+      outline: 2px solid $color-primary; 
       outline-offset: 1px;
     }
 
@@ -318,7 +318,7 @@ position: fixed;
 }
 
 // =============================================
-// NAVIGATION DU MOIS (Style amélioré)
+// NAVIGATION DU MOIS
 // =============================================
 .calendar-nav-container {
   display: flex;
@@ -373,7 +373,7 @@ position: fixed;
   }
 }
 
-// =============================================
+
 // =============================================
 // CALENDRIER PRINCIPAL
 // =============================================
@@ -389,12 +389,12 @@ position: fixed;
   flex-direction: column;
   height: 100%;
   max-width: none;
-  margin-left: 0; // Supprimez l'ancien margin
+  margin-left: 0;
   margin-right: 0;
-  padding: 0; // Supprimez l'ancien padding
+  padding: 0; 
 }
 
-// Ajustez les media queries pour la responsive
+
 @media (max-width: $breakpoint-xl) {
   .calendar-sidebar {
     width: 250px;

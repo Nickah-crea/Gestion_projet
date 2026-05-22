@@ -1,6 +1,5 @@
 @import '../base/variables';
 
-/*RESET GLOBAL – EMPÊCHE TOUT DÉCALAGE*/
 
 body, html {
   margin: 0 !important;
@@ -8,23 +7,21 @@ body, html {
   overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;
-  background: $color-background; // Changé: champagne beige
+  background: $color-background; 
 }
 
 .app-wrapper-global {
   padding: 0 !important;
   width: 100%;
-  background: $color-background; // Changé: champagne beige
+  background: $color-background; 
   width: 100%;
   display: flex;
   position: relative;
 }
 
-//  CONTENU PRINCIPAL – STRUCTURE OPTIMISÉE
-
 .main-content-container {
   flex: 1;
-  margin-left: 250px; // Espace pour la sidebar gauche
+  margin-left: 250px;
   transition: margin-left $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
   
   @media (max-width: 1400px) {
@@ -38,7 +35,7 @@ body, html {
 
 .main-content-scenariste-Scenariste {
   margin: 0 auto;
-  padding: 20px 50px 120px 50px; // 50px à gauche pour espace avec sidebar
+  padding: 20px 50px 120px 50px; 
   min-height: 100vh;
   box-sizing: border-box;
   width: 100%;
@@ -54,20 +51,20 @@ body, html {
   }
 }
 
-// =============================================
-// SIDEBAR GAUCHE FIXE - AVEC COULEUR PRINCIPALE
-// =============================================
+// ================
+// SIDEBAR GAUCHE 
+// ================
 
 .sidebar-left-fixed-Scenariste {
   position: fixed;
-  top: 60px; // 50px de marge en haut
+  top: 60px; 
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px); 
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // <-- CHANGÉ: couleur principale
+  background: $color-primary; 
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -104,7 +101,7 @@ body, html {
   }
 }
 
-// Styles des divs à l'intérieur de la sidebar (sans fond sauf si nécessaire)
+
 .personal-stats-compact-Scenariste,
 .recent-activity-compact-Scenariste {
   background: transparent !important;
@@ -112,9 +109,9 @@ body, html {
   box-shadow: none !important;  
 }
 
-// Exception: les cartes peuvent avoir un léger fond pour la lisibilité
+
 .personal-stat-card-compact-Scenariste {
-  background: rgba($color-text-light, 0.1) !important; // Fond semi-transparent blanc
+  background: rgba($color-text-light, 0.1) !important; 
   border: 1px solid rgba($color-text-light, 0.2) !important;
   border-radius: $border-radius;
   padding: $padding-md;
@@ -144,12 +141,12 @@ body, html {
 .personal-stats-compact-Scenariste {
   margin-bottom: $margin-sm;
   padding-bottom: $margin-sm;
-  border-bottom: 1px solid rgba($color-text-light, 0.2); // Bordure claire pour contraste
+  border-bottom: 1px solid rgba($color-text-light, 0.2); 
 }
 
 .section-title-compact-Scenariste {
   font-size: $font-size-p1;
-  color: $color-text-light !important; // Texte en blanc
+  color: $color-text-light !important; 
   margin-bottom: $margin-lg;
   display: flex;
   align-items: center;
@@ -158,9 +155,9 @@ body, html {
   @include typography-playfair-h4;
   
   i {
-    color: $color-text-light !important; // Icône en blanc
+    color: $color-text-light !important; 
     font-size: $font-size-p1;
-    background: rgba($color-text-light, 0.2) !important; // Fond clair
+    background: rgba($color-text-light, 0.2) !important; 
     padding: $padding-xs;
     border-radius: $border-radius-sm;
   }
@@ -180,10 +177,10 @@ body, html {
   
   i {
     font-size: $font-size-p1;
-    color: $color-text-light !important; // Icône en blanc
+    color: $color-text-light !important; 
     width: 32px;
     height: 32px;
-    background: rgba($color-text-light, 0.2) !important; // Fond clair
+    background: rgba($color-text-light, 0.2) !important; 
     border-radius: $border-radius-sm;
     display: flex;
     align-items: center;
@@ -192,7 +189,7 @@ body, html {
   
   h4 {
     font-size: $font-size-p3;
-    color: $color-text-light !important; // Texte en blanc
+    color: $color-text-light !important; 
     margin: 0;
     font-weight: $font-weight-semibold;
     @include typography-cinzel-h4;
@@ -209,7 +206,7 @@ body, html {
 .stat-value-compact-Scenariste {
   font-size: $font-size-h4;
   font-weight: $font-weight-black;
-  color: $color-text-light !important; // Texte en blanc
+  color: $color-text-light !important; 
   line-height: 1;
   @include typography-cinzel-h4;
 }
@@ -225,13 +222,13 @@ body, html {
   
   circle:nth-child(1) {
     fill: none;
-    stroke: rgba($color-text-light, 0.3) !important; // Bordure claire
+    stroke: rgba($color-text-light, 0.3) !important; 
     stroke-width: 3;
   }
   
   circle:nth-child(2) {
     fill: none;
-    stroke: $color-text-light !important; // Cercle en blanc
+    stroke: $color-text-light !important; 
     stroke-width: 3;
     stroke-linecap: round;
     transition: stroke-dasharray 1s ease;
@@ -254,7 +251,7 @@ body, html {
   
   .activity-title-compact-Scenariste {
     font-size: $font-size-p1;
-    color: $color-text-light !important; // Texte en blanc
+    color: $color-text-light !important; 
     margin: 0;
     font-weight: $font-weight-semibold;
     @include typography-playfair-h4;
@@ -264,7 +261,7 @@ body, html {
 .view-all-btn-compact-Scenariste {
   background: none;
   border: none;
-  color: $color-text-light !important; // Texte en blanc
+  color: $color-text-light !important; 
   font-size: $font-size-p3;
   cursor: pointer;
   padding: $padding-xs;
@@ -277,7 +274,7 @@ body, html {
   justify-content: center;
   
   &:hover {
-    background: rgba($color-text-light, 0.1) !important; // Fond clair au hover
+    background: rgba($color-text-light, 0.1) !important; 
     transform: translateX(2px);
   }
   
@@ -296,7 +293,7 @@ body, html {
     top: 0;
     bottom: 0;
     width: 2px;
-    background: rgba($color-text-light, 0.3); // Ligne en clair
+    background: rgba($color-text-light, 0.3); 
   }
 }
 
@@ -324,34 +321,33 @@ body, html {
   z-index: 1;
   position: relative;
   
-  // Couleurs par type d'activité avec contraste
   &.type-create {
-    background: rgba($color-text-light, 0.1); // Fond clair
-    color: $color-text-light !important; // Icône en blanc
+    background: rgba($color-text-light, 0.1); 
+    color: $color-text-light !important; 
     border: 2px solid rgba($color-text-light, 0.3);
   }
   
   &.type-edit {
-    background: rgba($color-text-light, 0.1); // Fond clair
-    color: $color-text-light !important; // Icône en blanc
+    background: rgba($color-text-light, 0.1); 
+    color: $color-text-light !important;
     border: 2px solid rgba($color-text-light, 0.3);
   }
   
   &.type-comment {
-    background: rgba($color-accent-dark, 0.2); // Fond accent foncé
-    color: $color-text-light !important; // Icône en blanc
+    background: rgba($color-accent-dark, 0.2); 
+    color: $color-text-light !important; 
     border: 2px solid rgba($color-accent-dark, 0.4);
   }
   
   &.type-status {
-    background: rgba($color-primary-dark, 0.2); // Fond primaire foncé
-    color: $color-text-light !important; // Icône en blanc
+    background: rgba($color-primary-dark, 0.2); 
+    color: $color-text-light !important; 
     border: 2px solid rgba($color-primary-dark, 0.4);
   }
   
   &.type-collaboration {
-    background: rgba($color-text-light, 0.1); // Fond clair
-    color: $color-text-light !important; // Icône en blanc
+    background: rgba($color-text-light, 0.1); 
+    color: $color-text-light !important; 
     border: 2px solid rgba($color-text-light, 0.3);
   }
 }
@@ -363,14 +359,14 @@ body, html {
 
 .activity-text-compact-Scenariste {
   font-size: $font-size-p4;
-  color: $color-text-light !important; // Texte en blanc
+  color: $color-text-light !important; 
   line-height: 1.4;
   margin-bottom: $gap-xs;
 }
 
 .activity-time-compact-Scenariste {
   font-size: $font-size-p5;
-  color: rgba($color-text-light, 0.8) !important; // Texte légèrement transparent
+  color: rgba($color-text-light, 0.8) !important; 
   display: flex;
   align-items: center;
   gap: $gap-xs;
@@ -384,7 +380,7 @@ body, html {
 .no-activities-compact-Scenariste {
   text-align: center;
   padding: $padding-lg 0;
-  color: rgba($color-text-light, 0.7) !important; // Texte légèrement transparent
+  color: rgba($color-text-light, 0.7) !important; 
   
   i {
     font-size: 1.5rem;
@@ -458,24 +454,20 @@ body, html {
   }
   
   &::-webkit-scrollbar-track {
-    background: rgba($color-text-light, 0.1); // Piste claire
+    background: rgba($color-text-light, 0.1); 
     border-radius: $border-radius-pill;
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba($color-text-light, 0.3); // Curseur clair
+    background: rgba($color-text-light, 0.3); 
     
     &:hover {
-      background: rgba($color-text-light, 0.5); // Curseur plus clair au hover
+      background: rgba($color-text-light, 0.5); 
     }
   }
 }
 
-// =============================================
-// AJUSTEMENTS POUR LE CONTENU PRINCIPAL
-// =============================================
 
-// Le reste du CSS existant reste inchangé...
 .welcome-section-Scenariste h2,
 .projects-label-Scenariste,
 .movie-title-Scenariste,
@@ -487,23 +479,23 @@ body, html {
   letter-spacing: 0.3px;
 }
 
-// Tailles équilibrées
+
 .welcome-section-Scenariste h2 {
   margin-bottom: $gap-sm;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   font-weight: $font-weight-bold;
   font-size: 28px;
 }
 
 .welcome-section-Scenariste p {
   font-size: $font-size-p4;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   font-weight: $font-weight-regular;
 }
 
 .projects-label-Scenariste {
   margin: 0;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   font-weight: $font-weight-medium;
   font-family: $font-family-hauora;
   font-size: $font-size-h4;
@@ -513,7 +505,7 @@ body, html {
   font-size: $font-size-h4;
   font-weight: $font-weight-semibold;
   margin: 0 0 $gap-xs 0;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
 }
 
 // =============================================
@@ -525,14 +517,14 @@ body, html {
   align-items: flex-start;
   padding: $padding-md 0;
   margin-bottom: $margin-lg;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  border-bottom: 1px solid $color-border; 
   gap: $gap-lg;
 }
 
 .welcome-section-Scenariste {
   p {
     font-size: $font-size-p2;
-    color: $color-text-secondary; // Changé: brun
+    color: $color-text-secondary; 
     margin: 0;
   }
 }
@@ -567,11 +559,10 @@ body, html {
     }
     
     .search-toggle-btn-Scenariste {
-      background: $color-background-alt; // Changé: blanc
-      color: $color-text-primary; // Changé: brun foncé
+      background: $color-background-alt; 
+      color: $color-text-primary;
     }
     
-    // Amélioration design pro
     .search-input-Scenariste {
       border-color: $color-primary;
       background: rgba($color-primary, 0.05);
@@ -592,24 +583,24 @@ body, html {
   width: 100%;
   padding: $padding-sm $padding-md $padding-sm $padding-md;
   border-radius: $border-radius-sm;
-  border: 1px solid $color-border; // Changé: bordure dorée
-  background: $color-background-alt; // Changé: blanc
+  border: 1px solid $color-border; 
+  background: $color-background-alt; 
   font-size: $font-size-p2;
   box-shadow: $shadow;
   transition: all $duration-slow cubic-bezier(0.4, 0, 0.2, 1);
   
-  // État initial caché
+
   opacity: 0;
   transform: translateX(10px);
   
   &:focus {
     outline: none;
-    border-color: $color-primary; // Changé: doré
-    box-shadow: 0 2px 12px rgba($color-primary, 0.2); // Changé: doré
+    border-color: $color-primary;
+    box-shadow: 0 2px 12px rgba($color-primary, 0.2); 
   }
 }
 
-// Bouton toggle (icône de recherche)
+
 .search-toggle-btn-Scenariste {
   position: absolute;
   right: 0;
@@ -619,8 +610,8 @@ body, html {
   height: 40px;
   border: none;
   border-radius: $border-radius-sm;
-  background: $color-tertiary-dark; // Changé: blanc
-  color: $color-background-alt; // Changé: orange foncé
+  background: $color-tertiary-dark; 
+  color: $color-background-alt; 
   font-size: $font-size-p1;
   cursor: pointer;
   display: flex;
@@ -647,7 +638,7 @@ body, html {
   background: none;
   border: none;
   font-size: $font-size-p1;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   cursor: pointer;
   padding: 4px;
   border-radius: 50%;
@@ -655,8 +646,8 @@ body, html {
   z-index: 2;
 
   &:hover {
-    background: $color-surface-hover; // Changé: doré subtil
-    color: $color-text-primary; // Changé: brun foncé
+    background: $color-surface-hover; 
+    color: $color-text-primary; 
   }
 }
 
@@ -711,8 +702,8 @@ body, html {
   select {
     padding: $padding-md;
     border-radius: $border-radius-xs;
-    border: 1px solid $color-border; // Changé: bordure dorée
-    background: $color-background-alt; // Changé: blanc
+    border: 1px solid $color-border;
+    background: $color-background-alt; 
     font-size: $font-size-p3;
     width: 150px;
     height: 55px;
@@ -720,7 +711,7 @@ body, html {
 
     &:focus {
       outline: none;
-      border-color: $color-primary; // Changé: doré
+      border-color: $color-primary; 
     }
   }
 }
@@ -739,8 +730,8 @@ body, html {
   text-align: center;
   gap: $gap-sm;
   padding: $padding-sm $padding-lg;
-  background: $color-primary !important; // Couleur principale
-  color: $color-text-light !important; // Texte en blanc
+  background: $color-primary !important; 
+  color: $color-text-light !important;
   border: none;
   border-radius: $border-radius-xs;
   font-size: $font-size-p2;
@@ -761,7 +752,7 @@ body, html {
   }
   
   .icon-Scenariste {
-    color: $color-text-light !important; // Icône en blanc
+    color: $color-text-light !important; 
   }
 }
 
@@ -875,7 +866,7 @@ body, html {
 }
 
 .movie-genre-Scenariste {
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   font-weight: $font-weight-medium;
   font-size: $font-size-p3;
   margin: 0 0 $padding-sm 0;
@@ -885,20 +876,20 @@ body, html {
   display: flex;
   align-items: center;
   gap: $gap-sm;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary; 
   font-size: $font-size-p3;
   font-weight: $font-weight-medium;
   margin-bottom: $padding-md;
 }
 
 .meta-separator-Scenariste {
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted;
   font-weight: $font-weight-regular;
 }
 
 .movie-synopsis p {
   font-size: $font-size-p3;  
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary; 
   line-height: $line-height-base;
   margin-bottom: $padding-md;
   flex-grow: 1;
@@ -916,11 +907,10 @@ body, html {
   gap: $gap-sm;
 }
 
-// =============================================
-// BOUTONS CARTES - STYLES AMÉLIORÉS
-// =============================================
+// ==================
+// BOUTONS CARTES 
+// ==================
 
-// Boutons cartes
 .accent-btn-Scenariste,
 .primary-btn-Scenariste {
   flex: 1;
@@ -936,12 +926,11 @@ body, html {
   cursor: pointer;
 }
 
-// BOUTON "DÉTAILS" - COULEUR ACCENT DARK
 .accent-btn {
   width: 100px;
   background: none !important;
-  border: 1.5px solid $color-accent-dark !important; // Couleur accent dark
-  color: $color-accent-dark !important; // Couleur accent dark
+  border: 1.5px solid $color-accent-dark !important;
+  color: $color-accent-dark !important; 
 
   &:hover {
     background: rgba($color-accent-dark, 0.1) !important;
@@ -950,10 +939,10 @@ body, html {
   }
 }
 
-// BOUTON "ÉCRAN" - COULEUR PRINCIPALE
+
 .primary-btn {
-  background: $color-primary !important; // Couleur principale
-  color: $color-text-light !important; // Texte en blanc
+  background: $color-primary !important; 
+  color: $color-text-light !important; 
   border: none;
 
   &:hover {
@@ -981,14 +970,13 @@ body, html {
   border-radius: 50%;
   cursor: pointer;
   transition: $transition-fast;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
 
   &:hover {
-    background: rgba($color-primary-dark, 0.1) !important; // Fond primaire foncé
-    color: $color-primary-dark !important; // Icône primaire foncée
+    background: rgba($color-primary-dark, 0.1) !important; 
+    color: $color-primary-dark !important; 
   }
-  
-  // Exception pour le bouton supprimer
+
   &.delete-btn-Scenariste:hover {
     color: $color-error !important;
     background: rgba($color-error, 0.1) !important;
@@ -1001,12 +989,12 @@ body, html {
 .no-projects-Scenariste {
   text-align: center;
   padding: $padding-xl $padding-lg;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
 
   h3 { 
     font-size: $font-size-h4;
     margin: $margin-md 0;
-    color: $color-text-secondary; // Changé: brun
+    color: $color-text-secondary; 
   }
   
   p { 
@@ -1017,7 +1005,7 @@ body, html {
 
 .no-projects-icon-Scenariste {
   font-size: 3rem;
-  color: rgba($color-text-primary, 0.2); // Changé: brun foncé
+  color: rgba($color-text-primary, 0.2); 
   margin-bottom: $margin-md;
 }
 
@@ -1030,23 +1018,23 @@ body, html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba($color-text-primary, 0.4); // Changé: brun foncé
+  background: rgba($color-text-primary, 0.4); 
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: $z-index-modal;
-  backdrop-filter: blur(8px); // Effet de flou
+  backdrop-filter: blur(8px); 
 }
 
 .modal-content-Scenariste {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt;
   padding: $padding-xl;
   border-radius: $border-radius-lg;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25); // Ombre plus prononcée
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25); 
   width: 90%;
   max-width: 800px;
   height: 550px;
-  border: 1px solid rgba($color-primary, 0.1); // Bordure subtile
+  border: 1px solid rgba($color-primary, 0.1); 
 }
 
 .modal-header-Scenariste {
@@ -1055,11 +1043,11 @@ body, html {
   align-items: center;
   margin-bottom: $margin-lg;
   @include typography-playfair-h2-italic;
-  border-bottom: 1px solid $color-tertiary-light; // Changé: taupe clair
+  border-bottom: 1px solid $color-tertiary-light; 
   margin-bottom: 20px;
   h3 {
     font-size: $font-size-h4;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary;
     margin: 0;
   }
 }
@@ -1075,11 +1063,11 @@ body, html {
   align-items: center;
   margin-bottom: $margin-lg;
   padding-bottom: $padding-md;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  border-bottom: 1px solid $color-border; 
   
   h3 {
     font-size: $font-size-h4;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary; 
     margin: 0;
     @include typography-playfair-h3-italic;
     font-weight: $font-weight-semibold;
@@ -1088,22 +1076,22 @@ body, html {
   .close-modal-btn-Scenariste {
     background: none;
     border: none;
-    color: $color-text-muted; // Changé: taupe
-    font-size: $font-size-p1; // Réduit de h4/h3 à p1
+    color: $color-text-muted; 
+    font-size: $font-size-p1; 
     cursor: pointer;
     padding: $padding-xs;
     border-radius: $border-radius-sm;
     transition: $transition-fast;
-    width: 32px; // Largeur fixe
-    height: 32px; // Hauteur fixe
+    width: 32px; 
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
     
     &:hover {
-      background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-      color: $color-error; // Changé: rouge bordeaux
+      background: rgba($color-error, 0.1); 
+      color: $color-error;
       transform: scale(1.05);
     }
     
@@ -1112,23 +1100,22 @@ body, html {
     }
     
     i {
-      font-size: $font-size-p2; // Icone plus petite
+      font-size: $font-size-p2; 
       line-height: 1;
     }
   }
 }
 
-// Modal de suppression - version encore plus petite
 .modal-header-confirm-Scenariste {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: $padding-lg;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  border-bottom: 1px solid $color-border; 
   
   h3 {
     @include typography-playfair-h4;
-    color: $color-error; // Changé: rouge bordeaux
+    color: $color-error; 
     margin: 0;
     display: flex;
     align-items: center;
@@ -1136,15 +1123,15 @@ body, html {
     font-size: $font-size-h4;
     
     i {
-      font-size: $font-size-p1; // Icone d'avertissement plus petite
+      font-size: $font-size-p1; 
     }
   }
   
   .close-modal-btn-Scenariste {
     background: none;
     border: none;
-    color: $color-text-muted; // Changé: taupe
-    font-size: $font-size-p3; // Très petit
+    color: $color-text-muted; 
+    font-size: $font-size-p3; 
     cursor: pointer;
     padding: 4px;
     border-radius: $border-radius-xs;
@@ -1156,8 +1143,8 @@ body, html {
     justify-content: center;
     
     &:hover {
-      background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-      color: $color-error; // Changé: rouge bordeaux
+      background: rgba($color-error, 0.1); 
+      color: $color-error;
     }
     
     i {
@@ -1166,10 +1153,10 @@ body, html {
   }
 }
  
-// Pour le modal d'édition d'épisode dans ProjetScenariste
+// // Pour le modal d'édition d'épisode dans ProjetScenariste
 .edit-project-modal-Scenariste .modal-header-Scenariste .close-modal-btn-Scenariste {
   i {
-    font-size: $font-size-p2 !important; // Force une taille cohérente
+    font-size: $font-size-p2 !important; 
   }
 }
 
@@ -1178,7 +1165,7 @@ body, html {
 // =============================================
 .global-search-results-Scenariste {
   margin: $margin-lg 0;
-  background: $color-pastel-gold; // Changé: doré pastel
+  background: $color-pastel-gold; 
   border-radius: 8px;
 }
 
@@ -1190,7 +1177,7 @@ body, html {
   
   h3 {
     font-size: $font-size-h4;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary; 
     margin: 0;
   }
 }
@@ -1303,7 +1290,6 @@ nav.fixed-bottom,
   width: 100%;
 }
 
-// Style de base pour les deux boutons
 .action-btn-Scenariste {
   display: flex;
   align-items: center;
@@ -1319,8 +1305,7 @@ nav.fixed-bottom,
   border: none;
   flex: 1;
   min-height: 40px;
-  
-  // Icônes
+
   .icon, i {
     font-size: $font-size-p2;
     transition: $transition-fast;
@@ -1345,32 +1330,32 @@ nav.fixed-bottom,
   }
 }
 
-// Bouton Détails - Style Accent Dark
+
 .action-btn-Scenariste.accent-btn {
   background: none;
-  border: 1.5px solid $color-accent-dark !important; // Couleur accent dark
-  color: $color-accent-dark !important; // Couleur accent dark
+  border: 1.5px solid $color-accent-dark !important; 
+  color: $color-accent-dark !important; 
 
   &:hover {
-    background: $color-accent-dark !important; // Couleur accent dark
-    color: $color-text-light !important; // Texte en blanc
-    border-color: $color-accent-dark !important; // Couleur accent dark
-    box-shadow: 0 2px 6px rgba($color-accent-dark, 0.3); // Ombre accent dark
+    background: $color-accent-dark !important; 
+    color: $color-text-light !important; 
+    border-color: $color-accent-dark !important; 
+    box-shadow: 0 2px 6px rgba($color-accent-dark, 0.3);
   }
 }
 
 // Bouton Écran - Style Primary
 .action-btn-Scenariste.primary-btn {
-  background: $color-primary !important; // Couleur principale
+  background: $color-primary !important; 
   border: none;
-  color: $color-text-light !important; // Texte en blanc
+  color: $color-text-light !important; 
   font-weight: $font-weight-semibold;
   
   &:hover {
-    background: darken($color-primary, 10%) !important; // Couleur principale foncée
-    border-color: darken($color-primary, 15%) !important; // Bordure plus foncée
-    box-shadow: 0 4px 12px rgba($color-primary, 0.3); // Ombre principale
-    color: $color-text-light !important; // Texte en blanc
+    background: darken($color-primary, 10%) !important;  
+    border-color: darken($color-primary, 15%) !important;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3); 
+    color: $color-text-light !important; 
     font-weight: $font-weight-semibold;
   }
 }
@@ -1407,16 +1392,16 @@ nav.fixed-bottom,
   animation: button-pulse 0.3s ease;
   
   &.accent-btn {
-    box-shadow: 0 0 0 3px rgba($color-accent-dark, 0.2); // Changé: accent dark
+    box-shadow: 0 0 0 3px rgba($color-accent-dark, 0.2); 
   }
   
   &.primary-btn {
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.2); // Changé: doré
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.2); 
   }
 }
 
 // =============================================
-// MODAL ÉDITION PROJET - STRUCTURE 2 COLONNES CORRIGÉE
+// MODAL ÉDITION PROJET 
 // =============================================
 
 .modal-body-Scenariste {
@@ -1424,17 +1409,17 @@ nav.fixed-bottom,
 }
 
 .error-message-Scenariste {
-  background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-  color: $color-error; // Changé: rouge bordeaux
+  background: rgba($color-error, 0.1); 
+  color: $color-error; 
   padding: $padding-sm;
   border-radius: $border-radius-sm;
   margin-bottom: $margin-md;
   font-size: $font-size-p3;
-  border-left: 3px solid $color-error; // Changé: rouge bordeaux
+  border-left: 3px solid $color-error; 
 }
 
 // =============================================
-// GRID POUR LES CHAMPS DU FORMULAIRE - CORRIGÉ
+// GRID POUR LES CHAMPS DU FORMULAIRE 
 // =============================================
 .form-group-Scenariste {
   margin-bottom: $margin-md;
@@ -1443,12 +1428,12 @@ nav.fixed-bottom,
     display: block;
     margin-bottom: $gap-xs;
     font-weight: $font-weight-semibold;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary; 
     font-size: $font-size-p2;
   }
 }
 
-// Container pour les champs en ligne - CORRIGÉ
+// Container pour les champs en ligne 
 .form-rows-container-Scenariste {
   display: flex;
   flex-direction: column;
@@ -1472,16 +1457,16 @@ nav.fixed-bottom,
 }
 
 // =============================================
-// CHAMPS DE FORMULAIRE - STYLE UNIFORME
+// CHAMPS DE FORMULAIRE
 // =============================================
 .form-input-Scenariste,
 .form-textarea-Scenariste,
 .form-select-Scenariste {
   width: 100%;
   padding: $padding-sm $padding-md;
-  border: 1.5px solid $color-border; // Changé: bordure dorée
+  border: 1.5px solid $color-border; 
   border-radius: $border-radius-sm;
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt;
   font-size: $font-size-p2;
   font-family: $font-family-primary;
   transition: $transition;
@@ -1489,12 +1474,12 @@ nav.fixed-bottom,
   
   &:focus {
     outline: none;
-    border-color: $color-primary; // Changé: doré
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.1); // Changé: doré subtil
+    border-color: $color-primary; 
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1); 
   }
   
   &:hover {
-    border-color: rgba($color-primary, 0.5); // Changé: doré
+    border-color: rgba($color-primary, 0.5); 
   }
 }
 
@@ -1528,14 +1513,14 @@ nav.fixed-bottom,
 }
 
 // =============================================
-// PIED DU MODAL - BOUTONS (RÉTABLIS)
+// PIED DU MODAL - BOUTONS 
 // =============================================
 .modal-footer-Scenariste {
   display: flex;
   gap: $gap-md;
   justify-content: flex-end;
   padding-top: $padding-md;
-  border-top: 1px solid $color-border; // Changé: bordure dorée
+  border-top: 1px solid $color-border; 
   margin-top: $margin-lg;
 }
 
@@ -1552,7 +1537,7 @@ nav.fixed-bottom,
   
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.2); // Changé: doré
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
   }
   
   &:disabled {
@@ -1563,30 +1548,30 @@ nav.fixed-bottom,
 }
 
 .cancel-btn-Scenariste {
-  background: rgba($color-text-muted, 0.1); // Changé: taupe subtil
-  color: $color-text-muted; // Changé: taupe
+  background: rgba($color-text-muted, 0.1);
+  color: $color-text-muted; 
   border: 1.5px solid transparent;
   
   &:hover:not(:disabled) {
-    background: rgba($color-text-muted, 0.2); // Changé: taupe
-    color: $color-text-primary; // Changé: brun foncé
+    background: rgba($color-text-muted, 0.2); 
+    color: $color-text-primary; 
     transform: translateY(-1px);
-    border-color: rgba($color-text-muted, 0.3); // Changé: taupe
+    border-color: rgba($color-text-muted, 0.3); 
   }
 }
 
 // BOUTON "ENREGISTRER" - COULEUR PRINCIPALE
 .save-btn-Scenariste {
-  background: $color-primary !important; // Couleur principale
-  color: $color-text-light !important; // Texte en blanc
+  background: $color-primary !important; 
+  color: $color-text-light !important; 
   border: 1.5px solid $color-primary !important;
   
   &:hover:not(:disabled) {
-    background: darken($color-primary, 10%) !important; // Couleur principale foncée
+    background: darken($color-primary, 10%) !important; 
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba($color-primary, 0.3); // Ombre principale
-    color: $color-text-light !important; // Texte en blanc
-    border-color: darken($color-primary, 15%) !important; // Bordure plus foncée
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3); 
+    color: $color-text-light !important; 
+    border-color: darken($color-primary, 15%) !important; 
   }
 }
 
@@ -1662,7 +1647,7 @@ nav.fixed-bottom,
 }
 
 // =============================================
-// ICÔNES DE STATISTIQUES - PRIMAIRE FONCÉE
+// ICÔNES DE STATISTIQUES 
 // =============================================
 
 .stat-icon-Scenariste {
@@ -1676,7 +1661,7 @@ nav.fixed-bottom,
   flex-shrink: 0;
   transition: $transition;
 
-  // Couleurs d'icônes avec primaire foncée
+  
   .stat-projects & {
     background: rgba($color-primary-dark, 0.1) !important; // Fond primaire foncé
     color: $color-primary-dark !important; // Icône primaire foncée
@@ -1714,7 +1699,7 @@ nav.fixed-bottom,
 .stat-label-Scenariste {
   font-size: $font-size-p2;
   font-weight: $font-weight-semibold;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary;
   margin-bottom: $gap-xs;
   @include typography-cinzel-h4;
 }
@@ -1724,7 +1709,7 @@ nav.fixed-bottom,
   display: flex;
   align-items: center;
   gap: $gap-xs;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   margin-top: $gap-sm;
 
   .fas {
@@ -1734,18 +1719,18 @@ nav.fixed-bottom,
   .stat-projects &,
   .stat-scenes & {
     .fa-arrow-up {
-      color: $color-success; // Changé: doré
+      color: $color-success; 
     }
 
     .fa-arrow-down {
-      color: $color-error; // Changé: rouge bordeaux
+      color: $color-error; 
     }
   }
 }
 
 .stat-subtext-Scenariste {
   font-size: $font-size-p4;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   margin-top: $gap-xs;
 }
 
@@ -1754,7 +1739,7 @@ nav.fixed-bottom,
   display: flex;
   align-items: center;
   gap: $gap-xs;
-  color: $color-warning; // Changé: orange
+  color: $color-warning; 
   margin-top: $gap-sm;
 
   .fa-exclamation-circle {
@@ -1762,14 +1747,13 @@ nav.fixed-bottom,
   }
 }
 
-// Le reste du CSS existant reste inchangé...
-// (Conserver toutes les autres sections du fichier original)
+
 
 // =============================================
 // SECTION DERNIÈRES ACTIVITÉS
 // =============================================
 .recent-activity-Scenariste {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt; 
   border-radius: $border-radius-lg;
   padding: $padding-xl;
   margin: $margin-xl 0;
@@ -1782,12 +1766,12 @@ nav.fixed-bottom,
   align-items: center;
   margin-bottom: $margin-lg;
   padding-bottom: $padding-md;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  border-bottom: 1px solid $color-border; 
 }
 
 .activity-title-Scenariste {
   font-size: $font-size-h3;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   margin: 0;
   @include typography-playfair-h3;
 }
@@ -1798,7 +1782,7 @@ nav.fixed-bottom,
   gap: $gap-xs;
   background: none;
   border: none;
-  color: $color-primary; // Changé: doré
+  color: $color-primary; 
   font-size: $font-size-p2;
   font-weight: $font-weight-semibold;
   cursor: pointer;
@@ -1807,7 +1791,7 @@ nav.fixed-bottom,
   transition: $transition-fast;
 
   &:hover {
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
+    background: rgba($color-primary, 0.1); 
     transform: translateX(4px);
   }
 
@@ -1832,7 +1816,7 @@ nav.fixed-bottom,
     top: 0;
     bottom: 0;
     width: 2px;
-    background: $color-border; // Changé: bordure dorée
+    background: $color-border; 
   }
 }
 
@@ -1856,41 +1840,41 @@ nav.fixed-bottom,
   font-size: $font-size-p1;
   z-index: 1;
 
-  // Couleurs par type d'activité
+  
   &.type-create {
-    background: rgba($color-success, 0.1); // Changé: doré subtil
-    color: $color-success; // Changé: doré
-    border: 2px solid $color-success; // Changé: doré
+    background: rgba($color-success, 0.1); 
+    color: $color-success; 
+    border: 2px solid $color-success; 
   }
 
   &.type-edit {
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
-    color: $color-primary; // Changé: doré
-    border: 2px solid $color-primary; // Changé: doré
+    background: rgba($color-primary, 0.1); 
+    color: $color-primary; 
+    border: 2px solid $color-primary; 
   }
 
   &.type-comment {
-    background: rgba($color-accent, 0.1); // Changé: orange subtil
-    color: $color-accent; // Changé: orange
-    border: 2px solid $color-accent; // Changé: orange
+    background: rgba($color-accent, 0.1); 
+    color: $color-accent; 
+    border: 2px solid $color-accent; 
   }
 
   &.type-status {
-    background: rgba($color-warning, 0.1); // Changé: orange subtil
-    color: $color-warning; // Changé: orange
-    border: 2px solid $color-warning; // Changé: orange
+    background: rgba($color-warning, 0.1); 
+    color: $color-warning; 
+    border: 2px solid $color-warning; 
   }
 
   &.type-collaboration {
-    background: rgba($color-info, 0.1); // Changé: bleu subtil
-    color: $color-info; // Changé: bleu
-    border: 2px solid $color-info; // Changé: bleu
+    background: rgba($color-info, 0.1);
+    color: $color-info; 
+    border: 2px solid $color-info; 
   }
 }
 
 .activity-content-Scenariste {
   flex: 1;
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt; 
   padding: $padding-md;
   border-radius: $border-radius;
   box-shadow: $shadow;
@@ -1898,7 +1882,7 @@ nav.fixed-bottom,
 
 .activity-text-Scenariste {
   font-size: $font-size-p2;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   margin-bottom: $gap-sm;
   line-height: $line-height-base;
 }
@@ -1908,7 +1892,7 @@ nav.fixed-bottom,
   align-items: center;
   gap: $gap-lg;
   font-size: $font-size-p4;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
 }
 
 .activity-time-Scenariste {
@@ -1923,14 +1907,14 @@ nav.fixed-bottom,
 }
 
 .activity-project-Scenariste {
-  color: $color-primary; // Changé: doré
+  color: $color-primary;
   cursor: pointer;
   padding: $gap-xs $padding-sm;
   border-radius: $border-radius-sm;
   transition: $transition-fast;
 
   &:hover {
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
+    background: rgba($color-primary, 0.1); 
     text-decoration: underline;
   }
 }
@@ -1938,7 +1922,7 @@ nav.fixed-bottom,
 .no-activities-Scenariste {
   text-align: center;
   padding: $padding-xl;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
 
   .fa-history {
     font-size: 3rem;
@@ -1961,7 +1945,7 @@ nav.fixed-bottom,
 
 .priority-title-Scenariste {
   font-size: $font-size-h3;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   margin-bottom: $margin-lg;
   display: flex;
   align-items: center;
@@ -1969,7 +1953,7 @@ nav.fixed-bottom,
   @include typography-playfair-h3;
 
   .fa-star {
-    color: $color-warning; // Changé: orange
+    color: $color-warning; 
     font-size: $font-size-h4;
   }
 }
@@ -1985,38 +1969,38 @@ nav.fixed-bottom,
 }
 
 .priority-card-Scenariste {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt; 
   border-radius: $border-radius-lg;
   padding: $padding-xl;
   box-shadow: $shadow-lg;
   transition: $transition;
   border: 1px solid transparent;
 
-  // Couleurs de bordure par priorité
+  
   &.priority-high {
-    border-color: $color-error; // Changé: rouge bordeaux
+    border-color: $color-error;
 
     .priority-badge-Scenariste {
-      background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-      color: $color-error; // Changé: rouge bordeaux
+      background: rgba($color-error, 0.1); 
+      color: $color-error; 
     }
   }
 
   &.priority-medium {
-    border-color: $color-warning; // Changé: orange
+    border-color: $color-warning; 
 
     .priority-badge-Scenariste {
-      background: rgba($color-warning, 0.1); // Changé: orange subtil
-      color: $color-warning; // Changé: orange
+      background: rgba($color-warning, 0.1); 
+      color: $color-warning; 
     }
   }
 
   &.priority-low {
-    border-color: $color-success; // Changé: doré
+    border-color: $color-success;
 
     .priority-badge-Scenariste {
-      background: rgba($color-success, 0.1); // Changé: doré subtil
-      color: $color-success; // Changé: doré
+      background: rgba($color-success, 0.1);
+      color: $color-success;
     }
   }
 
@@ -2049,22 +2033,22 @@ nav.fixed-bottom,
   button {
     background: none;
     border: none;
-    color: $color-text-muted; // Changé: taupe
+    color: $color-text-muted; 
     cursor: pointer;
     padding: $padding-xs;
     border-radius: $border-radius-sm;
     transition: $transition-fast;
 
     &:hover {
-      background: $color-surface-hover; // Changé: doré subtil
-      color: $color-text-primary; // Changé: brun foncé
+      background: $color-surface-hover;
+      color: $color-text-primary; 
     }
   }
 }
 
 .priority-project-title-Scenariste {
   font-size: $font-size-h4;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   margin: $margin-md 0;
   line-height: 1.3;
   @include typography-cinzel-h4;
@@ -2076,7 +2060,7 @@ nav.fixed-bottom,
 
 .progress-bar-Scenariste {
   height: 8px;
-  background: rgba($color-border, 0.5); // Changé: bordure dorée
+  background: rgba($color-border, 0.5); 
   border-radius: $border-radius-pill;
   overflow: hidden;
   margin-bottom: $gap-sm;
@@ -2084,14 +2068,14 @@ nav.fixed-bottom,
 
 .progress-fill-Scenariste {
   height: 100%;
-  background: linear-gradient(90deg, $color-primary, $color-primary-light); // Changé: doré
+  background: linear-gradient(90deg, $color-primary, $color-primary-light);
   border-radius: $border-radius-pill;
   transition: width 1s ease;
 }
 
 .progress-text-Scenariste {
   font-size: $font-size-p4;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   display: block;
   text-align: right;
 }
@@ -2101,15 +2085,15 @@ nav.fixed-bottom,
   align-items: center;
   gap: $gap-sm;
   font-size: $font-size-p3;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary; 
   padding: $padding-sm;
-  background: rgba($color-border, 0.1); // Changé: bordure dorée
+  background: rgba($color-border, 0.1); 
   border-radius: $border-radius-sm;
   margin: $margin-md 0;
 
   &.urgent {
-    background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-    color: $color-error; // Changé: rouge bordeaux
+    background: rgba($color-error, 0.1); 
+    color: $color-error; 
     font-weight: $font-weight-semibold;
   }
 
@@ -2129,8 +2113,8 @@ nav.fixed-bottom,
   gap: $gap-sm;
   width: 100%;
   padding: $padding-md;
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%); // Changé: doré
-  color: $color-text-primary; // Changé: brun foncé
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-primary; 
   border: none;
   border-radius: $border-radius;
   font-size: $font-size-p2;
@@ -2139,10 +2123,10 @@ nav.fixed-bottom,
   transition: $transition;
 
   &:hover {
-    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%); // Changé: doré foncé
+    background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%); 
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba($color-primary, 0.3); // Changé: doré
-    color: $color-text-light; // Changé: blanc
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+    color: $color-text-light; 
   }
 
   .fa-pencil-alt {
@@ -2217,24 +2201,24 @@ nav.fixed-bottom,
 
   h4 {
     font-size: $font-size-h4;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary; 
     margin-bottom: $margin-md;
     padding-bottom: $padding-sm;
-    border-bottom: 1px solid $color-border; // Changé: bordure dorée
+    border-bottom: 1px solid $color-border; 
     @include typography-cinzel-h4;
   }
 }
 
 .search-result-item-Scenariste {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt; 
   border-radius: $border-radius;
   margin-bottom: $gap-sm;
-  border: 1px solid $color-border; // Changé: bordure dorée
+  border: 1px solid $color-border; 
   overflow: hidden;
   transition: $transition-fast;
 
   &:hover {
-    border-color: $color-primary; // Changé: doré
+    border-color: $color-primary;
     box-shadow: $shadow-md;
   }
 }
@@ -2248,7 +2232,7 @@ nav.fixed-bottom,
   transition: $transition-fast;
 
   &:hover {
-    background: rgba($color-primary, 0.03); // Changé: doré très subtil
+    background: rgba($color-primary, 0.03); 
   }
 }
 
@@ -2268,7 +2252,7 @@ nav.fixed-bottom,
 
 .result-icon-Scenariste {
   font-size: $font-size-p1;
-  color: $color-primary; // Changé: doré
+  color: $color-primary;
   width: 24px;
   text-align: center;
 }
@@ -2276,7 +2260,7 @@ nav.fixed-bottom,
 .result-title-Scenariste {
   font-size: $font-size-p2;
   font-weight: $font-weight-semibold;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   flex: 1;
   min-width: 200px;
 }
@@ -2290,17 +2274,17 @@ nav.fixed-bottom,
 }
 
 .result-type-Scenariste {
-  background: rgba($color-accent, 0.1); // Changé: orange subtil
-  color: $color-accent; // Changé: orange
-  border: 1px solid rgba($color-accent, 0.2); // Changé: orange
+  background: rgba($color-accent, 0.1); 
+  color: $color-accent; 
+  border: 1px solid rgba($color-accent, 0.2);
 }
 
 .result-statut-Scenariste {
-  &.statut-en-cours { background: rgba($color-primary, 0.1); color: $color-primary; border: 1px solid rgba($color-primary, 0.2); } // Changé: doré
-  &.statut-termine { background: rgba($color-success, 0.1); color: $color-success; border: 1px solid rgba($color-success, 0.2); } // Changé: doré
+  &.statut-en-cours { background: rgba($color-primary, 0.1); color: $color-primary; border: 1px solid rgba($color-primary, 0.2); }
+  &.statut-termine { background: rgba($color-success, 0.1); color: $color-success; border: 1px solid rgba($color-success, 0.2); }
   &.statut-attente { background: rgba($color-warning, 0.1); color: $color-warning; border: 1px solid rgba($color-warning, 0.2); } // Changé: orange
   &.statut-annule { background: rgba($color-error, 0.1); color: $color-error; border: 1px solid rgba($color-error, 0.2); } // Changé: rouge bordeaux
-  &.statut-planifie { background: rgba($color-info, 0.1); color: $color-info; border: 1px solid rgba($color-info, 0.2); } // Changé: bleu
+  &.statut-planifie { background: rgba($color-info, 0.1); color: $color-info; border: 1px solid rgba($color-info, 0.2); } 
 }
 
 .result-actions-Scenariste {
@@ -2309,13 +2293,13 @@ nav.fixed-bottom,
   gap: $gap-xs;
   
   .action-btn-Scenariste:hover {
-    color: $color-primary-dark !important; // Icône primaire foncée
-    background: rgba($color-primary-dark, 0.1) !important; // Fond primaire foncé
+    color: $color-primary-dark !important; 
+    background: rgba($color-primary-dark, 0.1) !important;
   }
 }
 
 .toggle-icon-Scenariste {
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   transition: transform $transition-fast;
   margin-left: $gap-md;
 
@@ -2327,7 +2311,7 @@ nav.fixed-bottom,
 .action-btn-Scenariste {
   background: none;
   border: none;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   cursor: pointer;
   padding: $padding-xs;
   border-radius: $border-radius-sm;
@@ -2353,9 +2337,9 @@ nav.fixed-bottom,
 // =============================================
 
 .project-details-Scenariste {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt; 
   padding: $padding-lg;
-  border-top: 1px solid $color-border; // Changé: bordure dorée
+  border-top: 1px solid $color-border; 
   animation: slideDown 0.3s ease-out;
 
   @keyframes slideDown {
@@ -2379,10 +2363,10 @@ nav.fixed-bottom,
 
   h5 {
     font-size: $font-size-p2;
-    color: $color-text-secondary; // Changé: brun
+    color: $color-text-secondary; 
     margin-bottom: $margin-md;
     padding-bottom: $padding-xs;
-    border-bottom: 1px dashed $color-border; // Changé: bordure dorée
+    border-bottom: 1px dashed $color-border; 
     @include typography-cinzel-h4;
   }
 }
@@ -2392,7 +2376,7 @@ nav.fixed-bottom,
   align-items: center;
   gap: $gap-md;
   padding: $padding-sm $padding-md;
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt; 
   border-radius: $border-radius-sm;
   margin-bottom: $gap-sm;
   cursor: pointer;
@@ -2400,8 +2384,8 @@ nav.fixed-bottom,
   border: 1px solid transparent;
 
   &:hover {
-    border-color: $color-primary; // Changé: doré
-    background: rgba($color-primary, 0.03); // Changé: doré très subtil
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.03);
     transform: translateX(4px);
   }
 
@@ -2410,14 +2394,14 @@ nav.fixed-bottom,
   }
 
   i {
-    color: $color-primary; // Changé: doré
+    color: $color-primary;
     font-size: $font-size-p2;
     width: 20px;
   }
 
   span {
     font-size: $font-size-p3;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary; 
     flex: 1;
   }
 }
@@ -2425,9 +2409,9 @@ nav.fixed-bottom,
 .loading-content-Scenariste {
   text-align: center;
   padding: $padding-xl;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   font-style: italic;
-  background: rgba($color-border, 0.1); // Changé: bordure dorée
+  background: rgba($color-border, 0.1); 
   border-radius: $border-radius;
 }
 
@@ -2437,14 +2421,14 @@ nav.fixed-bottom,
 .no-results-Scenariste {
   text-align: center;
   padding: $padding-xl $padding-lg;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   font-size: $font-size-p2;
-  background: rgba($color-border, 0.1); // Changé: bordure dorée
+  background: rgba($color-border, 0.1);
   border-radius: $border-radius;
-  border: 1px dashed $color-border; // Changé: bordure dorée
+  border: 1px dashed $color-border;
 
   strong {
-    color: $color-text-secondary; // Changé: brun
+    color: $color-text-secondary; 
     font-weight: $font-weight-semibold;
   }
 }
@@ -2455,7 +2439,7 @@ nav.fixed-bottom,
 .close-results-btn-Scenariste {
   background: none;
   border: none;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   cursor: pointer;
   padding: $padding-xs;
   border-radius: 50%;
@@ -2467,8 +2451,8 @@ nav.fixed-bottom,
   transition: $transition-fast;
 
   &:hover {
-    background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-    color: $color-error; // Changé: rouge bordeaux
+    background: rgba($color-error, 0.1); 
+    color: $color-error; 
   }
 }
 
@@ -2572,15 +2556,15 @@ nav.fixed-bottom,
 }
 
 // =============================================
-// STATISTIQUES PERSONNELLES - VERSION ÉLÉGANTE
+// STATISTIQUES PERSONNELLES
 // =============================================
 
 .personal-stats-Scenariste {
-  background: linear-gradient(135deg, rgba($color-primary-light, 0.05) 0%, rgba($color-accent-light, 0.05) 100%); // Changé: doré/orange subtil
+  background: linear-gradient(135deg, rgba($color-primary-light, 0.05) 0%, rgba($color-accent-light, 0.05) 100%);
   border-radius: $border-radius-lg;
   padding: $padding-xl;
   margin: $margin-xl 0;
-  border: 1px solid rgba($color-primary, 0.1); // Changé: doré subtil
+  border: 1px solid rgba($color-primary, 0.1); 
   box-shadow: $shadow-md;
   position: relative;
   overflow: hidden;
@@ -2592,14 +2576,14 @@ nav.fixed-bottom,
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, $color-primary, $color-accent); // Changé: doré à orange
+    background: linear-gradient(90deg, $color-primary, $color-accent); 
     border-radius: $border-radius-lg $border-radius-lg 0 0;
   }
 }
 
 .section-title-Scenariste {
   font-size: $font-size-h3;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   margin-bottom: $margin-xl;
   display: flex;
   align-items: center;
@@ -2607,9 +2591,9 @@ nav.fixed-bottom,
   @include typography-playfair-h3;
 
   .fa-chart-line {
-    color: $color-primary; // Changé: doré
+    color: $color-primary;
     font-size: $font-size-h4;
-    background: rgba($color-primary, 0.1); // Changé: doré subtil
+    background: rgba($color-primary, 0.1);
     padding: $padding-sm;
     border-radius: $border-radius;
   }
@@ -2631,11 +2615,11 @@ nav.fixed-bottom,
 }
 
 .personal-stat-card-Scenariste {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt; 
   border-radius: $border-radius;
   padding: $padding-lg;
   box-shadow: $shadow;
-  border: 1px solid $color-border; // Changé: bordure dorée
+  border: 1px solid $color-border; 
   transition: all $transition;
   height: 100%;
   display: flex;
@@ -2644,43 +2628,43 @@ nav.fixed-bottom,
   &:hover {
     transform: translateY(-4px);
     box-shadow: $shadow-lg;
-    border-color: $color-primary; // Changé: doré
+    border-color: $color-primary;
   }
 
   // Couleurs d'accent par carte
   &:nth-child(1) {
-    border-top: 4px solid $color-success; // Changé: doré
+    border-top: 4px solid $color-success;
 
     .stat-header-Scenariste i {
-      color: $color-success; // Changé: doré
-      background: rgba($color-success, 0.1); // Changé: doré subtil
+      color: $color-success;
+      background: rgba($color-success, 0.1); 
     }
   }
 
   &:nth-child(2) {
-    border-top: 4px solid $color-primary; // Changé: doré
+    border-top: 4px solid $color-primary;
 
     .stat-header-Scenariste i {
-      color: $color-primary; // Changé: doré
-      background: rgba($color-primary, 0.1); // Changé: doré subtil
+      color: $color-primary;
+      background: rgba($color-primary, 0.1); 
     }
   }
 
   &:nth-child(3) {
-    border-top: 4px solid $color-accent; // Changé: orange
+    border-top: 4px solid $color-accent; 
 
     .stat-header-Scenariste i {
-      color: $color-accent; // Changé: orange
-      background: rgba($color-accent, 0.1); // Changé: orange subtil
+      color: $color-accent; 
+      background: rgba($color-accent, 0.1);  
     }
   }
 
   &:nth-child(4) {
-    border-top: 4px solid $color-warning; // Changé: orange
+    border-top: 4px solid $color-warning; 
 
     .stat-header-Scenariste i {
-      color: $color-warning; // Changé: orange
-      background: rgba($color-warning, 0.1); // Changé: orange subtil
+      color: $color-warning;
+      background: rgba($color-warning, 0.1);
     }
   }
 }
@@ -2691,7 +2675,7 @@ nav.fixed-bottom,
   gap: $gap-md;
   margin-bottom: $margin-lg;
   padding-bottom: $padding-md;
-  border-bottom: 1px solid rgba($color-border, 0.5); // Changé: bordure dorée
+  border-bottom: 1px solid rgba($color-border, 0.5); 
 
   i {
     font-size: $font-size-h4;
@@ -2706,7 +2690,7 @@ nav.fixed-bottom,
 
   h4 {
     font-size: $font-size-h4;
-    color: $color-text-primary; // Changé: brun foncé
+    color: $color-text-primary; 
     margin: 0;
     flex: 1;
     @include typography-cinzel-h4;
@@ -2726,31 +2710,31 @@ nav.fixed-bottom,
 .stat-value-Scenariste {
   font-size: $font-size-h1;
   font-weight: $font-weight-black;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   line-height: 1;
   margin-bottom: $gap-xs;
   @include typography-cinzel-h2;
 
   .personal-stat-card-Scenariste:nth-child(1) & {
-    color: $color-success; // Changé: doré
+    color: $color-success;
   }
 
   .personal-stat-card-Scenariste:nth-child(2) & {
-    color: $color-primary; // Changé: doré
+    color: $color-primary;
   }
 
   .personal-stat-card-Scenariste:nth-child(3) & {
-    color: $color-accent; // Changé: orange
+    color: $color-accent; 
   }
 
   .personal-stat-card-Scenariste:nth-child(4) & {
-    color: $color-warning; // Changé: orange
+    color: $color-warning; 
   }
 }
 
 .stat-label-Scenariste {
   font-size: $font-size-p3;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary;
   margin-bottom: $margin-md;
   font-weight: $font-weight-medium;
 }
@@ -2771,11 +2755,11 @@ nav.fixed-bottom,
 
   // Cercle coloré selon la valeur
   .personal-stat-card-Scenariste:nth-child(1) & circle:nth-child(2) {
-    stroke: $color-success; // Changé: doré
+    stroke: $color-success;
   }
 
   .personal-stat-card-Scenariste:nth-child(2) & circle:nth-child(2) {
-    stroke: $color-primary; // Changé: doré
+    stroke: $color-primary;
   }
 }
 
@@ -2794,20 +2778,20 @@ nav.fixed-bottom,
   width: fit-content;
 
   &.up {
-    background: rgba($color-success, 0.1); // Changé: doré subtil
-    color: $color-success; // Changé: doré
+    background: rgba($color-success, 0.1); 
+    color: $color-success;
 
     i {
-      color: $color-success; // Changé: doré
+      color: $color-success;
     }
   }
 
   &.down {
-    background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-    color: $color-error; // Changé: rouge bordeaux
+    background: rgba($color-error, 0.1); 
+    color: $color-error; 
 
     i {
-      color: $color-error; // Changé: rouge bordeaux
+      color: $color-error; 
     }
   }
 
@@ -2818,7 +2802,7 @@ nav.fixed-bottom,
 
 .time-details-Scenariste {
   margin-top: $margin-md;
-  background: rgba($color-border, 0.05); // Changé: bordure dorée
+  background: rgba($color-border, 0.05); 
   border-radius: $border-radius-sm;
   padding: $padding-md;
 }
@@ -2830,19 +2814,19 @@ nav.fixed-bottom,
   padding: $padding-xs 0;
 
   &:not(:last-child) {
-    border-bottom: 1px solid rgba($color-border, 0.3); // Changé: bordure dorée
+    border-bottom: 1px solid rgba($color-border, 0.3); 
   }
 }
 
 .time-label-Scenariste {
   font-size: $font-size-p4;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary; 
   font-weight: $font-weight-medium;
 }
 
 .time-value-Scenariste {
   font-size: $font-size-p3;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   font-weight: $font-weight-semibold;
 }
 
@@ -2865,23 +2849,23 @@ nav.fixed-bottom,
 
 .goal-title-Scenariste {
   font-size: $font-size-p3;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
   font-weight: $font-weight-semibold;
   flex: 1;
 }
 
 .goal-progress-Scenariste {
   font-size: $font-size-p4;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary;
   font-weight: $font-weight-medium;
-  background: rgba($color-border, 0.2); // Changé: bordure dorée
+  background: rgba($color-border, 0.2); 
   padding: 2px 8px;
   border-radius: $border-radius-pill;
 }
 
 .goal-bar-Scenariste {
   height: 8px;
-  background: rgba($color-border, 0.3); // Changé: bordure dorée
+  background: rgba($color-border, 0.3); 
   border-radius: $border-radius-pill;
   overflow: hidden;
   position: relative;
@@ -2894,9 +2878,9 @@ nav.fixed-bottom,
   position: relative;
   overflow: hidden;
 
-  // Couleur par objectif
+
   .goal-item-Scenariste:nth-child(1) & {
-    background: linear-gradient(90deg, $color-primary, $color-primary-light); // Changé: doré
+    background: linear-gradient(90deg, $color-primary, $color-primary-light);
     
     &::after {
       content: '';
@@ -2914,7 +2898,7 @@ nav.fixed-bottom,
   }
 
   .goal-item-Scenariste:nth-child(2) & {
-    background: linear-gradient(90deg, $color-accent, $color-accent-light); // Changé: orange
+    background: linear-gradient(90deg, $color-accent, $color-accent-light); 
     
     &::after {
       content: '';
@@ -3014,11 +2998,11 @@ nav.fixed-bottom,
     i {
       width: 36px;
       height: 36px;
-      font-size: $font-size-h4; // Ajouté pour conserver la taille
+      font-size: $font-size-h4;
     }
     
     h4 {
-      font-size: $font-size-p2; // Ajustement pour mobile
+      font-size: $font-size-p2; 
     }
   }
 
@@ -3032,7 +3016,7 @@ nav.fixed-bottom,
     align-self: flex-start;
   }
   
-  // Ajouts pour améliorer l'affichage mobile
+ 
   .personal-stats-grid-Scenariste {
     gap: $gap-md;
   }
@@ -3069,7 +3053,7 @@ nav.fixed-bottom,
   transform: translate(-50%, -50%);
   font-size: $font-size-p4;
   font-weight: $font-weight-bold;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary; 
 }
 
 // =============================================
@@ -3085,8 +3069,8 @@ nav.fixed-bottom,
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%) translateY(-8px);
-    background: $color-text-primary; // Changé: brun foncé
-    color: $color-text-light; // Changé: blanc
+    background: $color-text-primary; 
+    color: $color-text-light;
     padding: $gap-xs $padding-sm;
     border-radius: $border-radius-sm;
     font-size: $font-size-p4;
@@ -3111,12 +3095,12 @@ nav.fixed-bottom,
 // =============================================
 
 .viewer-sidebar {
-  background: $color-primary !important; // Couleur principale
+  background: $color-primary !important; 
   
   .viewer-info-section {
     .viewer-title {
       font-size: $font-size-p1;
-      color: $color-text-light !important; // Texte en blanc
+      color: $color-text-light !important; 
       margin-bottom: $margin-lg;
       display: flex;
       align-items: center;
@@ -3125,9 +3109,9 @@ nav.fixed-bottom,
       @include typography-playfair-h4;
       
       i {
-        color: $color-text-light !important; // Icône en blanc
+        color: $color-text-light !important; 
         font-size: $font-size-p1;
-        background: rgba($color-text-light, 0.2) !important; // Fond clair
+        background: rgba($color-text-light, 0.2) !important; 
         padding: $padding-xs;
         border-radius: $border-radius-sm;
       }
@@ -3146,20 +3130,20 @@ nav.fixed-bottom,
     align-items: center;
     gap: $gap-md;
     padding: $padding-sm;
-    background: rgba($color-text-light, 0.1) !important; // Fond semi-transparent blanc
+    background: rgba($color-text-light, 0.1) !important; 
     border-radius: $border-radius;
     border: 1px solid rgba($color-text-light, 0.2) !important;
     box-shadow: $shadow;
 
     i {
       font-size: $font-size-h4;
-      color: $color-primary-dark !important; // Icône primaire foncée
+      color: $color-primary-dark !important;
       width: 40px;
       height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba($color-primary-dark, 0.1) !important; // Fond primaire foncé
+      background: rgba($color-primary-dark, 0.1) !important; 
       border-radius: $border-radius;
     }
 
@@ -3169,7 +3153,7 @@ nav.fixed-bottom,
       .viewer-stat-value {
         font-size: $font-size-h4;
         font-weight: $font-weight-black;
-        color: $color-text-light !important; // Texte en blanc
+        color: $color-text-light !important; 
         line-height: 1;
         margin-bottom: $gap-xs;
         @include typography-cinzel-h4;
@@ -3177,22 +3161,22 @@ nav.fixed-bottom,
       
       .viewer-stat-label {
         font-size: $font-size-p4;
-        color: rgba($color-text-light, 0.8) !important; // Texte légèrement transparent
+        color: rgba($color-text-light, 0.8) !important; 
         font-weight: $font-weight-medium;
       }
     }
   }
 
   .viewer-message {
-    background: rgba($color-text-light, 0.1) !important; // Fond semi-transparent
+    background: rgba($color-text-light, 0.1) !important; 
     border-radius: $border-radius;
     padding: $padding-md;
-    border-left: 3px solid $color-accent-dark !important; // Bordure accent dark
+    border-left: 3px solid $color-accent-dark !important;
     margin-top: $margin-lg;
 
     p {
       font-size: $font-size-p4;
-      color: rgba($color-text-light, 0.9) !important; // Texte légèrement transparent
+      color: rgba($color-text-light, 0.9) !important; 
       margin: 0 0 $gap-xs 0;
       display: flex;
       align-items: center;
@@ -3203,7 +3187,7 @@ nav.fixed-bottom,
       }
 
       i {
-        color: $color-accent-dark !important; // Icône accent dark
+        color: $color-accent-dark !important; 
         font-size: $font-size-p3;
       }
     }
@@ -3219,8 +3203,8 @@ nav.fixed-bottom,
   border-radius: $border-radius-pill;
   font-size: $font-size-p4;
   font-weight: $font-weight-bold;
-  color: $color-accent-dark; // Couleur accent dark
-  background: rgba($color-accent-dark, 0.1); // Fond accent dark
+  color: $color-accent-dark;
+  background: rgba($color-accent-dark, 0.1); 
   border: 1px solid rgba($color-accent-dark, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -3397,7 +3381,7 @@ nav.fixed-bottom,
 }
 
 // =============================================
-// RESPONSIVE POUR LA SIDEBAR (AJUSTEMENTS FINAUX)
+// RESPONSIVE POUR LA SIDEBAR 
 // =============================================
 
 @media (max-width: $breakpoint-lg) {

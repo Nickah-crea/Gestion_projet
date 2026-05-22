@@ -1,6 +1,3 @@
-// =============================================
-// _comedien.scss – STYLE ULTRA-COMPACT
-// =============================================
 @import '../base/variables';
 
 .app-wrapper-global {
@@ -23,7 +20,7 @@
   @include typography-cinzel-h1;
   margin-bottom: $margin-lg;
   text-align: center;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary;
   position: relative;
   font-weight: $font-weight-semibold;
   
@@ -35,7 +32,7 @@
     transform: translateX(-50%);
     width: 60px;
     height: 2px;
-    background: linear-gradient(90deg, $color-primary, $color-accent); // Changé: doré à orange
+    background: linear-gradient(90deg, $color-primary, $color-accent); 
     border-radius: 1px;
   }
 }
@@ -44,11 +41,11 @@
 // FORMULAIRE ULTRA-COMPACT
 // =============================================
 .creation-comedien .form-container {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt;
   border-radius: $border-radius;
   box-shadow: $shadow-lg;
   padding: $padding-xl;
-  border: 1px solid $color-border; // Changé: bordure dorée
+  border: 1px solid $color-border;
   margin-bottom: $margin-xl;
   animation: slideInUp-conn $duration-normal $ease-out-cinema forwards;
 }
@@ -57,8 +54,8 @@
   @include typography-h3;
   margin-bottom: $margin-md;
   padding-bottom: $padding-sm;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
-  color: $color-text-primary; // Changé: brun foncé
+  border-bottom: 1px solid $color-border;
+  color: $color-text-primary;
 }
 
 .creation-comedien .comedien-form {
@@ -83,7 +80,7 @@
 .creation-comedien .form-group label {
   @include typography-p2;
   font-size: $font-size-p2;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary; 
   font-weight: $font-weight-medium;
 }
 
@@ -92,10 +89,10 @@
 .creation-comedien .form-select,
 .creation-comedien .form-textarea {
   padding: $padding-sm $padding-md;
-  border: 1px solid $color-border; // Changé: bordure dorée
+  border: 1px solid $color-border;
   border-radius: $border-radius-sm;
-  background: $color-background-alt; // Changé: blanc
-  color: $color-text-primary; // Changé: brun foncé
+  background: $color-background-alt;
+  color: $color-text-primary;
   font-size: $font-size-p2;
   height: 44px;
   box-shadow: $shadow-inset;
@@ -104,16 +101,16 @@
 
   &:focus {
     outline: none;
-    border-color: $color-primary; // Changé: doré
+    border-color: $color-primary; 
     box-shadow: 
-      0 0 0 3px rgba($color-primary, 0.15), // Changé: doré
+      0 0 0 3px rgba($color-primary, 0.15), 
       $shadow-inset;
   }
 }
 
 .creation-comedien .form-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238D695D' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); // Changé: brun
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238D695D' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); 
   background-repeat: no-repeat;
   background-position: right $padding-md center;
   background-size: 12px;
@@ -154,10 +151,10 @@
 }
 
 .creation-comedien .disponibilite-item {
-  background: $color-pastel-gold; // Changé: doré pastel (au lieu de bleu)
+  background: $color-pastel-gold; 
   border-radius: $border-radius-sm;
   padding: $padding-md;
-  border: 1px solid rgba($color-primary, 0.1); // Changé: doré
+  border: 1px solid rgba($color-primary, 0.1); 
 }
 
 .creation-comedien .disponibilite-inputs {
@@ -173,8 +170,8 @@
 }
 
 .creation-comedien .remove-dispo-btn {
-  background: $color-error; // Changé: rouge bordeaux
-  color: $color-text-light; // Changé: blanc
+  background: $color-error; 
+  color: $color-text-light;
   border: none;
   width: 32px;
   height: 32px;
@@ -186,7 +183,7 @@
   @include flex-center;
   
   &:hover {
-    background: darken($color-error, 10%); // Changé: rouge bordeaux plus foncé
+    background: darken($color-error, 10%);  
     transform: scale(1.1);
   }
 }
@@ -227,13 +224,13 @@
   max-height: 150px;
   object-fit: cover;
   border-radius: $border-radius;
-  border: 2px solid $color-border; // Changé: bordure dorée
+  border: 2px solid $color-border;
   box-shadow: $shadow;
 }
 
 .creation-comedien .remove-photo-btn {
-  background: $color-error; // Changé: rouge bordeaux
-  color: $color-text-light; // Changé: blanc
+  background: $color-error; 
+  color: $color-text-light;
   border: none;
   position: absolute;
   top: -8px;
@@ -248,7 +245,7 @@
   @include flex-center;
   
   &:hover {
-    background: darken($color-error, 10%); // Changé: rouge bordeaux plus foncé
+    background: darken($color-error, 10%);  
     transform: scale(1.1);
   }
 }
@@ -260,7 +257,7 @@
   justify-content: flex-end;
   margin-top: $margin-xl;
   padding-top: $margin-lg;
-  border-top: 1px solid $color-border; // Changé: bordure dorée
+  border-top: 1px solid $color-border;
   
   @include respond-to($breakpoint-md) {
     flex-direction: column;
@@ -282,8 +279,8 @@
 
 .creation-comedien .btn-secondary {
   background: transparent;
-  border: 2px solid $color-primary; // Changé: doré
-  color: $color-primary; // Changé: doré
+  border: 2px solid $color-primary; 
+  color: $color-primary; 
   padding: $padding-md $padding-lg;
   border-radius: $border-radius-sm;
   font-size: $font-size-p2;
@@ -293,8 +290,8 @@
   min-width: 120px;
   
   &:hover {
-    background: $color-primary; // Changé: doré
-    color: $color-text-light; // Changé: blanc
+    background: $color-primary; 
+    color: $color-text-light;
   }
   
   @include respond-to($breakpoint-md) {
@@ -304,27 +301,27 @@
 }
 
 // =============================================
-// TABLEAU DES COMÉDIENS - STYLE ULTRA-COMPACT
+// TABLEAU DES COMÉDIENS 
 // =============================================
 .creation-comedien .comediens-list {
-  background: $color-background-alt; // Changé: blanc
+  background: $color-background-alt;
   border-radius: $border-radius;
   box-shadow: $shadow-lg;
   padding: $padding-xl;
-  border: 1px solid $color-border; // Changé: bordure dorée
+  border: 1px solid $color-border;
   animation: slideInUp-conn $duration-slow $ease-out-cinema forwards;
 }
 
 .creation-comedien .list-header {
   margin-bottom: $margin-lg;
   padding-bottom: $padding-md;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  border-bottom: 1px solid $color-border;
 }
 
 .creation-comedien .list-header h3 {
   @include typography-h3;
   margin-bottom: $margin-md;
-  color: $color-text-primary; // Changé: brun foncé
+  color: $color-text-primary;
 }
 
 // Recherche et filtres
@@ -361,17 +358,17 @@
 .creation-comedien .filter-item label {
   @include typography-p2;
   font-size: $font-size-p2;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary; 
   font-weight: $font-weight-medium;
 }
 
 .creation-comedien .search-input,
 .creation-comedien .filter-select {
   padding: $padding-sm $padding-md;
-  border: 1px solid $color-border; // Changé: bordure dorée
+  border: 1px solid $color-border;
   border-radius: $border-radius-sm;
-  background: $color-background-alt; // Changé: blanc
-  color: $color-text-primary; // Changé: brun foncé
+  background: $color-background-alt;
+  color: $color-text-primary;
   font-size: $font-size-p2;
   height: 40px;
   box-shadow: $shadow-inset;
@@ -379,16 +376,16 @@
 
   &:focus {
     outline: none;
-    border-color: $color-primary; // Changé: doré
+    border-color: $color-primary; 
     box-shadow: 
-      0 0 0 3px rgba($color-primary, 0.15), // Changé: doré
+      0 0 0 3px rgba($color-primary, 0.15), 
       $shadow-inset;
   }
 }
 
 .creation-comedien .filter-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238D695D' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); // Changé: brun
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238D695D' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); 
   background-repeat: no-repeat;
   background-position: right $padding-md center;
   background-size: 10px;
@@ -410,20 +407,20 @@
   font-weight: $font-weight-semibold;
   text-align: left;
   padding: $padding-md;
-  background: $color-pastel-gold; // Changé: doré pastel
-  border-bottom: 2px solid $color-primary; // Changé: doré
-  color: $color-text-primary; // Changé: brun foncé
+  background: $color-pastel-gold;  
+  border-bottom: 2px solid $color-primary; 
+  color: $color-text-primary;
 }
 
 .creation-comedien .comediens-table td {
   padding: $padding-md;
-  border-bottom: 1px solid $color-border; // Changé: bordure dorée
+  border-bottom: 1px solid $color-border;
   vertical-align: middle;
-  color: $color-text-secondary; // Changé: brun
+  color: $color-text-secondary; 
 }
 
 .creation-comedien .comediens-table tr:hover {
-  background: rgba($color-primary, 0.03); // Changé: doré très subtil
+  background: rgba($color-primary, 0.03);  
   transition: $transition;
 }
 
@@ -433,7 +430,7 @@
   height: 48px;
   border-radius: $border-radius-sm;
   object-fit: cover;
-  border: 2px solid $color-border; // Changé: bordure dorée
+  border: 2px solid $color-border;
   box-shadow: $shadow;
 }
 
@@ -441,11 +438,11 @@
   width: 48px;
   height: 48px;
   border-radius: $border-radius-sm;
-  background: $color-pastel-gold; // Changé: doré pastel
+  background: $color-pastel-gold;  
   @include flex-center;
   font-size: $font-size-p2;
-  color: $color-text-muted; // Changé: taupe
-  border: 2px dashed $color-border; // Changé: bordure dorée
+  color: $color-text-muted; 
+  border: 2px dashed $color-border;
 }
 
 // Disponibilités dans le tableau
@@ -470,21 +467,21 @@
   border: 1px solid;
 
   &.statut-disponible {
-    background: rgba($color-success, 0.1); // Changé: doré subtil
-    color: $color-success; // Changé: doré
-    border-color: rgba($color-success, 0.3); // Changé: doré
+    background: rgba($color-success, 0.1);  
+    color: $color-success; 
+    border-color: rgba($color-success, 0.3); 
   }
   
   &.statut-indisponible {
-    background: rgba($color-error, 0.1); // Changé: rouge bordeaux subtil
-    color: $color-error; // Changé: rouge bordeaux
-    border-color: rgba($color-error, 0.3); // Changé: rouge bordeaux
+    background: rgba($color-error, 0.1);  
+    color: $color-error; 
+    border-color: rgba($color-error, 0.3); 
   }
   
   &.statut-occupe {
-    background: rgba($color-warning, 0.1); // Changé: orange subtil
-    color: $color-warning; // Changé: orange
-    border-color: rgba($color-warning, 0.3); // Changé: orange
+    background: rgba($color-warning, 0.1); 
+    color: $color-warning; 
+    border-color: rgba($color-warning, 0.3); 
   }
 }
 
@@ -513,12 +510,12 @@
 }
 
 .creation-comedien .btn-edit {
-  background: rgba($color-text-primary, 0.1); // Changé: brun foncé subtil
-  color: $color-text-primary; // Changé: brun foncé
+  background: rgba($color-text-primary, 0.1); 
+  color: $color-text-primary;
   
   &:hover {
-    background: rgba($color-primary, 0.2); // Changé: doré
-    border-color: $color-primary; // Changé: doré
+    background: rgba($color-primary, 0.2); 
+    border-color: $color-primary; 
   }
 }
 
@@ -533,11 +530,11 @@
 }
 
 .creation-comedien .btn-delete {
-  background: $color-error; // Changé: rouge bordeaux
-  color: $color-text-light; // Changé: blanc
+  background: $color-error; 
+  color: $color-text-light;
   
   &:hover {
-    background: darken($color-error, 10%); // Changé: rouge bordeaux plus foncé
+    background: darken($color-error, 10%);  
     transform: scale(1.05);
   }
 }
@@ -547,7 +544,7 @@
   @include flex-center;
   flex-direction: column;
   padding: $padding-xl;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
   font-style: italic;
   text-align: center;
   gap: $margin-md;
@@ -556,7 +553,7 @@
 .creation-comedien .loading {
   @include flex-center;
   padding: $padding-xl;
-  color: $color-text-muted; // Changé: taupe
+  color: $color-text-muted; 
 }
 
 // =============================================
@@ -610,36 +607,36 @@
 }
 
 // =============================================
-// MODE SOMBRE (adapté avec votre palette)
+// MODE SOMBRE 
 // =============================================
 body.dark-theme {
   .creation-comedien {
-    background: linear-gradient(135deg, $color-background-dark 0%, lighten($color-background-dark, 3%) 100%); // Changé: brun foncé
+    background: linear-gradient(135deg, $color-background-dark 0%, lighten($color-background-dark, 3%) 100%);
     background-image: 
-      radial-gradient(circle at 10% 20%, rgba($color-primary, 0.08) 0%, transparent 15%), // Changé: doré
-      radial-gradient(circle at 90% 80%, rgba($color-accent, 0.08) 0%, transparent 15%); // Changé: orange
+      radial-gradient(circle at 10% 20%, rgba($color-primary, 0.08) 0%, transparent 15%), 
+      radial-gradient(circle at 90% 80%, rgba($color-accent, 0.08) 0%, transparent 15%); 
   }
   
   .creation-comedien h2 {
-    color: $color-text-light; // Changé: blanc
+    color: $color-text-light;
     
     &::after {
-      background: linear-gradient(90deg, $color-primary, $color-tertiary); // Changé: doré à brun
+      background: linear-gradient(90deg, $color-primary, $color-tertiary);  
     }
   }
   
   .creation-comedien .form-container,
   .creation-comedien .comediens-list {
-    background: rgba($color-background-dark, 0.2); // Changé: brun foncé
-    border: 1px solid rgba($color-text-light, 0.15); // Changé: blanc
-    color: $color-text-light; // Changé: blanc
+    background: rgba($color-background-dark, 0.2);
+    border: 1px solid rgba($color-text-light, 0.15);
+    color: $color-text-light;
     backdrop-filter: blur(10px);
   }
   
   .creation-comedien .form-container h3,
   .creation-comedien .list-header h3 {
-    color: $color-text-light; // Changé: blanc
-    border-bottom-color: rgba($color-text-light, 0.15); // Changé: blanc
+    color: $color-text-light;
+    border-bottom-color: rgba($color-text-light, 0.15);
   }
   
   .creation-comedien .form-input,
@@ -647,67 +644,67 @@ body.dark-theme {
   .creation-comedien .form-textarea,
   .creation-comedien .search-input,
   .creation-comedien .filter-select {
-    background: rgba($color-background-dark, 0.3); // Changé: brun foncé
-    border: 1px solid rgba($color-text-light, 0.2); // Changé: blanc
-    color: $color-text-light; // Changé: blanc
+    background: rgba($color-background-dark, 0.3);
+    border: 1px solid rgba($color-text-light, 0.2);
+    color: $color-text-light;
     box-shadow: $shadow-inset;
     
     &::placeholder {
-      color: rgba($color-text-light, 0.5); // Changé: blanc
+      color: rgba($color-text-light, 0.5);
     }
     
     &:focus {
-      border-color: rgba($color-primary, 0.6); // Changé: doré
+      border-color: rgba($color-primary, 0.6); 
       box-shadow: 
-        0 0 0 3px rgba($color-primary, 0.2), // Changé: doré
+        0 0 0 3px rgba($color-primary, 0.2), 
         $shadow-inset;
     }
   }
   
   .creation-comedien .form-select,
   .creation-comedien .filter-select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23EDCA49' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); // Changé: doré
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23EDCA49' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); 
   }
   
   .creation-comedien .form-group label,
   .creation-comedien .search-group label,
   .creation-comedien .filter-item label {
-    color: rgba($color-text-light, 0.9); // Changé: blanc
+    color: rgba($color-text-light, 0.9);
   }
   
   .creation-comedien .disponibilite-item {
-    background: rgba($color-primary, 0.15); // Changé: doré
-    border-color: rgba($color-primary, 0.3); // Changé: doré
+    background: rgba($color-primary, 0.15); 
+    border-color: rgba($color-primary, 0.3); 
   }
   
   .creation-comedien .comediens-table th {
-    background: rgba($color-primary, 0.2); // Changé: doré
-    border-bottom-color: rgba($color-primary, 0.5); // Changé: doré
-    color: $color-text-light; // Changé: blanc
+    background: rgba($color-primary, 0.2); 
+    border-bottom-color: rgba($color-primary, 0.5); 
+    color: $color-text-light;
   }
   
   .creation-comedien .comediens-table td {
-    border-bottom-color: rgba($color-text-light, 0.1); // Changé: blanc
-    color: rgba($color-text-light, 0.8); // Changé: blanc
+    border-bottom-color: rgba($color-text-light, 0.1);
+    color: rgba($color-text-light, 0.8);
   }
   
   .creation-comedien .comediens-table tr:hover {
-    background: rgba($color-primary, 0.1); // Changé: doré
+    background: rgba($color-primary, 0.1); 
   }
   
   .creation-comedien .photo-placeholder {
-    background: rgba($color-tertiary, 0.2); // Changé: brun
-    color: rgba($color-text-light, 0.6); // Changé: blanc
-    border-color: rgba($color-tertiary, 0.3); // Changé: brun
+    background: rgba($color-tertiary, 0.2); 
+    color: rgba($color-text-light, 0.6);
+    border-color: rgba($color-tertiary, 0.3); 
   }
   
   .creation-comedien .preview-image {
-    border-color: rgba($color-text-light, 0.2); // Changé: blanc
+    border-color: rgba($color-text-light, 0.2);
   }
   
   .creation-comedien .empty-state,
   .creation-comedien .loading {
-    color: rgba($color-text-light, 0.6); // Changé: blanc
+    color: rgba($color-text-light, 0.6);
   }
 }
 
