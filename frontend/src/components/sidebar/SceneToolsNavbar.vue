@@ -6,11 +6,10 @@
       'with-right-sidebar': rightSidebarOpen
     }"
   >
-    <!-- Section gauche : titre et informations -->
+    <!-- Section gauche : icône uniquement -->
     <div class="navbar-left-section">
-      <div class="navbar-title">
+      <div class="navbar-icon">
         <i class="fas fa-tools"></i>
-        <span>Outils Scène</span>
       </div>
       <div v-if="!hasAnyPermissions" class="navbar-permission-notice">
         <i class="fas fa-eye"></i>
@@ -60,23 +59,6 @@
         </button>
       </div>
       
-      <!-- Nouveau dialogue -->
-      <div class="nav-tool-item" v-if="userPermissions.canCreateDialogue">
-        <button class="nav-tool-btn btn-dialogue" @click="startAddDialogue">
-          <i class="fas fa-comment-medical"></i>
-          <span>Nouveau dialogue</span>
-        </button>
-      </div>
-      
-      <!-- Commentaires -->
-      <div class="nav-tool-item">
-        <button class="nav-tool-btn btn-comments" @click="toggleComments">
-          <i class="fas fa-comments"></i>
-          <span>Commentaires</span>
-          <span class="badge" v-if="commentCount > 0">{{ commentCount }}</span>
-        </button>
-      </div>
-      
       <!-- Email -->
       <div class="nav-tool-item" v-if="userPermissions.canSendEmail">
         <button class="nav-tool-btn btn-email" @click="openEmailModal">
@@ -86,12 +68,7 @@
       </div>
     </div>
 
-    <!-- Section droite : bouton fermer -->
-    <div class="navbar-right-section">
-      <button class="close-navbar-btn" @click="closeNavbar" title="Masquer les outils">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
+    <!-- Section droite : supprimée (plus de bouton fermer) -->
   </nav>
 </template>
 
@@ -136,7 +113,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits([
-  'close',
   'raccords-updated',
   'raccord-created',
   'add-dialogue',
@@ -166,7 +142,7 @@ const hasAnyPermissions = computed(() => {
          perms.canViewRaccords || perms.canExport || perms.canSendEmail;
 });
 
-const closeNavbar = () => emit('close');
+// Suppression de closeNavbar (plus utilisé)
 
 const onRaccordsUpdated = () => emit('raccords-updated');
 const onRaccordCreated = () => emit('raccord-created');
@@ -226,5 +202,4 @@ onMounted(() => {
 
 onUnmounted(() => {});
 </script>
-
 
