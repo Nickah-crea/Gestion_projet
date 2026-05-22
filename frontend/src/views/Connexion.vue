@@ -344,21 +344,18 @@ export default {
     };
   },
   mounted() {
-    // Nettoyer les anciennes classes de thème
-    document.body.classList.remove('dark-theme');
     
-    // Démarrer la vidéo si nécessaire
+    document.body.classList.remove('dark-theme');
     this.initVideo();
   },
   methods: {
-    // Initialiser la vidéo
+    
     initVideo() {
       const video = this.$el?.querySelector('.scenariste-video');
       if (video) {
-        // S'assurer que la vidéo se joue
+       
         video.play().catch(error => {
           console.log('La vidéo ne peut pas se jouer automatiquement:', error);
-          // Fallback: afficher l'image si la vidéo ne peut pas se jouer
           const fallbackImg = video.querySelector('.scenariste-image');
           if (fallbackImg) {
             video.style.display = 'none';
@@ -368,7 +365,7 @@ export default {
       }
     },
     
-    // Navigation entre formulaires avec animations
+   
     switchToLogin() {
       this.animationDirection = 'slide-right';
       this.switchingToLogin = true;
@@ -407,7 +404,7 @@ export default {
       }, 400);
     },
 
-    // CONNEXION
+    
     async seConnecter() {
       this.loginLoading = true;
       this.loginError = '';
@@ -418,11 +415,11 @@ export default {
           password: this.loginPassword
         });
         
-        // Stocker les informations de l'utilisateur
+        
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('token', response.data.token);
         
-        // Rediriger en fonction du rôle
+      
         this.redirectByRole(response.data.user.role);
         
       } catch (error) {
@@ -433,7 +430,7 @@ export default {
       }
     },
 
-    // INSCRIPTION
+    
     async verifierEmail() {
       if (!this.registerEmail) return;
       
@@ -447,7 +444,7 @@ export default {
     },
     
     async sInscrire() {
-      // Validation
+      
       if (this.registerPassword !== this.registerConfirmPassword) {
         this.registerError = "Les mots de passe ne correspondent pas";
         return;
@@ -476,7 +473,7 @@ export default {
           biographie: this.registerBiographie
         });
         
-        // Connexion automatique après inscription réussie
+     
         await this.autoLoginAfterRegister();
         
       } catch (error) {
@@ -488,27 +485,27 @@ export default {
 
     async autoLoginAfterRegister() {
       try {
-        // Connexion automatique avec les mêmes identifiants
+       
         const loginResponse = await axios.post('/api/auth/login', {
           email: this.registerEmail,
           password: this.registerPassword
         });
         
-        // Stocker les informations de l'utilisateur
+       
         localStorage.setItem('user', JSON.stringify(loginResponse.data.user));
         localStorage.setItem('token', loginResponse.data.token);
         
-        // Rediriger directement vers le dashboard selon le rôle
+      
         this.redirectByRole(loginResponse.data.user.role);
         
       } catch (loginError) {
         console.error('Erreur connexion automatique:', loginError);
-        // Si la connexion auto échoue, rediriger vers la page de connexion
+      
         this.$router.push('/connexion?message=Inscription réussie! Veuillez vous connecter.');
       }
     },
 
-    // Redirection par rôle
+   
     redirectByRole(role) {
       let route = '/accueil';
       

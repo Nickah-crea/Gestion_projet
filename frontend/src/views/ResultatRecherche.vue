@@ -858,10 +858,7 @@
 </template>
 
 <script>
-// IMPORT DES SERVICES
 import { getResultatDetails, getResultatDetailsComplets } from '../service/rechercheService';
-
-// IMPORT DES FONCTIONS D'EXPORT
 import { genererPDF, genererPDFBlob } from '../export/pdfExport';
 import { envoyerPDFParEmail } from '../export/emailExport';
 
@@ -976,10 +973,6 @@ export default {
   },
   
   methods: {
-    // =============================================
-    // NAVIGATION
-    // =============================================
-    
     copierLien() {
       const url = window.location.href;
       navigator.clipboard.writeText(url).then(() => {
@@ -1048,10 +1041,7 @@ export default {
       }
     },
 
-    // =============================================
-    // CHARGEMENT DES DONNÉES
-    // =============================================
-    
+
     async chargerDetails() {
       this.chargement = true;
       this.erreur = null;
@@ -1079,10 +1069,6 @@ export default {
       }
     },
 
-    // =============================================
-    // GESTION DES EMAILS
-    // =============================================
-    
     ajouterEmail() {
       if (this.nouvelEmail && this.estEmailValide(this.nouvelEmail)) {
         if (!this.emailForm.toEmails.includes(this.nouvelEmail.trim().toLowerCase())) {
@@ -1138,10 +1124,7 @@ export default {
       }
     },
     
-    // =============================================
-    // GESTION DES COMÉDIENS
-    // =============================================
-    
+  
     async loadComediens() {
       if (this.recipientType === 'comedien' && this.comediensList.length === 0) {
         this.loadingComediens = true;
@@ -1190,10 +1173,6 @@ export default {
     clearAllComediens() {
       this.selectedComedienIds = [];
     },
-    
-    // =============================================
-    // EXPORT PDF
-    // =============================================
     
     async exporterPDF() {
       this.exportEnCours = true;
@@ -1261,10 +1240,6 @@ export default {
         this.exportEnCours = false;
       }
     },
-    
-    // =============================================
-    // FONCTIONS UTILITAIRES (utilisées dans le template)
-    // =============================================
     
     getTypeIcon(type) {
       const icons = {

@@ -315,7 +315,6 @@ export default {
         console.log('Planning chargé:', this.planning.length, 'éléments');
       } catch (error) {
         console.error('Erreur lors du chargement du planning:', error);
-        // Si l'endpoint /all ne fonctionne pas, essayez sans
         try {
           const response = await axios.get('/api/planning-tournage/all');
           this.planning = response.data || [];
@@ -346,7 +345,6 @@ export default {
           this.plateauxDuLieu = response.data || [];
         } catch (error) {
           console.error('Erreur lors du chargement des plateaux:', error);
-          // Essayez avec l'autre endpoint
           try {
             const response = await axios.get(`/api/plateaux/lieux/${this.formData.lieuId}`);
             this.plateauxDuLieu = response.data || [];
@@ -384,7 +382,6 @@ export default {
     
     async submitForm() {
       try {
-        // Validation
         if (!this.formData.sceneId || !this.formData.dateTournage || !this.formData.statutId) {
           alert('Veuillez remplir les champs obligatoires: Scène, Date et Statut');
           return;
@@ -435,7 +432,6 @@ export default {
         description: planning.description || ''
       };
       
-      // Définir les filtres pour la scène sélectionnée
       const scene = this.scenes.find(s => s.id === planning.sceneId);
       if (scene) {
         const sequence = this.sequences.find(s => s.id === scene.sequenceId);
@@ -451,8 +447,7 @@ export default {
       
       this.isEditing = true;
       this.editingId = planning.id;
-      
-      // Charger les plateaux si un lieu est sélectionné
+    
       if (this.formData.lieuId) {
         this.onLieuChange();
       }

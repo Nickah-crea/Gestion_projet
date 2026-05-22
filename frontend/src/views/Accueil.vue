@@ -382,7 +382,6 @@ async executeSearch() {
     // },
     
     navigateToResult(result) {
-  // Vérifier que result.projetId est bien défini
   if (!result.projetId) {
     console.error('ID du projet manquant dans le résultat de recherche');
     return;
@@ -485,7 +484,7 @@ async executeSearch() {
       if (confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
         try {
           await axios.delete(`/api/projets/${projectId}`);
-          await this.fetchProjects(); // Rafraîchir la liste
+          await this.fetchProjects();
         } catch (error) {
           console.error('Erreur lors de la suppression du projet:', error);
           alert('Erreur lors de la suppression du projet');
@@ -613,7 +612,6 @@ async executeSearchFallback(query) {
 },
 
 extractProjetId(item) {
-  // Logique pour extraire l'ID du projet si disponible
   return item.projetId || null;
 },
 
@@ -621,11 +619,9 @@ extractProjetId(item) {
 };
 </script>
 
-<style>
-/* scenariste_acceuil.css - Style inspiré de l'image: cartes minimalistes, arrondis élevés, shadows subtils, logos ronds */
+<!-- <style>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
-/* Police Inter pour clean et professionnel */
 @font-face {
   font-family: 'Inter';
   src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff') format('woff');
@@ -1178,5 +1174,5 @@ extractProjetId(item) {
     margin: 1rem;
   }
 }
-</style>
+</style> -->
 

@@ -246,7 +246,6 @@ export default {
     }
   },
   async mounted() {
-    // Configuration d'axios
     axios.defaults.baseURL = API_BASE_URL;
     
     axios.interceptors.request.use(

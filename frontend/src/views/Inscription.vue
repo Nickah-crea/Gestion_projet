@@ -297,7 +297,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<!-- <style scoped>
 /* Reset pour éviter tout style de sidebar */
 .app-wrapper-inscription {
   min-height: 100vh;
@@ -613,5 +613,5 @@ export default {
     max-width: 100%;
   }
 }
-</style>
+</style> -->
 

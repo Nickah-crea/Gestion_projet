@@ -332,28 +332,24 @@ export default {
   name: 'ForgotPassword',
   data() {
     return {
-      // État général
+     
       currentStep: 1,
       loading: false,
       email: '',
-      
-      // Étape 1
+    
       step1Error: '',
       step1Success: '',
-      
-      // Étape 2
+
       code: ['', '', '', '', '', ''],
       step2Error: '',
       step2Success: '',
       resendCooldown: 0,
       
-      // Étape 3
       newPassword: '',
       confirmPassword: '',
       step3Error: '',
       step3Success: '',
       
-      // Étape 4
       countdown: 5,
       userRole: null,
 
@@ -398,7 +394,6 @@ export default {
     }
   },
   mounted() {
-    // Initialiser la vidéo
     this.initVideo();
     
     // Récupérer l'email depuis l'URL si présent
@@ -423,7 +418,6 @@ export default {
       }
     },
     
-    // Navigation entre étapes
     goToStep(step) {
       this.currentStep = step;
       
@@ -449,7 +443,6 @@ export default {
           setTimeout(() => {
             this.goToStep(2);
             this.startResendCooldown();
-            // Focus sur le premier champ de code
             if (this.$refs.codeInputs && this.$refs.codeInputs[0]) {
               this.$refs.codeInputs[0].focus();
             }
@@ -638,10 +631,8 @@ export default {
         if (response.data.success) {
           this.step3Success = response.data.message;
           
-          // Récupérer le rôle de l'utilisateur
           await this.fetchUserRole();
           
-          // Passer à l'étape de succès
           setTimeout(() => {
             this.goToStep(4);
             this.startCountdown();
@@ -661,8 +652,6 @@ export default {
     // Récupérer le rôle de l'utilisateur
     async fetchUserRole() {
       try {
-        // Dans un système réel, on aurait un endpoint pour récupérer l'utilisateur
-        // Pour l'instant, on va simuler avec le login
         const loginResponse = await axios.post('/api/auth/login', {
           email: this.email,
           password: this.newPassword
@@ -677,7 +666,6 @@ export default {
       }
     },
     
-    // Compte à rebours pour la redirection
     startCountdown() {
       this.countdown = 5;
       
@@ -690,12 +678,11 @@ export default {
       }, 1000);
     },
     
-    // Redirection immédiate
     redirectNow() {
       this.redirectToDashboard();
     },
     
-    // Redirection selon le rôle
+
     redirectToDashboard() {
       let route = '/accueil';
       

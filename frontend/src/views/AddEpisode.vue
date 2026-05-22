@@ -1,4 +1,3 @@
-<!-- AddEpisode.vue - Version modifiée avec sidebar -->
 <template>
   <div class="app-wrapper-global">
     <!-- Sidebar latérale fixe à gauche -->
@@ -800,7 +799,7 @@ export default {
         let episodeData;
         
         if (this.isEditing) {
-          // Pour la MODIFICATION : Envoyer uniquement les champs modifiables
+         
           episodeData = {
             titre: this.form.titre,
             synopsis: this.form.synopsis,
@@ -818,7 +817,7 @@ export default {
           });
           
         } else {
-          // Pour la CRÉATION : Envoyer tous les champs
+          
           episodeData = {
             titre: this.form.titre,
             ordre: parseInt(this.form.ordre),
@@ -852,14 +851,13 @@ export default {
         }
       } catch (error) {
         console.error('Erreur lors de la création/modification de l\'épisode:', error);
-        console.error('Réponse d\'erreur:', error.response?.data); // Ajoutez cette ligne
+        console.error('Réponse d\'erreur:', error.response?.data); 
         
         if (error.response?.status === 400) {
           if (error.response?.data?.message?.includes('ordre')) {
             this.ordreError = 'Cet ordre existe déjà pour ce projet. Veuillez choisir un autre numéro.';
             this.errorMessage = this.ordreError;
           } else {
-            // Afficher le message d'erreur du serveur
             this.errorMessage = error.response.data.message || 'Erreur de validation';
           }
         } else if (error.response?.status === 403) {
@@ -874,7 +872,6 @@ export default {
       }
     },
     
-    // Modal de détails
     openDetailsModal(episode) {
       this.selectedEpisode = episode;
       this.showDetailsModal = true;
@@ -895,8 +892,7 @@ export default {
         });
         
         const episodeDetails = response.data;
-        
-        // Pré-remplir le formulaire avec les données de l'épisode
+      
         this.form = {
           titre: episodeDetails.titre,
           ordre: episodeDetails.ordre,
@@ -971,7 +967,7 @@ export default {
       }
     },
     
-    // Navigation et actions sidebar
+  
     goToEpisodeDetails(episode) {
       this.$router.push(`/episode/${episode.idEpisode}/detail-episode`);
     },

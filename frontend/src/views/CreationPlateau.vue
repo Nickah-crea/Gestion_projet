@@ -432,7 +432,7 @@ export default {
       loading: true,
       error: '',
       
-      // Données pour les listes
+     
       lieux: [],
       scenes: [],
       plateaux: [],
@@ -460,7 +460,7 @@ export default {
       notification: {
         show: false,
         message: '',
-        type: 'success' // 'success' ou 'error'
+        type: 'success' 
       },
       notificationTimeout: null
     };
@@ -535,7 +535,6 @@ export default {
     }
   },
   methods: {
-    // Navigation entre onglets
     goToForm() {
       this.activeTab = 'form';
       this.resetForm();
@@ -637,7 +636,6 @@ export default {
       this.activeTab = 'form';
     },
     
-    // Modal de confirmation de suppression
     confirmDeletePlateau(plateau) {
       this.plateauToDelete = plateau;
       this.showDeleteModal = true;
@@ -710,7 +708,6 @@ export default {
       }
     },
     
-    // Méthodes pour les zones de liste modifiable
     filterLieux() {
       const searchTerm = this.lieuSearch.toLowerCase();
       if (!searchTerm) {
@@ -763,7 +760,7 @@ export default {
       return lieu ? `${lieu.nomLieu} - ${lieu.projetTitre}` : '';
     },
 
-    // Notification
+    
     showNotification(message, type = 'success') {
       this.notification = {
         show: true,

@@ -596,7 +596,6 @@ export default {
   name: 'RechercheAvancee',
   data() {
     return {
-      // États des dropdowns
       showTypesDropdown: false,
       showStatutsDropdown: false,
       showDateDebutDropdown: false,
@@ -604,7 +603,6 @@ export default {
       triSelectionne: 'hierarchie',
       ordreCroissant: true,
 
-      // Données
       projets: [],
       episodes: [],
       sequences: [],
@@ -698,7 +696,6 @@ export default {
   },
   
   methods: {
-    // Méthodes utilitaires pour le template
     truncateText(text, maxLength) {
       if (!text) return ''
       if (text.length <= maxLength) return text
@@ -734,12 +731,9 @@ export default {
     },
     
     ouvrirScene(scene) {
-      // Implémentation pour ouvrir une scène
       console.log('Ouvrir scène:', scene)
-      // Navigation vers l'éditeur de scène
     },
 
-    // Méthodes existantes (à conserver)
     async chargerProjets() {
       try {
         this.projets = await getProjets()
@@ -1101,8 +1095,7 @@ export default {
 }
 </script>
 
-<style scoped>
-/* Styles spécifiques au composant si nécessaire */
+<!-- <style scoped>
 .comedien-text {
   font-style: italic;
   opacity: 0.8;
@@ -1114,5 +1107,5 @@ export default {
   text-align: center;
   padding: 4px 0;
 }
-</style>
+</style> -->
 

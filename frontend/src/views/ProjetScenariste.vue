@@ -282,7 +282,7 @@
                     </div>
                   </div>
                   
-                  <!-- Ligne 3 : Synopsis (pleine largeur) -->
+                  <!-- Ligne 3 : Synopsis  -->
                   <div class="form-row-Scenariste">
                     <div class="form-group-Scenariste form-full-width-Scenariste">
                       <label>Synopsis:</label>
@@ -388,7 +388,7 @@ export default {
       editLoading: false, 
       itemsPerPage: 6, 
       showLoadMore: false,
-      accessChecked: false, // Ajout d'un flag pour suivre si les accès ont été vérifiés
+      accessChecked: false, 
     };
   },
   computed: {
@@ -402,12 +402,11 @@ export default {
     },
     filteredEpisodes() {
       let filtered = this.episodes;
-      // Filtrer par statut
+     
       if (this.filterStatut) {
         filtered = filtered.filter(episode => episode.statutNom === this.filterStatut);
       }
 
-      // Filtrer par période
       const now = new Date();
       filtered = filtered.filter(episode => {
         const modifieLe = new Date(episode.modifieLe);
@@ -478,29 +477,23 @@ export default {
         const response = await axios.get(`/api/episodes/projet/${this.$route.params.id}`);
         this.episodes = response.data;
         
-        // Initialiser canAccess à false par défaut pour tous
         this.episodes.forEach(episode => {
           episode.canAccess = false;
         });
         
-        // Vérifier les permissions d'accès pour chaque épisode
         await this.checkEpisodesAccess();
       } catch (error) {
         console.error('Erreur lors du chargement des épisodes:', error);
       }
     },
-    
-    /**
-     * Vérifie l'accès de l'utilisateur à chaque épisode
-     */
+   
     async checkEpisodesAccess() {
-      // Si pas d'utilisateur connecté, tous les épisodes sont inaccessibles
+     
       if (!this.user || !this.user.id) {
         console.warn('Utilisateur non connecté');
         return;
       }
       
-      // Pour ADMIN et REALISATEUR, tous les épisodes sont accessibles
       if (this.userRole === 'ADMIN' || this.userRole === 'REALISATEUR') {
         this.episodes.forEach(episode => {
           episode.canAccess = true;
@@ -509,7 +502,6 @@ export default {
         return;
       }
       
-      // Pour UTILISATEUR (simple viewer), tous les épisodes sont en lecture seule
       if (this.userRole === 'UTILISATEUR') {
         this.episodes.forEach(episode => {
           episode.canAccess = false;
@@ -518,9 +510,7 @@ export default {
         return;
       }
       
-      // Pour SCENARISTE, vérifier chaque épisode individuellement
       if (this.userRole === 'SCENARISTE') {
-        // Vérifier l'accès pour chaque épisode
         const accessPromises = this.episodes.map(async (episode) => {
           try {
             const response = await axios.get(`/api/episodes/${episode.idEpisode}/access-check`, {
@@ -550,7 +540,6 @@ export default {
       }
     }, 
     startEditEpisode(episode) {
-      // Vérifier d'abord si l'utilisateur a accès à cet épisode
       if ((this.userRole === 'SCENARISTE' || this.userRole === 'UTILISATEUR') && !episode.canAccess) {
         this.showNotification('Vous n\'avez pas les droits nécessaires pour modifier cet épisode.', 'error');
         return;
@@ -691,7 +680,6 @@ export default {
       const episode = this.episodes.find(ep => ep.idEpisode === episodeId);
       if (!episode) return;
       
-      // Vérifier l'accès avant la suppression
       if ((this.userRole === 'SCENARISTE' || this.userRole === 'UTILISATEUR') && !episode.canAccess) {
         this.showNotification('Vous n\'avez pas les droits nécessaires pour supprimer cet épisode.', 'error');
         return;
@@ -716,12 +704,10 @@ export default {
         type: type
       };
       
-      // Annuler le timeout précédent s'il existe
       if (this.notificationTimeout) {
         clearTimeout(this.notificationTimeout);
       }
       
-      // Masquer automatiquement après 5 secondes
       this.notificationTimeout = setTimeout(() => {
         this.hideNotification();
       }, 5000);
@@ -737,12 +723,10 @@ export default {
     },
     
     loadMoreEpisodes() {
-      // Augmente le nombre d'épisodes affichés par 6 (une nouvelle ligne)
       this.itemsPerPage += 6;
     },
     
     resetPagination() {
-      // Réinitialise la pagination quand les filtres changent
       this.itemsPerPage = 6;
     },
     
@@ -802,7 +786,6 @@ export default {
     },
     goToDetails(episodeId) {
       const episode = this.episodes.find(ep => ep.idEpisode === episodeId);
-      // Si c'est un scénariste sans accès, afficher un message
       if ((this.userRole === 'SCENARISTE' || this.userRole === 'UTILISATEUR') && episode && !episode.canAccess) {
         this.showNotification('Vous n\'avez pas accès à cet épisode.', 'error');
         return;

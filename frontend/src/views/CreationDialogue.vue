@@ -530,7 +530,7 @@ export default {
   name: 'CreationDialogue',
   
   setup() {
-    // Variables réactives
+
     const user = ref(JSON.parse(localStorage.getItem('user')) || null);
     const activeTab = ref('form');
     const formData = ref({
@@ -546,19 +546,16 @@ export default {
     const loading = ref(true);
     const error = ref('');
     
-    // Données pour les listes
     const scenes = ref([]);
     const personnages = ref([]);
     const dialogues = ref([]);
     
-    // Filtres et recherche
     const searchTerm = ref('');
     const filterSceneId = ref('');
     const filterPersonnageId = ref('');
     
-    // Gestion de l'affichage par scène
-    const visibleDialoguesCount = ref({}); // { sceneId: count }
-    const defaultVisibleCount = ref(5); // Nombre de dialogues visibles par défaut
+    const visibleDialoguesCount = ref({});
+    const defaultVisibleCount = ref(5); 
     
     // Commentaires
     const showDialogueCommentModal = ref(false);
@@ -590,7 +587,6 @@ export default {
     const dialogueToDelete = ref(null);
     const isDeleting = ref(false);
     
-    // Debug
     const debugMode = ref(true); 
         
     // Computed properties
@@ -761,13 +757,11 @@ export default {
         console.log('Dialogues loaded:', response.data);
         dialogues.value = response.data;
         
-        // Debug: Afficher le premier dialogue pour vérifier la structure
         if (dialogues.value.length > 0) {
           console.log('First dialogue structure:', dialogues.value[0]);
         }
         
         await loadCommentCounts();
-        // Réinitialiser les compteurs visibles
         visibleDialoguesCount.value = {};
       } catch (error) {
         console.error('Erreur lors du chargement des dialogues:', error);
@@ -829,13 +823,11 @@ export default {
     };
     
   const submitForm = async () => {
-      // Valider les champs obligatoires
       if (!formData.value.sceneId) {
           alert('Veuillez sélectionner une scène');
           return;
       }
       
-      // MODIFIÉ: Ne pas obliger le texte si observation présente
       const texte = formData.value.texte?.trim() || '';
       const observation = formData.value.observation?.trim() || '';
       
@@ -865,7 +857,7 @@ export default {
               personnageId: formData.value.personnageId ? parseInt(formData.value.personnageId) : null,
               texte: texte, // Peut être vide si observation présente
               ordre: parseInt(formData.value.ordre),
-              observation: observation // Peut être vide si texte présent
+              observation: observation 
           };
           
           console.log('Submitting dialogue:', payload);
@@ -955,7 +947,6 @@ const executeDeleteDialogue = async () => {
   isDeleting.value = true;
   
   try {
-    // Ajoutez l'en-tête X-User-Id
     await axios.delete(`/api/dialogues/${dialogueToDelete.value.id}`, {
       headers: {
         'X-User-Id': user.value.id
@@ -965,19 +956,17 @@ const executeDeleteDialogue = async () => {
     await loadDialogues();
     closeDeleteModal();
     
-    // Notification de succès
+
     if (typeof showNotification === 'function') {
       showNotification('Dialogue supprimé avec succès', 'success');
     }
   } catch (error) {
     console.error('Erreur lors de la suppression du dialogue:', error);
-    
-    // Affichez plus de détails sur l'erreur
+  
     if (error.response?.data) {
       console.error('Détails de l\'erreur:', error.response.data);
     }
     
-    // Notification d'erreur
     if (typeof showNotification === 'function') {
       showNotification('Erreur lors de la suppression du dialogue', 'error');
     } else {
@@ -1037,7 +1026,6 @@ const executeDeleteDialogue = async () => {
       } catch (error) {
         console.error('Erreur lors du chargement des commentaires de dialogue:', error);
         dialogueComments.value = [];
-        // Ne pas alerter si c'est juste qu'il n'y a pas de commentaires
         if (error.response?.status !== 404) {
           alert('Erreur lors du chargement des commentaires: ' + error.message);
         }
@@ -1224,7 +1212,6 @@ const executeDeleteDialogue = async () => {
       return personnage ? personnage.nom : '';
     };
     
-    // Méthodes pour gérer l'affichage des dialogues
     const getVisibleCount = (sceneId) => {
       return visibleDialoguesCount.value[sceneId] || defaultVisibleCount.value;
     };
@@ -1236,7 +1223,7 @@ const executeDeleteDialogue = async () => {
     
     const showMoreDialogues = (sceneId) => {
       const currentCount = getVisibleCount(sceneId);
-      // Utilisation correcte pour Vue 3 Composition API
+     
       visibleDialoguesCount.value = {
         ...visibleDialoguesCount.value,
         [sceneId]: currentCount + defaultVisibleCount.value
@@ -1250,9 +1237,8 @@ const executeDeleteDialogue = async () => {
       };
     };
     
-    // Initialisation
+
     onMounted(async () => {
-      // Configuration de l'intercepteur axios
       axios.interceptors.request.use(
         (config) => {
           const token = localStorage.getItem('token');
@@ -1272,12 +1258,10 @@ const executeDeleteDialogue = async () => {
       document.addEventListener('click', handleClickOutside);
     });
     
-    // Nettoyage
     onBeforeUnmount(() => {
       document.removeEventListener('click', handleClickOutside);
     });
     
-    // Watchers
     watch(() => formData.value.sceneId, (newSceneId) => {
       if (newSceneId) {
         loadExistingOrders();

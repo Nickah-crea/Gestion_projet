@@ -698,12 +698,11 @@ export default {
     groupesRaccords() {
       return this.grouperRaccordsParScene(this.raccords);
     },
-      // Liste filtrée des projets accessibles
+      
     accessibleProjets() {
       if (!this.user) return [];
       if (this.user.role === 'ADMIN') return this.projets;
       
-      // Pour les réalisateurs et scénaristes, filtrer les projets accessibles
       return this.projets.filter(projet => 
         this.permissions.canViewScenes || 
         this.userProjetIds.includes(projet.id)
@@ -757,13 +756,12 @@ export default {
         this.$router.push('/');
       }
     },
-      // Initialiser les permissions
+     
     async initializePermissions() {
       try {
-        // Récupérer les permissions générales de l'utilisateur
+       
         const role = this.user?.role;
-        
-        // Permissions par défaut basées sur le rôle
+      
         if (role === 'ADMIN') {
           this.permissions = {
             canCreateRaccord: true,
@@ -798,7 +796,7 @@ export default {
           };
         }
         
-        // Charger les projets accessibles
+        
         await this.loadUserProjects();
         
       } catch (error) {
@@ -809,11 +807,11 @@ export default {
         async loadUserProjects() {
       try {
         if (this.user?.role === 'ADMIN') {
-          // Admin a accès à tous les projets
+         
           const response = await axios.get('/api/projets');
           this.userProjetIds = response.data.map(p => p.id);
         } else {
-          // Pour les autres rôles, récupérer les projets via les épisodes
+      
           const episodesResponse = await axios.get(`/api/episodes/utilisateur/${this.currentUserId}`);
           this.userProjetIds = [...new Set(episodesResponse.data.map(ep => ep.projetId))];
         }
@@ -822,7 +820,7 @@ export default {
         this.userProjetIds = [];
       }
     },
-     // Vérifier l'accès au projet
+  
     async checkProjectAccess(projetId) {
       try {
         const hasAccess = await axios.get(`/api/projets/${projetId}/access-check`, {
@@ -842,7 +840,7 @@ export default {
         return false;
       }
     },
-        // Vérifier l'accès à l'épisode
+       
     async checkEpisodeAccess(episodeId) {
       try {
         const hasAccess = await axios.get(`/api/episodes/${episodeId}/access-check`, {
@@ -862,7 +860,7 @@ export default {
         return false;
       }
     },
-    // Navigation entre onglets
+    
    goToForm() {
       if (!this.permissions.canCreateRaccord) {
         this.showAccessError('Vous n\'avez pas les permissions pour créer un raccord.');
@@ -883,15 +881,15 @@ export default {
 
    async loadInitialData() {
       try {
-        // Charger seulement les projets accessibles
+        
         const projetsRes = await axios.get('/api/projets');
         this.projets = this.filterAccessibleData(projetsRes.data, 'projets');
         
-        // Charger les scènes avec vérification d'accès
+        
         const scenesRes = await axios.get('/api/scenes');
         this.scenes = this.filterAccessibleData(scenesRes.data, 'scenes');
         
-        // Charger les autres données
+       
         const [typesRes, statutsRes, personnagesRes, comediensRes] = await Promise.all([
           axios.get('/api/raccords/types'),
           axios.get('/api/raccords/statuts'),
@@ -997,8 +995,7 @@ export default {
       try {
         let url = '/api/raccords';
         const params = new URLSearchParams();
-        
-        // Ajouter l'ID utilisateur pour filtrer les raccords accessibles
+      
         params.append('userId', this.currentUserId);
         
         if (this.selectedScene) {
@@ -1106,7 +1103,6 @@ export default {
           return;
         }
         
-        // Vérifier l'accès aux scènes
         const hasAccessToScenes = await this.checkSceneAccess(
           this.formData.sceneSourceId, 
           this.formData.sceneCibleId
@@ -1125,7 +1121,6 @@ export default {
 
         const formData = new FormData();
         
-        // Ajouter l'ID utilisateur pour vérification côté serveur
         formData.append('userId', this.currentUserId.toString());
         
         if (this.editingRaccord) {
@@ -1196,10 +1191,10 @@ export default {
       }
     },
 
-     // Vérifier l'accès aux scènes
+     
     async checkSceneAccess(sceneSourceId, sceneCibleId) {
       try {
-        // Vérifier l'accès à la scène source
+      
         const sourceAccess = await axios.get(`/api/scenes/${sceneSourceId}/access-check`, {
           headers: { 'X-User-Id': this.currentUserId }
         });
@@ -1209,7 +1204,6 @@ export default {
           return false;
         }
         
-        // Vérifier l'accès à la scène cible
         const cibleAccess = await axios.get(`/api/scenes/${sceneCibleId}/access-check`, {
           headers: { 'X-User-Id': this.currentUserId }
         });
@@ -1385,8 +1379,7 @@ export default {
       this.showAccessError('Vous n\'avez pas les permissions pour supprimer un raccord.');
       return;
     }
-    
-    // Trouver le raccord à supprimer pour afficher ses infos
+  
     const raccord = this.raccords.find(r => r.id === id);
     if (!raccord) return;
     
@@ -1425,8 +1418,6 @@ export default {
       await this.loadRaccords();
       this.closeDeleteModal();
       
-      // Optionnel: Afficher une notification de succès
-      // this.showSuccessNotification('Raccord supprimé avec succès!');
       
     } catch (error) {
       console.error('Erreur lors de la suppression du raccord:', error);
@@ -1450,7 +1441,6 @@ export default {
     }
   },
 
-     // Afficher les erreurs d'accès
     showAccessError(message) {
       alert(message);
       this.error = message;

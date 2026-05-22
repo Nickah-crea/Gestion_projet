@@ -498,15 +498,13 @@ export default {
       selectedProjetFilter: '',
       selectedComedienFilter: '',
       
-      // Modal de détails
       showDetailsModal: false,
       selectedPersonnage: null,
 
       showDeleteModal: false,
       characterToDelete: null,
       isDeleting: false,
-      
-      // Notification
+
       notification: {
         show: false,
         message: '',
@@ -541,7 +539,6 @@ export default {
     document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
-    // Navigation entre onglets
     goToForm() {
       this.activeTab = 'form';
       this.resetForm();
@@ -670,7 +667,6 @@ export default {
           await axios.put(`/api/personnages/${this.editingId}`, this.formData);
         } else {
           await axios.post('/api/personnages', this.formData);
-          //alert('Personnage créé avec succès');
         }
 
         this.resetForm();
@@ -731,7 +727,6 @@ export default {
     try {
       await axios.delete(`/api/personnages/${this.characterToDelete.id}`);
     
-      // Recharger la liste
       await this.loadPersonnages();
       this.closeDeleteModal();
     } catch (error) {

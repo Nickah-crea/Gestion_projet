@@ -576,7 +576,7 @@ export default {
       selectedProjetFilter: '',
       selectedStatutFilter: '',
       
-      // Modal de détails
+      
       showDetailsModal: false,
       selectedComedien: null,
 
@@ -585,11 +585,11 @@ export default {
         isDeleting: false,
         deleteError: '',
 
-        // Notification
+       
           notification: {
             show: false,
             message: '',
-            type: 'success' // 'success' ou 'error'
+            type: 'success' 
           },
           notificationTimeout: null
     };
@@ -620,7 +620,7 @@ export default {
     document.removeEventListener('click', this.closeProjetSuggestions);
   },
   methods: {
-    // Navigation entre onglets
+    
     goToForm() {
       this.activeTab = 'form';
       this.resetForm();
@@ -628,7 +628,7 @@ export default {
 
     goToList() {
       this.activeTab = 'list';
-      this.loadComediens(); // Recharger les données
+      this.loadComediens(); 
     },
 
     async loadProjets() {
@@ -762,7 +762,6 @@ async submitForm() {
     // Remplacer par les disponibilités uniques
     this.formData.disponibilites = uniqueDisponibilites;
     
-    // DEBUG: Afficher ce qui va être envoyé
     console.log('Disponibilités à envoyer:', this.formData.disponibilites);
     
     const formData = new FormData();
@@ -787,21 +786,20 @@ async submitForm() {
       }
     });
     
-    // DEBUG: Afficher les listes
     console.log('Dates:', dates);
     console.log('Statuts:', statuts);
     
-    // Ajouter chaque date individuellement
+  
     dates.forEach(date => {
       formData.append('datesDisponibilite', date);
     });
     
-    // Ajouter chaque statut individuellement
+    
     statuts.forEach(statut => {
       formData.append('statutsDisponibilite', statut);
     });
 
-    // DEBUG: Afficher le FormData
+
     for (let [key, value] of formData.entries()) {
       console.log(key + ': ' + value);
     }
@@ -823,10 +821,8 @@ async submitForm() {
       });
     }
     
-    this.resetForm();
-    // Attendre un peu pour que la base de données soit mise à jour
+    this.resetForm();  
     await new Promise(resolve => setTimeout(resolve, 500));
-    // Recharger les comédiens
     await this.loadComediens();
     this.activeTab = 'list';
   } catch (error) {
@@ -839,19 +835,16 @@ async submitForm() {
 },
 
 async forceRefresh() {
-  // Réinitialiser les données
+  
   this.comediens = [];
   this.filteredComediens = [];
   
-  // Recharger avec un délai
   await new Promise(resolve => setTimeout(resolve, 300));
   await this.loadComediens();
   
-  // Forcer le recalcul des filtres
   this.filterComediens();
 },
 
-// Modal de confirmation de suppression
 confirmDeleteComedien(id) {
   const comedian = this.comediens.find(c => c.id === id);
   if (!comedian) return;
@@ -876,7 +869,6 @@ async executeDeleteComedian() {
   try {
     await axios.delete(`/api/comediens/${this.comedianToDelete.id}`);
     
-    // Recharger la liste
     await this.loadComediens();
     this.closeDeleteModal();
   } catch (error) {
@@ -912,7 +904,6 @@ hideNotification() {
 },
 
 editComedien(comedien) {
-  // S'assurer qu'il n'y a pas de doublons de dates
   const uniqueDisponibilites = [];
   const dateSet = new Set();
   
@@ -950,7 +941,7 @@ editComedien(comedien) {
   this.closeDetailsModal();
 },
 
-    // Modal de détails
+   
     openDetailsModal(comedien) {
       this.selectedComedien = comedien;
       this.showDetailsModal = true;
@@ -961,7 +952,7 @@ editComedien(comedien) {
       this.selectedComedien = null;
     },
 
-    // Obtenir l'icône du statut
+  
     getStatutIcon(statut) {
       switch (statut) {
         case 'DISPONIBLE': return 'fas fa-check-circle';
@@ -991,7 +982,6 @@ resetForm() {
   this.showProjetSuggestions = false;
   this.error = '';
   
-  // Réinitialiser aussi les filtres de recherche
   this.comedienSearch = '';
   this.selectedProjetFilter = '';
   this.selectedStatutFilter = '';

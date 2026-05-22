@@ -216,7 +216,7 @@ export default {
       statutsScene: [],
       existingOrders: [],
       
-      // Formulaire
+    
       form: {
         titre: '',
         ordre: '',
@@ -230,11 +230,11 @@ export default {
       ordreError: '',
       suggestedOrdre: null,
       
-      // Statistiques
+     
       scenesCount: 0,
       scenesInSequence: 0,
       
-      // Édition
+  
       isEditing: false,
       editingId: null
     };
@@ -260,7 +260,6 @@ export default {
     await this.loadSceneStatistics();
   },
   methods: {
-    // Navigation entre onglets
     goToForm() {
       this.activeTab = 'form';
       this.isEditing = false;
@@ -353,14 +352,13 @@ export default {
         return;
       }
       
-      // Pour l'édition, on vérifie seulement si l'ordre a changé et s'il existe déjà
+     
       if (this.isEditing) {
         if (this.existingOrders.includes(orderNum)) {
           this.ordreError = `L'ordre ${orderNum} existe déjà pour cette séquence. Veuillez choisir un autre numéro.`;
           return;
         }
       } else {
-        // Pour la création, vérifier si l'ordre existe déjà
         if (this.existingOrders.includes(orderNum)) {
           this.ordreError = `L'ordre ${orderNum} existe déjà pour cette séquence. Veuillez choisir un autre numéro.`;
           return;
@@ -395,7 +393,7 @@ export default {
         let sceneData;
         
         if (this.isEditing) {
-          // Pour la MODIFICATION
+         
           sceneData = {
             titre: this.form.titre,
             synopsis: this.form.synopsis,
@@ -409,7 +407,7 @@ export default {
             }
           });
         } else {
-          // Pour la CRÉATION
+          
           sceneData = {
             titre: this.form.titre,
             ordre: parseInt(this.form.ordre),
@@ -478,7 +476,7 @@ export default {
       this.errorMessage = '';
       this.ordreError = '';
       
-      // Recharger les données
+      
       this.loadSequence();
       this.fetchExistingScenes();
     },

@@ -1,4 +1,3 @@
-<!-- AddSequence.vue - Version avec sidebar -->
 <template>
   <div class="app-wrapper-global">
     <!-- Sidebar latérale fixe à gauche -->

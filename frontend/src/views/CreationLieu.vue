@@ -459,23 +459,21 @@ export default {
       isSubmitting: false,
       loading: true,
       error: '',
-      
-      // Données pour les listes
+    
       projets: [],
       lieux: [],
       filteredLieux: [],
       
-      // Filtres et recherche
       searchTerm: '',
       filterProjetId: '',
       filterTypeLieu: '',
       
-      // Modale scènes
+     
       showScenesModal: false,
       selectedLieu: {},
       selectedLieuScenes: [],
       
-      // Zones de liste modifiable
+     
       projetSearch: '',
       filterProjetSearch: '',
       showProjetSuggestions: false,
@@ -557,7 +555,7 @@ export default {
     }
   },
   methods: {
-    // Navigation entre onglets
+  
     goToForm() {
       this.activeTab = 'form';
       this.resetForm();
@@ -587,13 +585,11 @@ export default {
         const response = await axios.get('/api/lieux');
         this.lieux = response.data;
         
-        // Charger le nombre de scènes pour chaque lieu
         for (let lieu of this.lieux) {
           try {
             const scenesResponse = await axios.get(`/api/scene-lieux/lieux/${lieu.id}`);
             lieu.sceneCount = scenesResponse.data.length;
             
-            // Charger les premières scènes pour l'affichage
             if (scenesResponse.data.length > 0) {
               lieu.scenes = scenesResponse.data.slice(0, 3);
             }
@@ -663,7 +659,6 @@ export default {
       this.activeTab = 'form';
     },
 
-  // Modal de confirmation de suppression
   confirmDeleteLieu(lieuId) {
     const lieu = this.lieux.find(l => l.id === lieuId);
     if (!lieu) return;
@@ -698,7 +693,6 @@ export default {
 
       await axios.delete(`/api/lieux/${this.lieuToDelete.id}`, config);
       
-      // Recharger la liste
       await this.loadLieux();
       this.closeDeleteModal();
       
@@ -715,14 +709,12 @@ export default {
     }
   },
   
-  // Méthodes d'affichage de messages (optionnelles mais recommandées)
   showSuccessMessage(message) {
-    // Vous pouvez implémenter un système de notification comme dans CreationComedien.vue
-    alert(message); // Temporairement
+    alert(message); 
   },
   
   showErrorMessage(message) {
-    alert(message); // Temporairement
+    alert(message); 
   },
     // async deleteLieu(lieuId) {
     //   if (!confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?')) {
@@ -801,7 +793,6 @@ export default {
       }
     },
     
-    // Méthodes pour les zones de liste modifiable
     filterProjets() {
       const searchTerm = this.projetSearch.toLowerCase();
       if (!searchTerm) {
