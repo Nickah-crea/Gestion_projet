@@ -1,19 +1,50 @@
 <template>
   <div class="forgot-password-container">
-    <!-- Vidéo de fond (même que connexion) -->
-    <div class="background-video">
-      <video autoplay muted loop playsinline class="scenariste-video">
-        <source src="../assets/img/autor.mp4" type="video/mp4">
-        <img src="../assets/img/autor.png" alt="Scénariste au travail" class="scenariste-image">
-      </video>
-      
-      <div class="video-overlay">
-        <div class="overlay-content">
-          <h2 class="overlay-title">RÉINITIALISATION</h2>
-          <p class="overlay-text">
-            Retrouvez l'accès à votre espace créatif en toute sécurité.
-          </p>
+    <!-- Diaporama d'images (comme Connexion) -->
+    <div class="background-slideshow">
+      <div class="slideshow-container">
+        <!-- Images du diaporama -->
+        <div 
+          v-for="(image, index) in slideshowImages" 
+          :key="index"
+          class="slide"
+          :class="{ 'active': currentSlide === index }"
+        >
+          <img 
+            :src="image.src" 
+            :alt="image.alt"
+            class="slideshow-image"
+          />
         </div>
+        
+        <!-- Overlay avec contenu -->
+        <div class="image-overlay">
+          <div class="overlay-content">
+            <h2 class="overlay-title">RÉINITIALISATION</h2>
+            <p class="overlay-text">
+              Retrouvez l'accès à votre espace créatif en toute sécurité.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Indicateurs du diaporama -->
+        <div class="slideshow-dots">
+          <span 
+            v-for="(image, index) in slideshowImages" 
+            :key="index"
+            class="dot"
+            :class="{ 'active': currentSlide === index }"
+            @click="currentSlide = index"
+          ></span>
+        </div>
+        
+        <!-- Boutons de navigation -->
+        <button class="slideshow-nav prev" @click="prevSlide">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="slideshow-nav next" @click="nextSlide">
+          <i class="fas fa-chevron-right"></i>
+        </button>
       </div>
     </div>
 
@@ -243,7 +274,6 @@
             </div>
           </div>
 
-          <!-- Le reste du formulaire reste identique -->
           <div class="password-strength" v-if="newPassword">
             <div class="strength-bar" :class="passwordStrengthClass"></div>
             <div class="strength-label">
@@ -316,7 +346,7 @@
           <button @click="redirectNow" class="premier-btn">
             <i class="fas fa-rocket"></i> ALLER MAINTENANT
           </button>
-          <router-link to="/connexion" class="secondary-btn">
+          <router-link to="/" class="secondary-btn">
             <i class="fas fa-sign-in-alt"></i> SE CONNECTER
           </router-link>
         </div>
@@ -327,12 +357,15 @@
 
 <script>
 import axios from 'axios';
+// Import des images pour le diaporama (mêmes que Connexion)
+import image1 from '../assets/img/connex-01.jpg';
+import image2 from '../assets/img/connex-02.jpg';
 
 export default {
   name: 'ForgotPassword',
   data() {
     return {
-     
+      // Étape actuelle (1, 2, 3, 4)
       currentStep: 1,
       loading: false,
       email: '',
@@ -354,7 +387,21 @@ export default {
       userRole: null,
 
       showNewPassword: false,
-      showConfirmPassword: false
+      showConfirmPassword: false,
+
+      // Diaporama
+      slideshowImages: [
+        {
+          src: image1,
+          alt: 'Scénariste au travail 1'
+        },
+        {
+          src: image2,
+          alt: 'Scénariste au travail 2'
+        }
+      ],
+      currentSlide: 0,
+      slideshowInterval: null
     };
   },
   computed: {
@@ -394,7 +441,8 @@ export default {
     }
   },
   mounted() {
-    this.initVideo();
+    // Démarrer le diaporama
+    this.startSlideshow();
     
     // Récupérer l'email depuis l'URL si présent
     const urlParams = new URLSearchParams(window.location.search);
@@ -403,21 +451,32 @@ export default {
       this.email = emailParam;
     }
   },
+  beforeDestroy() {
+    this.stopSlideshow();
+  },
   methods: {
-    initVideo() {
-      const video = this.$el?.querySelector('.scenariste-video');
-      if (video) {
-        video.play().catch(error => {
-          console.log('La vidéo ne peut pas se jouer automatiquement:', error);
-          const fallbackImg = video.querySelector('.scenariste-image');
-          if (fallbackImg) {
-            video.style.display = 'none';
-            fallbackImg.style.display = 'block';
-          }
-        });
+    // ========== MÉTHODES DIAPORAMA ==========
+    startSlideshow() {
+      this.slideshowInterval = setInterval(() => {
+        this.nextSlide();
+      }, 5000);
+    },
+    
+    stopSlideshow() {
+      if (this.slideshowInterval) {
+        clearInterval(this.slideshowInterval);
       }
     },
     
+    nextSlide() {
+      this.currentSlide = (this.currentSlide + 1) % this.slideshowImages.length;
+    },
+    
+    prevSlide() {
+      this.currentSlide = (this.currentSlide - 1 + this.slideshowImages.length) % this.slideshowImages.length;
+    },
+    
+    // ========== MÉTHODES EXISTANTES ==========
     goToStep(step) {
       this.currentStep = step;
       
@@ -466,6 +525,7 @@ export default {
     toggleConfirmPassword() {
       this.showConfirmPassword = !this.showConfirmPassword;
     },
+    
     // Gestion de l'entrée du code
     onCodeInput(event, index) {
       const value = event.target.value;
@@ -682,7 +742,6 @@ export default {
       this.redirectToDashboard();
     },
     
-
     redirectToDashboard() {
       let route = '/accueil';
       
@@ -717,6 +776,7 @@ export default {
 };
 </script>
 
+<style scoped lang="scss">
 
-
+</style>
 
