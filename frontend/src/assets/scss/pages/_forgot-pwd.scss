@@ -1,7 +1,7 @@
-/* AJOUTER À LA FIN DU FICHIER _connexion.scss */
+@import '../base/variables';
 
 /* =============================================
-   FORGOT PASSWORD - STYLE COHÉRENT AVEC CONNEXION
+   FORGOT PASSWORD - DESKTOP ONLY
    ============================================= */
 
 .forgot-password-container {
@@ -12,35 +12,100 @@
   justify-content: center;
   padding: 20px;
   font-family: $font-family-primary;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    
+    background-image: 
+      repeating-linear-gradient(
+        transparent 0px,
+        transparent 28px,
+        rgba($color-primary, 0.06) 28px,
+        rgba($color-primary, 0.06) 30px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 60px,
+        rgba($color-accent, 0.04) 60px,
+        rgba($color-accent, 0.04) 62px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent 0px,
+        transparent 80px,
+        rgba($color-tertiary, 0.03) 80px,
+        rgba($color-tertiary, 0.03) 82px
+      );
+    
+    background-size: 
+      100% 30px,
+      100% 100%,
+      100% 100%;
+    background-repeat: repeat;
+  }
+  
+  &::after {
+    content: '📖';
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 60px;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
-.background-video {
-  position: absolute;
+/* DIAPORAMA */
+.background-slideshow {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 1;
-  position: fixed;
 }
 
-.scenariste-video {
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  z-index: 1;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slideshow-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-  opacity: 95%;
 }
 
-.scenariste-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: none; /* Caché par défaut, affiché si la vidéo ne charge pas */
-}
-
-.video-overlay {
+.image-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -53,6 +118,7 @@
   );
   color: $color-text-light;
   padding: $padding-xl;
+  z-index: 3;
   
   .overlay-content {
     max-width: 1200px;
@@ -75,20 +141,87 @@
   }
 }
 
-/* Carte principale - SIMILAIRE À .connexion-card-conn */
+.slideshow-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 4;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+  }
+  
+  &.active {
+    width: 24px;
+    border-radius: 10px;
+    background: #8A9B78;
+    box-shadow: 0 0 8px rgba(138, 155, 120, 0.6);
+  }
+}
+
+.slideshow-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 4;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  &.prev {
+    left: 20px;
+  }
+  
+  &.next {
+    right: 20px;
+  }
+  
+  i {
+    font-size: 18px;
+  }
+}
+
+/* CARTE PRINCIPALE - AGRANDIE + TRANSPARENTE */
 .forgot-password-card {
   width: 100%;
-  max-width: 500px;
-  background: $color-background-alt;
+  max-width: 540px; /* +20px de chaque côté */
+  background: rgba($color-background-alt, 0.85);
   border-radius: $border-radius-lg;
   padding: $padding-xl;
   box-shadow: $shadow-lg;
-  z-index: 2;
+  z-index: 5;
   position: relative;
-  border: 1px solid rgba($color-primary, 0.1);
+  border: 1px solid rgba($color-primary, 0.2);
+  backdrop-filter: blur(8px);
 }
 
-/* En-tête - SIMILAIRE À .cinema-logo */
+/* EN-TÊTE */
 .password-reset-header {
   text-align: center;
   margin-bottom: $margin-lg;
@@ -119,7 +252,7 @@
   }
 }
 
-/* Indicateur d'étapes */
+/* INDICATEUR D'ÉTAPES */
 .step-indicator {
   display: flex;
   align-items: center;
@@ -186,7 +319,7 @@
   background: $color-success;
 }
 
-/* Contenu des étapes */
+/* CONTENU DES ÉTAPES */
 .step-content {
   animation: fadeIn 0.5s ease;
 }
@@ -220,7 +353,7 @@
   }
 }
 
-/* Champs de code */
+/* CHAMPS DE CODE */
 .code-input-container {
   display: flex;
   justify-content: center;
@@ -259,7 +392,7 @@
   margin-top: 8px;
 }
 
-/* Renvoyer le code */
+/* RENVOYER LE CODE */
 .resend-code-section {
   text-align: center;
   margin: 20px 0;
@@ -301,7 +434,7 @@
   }
 }
 
-/* Boutons d'étape */
+/* BOUTONS D'ÉTAPE */
 .step-buttons {
   display: flex;
   justify-content: space-between;
@@ -311,7 +444,7 @@
 
 .secondary-btn {
   padding: 12px 24px;
-  background: rgba($color-primary, 0.05);
+  background: rgba($color-primary, 0.1);
   color: $color-primary;
   border: 2px solid rgba($color-primary, 0.3);
   border-radius: $border-radius;
@@ -325,7 +458,7 @@
   @include typography-p2;
   
   &:hover:not(:disabled) {
-    background: rgba($color-primary, 0.1);
+    background: rgba($color-primary, 0.2);
     border-color: $color-primary;
   }
   
@@ -335,7 +468,7 @@
   }
 }
 
-/* Force du mot de passe */
+/* FORCE DU MOT DE PASSE */
 .password-strength {
   margin: 16px 0;
 }
@@ -367,7 +500,7 @@
   color: $color-text-muted;
 }
 
-/* Étape de succès */
+/* ÉTAPE DE SUCCÈS */
 .success-step {
   text-align: center;
   animation: fadeIn 0.5s ease;
@@ -402,7 +535,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba($color-primary, 0.05);
+  background: rgba($color-primary, 0.1);
   padding: 12px 24px;
   border-radius: 50px;
   margin-bottom: 24px;
@@ -432,9 +565,9 @@
   gap: 12px;
 }
 
-/* Messages de succès */
+/* MESSAGES */
 .success-message-cinema {
-  background: rgba($color-success, 0.08);
+  background: rgba($color-success, 0.15);
   border-left: 2px solid $color-success;
   padding: 12px;
   border-radius: $border-radius-xs;
@@ -453,12 +586,848 @@
   color: darken($color-success, 20%);
 }
 
+.error-message-cinema {
+  background: rgba($color-error, 0.15);
+  border-left: 2px solid $color-error;
+  padding: 12px;
+  border-radius: $border-radius-xs;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  i {
+    color: $color-error;
+    font-size: 16px;
+  }
+  
+  @include typography-p2;
+  color: $color-secondary-dark;
+}
+
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Lien retour */
+/* LIEN RETOUR */
+.back-to-login {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba($color-primary, 0.1);
+}
+
+.back-link {
+  @include typography-p2;
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  transition: $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:hover {
+    color: $color-accent;
+    text-decoration: underline;
+  }
+}
+
+/* TOGGLE MOT DE PASSE */
+.password-toggle-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $color-primary;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: $color-accent;
+  }
+}
+
+/* FORMULAIRES */
+.cinema-form {
+  .form-group-cinema {
+    margin-bottom: 12px;
+    
+    .input-wrapper {
+      position: relative;
+      
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $color-primary;
+        font-size: 16px;
+        z-index: 1;
+      }
+    }
+  }
+}
+
+.cinema-input {
+  width: 100%;
+  padding: 12px 12px 12px 44px;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  background: rgba($color-background, 0.7);
+  font-family: $font-family-primary;
+  font-size: 14px;
+  color: $color-text-primary;
+  transition: $transition-fast;
+  
+  &::placeholder {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-pastel-gold;
+  }
+  
+  &.error {
+    border-color: $color-error;
+    background: rgba($color-error, 0.1);
+  }
+}
+
+.premier-btn {
+  width: 100%;
+  border: none;
+  background: $color-primary;
+  color: $color-text-light;
+  font-family: $font-family-primary;
+  font-weight: $font-weight-semibold;
+  font-size: 16px;
+  padding: 14px 28px;
+  margin-top: 12px;
+  cursor: pointer;
+  border-radius: $border-radius;
+  transition: $transition;
+  
+  &:hover:not(:disabled) {
+    background: $color-primary-dark;
+    transform: translateY(-2px);
+    box-shadow: $shadow-primary;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  i {
+    font-size: 16px;
+  }
+}
+
+/* ANIMATION DE CHARGEMENT */
+.loading-film {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  
+  .film-frame {
+    width: 8px;
+    height: 12px;
+    background: $color-text-light;
+    animation: filmRoll 1.2s infinite ease-in-out;
+    
+    &:nth-child(1) {
+      animation-delay: -0.4s;
+    }
+    
+    &:nth-child(2) {
+      animation-delay: -0.2s;
+    }
+  }
+}
+
+@keyframes filmRoll {
+  0%, 80%, 100% {
+    transform: scaleY(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scaleY(1.2);
+    opacity: 1;
+  }
+}
+
+.password-hint-cinema {
+  @include typography-p3;
+  color: $color-text-muted;
+  margin-top: 6px;
+  padding-left: 44px;
+}
+
+
+
+.forgot-password-container {
+  min-height: 100vh;
+  background: $color-background;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: $font-family-primary;
+  position: relative;
+  
+  // Motif de fond comme Connexion
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    
+    background-image: 
+      repeating-linear-gradient(
+        transparent 0px,
+        transparent 28px,
+        rgba($color-primary, 0.06) 28px,
+        rgba($color-primary, 0.06) 30px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 60px,
+        rgba($color-accent, 0.04) 60px,
+        rgba($color-accent, 0.04) 62px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent 0px,
+        transparent 80px,
+        rgba($color-tertiary, 0.03) 80px,
+        rgba($color-tertiary, 0.03) 82px
+      );
+    
+    background-size: 
+      100% 30px,
+      100% 100%,
+      100% 100%;
+    background-repeat: repeat;
+  }
+  
+  &::after {
+    content: '📖';
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 60px;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+/* =============================================
+   DIAPORAMA
+   ============================================= */
+
+.background-slideshow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  z-index: 1;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slideshow-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba($color-text-primary, 0.9) 0%,
+    rgba($color-text-primary, 0.7) 50%,
+    rgba($color-text-primary, 0.5) 100%
+  );
+  color: $color-text-light;
+  padding: $padding-xl;
+  z-index: 3;
+  
+  .overlay-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    .overlay-title {
+      @include typography-playfair-h4;
+      color: $color-text-light;
+      font-weight: $font-weight-bold;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    
+    .overlay-text {
+      @include typography-p3;
+      font-family: $font-family-primary;
+      color: rgba($color-text-light, 0.9);
+      line-height: 1.4;
+    }
+  }
+}
+
+.slideshow-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 4;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+  }
+  
+  &.active {
+    width: 24px;
+    border-radius: 10px;
+    background: #8A9B78;
+    box-shadow: 0 0 8px rgba(138, 155, 120, 0.6);
+  }
+}
+
+.slideshow-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 4;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  &.prev {
+    left: 20px;
+  }
+  
+  &.next {
+    right: 20px;
+  }
+  
+  i {
+    font-size: 18px;
+  }
+}
+
+/* =============================================
+   CARTE PRINCIPALE - AGRANDIE + TRANSPARENTE
+   ============================================= */
+
+.forgot-password-card {
+  width: 100%;
+  max-width: 540px; /* 500px + 20px de chaque côté = 540px */
+  background: rgba($color-background-alt, 0.85); /* Légèrement transparent */
+  border-radius: $border-radius-lg;
+  padding: $padding-xl;
+  box-shadow: $shadow-lg;
+  z-index: 5;
+  position: relative;
+  border: 1px solid rgba($color-primary, 0.2);
+  backdrop-filter: blur(8px); /* Flou pour mieux voir le fond */
+}
+
+/* =============================================
+   EN-TÊTE
+   ============================================= */
+
+.password-reset-header {
+  text-align: center;
+  margin-bottom: $margin-lg;
+  
+  .logo-icon {
+    font-size: 32px;
+    color: $color-primary;
+    margin-bottom: 8px;
+  }
+  
+  .logo-text {
+    @include typography-playfair-h2;
+    color: $color-text-primary;
+    font-weight: $font-weight-black;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+    
+    background: linear-gradient(135deg, $color-primary 0%, $color-accent 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .logo-subtitle {
+    @include typography-p2;
+    font-family: $font-family-primary;
+    color: $color-text-muted;
+  }
+}
+
+/* =============================================
+   INDICATEUR D'ÉTAPES
+   ============================================= */
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $margin-xl;
+  gap: 8px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $color-border;
+  color: $color-text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: $font-weight-semibold;
+  font-size: 14px;
+  transition: $transition;
+}
+
+.step.active .step-number {
+  background: $color-primary;
+  color: $color-text-light;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba($color-primary, 0.2);
+}
+
+.step.completed .step-number {
+  background: $color-success;
+  color: $color-text-light;
+}
+
+.step-label {
+  margin-top: 6px;
+  @include typography-p4;
+  color: $color-text-muted;
+  text-align: center;
+  min-width: 70px;
+}
+
+.step.active .step-label {
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: $color-border;
+  max-width: 60px;
+}
+
+.step-line.completed {
+  background: $color-success;
+}
+
+/* =============================================
+   CONTENU DES ÉTAPES
+   ============================================= */
+
+.step-content {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-description {
+  text-align: center;
+  margin-bottom: $margin-lg;
+  
+  .step-icon {
+    font-size: 28px;
+    color: $color-primary;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    @include typography-p2;
+    color: $color-text-secondary;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  
+  .code-expiry {
+    @include typography-p3;
+    color: $color-accent;
+    font-weight: $font-weight-medium;
+  }
+}
+
+/* =============================================
+   CHAMPS DE CODE
+   ============================================= */
+
+.code-input-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.code-input {
+  width: 46px;
+  height: 56px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: $font-weight-semibold;
+  border: 2px solid $color-border;
+  border-radius: $border-radius;
+  background: rgba($color-background, 0.5);
+  color: $color-text-primary;
+  transition: $transition-fast;
+  
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-pastel-gold;
+    outline: none;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.code-hint {
+  text-align: center;
+  @include typography-p3;
+  color: $color-text-muted;
+  margin-top: 8px;
+}
+
+/* =============================================
+   RENVOYER LE CODE
+   ============================================= */
+
+.resend-code-section {
+  text-align: center;
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba($color-primary, 0.05);
+  border-radius: $border-radius;
+  
+  p {
+    @include typography-p3;
+    color: $color-text-secondary;
+    margin-bottom: 8px;
+  }
+}
+
+.resend-btn {
+  background: none;
+  border: 1px solid $color-primary;
+  color: $color-primary;
+  cursor: pointer;
+  font-weight: $font-weight-medium;
+  padding: 8px 16px;
+  border-radius: $border-radius;
+  transition: $transition-fast;
+  @include typography-p3;
+  
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  i {
+    margin-right: 6px;
+  }
+}
+
+/* =============================================
+   BOUTONS D'ÉTAPE
+   ============================================= */
+
+.step-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.secondary-btn {
+  padding: 12px 24px;
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  border: 2px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  @include typography-p2;
+  
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.2);
+    border-color: $color-primary;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* =============================================
+   FORCE DU MOT DE PASSE
+   ============================================= */
+
+.password-strength {
+  margin: 16px 0;
+}
+
+.strength-bar {
+  height: 4px;
+  border-radius: 2px;
+  margin-bottom: 8px;
+  transition: $transition;
+  
+  &.weak {
+    width: 33%;
+    background: $color-error;
+  }
+  
+  &.medium {
+    width: 66%;
+    background: $color-accent;
+  }
+  
+  &.strong {
+    width: 100%;
+    background: $color-success;
+  }
+}
+
+.strength-label {
+  @include typography-p3;
+  color: $color-text-muted;
+}
+
+/* =============================================
+   ÉTAPE DE SUCCÈS
+   ============================================= */
+
+.success-step {
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.success-animation {
+  font-size: 48px;
+  color: $color-success;
+  margin-bottom: 20px;
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.success-title {
+  @include typography-playfair-h3;
+  color: $color-text-primary;
+  margin-bottom: 16px;
+}
+
+.success-message {
+  @include typography-p2;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.user-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba($color-primary, 0.1);
+  padding: 12px 24px;
+  border-radius: 50px;
+  margin-bottom: 24px;
+  @include typography-p2;
+  color: $color-text-secondary;
+  
+  i {
+    color: $color-primary;
+  }
+}
+
+.redirect-countdown {
+  @include typography-p2;
+  color: $color-text-secondary;
+  margin-bottom: 24px;
+}
+
+.countdown-number {
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  font-size: 20px;
+}
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* =============================================
+   MESSAGES
+   ============================================= */
+
+.success-message-cinema {
+  background: rgba($color-success, 0.15);
+  border-left: 2px solid $color-success;
+  padding: 12px;
+  border-radius: $border-radius-xs;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+  
+  i {
+    color: $color-success;
+    font-size: 16px;
+  }
+  
+  @include typography-p2;
+  color: darken($color-success, 20%);
+}
+
+.error-message-cinema {
+  background: rgba($color-error, 0.15);
+  border-left: 2px solid $color-error;
+  padding: 12px;
+  border-radius: $border-radius-xs;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  i {
+    color: $color-error;
+    font-size: 16px;
+  }
+  
+  @include typography-p2;
+  color: $color-secondary-dark;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================
+   LIEN RETOUR
+   ============================================= */
+
 .back-to-login {
   text-align: center;
   margin-top: 20px;
@@ -483,130 +1452,9 @@
 }
 
 /* =============================================
-   RESPONSIVE FORGOT PASSWORD
+   TOGGLE MOT DE PASSE
    ============================================= */
 
-// TABLETTE (768px - 991px)
-@media (max-width: 991px) and (min-width: 768px) {
-  .forgot-password-card {
-    max-width: 600px;
-    padding: $padding-lg;
-  }
-  
-  .step-indicator {
-    gap: 6px;
-  }
-  
-  .step-label {
-    font-size: $font-size-p4;
-    min-width: 60px;
-  }
-  
-  .code-input {
-    width: 40px;
-    height: 50px;
-    font-size: 18px;
-  }
-}
-
-// MOBILE (< 768px)
-@media (max-width: 767px) {
-  .forgot-password-container {
-    padding: 10px;
-  }
-  
-  .forgot-password-card {
-    padding: $padding-lg;
-    margin: 0 10px;
-  }
-  
-  .password-reset-header {
-    .logo-text {
-      font-size: $font-size-h3;
-    }
-    
-    .logo-icon {
-      font-size: 28px;
-      margin-bottom: 6px;
-    }
-  }
-  
-  .step-indicator {
-    gap: 4px;
-    margin-bottom: $margin-lg;
-  }
-  
-  .step-number {
-    width: 32px;
-    height: 32px;
-    font-size: 13px;
-  }
-  
-  .step-label {
-    font-size: 11px;
-    min-width: 50px;
-  }
-  
-  .step-line {
-    max-width: 30px;
-  }
-  
-  .code-input-container {
-    gap: 8px;
-  }
-  
-  .code-input {
-    width: 36px;
-    height: 46px;
-    font-size: 16px;
-  }
-  
-  .step-buttons {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .secondary-btn,
-  .premier-btn {
-    width: 100%;
-  }
-}
-
-// PETIT MOBILE (< 576px)
-@media (max-width: 575px) {
-  .forgot-password-card {
-    padding: $padding-md;
-  }
-  
-  .password-reset-header {
-    .logo-text {
-      font-size: $font-size-h4;
-    }
-    
-    .logo-subtitle {
-      font-size: $font-size-p3;
-    }
-  }
-  
-  .step-number {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-  
-  .step-label {
-    display: none;
-  }
-  
-  .code-input {
-    width: 32px;
-    height: 42px;
-    font-size: 14px;
-  }
-}
-
-
-// Styles pour les icônes de toggle (si pas déjà définis dans _connexion.scss)
 .password-toggle-icon {
   position: absolute;
   right: 16px;
@@ -623,11 +1471,139 @@
   }
 }
 
-// Responsive
-@media (max-width: 767px) {
-  .password-toggle-icon {
-    right: 12px;
-    font-size: 14px;
+/* =============================================
+   FORMULAIRES
+   ============================================= */
+
+.cinema-form {
+  .form-group-cinema {
+    margin-bottom: 12px;
+    
+    .input-wrapper {
+      position: relative;
+      
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $color-primary;
+        font-size: 16px;
+        z-index: 1;
+      }
+    }
   }
 }
 
+.cinema-input {
+  width: 100%;
+  padding: 12px 12px 12px 44px;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  background: rgba($color-background, 0.7);
+  font-family: $font-family-primary;
+  font-size: 14px;
+  color: $color-text-primary;
+  transition: $transition-fast;
+  
+  &::placeholder {
+    color: $color-text-muted;
+    font-size: 13px;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-pastel-gold;
+  }
+  
+  &.error {
+    border-color: $color-error;
+    background: rgba($color-error, 0.1);
+  }
+}
+
+.premier-btn {
+  width: 100%;
+  border: none;
+  background: $color-primary;
+  color: $color-text-light;
+  font-family: $font-family-primary;
+  font-weight: $font-weight-semibold;
+  font-size: 16px;
+  padding: 14px 28px;
+  margin-top: 12px;
+  cursor: pointer;
+  border-radius: $border-radius;
+  transition: $transition;
+  
+  &:hover:not(:disabled) {
+    background: $color-primary-dark;
+    transform: translateY(-2px);
+    box-shadow: $shadow-primary;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  i {
+    font-size: 16px;
+  }
+}
+
+/* =============================================
+   ANIMATION DE CHARGEMENT
+   ============================================= */
+
+.loading-film {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  
+  .film-frame {
+    width: 8px;
+    height: 12px;
+    background: $color-text-light;
+    animation: filmRoll 1.2s infinite ease-in-out;
+    
+    &:nth-child(1) {
+      animation-delay: -0.4s;
+    }
+    
+    &:nth-child(2) {
+      animation-delay: -0.2s;
+    }
+  }
+}
+
+@keyframes filmRoll {
+  0%, 80%, 100% {
+    transform: scaleY(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scaleY(1.2);
+    opacity: 1;
+  }
+}
+
+.password-hint-cinema {
+  @include typography-p3;
+  color: $color-text-muted;
+  margin-top: 6px;
+  padding-left: 44px;
+}
