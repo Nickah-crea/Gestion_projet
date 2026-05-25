@@ -7,7 +7,9 @@ import com.example.films.service.ScenaristeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/scenaristes")
@@ -33,6 +35,43 @@ public class ScenaristeController {
             return ResponseEntity.ok(episodes);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    // ========== NOUVEAUX ENDPOINTS POUR LES STATISTIQUES ==========
+    
+    @GetMapping("/stats/productivite")
+    public ResponseEntity<Map<String, Object>> getProductiviteStats(@RequestParam Long userId) {
+        try {
+            Map<String, Object> stats = scenaristeService.getProductiviteStats(userId);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            errorResponse.put("productivite", 0);
+            errorResponse.put("scenesModifiees7j", 0);
+            errorResponse.put("tendanceScenes", 0);
+            errorResponse.put("tempsTotalMinutes", 0);
+            errorResponse.put("moyenneQuotidienneMinutes", 0);
+            errorResponse.put("sessionMoyenneMinutes", 45);
+            return ResponseEntity.ok(errorResponse);
+        }
+    }
+    
+    @GetMapping("/stats/activites-recentes")
+    public ResponseEntity<Map<String, Object>> getRecentActivities(
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "5") int limit) {
+        try {
+            List<Map<String, Object>> activities = scenaristeService.getRecentActivities(userId, limit);
+            Map<String, Object> response = new HashMap<>();
+            response.put("activities", activities);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            errorResponse.put("activities", List.of());
+            return ResponseEntity.ok(errorResponse);
         }
     }
 }
