@@ -35,9 +35,9 @@
         <div class="recent-activity-compact-Scenariste">
           <div class="activity-header-compact-Scenariste">
             <h3 class="activity-title-compact-Scenariste">Dernières activités</h3>
-            <button class="view-all-btn-compact-Scenariste" @click="viewAllActivities" title="Voir tout">
+            <!-- <button class="view-all-btn-compact-Scenariste" @click="viewAllActivities" title="Voir tout">
               <i class="fas fa-chevron-right"></i>
-            </button>
+            </button> -->
           </div>
           
           <div class="activity-timeline-compact-Scenariste">

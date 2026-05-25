@@ -1178,7 +1178,7 @@ export default {
       this.exportEnCours = true;
       
       try {
-        const pdf = genererPDF(this.resultat, this.resultatDetails);
+        const pdf = await genererPDF(this.resultat, this.resultatDetails);
         pdf.save(`${this.resultat.type}_${this.resultat.titre}_${new Date().toISOString().split('T')[0]}.pdf`);
       } catch (error) {
         console.error('Erreur lors de l\'export PDF:', error);
@@ -1187,12 +1187,12 @@ export default {
         this.exportEnCours = false;
       }
     },
-    
+
     async ouvrirDialogueEmail() {
       this.exportEnCours = true;
       
       try {
-        this.generatedPdfBlob = genererPDFBlob(this.resultat, this.resultatDetails);
+        this.generatedPdfBlob = await genererPDFBlob(this.resultat, this.resultatDetails);
         this.resetEmailForm();
         this.emailDialogVisible = true;
       } catch (error) {
