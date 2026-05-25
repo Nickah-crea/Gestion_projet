@@ -4,49 +4,71 @@
       <!-- Conteneur split-screen -->
       <div class="split-screen-container" :class="{ 'inscription-mode': !isLoginForm }">
         
-        <!-- Vidéo au lieu de l'image -->
+        <!-- Diaporama d'images -->
         <div class="image-side">
           <div class="image-wrapper">
-            <!-- Vidéo de fond -->
-            <video 
-              autoplay 
-              muted 
-              loop 
-              playsinline 
-              class="scenariste-video"
-            >  
-              <source src="../assets/img/video-login3.mp4" type="video/mp4">
-              <!-- Fallback si la vidéo ne charge pas -->
-              <img src="../assets/img/autor.png" alt="Scénariste au travail" class="scenariste-image">
-            </video>
-            
-            <!-- Overlay avec contenu -->
-            <div class="image-overlay">
-              <div class="overlay-content">
-                <h2 class="overlay-title">
-                  {{ isLoginForm ? 'VDFI' : 'VOTRE PLATEAU' }}
-                </h2>
-                <p class="overlay-text">
-                  {{ isLoginForm 
-                    ? 'Accédez à votre espace créatif dédié à la production cinématographique.' 
-                    : 'Rejoignez la communauté des créateurs et organisez vos projets.' 
-                  }}
-                </p>
-                <div class="overlay-features">
-                  <div class="feature">
-                    <i class="fas fa-film"></i>
-                    <span>{{ isLoginForm ? 'Production' : 'Collaboration' }}</span>
-                  </div>
-                  <div class="feature">
-                    <i class="fas fa-clapperboard"></i>
-                    <span>{{ isLoginForm ? 'Gestion' : 'Création' }}</span>
-                  </div>
-                  <div class="feature">
-                    <i class="fas fa-star"></i>
-                    <span>{{ isLoginForm ? 'Organisation' : 'Innovation' }}</span>
+            <div class="slideshow-container">
+              <!-- Images du diaporama -->
+              <div 
+                v-for="(image, index) in slideshowImages" 
+                :key="index"
+                class="slide"
+                :class="{ 'active': currentSlide === index }"
+              >
+                <img 
+                  :src="image.src" 
+                  :alt="image.alt"
+                  class="slideshow-image"
+                />
+              </div>
+              
+              <!-- Overlay avec contenu -->
+              <div class="image-overlay">
+                <div class="overlay-content">
+                  <h2 class="overlay-title">
+                    {{ isLoginForm ? 'VDFI' : 'VOTRE PLATEAU' }}
+                  </h2>
+                  <p class="overlay-text">
+                    {{ isLoginForm 
+                      ? 'Accédez à votre espace créatif dédié à la production cinématographique.' 
+                      : 'Rejoignez la communauté des créateurs et organisez vos projets.' 
+                    }}
+                  </p>
+                  <div class="overlay-features">
+                    <div class="feature">
+                      <i class="fas fa-film"></i>
+                      <span>{{ isLoginForm ? 'Production' : 'Collaboration' }}</span>
+                    </div>
+                    <div class="feature">
+                      <i class="fas fa-clapperboard"></i>
+                      <span>{{ isLoginForm ? 'Gestion' : 'Création' }}</span>
+                    </div>
+                    <div class="feature">
+                      <i class="fas fa-star"></i>
+                      <span>{{ isLoginForm ? 'Organisation' : 'Innovation' }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
+              
+              <!-- Indicateurs du diaporama -->
+              <div class="slideshow-dots">
+                <span 
+                  v-for="(image, index) in slideshowImages" 
+                  :key="index"
+                  class="dot"
+                  :class="{ 'active': currentSlide === index }"
+                  @click="currentSlide = index"
+                ></span>
+              </div>
+              
+              <!-- Boutons de navigation -->
+              <button class="slideshow-nav prev" @click="prevSlide">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="slideshow-nav next" @click="nextSlide">
+                <i class="fas fa-chevron-right"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -82,29 +104,29 @@
                   </div>
                   
                   <div class="form-group-cinema">
-                  <div class="input-wrapper">
-                    <i class="input-icon fas fa-lock"></i>
-                    <input 
-                      :type="showLoginPassword ? 'text' : 'password'"
-                      id="password-connexion-conn"
-                      v-model="loginPassword" 
-                      required 
-                      placeholder="Votre mot de passe"
-                      class="cinema-input"
-                    />
-                    <i 
-                      class="password-toggle-icon fas" 
-                      :class="showLoginPassword ? 'fa-eye-slash' : 'fa-eye'"
-                      @click="toggleLoginPassword"
-                    ></i>
+                    <div class="input-wrapper">
+                      <i class="input-icon fas fa-lock"></i>
+                      <input 
+                        :type="showLoginPassword ? 'text' : 'password'"
+                        id="password-connexion-conn"
+                        v-model="loginPassword" 
+                        required 
+                        placeholder="Votre mot de passe"
+                        class="cinema-input"
+                      />
+                      <i 
+                        class="password-toggle-icon fas" 
+                        :class="showLoginPassword ? 'fa-eye-slash' : 'fa-eye'"
+                        @click="toggleLoginPassword"
+                      ></i>
+                    </div>
                   </div>
-                </div>
                   
                   <div class="form-options-cinema">
-                      <router-link to="/forgot-password" class="forgot-password-link">
-                        Mot de passe oublié ?
-                      </router-link>
-                    </div>
+                    <router-link to="/forgot-password" class="forgot-password-link">
+                      Mot de passe oublié ?
+                    </router-link>
+                  </div>
 
                   <div v-if="loginError" class="error-message-cinema">
                     <i class="fas fa-exclamation-circle"></i>
@@ -119,7 +141,7 @@
                         <span class="film-frame"></span>
                       </span>
                       <span v-else>
-                         SE CONNECTER <i class="fas fa-play-circle"></i>
+                        SE CONNECTER <i class="fas fa-play-circle"></i>
                       </span>
                     </span>
                   </button>
@@ -129,9 +151,7 @@
               <!-- Formulaire d'inscription -->
               <div v-else key="register" class="inscription-formulaire">
                 <form @submit.prevent="sInscrire" class="cinema-form container-inscription">
-                  <!-- Nom et Email côte à côte -->
                   <div class="form-row double">
-                    <!-- Nom -->
                     <div class="form-group-cinema">
                       <div class="input-wrapper">
                         <i class="input-icon fas fa-user"></i>
@@ -145,7 +165,6 @@
                       </div>
                     </div>
                     
-                    <!-- Email -->
                     <div class="form-group-cinema">
                       <div class="input-wrapper">
                         <i class="input-icon fas fa-at"></i>
@@ -167,9 +186,7 @@
                     </div>
                   </div>
 
-                  <!-- Mot de passe et Confirmation côte à côte -->
                   <div class="form-row double">
-                    <!-- Mot de passe -->
                     <div class="form-group-cinema">
                       <div class="input-wrapper">
                         <i class="input-icon fas fa-key"></i>
@@ -192,7 +209,6 @@
                       </div>
                     </div>
 
-                    <!-- Confirmation mot de passe -->
                     <div class="form-group-cinema">
                       <div class="input-wrapper">
                         <i class="input-icon fas fa-shield-alt"></i>
@@ -216,9 +232,7 @@
                     </div>
                   </div>
                   
-                  <!-- Rôle et Spécialité côte à côte -->
                   <div class="form-row double">
-                    <!-- Rôle (optionnel) -->
                     <div class="form-group-cinema">
                       <div class="input-wrapper">
                         <i class="input-icon fas fa-theater-masks"></i>
@@ -234,7 +248,6 @@
                       </div>
                     </div>
 
-                    <!-- Champs conditionnels pour scénariste/réalisateur -->
                     <div v-if="registerRole === 'SCENARISTE' || registerRole === 'REALISATEUR'" class="form-group-cinema">
                       <div class="input-wrapper">
                         <i class="input-icon fas fa-star"></i>
@@ -248,7 +261,6 @@
                     </div>
                   </div>
 
-                  <!-- Biographie (pleine largeur) -->
                   <div v-if="registerRole === 'SCENARISTE' || registerRole === 'REALISATEUR'" class="form-group-cinema">
                     <div class="input-wrapper">
                       <i class="input-icon fas fa-book"></i>
@@ -261,13 +273,11 @@
                     </div>
                   </div>
                   
-                  <!-- Message d'erreur général -->
                   <div v-if="registerError" class="error-message-cinema">
                     <i class="fas fa-exclamation-circle"></i>
                     {{ registerError }}
                   </div>
                   
-                  <!-- Bouton d'inscription -->
                   <button 
                     type="submit" 
                     class="premier-btn" 
@@ -288,7 +298,6 @@
               </div>
             </transition>
 
-            <!-- Lien de bascule avec animation -->
             <div class="signup-link-cinema-center" :class="{ 'slide-out-right': switchingToRegister, 'slide-in-right': switchingToLogin }">
               <div class="link-content">
                 {{ isLoginForm ? "Nouveau sur la plateforme ?" : "Déjà membre ?" }}
@@ -306,6 +315,9 @@
 
 <script>
 import axios from 'axios';
+// IMPORTANT: Importer les images directement
+import image1 from '../assets/img/connex-01.jpg';
+import image2 from '../assets/img/connex-02.jpg';
 
 export default {
   name: 'AuthView',
@@ -340,32 +352,51 @@ export default {
       // États pour afficher/masquer les mots de passe
       showLoginPassword: false,
       showRegisterPassword: false,
-      showRegisterConfirmPassword: false
+      showRegisterConfirmPassword: false,
+
+      // Diaporama - Utiliser les imports
+      slideshowImages: [
+        {
+          src: image1,
+          alt: 'Scénariste au travail 1'
+        },
+        {
+          src: image2,
+          alt: 'Scénariste au travail 2'
+        }
+      ],
+      currentSlide: 0,
+      slideshowInterval: null
     };
   },
   mounted() {
-    
     document.body.classList.remove('dark-theme');
-    this.initVideo();
+    this.startSlideshow();
+  },
+  beforeDestroy() {
+    this.stopSlideshow();
   },
   methods: {
+    startSlideshow() {
+      this.slideshowInterval = setInterval(() => {
+        this.nextSlide();
+      }, 5000);
+    },
     
-    initVideo() {
-      const video = this.$el?.querySelector('.scenariste-video');
-      if (video) {
-       
-        video.play().catch(error => {
-          console.log('La vidéo ne peut pas se jouer automatiquement:', error);
-          const fallbackImg = video.querySelector('.scenariste-image');
-          if (fallbackImg) {
-            video.style.display = 'none';
-            fallbackImg.style.display = 'block';
-          }
-        });
+    stopSlideshow() {
+      if (this.slideshowInterval) {
+        clearInterval(this.slideshowInterval);
       }
     },
     
-   
+    nextSlide() {
+      this.currentSlide = (this.currentSlide + 1) % this.slideshowImages.length;
+    },
+    
+    prevSlide() {
+      this.currentSlide = (this.currentSlide - 1 + this.slideshowImages.length) % this.slideshowImages.length;
+    },
+    
     switchToLogin() {
       this.animationDirection = 'slide-right';
       this.switchingToLogin = true;
@@ -404,7 +435,6 @@ export default {
       }, 400);
     },
 
-    
     async seConnecter() {
       this.loginLoading = true;
       this.loginError = '';
@@ -415,11 +445,9 @@ export default {
           password: this.loginPassword
         });
         
-        
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('token', response.data.token);
         
-      
         this.redirectByRole(response.data.user.role);
         
       } catch (error) {
@@ -430,7 +458,6 @@ export default {
       }
     },
 
-    
     async verifierEmail() {
       if (!this.registerEmail) return;
       
@@ -444,7 +471,6 @@ export default {
     },
     
     async sInscrire() {
-      
       if (this.registerPassword !== this.registerConfirmPassword) {
         this.registerError = "Les mots de passe ne correspondent pas";
         return;
@@ -473,7 +499,6 @@ export default {
           biographie: this.registerBiographie
         });
         
-     
         await this.autoLoginAfterRegister();
         
       } catch (error) {
@@ -485,27 +510,22 @@ export default {
 
     async autoLoginAfterRegister() {
       try {
-       
         const loginResponse = await axios.post('/api/auth/login', {
           email: this.registerEmail,
           password: this.registerPassword
         });
         
-       
         localStorage.setItem('user', JSON.stringify(loginResponse.data.user));
         localStorage.setItem('token', loginResponse.data.token);
         
-      
         this.redirectByRole(loginResponse.data.user.role);
         
       } catch (loginError) {
         console.error('Erreur connexion automatique:', loginError);
-      
         this.$router.push('/connexion?message=Inscription réussie! Veuillez vous connecter.');
       }
     },
 
-   
     redirectByRole(role) {
       let route = '/accueil';
       
@@ -619,22 +639,115 @@ export default {
   }
 }
 
-/* Styles spécifiques pour la vidéo */
-.scenariste-video {
+/* Styles du diaporama */
+.slideshow-container {
+  position: relative;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
-  background-color: #000; /* Fond noir si la vidéo ne charge pas */
+  overflow: hidden;
 }
 
-/* Fallback pour l'image */
-.scenariste-image {
-  display: none; /* Caché par défaut, affiché seulement si la vidéo échoue */
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  z-index: 1;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slideshow-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
+}
+
+.image-overlay {
+  z-index: 3;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.slideshow-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 4;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+}
+
+.dot.active {
+  width: 24px;
+  border-radius: 10px;
+  background: #8A9B78;
+  box-shadow: 0 0 8px rgba(138, 155, 120, 0.6);
+}
+
+.slideshow-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 4;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slideshow-nav:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.slideshow-nav.prev {
+  left: 20px;
+}
+
+.slideshow-nav.next {
+  right: 20px;
+}
+
+.slideshow-nav i {
+  font-size: 18px;
 }
 </style>
 
