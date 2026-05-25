@@ -370,19 +370,16 @@ export default {
         { id: 'raccord', label: 'Raccord', icon: 'fas fa-link' }
       ],
       
-      // Données des statuts
       statutsProjet: [],
       statutsEpisode: [],
       statutsScene: [],
       statutsSequence: [],
       statutsPlanning: [],
       statutsRaccord: [],
-      
-      // Filtres
+
       filtreActif: '',
       searchTerm: '',
-      
-      // Modal
+
       showModal: false,
       isEditing: false,
       editingType: null,
@@ -397,8 +394,7 @@ export default {
         type: 'warning',
         onConfirm: null
       },
-      
-      // Formulaire
+    
       formData: {
         code: '',
         nom: '',
@@ -408,7 +404,7 @@ export default {
       },
       errors: {},
       
-      // Toast
+     
       toast: {
         show: false,
         message: '',
@@ -416,7 +412,7 @@ export default {
         icon: 'fa-check'
       },
       
-      // États
+   
       loading: false
     };
   },
@@ -478,7 +474,7 @@ export default {
   },
 
   methods: {
-    // Méthodes pour charger les données
+
     async loadAllStatuts() {
       this.loading = true;
       try {
@@ -511,7 +507,6 @@ export default {
       }
     },
 
-    // Méthodes pour la confirmation
     openConfirmModal(config) {
       this.confirmConfig = {
         title: config.title || 'Confirmation',
@@ -539,7 +534,7 @@ export default {
       this.closeConfirmModal();
     },
     
-    // Méthodes utilitaires
+
     getEndpoint(type) {
       const endpoints = {
         projet: '/api/statuts-projet',
@@ -646,10 +641,11 @@ export default {
     },
     
     applyFilter() {
-      // Le filtrage se fait dans les computed properties
+      // Cette méthode est déclenchée à chaque changement de filtre ou de terme de recherche
+      // Les statuts affichés seront automatiquement mis à jour grâce à la computed property getFilteredStatuts
     },
     
-    // Modal
+    
     openCreateModal(type) {
       this.resetForm();
       this.isEditing = false;
@@ -886,7 +882,6 @@ export default {
       });
     },
 
-    // Toast notifications
     showSuccess(message) {
       this.toast = {
         show: true,
@@ -926,6 +921,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
 

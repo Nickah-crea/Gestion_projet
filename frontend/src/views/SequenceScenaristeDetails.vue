@@ -222,8 +222,7 @@
                 </span>
               </div>
               <div class="movie-actions-Scenariste">
-                <!-- Masquer les boutons d'action pour les viewers -->
-                <!-- Icône de lieu pour ajouter un lieu à la scène -->
+               
                 <button class="action-btn-Scenariste lieu-btn-Scenariste" @click.stop="openAddLieuModal(scene)" title="Ajouter un lieu" v-if="!isViewer">
                   <i class="fas fa-map-marker-alt"></i>
                 </button>
@@ -244,7 +243,7 @@
                 <p>{{ truncateText(scene.synopsis, 120) }}</p>
               </div>
                                   
-              <!-- Métadonnées -->
+            
               <div class="movie-meta-Scenariste">
                 <i class="fas fa-list-ol"></i><span>Ordre: {{ scene.ordre }}</span>
                 <span class="meta-separator-Scenariste">|</span>
@@ -648,7 +647,6 @@ export default {
     };
   },
   computed: {
-    // Ajout du computed pour vérifier le rôle
     isViewer() {
       return this.user?.role === 'UTILISATEUR';
     },
@@ -662,7 +660,6 @@ export default {
       return this.user?.role === 'ADMIN';
     },
     canEdit() {
-      // Seuls les SCENARISTE, REALISATEUR et ADMIN peuvent éditer
       return this.user?.role === 'SCENARISTE' || 
              this.user?.role === 'REALISATEUR' || 
              this.user?.role === 'ADMIN';
@@ -676,7 +673,6 @@ export default {
         filtered = filtered.filter(scene => scene.statutNom === this.filterStatut);
       }
 
-      // Filtrer par période
       const now = new Date();
       filtered = filtered.filter(scene => {
         const modifieLe = new Date(scene.modifieLe);
@@ -704,21 +700,17 @@ export default {
     },
   },
 async created() {
-  // Pour les UTILISATEUR et ADMIN, pas besoin de vérifier
   if (this.user?.role !== 'UTILISATEUR' && this.user?.role !== 'ADMIN') {
-    await this.checkAccess(); // Cette méthode charge déjà la séquence si l'accès est accordé
+    await this.checkAccess();
   } else {
-    // Pour UTILISATEUR et ADMIN, charger la séquence directement
     await this.loadSequence();
   }
   
   if (!this.accessDenied) {
-    // Si la séquence n'a pas encore été chargée (cas UTILISATEUR/ADMIN)
     if (!this.sequence.idSequence) {
       await this.loadSequence();
     }
     
-    // Charger le reste des données
     if (this.sequence.episodeId) {
       await this.loadEpisode();
     }
@@ -727,7 +719,6 @@ async created() {
     await this.loadCommentCount();
     await this.loadLieuxDisponibles();
   } else {
-    // Si accès refusé, arrêtez le chargement ici
     return;
   }
 },
@@ -744,7 +735,6 @@ async created() {
   } catch (error) {
     console.error('Erreur lors du chargement de la séquence:', error);
     
-    // Ne pas bloquer automatiquement l'accès pour les erreurs réseau
     if (error.response?.status === 403) {
       this.accessDenied = true;
       this.showNotification('Accès refusé', 'error');
@@ -752,10 +742,7 @@ async created() {
       this.accessDenied = true;
       this.showNotification('Séquence non trouvée', 'error');
     } else {
-      // Pour les erreurs réseau, montrer un message mais ne pas bloquer
       this.showNotification('Erreur de connexion lors du chargement de la séquence', 'error');
-      // Vous pouvez choisir de bloquer ou non selon votre besoin
-      // this.accessDenied = true;
     }
   }
 },
@@ -773,7 +760,6 @@ async created() {
         }
       } catch (error) {
         console.error('Erreur lors du chargement de l\'épisode:', error);
-        // Ne pas afficher d'erreur pour l'utilisateur, juste logger
         this.episode = {};
       }
     },
@@ -788,7 +774,6 @@ async created() {
         });
         this.scenes = response.data;
         
-        // Charger le nombre de commentaires pour chaque scène
         for (let scene of this.scenes) {
           try {
             const countResponse = await axios.get(`/api/scene-commentaires/scene/${scene.idScene}/count`, {
@@ -1268,11 +1253,9 @@ async created() {
     async openSynopsisModal(scene) {
       this.selectedScene = scene;
       this.showSynopsisModal = true;
-      
-      // Charger les comédiens de la scène
+    
       await this.loadSceneComediens(scene.idScene);
       
-      // Charger les lieux de la scène
       await this.loadSceneLieus(scene.idScene);
     },
 
@@ -1329,7 +1312,7 @@ async created() {
             this.showNotification('Vous n\'avez pas accès à cette séquence', 'error');
           } else {
             this.accessDenied = false;
-            this.sequence = sequence; // Stocker la séquence déjà chargée
+            this.sequence = sequence; 
           }
         } catch (error) {
           console.error('Erreur lors de la vérification des droits d\'accès:', error);
@@ -1341,8 +1324,6 @@ async created() {
             this.accessDenied = true;
             this.showNotification('Séquence non trouvée', 'error');
           } else {
-            // Pour les autres erreurs, ne pas bloquer automatiquement
-            // Charger la séquence normalement et laisser l'API backend gérer les permissions
             this.accessDenied = false;
           }
         }

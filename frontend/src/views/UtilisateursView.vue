@@ -703,8 +703,6 @@ export default {
     goToListAndManagePhoto() {
       this.activeTab = 'liste';
       this.resetForm();
-      // Ici, on pourrait ajouter un scroll vers l'utilisateur concerné
-      // ou ouvrir directement la modal de gestion
       if (this.editingUser) {
         setTimeout(() => {
           this.manageUserPhoto(this.editingUser);
@@ -890,7 +888,6 @@ export default {
 
       try {
         if (this.editingUser) {
-          // Modification - Ne pas envoyer le mot de passe s'il est vide
           const updateData = { ...this.formData };
           if (!updateData.motDePasse) {
             delete updateData.motDePasse;
@@ -899,7 +896,6 @@ export default {
           await axios.put(`/api/utilisateurs/${this.editingUser.idUtilisateur || this.editingUser.id}`, updateData);
           this.showToast('Utilisateur modifié avec succès', 'success');
         } else {
-          // Création
           await axios.post('/api/auth/register', this.formData);
           this.showToast('Utilisateur créé avec succès', 'success');
         }
@@ -961,8 +957,5 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-</style>
 
 

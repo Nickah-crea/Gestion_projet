@@ -1,4 +1,3 @@
-<!-- TypesRaccordCRUD.vue -->
 <template>
   <div class="app-wrapper-global">
     <!-- Sidebar latérale fixe à gauche -->
@@ -304,7 +303,6 @@
       </div>
     </div>
 
-    <!-- Toast de notification -->
     <div v-if="toast.show" class="toast" :class="toast.type">
       <i class="fas" :class="toast.icon"></i>
       <span>{{ toast.message }}</span>
@@ -391,7 +389,6 @@ export default {
     await this.loadTypes();
   },
   methods: {
-    // Méthodes pour charger les données
     async loadTypes() {
       this.loading = true;
       try {
@@ -405,7 +402,7 @@ export default {
       }
     },
     
-    // Méthodes utilitaires
+
     getTypeColorClass(type) {
       const code = type.code?.toLowerCase() || '';
       if (code.includes('decor') || code.includes('position')) {
@@ -435,7 +432,7 @@ export default {
       }
     },
     
-    // Pré-remplir avec un type courant
+   
     prefillForm(commonType) {
       this.resetForm();
       this.formData = {
@@ -447,7 +444,7 @@ export default {
       this.isEditing = false;
     },
     
-    // Modal
+
     openCreateModal() {
       this.resetForm();
       this.isEditing = false;
@@ -460,7 +457,6 @@ export default {
       this.editingId = type.id;
       this.activeTab = 'ajout';
       
-      // Remplir le formulaire
       this.formData = {
         code: type.code,
         nomType: type.nomType,
@@ -546,7 +542,7 @@ export default {
       }
     },
     
-    // Confirmation de suppression
+    
     deleteType(type) {
       this.typeToDelete = type;
       this.showDeleteModal = true;
@@ -585,7 +581,7 @@ export default {
       }
     },
     
-    // Toast notifications
+   
     showToast(message, type = 'success') {
       this.toast = {
         show: true,

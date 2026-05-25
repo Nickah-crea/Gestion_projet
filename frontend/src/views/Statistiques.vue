@@ -401,7 +401,6 @@ const lastUpdate = computed(() => {
   })
 })
 
-// Les computed properties et méthodes restent identiques...
 const piePercentages = computed(() => {
   const result = { episodes: {}, sequences: {}, scenes: {} }
   const stats = statistics.value.statistics || {}
