@@ -9,8 +9,6 @@
   justify-content: center;
   padding: 20px;
   font-family: $font-family-primary;
-  
-  // MOTIF DE FOND - LIVRES ET CARNET D'ÉCRITURE
   position: relative;
   
   &::before {
@@ -23,16 +21,13 @@
     pointer-events: none;
     z-index: 0;
     
-    // Motif principal : lignes de cahier + livres stylisés
     background-image: 
-      // Lignes horizontales type cahier d'écolier
       repeating-linear-gradient(
         transparent 0px,
         transparent 28px,
         rgba($color-primary, 0.06) 28px,
         rgba($color-primary, 0.06) 30px
       ),
-      // Lignes verticales type marge
       repeating-linear-gradient(
         90deg,
         transparent 0px,
@@ -40,7 +35,6 @@
         rgba($color-accent, 0.04) 60px,
         rgba($color-accent, 0.04) 62px
       ),
-      // Motif livres empilés (petits rectangles)
       repeating-linear-gradient(
         45deg,
         transparent 0px,
@@ -49,15 +43,13 @@
         rgba($color-tertiary, 0.03) 82px
       );
     
-    // Motif de livres en overlay
     background-size: 
-      100% 30px,    // lignes horizontales
-      100% 100%,    // lignes verticales
-      100% 100%;    // diagonale
+      100% 30px,
+      100% 100%,
+      100% 100%;
     background-repeat: repeat;
   }
   
-  // Deuxième couche : silhouettes de livres ouverts
   &::after {
     content: '📖';
     position: fixed;
@@ -72,9 +64,9 @@
 
 .connexion-container-conn {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1400px;
   height: 90vh;
-  min-height: 600px;
+  min-height: 700px;
   position: relative;
   z-index: 1;
 }
@@ -88,21 +80,17 @@
   border-radius: $border-radius-lg;
   overflow: hidden;
   box-shadow: $shadow-lg;
-  
-  // Mode connexion: image à droite
   flex-direction: row;
   
-  // Mode inscription: image à gauche
   &.inscription-mode {
     flex-direction: row-reverse;
     
-    // PLUS D'ESPACE pour le formulaire d'inscription
     .form-side {
-      flex: 1.3; // 30% plus large
+      flex: 1.4;
     }
     
     .image-side {
-      flex: 0.7; // 30% plus petit
+      flex: 0.6;
     }
   }
 }
@@ -116,13 +104,6 @@
   .image-wrapper {
     width: 100%;
     height: 100%;
-    
-    .scenariste-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
     
     .image-overlay {
       position: absolute;
@@ -177,33 +158,49 @@
   }
 }
 
-// CÔTÉ FORMULAIRE
+// CÔTÉ FORMULAIRE - Version Desktop centrée
 .form-side {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: $padding-xl;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-primary, 0.1);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-primary, 0.3);
+    border-radius: 2px;
+  }
 }
 
-// Carte principale - PLUS GRANDE EN INSCRIPTION
+// Carte principale
 .connexion-card-conn {
   width: 100%;
-  max-width: 450px;
+  max-width: 480px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  height: 100%;
   
-  // En mode inscription, encore plus large
   .inscription-mode & {
-    max-width: 550px; // +100px pour l'inscription
+    max-width: 600px;
   }
   
   .cinema-logo {
     text-align: center;
     margin-bottom: $margin-lg;
     flex-shrink: 0;
+    margin-top: 0;
     
     .logo-icon {
       font-size: 32px;
@@ -255,11 +252,7 @@
   }
 }
 
-// =============================================
-// FORMULAIRES - ESPACEMENT RÉDUIT DE 4px
-// =============================================
-
-// STYLES COMMUNS POUR CONNEXION ET INSCRIPTION
+// FORMULAIRES
 .cinema-form {
   .form-group-cinema {
     margin-bottom: 12px;
@@ -280,31 +273,26 @@
   }
 }
 
-// INSCRIPTION - INPUTS CÔTE À CÔTE SUR DESKTOP
+// INSCRIPTION - INPUTS CÔTE À CÔTE
 .inscription-formulaire {
   .cinema-form {
     .form-row {
       display: grid;
-      grid-template-columns: 1fr; // Par défaut en colonne (mobile)
-      gap: 8px;
+      gap: 12px;
       margin-bottom: 12px;
       
       &.double {
-        @media (min-width: 768px) {
-          grid-template-columns: 1fr 1fr; // Côte à côte sur tablette/desktop
-          gap: 8px;
-        }
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
       }
     }
     
-    // IMPORTANT: Supprimer les marges des .form-group-cinema dans les lignes
     .form-row .form-group-cinema {
-      margin-bottom: 0; // PAS de marge ici
+      margin-bottom: 0;
     }
     
-    // Rétablir la marge seulement pour les groupes en dehors des lignes
     .form-group-cinema {
-      margin-bottom: 12px; // Pour biographie, erreur, etc.
+      margin-bottom: 12px;
     }
   }
 }
@@ -346,20 +334,6 @@
   background-repeat: no-repeat;
   background-position: right 16px center;
   padding-right: 40px;
-  
-  &.role-select {
-    padding: 12px 16px 12px 44px;
-    font-size: 15px;
-    height: 46px;
-    border-radius: $border-radius;
-    border: 2px solid rgba($color-primary, 0.3);
-    background-color: rgba($color-primary, 0.05);
-    
-    &:focus {
-      border-color: $color-primary;
-      background-color: rgba($color-primary, 0.1);
-    }
-  }
 }
 
 // Textarea
@@ -375,7 +349,7 @@
 // Indicateurs email
 .email-status-cinema {
   position: absolute;
-  right: 16px;
+  right: 45px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -410,16 +384,14 @@
 // Options du formulaire
 .form-options-cinema {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
   margin-bottom: 12px;
 }
 
-.forgot-link-cinema {
-  @include typography-p2;
+.forgot-password-link {
   color: $color-primary;
   text-decoration: none;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
   transition: $transition-fast;
   
   &:hover {
@@ -551,260 +523,6 @@
   }
 }
 
-// =============================================
-// RESPONSIVE CORRIGÉ
-// =============================================
-
-// DESKTOP (> 992px) - INPUTS CÔTE À CÔTE
-@media (min-width: 992px) {
-  .split-screen-container {
-    flex-direction: row;
-    
-    &.inscription-mode {
-      flex-direction: row-reverse;
-      
-      .form-side {
-        flex: 1.4; // 40% plus large en inscription sur desktop
-      }
-      
-      .image-side {
-        flex: 0.6; // 40% plus petit
-      }
-    }
-  }
-  
-  .connexion-card-conn {
-    max-width: 480px;
-    margin-top: 50px;
-
-    .inscription-mode & {
-      max-width: 600px; // Encore plus large
-    }
-  }
-  
-  // SUR DESKTOP, LES INPUTS RESTENT CÔTE À CÔTE
-  .inscription-formulaire {
-    .cinema-form {
-      .form-row {
-        &.double {
-          grid-template-columns: 1fr 1fr !important;
-          gap: 8px;
-        }
-      }
-    }
-  }
-}
-
-// TABLETTE (768px - 991px)
-@media (max-width: 991px) and (min-width: 768px) {
-  .connexion-container-conn {
-    height: auto;
-    min-height: 100vh;
-  }
-  
-  .split-screen-container {
-    flex-direction: column;
-    height: auto;
-    
-    &.inscription-mode {
-      flex-direction: column;
-    }
-    
-    .image-side {
-      height: 300px;
-      min-height: 300px;
-      flex: none;
-      
-      .image-overlay {
-        padding: $padding-md;
-      }
-    }
-    
-    .form-side {
-      flex: 1;
-      min-height: auto;
-      padding: $padding-xl;
-    }
-  }
-  
-  .connexion-card-conn {
-    max-width: 700px;
-    
-    .inscription-mode & {
-      max-width: 700px;
-    }
-  }
-  
-  // SUR TABLETTE, LES INPUTS PEUVENT RESTER CÔTE À CÔTE
-  .inscription-formulaire {
-    .cinema-form {
-      .form-row {
-        &.double {
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
-        }
-      }
-    }
-  }
-}
-
-// MOBILE (< 768px)
-@media (max-width: 767px) {
-  .app-wrapper-co-conn {
-    padding: 10px;
-    
-    &::before {
-      background-size: 
-        100% 30px,
-        100% 100%,
-        100% 100%;
-    }
-  }
-  
-  .connexion-container-conn {
-    height: 100vh;
-    max-width: 100%;
-  }
-  
-  .split-screen-container {
-    flex-direction: column;
-    height: 100%;
-    
-    &.inscription-mode {
-      flex-direction: column;
-    }
-    
-    .image-side {
-      height: 220px;
-      min-height: 220px;
-      flex: none;
-    }
-    
-    .form-side {
-      flex: 1;
-      padding: $padding-lg;
-      overflow: hidden;
-    }
-  }
-  
-  .connexion-card-conn {
-    max-width: 100%;
-    height: 100%;
-    
-    .cinema-logo {
-      margin-bottom: $margin-md;
-      
-      .logo-text {
-        font-size: $font-size-h3;
-      }
-      
-      .logo-icon {
-        font-size: 28px;
-        margin-bottom: 6px;
-      }
-    }
-  }
-  
-  // SUR MOBILE, TOUT EN COLONNE
-  .inscription-formulaire {
-    .cinema-form {
-      .form-row {
-        &.double {
-          grid-template-columns: 1fr;
-          gap: 8px;
-        }
-      }
-    }
-  }
-  
-  // Réductions sur mobile
-  .form-group-cinema {
-    margin-bottom: 10px;
-  }
-  
-  .cinema-input {
-    padding: 10px 10px 10px 40px;
-    font-size: 13px;
-  }
-  
-  .premier-btn {
-    padding: 12px 24px;
-    font-size: 15px;
-    margin-top: 10px;
-  }
-}
-
-// PETIT MOBILE (< 576px)
-@media (max-width: 575px) {
-  .split-screen-container {
-    .image-side {
-      height: 180px;
-      min-height: 180px;
-      
-      .image-overlay {
-        padding: $padding-sm;
-        
-        .overlay-content {
-          .overlay-title {
-            font-size: $font-size-p1;
-            margin-bottom: 4px;
-          }
-          
-          .overlay-text {
-            font-size: $font-size-p4;
-            margin-bottom: 8px;
-          }
-        }
-      }
-    }
-    
-    .form-side {
-      padding: $padding-md;
-    }
-  }
-  
-  .connexion-card-conn {
-    .cinema-logo {
-      .logo-text {
-        font-size: $font-size-h4;
-      }
-      
-      .logo-subtitle {
-        font-size: $font-size-p3;
-      }
-    }
-  }
-
-  // Réductions supplémentaires
-  .form-group-cinema {
-    margin-bottom: 8px;
-  }
-  
-  .cinema-input {
-    padding: 8px 8px 8px 36px;
-    font-size: 12px;
-  }
-  
-  .premier-btn {
-    padding: 10px 20px;
-    font-size: 14px;
-    margin-top: 8px;
-  }
-}
-
-/* Ajouter cette classe dans le style scoped de Connexion.vue */
-.forgot-password-link {
-  color: #ff6b00;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.forgot-password-link:hover {
-  color: #ff8c00;
-  text-decoration: underline;
-}
-
 // Style pour l'icône de toggle du mot de passe
 .password-toggle-icon {
   position: absolute;
@@ -820,32 +538,14 @@
   &:hover {
     color: $color-accent;
   }
-  
-  // Ajustement quand il y a déjà un indicateur email
-  .email-status-cinema + & {
-    right: 80px; // Décaler pour ne pas chevaucher l'indicateur email
-  }
 }
 
 // Ajustement pour le wrapper d'input
 .input-wrapper {
   position: relative;
   
-  // S'assurer que l'icône de toggle ne chevauche pas l'icône d'input
   .input-icon {
     z-index: 1;
   }
 }
 
-// Responsive
-@media (max-width: 767px) {
-  .password-toggle-icon {
-    right: 12px;
-    font-size: 14px;
-  }
-}
-
-// Pour les champs avec vérification d'email
-.email-status-cinema {
-  right: 45px; // Réduire pour laisser place à l'icône œil
-}

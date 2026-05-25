@@ -1,41 +1,92 @@
 @import '../base/variables';
 
-.add-project-container-add-projet {
-  flex: 1;
-  padding: $spacing-md;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-// =============================================
-// EN-TÊTE DU FORMULAIRE
-// =============================================
-.main-content-add-projet {
-  background: $color-background-alt; 
-  border-radius: $border-radius-sm;
-  box-shadow: $shadow-md;
-  padding: $spacing-lg;
-}
-
-.form-header-add-projet {
+.app-wrapper-global {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-lg;
-  padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $color-border; 
+  min-height: 100vh;
+}
 
-  h2 {
-    @include typography-playfair-h3;
-    color: $color-text-primary;
-    margin: 0;
-    font-size: calc(#{$font-size-h3} - 2px);
+// =============================================
+// SIDEBAR LATÉRALE FIXE À GAUCHE
+// =============================================
+.creation-sidebar-add-project {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 280px;
+  height: calc(100vh - 60px);
+  z-index: $z-index-fixed - 1;
+  overflow-y: auto;
+  padding: $padding-lg;
+  background: $color-primary;
+  box-sizing: border-box;
+  box-shadow: $shadow-accent;
+  border-radius: 20px;
+
+  i {
+    color: $color-text-light !important;
   }
 
-  .back-btn-add-projet {
-    padding: $gap-xs $padding-sm;
-    background: transparent;
-    border: 1px solid $color-border; 
+  .sidebar-btn-add-project:not(.nouvelle-projet-btn) i {
+    color: $color-primary-dark !important;
+  }
+
+  .sidebar-btn-add-project:hover i {
+    color: $color-text-light !important;
+  }
+
+  .sidebar-header-add-project {
+    margin-bottom: $spacing-md;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-sm;
+
+    .sidebar-title-add-project {
+      @include typography-playfair-h4;
+      color: $color-text-light;
+      margin: 0 0 $gap-xs 0;
+      font-size: calc(#{$font-size-h4} - 2px);
+    }
+
+    .sidebar-subtitle-add-project {
+      @include typography-p4;
+      color: $color-text-light;
+      margin: 0;
+    }
+  }
+
+  .sidebar-section-add-project {
+    margin-bottom: $spacing-md;
+    background: rgba($color-text-light, 0.1);
+    border-radius: $border-radius-xs;
+    padding: $padding-sm;
+    box-shadow: $shadow-hover;
+
+    .section-title-add-project {
+      @include typography-p4;
+      color: $color-text-light;
+      margin-bottom: $gap-sm;
+      font-size: calc(#{$font-size-p4} + 1px);
+      display: flex;
+      align-items: center;
+      gap: $gap-xs;
+      
+      i {
+        color: $color-text-light !important;
+      }
+    }
+  }
+
+  .sidebar-actions-add-project {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+  }
+
+  .sidebar-btn-add-project {
+    width: 100%;
+    height: 36px;
+    padding: 0 $padding-sm;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-secondary;
@@ -43,31 +94,285 @@
     transition: $transition-fast;
     display: flex;
     align-items: center;
+    font-weight: $font-weight-semibold;
     gap: $gap-xs;
+    box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1); 
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
+      
+      i {
+        color: $color-primary !important;
+      }
+    }
+
+    &.active {
+      background: $color-accent-dark;
+      border-color: $color-primary;
+      color: $color-text-light;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
 
     &:focus-visible {
       outline: 2px solid $color-primary;
       outline-offset: 1px;
     }
+
+    &.nouvelle-projet-btn {
+      background: $color-accent-dark;
+      color: $color-white;
+      font-weight: $font-weight-semibold;
+      
+      i {
+        color: $color-text-light !important;
+      }
+    }
+    
+    &.retour-btn i {
+      color: $color-primary-dark !important;
+    }
+    
+    &.retour-btn:hover i {
+      color: $color-text-light !important;
+    }
+  }
+
+  .filter-group-add-project {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .filter-item-add-project {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xs;
+    margin-bottom: $gap-sm;
+
+    label {
+      @include typography-p4;
+      color: $color-text-light;
+      font-weight: $font-weight-medium;
+      margin-bottom: $gap-xs;
+    }
+  }
+
+  .user-info-add-project {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    transition: $transition-fast;
+    
+    i {
+      color: $color-primary-dark !important;
+      font-size: $font-size-p3;
+      transition: $transition-fast;
+    }
+    
+    span {
+      flex: 1;
+      @include text-truncate;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+    
+    &:hover {
+      border-color: $color-primary;
+      background: $color-surface-hover;
+      
+      i {
+        color: $color-primary !important;
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .stats-add-project {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .stat-item-add-project {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border-radius: $border-radius-xs;
+    border: 1px solid $color-border;
+    transition: $transition-fast;
+
+    &:hover {
+      border-color: $color-primary;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
+
+    .stat-number-add-project {
+      @include typography-playfair-h4;
+      color: $color-primary;
+      font-size: calc(#{$font-size-h4} - 4px);
+      font-weight: $font-weight-bold;
+    }
+
+    .stat-label-add-project {
+      @include typography-p4;
+      color: $color-text-muted;
+      text-align: center;
+    }
   }
 }
 
 // =============================================
-// FORMULAIRE PRINCIPAL
+// CONTENU PRINCIPAL À DROITE
 // =============================================
-.project-form-add-projet {
+.creation-body-add-project {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-add-project {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// =============================================
+// SYSTÈME D'ONGLETS
+// =============================================
+.tabs-container-add-project {
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.tabs-header-add-project {
+  display: flex;
+  background: $color-background-alt;
+  border-bottom: 1px solid $color-border;
+  position: relative;
+}
+
+.tab-btn-add-project {
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  border: none;
+  @include typography-p3;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap-sm;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.tab-indicator-add-project {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: $color-primary;
+  transition: transform $transition;
+  z-index: 1;
+}
+
+.tabs-content-add-project {
+  position: relative;
+}
+
+.tab-pane-add-project {
+  padding: $spacing-lg;
+  animation: fadeInUp-add-project 0.3s ease-out;
+}
+
+@keyframes fadeInUp-add-project {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================
+// FORMULAIRE DE CRÉATION/MODIFICATION
+// =============================================
+.form-container-add-project {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.form-header-add-project {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+}
+
+.project-form-add-project {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
 }
 
-.form-group-add-projet {
+.form-row-add-project {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+.form-group-add-project {
   display: flex;
   flex-direction: column;
   gap: $gap-xs;
@@ -82,7 +387,7 @@
 
     &::after {
       content: '*';
-      color: $color-error; 
+      color: $color-error;
       margin-left: 2px;
     }
 
@@ -91,16 +396,16 @@
     }
   }
 
-  .form-input-add-projet,
-  .form-textarea-add-projet,
-  .form-select-add-projet {
+  .form-input-add-project,
+  .form-select-add-project,
+  .form-textarea-add-project {
     width: 100%;
     padding: $gap-sm $padding-sm;
-    border: 1px solid $color-border; 
+    border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
-    background: $color-background-alt; 
+    background: $color-background-alt;
     transition: $transition-fast;
     box-sizing: border-box;
 
@@ -111,23 +416,27 @@
     }
 
     &:hover {
-      border-color: rgba($color-primary, 0.5);
+      border-color: darken($color-border, 10%);
+    }
+
+    &:disabled {
+      background: $color-background;
+      color: $color-text-muted;
+      cursor: not-allowed;
     }
   }
 
-  .form-input-add-projet,
-  .form-select-add-projet {
+  .form-input-add-project {
     height: 42px;
+    
+    &.error-input {
+      border-color: $color-error;
+      background: rgba($color-error, 0.05);
+    }
   }
 
-  .form-textarea-add-projet {
-    resize: vertical;
-    min-height: 100px;
-    font-family: inherit;
-    line-height: $line-height-base;
-  }
-
-  .form-select-add-projet {
+  .form-select-add-project {
+    height: 42px;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -136,64 +445,44 @@
     background-size: 12px;
     padding-right: $padding-lg;
   }
-}
 
-// =============================================
-// LIGNES DE FORMULAIRE
-// =============================================
-.form-row-add-projet {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-md;
-
-  @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-    gap: $spacing-sm;
-  }
-
-  .form-group-add-projet {
-    margin-bottom: 0;
+  .form-textarea-add-project {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+    line-height: $line-height-base;
   }
 }
 
 // =============================================
-// MESSAGE D'ERREUR
+// MESSAGES D'ERREUR
 // =============================================
-.error-message-add-projet {
+.error-message-add-project {
   padding: $padding-sm;
-  background: rgba($color-error, 0.1);  
-  border: 1px solid $color-error; 
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
   border-radius: $border-radius-xs;
-  color: $color-error; 
+  color: $color-error;
   font-size: $font-size-p4;
   font-weight: $font-weight-medium;
   display: flex;
   align-items: center;
   gap: $gap-xs;
-
-  &::before {
-    content: '⚠';
-    font-size: $font-size-p3;
-  }
 }
 
 // =============================================
 // ACTIONS DU FORMULAIRE
 // =============================================
-.form-actions-add-projet {
+.form-actions-add-project {
   display: flex;
   gap: $spacing-sm;
   justify-content: flex-end;
   margin-top: $spacing-lg;
   padding-top: $spacing-sm;
-  border-top: 1px solid $color-border; 
+  border-top: 1px solid $color-border;
 
-  @media (max-width: $breakpoint-md) {
-    flex-direction: column;
-  }
-
-  .cancel-btn-add-projet,
-  .submit-btn-add-projet {
+  .cancel-btn-add-project,
+  .submit-btn-add-project {
     padding: $gap-sm $spacing-md;
     border: none;
     border-radius: $border-radius-xs;
@@ -207,11 +496,6 @@
     gap: $gap-xs;
     min-width: 140px;
 
-    @media (max-width: $breakpoint-md) {
-      min-width: auto;
-      width: 100%;
-    }
-
     &:focus-visible {
       outline: 2px solid $color-primary;
       outline-offset: 1px;
@@ -224,24 +508,24 @@
     }
   }
 
-  .cancel-btn-add-projet {
+  .cancel-btn-add-project {
     background: transparent;
-    border: 1px solid $color-border; 
+    border: 1px solid $color-border;
     color: $color-text-secondary;
 
     &:hover:not(:disabled) {
-      background: rgba($color-primary, 0.1); 
+      background: rgba($color-primary, 0.1);
       border-color: $color-primary;
       color: $color-primary;
     }
   }
 
-  .submit-btn-add-projet {
+  .submit-btn-add-project {
     background: $color-primary;
-    color: $color-text-light; 
+    color: $color-white;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%); 
+      background: darken($color-primary, 10%);
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -253,172 +537,24 @@
 }
 
 // =============================================
-// ÉTATS DE CHARGEMENT
-// =============================================
-.loading-state-add-projet {
-  .submit-btn-add-projet {
-    position: relative;
-    color: transparent;
-
-    &::after {
-      content: '';
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      border: 2px solid transparent;
-      border-top: 2px solid $color-text-light; 
-      border-radius: 50%;
-      animation: spin-add-projet 1s linear infinite;
-    }
-  }
-}
-
-@keyframes spin-add-projet {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// =============================================
-// STATES ET VALIDATION
-// =============================================
-.form-group-add-projet {
-  &.has-error {
-    .form-input-add-projet,
-    .form-textarea-add-projet,
-    .form-select-add-projet {
-      border-color: $color-error; 
-      
-      &:focus {
-        box-shadow: 0 0 0 2px rgba($color-error, 0.1); 
-      }
-    }
-
-    .error-text-add-projet {
-      font-size: $font-size-p5;
-      color: $color-error; 
-      display: flex;
-      align-items: center;
-      gap: $gap-xs;
-      margin-top: 2px;
-
-      &::before {
-        content: '!';
-        font-size: $font-size-p5;
-        font-weight: $font-weight-bold;
-      }
-    }
-  }
-
-  &.has-success {
-    .form-input-add-projet,
-    .form-textarea-add-projet,
-    .form-select-add-projet {
-      border-color: $color-success;
-    }
-  }
-}
-
-// =============================================
-// RESPONSIVE
-// =============================================
-@media (max-width: $breakpoint-lg) {
-  .add-project-container-add-projet {
-    padding: $spacing-sm;
-  }
-
-  .main-content-add-projet {
-    padding: $spacing-md;
-  }
-
-  .form-header-add-projet {
-    flex-direction: column;
-    gap: $spacing-sm;
-    align-items: flex-start;
-
-    h2 {
-      font-size: calc(#{$font-size-h3} - 4px);
-    }
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .main-content-add-projet {
-    padding: $spacing-sm;
-    border-radius: $border-radius-sm;
-  }
-
-  .project-form-add-projet {
-    gap: $spacing-sm;
-  }
-
-  .form-actions-add-projet {
-    margin-top: $spacing-md;
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .add-project-container-add-projet {
-    padding: $gap-xs;
-  }
-
-  .form-group-add-projet {
-    .form-input-add-projet,
-    .form-textarea-add-projet,
-    .form-select-add-projet {
-      padding: $gap-xs $padding-xs;
-      font-size: $font-size-p4;
-    }
-
-    .form-input-add-projet,
-    .form-select-add-projet {
-      height: 38px;
-    }
-  }
-}
-
-// =============================================
 // AMÉLIORATIONS D'ACCESSIBILITÉ
 // =============================================
 @media (prefers-reduced-motion: reduce) {
-  .form-input-add-projet,
-  .form-textarea-add-projet,
-  .form-select-add-projet,
-  .back-btn-add-projet,
-  .cancel-btn-add-projet,
-  .submit-btn-add-projet {
+  .sidebar-btn-add-project,
+  .form-input-add-project,
+  .submit-btn-add-project,
+  .cancel-btn-add-project,
+  .tab-btn-add-project,
+  .tab-indicator-add-project {
     transition: none;
-
+    
     &:hover {
       transform: none;
     }
   }
-
-  .loading-state-add-projet .submit-btn-add-projet::after {
+  
+  .tab-pane-add-project {
     animation: none;
   }
 }
-
-
-.form-input-add-projet:focus-visible,
-.form-textarea-add-projet:focus-visible,
-.form-select-add-projet:focus-visible {
-  outline: 2px solid $color-primary;
-  outline-offset: 1px;
-}
-
-
-@media (prefers-contrast: high) {
-  .form-input-add-projet,
-  .form-textarea-add-projet,
-  .form-select-add-projet {
-    border-width: 2px;
-  }
-
-  .error-message-add-projet {
-    border-width: 2px;
-  }
-}
-
-
-
 
