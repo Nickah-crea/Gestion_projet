@@ -1,238 +1,249 @@
 // export/pdfExport.js
 import jsPDF from 'jspdf';
+import logoVide from '../assets/img/logo-vide.png';
 import { exporterPDFPersonnage } from './pdfExportPersonnage';
 import { exporterPDFScene } from './pdfExportScene';
 import { exporterPDFLieu } from './pdfExportLieu';
 import { exporterPDFPlateau } from './pdfExportPlateau';
 
-// Logo import - attention : il faut charger l'image en base64 ou via URL
-// Pour une image locale, il faut la charger en base64
-// Je te propose une fonction pour charger le logo dynamiquement
-
-const COLORS = {
-  primary: '#5F7E96',
-  primaryDark: '#53443D',
-  textDark: '#2C241E',
-  textMedium: '#6B5A4E',
-  textLight: '#9B8A7A',
-  border: '#E8E0D5',
+// === PALETTE DE COULEURS ===
+export const COLORS = {
+  primary: [138, 155, 120],        // $color-primary: #8A9B78
+  secondPrim: [220, 207, 184],     // $color-second-prim: #DCCFB8
+  primaryLight: [241, 239, 230],   // $color-primary-light: #F1EFE6
+  primaryDark: [83, 68, 61],       // $color-primary-dark: #53443D
+  accent: [173, 117, 86],          // $color-accent: #AD7556
+  accentLight: [198, 146, 114],    // $color-accent-light: #C69272
+  accentDark: [140, 90, 66],       // $color-accent-dark: #8C5A42
+  secondary: [196, 122, 107],      // $color-secondary: #C47A6B
+  secondaryLight: [217, 154, 138], // $color-secondary-light: #D99A8A
+  secondaryDark: [165, 94, 79],    // $color-secondary-dark: #A55E4F
+  tertiary: [184, 169, 154],       // $color-tertiary: #B8A99A
+  tertiaryLight: [218, 207, 191],  // $color-tertiary-light: #DACFBF
+  tertiaryDark: [142, 123, 107],   // $color-tertiary-dark: #8E7B6B
+  cool: [155, 183, 201],           // $color-cool: #9BB7C9
+  coolLight: [227, 236, 242],      // $color-cool-light: #E3ECF2
+  green: [184, 201, 168],          // $color-green: #B8C9A8
+  greenLight: [217, 229, 204],     // $color-green-light: #D9E5CC
+  greenDark: [138, 155, 120],      // $color-green-dark: #8A9B78
+  textPrimary: [44, 36, 30],
+  textSecondary: [107, 90, 78],
+  textMuted: [150, 140, 130],
 };
 
-// Fonction pour charger une image en base64
-async function loadImageAsBase64(imagePath) {
-  const response = await fetch(imagePath);
-  const blob = await response.blob();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}
-
-// Cache pour le logo chargé
 let cachedLogo = null;
 
-async function getLogoBase64() {
+export const getLogoBase64 = async () => {
   if (cachedLogo) return cachedLogo;
   
   try {
-    // Pour une image dans public/ (plus simple)
-    // Mettre le logo dans le dossier public/ et utiliser '/logo-vide.png'
-    const logoPath = '/logo-vide.png';
-    cachedLogo = await loadImageAsBase64(logoPath);
-    return cachedLogo;
+    const response = await fetch(logoVide);
+    const blob = await response.blob();
+    
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        cachedLogo = reader.result;
+        resolve(cachedLogo);
+      };
+      reader.readAsDataURL(blob);
+    });
   } catch (error) {
-    console.warn('Logo non trouvé, génération sans logo:', error);
+    console.warn('Erreur chargement logo:', error);
     return null;
   }
-}
+};
 
-function addHeaderWithLogo(pdf, title, margin, yPosition, logoBase64 = null) {
-  let currentY = yPosition;
+export function addStandardHeader(pdf, pageNum, title, projetTitre = 'VDFI', extraInfo = '') {
+  pdf.setDrawColor(...COLORS.tertiaryLight);
+  pdf.setLineWidth(0.3);
+  pdf.line(20, 15, 190, 15);
   
-  // Ajouter le logo à gauche si disponible
-  if (logoBase64) {
-    try {
-      // Dimensions du logo (ajuste selon ton image)
-      const logoWidth = 20;
-      const logoHeight = 20;
-      pdf.addImage(logoBase64, 'PNG', margin, currentY - 5, logoWidth, logoHeight);
-      // Décale le titre pour éviter le logo
-      pdf.setFontSize(24);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(COLORS.primaryDark);
-      pdf.text(title, margin + logoWidth + 5, currentY);
-    } catch (error) {
-      console.warn('Erreur lors de l\'ajout du logo:', error);
-      pdf.text(title, margin, currentY);
-    }
-  } else {
-    pdf.setFontSize(24);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(COLORS.primaryDark);
-    pdf.text(title, margin, currentY);
-  }
-  
-  currentY += 10;
-  
-  pdf.setFontSize(9);
-  pdf.setFont('helvetica', 'normal');
-  pdf.setTextColor(COLORS.textLight);
-  pdf.text(`Genere le ${new Date().toLocaleDateString('fr-FR')} a ${new Date().toLocaleTimeString('fr-FR')}`, margin, currentY);
-  currentY += 8;
-  
-  pdf.setDrawColor(COLORS.primary);
-  pdf.setLineWidth(0.8);
-  pdf.line(margin, currentY, margin + 50, currentY);
-  currentY += 15;
-  
-  return currentY;
-}
-
-function addInfoCard(pdf, label, value, margin, yPosition) {
-  let currentY = yPosition;
-  
+  pdf.setTextColor(...COLORS.textSecondary);
   pdf.setFontSize(8);
   pdf.setFont('helvetica', 'normal');
-  pdf.setTextColor(COLORS.textMedium);
-  pdf.text(label.toUpperCase(), margin, currentY);
-  currentY += 5;
+  pdf.text(projetTitre, 185, 22, { align: 'right' });
+  pdf.text(extraInfo, 185, 29, { align: 'right' });
+  pdf.text(`Page ${pageNum}`, 185, 36, { align: 'right' });
   
-  pdf.setFontSize(11);
+  if (title) {
+    pdf.setFontSize(7);
+    pdf.setTextColor(...COLORS.textMuted);
+    pdf.setFont('helvetica', 'italic');
+    const truncatedTitle = title.length > 45 ? title.substring(0, 42) + '...' : title;
+    pdf.text(truncatedTitle, 20, 32);
+  }
+}
+
+export function addStandardFooter(pdf, pageNum, totalPages, documentType, itemTitle) {
+  pdf.setDrawColor(...COLORS.tertiaryLight);
+  pdf.setLineWidth(0.2);
+  pdf.line(20, 280, 190, 280);
+  
+  pdf.setTextColor(...COLORS.textMuted);
+  pdf.setFontSize(8);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(`Page ${pageNum}`, 105, 288, { align: 'center' });
+  
+  if (pageNum === 1) {
+    pdf.setFontSize(7);
+    pdf.text(documentType, 105, 293, { align: 'center' });
+  } else {
+    pdf.setFontSize(7);
+    const truncatedTitle = itemTitle.length > 40 ? itemTitle.substring(0, 37) + '...' : itemTitle;
+    pdf.text(truncatedTitle, 20, 293);
+  }
+  
+  if (pageNum === totalPages) {
+    pdf.setFontSize(7);
+    pdf.setTextColor(...COLORS.tertiary);
+    pdf.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 293, { align: 'center' });
+  }
+}
+
+export async function createCoverPage(pdf, title, subtitle, metadata, documentType) {
+  pdf.setFillColor(...COLORS.primaryLight);
+  pdf.rect(0, 0, 210, 297, 'F');
+  
+  let yStart = 40;
+  const logoBase64 = await getLogoBase64();
+  if (logoBase64) {
+    try {
+      pdf.addImage(logoBase64, 'PNG', 80, 25, 50, 20);
+      yStart = 70;
+    } catch (imgError) {
+      console.warn('Erreur insertion logo:', imgError);
+    }
+  }
+  
+  pdf.setDrawColor(...COLORS.secondPrim);
+  pdf.setLineWidth(0.5);
+  pdf.line(60, yStart - 5, 150, yStart - 5);
+  
+  pdf.setTextColor(...COLORS.primaryDark);
+  pdf.setFontSize(28);
   pdf.setFont('helvetica', 'bold');
-  pdf.setTextColor(COLORS.textDark);
+  pdf.text(documentType.toUpperCase(), 105, yStart + 20, { align: 'center' });
   
-  const lines = pdf.splitTextToSize(value || '—', 80);
-  lines.forEach(line => {
-    pdf.text(line, margin, currentY);
-    currentY += 5;
+  if (subtitle) {
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(...COLORS.accent);
+    pdf.text(subtitle, 105, yStart + 45, { align: 'center' });
+  }
+  
+  pdf.setFontSize(13);
+  pdf.setTextColor(...COLORS.primaryDark);
+  pdf.setFont('helvetica', 'normal');
+  const titleLines = pdf.splitTextToSize(title, 160);
+  let titleY = subtitle ? yStart + 65 : yStart + 50;
+  titleLines.forEach(line => {
+    pdf.text(line, 105, titleY, { align: 'center' });
+    titleY += 7;
   });
   
-  return currentY;
+  if (metadata && metadata.length > 0) {
+    const infoY = titleY + 20;
+    pdf.setFontSize(10);
+    pdf.setTextColor(...COLORS.textSecondary);
+    pdf.setFont('helvetica', 'normal');
+    metadata.forEach((meta, index) => {
+      pdf.text(meta, 105, infoY + (index * 10), { align: 'center' });
+    });
+  }
+  
+  pdf.setFontSize(9);
+  pdf.setTextColor(...COLORS.textMuted);
+  pdf.text(`Document généré le ${new Date().toLocaleDateString('fr-FR', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  })}`, 105, 270, { align: 'center' });
+  
+  pdf.text('v1.0 • Export VDFI', 105, 280, { align: 'center' });
+  
+  return pdf;
 }
 
-function addFooter(pdf, margin, pageNumber, totalPages) {
-  const pageHeight = pdf.internal.pageSize.getHeight();
+export async function genererPDF(resultat, resultatDetails) {
+  let pdf = new jsPDF('p', 'mm', 'a4');
   
-  pdf.setFontSize(7);
-  pdf.setFont('helvetica', 'italic');
-  pdf.setTextColor(COLORS.textLight);
-  pdf.text(`VDFI - Page ${pageNumber} sur ${totalPages}`, margin, pageHeight - 12);
+  const typeLabel = getTypeLabel(resultat.type);
+  const documentType = `FICHE ${typeLabel.toUpperCase()}`;
+  const subtitle = resultat.titre || 'Sans titre';
   
-  pdf.setDrawColor(COLORS.border);
-  pdf.setLineWidth(0.3);
-  pdf.line(margin, pageHeight - 18, margin + 35, pageHeight - 18);
-}
-
-// Version synchrone pour une utilisation simple (sans logo)
-export function genererPDFSimple(resultat, resultatDetails) {
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  let yPosition = 20;
+  const metadata = [];
+  if (resultat.projetTitre) metadata.push(`Projet: ${resultat.projetTitre}`);
+  if (resultat.type === 'personnage' && resultat.comedienNom) metadata.push(`Comédien: ${resultat.comedienNom}`);
+  if (resultat.type === 'scene' && resultat.dateTournage) metadata.push(`Date: ${formatDate(resultat.dateTournage)}`);
+  
+  pdf = await createCoverPage(pdf, subtitle, null, metadata, documentType);
+  pdf.addPage();
+  
+  let yPosition = 50;
+  let pageNum = 2;
   const margin = 20;
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const contentWidth = pageWidth - (2 * margin);
+  const contentWidth = 170;
   
-  yPosition = addHeaderWithLogo(pdf, `Details du ${getTypeLabel(resultat.type)}`, margin, yPosition, null);
+  addStandardHeader(pdf, pageNum, subtitle, resultat.projetTitre || 'VDFI', `${typeLabel} - ${subtitle.substring(0, 30)}`);
   
-  // Carte informations principales
-  pdf.setFillColor(250, 249, 242);
-  pdf.roundedRect(margin, yPosition - 2, contentWidth, 38, 2, 2, 'F');
+  pdf.setFillColor(...COLORS.primaryLight);
+  pdf.roundedRect(margin, yPosition - 2, 55, 9, 2, 2, 'F');
+  pdf.setTextColor(...COLORS.accent);
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(typeLabel, margin + 3, yPosition + 4);
   
-  let infoY = yPosition;
-  infoY = addInfoCard(pdf, 'TITRE', resultat.titre, margin + 5, infoY);
-  infoY += 8;
-  infoY = addInfoCard(pdf, 'TYPE', getTypeLabel(resultat.type), margin + 5, infoY);
-  infoY += 8;
-  infoY = addInfoCard(pdf, 'DERNIERE MODIFICATION', formatDateTime(resultat.modifieLe), margin + 5, infoY);
+  pdf.setTextColor(...COLORS.primaryDark);
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  const shortTitle = subtitle.length > 45 ? subtitle.substring(0, 42) + '...' : subtitle;
+  pdf.text(shortTitle, margin + 60, yPosition + 4);
   
-  yPosition = infoY + 12;
+  yPosition += 14;
+  
+  pdf.setDrawColor(...COLORS.secondPrim);
+  pdf.setLineWidth(0.5);
+  pdf.line(margin, yPosition, 190, yPosition);
+  yPosition += 12;
   
   switch (resultat.type) {
     case 'personnage':
-      yPosition = exporterPDFPersonnage(pdf, resultat, resultatDetails, margin, yPosition, contentWidth);
+      yPosition = await exporterPDFPersonnage(pdf, resultat, resultatDetails, margin, yPosition, contentWidth, pageNum, subtitle);
       break;
     case 'scene':
-      yPosition = exporterPDFScene(pdf, resultat, resultatDetails, margin, yPosition, contentWidth);
+      yPosition = await exporterPDFScene(pdf, resultat, resultatDetails, margin, yPosition, contentWidth, pageNum, subtitle);
       break;
     case 'lieu':
-      yPosition = exporterPDFLieu(pdf, resultat, resultatDetails, margin, yPosition, contentWidth);
+      yPosition = await exporterPDFLieu(pdf, resultat, resultatDetails, margin, yPosition, contentWidth, pageNum, subtitle);
       break;
     case 'plateau':
-      yPosition = exporterPDFPlateau(pdf, resultat, resultatDetails, margin, yPosition, contentWidth);
+      yPosition = await exporterPDFPlateau(pdf, resultat, resultatDetails, margin, yPosition, contentWidth, pageNum, subtitle);
       break;
   }
   
-  const pageCount = pdf.internal.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
+  const totalPages = pdf.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
     pdf.setPage(i);
-    addFooter(pdf, margin, i, pageCount);
+    addStandardFooter(pdf, i, totalPages, documentType, subtitle);
   }
   
   return pdf;
 }
 
-// Version asynchrone avec logo
-export async function genererPDFAvecLogo(resultat, resultatDetails) {
-  const logoBase64 = await getLogoBase64();
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  let yPosition = 20;
-  const margin = 20;
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const contentWidth = pageWidth - (2 * margin);
-  
-  yPosition = addHeaderWithLogo(pdf, `Details du ${getTypeLabel(resultat.type)}`, margin, yPosition, logoBase64);
-  
-  // Carte informations principales
-  pdf.setFillColor(250, 249, 242);
-  pdf.roundedRect(margin, yPosition - 2, contentWidth, 38, 2, 2, 'F');
-  
-  let infoY = yPosition;
-  infoY = addInfoCard(pdf, 'TITRE', resultat.titre, margin + 5, infoY);
-  infoY += 8;
-  infoY = addInfoCard(pdf, 'TYPE', getTypeLabel(resultat.type), margin + 5, infoY);
-  infoY += 8;
-  infoY = addInfoCard(pdf, 'DERNIERE MODIFICATION', formatDateTime(resultat.modifieLe), margin + 5, infoY);
-  
-  yPosition = infoY + 12;
-  
-  switch (resultat.type) {
-    case 'personnage':
-      yPosition = exporterPDFPersonnage(pdf, resultat, resultatDetails, margin, yPosition, contentWidth);
-      break;
-    case 'scene':
-      yPosition = exporterPDFScene(pdf, resultat, resultatDetails, margin, yPosition, contentWidth);
-      break;
-    case 'lieu':
-      yPosition = exporterPDFLieu(pdf, resultat, resultatDetails, margin, yPosition, contentWidth);
-      break;
-    case 'plateau':
-      yPosition = exporterPDFPlateau(pdf, resultat, resultatDetails, margin, yPosition, contentWidth);
-      break;
-  }
-  
-  const pageCount = pdf.internal.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    pdf.setPage(i);
-    addFooter(pdf, margin, i, pageCount);
-  }
-  
-  return pdf;
-}
-
-// Fonction principale (garder la compatibilité)
-export function genererPDF(resultat, resultatDetails) {
-  return genererPDFSimple(resultat, resultatDetails);
-}
-
-export function genererPDFBlob(resultat, resultatDetails) {
-  const pdf = genererPDF(resultat, resultatDetails);
+export async function genererPDFBlob(resultat, resultatDetails) {
+  const pdf = await genererPDF(resultat, resultatDetails);
   return pdf.output('blob');
+}
+
+export function genererPDFSimple(resultat, resultatDetails) {
+  return genererPDF(resultat, resultatDetails);
 }
 
 function getTypeLabel(type) {
   const labels = {
-    scene: 'Scene',
+    scene: 'Scène',
     personnage: 'Personnage',
     lieu: 'Lieu',
     plateau: 'Plateau'
@@ -240,10 +251,10 @@ function getTypeLabel(type) {
   return labels[type] || type;
 }
 
-function formatDateTime(dateTime) {
-  if (!dateTime) return '—';
+function formatDate(date) {
+  if (!date) return '—';
   try {
-    return new Date(dateTime).toLocaleString('fr-FR');
+    return new Date(date).toLocaleDateString('fr-FR');
   } catch (error) {
     return '—';
   }
