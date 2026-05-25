@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import logoBase64 from '../assets/img/logo-vide.png';
 
 export const exportEpisodeWithSequencePDF = async (currentEpisode, currentSequence) => {
   if (!currentEpisode) return;
@@ -17,21 +18,19 @@ export const exportEpisodeWithSequencePDF = async (currentEpisode, currentSequen
     
     const pdf = new jsPDF('p', 'mm', 'a4');
     
-    // Variables de design basées sur _variables.scss
-    const primaryColor = [45, 26, 26];        // $color-black: #2D1A1A
-    const accentColor = [227, 28, 52];        // $color-accent: #E31C34
-    const secondaryColor = [245, 124, 0];     // $color-primary: #F57C00
-    const tertiaryColor = [191, 226, 70];     // $color-tertiary: #BFE246
-    const lightBgColor = [255, 248, 240];     // $color-tertiary-light: #FFF8F0
-    const textColor = [45, 26, 26];           // $color-text-primary
-    const mutedTextColor = [109, 26, 42];     // $color-text-secondary
-    const borderColor = [245, 124, 0, 0.18 * 255]; // $color-border
-    
-    // Police principalement Playfair Display avec différents poids
-    const fontTitle = "playfair-bold";
-    const fontSubtitle = "playfair-medium";
-    const fontBody = "helvetica";
-    const fontEmphasis = "helvetica-bold";
+    // === PALETTE DE COULEURS MINIMALISTE PROFESSIONNELLE ===
+    const primaryColor = [138, 155, 120];        // $color-primary: #8A9B78
+    const secondPrimColor = [220, 207, 184];     // $color-second-prim: #DCCFB8
+    const primaryLight = [241, 239, 230];        // $color-primary-light: #F1EFE6
+    const primaryDark = [83, 68, 61];            // $color-primary-dark: #53443D
+    const accentColor = [173, 117, 86];          // $color-accent: #AD7556
+    const accentLight = [198, 146, 114];         // $color-accent-light: #C69272
+    const accentDark = [140, 90, 66];            // $color-accent-dark: #8C5A42
+    const tertiaryColor = [184, 169, 154];       // $color-tertiary: #B8A99A
+    const tertiaryLight = [218, 207, 191];       // $color-tertiary-light: #DACFBF
+    const textPrimary = [44, 36, 30];            // Texte principal
+    const textSecondary = [107, 90, 78];         // Texte secondaire
+    const textMuted = [150, 140, 130];           // Texte atténué
     
     // Calculer les totaux
     const totalScenes = sequences.reduce((total, seq) => total + (seq.scenes?.length || 0), 0);
@@ -41,97 +40,87 @@ export const exportEpisodeWithSequencePDF = async (currentEpisode, currentSequen
     }, 0);
     
     // =============================================
-    // PAGE DE GARDE - MINIMALISTE ET PROFESSIONNEL
+    // PAGE DE GARDE
     // =============================================
     
-    // Fond léger minimaliste
-    pdf.setFillColor(...lightBgColor);
+    // Fond léger
+    pdf.setFillColor(...primaryLight);
     pdf.rect(0, 0, 210, 297, 'F');
     
-    // Ligne décorative en haut
-    pdf.setFillColor(...accentColor);
-    pdf.rect(0, 0, 210, 8, 'F');
+    // Logo centré en haut
+    let yStart = 40;
+    if (logoBase64) {
+      try {
+        pdf.addImage(logoBase64, 'PNG', 80, 25, 50, 20);
+        yStart = 70;
+      } catch (imgError) {
+        console.warn('Erreur insertion logo:', imgError);
+      }
+    }
     
-    // Logo/Identité en haut à droite
-    pdf.setFontSize(10);
-    pdf.setTextColor(...mutedTextColor);
-    pdf.setFont(fontBody);
-    pdf.text('VDFI', 190, 15, { align: 'right' });
+    // Ligne décorative sous le logo
+    pdf.setDrawColor(...secondPrimColor);
+    pdf.setLineWidth(0.5);
+    pdf.line(60, yStart - 5, 150, yStart - 5);
     
     // Titre principal
-    pdf.setFontSize(32);
-    pdf.setTextColor(...primaryColor);
-    pdf.setFont(fontTitle);
-    
-    const yStart = 80;
+    pdf.setTextColor(...primaryDark);
+    pdf.setFontSize(28);
+    pdf.setFont('helvetica', 'bold');
     
     if (isMultipleSequences) {
-      // Export complet de l'épisode
-      pdf.text(`ÉPISODE ${currentEpisode.ordre}`, 105, yStart, { align: 'center' });
+      pdf.text(`ÉPISODE ${currentEpisode.ordre}`, 105, yStart + 20, { align: 'center' });
       
-      pdf.setFontSize(24);
-      pdf.setFont(fontSubtitle);
-      pdf.text(currentEpisode.titre.toUpperCase(), 105, yStart + 15, { align: 'center' });
+      pdf.setFontSize(18);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(currentEpisode.titre.toUpperCase(), 105, yStart + 35, { align: 'center' });
       
-      // Ligne décorative sous le titre
-      pdf.setDrawColor(...secondaryColor);
-      pdf.setLineWidth(1);
-      pdf.line(60, yStart + 25, 150, yStart + 25);
-      
-      pdf.setFontSize(14);
-      pdf.setTextColor(...mutedTextColor);
-      pdf.setFont(fontBody);
-      pdf.text('DOCUMENT DE PRODUCTION COMPLET', 105, yStart + 40, { align: 'center' });
-      
-      // Informations minimalistes
-      const infoY = yStart + 65;
       pdf.setFontSize(12);
+      pdf.setTextColor(...accentColor);
+      pdf.text("DOCUMENT DE PRODUCTION COMPLET", 105, yStart + 55, { align: 'center' });
+      
+      // Métriques
+      const infoY = yStart + 85;
+      pdf.setFontSize(11);
+      pdf.setTextColor(...textSecondary);
       pdf.text(`${sequences.length} séquences`, 105, infoY, { align: 'center' });
       pdf.text(`${totalScenes} scènes`, 105, infoY + 8, { align: 'center' });
       pdf.text(`${totalDialogues} dialogues`, 105, infoY + 16, { align: 'center' });
-      pdf.text(`Statut: ${currentEpisode.statutNom}`, 105, infoY + 24, { align: 'center' });
       
     } else {
-      // Export d'une seule séquence
-      pdf.text(`ÉPISODE ${currentEpisode.ordre}`, 105, yStart, { align: 'center' });
+      pdf.text(`ÉPISODE ${currentEpisode.ordre}`, 105, yStart + 20, { align: 'center' });
       
-      pdf.setFontSize(18);
-      pdf.setFont(fontSubtitle);
-      pdf.text(currentEpisode.titre, 105, yStart + 15, { align: 'center' });
-      
-      // Ligne décorative
-      pdf.setDrawColor(...secondaryColor);
-      pdf.setLineWidth(1);
-      pdf.line(70, yStart + 25, 140, yStart + 25);
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(currentEpisode.titre, 105, yStart + 33, { align: 'center' });
       
       pdf.setFontSize(16);
       pdf.setTextColor(...accentColor);
-      pdf.setFont(fontTitle);
-      pdf.text(`SÉQUENCE ${currentSequence.ordre}`, 105, yStart + 45, { align: 'center' });
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`SÉQUENCE ${currentSequence.ordre}`, 105, yStart + 55, { align: 'center' });
       
-      pdf.setFontSize(14);
-      pdf.setTextColor(...primaryColor);
-      pdf.setFont(fontSubtitle);
-      pdf.text(currentSequence.titre, 105, yStart + 60, { align: 'center' });
+      pdf.setFontSize(13);
+      pdf.setTextColor(...primaryDark);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(currentSequence.titre, 105, yStart + 70, { align: 'center' });
     }
     
-    // Métadonnées minimalistes
-    const metaY = isMultipleSequences ? yStart + 110 : yStart + 90;
+    // Métadonnées
+    const metaY = isMultipleSequences ? yStart + 125 : yStart + 100;
     pdf.setFontSize(10);
-    pdf.setTextColor(...mutedTextColor);
-    pdf.setFont(fontBody);
+    pdf.setTextColor(...textMuted);
+    pdf.setFont('helvetica', 'normal');
     
     if (currentEpisode.realisateur) {
       pdf.text(`Réalisateur: ${currentEpisode.realisateur.nom}`, 105, metaY, { align: 'center' });
     }
-    
     if (currentEpisode.scenariste) {
-      pdf.text(`Scénariste: ${currentEpisode.scenariste.nom}`, 105, metaY + 6, { align: 'center' });
+      pdf.text(`Scénariste: ${currentEpisode.scenariste.nom}`, 105, metaY + 7, { align: 'center' });
     }
     
-    // Date en bas
+    // Date
     pdf.setFontSize(9);
-    pdf.setTextColor(150, 150, 150);
+    pdf.setTextColor(...textMuted);
     pdf.text(`Document généré le ${new Date().toLocaleDateString('fr-FR', { 
       weekday: 'long', 
       year: 'numeric', 
@@ -139,7 +128,6 @@ export const exportEpisodeWithSequencePDF = async (currentEpisode, currentSequen
       day: 'numeric' 
     })}`, 105, 270, { align: 'center' });
     
-    // Numéro de version
     pdf.text('v1.0 • Confidential', 105, 280, { align: 'center' });
     
     pdf.addPage();
@@ -147,640 +135,527 @@ export const exportEpisodeWithSequencePDF = async (currentEpisode, currentSequen
     // =============================================
     // EN-TÊTE STANDARD POUR TOUTES LES PAGES
     // =============================================
-    let yPosition = 30;
+    let yPosition = 25;
     let pageNum = 2;
     
     const addHeader = (pageNum, currentTitle = '') => {
-      // Ligne d'en-tête
-      pdf.setFillColor(...primaryColor);
-      pdf.rect(0, 0, 210, 20, 'F');
+      // Ligne fine d'en-tête
+      pdf.setDrawColor(...tertiaryLight);
+      pdf.setLineWidth(0.3);
+      pdf.line(20, 15, 190, 15);
       
-      // Numéro de page
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(9);
-      pdf.setFont(fontBody);
-      pdf.text(`Page ${pageNum}`, 200, 12, { align: 'right' });
+      // Logo
+      if (logoBase64) {
+        try {
+          pdf.addImage(logoBase64, 'PNG', 20, 18, 22, 9);
+        } catch (imgError) {
+          console.warn('Erreur insertion logo:', imgError);
+        }
+      }
       
-      // Titre du document
-      pdf.setFontSize(11);
-      pdf.setFont(fontEmphasis);
+      // Informations projet à droite
+      pdf.setTextColor(...textSecondary);
+      pdf.setFontSize(8);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`${currentEpisode?.projetTitre || 'VDFI'}`, 185, 22, { align: 'right' });
+      
       if (isMultipleSequences) {
-        pdf.text(`Épisode ${currentEpisode.ordre}: ${currentEpisode.titre}`, 20, 12);
+        pdf.text(`Épisode ${currentEpisode.ordre}`, 185, 29, { align: 'right' });
       } else {
-        pdf.text(`Épisode ${currentEpisode.ordre} - Séquence ${currentSequence.ordre}`, 20, 12);
+        pdf.text(`Épisode ${currentEpisode.ordre} - Seq ${currentSequence.ordre}`, 185, 29, { align: 'right' });
       }
       
-      // Sous-titre courant si fourni
+      pdf.text(`Page ${pageNum}`, 185, 36, { align: 'right' });
+      
+      // Titre courant
       if (currentTitle) {
-        pdf.setFontSize(9);
-        pdf.setFont(fontBody);
-        pdf.setTextColor(200, 200, 200);
-        pdf.text(currentTitle, 20, 17);
+        pdf.setFontSize(7);
+        pdf.setTextColor(...textMuted);
+        pdf.setFont('helvetica', 'italic');
+        pdf.text(currentTitle, 20, 32);
       }
-      
-      // Ligne de séparation
-      pdf.setDrawColor(...accentColor);
-      pdf.setLineWidth(0.5);
-      pdf.line(20, 25, 190, 25);
     };
     
     // =============================================
     // SYNOPSIS DE L'ÉPISODE
     // =============================================
     addHeader(pageNum, 'Synopsis');
-    yPosition = 40;
+    yPosition = 50;
     
-    // Titre section
-    pdf.setFontSize(16);
-    pdf.setTextColor(...primaryColor);
-    pdf.setFont(fontTitle);
-    pdf.text('SYNOPSIS', 20, yPosition);
-    
-    yPosition += 10;
-    
-    // Ligne décorative
-    pdf.setDrawColor(...secondaryColor);
-    pdf.setLineWidth(0.3);
-    pdf.line(20, yPosition - 2, 50, yPosition - 2);
+    pdf.setTextColor(...primaryDark);
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text("SYNOPSIS", 20, yPosition);
     
     yPosition += 8;
+    pdf.setDrawColor(...secondPrimColor);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, yPosition, 70, yPosition);
+    yPosition += 12;
     
-    // Contenu du synopsis
-    pdf.setFontSize(11);
-    pdf.setTextColor(...textColor);
-    pdf.setFont(fontBody);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(...textSecondary);
     const episodeSynopsis = currentEpisode.synopsis || 'Aucun synopsis disponible.';
     const episodeSynopsisLines = pdf.splitTextToSize(episodeSynopsis, 170);
     pdf.text(episodeSynopsisLines, 20, yPosition);
-    yPosition += (episodeSynopsisLines.length * 5) + 25;
+    yPosition += (episodeSynopsisLines.length * 5) + 20;
     
     // =============================================
-    // CONTENU PRINCIPAL - ADAPTÉ AU TYPE D'EXPORT
+    // CONTENU PRINCIPAL
     // =============================================
     
     if (isMultipleSequences) {
       // =============================================
-      // EXPORT COMPLET : TOUTES LES SÉQUENCES
+      // TABLE DES MATIÈRES
       // =============================================
-      
-      // Table des matières
       pdf.setFontSize(14);
-      pdf.setTextColor(...primaryColor);
-      pdf.setFont(fontTitle);
-      pdf.text('TABLE DES MATIÈRES', 20, yPosition);
+      pdf.setTextColor(...primaryDark);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text("TABLE DES MATIÈRES", 20, yPosition);
       
-      yPosition += 10;
-      pdf.setDrawColor(...secondaryColor);
-      pdf.setLineWidth(0.3);
-      pdf.line(20, yPosition - 2, 60, yPosition - 2);
+      yPosition += 8;
+      pdf.setDrawColor(...secondPrimColor);
+      pdf.setLineWidth(0.5);
+      pdf.line(20, yPosition, 85, yPosition);
       yPosition += 15;
-      
-      pdf.setFontSize(10);
-      pdf.setTextColor(...textColor);
-      pdf.setFont(fontBody);
       
       sequences.forEach((sequence, index) => {
         if (yPosition > 250) {
           pdf.addPage();
           pageNum++;
           addHeader(pageNum, 'Table des matières');
-          yPosition = 40;
+          yPosition = 50;
         }
         
         const sceneCount = sequence.scenes?.length || 0;
         const dialogueCount = sequence.scenes?.reduce((total, scene) => 
           total + (scene.dialogues?.length || 0), 0) || 0;
         
-        // Numéro de séquence en accent
         pdf.setFontSize(11);
         pdf.setTextColor(...accentColor);
-        pdf.setFont(fontEmphasis);
+        pdf.setFont('helvetica', 'bold');
         pdf.text(`${sequence.ordre}.`, 25, yPosition);
         
-        // Titre de la séquence
-        pdf.setTextColor(...primaryColor);
+        pdf.setTextColor(...primaryDark);
+        pdf.setFont('helvetica', 'normal');
         pdf.text(sequence.titre, 35, yPosition);
         
-        // Métadonnées minimales
-        pdf.setFontSize(9);
-        pdf.setTextColor(...mutedTextColor);
-        pdf.setFont(fontBody);
-        pdf.text(`• ${sceneCount} scène${sceneCount > 1 ? 's' : ''} • ${dialogueCount} dialogue${dialogueCount > 1 ? 's' : ''}`, 35, yPosition + 5);
+        pdf.setFontSize(8);
+        pdf.setTextColor(...textMuted);
+        pdf.text(`${sceneCount} scène${sceneCount > 1 ? 's' : ''} • ${dialogueCount} dialogue${dialogueCount > 1 ? 's' : ''}`, 35, yPosition + 5);
         
         yPosition += 15;
         
         if (index < sequences.length - 1) {
-          pdf.setDrawColor(230, 230, 230);
-          pdf.setLineWidth(0.1);
+          pdf.setDrawColor(tertiaryLight[0], tertiaryLight[1], tertiaryLight[2]);
+          pdf.setLineWidth(0.2);
           pdf.line(25, yPosition - 5, 185, yPosition - 5);
           yPosition += 5;
         }
       });
       
-      yPosition += 10;
+      yPosition += 15;
       
       // =============================================
       // CONTENU DÉTAILLÉ PAR SÉQUENCE
       // =============================================
-      sequences.forEach((sequence, seqIndex) => {
-        // Nouvelle page pour chaque séquence (sauf première)
-        if (seqIndex > 0 || yPosition > 50) {
+      for (let seqIdx = 0; seqIdx < sequences.length; seqIdx++) {
+        const sequence = sequences[seqIdx];
+        
+        if (seqIdx > 0 || yPosition > 50) {
           pdf.addPage();
           pageNum++;
           addHeader(pageNum, `Séquence ${sequence.ordre}`);
-          yPosition = 40;
+          yPosition = 50;
         }
         
-        // En-tête de séquence
-        pdf.setFontSize(16);
-        pdf.setTextColor(...primaryColor);
-        pdf.setFont(fontTitle);
-        pdf.text(`SÉQUENCE ${sequence.ordre}`, 20, yPosition);
+        // Ligne fine au-dessus de la séquence
+        pdf.setDrawColor(...primaryLight);
+        pdf.setLineWidth(0.3);
+        pdf.line(20, yPosition - 3, 190, yPosition - 3);
         
-        yPosition += 8;
-        pdf.setDrawColor(...accentColor);
-        pdf.setLineWidth(1);
-        pdf.line(20, yPosition - 2, 70, yPosition - 2);
-        
-        yPosition += 5;
-        
-        // Titre de la séquence
-        pdf.setFontSize(14);
-        pdf.setFont(fontSubtitle);
-        pdf.text(sequence.titre, 20, yPosition);
-        
-        yPosition += 10;
-        
-        // Métadonnées de la séquence
+        // Badge séquence
+        pdf.setFillColor(...primaryLight);
+        pdf.roundedRect(20, yPosition - 2, 55, 9, 2, 2, 'F');
+        pdf.setTextColor(...accentColor);
         pdf.setFontSize(10);
-        pdf.setTextColor(...mutedTextColor);
-        pdf.setFont(fontBody);
-        pdf.text(`Statut: ${sequence.statutNom || 'Non défini'}`, 20, yPosition);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`Séquence ${sequence.ordre}`, 23, yPosition + 4);
+        
+        // Titre séquence
+        pdf.setTextColor(...primaryDark);
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(sequence.titre, 80, yPosition + 4);
+        
+        yPosition += 14;
+        
+        // Métadonnées
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(...textMuted);
+        pdf.text(`Statut: ${sequence.statutNom || 'Non défini'}`, 25, yPosition);
         
         if (sequence.synopsis && sequence.synopsis.trim()) {
-          yPosition += 6;
-          pdf.text('Synopsis:', 20, yPosition);
-          yPosition += 4;
-          
-          const synopsisLines = pdf.splitTextToSize(sequence.synopsis, 170);
-          synopsisLines.forEach(line => {
-            pdf.text(`  ${line}`, 22, yPosition);
-            yPosition += 4;
-          });
-        } else {
-          yPosition += 6;
+          yPosition += 5;
+          pdf.setTextColor(...textSecondary);
+          const synopsisLines = pdf.splitTextToSize(sequence.synopsis, 165);
+          pdf.text(synopsisLines, 25, yPosition);
+          yPosition += (synopsisLines.length * 4);
         }
         
-        yPosition += 10;
+        yPosition += 8;
         
         // =============================================
         // SCÈNES DE LA SÉQUENCE
         // =============================================
         if (sequence.scenes && sequence.scenes.length > 0) {
-          // Titre section scènes
-          pdf.setFontSize(12);
-          pdf.setTextColor(...primaryColor);
-          pdf.setFont(fontEmphasis);
-          pdf.text('SCÈNES', 20, yPosition);
-          
-          yPosition += 5;
-          pdf.setDrawColor(...secondaryColor);
-          pdf.setLineWidth(0.3);
-          pdf.line(20, yPosition - 2, 40, yPosition - 2);
-          yPosition += 8;
-          
-          sequence.scenes.forEach((scene, sceneIndex) => {
-            if (yPosition > 250) {
-              pdf.addPage();
-              pageNum++;
-              addHeader(pageNum, `Séquence ${sequence.ordre} - Scène ${scene.ordre}`);
-              yPosition = 40;
-            }
+          for (let sceneIdx = 0; sceneIdx < sequence.scenes.length; sceneIdx++) {
+            const scene = sequence.scenes[sceneIdx];
             
-            // En-tête de scène
-            pdf.setFillColor(...lightBgColor);
-            pdf.rect(20, yPosition - 4, 170, 8, 'F');
-            
-            pdf.setFontSize(11);
-            pdf.setTextColor(...primaryColor);
-            pdf.setFont(fontEmphasis);
-            pdf.text(`Scène ${scene.ordre}: ${scene.titre}`, 22, yPosition);
-            
-            yPosition += 10;
-            
-            // Métadonnées de la scène
-            pdf.setFontSize(9);
-            pdf.setTextColor(...mutedTextColor);
-            pdf.setFont(fontBody);
-            
-            pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 25, yPosition);
-            
-            const lieuxCount = scene.sceneLieus?.length || 0;
-            if (lieuxCount > 0) {
-              pdf.text(`• Lieux: ${lieuxCount}`, 60, yPosition);
-            }
-            
-            yPosition += 5;
-            
-            // Synopsis de la scène (si présent)
-            if (scene.synopsis && scene.synopsis.trim()) {
-              const sceneSynopsis = scene.synopsis.length > 150 ? 
-                scene.synopsis.substring(0, 150) + '...' : scene.synopsis;
-              pdf.text(`"${sceneSynopsis}"`, 25, yPosition);
-              yPosition += 6;
-            }
-            
-            // =============================================
-            // DIALOGUES DE LA SCÈNE
-            // =============================================
-            if (scene.dialogues && scene.dialogues.length > 0) {
-              yPosition += 5;
+            if (scene.dialogues?.length) {
+              // Gestion des sauts de page
+              if (yPosition > 240) {
+                pdf.addPage();
+                pageNum++;
+                addHeader(pageNum, `Séquence ${sequence.ordre} - Suite`);
+                yPosition = 50;
+              }
               
-              scene.dialogues.forEach((dialogue, dialogueIndex) => {
-                if (yPosition > 250) {
+              // Ligne fine au-dessus de la scène
+              pdf.setDrawColor(...primaryLight);
+              pdf.setLineWidth(0.3);
+              pdf.line(20, yPosition - 3, 190, yPosition - 3);
+              
+              // Badge scène
+              pdf.setFillColor(...primaryLight);
+              pdf.roundedRect(20, yPosition - 2, 40, 9, 2, 2, 'F');
+              pdf.setTextColor(...accentColor);
+              pdf.setFontSize(10);
+              pdf.setFont('helvetica', 'bold');
+              pdf.text(`Scène ${scene.ordre}`, 23, yPosition + 4);
+              
+              // Titre scène
+              pdf.setTextColor(...primaryDark);
+              pdf.setFontSize(11);
+              pdf.setFont('helvetica', 'bold');
+              const title = scene.titre || 'Sans titre';
+              pdf.text(title, 65, yPosition + 4);
+              
+              // Nombre de dialogues
+              const dialogueCount = scene.dialogues.length;
+              pdf.setFillColor(...primaryLight);
+              pdf.roundedRect(160, yPosition - 2, 30, 9, 2, 2, 'F');
+              pdf.setTextColor(...accentLight);
+              pdf.setFontSize(7);
+              pdf.setFont('helvetica', 'bold');
+              pdf.text(`${dialogueCount} dialogue${dialogueCount > 1 ? 's' : ''}`, 163, yPosition + 4);
+              
+              yPosition += 14;
+              
+              // SYNOPSIS COMPLET DE LA SCÈNE (modification 1)
+              if (scene.synopsis && scene.synopsis.trim()) {
+                pdf.setFontSize(9);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(...textSecondary);
+                const synopsisLines = pdf.splitTextToSize(scene.synopsis, 165);
+                pdf.text(synopsisLines, 25, yPosition);
+                yPosition += (synopsisLines.length * 4) + 4;
+              }
+              
+              // =============================================
+              // DIALOGUES DE LA SCÈNE (style personnage à gauche)
+              // =============================================
+              for (let dIdx = 0; dIdx < scene.dialogues.length; dIdx++) {
+                const dialogue = scene.dialogues[dIdx];
+                
+                if (yPosition > 265) {
                   pdf.addPage();
                   pageNum++;
-                  addHeader(pageNum, `Scène ${scene.ordre} - Dialogues`);
-                  yPosition = 40;
+                  addHeader(pageNum, `Scène ${scene.ordre} - Suite`);
+                  yPosition = 50;
                 }
                 
-                // Personnage en accent
-                pdf.setFontSize(10);
-                pdf.setTextColor(...accentColor);
-                pdf.setFont(fontEmphasis);
-                
-                const personnage = dialogue.personnageNom || 'NARRATEUR';
-                pdf.text(`${personnage.toUpperCase()}:`, 30, yPosition);
-                
-                yPosition += 5;
+                // Nom du personnage à gauche
+                pdf.setFontSize(9);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(...accentDark);
+                const persoNom = dialogue.personnageNom || 'NARRATEUR';
+                const persoText = `${persoNom}:`;
+                const persoWidth = pdf.getTextWidth(persoText);
+                pdf.text(persoText, 28, yPosition);
                 
                 // Texte du dialogue
-                pdf.setFontSize(9);
-                pdf.setTextColor(...textColor);
-                pdf.setFont(fontBody);
-                
                 const dialogueText = dialogue.texte || '';
-                if (dialogueText.trim()) {
-                  const dialogueLines = pdf.splitTextToSize(dialogueText, 155);
-                  dialogueLines.forEach(line => {
-                    pdf.text(`  ${line}`, 32, yPosition);
+                pdf.setFontSize(9);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(...textSecondary);
+                
+                const maxWidth = 155;
+                const availableWidth = maxWidth - (persoWidth + 5);
+                
+                if (availableWidth > 0 && dialogueText.trim()) {
+                  const textWidth = pdf.getTextWidth(dialogueText);
+                  
+                  if (textWidth <= availableWidth) {
+                    pdf.text(dialogueText, 28 + persoWidth + 3, yPosition);
+                    yPosition += 5;
+                  } else {
+                    const wrappedLines = pdf.splitTextToSize(dialogueText, availableWidth);
+                    pdf.text(wrappedLines[0], 28 + persoWidth + 3, yPosition);
+                    yPosition += 4;
+                    
+                    for (let lineIdx = 1; lineIdx < wrappedLines.length; lineIdx++) {
+                      if (yPosition > 270) {
+                        pdf.addPage();
+                        pageNum++;
+                        addHeader(pageNum, `Scène ${scene.ordre} - Suite`);
+                        yPosition = 50;
+                      }
+                      pdf.text(wrappedLines[lineIdx], 28 + persoWidth + 3, yPosition);
+                      yPosition += 4;
+                    }
+                    yPosition += 1;
+                  }
+                } else if (dialogueText.trim()) {
+                  const wrappedLines = pdf.splitTextToSize(dialogueText, maxWidth);
+                  wrappedLines.forEach(line => {
+                    if (yPosition > 270) {
+                      pdf.addPage();
+                      pageNum++;
+                      addHeader(pageNum, `Scène ${scene.ordre} - Suite`);
+                      yPosition = 50;
+                    }
+                    pdf.text(line, 28, yPosition);
                     yPosition += 4;
                   });
                 }
                 
-                // Observation (si présente)
+                // Observation
                 if (dialogue.observation && dialogue.observation.trim()) {
-                  yPosition += 2;
-                  pdf.setFontSize(8);
-                  pdf.setTextColor(...mutedTextColor);
-                  pdf.setFont(fontBody);
-                  pdf.text(`[Note: ${dialogue.observation}]`, 32, yPosition);
-                  yPosition += 4;
-                }
-                
-                // Séparation entre dialogues (sauf dernier)
-                if (dialogueIndex < scene.dialogues.length - 1) {
+                  yPosition += 1;
+                  pdf.setFontSize(7);
+                  pdf.setFont('helvetica', 'italic');
+                  pdf.setTextColor(...textMuted);
+                  pdf.text(`[Note: ${dialogue.observation}]`, 30, yPosition);
                   yPosition += 3;
-                  pdf.setDrawColor(240, 240, 240);
-                  pdf.setLineWidth(0.1);
-                  pdf.line(30, yPosition, 180, yPosition);
-                  yPosition += 5;
                 }
-              });
+              }
               
-              yPosition += 8;
+              // Espace entre les scènes : 1.5 cm = 15 mm (modification 2)
+              yPosition += 15;
             }
-            
-            // Séparation entre scènes (sauf dernière)
-            if (sceneIndex < sequence.scenes.length - 1) {
-              pdf.setDrawColor(230, 230, 230);
-              pdf.setLineWidth(0.1);
-              pdf.line(25, yPosition, 185, yPosition);
-              yPosition += 10;
-            }
-          });
-        } else {
-          pdf.setFontSize(10);
-          pdf.setTextColor(...mutedTextColor);
-          pdf.setFont(fontBody);
-          pdf.text('Aucune scène dans cette séquence.', 25, yPosition);
-          yPosition += 10;
+          }
         }
         
-        yPosition += 15;
-      });
+        yPosition += 8;
+      }
       
     } else {
       // =============================================
       // EXPORT D'UNE SEULE SÉQUENCE
       // =============================================
       
-      // Titre de la séquence
-      pdf.setFontSize(16);
-      pdf.setTextColor(...primaryColor);
-      pdf.setFont(fontTitle);
-      pdf.text(`SÉQUENCE ${currentSequence.ordre}`, 20, yPosition);
-      
-      yPosition += 8;
-      pdf.setDrawColor(...accentColor);
-      pdf.setLineWidth(1);
-      pdf.line(20, yPosition - 2, 70, yPosition - 2);
-      
-      yPosition += 5;
-      
-      pdf.setFontSize(14);
-      pdf.setFont(fontSubtitle);
-      pdf.text(currentSequence.titre, 20, yPosition);
-      
-      yPosition += 12;
-      
-      // Métadonnées de la séquence
+      // Badge séquence
+      pdf.setFillColor(...primaryLight);
+      pdf.roundedRect(20, yPosition - 2, 55, 9, 2, 2, 'F');
+      pdf.setTextColor(...accentColor);
       pdf.setFontSize(10);
-      pdf.setTextColor(...mutedTextColor);
-      pdf.setFont(fontBody);
-      pdf.text(`Statut: ${currentSequence.statutNom || 'Non défini'}`, 20, yPosition);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`Séquence ${currentSequence.ordre}`, 23, yPosition + 4);
+      
+      // Titre séquence
+      pdf.setTextColor(...primaryDark);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(currentSequence.titre, 80, yPosition + 4);
+      
+      yPosition += 14;
+      
+      // Métadonnées
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(...textMuted);
+      pdf.text(`Statut: ${currentSequence.statutNom || 'Non défini'}`, 25, yPosition);
       
       if (currentSequence.synopsis && currentSequence.synopsis.trim()) {
-        yPosition += 6;
-        const synopsisLines = pdf.splitTextToSize(`Synopsis: ${currentSequence.synopsis}`, 170);
-        pdf.text(synopsisLines, 20, yPosition);
-        yPosition += (synopsisLines.length * 4) + 15;
-      } else {
-        yPosition += 10;
+        yPosition += 5;
+        pdf.setTextColor(...textSecondary);
+        const synopsisLines = pdf.splitTextToSize(currentSequence.synopsis, 165);
+        pdf.text(synopsisLines, 25, yPosition);
+        yPosition += (synopsisLines.length * 4);
       }
+      
+      yPosition += 12;
       
       // =============================================
       // SCÈNES DE LA SÉQUENCE
       // =============================================
       if (currentSequence.scenes && currentSequence.scenes.length > 0) {
-        pdf.setFontSize(12);
-        pdf.setTextColor(...primaryColor);
-        pdf.setFont(fontEmphasis);
-        pdf.text('SCÈNES', 20, yPosition);
-        
-        yPosition += 5;
-        pdf.setDrawColor(...secondaryColor);
-        pdf.setLineWidth(0.3);
-        pdf.line(20, yPosition - 2, 40, yPosition - 2);
-        yPosition += 10;
-        
-        currentSequence.scenes.forEach((scene, sceneIndex) => {
-          if (yPosition > 250) {
-            pdf.addPage();
-            pageNum++;
-            addHeader(pageNum, `Scène ${scene.ordre}`);
-            yPosition = 40;
-          }
+        for (let sceneIdx = 0; sceneIdx < currentSequence.scenes.length; sceneIdx++) {
+          const scene = currentSequence.scenes[sceneIdx];
           
-          // Titre de la scène
-          pdf.setFillColor(...lightBgColor);
-          pdf.rect(20, yPosition - 4, 170, 8, 'F');
-          
-          pdf.setFontSize(11);
-          pdf.setTextColor(...primaryColor);
-          pdf.setFont(fontEmphasis);
-          pdf.text(`Scène ${scene.ordre}: ${scene.titre}`, 22, yPosition);
-          
-          yPosition += 10;
-          
-          // Métadonnées de la scène
-          pdf.setFontSize(9);
-          pdf.setTextColor(...mutedTextColor);
-          pdf.setFont(fontBody);
-          
-          pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 25, yPosition);
-          
-          const lieuxCount = scene.sceneLieus?.length || 0;
-          if (lieuxCount > 0) {
-            pdf.text(`• Lieux: ${lieuxCount}`, 60, yPosition);
-          }
-          
-          yPosition += 5;
-          
-          // Synopsis de la scène
-          if (scene.synopsis && scene.synopsis.trim()) {
-            const sceneSynopsis = scene.synopsis.length > 120 ? 
-              scene.synopsis.substring(0, 120) + '...' : scene.synopsis;
-            pdf.text(`"${sceneSynopsis}"`, 25, yPosition);
-            yPosition += 6;
-          }
-          
-          // =============================================
-          // DIALOGUES DE LA SCÈNE
-          // =============================================
-          if (scene.dialogues && scene.dialogues.length > 0) {
-            yPosition += 5;
+          if (scene.dialogues?.length) {
+            if (yPosition > 240) {
+              pdf.addPage();
+              pageNum++;
+              addHeader(pageNum, `Suite - Scène ${scene.ordre}`);
+              yPosition = 50;
+            }
             
-            scene.dialogues.forEach((dialogue, dialogueIndex) => {
-              if (yPosition > 250) {
+            // Ligne fine au-dessus de la scène
+            pdf.setDrawColor(...primaryLight);
+            pdf.setLineWidth(0.3);
+            pdf.line(20, yPosition - 3, 190, yPosition - 3);
+            
+            // Badge scène
+            pdf.setFillColor(...primaryLight);
+            pdf.roundedRect(20, yPosition - 2, 40, 9, 2, 2, 'F');
+            pdf.setTextColor(...accentColor);
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`Scène ${scene.ordre}`, 23, yPosition + 4);
+            
+            // Titre scène
+            pdf.setTextColor(...primaryDark);
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'bold');
+            const title = scene.titre || 'Sans titre';
+            pdf.text(title, 65, yPosition + 4);
+            
+            // Nombre de dialogues
+            const dialogueCount = scene.dialogues.length;
+            pdf.setFillColor(...primaryLight);
+            pdf.roundedRect(160, yPosition - 2, 30, 9, 2, 2, 'F');
+            pdf.setTextColor(...accentLight);
+            pdf.setFontSize(7);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`${dialogueCount} dialogue${dialogueCount > 1 ? 's' : ''}`, 163, yPosition + 4);
+            
+            yPosition += 14;
+            
+            // SYNOPSIS COMPLET DE LA SCÈNE (modification 1)
+            if (scene.synopsis && scene.synopsis.trim()) {
+              pdf.setFontSize(9);
+              pdf.setFont('helvetica', 'normal');
+              pdf.setTextColor(...textSecondary);
+              const synopsisLines = pdf.splitTextToSize(scene.synopsis, 165);
+              pdf.text(synopsisLines, 25, yPosition);
+              yPosition += (synopsisLines.length * 4) + 4;
+            }
+            
+            // =============================================
+            // DIALOGUES DE LA SCÈNE
+            // =============================================
+            for (let dIdx = 0; dIdx < scene.dialogues.length; dIdx++) {
+              const dialogue = scene.dialogues[dIdx];
+              
+              if (yPosition > 265) {
                 pdf.addPage();
                 pageNum++;
-                addHeader(pageNum, `Scène ${scene.ordre} - Dialogues`);
-                yPosition = 40;
+                addHeader(pageNum, `Scène ${scene.ordre} - Suite`);
+                yPosition = 50;
               }
               
-              // Personnage
-              pdf.setFontSize(10);
-              pdf.setTextColor(...accentColor);
-              pdf.setFont(fontEmphasis);
-              
-              const personnage = dialogue.personnageNom || 'NARRATEUR';
-              pdf.text(`${personnage.toUpperCase()}:`, 30, yPosition);
-              
-              yPosition += 5;
+              // Nom du personnage à gauche
+              pdf.setFontSize(9);
+              pdf.setFont('helvetica', 'bold');
+              pdf.setTextColor(...accentDark);
+              const persoNom = dialogue.personnageNom || 'NARRATEUR';
+              const persoText = `${persoNom}:`;
+              const persoWidth = pdf.getTextWidth(persoText);
+              pdf.text(persoText, 28, yPosition);
               
               // Texte du dialogue
-              pdf.setFontSize(9);
-              pdf.setTextColor(...textColor);
-              pdf.setFont(fontBody);
-              
               const dialogueText = dialogue.texte || '';
-              if (dialogueText.trim()) {
-                const dialogueLines = pdf.splitTextToSize(dialogueText, 155);
-                dialogueLines.forEach(line => {
-                  pdf.text(`  ${line}`, 32, yPosition);
+              pdf.setFontSize(9);
+              pdf.setFont('helvetica', 'normal');
+              pdf.setTextColor(...textSecondary);
+              
+              const maxWidth = 155;
+              const availableWidth = maxWidth - (persoWidth + 5);
+              
+              if (availableWidth > 0 && dialogueText.trim()) {
+                const textWidth = pdf.getTextWidth(dialogueText);
+                
+                if (textWidth <= availableWidth) {
+                  pdf.text(dialogueText, 28 + persoWidth + 3, yPosition);
+                  yPosition += 5;
+                } else {
+                  const wrappedLines = pdf.splitTextToSize(dialogueText, availableWidth);
+                  pdf.text(wrappedLines[0], 28 + persoWidth + 3, yPosition);
+                  yPosition += 4;
+                  
+                  for (let lineIdx = 1; lineIdx < wrappedLines.length; lineIdx++) {
+                    if (yPosition > 270) {
+                      pdf.addPage();
+                      pageNum++;
+                      addHeader(pageNum, `Scène ${scene.ordre} - Suite`);
+                      yPosition = 50;
+                    }
+                    pdf.text(wrappedLines[lineIdx], 28 + persoWidth + 3, yPosition);
+                    yPosition += 4;
+                  }
+                  yPosition += 1;
+                }
+              } else if (dialogueText.trim()) {
+                const wrappedLines = pdf.splitTextToSize(dialogueText, maxWidth);
+                wrappedLines.forEach(line => {
+                  if (yPosition > 270) {
+                    pdf.addPage();
+                    pageNum++;
+                    addHeader(pageNum, `Scène ${scene.ordre} - Suite`);
+                    yPosition = 50;
+                  }
+                  pdf.text(line, 28, yPosition);
                   yPosition += 4;
                 });
               }
               
               // Observation
               if (dialogue.observation && dialogue.observation.trim()) {
-                yPosition += 2;
-                pdf.setFontSize(8);
-                pdf.setTextColor(...mutedTextColor);
-                pdf.setFont(fontBody);
-                pdf.text(`[Note: ${dialogue.observation}]`, 32, yPosition);
-                yPosition += 4;
-              }
-              
-              // Séparation entre dialogues
-              if (dialogueIndex < scene.dialogues.length - 1) {
+                yPosition += 1;
+                pdf.setFontSize(7);
+                pdf.setFont('helvetica', 'italic');
+                pdf.setTextColor(...textMuted);
+                pdf.text(`[Note: ${dialogue.observation}]`, 30, yPosition);
                 yPosition += 3;
-                pdf.setDrawColor(240, 240, 240);
-                pdf.setLineWidth(0.1);
-                pdf.line(30, yPosition, 180, yPosition);
-                yPosition += 5;
               }
-            });
+            }
             
-            yPosition += 8;
+            // Espace entre les scènes : 1.5 cm = 15 mm (modification 2)
+            yPosition += 15;
           }
-          
-          // Séparation entre scènes
-          if (sceneIndex < currentSequence.scenes.length - 1) {
-            pdf.setDrawColor(230, 230, 230);
-            pdf.setLineWidth(0.1);
-            pdf.line(25, yPosition, 185, yPosition);
-            yPosition += 10;
-          }
-        });
+        }
       }
     }
     
     // =============================================
-    // PAGE DE RÉSUMÉ FINAL
-    // =============================================
-    pdf.addPage();
-    pageNum++;
-    addHeader(pageNum, 'Résumé');
-    yPosition = 40;
-    
-    // Titre résumé
-    pdf.setFontSize(16);
-    pdf.setTextColor(...primaryColor);
-    pdf.setFont(fontTitle);
-    pdf.text('RÉSUMÉ', 20, yPosition);
-    
-    yPosition += 10;
-    pdf.setDrawColor(...secondaryColor);
-    pdf.setLineWidth(0.3);
-    pdf.line(20, yPosition - 2, 50, yPosition - 2);
-    yPosition += 15;
-    
-    // Statistiques principales
-    pdf.setFontSize(12);
-    pdf.setTextColor(...primaryColor);
-    pdf.setFont(fontEmphasis);
-    pdf.text('STATISTIQUES', 20, yPosition);
-    
-    yPosition += 8;
-    pdf.setFontSize(10);
-    pdf.setTextColor(...textColor);
-    pdf.setFont(fontBody);
-    
-    if (isMultipleSequences) {
-      pdf.text(`Épisode: ${currentEpisode.titre}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Séquences: ${sequences.length}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Scènes totales: ${totalScenes}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Dialogues totaux: ${totalDialogues}`, 25, yPosition);
-      yPosition += 15;
-      
-      // Détail par séquence
-      pdf.setFontSize(11);
-      pdf.setTextColor(...primaryColor);
-      pdf.setFont(fontEmphasis);
-      pdf.text('DÉTAIL PAR SÉQUENCE', 20, yPosition);
-      
-      yPosition += 10;
-      pdf.setFontSize(9);
-      pdf.setTextColor(...textColor);
-      pdf.setFont(fontBody);
-      
-      sequences.forEach((sequence, index) => {
-        if (yPosition > 250) {
-          pdf.addPage();
-          pageNum++;
-          addHeader(pageNum, 'Résumé détaillé');
-          yPosition = 40;
-        }
-        
-        const sceneCount = sequence.scenes?.length || 0;
-        const dialogueCount = sequence.scenes?.reduce((total, scene) => 
-          total + (scene.dialogues?.length || 0), 0) || 0;
-        
-        pdf.setFontSize(10);
-        pdf.setTextColor(...accentColor);
-        pdf.text(`Séquence ${sequence.ordre}:`, 25, yPosition);
-        
-        pdf.setFontSize(9);
-        pdf.setTextColor(...textColor);
-        pdf.text(`  ${sequence.titre}`, 50, yPosition);
-        yPosition += 5;
-        pdf.text(`  • Scènes: ${sceneCount}`, 52, yPosition);
-        yPosition += 4;
-        pdf.text(`  • Dialogues: ${dialogueCount}`, 52, yPosition);
-        yPosition += 4;
-        pdf.text(`  • Statut: ${sequence.statutNom || 'Non défini'}`, 52, yPosition);
-        yPosition += 8;
-        
-        if (index < sequences.length - 1) {
-          pdf.setDrawColor(240, 240, 240);
-          pdf.setLineWidth(0.1);
-          pdf.line(25, yPosition - 2, 185, yPosition - 2);
-          yPosition += 5;
-        }
-      });
-    } else {
-      pdf.text(`Séquence: ${currentSequence.titre}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Scènes: ${currentSequence.scenes?.length || 0}`, 25, yPosition);
-      
-      const dialogueCount = currentSequence.scenes?.reduce((total, scene) => 
-        total + (scene.dialogues?.length || 0), 0) || 0;
-      pdf.text(`Dialogues: ${dialogueCount}`, 25, yPosition + 6);
-    }
-    
-    yPosition += 20;
-    
-    // Signature/Footer
-    pdf.setDrawColor(...accentColor);
-    pdf.setLineWidth(0.5);
-    pdf.line(20, yPosition, 80, yPosition);
-    
-    yPosition += 5;
-    pdf.setFontSize(9);
-    pdf.setTextColor(...mutedTextColor);
-    pdf.setFont(fontBody);
-    pdf.text('Document approuvé pour production', 20, yPosition);
-    
-    yPosition += 4;
-    pdf.setFontSize(8);
-    pdf.setTextColor(150, 150, 150);
-    pdf.text(`Date d'approbation: ${new Date().toLocaleDateString('fr-FR')}`, 20, yPosition);
-    
-    // =============================================
-    // PIED DE PAGE SUR TOUTES LES PAGES
+    // PIED DE PAGE MINIMALISTE
     // =============================================
     const totalPages = pdf.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       pdf.setPage(i);
       
-      // Ligne de pied de page
-      pdf.setDrawColor(...primaryColor);
-      pdf.setLineWidth(0.3);
-      pdf.line(20, 285, 190, 285);
+      pdf.setDrawColor(...tertiaryLight);
+      pdf.setLineWidth(0.2);
+      pdf.line(20, 280, 190, 280);
       
-      // Texte du pied de page
+      pdf.setTextColor(...textMuted);
       pdf.setFontSize(8);
-      pdf.setTextColor(...mutedTextColor);
-      pdf.setFont(fontBody);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Page ${i}`, 105, 288, { align: 'center' });
       
-      if (isMultipleSequences) {
-        pdf.text(`Épisode ${currentEpisode.ordre} - ${currentEpisode.titre} • ${sequences.length} séquences • Page ${i}/${totalPages}`, 105, 290, { align: 'center' });
-      } else {
-        pdf.text(`Épisode ${currentEpisode.ordre} - Séquence ${currentSequence.ordre} • Page ${i}/${totalPages}`, 105, 290, { align: 'center' });
+      if (i === totalPages) {
+        pdf.setFontSize(7);
+        pdf.setTextColor(...tertiaryColor);
+        pdf.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 293, { align: 'center' });
       }
-      
-      // Copyright
-      pdf.setTextColor(180, 180, 180);
-      pdf.text('© VDFI • Document confidentiel', 105, 295, { align: 'center' });
     }
     
     // =============================================
-    // SAUVEGARDE DU DOCUMENT
+    // SAUVEGARDE
     // =============================================
     const fileName = isMultipleSequences 
       ? `Episode-${currentEpisode.ordre}-${currentEpisode.titre.replace(/[^a-z0-9]/gi, '_')}-Complet.pdf`
@@ -794,4 +669,5 @@ export const exportEpisodeWithSequencePDF = async (currentEpisode, currentSequen
   }
 };
 
+export default exportEpisodeWithSequencePDF;
 

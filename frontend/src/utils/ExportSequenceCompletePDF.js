@@ -1,162 +1,365 @@
 import jsPDF from 'jspdf';
+import logoBase64 from '../assets/img/logo-vide.png';
 
 export const exportSequenceCompletePDF = async (currentSequence, currentEpisode) => {
-  if (!currentSequence) return;
+  // Validation des données d'entrée
+  if (!currentSequence) {
+    console.error('Aucune séquence fournie');
+    return;
+  }
+
+  if (!currentSequence.scenes) {
+    console.error('La séquence n\'a pas de propriété "scenes"');
+    return;
+  }
   
   try {
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const primaryColor = [33, 41, 79];
-    const secondaryColor = [220, 53, 69];
     
-    // Page de garde
-    pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, 210, 297, 'F');
+    // === PALETTE DE COULEURS MINIMALISTE PROFESSIONNELLE ===
+    const primaryColor = [138, 155, 120];        // $color-primary: #8A9B78
+    const secondPrimColor = [220, 207, 184];     // $color-second-prim: #DCCFB8
+    const primaryLight = [241, 239, 230];        // $color-primary-light: #F1EFE6
+    const primaryDark = [83, 68, 61];            // $color-primary-dark: #53443D
+    const accentColor = [173, 117, 86];          // $color-accent: #AD7556
+    const accentLight = [198, 146, 114];         // $color-accent-light: #C69272
+    const accentDark = [140, 90, 66];            // $color-accent-dark: #8C5A42
+    const tertiaryColor = [184, 169, 154];       // $color-tertiary: #B8A99A
+    const tertiaryLight = [218, 207, 191];       // $color-tertiary-light: #DACFBF
+    const textPrimary = [44, 36, 30];            // Texte principal
+    const textSecondary = [107, 90, 78];         // Texte secondaire
+    const textMuted = [150, 140, 130];           // Texte atténué
     
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(24);
-    pdf.text(`SÉQUENCE ${currentSequence.ordre}`, 105, 120, { align: 'center' });
+    let yPosition = 25;
     
-    pdf.setFontSize(18);
-    pdf.text(currentSequence.titre.toUpperCase(), 105, 140, { align: 'center' });
+    // === EN-TÊTE MINIMALISTE ===
+    // Ligne fine supérieure
+    pdf.setDrawColor(...tertiaryLight);
+    pdf.setLineWidth(0.3);
+    pdf.line(20, 15, 190, 15);
     
-    pdf.setFontSize(14);
-    pdf.text(`Statut: ${currentSequence.statutNom}`, 105, 160, { align: 'center' });
-    
-    pdf.setFontSize(12);
-    pdf.text(`Épisode ${currentEpisode?.ordre}: ${currentEpisode?.titre}`, 105, 180, { align: 'center' });
-    pdf.text(`Projet: ${currentEpisode?.projetTitre || 'Série TV'}`, 105, 190, { align: 'center' });
-    
-    pdf.text(`Exporté le ${new Date().toLocaleDateString()}`, 105, 210, { align: 'center' });
-    
-    pdf.addPage();
-    
-    // En-tête pages suivantes
-    const addHeader = (pageNum) => {
-      pdf.setFillColor(...primaryColor);
-      pdf.rect(0, 0, 210, 30, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(12);
-      pdf.text(`SÉQUENCE ${currentSequence.ordre} - ${currentSequence.titre}`, 20, 15);
-      pdf.text(`Page ${pageNum}`, 190, 15, { align: 'right' });
-      
-      pdf.setDrawColor(...secondaryColor);
-      pdf.setLineWidth(0.5);
-      pdf.line(20, 35, 190, 35);
-    };
-    
-    let yPosition = 45;
-    let pageNum = 2;
-    
-    addHeader(pageNum);
-    
-    // Synopsis séquence
-    pdf.setTextColor(...primaryColor);
-    pdf.setFontSize(16);
-    pdf.text('SYNOPSIS DE LA SÉQUENCE', 20, yPosition);
-    
-    yPosition += 12;
-    pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 0);
-    const synopsisLines = pdf.splitTextToSize(currentSequence.synopsis || 'Aucun synopsis', 170);
-    pdf.text(synopsisLines, 20, yPosition);
-    yPosition += (synopsisLines.length * 4) + 25;
-    
-    // Scènes
-    pdf.setFontSize(16);
-    pdf.setTextColor(...primaryColor);
-    pdf.text('DÉTAIL DES SCÈNES', 20, yPosition);
-    yPosition += 20;
-    
-    currentSequence.scenes.forEach((scene, sceneIndex) => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        pageNum++;
-        addHeader(pageNum);
-        yPosition = 45;
+    // Logo
+    if (logoBase64) {
+      try {
+        pdf.addImage(logoBase64, 'PNG', 20, 20, 25, 10);
+      } catch (imgError) {
+        console.warn('Erreur insertion logo:', imgError);
       }
-      
-      // En-tête scène
-      pdf.setFillColor(240, 240, 240);
-      pdf.rect(20, yPosition - 5, 170, 8, 'F');
-      
-      pdf.setFontSize(14);
-      pdf.setTextColor(...primaryColor);
-      pdf.text(`SCÈNE ${scene.ordre}: ${scene.titre}`, 22, yPosition);
-      yPosition += 15;
-      
-      // Informations scène
-      pdf.setFontSize(10);
-      pdf.setTextColor(80, 80, 80);
-      pdf.text(`Statut: ${scene.statutNom || 'Non défini'}`, 22, yPosition);
-      yPosition += 8;
-      
-      // Synopsis scène
-      pdf.text('Synopsis:', 22, yPosition);
-      const sceneSynopsisLines = pdf.splitTextToSize(scene.synopsis || 'Aucun synopsis', 160);
-      pdf.text(sceneSynopsisLines, 25, yPosition + 4);
-      yPosition += (sceneSynopsisLines.length * 3.5) + 10;
-      
-      // Lieux
-      if (scene.sceneLieus?.length) {
-        pdf.text('Lieux:', 22, yPosition);
-        scene.sceneLieus.forEach((sceneLieu, lieuIndex) => {
-          const lieuText = `• ${sceneLieu.lieuNom}${sceneLieu.plateauNom ? ` (Plateau: ${sceneLieu.plateauNom})` : ''}`;
-          pdf.text(lieuText, 25, yPosition + 4 + (lieuIndex * 4));
-        });
-        yPosition += (scene.sceneLieus.length * 4) + 8;
-      }
-      
-      // Dialogues (premiers seulement)
-      if (scene.dialogues?.length) {
-        pdf.text('Dialogues:', 22, yPosition);
-        yPosition += 6;
-        
-        // Afficher seulement les 3 premiers dialogues pour l'aperçu
-        scene.dialogues.slice(0, 3).forEach((dialogue, dialogueIndex) => {
-          pdf.setFontSize(9);
-          pdf.setTextColor(23, 162, 184);
-          pdf.text(`${dialogue.personnageNom || 'NARRATEUR'}:`, 25, yPosition);
-          yPosition += 4;
-          
-          pdf.setFontSize(8);
-          pdf.setTextColor(0, 0, 0);
-          const previewText = dialogue.texte.length > 100 ? dialogue.texte.substring(0, 100) + '...' : dialogue.texte;
-          const previewLines = pdf.splitTextToSize(previewText, 155);
-          pdf.text(previewLines, 30, yPosition);
-          yPosition += (previewLines.length * 3) + 6;
-        });
-        
-        if (scene.dialogues.length > 3) {
-          pdf.setFontSize(8);
-          pdf.setTextColor(150, 150, 150);
-          pdf.text(`... et ${scene.dialogues.length - 3} dialogue(s) supplémentaire(s)`, 25, yPosition);
-          yPosition += 8;
-        }
-      }
-      
-      yPosition += 15;
-      
-      // Ligne de séparation entre scènes
-      if (sceneIndex < currentSequence.scenes.length - 1) {
-        pdf.setDrawColor(200, 200, 200);
-        pdf.line(20, yPosition - 5, 190, yPosition - 5);
-        yPosition += 10;
-      }
-    });
-    
-    // Pied de page final
-    const totalPages = pdf.internal.getNumberOfPages();
-    for (let i = 2; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setTextColor(100, 100, 100);
-      pdf.setFontSize(8);
-      pdf.text(`Document complet - ${totalPages - 1} pages`, 105, 290, { align: 'center' });
     }
     
-    pdf.save(`sequence-${currentSequence.ordre}-complete.pdf`);
+    // Informations projet à droite
+    pdf.setTextColor(...textSecondary);
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`${currentEpisode?.projetTitre || 'PROJET'}`, 185, 22, { align: 'right' });
+    pdf.text(`Épisode ${currentEpisode?.ordre || ''}`, 185, 29, { align: 'right' });
+    pdf.text(`${new Date().toLocaleDateString('fr-FR')}`, 185, 36, { align: 'right' });
+    
+    // Petit titre indicateur
+    yPosition = 50;
+    pdf.setTextColor(...textMuted);
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text("Fiche complète de la", 20, yPosition);
+    
+    // Titre principal de la séquence
+    yPosition = 58;
+    pdf.setTextColor(...primaryDark);
+    pdf.setFontSize(22);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(`Séquence ${currentSequence.ordre}`, 20, yPosition);
+    
+    yPosition += 8;
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'light');
+    pdf.setTextColor(...textSecondary);
+    pdf.text(currentSequence.titre || 'Sans titre', 20, yPosition);
+    
+    // Ligne de séparation
+    yPosition += 12;
+    pdf.setDrawColor(...secondPrimColor);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, yPosition, 190, yPosition);
+    
+    yPosition += 10;
+    
+    // Badge statut
+    pdf.setFillColor(...primaryLight);
+    pdf.roundedRect(20, yPosition - 4, 55, 7, 2, 2, 'F');
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(...accentColor);
+    pdf.text(`Statut: ${currentSequence.statutNom || 'Non défini'}`, 23, yPosition);
+    
+    yPosition += 15;
+    
+    // === SYNOPSIS DE LA SÉQUENCE ===
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Synopsis', 20, yPosition);
+    
+    yPosition += 8;
+    
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(...textSecondary);
+    
+    const synopsisText = currentSequence.synopsis || 'Aucun synopsis disponible pour cette séquence.';
+    const synopsisLines = pdf.splitTextToSize(synopsisText, 170);
+    pdf.text(synopsisLines, 20, yPosition);
+    
+    yPosition += (synopsisLines.length * 4.5) + 20;
+    
+    // === SECTION SCÈNES ===
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Scènes', 20, yPosition);
+    
+    yPosition += 12;
+    
+    const scenes = currentSequence.scenes || [];
+    const sceneCount = scenes.length;
+    
+    // Badge compteur
+    pdf.setFillColor(...primaryLight);
+    pdf.roundedRect(20, yPosition - 4, 40, 7, 2, 2, 'F');
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(...primaryColor);
+    pdf.text(`${sceneCount} scène${sceneCount > 1 ? 's' : ''}`, 23, yPosition);
+    
+    yPosition += 15;
+    
+    // === PARCOURS DES SCÈNES (style épuré) ===
+    for (let idx = 0; idx < scenes.length; idx++) {
+      const scene = scenes[idx];
+      
+      // Gestion des sauts de page
+      if (yPosition > 270) {
+        pdf.addPage();
+        yPosition = 25;
+        
+        // Petit rappel en haut de page
+        pdf.setDrawColor(...tertiaryLight);
+        pdf.setLineWidth(0.3);
+        pdf.line(20, 15, 190, 15);
+        pdf.setTextColor(...textMuted);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'italic');
+        pdf.text(`Suite - Séquence ${currentSequence.ordre}`, 20, 22);
+        yPosition = 40;
+      }
+      
+      // === CARD SCÈNE MINIMALISTE ===
+      
+      // Numéro de scène (badge)
+      pdf.setFillColor(...primaryLight);
+      pdf.roundedRect(20, yPosition - 5, 28, 8, 2, 2, 'F');
+      pdf.setTextColor(...accentColor);
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`${scene.ordre || idx + 1}`, 27, yPosition);
+      
+      // Titre de la scène
+      pdf.setTextColor(...textPrimary);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      const title = scene.titre || 'Sans titre';
+      const displayTitle = title.length > 50 ? title.substring(0, 47) + '...' : title;
+      pdf.text(displayTitle, 54, yPosition);
+      
+      // Statut (à droite)
+      if (scene.statutNom) {
+        pdf.setTextColor(...tertiaryColor);
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(scene.statutNom, 185, yPosition, { align: 'right' });
+      }
+      
+      yPosition += 10;
+      
+      // Synopsis de la scène
+      if (scene.synopsis) {
+        pdf.setFontSize(8.5);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(...textSecondary);
+        
+        const sceneSynopsis = scene.synopsis;
+        const sceneSynopsisLines = pdf.splitTextToSize(sceneSynopsis, 160);
+        pdf.text(sceneSynopsisLines, 20, yPosition);
+        yPosition += (sceneSynopsisLines.length * 4.5) + 6;
+      } else {
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'italic');
+        pdf.setTextColor(...textMuted);
+        pdf.text('Aucun synopsis', 20, yPosition);
+        yPosition += 6;
+      }
+      
+      // === LIEUX ===
+      if (scene.sceneLieus && scene.sceneLieus.length > 0) {
+        // Icône lieu (point)
+        pdf.setFillColor(...accentLight);
+        pdf.circle(22, yPosition - 2, 1.2, 'F');
+        
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(...textMuted);
+        
+        const lieuxText = scene.sceneLieus.map(sl => {
+          let text = sl.lieuNom || 'Lieu inconnu';
+          if (sl.plateauNom) text += ` (${sl.plateauNom})`;
+          return text;
+        }).join(' • ');
+        
+        const lieuxLines = pdf.splitTextToSize(lieuxText, 160);
+        pdf.text(lieuxLines, 26, yPosition);
+        yPosition += (lieuxLines.length * 4) + 6;
+      }
+      
+      // === NOTES ===
+      if (scene.notes && scene.notes.length > 0) {
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(...accentColor);
+        pdf.text('Notes:', 20, yPosition);
+        yPosition += 4;
+        
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'italic');
+        pdf.setTextColor(...textSecondary);
+        
+        const notesLines = pdf.splitTextToSize(scene.notes, 170);
+        pdf.text(notesLines, 20, yPosition);
+        yPosition += (notesLines.length * 4) + 6;
+      }
+      
+      // === DIALOGUES ===
+      if (scene.dialogues && scene.dialogues.length > 0) {
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(...primaryColor);
+        pdf.text('Dialogues:', 20, yPosition);
+        yPosition += 5;
+        
+        const maxDialogues = Math.min(scene.dialogues.length, 10);
+        
+        for (let dIdx = 0; dIdx < maxDialogues; dIdx++) {
+          const dialogue = scene.dialogues[dIdx];
+          
+          if (yPosition > 270) {
+            pdf.addPage();
+            yPosition = 25;
+            pdf.setDrawColor(...tertiaryLight);
+            pdf.setLineWidth(0.3);
+            pdf.line(20, 15, 190, 15);
+            pdf.setTextColor(...textMuted);
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'italic');
+            pdf.text(`Suite - Séquence ${currentSequence.ordre}`, 20, 22);
+            yPosition = 40;
+          }
+          
+          // Nom du personnage
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setTextColor(...accentDark);
+          const persoNom = dialogue.personnageNom || 'NARRATEUR';
+          const persoText = `${persoNom}:`;
+          const persoWidth = pdf.getTextWidth(persoText);
+          pdf.text(persoText, 22, yPosition);
+          
+          // Texte du dialogue
+          let dialogueText = dialogue.texte || '';
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(...textSecondary);
+          
+          const maxWidth = 160;
+          const availableWidth = maxWidth - persoWidth;
+          const textWidth = pdf.getTextWidth(dialogueText);
+          
+          if (textWidth <= availableWidth) {
+            pdf.text(dialogueText, 22 + persoWidth + 2, yPosition);
+            yPosition += 5;
+          } else {
+            const wrappedLines = pdf.splitTextToSize(dialogueText, availableWidth);
+            pdf.text(wrappedLines[0], 22 + persoWidth + 2, yPosition);
+            yPosition += 4;
+            
+            for (let lineIdx = 1; lineIdx < wrappedLines.length; lineIdx++) {
+              if (yPosition > 270) {
+                pdf.addPage();
+                yPosition = 25;
+                pdf.setDrawColor(...tertiaryLight);
+                pdf.setLineWidth(0.3);
+                pdf.line(20, 15, 190, 15);
+                pdf.setTextColor(...textMuted);
+                pdf.setFontSize(9);
+                pdf.setFont('helvetica', 'italic');
+                pdf.text(`Suite - Séquence ${currentSequence.ordre}`, 20, 22);
+                yPosition = 40;
+              }
+              pdf.text(wrappedLines[lineIdx], 22 + persoWidth + 2, yPosition);
+              yPosition += 4;
+            }
+            yPosition += 1;
+          }
+        }
+        
+        if (scene.dialogues.length > 10) {
+          pdf.setFontSize(7);
+          pdf.setFont('helvetica', 'italic');
+          pdf.setTextColor(...textMuted);
+          pdf.text(`+ ${scene.dialogues.length - 10} dialogue(s) supplémentaire(s)`, 22, yPosition);
+          yPosition += 6;
+        }
+        
+        yPosition += 2;
+      }
+      
+      yPosition += 8;
+      
+      // Ligne de séparation (sauf dernière)
+      if (idx < sceneCount - 1) {
+        pdf.setDrawColor(...primaryLight);
+        pdf.setLineWidth(0.3);
+        pdf.line(20, yPosition - 2, 190, yPosition - 2);
+        yPosition += 8;
+      }
+    }
+    
+    // === PIED DE PAGE MINIMALISTE ===
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      
+      pdf.setDrawColor(...tertiaryLight);
+      pdf.setLineWidth(0.2);
+      pdf.line(20, 280, 190, 280);
+      
+      pdf.setTextColor(...textMuted);
+      pdf.setFontSize(8);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Page ${i}`, 105, 288, { align: 'center' });
+      
+      if (i === pageCount) {
+        pdf.setFontSize(7);
+        pdf.setTextColor(...tertiaryColor);
+        pdf.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 293, { align: 'center' });
+      }
+    }
+    
+    // Sauvegarde
+    const fileName = `SEQ-${currentSequence.ordre}_complete.pdf`;
+    pdf.save(fileName);
+    
+    return true;
     
   } catch (error) {
-    console.error('Erreur lors de l\'export PDF complet de la séquence:', error);
+    console.error('Erreur détaillée export PDF:', error);
     throw error;
   }
 };
