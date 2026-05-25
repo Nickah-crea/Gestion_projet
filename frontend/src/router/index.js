@@ -190,11 +190,6 @@ const routes = [
     props: true,
   },
   {
-    path: '/gestion-equipe',
-    name: 'gestion-equipe',
-    component: () => import('../views/GestionEquipe.vue')
-  },
-  {
   path: '/calendrier',
   name: 'Calendrier',
   component: () => import('../views/Calendrier.vue')
