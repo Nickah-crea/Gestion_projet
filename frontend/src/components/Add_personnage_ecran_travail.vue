@@ -9,11 +9,10 @@
 
       <!-- Section Projet actuel -->
       <div class="sidebar-section-crea-comedien">
-        <h3 class="section-title-crea-comedien"><i class="fas fa-film"></i> Projet actuel</h3>
+        <h3 class="section-title-crea-comedien"><i class="fas fa-film"></i> Projet associé</h3>
         <div class="stats-crea-comedien">
           <div class="stat-item-crea-comedien">
             <span class="stat-number-crea-comedien" style="font-size: 18px;">{{ projetTitre || 'Non sélectionné' }}</span>
-            <span class="stat-label-crea-comedien">Projet associé</span>
           </div>
         </div>
       </div>
@@ -68,16 +67,6 @@
     <div class="creation-body-crea-comedien">
       <div class="creation-main-content-crea-comedien">
         
-        <!-- En-tête principal -->
-        <div class="main-header-crea-comedien">
-          <h1 class="page-title-crea-comedien">
-            <i class="fas fa-user-circle"></i> 
-            Gestion des Personnages
-          </h1>
-          <p class="page-subtitle-crea-comedien">
-            Créez, modifiez et gérez les personnages de vos projets
-          </p>
-        </div>
 
         <!-- Système d'onglets -->
         <div class="tabs-container-crea-comedien">
@@ -392,38 +381,35 @@
     </div>
 
     <!-- MODAL DE CONFIRMATION SUPPRESSION -->
-    <div v-if="showDeleteModal" class="modal-overlay-crea-comedien" @click="closeDeleteModal">
-      <div class="modal-content-crea-comedien" @click.stop style="max-width: 500px;">
-        <div class="modal-header-crea-comedien" style="border-bottom-color: #C47A6B;">
-          <h3 style="color: #C47A6B;">
-            <i class="fas fa-exclamation-triangle"></i>
-            Confirmation de suppression
-          </h3>
-          <button @click="closeDeleteModal" class="modal-close-btn-crea-comedien">
+     <div v-if="showDeleteModal" class="delete-confirmation-modal-Scenariste">
+      <div class="modal-overlay-Scenariste" @click="closeDeleteModal"></div>
+      <div class="modal-content-confirm-Scenariste">
+        <div class="modal-header-confirm-Scenariste">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirmation de suppression</h3>
+          <button @click="closeDeleteModal" class="close-modal-btn-Scenariste">
             <i class="fas fa-times"></i>
           </button>
         </div>
         
-        <div class="modal-body-crea-comedien" style="text-align: center;">
-          <div style="font-size: 48px; margin-bottom: 16px; color: #C47A6B;">
-            <i class="fas fa-trash-alt"></i>
+        <div class="modal-body-confirm-Scenariste">
+          <div class="warning-icon-Scenariste">
+            <i class="fas fa-trash"></i>
           </div>
-          <p style="font-size: 16px; margin-bottom: 8px;">
+          <p class="warning-text-Scenariste">
             Êtes-vous sûr de vouloir supprimer le personnage <strong>{{ personnageToDelete?.nom }}</strong> ?
           </p>
-          <p style="font-size: 14px; color: #8A9B78;">
+          <p class="warning-subtext-Scenariste">
             Cette action est irréversible.
           </p>
         </div>
         
-        <div class="modal-footer-crea-comedien">
-          <button @click="closeDeleteModal" class="cancel-btn-crea-comedien" style="background: transparent; border: 1px solid #DCCFB8;">
+        <div class="modal-footer-confirm-Scenariste">
+          <button @click="closeDeleteModal" class="cancel-confirm-btn-Scenariste">
             <i class="fas fa-times"></i> Annuler
           </button>
-          <button @click="executeDeletePersonnage" class="submit-btn-crea-comedien" style="background: #C47A6B;" :disabled="isDeleting">
-            <i v-if="isDeleting" class="fas fa-spinner fa-spin"></i>
-            <i v-else class="fas fa-trash"></i>
-            Supprimer
+          <button @click="executeDeletePersonnage" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
+            <span v-if="isDeleting">Suppression...</span>
+            <span v-else>Supprimer définitivement</span>
           </button>
         </div>
       </div>
@@ -691,10 +677,10 @@ export default {
       try {
         if (this.isEditing) {
           await axios.put(`/api/personnages/${this.editingId}`, this.formData);
-          this.showNotification('Personnage modifié avec succès', 'success');
+          // this.showNotification('Personnage modifié avec succès', 'success');
         } else {
           await axios.post('/api/personnages', this.formData);
-          this.showNotification('Personnage créé avec succès', 'success');
+          // this.showNotification('Personnage créé avec succès', 'success');
         }
         
         this.resetForm();

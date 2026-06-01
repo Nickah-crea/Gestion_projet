@@ -339,7 +339,7 @@ export default {
           'X-User-Id': user.id
         }
       });
-      alert('Dialogue modifié avec succès!');
+      // alert('Dialogue modifié avec succès!');
     } else {
       response = await axios.post('/api/dialogues', payload, {
         headers: {
@@ -347,7 +347,7 @@ export default {
         }
       });
       this.newDialogueId = response.data.id;
-      alert('Dialogue ajouté avec succès!');
+      // alert('Dialogue ajouté avec succès!');
       
       if (this.projetId) {
         this.$router.push({

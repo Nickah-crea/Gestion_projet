@@ -350,7 +350,7 @@
           </button>
           <button @click="executeDeleteLieu" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
             <span v-if="isDeleting"><i class="fas fa-spinner fa-spin"></i> Suppression...</span>
-            <span v-else><i class="fas fa-trash"></i> Supprimer définitivement</span>
+            <span v-else> Supprimer définitivement</span>
           </button>
         </div>
       </div>

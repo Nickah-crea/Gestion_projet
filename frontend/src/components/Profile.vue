@@ -607,7 +607,7 @@ export default {
         localStorage.setItem('user', JSON.stringify(updatedUser));
 
         this.isEditing = false;
-        this.showToast('Profil mis à jour avec succès', 'success');
+        // this.showToast('Profil mis à jour avec succès', 'success');
         
       } catch (error) {
         console.error('Erreur lors de la mise à jour:', error);
@@ -672,7 +672,7 @@ export default {
           confirmPassword: ''
         };
         
-        this.showToast('Mot de passe changé avec succès', 'success');
+        // this.showToast('Mot de passe changé avec succès', 'success');
         
       } catch (error) {
         console.error('Erreur lors du changement de mot de passe:', error);
@@ -727,7 +727,7 @@ export default {
         this.currentPhotoFile = null;
         this.imageError = false;
         
-        this.showToast('Photo de profil mise à jour avec succès', 'success');
+        // this.showToast('Photo de profil mise à jour avec succès', 'success');
         
       } catch (error) {
         console.error('Erreur lors de l\'upload:', error);
@@ -796,7 +796,7 @@ export default {
         };
         localStorage.setItem('user', JSON.stringify(updatedUser));
 
-        this.showToast('Photo de profil supprimée avec succès', 'success');
+        // this.showToast('Photo de profil supprimée avec succès', 'success');
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
         this.formError = 'Erreur lors de la suppression de la photo';

@@ -2965,7 +2965,7 @@ const deleteSequence = async (sequenceId) => {
       // Retourner à la vue épisode
       sidebarSelection.value = { type: 'episode', id: store.currentEpisode.idEpisode };
       updateRouteForSelection();
-      alert('Séquence supprimée avec succès! Les ordres ont été recalculés.');
+      // alert('Séquence supprimée avec succès! Les ordres ont été recalculés.');
     } catch (error) {
       console.error('Erreur lors de la suppression de la séquence:', error);
       alert('Erreur lors de la suppression de la séquence');
@@ -2993,7 +2993,7 @@ const deleteScene = async (sceneId) => {
     });
     
     await store.fetchSequenceDetails(store.currentSequence.idSequence);
-    alert('Scène supprimée avec succès! Les ordres ont été recalculés.');
+    // alert('Scène supprimée avec succès! Les ordres ont été recalculés.');
   } catch (error) {
     console.error('Erreur DELETE complète:', error);
     console.error('Response data:', error.response?.data);
@@ -3025,7 +3025,7 @@ const deleteDialogue = async (dialogueId) => {
       });
       
       await store.fetchSequenceDetails(store.currentSequence.idSequence);
-      alert('Dialogue supprimé avec succès!');
+      // alert('Dialogue supprimé avec succès!');
     } catch (error) {
       console.error('Erreur lors de la suppression du dialogue:', error);
       alert('Erreur lors de la suppression du dialogue: ' + (error.response?.data?.message || error.message));
@@ -3054,7 +3054,7 @@ const exportScenesOnlyPDF = async () => {
   
   try {
     await exportScenesOnlyPDFFunc(currentSequence.value, currentEpisode.value);
-    alert('PDF des scènes exporté avec succès !');
+    // alert('PDF des scènes exporté avec succès !');
   } catch (error) {
     console.error('Erreur lors de l\'export PDF des scènes:', error);
     alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
@@ -3120,7 +3120,7 @@ const exportScenePDF = async (scene) => {
   
   try {
     await exportScenePDFFunc(scene, currentEpisode.value, getSceneCommentCount);
-    alert('PDF de la scène exporté avec succès !');
+    // alert('PDF de la scène exporté avec succès !');
   } catch (error) {
     console.error('Erreur lors de l\'export PDF de la scène:', error);
     alert('Erreur lors de l\'export PDF: ' + (error.response?.data?.message || error.message));
@@ -3210,7 +3210,7 @@ const confirmDeleteProject = async () => {
       });
 
       router.push('/projets');
-      alert('Projet supprimé avec succès!');
+      // alert('Projet supprimé avec succès!');
       
     } catch (error) {
       console.error('Erreur lors de la suppression du projet:', error);

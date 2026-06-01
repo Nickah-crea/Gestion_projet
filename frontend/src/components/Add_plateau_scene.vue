@@ -148,7 +148,7 @@
                   <!-- Ligne 1 : Lieu + Nom du plateau -->
                   <div class="form-row-crea-plateau">
                     <div class="form-group-crea-plateau">
-                      <label for="lieuSearch">Lieu *</label>
+                      <label for="lieuSearch">Lieu </label>
                       <div class="search-container-crea-plateau">
                         <input
                           type="text"
@@ -181,7 +181,7 @@
                     </div>
 
                     <div class="form-group-crea-plateau">
-                      <label for="nom">Nom du plateau *</label>
+                      <label for="nom">Nom du plateau</label>
                       <input 
                         id="nom"
                         v-model="formData.nom" 
@@ -196,7 +196,7 @@
                   <!-- Ligne 2 : Type de plateau -->
                   <div class="form-row-crea-plateau">
                     <div class="form-group-crea-plateau">
-                      <label for="typePlateau">Type de plateau *</label>
+                      <label for="typePlateau">Type de plateau</label>
                       <select 
                         id="typePlateau"
                         v-model="formData.typePlateau" 
@@ -391,7 +391,7 @@
           </button>
           <button @click="executeDeletePlateau" class="delete-confirm-btn-Scenariste" :disabled="isDeleting">
             <span v-if="isDeleting"><i class="fas fa-spinner fa-spin"></i> Suppression...</span>
-            <span v-else><i class="fas fa-trash"></i> Supprimer définitivement</span>
+            <span v-else>Supprimer définitivement</span>
           </button>
         </div>
       </div>
@@ -633,10 +633,10 @@ export default {
 
         if (this.isEditing) {
           await axios.put(`/api/plateaux/${this.editingId}`, payload, { headers });
-          alert('Plateau modifié avec succès!');
+          // alert('Plateau modifié avec succès!');
         } else {
           await axios.post('/api/plateaux', payload, { headers });
-          alert('Plateau créé avec succès!');
+          // alert('Plateau créé avec succès!');
         }
         
         this.resetForm();
@@ -691,7 +691,7 @@ export default {
         await axios.delete(`/api/plateaux/${this.plateauToDelete.id}`, { headers });
         await this.loadPlateaux();
         this.closeDeleteModal();
-        alert('Plateau supprimé avec succès!');
+        // alert('Plateau supprimé avec succès!');
       } catch (error) {
         console.error('Erreur lors de la suppression du plateau:', error);
         alert('Erreur: ' + (error.response?.data?.message || error.message));
