@@ -1,4 +1,3 @@
-// ===== IMPORTS TAILWIND & DAISYUI =====
 @use "sass:color";
 
 @import 'tailwindcss/base';
@@ -26,6 +25,7 @@
 @import 'components/add-ep_ecran';
 @import 'components/add_seq_ecran';
 @import 'components/add_lieu_ecran';
+@import 'components/add_plateau_scene';
 @import './components/add_comedien_ecran_travail';
 @import './components/add_personnage_ecran_travail';
 
