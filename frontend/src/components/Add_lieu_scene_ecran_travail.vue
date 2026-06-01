@@ -631,7 +631,7 @@ export default {
     
     resetForm() {
       this.formData = {
-        projetId: this.formData.projetId, // Garder le même projetId
+        projetId: this.formData.projetId, 
         nomLieu: '',
         typeLieu: '',
         adresse: ''

@@ -101,9 +101,6 @@
           <div class="tabs-content-crea-comedien">
             <div class="tab-indicator-crea-comedien" :style="getTabIndicatorStyle"></div>
             
-            <!-- ============================================= -->
-            <!-- ONGLET FORMULAIRE -->
-            <!-- ============================================= -->
             <div v-show="activeTab === 'form'" class="tab-pane-crea-comedien">
               <div class="form-container-crea-comedien">
                 <div class="form-header-crea-comedien">
@@ -234,9 +231,6 @@
               </div>
             </div>
 
-            <!-- ============================================= -->
-            <!-- ONGLET LISTE -->
-            <!-- ============================================= -->
             <div v-show="activeTab === 'list'" class="tab-pane-crea-comedien">
               <div class="comediens-list-crea-comedien">
                 <div class="list-header-crea-comedien">
@@ -335,9 +329,6 @@
       </div>
     </div>
 
-    <!-- ============================================= -->
-    <!-- MODAL DE DÉTAILS -->
-    <!-- ============================================= -->
     <div v-if="showDetailsModal" class="modal-overlay-crea-comedien" @click="closeDetailsModal">
       <div class="modal-content-crea-comedien" @click.stop>
         <div class="modal-header-crea-comedien">
@@ -400,9 +391,7 @@
       </div>
     </div>
 
-    <!-- ============================================= -->
     <!-- MODAL DE CONFIRMATION SUPPRESSION -->
-    <!-- ============================================= -->
     <div v-if="showDeleteModal" class="modal-overlay-crea-comedien" @click="closeDeleteModal">
       <div class="modal-content-crea-comedien" @click.stop style="max-width: 500px;">
         <div class="modal-header-crea-comedien" style="border-bottom-color: #C47A6B;">
@@ -440,9 +429,7 @@
       </div>
     </div>
 
-    <!-- ============================================= -->
     <!-- NOTIFICATION -->
-    <!-- ============================================= -->
     <div v-if="notification.show" :class="['message-crea-profile', notification.type]" @click="hideNotification">
       <i :class="notification.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
       {{ notification.message }}
@@ -569,9 +556,6 @@ export default {
   },
   
   methods: {
-    // =============================================
-    // NAVIGATION
-    // =============================================
     goToForm() {
       this.activeTab = 'form';
       this.resetForm();
@@ -585,10 +569,6 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    
-    // =============================================
-    // CHARGEMENT DES DONNÉES
-    // =============================================
     async fetchProjetDetails(projetId) {
       try {
         const response = await axios.get(`/api/projets/${projetId}`);
@@ -640,9 +620,6 @@ export default {
       }
     },
     
-    // =============================================
-    // FILTRES
-    // =============================================
     filterPersonnages() {
       if (this.personnageSearch.trim() === '') {
         this.filteredPersonnages = this.personnages;
@@ -679,9 +656,6 @@ export default {
       );
     },
     
-    // =============================================
-    // SÉLECTIONS
-    // =============================================
     selectProjet(projet) {
       if (!this.currentProjetId) {
         this.formData.projetId = projet.id;
@@ -710,9 +684,6 @@ export default {
       }
     },
     
-    // =============================================
-    // SOUMISSION DU FORMULAIRE
-    // =============================================
     async submitForm() {
       this.isSubmitting = true;
       this.error = '';
@@ -739,9 +710,6 @@ export default {
       }
     },
     
-    // =============================================
-    // RÉINITIALISATION
-    // =============================================
     resetForm() {
       this.formData = {
         nom: '',
@@ -758,9 +726,6 @@ export default {
       this.filteredComediens = [...this.comediens];
     },
     
-    // =============================================
-    // ÉDITION
-    // =============================================
     editPersonnage(personnage) {
       this.formData = {
         nom: personnage.nom,
@@ -777,9 +742,6 @@ export default {
       this.closeDetailsModal();
     },
     
-    // =============================================
-    // SUPPRESSION
-    // =============================================
     confirmDeletePersonnage(id) {
       const personnage = this.personnages.find(p => p.id === id);
       if (!personnage) return;
@@ -811,9 +773,6 @@ export default {
       }
     },
     
-    // =============================================
-    // MODAL DÉTAILS
-    // =============================================
     openDetailsModal(personnage) {
       this.selectedPersonnage = personnage;
       this.showDetailsModal = true;
@@ -824,9 +783,6 @@ export default {
       this.selectedPersonnage = null;
     },
     
-    // =============================================
-    // NOTIFICATION
-    // =============================================
     showNotification(message, type = 'success') {
       this.notification = {
         show: true,
@@ -852,9 +808,6 @@ export default {
       }
     },
     
-    // =============================================
-    // UTILITAIRES
-    // =============================================
     truncateDescription(description, maxLength = 80) {
       if (!description) return 'Aucune description';
       if (description.length <= maxLength) return description;
@@ -887,7 +840,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<!-- <style lang="scss" scoped>
 
 // Styles supplémentaires spécifiques aux personnages
 .disabled-input {
@@ -1165,5 +1118,5 @@ export default {
     padding: 2px 6px;
   }
 }
-</style>
+</style> -->
 

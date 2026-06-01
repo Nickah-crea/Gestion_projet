@@ -97,14 +97,12 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'add', 'load-plateaux', 'remove-lieu'])
 
-// Créer une copie locale des données pour éviter la mutation directe
 const localLieuData = ref({
   selectedLieuId: props.lieuData?.selectedLieuId || null,
   selectedPlateauId: props.lieuData?.selectedPlateauId || null,
   descriptionUtilisation: props.lieuData?.descriptionUtilisation || ''
 })
 
-// Mettre à jour localLieuData quand lieuData change
 watch(() => props.lieuData, (newData) => {
   if (newData) {
     localLieuData.value = {

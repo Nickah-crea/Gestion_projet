@@ -473,15 +473,15 @@ export default {
 
     const supprimerTournage = async () => {
       if (!props.userPermissions.canCreateScene) {
-        alert('Vous n\'êtes pas autorisé à supprimer des tournages.');
+        // alert('Vous n\'êtes pas autorisé à supprimer des tournages.');
         return;
       }
       
       if (!tournage.value) return;
       
-      if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement ce planning de tournage ? Cette action est irréversible.')) {
-        return;
-      }
+      // if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement ce planning de tournage ? Cette action est irréversible.')) {
+      //   return;
+      // }
       
       try {
         chargement.value = true;
@@ -490,7 +490,7 @@ export default {
         tournage.value = null;
         emit('tournage-updated', null);
         
-        alert('Planning de tournage supprimé avec succès!');
+        // alert('Planning de tournage supprimé avec succès!');
         
       } catch (error) {
         console.error('Erreur suppression tournage:', error);
@@ -703,7 +703,7 @@ export default {
         showModal.value = false;
         emit('tournage-updated', tournage.value);
         
-        alert(`Tournage ${isModification.value ? 'modifié' : 'planifié'} avec succès!`);
+        // alert(`Tournage ${isModification.value ? 'modifié' : 'planifié'} avec succès!`);
         
       } catch (error) {
         console.error('Erreur sauvegarde tournage:', error);

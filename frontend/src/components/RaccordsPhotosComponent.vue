@@ -1,4 +1,3 @@
-[file name]: RaccordsPhotosComponent.vue
 <template>
   <div class="raccords-photos-container-raccord-photo">
     <!-- Bouton pour ouvrir le modal -->
@@ -264,7 +263,6 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 
-// Props
 const props = defineProps({
   sceneId: {
     type: Number,
@@ -408,7 +406,6 @@ const loadStatutsRaccord = async () => {
   try {
     const response = await axios.get('/api/raccords/statuts')
     availableStatuts.value = response.data
-    // Définir le statut par défaut
     if (availableStatuts.value.length > 0 && !newRaccord.value.statutRaccordId) {
       newRaccord.value.statutRaccordId = availableStatuts.value[0].id
     }
@@ -458,7 +455,7 @@ const loadExistingRaccords = async () => {
       })
     )
     
-    // Filtrer les nulls (raccords exclus)
+    
     existingRaccords.value = filteredRaccords.filter(r => r !== null)
     
     console.log(`Raccords pour scène ${props.sceneId}:`)
@@ -489,7 +486,7 @@ const handleImageUpload = (event) => {
   if (files && files.length > 0) {
     newRaccord.value.images = Array.from(files)
     
-    // Créer les previews
+   
     previewImages.value = []
     Array.from(files).forEach(file => {
       // Vérifier le type de fichier
@@ -569,8 +566,7 @@ const addRaccord = async () => {
     }
   } catch (error) {
     console.error('Erreur détaillée lors de la sauvegarde:', error)
-    
-    // Message d'erreur plus informatif
+   
     if (error.response?.status === 400) {
       if (error.response.data === "Accès non autorisé") {
         alert('Erreur: Vous n\'avez pas accès à cette scène.')

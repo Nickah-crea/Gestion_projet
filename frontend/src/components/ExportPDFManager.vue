@@ -1,4 +1,3 @@
-<!-- ExportPDFManager.vue -->
 <template>
   <div class="export-manager">
     <!-- Dropdown pour les exports PDF -->

@@ -101,9 +101,6 @@
           <div class="tabs-content-crea-comedien">
             <div class="tab-indicator-crea-comedien" :style="getTabIndicatorStyle"></div>
             
-            <!-- ============================================= -->
-            <!-- ONGLET FORMULAIRE -->
-            <!-- ============================================= -->
             <div v-show="activeTab === 'form'" class="tab-pane-crea-comedien">
               <div class="form-container-crea-comedien">
                 <div class="form-header-crea-comedien">
@@ -259,9 +256,7 @@
               </div>
             </div>
 
-            <!-- ============================================= -->
             <!-- ONGLET LISTE -->
-            <!-- ============================================= -->
             <div v-show="activeTab === 'list'" class="tab-pane-crea-comedien">
               <div class="comediens-list-crea-comedien">
                 <div class="list-header-crea-comedien">
@@ -366,9 +361,7 @@
       </div>
     </div>
 
-    <!-- ============================================= -->
     <!-- MODAL DE DÉTAILS -->
-    <!-- ============================================= -->
     <div v-if="showDetailsModal" class="modal-overlay-crea-comedien" @click="closeDetailsModal">
       <div class="modal-content-crea-comedien" @click.stop>
         <div class="modal-header-crea-comedien">
@@ -457,9 +450,7 @@
       </div>
     </div>
 
-    <!-- ============================================= -->
     <!-- MODAL DE CONFIRMATION SUPPRESSION -->
-    <!-- ============================================= -->
     <div v-if="showDeleteModal" class="modal-overlay-crea-comedien" @click="closeDeleteModal">
       <div class="modal-content-crea-comedien" @click.stop style="max-width: 500px;">
         <div class="modal-header-crea-comedien" style="border-bottom-color: #C47A6B;">
@@ -497,9 +488,7 @@
       </div>
     </div>
 
-    <!-- ============================================= -->
     <!-- NOTIFICATION -->
-    <!-- ============================================= -->
     <div v-if="notification.show" :class="['message-crea-profile', notification.type]" @click="hideNotification">
       <i :class="notification.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
       {{ notification.message }}
@@ -584,7 +573,6 @@ export default {
   },
   
   async mounted() {
-    // Récupérer l'ID du projet depuis les paramètres de route
     this.projetId = this.$route.params.projetId || this.$route.query.projetId;
     
     console.log('Projet ID récupéré:', this.projetId);
@@ -607,9 +595,6 @@ export default {
   },
   
   methods: {
-    // =============================================
-    // NAVIGATION
-    // =============================================
     goToForm() {
       this.activeTab = 'form';
       this.resetForm();
@@ -624,9 +609,6 @@ export default {
       this.$router.go(-1);
     },
     
-    // =============================================
-    // CHARGEMENT DES DONNÉES
-    // =============================================
     async loadProjetInfo() {
       try {
         console.log('Chargement des infos du projet ID:', this.projetId);
@@ -656,9 +638,6 @@ export default {
       }
     },
     
-    // =============================================
-    // FILTRES
-    // =============================================
     filterComediens() {
       if (this.comedienSearch.trim() === '') {
         this.filteredComediens = this.comediens;
@@ -671,9 +650,6 @@ export default {
       }
     },
     
-    // =============================================
-    // PHOTO
-    // =============================================
     getPhotoUrl(photoPath) {
       return `/api/comediens/photo/${photoPath}`;
     },
@@ -698,9 +674,6 @@ export default {
       }
     },
     
-    // =============================================
-    // DISPONIBILITÉS
-    // =============================================
     addDisponibilite() {
       this.formData.disponibilites.push({
         date: '',
@@ -712,15 +685,11 @@ export default {
       this.formData.disponibilites.splice(index, 1);
     },
     
-    // =============================================
-    // SOUMISSION DU FORMULAIRE
-    // =============================================
     async submitForm() {
       this.isSubmitting = true;
       this.error = '';
       
       try {
-        // Éliminer les doublons de dates
         const dateSet = new Set();
         const uniqueDisponibilites = [];
         
@@ -744,7 +713,6 @@ export default {
           formData.append('photo', this.currentPhotoFile);
         }
         
-        // Ajouter les disponibilités
         this.formData.disponibilites.forEach(dispo => {
           if (dispo.date) {
             formData.append('dateDisponibilite', dispo.date);
@@ -778,9 +746,6 @@ export default {
       }
     },
     
-    // =============================================
-    // RÉINITIALISATION
-    // =============================================
     resetForm() {
       this.formData = {
         nom: '',
@@ -798,11 +763,7 @@ export default {
       }
     },
     
-    // =============================================
-    // ÉDITION
-    // =============================================
     editComedien(comedien) {
-      // Éliminer les doublons de dates
       const uniqueDisponibilites = [];
       const dateSet = new Set();
       
@@ -836,9 +797,6 @@ export default {
       this.closeDetailsModal();
     },
     
-    // =============================================
-    // SUPPRESSION
-    // =============================================
     confirmDeleteComedien(id) {
       const comedian = this.comediens.find(c => c.id === id);
       if (!comedian) return;
@@ -870,9 +828,6 @@ export default {
       }
     },
     
-    // =============================================
-    // MODAL DÉTAILS
-    // =============================================
     openDetailsModal(comedien) {
       this.selectedComedien = comedien;
       this.showDetailsModal = true;
@@ -883,9 +838,6 @@ export default {
       this.selectedComedien = null;
     },
     
-    // =============================================
-    // NOTIFICATION
-    // =============================================
     showNotification(message, type = 'success') {
       this.notification = {
         show: true,
@@ -911,9 +863,6 @@ export default {
       }
     },
     
-    // =============================================
-    // UTILITAIRES
-    // =============================================
     formatDate(dateString) {
       if (!dateString) return '';
       return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -960,7 +909,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<!-- <style lang="scss" scoped>
 // Styles supplémentaires spécifiques
 .disabled-input {
   opacity: 0.8;
@@ -1027,5 +976,5 @@ export default {
     margin-left: 0;
   }
 }
-</style>
+</style> -->
 

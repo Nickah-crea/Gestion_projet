@@ -93,7 +93,7 @@ export default {
         observation: '',
       },
       sceneTitle: '',
-      scene: {}, // Stocker les détails complets de la scène (incluant sequence et episode)
+      scene: {}, 
       isEditing: false,
       editingId: null,
       scenes: [],
@@ -132,7 +132,6 @@ export default {
     }
   },
   watch: {
-    // Charger les ordres existants quand la scène change
     'formData.sceneId': function(newSceneId) {
       if (newSceneId) {
         this.loadExistingOrders();
@@ -144,7 +143,6 @@ export default {
     }
   },
   async created() {
-    // Configuration des intercepteurs axios
      axios.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('token');
@@ -185,11 +183,9 @@ export default {
         this.scene = response.data;
         this.sceneTitle = this.scene.titre;
 
-        // Récupérer l'ID du projet correctement
         if (this.scene.projetId) {
           this.projetId = this.scene.projetId;
         } else if (this.scene.sequenceId) {
-          // Si projetId n'est pas directement dans la scène, chercher via la séquence
           try {
             const sequenceResponse = await axios.get(`/api/sequences/${this.scene.sequenceId}`, { headers });
             if (sequenceResponse.data.episodeId) {
@@ -260,11 +256,9 @@ export default {
         const user = JSON.parse(localStorage.getItem('user'));
         const headers = user && user.id ? { 'X-User-Id': user.id } : {};
         
-        // Récupérer tous les dialogues de cette scène pour vérifier les ordres existants
         const response = await axios.get(`/api/dialogues/scene/${this.formData.sceneId}`, { headers });
         this.existingOrders = response.data.map(dialogue => dialogue.ordre);
         
-        // Calculer le prochain ordre disponible
         this.calculateSuggestedOrder();
       } catch (error) {
         console.error('Erreur lors du chargement des ordres existants:', error);
@@ -274,7 +268,6 @@ export default {
       if (this.existingOrders.length === 0) {
         this.suggestedOrder = 1;
       } else {
-        // Trouver le plus grand ordre existant et ajouter 1
         const maxOrder = Math.max(...this.existingOrders);
         this.suggestedOrder = maxOrder + 1;
       }
@@ -319,13 +312,11 @@ export default {
   }
   
   try {
-    // Récupérer l'utilisateur connecté
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || !user.id) {
       throw new Error('Utilisateur non connecté');
     }
 
-    // Valider que sceneId est présent
     if (!this.formData.sceneId) {
       alert('Erreur: ID de scène manquant');
       return;
@@ -339,7 +330,7 @@ export default {
       observation: this.formData.observation || '',
     };
 
-    console.log('Payload envoyé:', payload); // Debug
+    console.log('Payload envoyé:', payload); 
     
     let response;
     if (this.isEditing) {
@@ -358,7 +349,6 @@ export default {
       this.newDialogueId = response.data.id;
       alert('Dialogue ajouté avec succès!');
       
-      // Redirection après création - Vérifier que projetId est disponible
       if (this.projetId) {
         this.$router.push({
           path: `/projet/${this.projetId}/ecran-travail`,
@@ -368,7 +358,6 @@ export default {
           }
         });
       } else {
-        // Fallback si projetId n'est pas disponible
         this.$router.push('/scenariste');
       }
     }
@@ -395,7 +384,6 @@ export default {
       this.suggestedOrder = null;
       this.orderError = '';
       
-      // Recalculer l'ordre suggéré après réinitialisation
       if (this.sceneId) {
         this.loadExistingOrders();
       }
@@ -440,7 +428,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<!-- <style scoped>
 .creation-dialogue-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -669,4 +657,4 @@ option {
     width: 100%;
   }
 }
-</style>
+</style> -->

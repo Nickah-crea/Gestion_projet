@@ -162,7 +162,6 @@
                         class="alerte-indicator"
                         title="Raccord(s) critique(s)"
                         @click.stop="ouvrirDetailsAlerte(getAlertesPourDate(day.date)[0])">
-                    🚨
                   </span>
                 </div>
                 
@@ -215,7 +214,7 @@
                       class="alerte-item-day critique"
                       @click.stop="ouvrirDetailsAlerte(alerte)"
                       :title="alerte.getDescriptionComplete()">
-                    🚨 Raccord Critique
+                    Raccord Critique
                   </div>
                 </div>
               </div>
@@ -225,8 +224,7 @@
       </div>
 
     <!-- Modal de création/modification de planning -->
-    
-           <div v-if="showPlanningModal" class="modal-overlay" @click="fermerModalPlanning">
+    <div v-if="showPlanningModal" class="modal-overlay" @click="fermerModalPlanning">
       <div class="modal-content planning-modal" @click.stop>
         <div class="modal-header">
           <h3>
@@ -592,8 +590,6 @@ export default {
   },
 
   computed: {
-    // Vérifier le rôle de l'utilisateur
-     
     isScenariste() {
       return this.user?.role === 'SCENARISTE';
     },
@@ -627,9 +623,7 @@ export default {
       );
     },
     
-    // Épisodes accessibles pour le filtre
     episodesAccessiblesPourFiltre() {
-      // ICI: utiliser formPlanning.projetId au lieu de filtreProjet
       if (!this.formPlanning.projetId) return [];
       if (this.isAdmin) return this.episodesParProjet;
       
@@ -775,7 +769,6 @@ watch: {
       try {
         const response = await axios.get('/api/projets');
         
-        // Filtrer les projets accessibles
         if (this.isAdmin) {
           this.projets = response.data;
         } else {
@@ -812,7 +805,6 @@ watch: {
             plateauId: premierLieu.plateauId
           });
           
-          // Charger les plateaux pour ce lieu SANS EFFACER LE PLATEAU PRÉ-DÉFINI
           if (premierLieu.lieuId) {
             await this.chargerPlateauxParLieu();
           }
@@ -853,7 +845,6 @@ watch: {
       if (tournage.episodeId) {
         const hasAccess = await this.checkEpisodeAccess(tournage.episodeId);
         if (!hasAccess) {
-          // Ne pas ouvrir le modal si pas d'accès
           return;
         }
       }
@@ -973,10 +964,7 @@ watch: {
   
   async initializePermissions() {
     try {
-      // Récupérer les permissions générales de l'utilisateur
       const role = this.user?.role;
-      
-      // Permissions par défaut basées sur le rôle
       if (this.isAdmin) {
         this.permissions = {
           canCreatePlanning: true,
@@ -1007,7 +995,6 @@ watch: {
         };
       }
       
-      // Charger les projets et épisodes accessibles
       await this.loadUserProjects();
       await this.loadUserEpisodes();
       
@@ -1230,7 +1217,6 @@ async chargerEpisodesParProjet() {
         const response = await axios.get(`/api/plateaux/lieux/${this.formPlanning.lieuId}`);
         this.plateauxParLieu = response.data;
         
-        // NE PAS RÉINITIALISER LE PLATEAU SI C'EST UNE CRÉATION AVEC LIEU PRÉ-DÉFINI
         if (!this.isModificationPlanning && this.hasSceneLieu) {
           // Conserver la valeur pré-définie
           console.log('Conservation du plateau pré-défini:', this.formPlanning.plateauId);
@@ -1246,7 +1232,7 @@ async chargerEpisodesParProjet() {
 async verifierConflitsComediens() {
   if (!this.formPlanning.sceneId || !this.formPlanning.dateTournage || 
       !this.formPlanning.heureDebut || !this.formPlanning.heureFin) {
-    return { hasConflicts: false, conflicts: [] }; // Pas de conflits si données manquantes
+    return { hasConflicts: false, conflicts: [] }; 
   }
 
   try {
@@ -1259,11 +1245,9 @@ async verifierConflitsComediens() {
       }
     });
 
-    // Retourner les données de conflit directement
     return response.data;
   } catch (error) {
     console.error('Erreur vérification conflits:', error);
-    // En cas d'erreur, on considère qu'il n'y a pas de conflit (pour ne pas bloquer inutilement)
     return { hasConflicts: false, conflicts: [] };
   }
 },
@@ -1282,21 +1266,18 @@ async verifierConflitsTempsReel() {
       });
 
       if (response.data.hasConflicts) {
-        // Afficher les conflits en temps réel
-        this.erreurPlanning = '🚨 Conflits détectés. Impossible de créer le planning:\n' + 
+        this.erreurPlanning = 'Conflits détectés. Impossible de créer le planning:\n' + 
                              response.data.conflicts.join('\n');
       } else {
         this.erreurPlanning = '';
       }
     } catch (error) {
-      // Ne pas afficher d'erreur pour la vérification en temps réel
       this.erreurPlanning = '';
     }
   }
 },
 
 async soumettrePlanning() {
-  // Vérifier les permissions
   if (this.isModificationPlanning && !this.permissions.canEditPlanning) {
     this.showAccessError('Vous n\'avez pas les permissions pour modifier un planning.');
     return;
@@ -1307,24 +1288,19 @@ async soumettrePlanning() {
     return;
   }
   
-  // Vérifier l'accès à l'épisode
   if (this.formPlanning.episodeId) {
     const hasAccess = await this.checkEpisodeAccess(this.formPlanning.episodeId);
     if (!hasAccess) return;
   }
-  
-  // Ne pas permettre la soumission pour les viewers
   if (this.isViewer) return;
   
   if (!this.validerFormulairePlanning()) return;
   
-  // MODIFICATION ICI: Vérifier les conflits et BLOQUER si détectés
   const conflictsResult = await this.verifierConflitsComediens();
   if (conflictsResult && conflictsResult.hasConflicts) {
-    // Afficher les conflits et BLOQUER la création
     this.erreurPlanning = 'Conflits de comédiens détectés. Impossible de créer le planning:\n' + 
                          conflictsResult.conflicts.join('\n');
-    return; // Stop ici - ne pas continuer
+    return;
   }
   
   this.chargementPlanning = true;
@@ -1338,13 +1314,11 @@ async soumettrePlanning() {
     }
     await this.chargerTournages();
     this.fermerModalPlanning();
-    //alert(`✅ Planning ${this.isModificationPlanning ? 'modifié' : 'créé'} avec succès !`);
   } catch (error) {
     console.error('Erreur sauvegarde planning:', error);
     
-    // Gérer spécifiquement les erreurs de conflit du backend
     if (error.response?.status === 400 && error.response?.data?.message?.includes('Conflits détectés')) {
-      this.erreurPlanning = '🚨 Conflits de planning détectés : ' + error.response.data.message;
+      this.erreurPlanning = 'Conflits de planning détectés : ' + error.response.data.message;
     } else {
       this.erreurPlanning = error.response?.data?.message || 'Erreur lors de la sauvegarde du planning';
     }
@@ -1353,7 +1327,6 @@ async soumettrePlanning() {
   }
 },
     async supprimerTournageDirect(tournage) {
-      // Vérifier les permissions
       if (!this.permissions.canDeletePlanning) {
         this.showAccessError('Vous n\'avez pas les permissions pour supprimer un planning.');
         return;
@@ -1388,14 +1361,13 @@ async soumettrePlanning() {
         }
       }
     },
-    // Méthode pour vérifier l'accès localement (sans appel API)
     hasAccessToEpisode(episodeId) {
       if (this.isAdmin) return true;
       if (!this.currentUserId) return false;
       
       return this.episodesAccessibles.includes(episodeId);
     },
-    // Mettre à jour la méthode validerFormulairePlanning
+
     validerFormulairePlanning() {
         this.erreurPlanning = '';
         
@@ -1438,7 +1410,6 @@ async soumettrePlanning() {
       const sceneId = urlParams.get('sceneId');
       
       if (sceneId) {
-        // Filtrer automatiquement par cette scène
         this.selectedSceneId = parseInt(sceneId);
         this.chargerTournagesAvecFiltreScene();
       }
@@ -1450,10 +1421,8 @@ async soumettrePlanning() {
       try {
         const response = await axios.get(`/api/scene-tournage/scene/${this.selectedSceneId}`);
         if (response.data) {
-          // Afficher les détails de cette scène spécifique
           this.ouvrirDetailsTournage(response.data);
           
-          // Optionnel: Centrer le calendrier sur la date de tournage
           if (response.data.dateTournage) {
             this.filtreDate = response.data.dateTournage;
             this.dateCourante = new Date(response.data.dateTournage);
@@ -1486,20 +1455,20 @@ async soumettrePlanning() {
       html: `
         <div class="alerte-raccord-content">
           <div class="alerte-section">
-            <h4>📋 Informations du raccord</h4>
+            <h4>Informations du raccord</h4>
             <p><strong>Scène Source:</strong> ${alerte.sceneSourceTitre}</p>
             <p><strong>Scène Cible:</strong> ${alerte.sceneCibleTitre}</p>
             <p><strong>Type:</strong> ${alerte.typeRaccord}</p>
             <p><strong>Description:</strong> ${alerte.description}</p>
           </div>
           <div class="alerte-section">
-            <h4>⚠️ Alertes</h4>
+            <h4> Alertes</h4>
             <ul>
               ${alerte.messagesAlerte.map(msg => `<li>${msg}</li>`).join('')}
             </ul>
           </div>
           <div class="alerte-section">
-            <h4>📅 Dates de tournage</h4>
+            <h4>Dates de tournage</h4>
             <p><strong>Source:</strong> ${this.formatDateDetails(alerte.dateTournageSource)}</p>
             <p><strong>Cible:</strong> ${this.formatDateDetails(alerte.dateTournageCible)}</p>
           </div>
@@ -1529,10 +1498,9 @@ async soumettrePlanning() {
   mounted() {
      this.loadUserData();
     this.initializePermissions();
-     // Vérifier si l'utilisateur peut voir le calendrier
      if (!this.permissions.canViewPlanning) {
         this.showAccessError('Vous n\'avez pas les permissions pour accéder au calendrier de tournage.');
-        this.$router.push('/dashboard'); // Rediriger vers le tableau de bord
+        this.$router.push('/dashboard');
         return;
       }
     this.chargerTournages();
@@ -1549,7 +1517,6 @@ async soumettrePlanning() {
         () => {
             if (this.formPlanning.sceneId && this.formPlanning.dateTournage && 
                 this.formPlanning.heureDebut && this.formPlanning.heureFin) {
-                // Délai pour éviter trop d'appels API
                 clearTimeout(this.conflitTimeout);
                 this.conflitTimeout = setTimeout(() => {
                     this.verifierConflitsTempsReel();

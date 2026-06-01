@@ -11,7 +11,6 @@
         </button>
       </div>
       <form @submit.prevent="$emit('save', editingProject)" class="edit-form-ecran-travail">
-        <!-- Première ligne : Titre et Genre côte à côte -->
         <div class="form-row-ecran-travail">
           <div class="form-group-ecran-travail">
             <label for="edit-project-titre">Titre</label>
@@ -39,7 +38,6 @@
           </div>
         </div>
         
-        <!-- Deuxième ligne : Statut et Date de fin côte à côte -->
         <div class="form-row-ecran-travail">
           <div class="form-group-ecran-travail">
             <label for="edit-project-statut">Statut</label>
@@ -66,7 +64,6 @@
           </div>
         </div>
         
-        <!-- Synopsis en dessous sur toute la largeur -->
         <div class="form-group-ecran-travail">
           <label for="edit-project-synopsis">Synopsis (optionnel)</label>
           <textarea

@@ -159,11 +159,10 @@
         'with-tools-navbar': sidebarSelection.type === 'scene' && currentScene,
         'right-sidebar-open-screen-work': sidebarOpen,
         'with-secondary-navbar': sidebarSelection.type === 'scene' && currentScene,
-        'project-view-mode': sidebarSelection.type === 'project' // AJOUT
+        'project-view-mode': sidebarSelection.type === 'project' 
       }"
       :style="getMainContentStyle()"
     >
-      <!-- ==================== CONTENU DYNAMIQUE ==================== -->
       
       <!-- 1. VUE PROJET -->
       <div v-if="sidebarSelection.type === 'project'" class="main-content-view-screen-work project-view-mode">
@@ -357,7 +356,7 @@
           </div>
         </div>
         
-        <!-- ==================== MODALE POUR LES INFORMATIONS DE L'ÉPISODE ==================== -->
+        <!-- MODALE POUR LES INFORMATIONS DE L'ÉPISODE -->
         <div v-if="showEpisodeDetailsModal" class="modal-overlay-screen-work" @click="showEpisodeDetailsModal = false">
           <div class="modal-content-screen-work episode-details-modal" @click.stop>
             <div class="modal-header-screen-work">
@@ -464,7 +463,7 @@
             </div>
           </div>
           
-          <!-- Section Commentaires (optionnelle) -->
+          <!-- Section Commentaires -->
             <div v-if="showSequenceCommentSection" class="detail-section-screen-work comment-section-screen-work">
               <div class="detail-section-header-screen-work">
                 <h3><i class="fas fa-comments"></i> Commentaires</h3>
@@ -569,7 +568,7 @@
           </div>
         </div>
         
-        <!-- ==================== MODALE POUR LES INFORMATIONS DE LA SÉQUENCE ==================== -->
+        <!-- MODALE POUR LES INFORMATIONS DE LA SÉQUENCE -->
         <div v-if="showSequenceDetails" class="details-modal-overlay-screen-work" @click.self="showSequenceDetails = false">
           <div class="details-modal-screen-work">
             <!-- En-tête de la popup -->
@@ -689,7 +688,7 @@
             </div>
           </div>
 
-          <!-- Section Commentaires (optionnelle) -->
+          <!-- Section Commentaires -->
             <div v-if="showSceneCommentModal && selectedSceneForComments?.idScene === currentScene.idScene" class="detail-section-screen-work comment-section-screen-work">
               <div class="detail-section-header-screen-work">
                 <h3><i class="fas fa-comments"></i> Commentaires de la scène</h3>
@@ -868,7 +867,7 @@
           </div>
         </div>
         
-        <!-- ==================== MODALE POUR LES INFORMATIONS DE LA SCÈNE ==================== -->
+        <!-- MODALE POUR LES INFORMATIONS DE LA SCÈNE -->
         <div v-if="showSceneDetailsModal" class="scene-details-modal-overlay-screen-work" @click.self="showSceneDetailsModal = false">
           <div class="scene-details-modal-screen-work">
             <!-- En-tête de la popup -->
@@ -952,7 +951,7 @@
         <p>Sélectionnez un élément dans la sidebar pour afficher ses détails</p>
       </div>
 
-      <!-- ==================== MODALES ==================== -->
+      <!-- MODALES -->
       
       <!-- Modale pour surlignage -->
       <div v-if="showHighlightModal" class="modal-overlay-screen-work" @click="closeHighlightModal">
@@ -1127,7 +1126,6 @@ import LeftSidebar from './sidebar/LeftSidebar.vue';
 import RightSidebar from './sidebar/RightSidebar.vue';
 import SceneToolsNavbar from './sidebar/SceneToolsNavbar.vue';
 
-// Importez les fonctions d'export depuis vos nouveaux fichiers
 import { 
   formatDate,
   getBase64FromUrl 
@@ -1168,13 +1166,10 @@ const store = useEcranTravailStore();
 const comediens = ref([]);
 const selectedComedien = ref(null);
 
-//Modal de l'episode dans l'écran
 const showEpisodeDetailsModal = ref(false);
 
-// Modal de séquence dans l'écran
 const showSequenceDetails = ref(false)
 
-// Modal de scène dans l'écran
 const showSceneDetailsModal = ref(false)
 
 // Méthode pour obtenir la classe CSS du statut
@@ -1205,7 +1200,7 @@ const sidebarOpen = ref(true);
 
 // État de la sélection dans la sidebar
 const sidebarSelection = ref({
-  type: 'project', // 'project', 'episode', 'sequence', 'scene'
+  type: 'project', 
   id: null
 });
 
@@ -1229,32 +1224,24 @@ const userPermissions = ref({
     canCreateComedien: false,
     canCreatePersonnage: false,
 
-    // NOUVEAU : Permissions pour les raccords
     canCreateRaccord: false,
-    canViewRaccords: true, // Par défaut true pour la consultation
+    canViewRaccords: true, 
     
-    // NOUVEAU : Permissions pour l'export
     canExport: false,
     
-    // NOUVEAU : Permissions pour l'email
     canSendEmail: false,
     
-    // NOUVEAU : Permissions pour le tournage
     canPlanTournage: false,
     canEditTournage: false,
     
-    // NOUVEAU : Permissions pour les commentaires
-    canAddComments: true, // Par défaut true
+    canAddComments: true, 
     canDeleteComments: false,
     
-    // NOUVEAU : Permissions pour les surlignages
     canHighlight: false,
 
 });
 
 const showEmailModal = ref(false)
-
-
 
 const openEmailModal = () => {
   showEmailModal.value = true
@@ -1281,18 +1268,15 @@ const onRaccordCreated = () => {
 };
 
 watch(() => sidebarSelection.value.type, (newType) => {
-  // Fermer automatiquement quand on passe en mode scène
   if (newType === 'scene') {
     sidebarOpen.value = false;
   } 
-  // Ouvrir automatiquement pour les autres sections (sauf si déjà ouvert)
   else if (!sidebarOpen.value) {
     sidebarOpen.value = true;
   }
 }, { immediate: true });
 
 
-// Méthode pour toggle la sidebar droite
 const toggleSidebar = () => {
   // Si on est dans une scène, basculer entre sidebar droite et outils scène
   if (sidebarSelection.value.type === 'scene' && currentScene.value) {
@@ -1742,25 +1726,19 @@ const checkUserPermissions = async (episodeId) => {
             canCreateComedien: response.data.canCreateComedien || false,
             canCreatePersonnage: response.data.canCreatePersonnage || false,
             
-            // NOUVEAU : Permissions pour les raccords
             canCreateRaccord: response.data.canCreateRaccord || true,
             canViewRaccords: response.data.canViewRaccords || true, 
             
-            // NOUVEAU : Permissions pour l'export
             canExport: response.data.canExport || response.data.canCreateScene || false,
             
-            // NOUVEAU : Permissions pour l'email
             canSendEmail: response.data.canSendEmail || true,
             
-            // NOUVEAU : Permissions pour le tournage
             canPlanTournage: response.data.canPlanTournage || response.data.canCreateScene || false,
             canEditTournage: response.data.canEditTournage || response.data.canCreateScene || false,
             
-            // NOUVEAU : Permissions pour les commentaires
-            canAddComments: response.data.canAddComments || true, // Par défaut true
+            canAddComments: response.data.canAddComments || true, 
             canDeleteComments: response.data.canDeleteComments || false,
             
-            // NOUVEAU : Permissions pour les surlignages
             canHighlight: response.data.canHighlight || response.data.canCreateDialogue || false
         };
         
@@ -1777,7 +1755,6 @@ const checkUserPermissions = async (episodeId) => {
         }
     } catch (error) {
         console.error('Erreur lors de la vérification des permissions:', error);
-        // Définir toutes les permissions à false en cas d'erreur
         userPermissions.value = {
             canEditEpisode: false,
             canCreateSequence: false,
@@ -1788,12 +1765,12 @@ const checkUserPermissions = async (episodeId) => {
             canCreateComedien: false,
             canCreatePersonnage: false,
             canCreateRaccord: false,
-            canViewRaccords: true, // Toujours permettre la vue
+            canViewRaccords: true,
             canExport: false,
             canSendEmail: true,
             canPlanTournage: false,
             canEditTournage: false,
-            canAddComments: true, // Toujours permettre d'ajouter des commentaires
+            canAddComments: true, 
             canDeleteComments: false,
             canHighlight: false
         };
@@ -1815,7 +1792,6 @@ watch(() => store.currentEpisode, async (newEpisode) => {
 });
 
 
-// Watch pour mettre à jour la sélection quand le store change
 watch(() => store.currentScene, (newScene) => {
   if (newScene && sidebarSelection.value.type === 'scene') {
     sidebarSelection.value.id = newScene.idScene;
@@ -1854,7 +1830,6 @@ const loadPersonnages = async () => {
   }
 };
 
-// Méthodes pour le surlignage
 const applyHighlight = async () => {
   if (!selectedColor.value || !selectedDialogueForHighlight.value || !selectedText.value) {
     alert('Veuillez sélectionner une couleur et du texte.');
@@ -1915,7 +1890,6 @@ const loadAvailableColors = async () => {
   }
 };
 
-// Méthode pour ouvrir la modale de surlignage
 const openHighlightModal = async (dialogue, event) => {
   if (availableColors.value.length === 0) {
     await loadAvailableColors();
@@ -2114,7 +2088,6 @@ const confirmDeleteEpisode = async () => {
 
     await store.fetchEpisodes(projetId.value);
     
-    // Retourner à la vue projet
     sidebarSelection.value = { type: 'project', id: null };
     router.push({ query: {} });
     
@@ -2373,7 +2346,6 @@ const goToPrevScene = async () => {
   }
 };
 
-// Méthodes pour la navigation
 const goToNextPage = () => store.goToNextPage();
 const goToPrevPage = () => store.goToPrevPage();
 const retryFetch = () => store.fetchEpisodes(projetId.value);
@@ -2387,7 +2359,6 @@ const selectSequence = async (sequenceId) => {
   newlyCreatedSequenceId.value = null;
 };
 
-// Méthodes pour l'ajout
 const goToAddEpisode = async () => {
   if (!projetId.value) {
     console.error('ID du projet non trouvé !');
@@ -2599,7 +2570,6 @@ const removeLieuFromScene = async (sceneLieuId) => {
   }
 };
 
-// Charger les statuts
 const loadStatutsEpisode = async () => {
   try {
     const response = await axios.get('/api/statuts-episode');
@@ -2627,7 +2597,6 @@ const loadStatutsScene = async () => {
   }
 };
 
-// Charger les lieux et plateaux disponibles
 const loadAvailableLieux = async () => {
   try {
     if (route.params.idProjet) {
@@ -2674,7 +2643,6 @@ const loadAvailablePlateaux = async () => {
   }
 };
 
-// Helpers
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 const getStatuts = (type) => {
@@ -2707,7 +2675,6 @@ const getStatutNomById = (type, id) => {
   return statut ? statut[nomField] : '';
 };
 
-// Méthodes pour les commentaires d'épisode
 const toggleEpisodeCommentSection = async () => {
   showEpisodeCommentSection.value = !showEpisodeCommentSection.value;
   if (showEpisodeCommentSection.value) {
@@ -2776,7 +2743,6 @@ const deleteEpisodeComment = async (commentId) => {
   }
 };
 
-// Méthodes pour les commentaires
 const toggleSequenceCommentSection = async () => {
   showSequenceCommentSection.value = !showSequenceCommentSection.value;
   if (showSequenceCommentSection.value) {
@@ -3068,7 +3034,7 @@ const deleteDialogue = async (dialogueId) => {
 };
 
 const onReplanificationDansScene = (data) => {
-  console.log('🔄 Replanification dans scène détectée:', data)
+  console.log(' Replanification dans scène détectée:', data)
   
   if (store.currentSequence) {
     store.fetchSequenceDetails(store.currentSequence.idSequence)
@@ -3254,12 +3220,10 @@ const confirmDeleteProject = async () => {
 };
 
 const openRaccordsPhotosModal = (scene) => {
-  // Ouvrir modale ou autre action pour les raccords photos
   console.log('Ouvrir raccords photos pour:', scene);
 };
 
 const openCreateRaccordModal = (scene) => {
-  // Ouvrir modale pour créer un raccord
   console.log('Créer raccord pour:', scene);
 };
 

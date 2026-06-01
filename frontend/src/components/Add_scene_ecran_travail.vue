@@ -294,12 +294,10 @@ export default {
       if (this.existingOrders.length === 0) {
         this.suggestedOrder = 1;
       } else {
-        // Trouver le plus grand ordre existant et ajouter 1
         const maxOrder = Math.max(...this.existingOrders);
         this.suggestedOrder = maxOrder + 1;
       }
       
-      // Pré-remplir le champ avec la suggestion
       this.scene.ordre = this.suggestedOrder;
     },
     validateOrder() {
@@ -312,14 +310,12 @@ export default {
         this.orderError = 'L\'ordre doit être un nombre positif';
         return;
       }
-      
-      // Vérifier si l'ordre existe déjà
+  
       if (this.existingOrders.includes(this.scene.ordre)) {
         this.orderError = `L'ordre ${this.scene.ordre} existe déjà dans cette séquence`;
         return;
       }
       
-      // Si tout est valide, effacer l'erreur
       this.orderError = '';
     },
     useSuggestedOrder() {
@@ -327,7 +323,6 @@ export default {
       this.validateOrder();
     },
     async submitScene() {
-      // Valider à nouveau avant soumission
       this.validateOrder();
       
       if (this.orderError) {
@@ -339,20 +334,17 @@ export default {
       this.errorMessage = '';
       
       try {
-        // Récupérer l'utilisateur connecté
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user || !user.id) {
           throw new Error('Utilisateur non connecté');
         }
 
-        // Ajouter le header X-User-Id
         const response = await axios.post(`/api/scenes/sequences/${this.sequenceId}`, this.scene, {
           headers: {
             'X-User-Id': user.id
           }
         });
         
-        // Redirection vers l'URL sauvegardée
         this.$router.push(this.backUrl);
         
       } catch (error) {
@@ -403,7 +395,4 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Suppression des anciens styles et import du nouveau fichier CSS */
-</style>
 

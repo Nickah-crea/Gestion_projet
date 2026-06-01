@@ -1,7 +1,6 @@
 <template>
   <nav class="navbar" :class="{ 'collapsed': isCollapsed }">
     <div class="navbar-main">
-      <!-- TOUT SUR LA MÊME LIGNE -->
       <div class="navbar-content">
         <div class="navbar-left">
           <router-link to="/" class="logo-link">
@@ -37,8 +36,7 @@
             <span class="link-text">Recherche</span>
           </router-link>
 
-          <!-- BOUTON + AJOUTER AVEC POP-UP STYLISÉ -->
-          <!-- BOUTON + AJOUTER AVEC POP-UP STYLISÉ -->
+          
     <div class="quick-add-section" v-if="user?.role !== 'UTILISATEUR'">
       <button 
         class="quick-add-btn" 
@@ -51,11 +49,10 @@
         <i class="fas fa-chevron-down dropdown-icon" :class="{ 'rotate-180': showAddPopup }"></i>
       </button>
   
-            <!-- POP-UP SOUS LA NAVBAR : GRILLE DE BOUTONS (4 par ligne max) -->
+            <!-- POP-UP SOUS LA NAVBAR : GRILLE DE BOUTONS -->
             <div v-if="showAddPopup" class="add-popup" @click.stop>
               <div class="popup-content">
                 <div class="popup-grid">
-                  <!-- Ligne 1 : 4 boutons -->
                   <div class="popup-row">
                     <button class="popup-btn" @click="navigateTo('/creation-comedien')">
                       Comédien
@@ -79,9 +76,6 @@
                     <button class="popup-btn" @click="navigateTo('/raccords')">
                       Raccord
                     </button>
-                    <!-- <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/gestion-equipe')">
-                      Équipe
-                    </button> -->
                     <button class="popup-btn" v-if="user?.role === 'ADMIN'" @click="navigateTo('/utilisateurs')">
                       Utilisateurs
                     </button>
@@ -241,7 +235,6 @@ export default {
         }
       } catch (error) {
         console.error('Erreur lors du chargement du profil utilisateur:', error);
-        // Ne pas afficher d'erreur pour ne pas perturber l'utilisateur
       } finally {
         this.loadingProfilePhoto = false;
       }
@@ -253,7 +246,6 @@ export default {
         try {
           const user = JSON.parse(userData);
           if (user.id) {
-            // Recharger les données utilisateur à chaque changement de route
             await this.loadUserProfile(user.id);
           }
         } catch (error) {

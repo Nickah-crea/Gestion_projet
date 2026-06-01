@@ -39,7 +39,7 @@
               <div class="alert-content-raccord-scene">
                 <i class="fas fa-exclamation-triangle"></i>
                 <div class="alert-text-raccord-scene">
-                  <h5>⚠️ Incohérences chronologiques détectées</h5>
+                  <h5>Incohérences chronologiques détectées</h5>
                   <p>{{ chronologyAlertMessage }}</p>
                   <p class="alert-details-raccord-scene">
                     <strong>Scène source:</strong> {{ formatDate(sceneSourceTournageInfo?.dateTournage) || 'Non planifiée' }}
@@ -438,7 +438,6 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
 
-// Props
 const props = defineProps({
   projetId: {
     type: Number,
@@ -559,8 +558,6 @@ const chronologyAlertMessage = computed(() => {
 })
 
 
-
-// Watcher pour la prop sceneSourceId
 watch(() => props.sceneSourceId, (newSceneSourceId) => {
   if (newSceneSourceId) {
     raccordData.value.sceneSourceId = newSceneSourceId
@@ -604,13 +601,12 @@ const closeModal = () => {
 const loadInitialData = async () => {
   try {
     await Promise.all([
-      loadScenes(), // Charger toutes les scènes d'abord
+      loadScenes(), 
       loadTypesRaccord(),
       loadStatutsRaccord(),
       loadPersonnages()
     ]);
     
-    // Après avoir chargé les scènes, filtrer les scènes accessibles
     await filterAccessibleScenes();
     
   } catch (error) {
@@ -638,7 +634,6 @@ const loadScenes = async () => {
     
     const response = await axios.get(url)
     availableScenes.value = response.data
-    // Initialiser accessibleScenes avec toutes les scènes (sera filtré plus tard)
     accessibleScenes.value = [...availableScenes.value]
     
     console.log('Scènes chargées - structure:', availableScenes.value[0])
@@ -659,16 +654,12 @@ const filterAccessibleScenes = async () => {
       return;
     }
     
-    // Filtrer les scènes accessibles via l'API d'accès
     const accessibleScenesResult = [];
     
-    // Vérifier l'accès pour chaque scène
     for (const scene of availableScenes.value) {
       try {
-        // Utiliser le bon champ d'ID selon la structure des données
         const sceneId = scene.idScene || scene.id;
         
-        // Appeler l'API pour vérifier l'accès
         const response = await axios.get(`/api/scenes/${sceneId}/access-check`, {
           headers: {
             'X-User-Id': user.id
@@ -676,30 +667,25 @@ const filterAccessibleScenes = async () => {
         });
         
         if (response.data === true) {
-          // L'utilisateur a accès à cette scène
           accessibleScenesResult.push(scene);
         }
       } catch (error) {
         console.error(`Erreur lors de la vérification de l'accès pour la scène ${scene.id}:`, error);
-        // En cas d'erreur, ne pas inclure la scène pour la sécurité
       }
     }
     
     accessibleScenes.value = accessibleScenesResult;
     console.log('Scènes accessibles après vérification:', accessibleScenes.value.length);
     
-    // Mettre à jour le filtre des scènes cible
     updateScenesCibleFilter();
     
   } catch (error) {
     console.error('Erreur lors du filtrage des scènes accessibles:', error);
-    // En cas d'erreur, utiliser un filtrage basique
     accessibleScenes.value = availableScenes.value;
     updateScenesCibleFilter();
   }
 }
 
-// Méthode pour charger les informations de tournage d'une scène
 const loadSceneTournageInfo = async (sceneId, type) => {
   try {
     const response = await axios.get(`/api/scene-tournage/scene/${sceneId}`)
@@ -719,8 +705,7 @@ const loadSceneTournageInfo = async (sceneId, type) => {
     }
   } catch (error) {
     console.log(`Aucun tournage trouvé pour la scène ${sceneId}`)
-    
-    // Fallback ou valeur par défaut
+  
     const defaultInfo = {
       id: sceneId,
       dateTournage: null,
@@ -741,7 +726,6 @@ const removeSceneCible = (sceneId) => {
   if (index !== -1) {
     raccordData.value.scenesCibleIds.splice(index, 1)
     
-    // Retirer les infos correspondantes
     const infoIndex = scenesCibleInfo.value.findIndex(info => 
       (info.idScene || info.id) === sceneId
     )
@@ -774,7 +758,7 @@ const getSceneOrder = (sceneId) => {
   return scene ? scene.ordre : '?'
 }
 
-// Méthode pour mettre à jour le message d'alerte
+
 const updateChronologyAlert = () => {
   if (!sceneSourceTournageInfo.value || !sceneCibleTournageInfo.value) {
     chronologyAlertMessage.value = ''
@@ -814,13 +798,11 @@ const onPersonnagesChange = () => {
   selectedPersonnagesInfo.value = []
   selectedComediens.value = []
   
-  // Récupérer les informations des personnages sélectionnés
   raccordData.value.personnagesIds.forEach(personnageId => {
     const personnage = personnages.value.find(p => p.id === personnageId)
     if (personnage) {
       selectedPersonnagesInfo.value.push(personnage)
       
-      // Ajouter le comédien associé s'il existe
       if (personnage.comedienId && personnage.comedienNom) {
         const comedienExists = selectedComediens.value.some(c => c.id === personnage.comedienId)
         if (!comedienExists) {
@@ -834,7 +816,6 @@ const onPersonnagesChange = () => {
     }
   })
   
-  // Mettre à jour les IDs des comédiens
   raccordData.value.comediensIds = selectedComediens.value.map(comedien => comedien.id)
 }
 
@@ -842,7 +823,7 @@ const removePersonnage = (personnageId) => {
   const index = raccordData.value.personnagesIds.indexOf(personnageId)
   if (index !== -1) {
     raccordData.value.personnagesIds.splice(index, 1)
-    onPersonnagesChange() // Recalculer les comédiens
+    onPersonnagesChange() 
   }
 }
 
@@ -900,17 +881,15 @@ const loadPhotosForScenes = async () => {
   try {
     console.log('Chargement des photos pour la scène source:', sceneId)
     
-    // Charger les raccords seulement pour la scène source
     const response = await axios.get(`/api/raccords/scene/${sceneId}`)
     
-    // Extraire les images de tous les raccords de la scène source
     availablePhotos.value = response.data.flatMap(raccord => {
       const ownImages = raccord.images?.map(image => ({
         ...image,
         typeRaccordId: raccord.typeRaccordId,
         sceneId: sceneId,
         raccordId: raccord.id,
-        isShared: false // Image propre au raccord
+        isShared: false 
       })) || []
       
       const sharedImages = raccord.sharedImages?.map(image => ({
@@ -918,7 +897,7 @@ const loadPhotosForScenes = async () => {
         typeRaccordId: raccord.typeRaccordId,
         sceneId: sceneId,
         raccordId: raccord.id,
-        isShared: true // Image partagée
+        isShared: true 
       })) || []
       
       return [...ownImages, ...sharedImages]
@@ -952,7 +931,6 @@ const onTypeSelectionChange = () => {
 const onScenesCibleChange = async () => {
   console.log('Scènes cibles changées:', raccordData.value.scenesCibleIds)
   
-  // Charger les infos pour toutes les scènes cibles sélectionnées
   scenesCibleInfo.value = []
   scenesCibleTournageInfo.value = []
   
@@ -971,11 +949,9 @@ const loadSceneInfo = async (sceneId, type) => {
     if (type === 'source') {
       sceneSourceInfo.value = sceneData
     } else {
-      // Ajouter à la liste des scènes cibles
       scenesCibleInfo.value.push(sceneData)
     }
     
-    // Charger les informations de tournage
     await loadSceneTournageInfo(sceneId, type)
     
   } catch (error) {
@@ -995,7 +971,7 @@ const checkPermission = (action) => {
       return false;
   }
 };
-// Watcher pour la scène cible
+
 watch(() => raccordData.value.sceneCibleId, async (newSceneCibleId) => {
   console.log('Scène cible changée:', newSceneCibleId)
   if (newSceneCibleId) {
@@ -1008,7 +984,6 @@ watch(() => raccordData.value.sceneCibleId, async (newSceneCibleId) => {
   await loadPhotosForScenes()
 })
 
-// Watcher pour la scène source (au cas où elle changerait)
 watch(() => raccordData.value.sceneSourceId, async (newSceneSourceId) => {
   if (newSceneSourceId) {
     await loadSceneInfo(newSceneSourceId, 'source')
@@ -1017,7 +992,6 @@ watch(() => raccordData.value.sceneSourceId, async (newSceneSourceId) => {
 
 const updateScenesCibleFilter = () => {
   if (raccordData.value.sceneSourceId && accessibleScenes.value.length > 0) {
-    // Vérifier la structure des données pour utiliser le bon champ d'ID
     const firstScene = accessibleScenes.value[0]
     const idField = firstScene.idScene !== undefined ? 'idScene' : 'id'
     
@@ -1085,11 +1059,11 @@ const createRaccord = async () => {
   if (!canCreateRaccord.value) return
 
   try {
-    // Créer un raccord pour chaque scène cible
+
     for (const sceneCibleId of raccordData.value.scenesCibleIds) {
       const raccordPayload = {
         sceneSourceId: raccordData.value.sceneSourceId,
-        sceneCibleId: sceneCibleId, // Utiliser chaque scène cible individuellement
+        sceneCibleId: sceneCibleId, 
         description: raccordData.value.description,
         estCritique: raccordData.value.estCritique,
         statutRaccordId: raccordData.value.statutRaccordId,
@@ -1099,7 +1073,6 @@ const createRaccord = async () => {
         comediensIds: raccordData.value.comediensIds
       }
 
-      // Créer le raccord
       await axios.post('/api/raccords/scene-liaison-shared', raccordPayload)
     }
     
@@ -1153,13 +1126,11 @@ onMounted(() => {
     raccordData.value.sceneSourceId = props.sceneSourceId
   }
   
-  // Charger les données de base
   loadTypesRaccord()
   loadStatutsRaccord()
   loadPersonnages()
 })
 
-// Exposer la méthode pour ouvrir le modal
 defineExpose({
   openRaccordModal,
   checkPermission

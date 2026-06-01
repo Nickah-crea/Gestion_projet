@@ -244,7 +244,7 @@ export default {
   emits: ['replanification-updated', 'tournage-updated', 'replanification-appliquee'],
 
   setup(props, { emit }) {
-    // États réactifs
+
     const showModal = ref(false)
     const loading = ref(false)
     const availableRaccords = ref([])
@@ -253,7 +253,7 @@ export default {
     const isMounted = ref(false)
     const conflitsDetected = ref([])
 
-    // Données de replanification
+
     const replanificationData = ref({
       sceneId: props.sceneId, 
       nouvelleDate: '',
@@ -428,7 +428,7 @@ export default {
 
       } catch (error) {
         console.error('❌ Erreur lors de la vérification des conflits:', error)
-        // Ne pas bloquer l'utilisateur en cas d'erreur de vérification
+  
       }
     }
 
@@ -505,7 +505,7 @@ export default {
       const peutContinuer = await verifierConflitsFinaux()
       if (!peutContinuer) return
 
-      console.log('🚀 Début de la replanification')
+      console.log(' Début de la replanification')
       loading.value = true
       try {
         const replanificationPayload = {
@@ -519,14 +519,14 @@ export default {
         console.log('📤 Envoi de la replanification:', replanificationPayload)
 
         const response = await axios.post('/api/replanifications', replanificationPayload)
-        console.log('✅ Replanification créée:', response.data)
+        console.log('Replanification créée:', response.data)
 
         if (response.status === 201) {
           // Appliquer immédiatement la replanification
-          console.log('🔄 Application de la replanification...')
+          console.log(' Application de la replanification...')
           const replanificationAppliquee = await terminerReplanification(response.data.id)
           
-          console.log('✅ Replanification appliquée avec succès!')
+          console.log('Replanification appliquée avec succès!')
           
           // Émettre l'événement avec les nouvelles données de tournage
           emit('replanification-appliquee', {
@@ -534,7 +534,7 @@ export default {
             nouveauTournage: replanificationAppliquee.tournageMisAJour || replanificationAppliquee
           })
           
-          alert('Replanification créée et appliquée avec succès!')
+          // alert('Replanification créée et appliquée avec succès!')
           closeModal()
           emit('replanification-updated')
           emit('tournage-updated')
@@ -575,18 +575,18 @@ export default {
           nouveauTournage: replanificationAppliquee.tournageMisAJour || replanificationAppliquee
         })
         
-        alert('Replanification appliquée avec succès!')
+        // alert('Replanification appliquée avec succès!')
         emit('tournage-updated')
         await loadData()
       } catch (error) {
-        console.error('❌ Erreur lors de l\'application de la replanification:', error)
+        console.error('Erreur lors de l\'application de la replanification:', error)
         const errorMessage = error.response?.data?.message || error.message || 'Erreur inconnue'
         alert('Erreur lors de l\'application: ' + errorMessage)
       }
     }
 
     const resetReplanificationData = () => {
-      console.log('🔄 Réinitialisation des données du formulaire')
+      console.log('Réinitialisation des données du formulaire')
       replanificationData.value = {
         sceneId: props.sceneId,
         nouvelleDate: '',
@@ -661,12 +661,10 @@ export default {
       }
     })
 
-    // Watcher pour surveiller les changements du tournage
     watch(currentTournage, (newTournage) => {
-      console.log('🔄 Tournage mis à jour:', newTournage?.statutTournage)
+      console.log(' Tournage mis à jour:', newTournage?.statutTournage)
     }, { deep: true })
 
-    // Watchers pour la vérification en temps réel des conflits
     watch(() => replanificationData.value.nouvelleDate, verifierConflitsTempsReel)
     watch(() => replanificationData.value.nouvelleHeureDebut, verifierConflitsTempsReel)
     watch(() => replanificationData.value.nouvelleHeureFin, verifierConflitsTempsReel)

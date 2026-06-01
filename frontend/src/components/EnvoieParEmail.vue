@@ -86,8 +86,7 @@
           </select>
         </div>
 
-<!-- Destinataire -->
-<!-- Destinataire -->
+
 <div class="form-section-email">
   <label class="form-label-email">Sélectionner le type de destinataires :</label>
   <div class="recipient-type-simple-email">
@@ -329,7 +328,6 @@ const props = defineProps({
   projetInfos: Object
 })
 
-// Émits
 const emit = defineEmits(['close', 'email-sent'])
 
 // États réactifs
@@ -356,7 +354,6 @@ const loadingComediens = ref(false)
 const canSendEmail = computed(() => {
   if (!selectedExportType.value) return false
   
-  // Vérifications spécifiques selon le type d'export
   if (selectedExportType.value === 'raccords-comedien' && !selectedComedienId.value) {
     return false
   }
@@ -399,14 +396,12 @@ const filteredComediensWithEmail = computed(() => {
   return filteredComediens.value.filter(comedien => comedien.email && comedien.email.trim() !== '')
 })
 
-// Méthode pour sélectionner tous les comédiens
 const selectAllComediens = () => {
   selectedRecipientComedienIds.value = comediensList.value
     .filter(comedien => comedien.email && comedien.email.trim() !== '')
     .map(comedien => comedien.id)
 }
 
-// Méthode pour désélectionner tous les comédiens
 const clearAllComediens = () => {
   selectedRecipientComedienIds.value = []
 }
@@ -600,8 +595,8 @@ const loadComediens = async () => {
 
 const reloadComediens = () => {
   console.log('Rechargement manuel des comédiens...')
-  comediensList.value = [] // Vider la liste
-  loadComediens() // Recharger
+  comediensList.value = [] 
+  loadComediens() 
 }
 
 const getComedienName = (comedienId) => {
@@ -625,7 +620,6 @@ const getRecipientInfo = () => {
   return 'Non spécifié'
 }
 
-// Watcher pour charger les comédiens quand la modale s'ouvre
 watch(() => props.showModal, (newValue) => {
   if (newValue) {
     loadComediens()
@@ -633,7 +627,6 @@ watch(() => props.showModal, (newValue) => {
   }
 })
 
-// Watcher pour charger les comédiens quand le projet change
 watch(() => props.projetInfos?.id, () => {
   if (props.showModal) {
     loadComediens()
@@ -740,8 +733,6 @@ watch(selectedSceneId, (newSceneId) => {
   }
 })
 
-// Méthode principale d'envoi d'email
-// Méthode principale d'envoi d'email
 const sendEmail = async () => {
   if (!canSendEmail.value) return
   
@@ -768,7 +759,6 @@ const sendEmail = async () => {
       
       console.log('Debug - emails des comédiens:', recipientEmails)
     } else {
-      // Utiliser les emails manuels validés
       recipientEmails = validEmails.value
       
       if (recipientEmails.length === 0) {
@@ -861,7 +851,6 @@ const sendEmail = async () => {
       })
     );
     
-    // Attendre tous les envois
     const results = await Promise.allSettled(emailPromises);
     
     // Analyser les résultats
@@ -892,14 +881,12 @@ const sendEmail = async () => {
   }
 };
 
-// Ajouter un watcher pour valider les emails lorsque la saisie change
 watch(manualEmails, () => {
   if (recipientType.value === 'manual') {
     validateEmails();
   }
 });
 
-// Ajouter un watcher pour réinitialiser la validation lorsque le type change
 watch(recipientType, (newType) => {
   if (newType === 'manual') {
     validateEmails();
@@ -1562,7 +1549,7 @@ const generateRaccordsProjetPDF = async () => {
 
       // Parcourir tous les raccords
       for (const [index, r] of raccords.entries()) {
-        if (y > 200) { // Réduire pour laisser de la place pour les images
+        if (y > 200) { 
           pdf.addPage();
           y = 30;
         }
@@ -2021,7 +2008,7 @@ const generateRaccordsScenePDF = async (sceneId) => {
       const colorShared = [72, 61, 139];        // Couleur pour images partagées
       const colorSharedLight = [230, 230, 250]; // Fond pour images partagées
 
-      // ========== PAGE DE GARDE ==========
+      // PAGE DE GARDE
       pdf.setFillColor(...primaryColor);
       pdf.rect(0, 0, 210, 297, 'F');
       pdf.setTextColor(255, 255, 255);
@@ -2057,14 +2044,14 @@ const generateRaccordsScenePDF = async (sceneId) => {
       pdf.addPage();
       let y = 30;
 
-      // ========== EN-TÊTE ==========
+      // EN-TÊTE
       pdf.setFillColor(...primaryColor);
       pdf.rect(0, 0, 210, 25, 'F');
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(16);
       pdf.text(`RACCORDS - SCÈNE ${sceneOrdre}`, 105, 15, { align: 'center' });
 
-      // ========== PARCOURIR LES RACCORDS FILTRÉS ==========
+      // PARCOURIR LES RACCORDS FILTRÉS
       for (const [index, r] of raccordsFiltres.entries()) {
         const isSceneSource = r.sceneSourceId === sceneId;
         const isSceneCible = r.sceneCibleId === sceneId;
@@ -2118,7 +2105,7 @@ const generateRaccordsScenePDF = async (sceneId) => {
           y += 6;
         }
 
-        // ========== IMAGES DIRECTES ==========
+        // IMAGES DIRECTES
         if (r.images && r.images.length > 0) {
           pdf.setFontSize(11);
           pdf.setFont("helvetica", "bold");
@@ -2129,7 +2116,7 @@ const generateRaccordsScenePDF = async (sceneId) => {
           await processImages(pdf, r.images, false);
         }
 
-        // ========== IMAGES PARTAGÉES (UNIQUEMENT SI SCÈNE CIBLE) ==========
+        // IMAGES PARTAGÉES (UNIQUEMENT SI SCÈNE CIBLE)
         const shouldShowSharedImages = isSceneCible && hasSharedImages;
         
         if (shouldShowSharedImages) {
@@ -2289,7 +2276,7 @@ const generateRaccordsScenePDF = async (sceneId) => {
         pdf.text('N/A', x + 15, y + 18);
       }
 
-      // ========== PAGE DE SYNTHÈSE ==========
+      // PAGE DE SYNTHÈSE
       pdf.addPage();
       
       // Header
@@ -2346,7 +2333,7 @@ const generateRaccordsScenePDF = async (sceneId) => {
         }
       });
 
-      // ========== PIED DE PAGE ==========
+      // PIED DE PAGE
       const totalPages = pdf.internal.getNumberOfPages();
       for (let i = 2; i <= totalPages; i++) {
         pdf.setPage(i);
@@ -2491,7 +2478,7 @@ const generateSceneCompletePDF = async (sceneId) => {
     
     let yPosition = 20;
     
-    // ========== EN-TÊTE ==========
+    // EN-TÊTE
     pdf.setFillColor(...primaryColor);
     pdf.rect(0, 0, 210, 40, 'F');
     
@@ -2511,7 +2498,7 @@ const generateSceneCompletePDF = async (sceneId) => {
     
     yPosition = 60;
     
-    // ========== TITRE DE LA SCÈNE ==========
+    // TITRE DE LA SCÈNE
     pdf.setTextColor(...primaryColor);
     pdf.setFontSize(20);
     pdf.setFont("helvetica", "bold");
@@ -2519,7 +2506,7 @@ const generateSceneCompletePDF = async (sceneId) => {
     
     yPosition += 15;
     
-    // ========== INFORMATIONS GÉNÉRALES ==========
+    // INFORMATIONS GÉNÉRALES
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(0, 0, 0);
@@ -2569,7 +2556,7 @@ const generateSceneCompletePDF = async (sceneId) => {
       yPosition += 5;
     }
     
-    // ========== DIALOGUES ==========
+    // DIALOGUES
     if (scene.dialogues?.length > 0) {
       pdf.setFontSize(14);
       pdf.setFont("helvetica", "bold");
@@ -2636,7 +2623,7 @@ const generateSceneCompletePDF = async (sceneId) => {
       yPosition += 15;
     }
     
-    // ========== COMMENTAIRES ==========
+    // COMMENTAIRES
     // Note: On pourrait ajouter les commentaires ici si disponibles
     yPosition += 10;
     
@@ -2668,7 +2655,7 @@ const generateSceneCompletePDF = async (sceneId) => {
       yPosition += 5;
     }
     
-    // ========== PIED DE PAGE ==========
+    // PIED DE PAGE
     const totalPages = pdf.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       pdf.setPage(i);
@@ -2695,7 +2682,6 @@ const formatDate = (dateString) => {
   });
 };
 
-// Exposer les méthodes si nécessaire
 defineExpose({
   generateScenesPDF,
   generateSequenceDialoguesPDF,
