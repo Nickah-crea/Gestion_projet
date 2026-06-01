@@ -7,28 +7,26 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
     currentEpisode: null,
     sequences: [],
     currentSequence: null,
-    scenes: [], // Ajouté pour stocker toutes les scènes de la séquence
-    currentScene: null, // Ajouté pour la scène actuellement sélectionnée
+    scenes: [], 
+    currentScene: null, 
     currentEpisodeIndex: 0,
     currentSequenceIndex: 0,
-    currentSceneIndex: 0, // Ajouté pour l'index de la scène actuelle
+    currentSceneIndex: 0,
     projetId: null,
     projetInfos: null,
     error: null,
     isLoading: false,
     lastViewedEpisodeId: null,
     lastViewedSequenceId: null,
-    lastViewedSceneId: null, // Ajouté pour mémoriser la dernière scène vue
+    lastViewedSceneId: null, 
     
-    // NOUVEAU : État pour la sélection dans la sidebar
     sidebarSelection: {
-      type: 'project', // 'project', 'episode', 'sequence', 'scene'
+      type: 'project', 
       id: null
     }
   }),
 
   actions: {
-    // NOUVEAU : Méthode pour mettre à jour la sélection
     updateSidebarSelection(type, id) {
       this.sidebarSelection.type = type;
       this.sidebarSelection.id = id;
@@ -46,7 +44,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
       }
     },
 
-    // NOUVEAU : Restaurer la sélection depuis l'état sauvegardé
+    // Restaurer la sélection depuis l'état sauvegardé
     restoreSelection() {
       if (this.lastViewedSceneId) {
         return { type: 'scene', id: this.lastViewedSceneId };
@@ -409,7 +407,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
           }
         }
         
-        // Navigate to the previous episode if available
+        // Navigation à l'épisode précédent si disponible
         if (this.currentEpisodeIndex > 0) {
           console.log('Navigating to previous episode');
           this.currentEpisodeIndex--;
@@ -422,7 +420,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
           console.log(`Navigating to previous episode: ${this.currentEpisode.titre}`);
           await this.fetchSequences(this.currentEpisode.idEpisode);
           
-          // If the previous episode has sequences, go to the last one
+          // si l'épisode précédent a des séquences, aller à la dernière
           if (this.sequences.length > 0) {
             this.currentSequence = this.sequences[this.sequences.length - 1];
             this.currentSequenceIndex = this.sequences.length - 1;
@@ -439,7 +437,7 @@ export const useEcranTravailStore = defineStore('ecranTravail', {
           return;
         }
         
-        // If no episodes or at the first episode with no sequences, reset to initial state
+        // si absence d'épisode ou si le précédent n'a pas de séquences, réinitialiser à l'état initial
         this.currentEpisode = null;
         this.currentSequence = null;
         this.currentScene = null;
