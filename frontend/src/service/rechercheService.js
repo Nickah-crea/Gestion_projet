@@ -1,4 +1,3 @@
-// src/services/rechercheService.js
 import axios from 'axios'
 
 const API_BASE_URL = 'http://localhost:8080/api'
@@ -33,7 +32,6 @@ export const getResultatDetails = async (type, id) => {
   }
 }
 
-// CORRECTION : Changé "complet" en "complets" pour correspondre au backend
 export const getResultatDetailsComplets = async (type, id) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/recherche-avancee/details/${type}/${id}/complets`)
@@ -44,7 +42,7 @@ export const getResultatDetailsComplets = async (type, id) => {
   }
 }
 
-// NOUVELLE FONCTION : Récupérer les statistiques
+
 export const getStatistiques = async (type, id) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/recherche-avancee/statistiques/${type}/${id}`)
@@ -55,7 +53,7 @@ export const getStatistiques = async (type, id) => {
   }
 }
 
-// NOUVELLE MÉTHODE : Récupérer la liste des projets
+
 export const getProjets = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/projets`);
@@ -67,7 +65,7 @@ export const getProjets = async () => {
 };
 
 
-// NOUVELLES MÉTHODES POUR ÉPISODES ET SÉQUENCES
+
 export const getEpisodesByProjet = async (projetId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/projets/${projetId}/episodes`)

@@ -1,17 +1,16 @@
-// usePDFExporter.js
+
 import { ref } from 'vue';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 
 export function usePDFExporter(emits) {
   
-  // Couleurs de l'application
   const colorPrimary = [33, 41, 79];      // #21294F
   const colorSecondary = [220, 53, 69];   // #dc3545
   const colorAccent = [23, 162, 184];     // #17a2b8
   const colorLight = [240, 240, 240];
   
-  // Fonction utilitaire pour charger les images
+  
   const getBase64FromUrl = async (filename) => {
     if (!filename || filename.includes('undefined') || filename === 'undefined') {
       console.warn('Nom de fichier invalide:', filename);
@@ -742,7 +741,7 @@ export function usePDFExporter(emits) {
       
       let yPosition = 20;
       
-      // ========== EN-TÊTE ==========
+      // EN-TÊTE
       pdf.setFillColor(...colorPrimary);
       pdf.rect(0, 0, 210, 40, 'F');
       
@@ -762,7 +761,7 @@ export function usePDFExporter(emits) {
       
       yPosition = 60;
       
-      // ========== TITRE DE LA SCÈNE ==========
+      // TITRE DE LA SCÈNE 
       pdf.setTextColor(...colorPrimary);
       pdf.setFontSize(20);
       pdf.setFont("helvetica", "bold");
@@ -770,7 +769,7 @@ export function usePDFExporter(emits) {
       
       yPosition += 15;
       
-      // ========== INFORMATIONS GÉNÉRALES ==========
+      // INFORMATIONS GÉNÉRALES
       pdf.setFontSize(11);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(0, 0, 0);
@@ -820,7 +819,7 @@ export function usePDFExporter(emits) {
         yPosition += 5;
       }
       
-      // ========== DIALOGUES ==========
+      // DIALOGUES 
       if (scene.dialogues?.length > 0) {
         pdf.setFontSize(14);
         pdf.setFont("helvetica", "bold");
@@ -887,7 +886,7 @@ export function usePDFExporter(emits) {
         yPosition += 15;
       }
       
-      // ========== PIED DE PAGE ==========
+      // PIED DE PAGE
       const totalPages = pdf.internal.getNumberOfPages();
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
@@ -898,7 +897,7 @@ export function usePDFExporter(emits) {
         pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 190, 290, { align: 'right' });
       }
       
-      // ========== SAUVEGARDE ==========
+      // SAUVEGARDE
       const safeFileName = `scene-${scene.ordre}-${scene.titre}`
         .toLowerCase()
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -1083,13 +1082,13 @@ export function usePDFExporter(emits) {
     }
     
     try {
-      console.log('🚨 Début export PDF pour scène:', sceneId);
+      console.log('Début export PDF pour scène:', sceneId);
       
       // Récupérer les raccords
       const response = await axios.get(`/api/raccords/export/scene/${sceneId}`);
       const raccords = response.data;
 
-      console.log('📊 Réponse brute de l\'API:', raccords);
+      console.log(' Réponse brute de l\'API:', raccords);
       console.log(`Nombre de raccords: ${raccords.length}`);
       
       if (!raccords || raccords.length === 0) {
@@ -1102,7 +1101,7 @@ export function usePDFExporter(emits) {
       const totalImages = raccords.reduce((sum, r) => sum + (r.images?.length || 0), 0);
       const raccordsCritiques = raccords.filter(r => r.estCritique).length;
       
-      console.log(`📈 Statistiques: ${totalRaccords} raccords, ${totalImages} images, ${raccordsCritiques} critiques`);
+      console.log(` Statistiques: ${totalRaccords} raccords, ${totalImages} images, ${raccordsCritiques} critiques`);
 
       const sceneTitre = scene.titre || `Scène ${sceneId}`;
       const sceneOrdre = scene.ordre || '';
@@ -1116,7 +1115,7 @@ export function usePDFExporter(emits) {
       const colorSand = [242, 217, 160];     // #F2D9A0 - Sand Gold
       const colorLightBg = [250, 247, 242];  // #FAF7F2 - Fond clair
       
-      // ========== PAGE DE GARDE ==========
+      // PAGE DE GARDE
       pdf.setFillColor(255, 255, 255);
       pdf.rect(0, 0, 210, 297, 'F');
       
@@ -1174,7 +1173,7 @@ export function usePDFExporter(emits) {
       pdf.setTextColor(120, 120, 120);
       pdf.text(`Document généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 270, { align: 'center' });
 
-      // ========== PAGES SUIVANTES ==========
+      // PAGES SUIVANTES
       let currentPage = 2;
       let yPosition = 30;
       
@@ -1202,7 +1201,7 @@ export function usePDFExporter(emits) {
       pdf.addPage();
       addPageHeader();
 
-      // ========== PARCOURIR LES RACCORDS ==========
+      // PARCOURIR LES RACCORDS
       for (const [index, raccord] of raccords.entries()) {
         const raccordIndex = index + 1;
         
@@ -1419,7 +1418,7 @@ export function usePDFExporter(emits) {
                   imagesInCurrentRow = 0;
                 }
                 
-                console.log(`✅ Image ${imgIndex + 1} ajoutée (${displayWidth.toFixed(0)}×${displayHeight.toFixed(0)}mm)`);
+                console.log(`Image ${imgIndex + 1} ajoutée (${displayWidth.toFixed(0)}×${displayHeight.toFixed(0)}mm)`);
               }
             } catch (imageError) {
               console.warn(`Erreur image ${imgIndex + 1}:`, imageError);
@@ -1486,7 +1485,7 @@ export function usePDFExporter(emits) {
         }
       }
       
-      // ========== PAGE DE SYNTHÈSE ==========
+      // PAGE DE SYNTHÈSE
       pdf.addPage();
       currentPage++;
       
@@ -1562,7 +1561,7 @@ export function usePDFExporter(emits) {
       pdf.setTextColor(120, 120, 120);
       pdf.text("Document technique à usage interne de la production", 105, lineY + 15, { align: 'center' });
       
-      // ========== PIED DE PAGE SUR TOUTES LES PAGES ==========
+      // PIED DE PAGE SUR TOUTES LES PAGES
       const totalPages = pdf.internal.getNumberOfPages();
       
       for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
@@ -1589,7 +1588,7 @@ export function usePDFExporter(emits) {
         }
       }
       
-      // ========== SAUVEGARDE ==========
+      // SAUVEGARDE
       const safeFileName = `raccords-scene-${sceneOrdre}-${sceneTitre}`
         .toLowerCase()
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
