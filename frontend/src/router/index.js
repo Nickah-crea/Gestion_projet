@@ -10,7 +10,6 @@ import AddProject from '../views/AddProject.vue'
 import ProjetScenaristeView from '../views/ProjetScenariste.vue'
 import AddEpisode from '../views/AddEpisode.vue'
 import EcranTravail from '../components/EcranTravail.vue';
-import Ecran_travail_viewers from '../components/Ecran_travail_viewers.vue';
 import Add_scene_ecran_travail from '../components/Add_scene_ecran_travail.vue';
 import Add_sequence_ecran_travail from '../components/Add_sequence_ecran_travail.vue';
 import Add_dialogue_scene from '../components/Add_dialogue_scene.vue';
@@ -282,11 +281,11 @@ const routes = [
     name: 'profile',
     component: () => import('../components/Profile.vue')
   },
-  {
-    path: '/activities',
-    name: 'activities',
-    component: () => import('../components/Activities.vue')
-  },
+  // {
+  //   path: '/activities',
+  //   name: 'activities',
+  //   component: () => import('../components/Activities.vue')
+  // },
 
   {
     path: '/sidebar/left',
