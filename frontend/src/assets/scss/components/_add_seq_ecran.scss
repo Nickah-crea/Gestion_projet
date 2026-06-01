@@ -17,7 +17,7 @@
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: rgba($color-border, 0.1);
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -31,6 +31,21 @@
   @media (max-width: $breakpoint-lg) {
     display: none;
   }
+  
+  // Style général pour les icônes - BLANC par défaut
+  i {
+    color: $color-text-light !important;
+  }
+  
+  // Exception pour les boutons - garder la couleur marron
+  .sidebar-btn-seq-ecran:not(.active) i {
+    color: $color-primary-dark !important;
+  }
+  
+  // Au survol, tous les boutons mettent leurs icônes en blanc
+  .sidebar-btn-seq-ecran:hover i {
+    color: $color-text-light !important;
+  }
 
   .sidebar-header-seq-ecran {
     margin-bottom: $spacing-md;
@@ -39,33 +54,37 @@
 
     .sidebar-title-seq-ecran {
       @include typography-playfair-h4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle-seq-ecran {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-light;
       margin: 0;
     }
   }
 
   .sidebar-section-seq-ecran {
     margin-bottom: $spacing-md;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important;
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
     .section-title-seq-ecran {
       @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
       align-items: center;
       gap: $gap-xs;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
   }
 
@@ -93,14 +112,23 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
+      
+      i {
+        color: $color-primary !important;
+      }
     }
 
     &.active {
-      background: $color-tertiary-dark;
+      background: $color-accent-dark;
+      border-color: $color-primary;
       color: $color-text-light;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
 
     &:focus-visible {
@@ -119,33 +147,50 @@
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
+    margin-bottom: $gap-sm;
 
     label {
       @include typography-p4;
-      color: $color-text-secondary;
+      color: $color-text-light;
       font-weight: $font-weight-medium;
+      margin-bottom: $gap-xs;
     }
   }
 
+  // Style pour les cartes d'information (épisode parent et projet associé)
   .episode-info-seq-ecran {
     display: flex;
     align-items: center;
     gap: $gap-sm;
-    padding: $gap-xs $padding-xs;
-    background: rgba($color-primary, 0.05);
-    border: 1px solid rgba($color-primary, 0.2);
+    padding: $padding-sm;
+    background: $color-background-alt;
+    border: 1px solid $color-border;
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     color: $color-text-primary;
+    transition: $transition-fast;
     
     i {
-      color: $color-primary;
+      color: $color-primary-dark !important;
       font-size: $font-size-p3;
+      transition: $transition-fast;
     }
     
     span {
       flex: 1;
       @include text-truncate;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+    
+    &:hover {
+      border-color: $color-primary;
+      background: $color-surface-hover;
+      
+      i {
+        color: $color-primary !important;
+        transform: scale(1.05);
+      }
     }
   }
 
@@ -155,26 +200,43 @@
     gap: $gap-sm;
   }
 
-  .stat-item-seq-ecran {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: $padding-sm;
-    background: $color-background-alt;
-    border-radius: $border-radius-xs;
-    border: 1px solid $color-border;
+.stat-item-seq-ecran {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $padding-sm;
+  background: $color-background-alt;
+  border-radius: $border-radius-xs;
+  border: 1px solid $color-border;
+  transition: $transition-fast;
 
-    .stat-number-seq-ecran {
-      @include typography-playfair-h4;
-      color: $color-primary;
-      font-size: calc(#{$font-size-h4} - 4px);
-      font-weight: $font-weight-bold;
-    }
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-1px);
+    box-shadow: $shadow-sm;
+  }
 
-    .stat-label-seq-ecran {
-      @include typography-p4;
-      color: $color-text-muted;
-      text-align: center;
+  .stat-number-seq-ecran {
+    @include typography-playfair-h4;
+    color: $color-primary;
+    font-size: calc(#{$font-size-h4} - 4px);
+    font-weight: $font-weight-bold;
+  }
+
+  .stat-label-seq-ecran {
+    @include typography-p4;
+    color: $color-text-muted;
+    text-align: center;
+  }
+}
+
+  .aide-content-seq-ecran {
+    .aide-text-seq-ecran {
+      @include typography-p5;
+      color: $color-text-light;
+      line-height: 1.5;
+      margin: 0;
+      opacity: 0.9;
     }
   }
 }
@@ -541,15 +603,6 @@
     &:hover {
       transform: none;
     }
-  }
-}
-
-.aide-content-seq-ecran {
-  .aide-text-seq-ecran {
-    @include typography-p5;
-    color: $color-text-muted;
-    line-height: 1.5;
-    margin: 0;
   }
 }
 

@@ -17,7 +17,7 @@
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: rgba($color-border, 0.1);
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -31,6 +31,21 @@
   @media (max-width: $breakpoint-lg) {
     display: none;
   }
+  
+  // Style général pour les icônes - BLANC par défaut
+  i {
+    color: $color-text-light !important;
+  }
+  
+  // Exception pour les boutons Retour - garder la couleur marron
+  .sidebar-btn-ecran:not(.active) i {
+    color: $color-primary-dark !important;
+  }
+  
+  // Au survol, tous les boutons mettent leurs icônes en blanc
+  .sidebar-btn-ecran:hover i {
+    color: $color-text-light !important;
+  }
 
   .sidebar-header-ecran {
     margin-bottom: $spacing-md;
@@ -39,33 +54,37 @@
 
     .sidebar-title-ecran {
       @include typography-playfair-h4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle-ecran {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-light;
       margin: 0;
     }
   }
 
   .sidebar-section-ecran {
     margin-bottom: $spacing-md;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important;
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
     .section-title-ecran {
       @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
       align-items: center;
       gap: $gap-xs;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
   }
 
@@ -93,14 +112,23 @@
     box-sizing: border-box;
 
     &:hover {
-      background: rgba($color-primary, 0.1);
+      background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
+      
+      i {
+        color: $color-primary !important;
+      }
     }
 
     &.active {
-      background: $color-tertiary-dark;
+      background: $color-accent-dark;
+      border-color: $color-primary;
       color: $color-text-light;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
 
     &:focus-visible {
@@ -109,68 +137,51 @@
     }
   }
 
-  .filter-group-ecran {
+  .projet-info-ecran {
     display: flex;
     flex-direction: column;
     gap: $gap-sm;
   }
 
-  .filter-item-ecran {
+  .info-item-ecran {
     display: flex;
-    flex-direction: column;
-    gap: $gap-xs;
+    justify-content: space-between;
+    align-items: center;
+    padding: $padding-xs 0;
+    border-bottom: 1px dashed $color-border;
 
-    label {
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .info-label-ecran {
       @include typography-p4;
-      color: $color-text-secondary;
+      color: $color-text-light;
       font-weight: $font-weight-medium;
     }
-  }
 
-  .filter-select-ecran {
-    width: 100%;
-    height: 34px;
-    padding: 0 $padding-xs;
-    background: $color-background-alt;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    color: $color-text-primary;
-    cursor: pointer;
-    box-sizing: border-box;
-    
-    &:focus {
-      outline: none;
-      border-color: $color-primary;
-    }
-  }
-
-  .stats-ecran {
-    display: flex;
-    flex-direction: column;
-    gap: $gap-sm;
-  }
-
-  .stat-item-ecran {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: $padding-sm;
-    background: $color-background-alt;
-    border-radius: $border-radius-xs;
-    border: 1px solid $color-border;
-
-    .stat-number-ecran {
-      @include typography-playfair-h4;
-      color: $color-primary;
-      font-size: calc(#{$font-size-h4} - 4px);
-      font-weight: $font-weight-bold;
-    }
-
-    .stat-label-ecran {
+    .info-value-ecran {
       @include typography-p4;
-      color: $color-text-muted;
-      text-align: center;
+      color: $color-text-light;
+      font-weight: $font-weight-semibold;
+
+      &.suggestion-highlight-ecran {
+        color: $color-text-light !important;  // Changé: blanc pour la visibilité
+        background: rgba($color-text-light, 0.2);
+        padding: 2px 8px;
+        border-radius: $border-radius-pill;
+        border: 1px solid rgba($color-text-light, 0.3);
+      }
+    }
+  }
+
+  .aide-content-ecran {
+    .aide-text-ecran {
+      @include typography-p5;
+      color: $color-text-light;
+      line-height: 1.5;
+      margin: 0;
+      opacity: 0.9;
     }
   }
 }

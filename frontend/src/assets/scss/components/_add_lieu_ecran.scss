@@ -6,7 +6,7 @@
 }
 
 // =============================================
-// SIDEBAR LATÉRALE
+// SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
 .creation-sidebar-crea-lieu-ecran {
   position: fixed;
@@ -17,7 +17,7 @@
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: rgba($color-border, 0.1);
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -31,6 +31,21 @@
   @media (max-width: $breakpoint-lg) {
     display: none;
   }
+  
+  // Style général pour les icônes - BLANC par défaut
+  i {
+    color: $color-text-light !important;
+  }
+  
+  // Exception pour les boutons - garder la couleur marron
+  .sidebar-btn-crea-lieu-ecran:not(.active) i {
+    color: $color-primary-dark !important;
+  }
+  
+  // Au survol, tous les boutons mettent leurs icônes en blanc
+  .sidebar-btn-crea-lieu-ecran:hover i {
+    color: $color-text-light !important;
+  }
 
   .sidebar-header-crea-lieu-ecran {
     margin-bottom: $spacing-md;
@@ -39,33 +54,37 @@
 
     .sidebar-title-crea-lieu-ecran {
       @include typography-playfair-h4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin: 0 0 $gap-xs 0;
       font-size: calc(#{$font-size-h4} - 2px);
     }
 
     .sidebar-subtitle-crea-lieu-ecran {
       @include typography-p4;
-      color: $color-text-muted;
+      color: $color-text-light;
       margin: 0;
     }
   }
 
   .sidebar-section-crea-lieu-ecran {
     margin-bottom: $spacing-md;
-    background: $color-background-alt;
+    background: rgba($color-text-light, 0.1) !important;
     border-radius: $border-radius-xs;
     padding: $padding-sm;
     box-shadow: $shadow-hover;
 
     .section-title-crea-lieu-ecran {
       @include typography-p4;
-      color: $color-text-primary;
+      color: $color-text-light;
       margin-bottom: $gap-sm;
       font-size: calc(#{$font-size-p4} + 1px);
       display: flex;
       align-items: center;
       gap: $gap-xs;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
   }
 
@@ -96,11 +115,20 @@
       background: $color-surface-hover;
       border-color: $color-primary;
       color: $color-primary;
+      
+      i {
+        color: $color-primary !important;
+      }
     }
 
     &.active {
-      background: $color-tertiary-dark;
+      background: $color-accent-dark;
+      border-color: $color-primary;
       color: $color-text-light;
+      
+      i {
+        color: $color-text-light !important;
+      }
     }
 
     &:focus-visible {
@@ -119,30 +147,13 @@
     display: flex;
     flex-direction: column;
     gap: $gap-xs;
+    margin-bottom: $gap-sm;
 
     label {
       @include typography-p4;
-      color: $color-text-secondary;
+      color: $color-text-light;
       font-weight: $font-weight-medium;
-    }
-  }
-
-  .filter-select-crea-lieu-ecran {
-    width: 100%;
-    height: 36px;
-    padding: 0 $padding-sm;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-xs;
-    font-size: $font-size-p4;
-    color: $color-text-primary;
-    background: $color-background-alt;
-    transition: $transition-fast;
-    box-sizing: border-box;
-
-    &:focus {
-      outline: none;
-      border-color: $color-primary;
-      box-shadow: 0 0 0 2px $color-pastel-gold;
+      margin-bottom: $gap-xs;
     }
   }
 
@@ -160,6 +171,13 @@
     background: $color-background-alt;
     border-radius: $border-radius-xs;
     border: 1px solid $color-border;
+    transition: $transition-fast;
+
+    &:hover {
+      border-color: $color-primary;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
 
     .stat-number-crea-lieu-ecran {
       @include typography-playfair-h4;
@@ -172,6 +190,54 @@
       @include typography-p4;
       color: $color-text-muted;
       text-align: center;
+    }
+  }
+
+  .projet-info-ecran {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-sm;
+  }
+
+  .info-item-ecran {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $padding-xs 0;
+    border-bottom: 1px dashed $color-border;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .info-label-ecran {
+      @include typography-p4;
+      color: $color-text-light;
+      font-weight: $font-weight-medium;
+    }
+
+    .info-value-ecran {
+      @include typography-p4;
+      color: $color-text-light;
+      font-weight: $font-weight-semibold;
+
+      &.suggestion-highlight-ecran {
+        color: $color-text-light;
+        background: rgba($color-text-light, 0.2);
+        padding: 2px 8px;
+        border-radius: $border-radius-pill;
+        border: 1px solid rgba($color-text-light, 0.3);
+      }
+    }
+  }
+
+  .aide-content-ecran {
+    .aide-text-ecran {
+      @include typography-p5;
+      color: $color-text-light;
+      line-height: 1.5;
+      margin: 0;
+      opacity: 0.9;
     }
   }
 }
@@ -365,7 +431,7 @@
     }
   }
 
-  // Ajoutez ce style pour les champs de formulaire standards
+  // Style pour les champs de formulaire standards
   input[type="text"],
   input[type="email"],
   input[type="number"],
@@ -384,15 +450,15 @@
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 2px $color-pastel-gold;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
 
     &:hover {
-      border-color: $color-border-dark;
+      border-color: rgba($color-primary, 0.5);
     }
   }
 
-  // Style spécifique pour le champ de recherche (garder le style existant)
+  // Style spécifique pour le champ de recherche
   .search-input-crea-lieu-ecran {
     width: 100%;
     height: 42px;
@@ -408,7 +474,7 @@
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 2px $color-pastel-gold;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
   }
 }
@@ -434,7 +500,7 @@
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 2px $color-pastel-gold;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
     }
   }
 
@@ -461,7 +527,7 @@
     border-bottom: 1px solid $color-border;
 
     &:hover {
-      background: $color-surface-hover;
+      background: rgba($color-primary, 0.1);
     }
 
     &.clear-filter {
@@ -571,7 +637,7 @@
     color: $color-text-secondary;
 
     &:hover:not(:disabled) {
-      background: $color-surface-hover;
+      background: rgba($color-primary, 0.1);
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -582,7 +648,7 @@
     color: $color-text-light;
 
     &:hover:not(:disabled) {
-      background: $color-primary-dark;
+      background: darken($color-primary, 10%);
       transform: translateY(-1px);
       box-shadow: $shadow-hover;
     }
@@ -659,7 +725,7 @@
       &:focus {
         outline: none;
         border-color: $color-primary;
-        box-shadow: 0 0 0 2px $color-pastel-gold;
+        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
       }
 
       @media (max-width: $breakpoint-sm) {
@@ -1080,7 +1146,7 @@
     color: $color-text-secondary;
 
     &:hover {
-      background: $color-surface-hover;
+      background: rgba($color-primary, 0.1);
       border-color: $color-primary;
       color: $color-primary;
     }
@@ -1167,6 +1233,7 @@
     animation: none;
   }
 }
+
 .form-input-disabled-ecran {
   width: 100%;
   height: 42px;
@@ -1198,7 +1265,7 @@
   gap: $gap-xs;
 
   &:hover {
-    background: $color-primary-dark;
+    background: darken($color-primary, 10%);
     transform: translateY(-1px);
   }
 }
