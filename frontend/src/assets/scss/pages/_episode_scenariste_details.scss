@@ -1,4 +1,3 @@
-// _episode_scenariste_details.scss – Version simplifiée qui réutilise les styles de _acceuil.scss
 @import '../base/variables';
 
 .episode-scenariste-details-page {
@@ -9,18 +8,18 @@
   }
 
   // =============================================
-  // SIDEBAR LATÉRALE FIXE - RÉUTILISATION DES STYLES DE _projet_scenariste.scss
+  // SIDEBAR LATÉRALE FIXE 
   // =============================================
  .creation-sidebar-projet-scenariste {
  position: fixed;
-  top: 60px; // 50px de marge en haut
+  top: 60px; 
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px); 
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // <-- CHANGÉ: couleur principale
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -223,7 +222,7 @@
   }
 
   // =============================================
-  // DÉTAILS DE L'ÉPISODE - STYLE IDENTIQUE À PROJET
+  // DÉTAILS DE L'ÉPISODE 
   // =============================================
   .project-details-spiral-Scenariste {
     background: $color-primary;
@@ -387,7 +386,7 @@
 }
 
   // =============================================
-  // COMMENTAIRES - STYLE SPÉCIFIQUE POUR L'ÉPISODE
+  // COMMENTAIRES 
   // =============================================
   .comment-section {
     background: $color-primary-light;
@@ -554,7 +553,6 @@
   // .suggestion-text
   // .suggestion-btn-projet-scenariste
   
-  // Utilisez ces classes comme dans Scenariste_accueil.vue
 
   // =============================================
   // MESSAGES D'ERREUR ET NOTIFICATIONS
@@ -721,9 +719,9 @@
   }
 }
 
-// Ajoutez à la fin de _episode_scenariste_details.scss
+
 // =============================================
-// MODALE AJOUTER SÉQUENCE - STYLES RESPONSIVE
+// MODALE AJOUTER SÉQUENCE
 // =============================================
 
 .add-sequence-modal {

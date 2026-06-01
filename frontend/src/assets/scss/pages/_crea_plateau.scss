@@ -52,7 +52,7 @@
 
   .sidebar-header-crea-plateau {
     margin-bottom: $spacing-md;
-    border-bottom: 1px solid $color-border; // Changé: bordure dorée
+    border-bottom: 1px solid $color-border; 
     padding-bottom: $spacing-sm;
 
     .sidebar-title-crea-plateau {
@@ -128,7 +128,7 @@
   }
 
     &:focus-visible {
-      outline: 2px solid $color-primary; // Changé: doré
+      outline: 2px solid $color-primary; 
       outline-offset: 1px;
     }
   }
@@ -207,7 +207,7 @@
   flex: 1;
   margin-left: 280px;
   min-height: 100vh;
-  background: none; /* Ajouté pour cohérence */
+  background: none; 
 }
 
 .creation-main-content-crea-plateau {
@@ -413,7 +413,7 @@
     grid-column: 1 / -1;
   }
   
-  // Ajoutez ce style pour les champs de formulaire standards comme dans _crea_lieu.scss
+  
   input[type="text"],
   input[type="email"],
   input[type="number"],
@@ -582,7 +582,7 @@
   border-top: 1px solid $color-border;
 
   @media (max-width: $breakpoint-md) {
-    flex-direction: column; /* Ajouté pour cohérence */
+    flex-direction: column; 
   }
 
   .submit-btn-crea-plateau {
@@ -602,8 +602,8 @@
     color: $color-text-light;
 
     @media (max-width: $breakpoint-md) {
-      min-width: auto; /* Ajouté pour cohérence */
-      width: 100%; /* Ajouté pour cohérence */
+      min-width: auto; 
+      width: 100%;
     }
 
     &:hover:not(:disabled) {
@@ -626,8 +626,8 @@
 
   .cancel-btn-crea-plateau {
     padding: $gap-sm $spacing-md;
-    background: transparent; /* Modifié de $color-error à transparent */
-    border: 1px solid $color-border; /* Ajouté pour cohérence */
+    background: transparent; 
+    border: 1px solid $color-border; 
     border-radius: $border-radius-xs;
     font-size: $font-size-p4;
     font-weight: $font-weight-semibold;
@@ -636,12 +636,12 @@
     display: flex;
     align-items: center;
     gap: $gap-xs;
-    color: $color-text-secondary; /* Modifié pour cohérence */
+    color: $color-text-secondary; 
 
     &:hover {
-      background: $color-surface-hover; /* Modifié pour cohérence */
-      border-color: $color-primary; /* Ajouté pour cohérence */
-      color: $color-primary; /* Ajouté pour cohérence */
+      background: $color-surface-hover;
+      border-color: $color-primary; 
+      color: $color-primary; 
     }
   }
 }
@@ -703,7 +703,7 @@
       height: 42px;
       padding: 0 $padding-md 0 ($padding-md + $padding-xs);
       border: 1px solid $color-border;
-      border-radius: $border-radius-xs; /* Modifié de $border-radius-pill à $border-radius-xs */
+      border-radius: $border-radius-xs; 
       background: $color-background-alt;
       font-size: $font-size-p3;
       color: $color-text-primary;
@@ -838,7 +838,7 @@
     transition: $transition-fast;
 
     &:hover {
-      transform: scale(1.1); /* Ajouté pour cohérence */
+      transform: scale(1.1); 
     }
   }
 
@@ -879,7 +879,7 @@
   @include typography-p4;
   color: $color-text-secondary;
   display: flex;
-  align-items: center; /* Modifié de flex-start à center pour cohérence */
+  align-items: center; 
   gap: $gap-xs;
 
   i {
@@ -992,7 +992,7 @@
   .sidebar-btn-crea-plateau,
   .search-input-crea-plateau,
   .submit-btn-crea-plateau,
-  .cancel-btn-crea-plateau, /* Ajouté pour cohérence */
+  .cancel-btn-crea-plateau, 
   .tab-btn-crea-plateau,
   .tab-indicator-crea-plateau,
   .plateau-card-crea-plateau,

@@ -1,4 +1,3 @@
-// _sequence_scenariste_details.scss – Version qui réutilise les styles de _episode_scenariste_details.scss
 @import '../base/variables';
 
 .sequence-scenariste-details-page {
@@ -13,14 +12,14 @@
   // =============================================
  .creation-sidebar-projet-scenariste {
   position: fixed;
-  top: 60px; // 50px de marge en haut
+  top: 60px; 
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px); 
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // <-- CHANGÉ: couleur principale
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -391,7 +390,7 @@
   }
 
   // =============================================
-  // COMMENTAIRES - MÊME STYLE QUE ÉPISODE
+  // COMMENTAIRES 
   // =============================================
   .comment-section {
    background: $color-primary-light;
@@ -502,7 +501,7 @@
   }
 
   // =============================================
-  // SECTION SCÈNES - MÊME STYLE QUE SÉQUENCES
+  // SECTION SCÈNES 
   // =============================================
   .episodes-section-projet-scenariste {
     margin: 0 0 $spacing-lg 0;
@@ -528,7 +527,7 @@
   }
 
   // =============================================
-  // MODALE SYNOPSIS - STYLE SPÉCIFIQUE
+  // MODALE SYNOPSIS
   // =============================================
   .synopsis-modal {
     max-width: 600px;
@@ -936,7 +935,7 @@
 }
 
 // =============================================
-// MODALE D'AJOUT DE LIEU - STYLES AMÉLIORÉS
+// MODALE D'AJOUT DE LIEU 
 // =============================================
 .edit-project-modal-Scenariste {
   &.lieu-modal {

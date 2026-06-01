@@ -2,9 +2,7 @@
 @import '../pages/acceuil';
 @import '../pages/crea_comedien';
 
-// =============================================
-// WRAPPER GLOBAL
-// =============================================
+
 .app-wrapper-global {
   display: flex;
   min-height: 100vh;
@@ -848,16 +846,16 @@ position: fixed;
 
 .modal-footer-confirm-Scenariste {
   display: flex;
-  gap: $gap-sm; // Espacement réduit
-  padding: $padding-md $padding-lg; // Padding réduit
+  gap: $gap-sm; 
+  padding: $padding-md $padding-lg; 
   border-top: 1px solid $color-border;
   
   button {
     flex: 1;
-    padding: 8px 16px; // Taille très compacte
-    border-radius: $border-radius-xs; // Rayon plus petit
+    padding: 8px 16px; 
+    border-radius: $border-radius-xs; 
     font-weight: $font-weight-semibold;
-    font-size: $font-size-p4; // Texte encore plus petit
+    font-size: $font-size-p4; 
     cursor: pointer;
     transition: $transition;
     display: flex;
@@ -865,7 +863,7 @@ position: fixed;
     justify-content: center;
     gap: 6px;
     border: none;
-    height: 36px; // Hauteur compacte
+    height: 36px; 
     
     &:disabled {
       opacity: 0.6;
@@ -909,7 +907,7 @@ position: fixed;
 
 
 // =============================================
-// NOTIFICATIONS - MÊME STYLE QUE PROFIL.VUE
+// NOTIFICATIONS 
 // =============================================
 
 .message-crea-profile {
@@ -993,27 +991,27 @@ position: fixed;
     box-shadow: $shadow-xl;
     width: 90%;
     max-width: 800px;
-    max-height: 90vh; // Limite la hauteur maximale
-    overflow-y: auto; // Ajoute le défilement si nécessaire
+    max-height: 90vh; 
+    overflow-y: auto; 
     display: flex;
     flex-direction: column;
     
     .modal-body-Scenariste {
       flex: 1;
-      overflow-y: auto; // Défilement pour le contenu
+      overflow-y: auto; 
       margin-bottom: $margin-lg;
-      padding-right: $padding-sm; // Espace pour la scrollbar
+      padding-right: $padding-sm; 
       
-      // Styles spécifiques pour l'édition d'épisode
+      
       &.episode-edit-modal {
-        min-height: 300px; // Hauteur minimale
-        max-height: 400px; // Hauteur maximale ajustée
+        min-height: 300px; 
+        max-height: 400px;
       }
     }
     
     .modal-footer-Scenariste {
-      flex-shrink: 0; // Empêche le footer de rétrécir
-      margin-top: auto; // Pousse le footer vers le bas
+      flex-shrink: 0; 
+      margin-top: auto; 
     }
   }
 }
@@ -1043,8 +1041,8 @@ position: fixed;
   margin-bottom: $margin-md;
   font-size: $font-size-p3;
   border-left: 3px solid $color-error;
-  word-wrap: break-word; // Force le retour à la ligne
-  overflow-wrap: break-word; // Alternative pour compatibilité
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
 }
 
 .order-error {
@@ -1054,7 +1052,6 @@ position: fixed;
   font-weight: $font-weight-medium;
 }
 
-// Style pour les champs en erreur
 .error-input {
   border-color: $color-error !important;
   background-color: rgba($color-error, 0.05) !important;
@@ -1150,8 +1147,7 @@ position: fixed;
 .modal-footer-Scenariste,
 .cancel-btn-Scenariste,
 .save-btn-Scenariste {
-  // Ces classes sont définies dans _acceuil.scss
-  // Elles sont utilisées ici pour assurer la cohérence du design
+ 
 }
 
 // =============================================

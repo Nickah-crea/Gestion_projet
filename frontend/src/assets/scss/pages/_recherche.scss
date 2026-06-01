@@ -1,9 +1,5 @@
-// _recherche.scss – Version avec sidebar et design cohérent pour la recherche multiple
 @import '../base/variables';
 
-// =============================================
-// WRAPPER GLOBAL (identique)
-// =============================================
 .app-wrapper-global {
   display: flex;
   min-height: 100vh;
@@ -11,18 +7,18 @@
 }
 
 // =============================================
-// SIDEBAR LATÉRALE FIXE À GAUCHE - STYLE IDENTIQUE
+// SIDEBAR LATÉRALE FIXE À GAUCHE
 // =============================================
 .search-sidebar-recherche {
   position: fixed;
-  top: 60px; // 50px de marge en haut
+  top: 60px; 
   left: 0;
   width: 280px;
-  height: calc(100vh - 50px); // Hauteur ajustée pour tenir compte du top
+  height: calc(100vh - 50px); 
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // <-- CHANGÉ: couleur principale
+  background: $color-primary;
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
@@ -311,7 +307,7 @@
 }
 
 // =============================================
-// CONTENU PRINCIPAL À DROITE (identique)
+// CONTENU PRINCIPAL À DROITE
 // =============================================
 .search-body-recherche {
   flex: 1;
@@ -366,7 +362,7 @@
   flex: 1;
   height: 55px;
   padding: 0 $padding-lg;
-  padding-right: 100px; // Espace pour les boutons
+  padding-right: 100px; 
   border: 2px solid $color-border;
   border-radius: 150px;
   font-size: $font-size-p2;
@@ -557,7 +553,7 @@
 }
 
 // =============================================
-// GRILLE DE RÉSULTATS - STYLE IDENTIQUE À L'ACCUEIL
+// GRILLE DE RÉSULTATS 
 // =============================================
 .projects-library-Scenariste {
   display: grid;
@@ -566,7 +562,7 @@
   padding: $padding-lg 0;
 }
 
-// Carte de résultat - STYLE IDENTIQUE À L'ACCUEIL
+// Carte de résultat 
 .movie-card-Scenariste {
   background: $color-background-alt;
   border-radius: $border-radius-xs;
@@ -576,7 +572,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 350px; // Hauteur ajustée pour contenir plus d'infos
+  height: 350px; 
   padding: $padding-lg;
   animation: slide-in 0.5s ease-out forwards;
   animation-delay: calc(var(--index, 1) * 0.1s);
@@ -590,7 +586,6 @@
     border-color: $color-primary;
   }
 
-  // Styles spécifiques par type de résultat
   &.type-scene {
     border-top: 3px solid rgba($color-scene, 0.5);
     
@@ -933,7 +928,7 @@
 }
 
 // =============================================
-// BOUTONS CARTES - STYLES IDENTIQUES À L'ACCUEIL
+// BOUTONS CARTES 
 // =============================================
 
 .action-btn-Scenariste {
@@ -976,7 +971,6 @@
   }
 }
 
-// Bouton Détails - Style Accent Dark (identique)
 .action-btn-Scenariste.accent-btn {
   background: none;
   border: 1.5px solid $color-accent-dark !important;
@@ -990,7 +984,7 @@
   }
 }
 
-// Bouton Voir plus - Style Primary (identique)
+
 .action-btn-Scenariste.primary-btn {
   background: $color-primary !important;
   border: none;
@@ -1325,8 +1319,6 @@
   }
 }
 
-
-// Ajoutez ces styles à votre fichier _recherche.scss
 
 // =============================================
 // SECTION EN-TÊTE AVEC BARRE DE RECHERCHE

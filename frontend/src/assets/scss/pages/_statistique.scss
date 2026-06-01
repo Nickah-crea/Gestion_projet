@@ -1,4 +1,3 @@
-// _stats.scss – Version cohérente avec projetScenariste
 @import '../base/variables';
 @import '../pages/acceuil';
 
@@ -12,7 +11,7 @@
 }
 
 // =============================================
-// SIDEBAR LATÉRALE FIXE À GAUCHE - Style ProjetScenariste
+// SIDEBAR LATÉRALE FIXE À GAUCHE 
 // =============================================
 .creation-sidebar-stats-admin {
   position: fixed;
@@ -23,7 +22,7 @@
   z-index: $z-index-fixed - 1;
   overflow-y: auto;
   padding: $padding-lg;
-  background: $color-primary; // Même couleur que ProjetScenariste
+  background: $color-primary; 
   box-sizing: border-box;
   border: none !important;
   box-shadow: $shadow-accent;
