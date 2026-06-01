@@ -134,12 +134,7 @@ const routes = [
     component: EcranTravail,
     props: true,
   },
-  {
-    path: '/projet/:idProjet/ecran-travail-viewers',
-    name: 'Ecran_travail_viewers',
-    component: Ecran_travail_viewers,
-    props: true,
-  },
+ 
   {
     path: '/sequence/:sequenceId/add-scene-ecran-travail',
     name: 'Add_scene_ecran_travail',
