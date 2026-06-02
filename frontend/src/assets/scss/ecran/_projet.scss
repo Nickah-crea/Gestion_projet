@@ -6,7 +6,7 @@
   padding: $padding-xl $padding-lg;
   min-height: 100vh;
   box-sizing: border-box;
-  margin-top: 60px; // Hauteur du header fixe
+  margin-top: 60px; 
   width: 100%;
   position: relative;
 }
@@ -14,8 +14,8 @@
 // ==================== CONTENEUR DU PROJET - CORRECTION IMPORTANTE ====================
 
 .project-view-screen-work {
-  max-width: 1400px; // Même largeur que le header
-  min-width: 800px; // IMPORTANT: largeur minimale pour éviter le rétrécissement
+  max-width: 1400px; 
+  min-width: 800px; 
   width: 100%;
   margin: 0 auto;
   background: $color-background;
@@ -82,11 +82,9 @@
   width: 100%;
   box-sizing: border-box;
   
-  // Assurer que le contenu ne rétrécit pas
-  min-width: 0; // Important pour flex
+  min-width: 0;
 }
 
-// Le synopsis doit toujours prendre toute la largeur
 .synopsis-text-screen-work {
   @include typography-p1;
   color: $color-text-secondary;
@@ -99,12 +97,10 @@
   width: 100%;
   box-sizing: border-box;
   
-  // Même pour un texte court, garder la largeur
   display: block;
-  min-height: 120px; // Hauteur minimale pour éviter le rétrécissement
+  min-height: 120px;
 }
 
-// ==================== ANIMATION ====================
 
 @keyframes content-appear {
   from {
@@ -146,7 +142,7 @@
   line-height: 1.2;
   letter-spacing: -0.3px;
   flex: 1;
-  min-width: 0; // Pour le text-overflow
+  min-width: 0; 
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -169,7 +165,7 @@
   min-width: 100px;
   justify-content: center;
   height: fit-content;
-  flex-shrink: 0; // Empêche le rétrécissement
+  flex-shrink: 0; 
 }
 
 // ==================== STATISTIQUES ====================
@@ -199,7 +195,7 @@
   line-height: normal;
   border: none;
   box-shadow: none;
-  min-width: 0; // Important pour flex
+  min-width: 0; 
   
   &:hover {
     background: rgba($color-border, 0.2);
@@ -284,7 +280,6 @@
   }
 }
 
-// Section Synopsis avec bouton de modification
 .project-details-view-screen-work {
   margin-bottom: $margin-xl;
   background: $color-primary-light;
@@ -351,7 +346,6 @@
   width: 100%;
 }
 
-// Actions supplémentaires (Ajouter un épisode)
 .project-actions-view-screen-work {
   display: flex;
   gap: $gap-lg;
@@ -410,12 +404,10 @@
     }
   }
   
-  // Ajustement des min-width sur tablette
   .project-view-screen-work {
     min-width: 700px;
   }
   
-  // Responsive général
   .project-stats-view-screen-work {
     gap: $gap-sm;
   }
@@ -614,12 +606,9 @@
   }
 }
 
-// ==================== SOLUTION ALTERNATIVE : DISPLAY GRID ====================
-// Si le flex ne fonctionne pas bien, essaie cette version grid
-
 .project-view-screen-work.grid-version {
   display: grid;
-  grid-template-columns: 1fr; // Une seule colonne qui prend toute la largeur
+  grid-template-columns: 1fr; 
   width: 100%;
   
   > * {
@@ -629,6 +618,6 @@
 }
 
 .synopsis-text-screen-work {
-  max-width: 1000px;   // largeur maximale
-  margin: 0 auto;      // centré si besoin
+  max-width: 1000px;   
+  margin: 0 auto;     
 }

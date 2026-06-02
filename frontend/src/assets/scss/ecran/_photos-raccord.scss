@@ -10,10 +10,6 @@
 // =============================================
 // BOUTON D'OUVERTURE DU MODAL
 // =============================================
-// =============================================
-// STYLE SPÉCIFIQUE POUR .btn-open-raccords-raccord-photo
-// =============================================
-
 
 .btn-open-raccords-raccord-photo {
   @include nav-button-base;
@@ -40,9 +36,6 @@
   }
 }
 
-// =============================================
-// RESPONSIVE POUR .btn-open-raccords-raccord-photo
-// =============================================
 
 // Tablette (max-width: 1200px)
 @media (max-width: $breakpoint-xl) {

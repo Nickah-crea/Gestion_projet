@@ -1,9 +1,5 @@
-// _scene_tournage.scss – Style pour la section tournage d'une scène
 @import '../base/variables';
 
-// =============================================
-// SECTION TOURNAGE - LARGEUR COMPLÈTE
-// =============================================
 .tournage-section {
   background: $color-background-alt;
   border-radius: $border-radius;
@@ -15,9 +11,6 @@
   max-width: 100%;
 }
 
-// ────────────────────────────────────────────────
-// En-tête de section
-// ────────────────────────────────────────────────
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -43,7 +36,6 @@
   }
 }
 
-// Indicateur de statut
 .statut-indicator {
   @include typography-p4;
   padding: 6px 16px;
@@ -83,16 +75,12 @@
   }
 }
 
-// Conteneur du statut à droite
 .statut-container {
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
-// ────────────────────────────────────────────────
-// Ligne des boutons d'action - STYLES CORRIGÉS
-// ────────────────────────────────────────────────
 .action-buttons-row {
   margin: $margin-md 0 $margin-lg 0;
   border-top: 1px solid rgba($color-border, 0.2);
@@ -444,9 +432,6 @@
   }
 }
 
-// ────────────────────────────────────────────────
-// Modal
-// ────────────────────────────────────────────────
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -520,9 +505,6 @@
   }
 }
 
-// ────────────────────────────────────────────────
-// Formulaire tournage
-// ────────────────────────────────────────────────
 .tournage-form {
   padding: $padding-xl;
 }
@@ -609,9 +591,6 @@
   }
 }
 
-// ────────────────────────────────────────────────
-// Message d'erreur
-// ────────────────────────────────────────────────
 .error-message {
   @include typography-p3;
   color: $color-error;
@@ -629,9 +608,6 @@
   }
 }
 
-// ────────────────────────────────────────────────
-// Actions modal
-// ────────────────────────────────────────────────
 .modal-actions {
   display: flex;
   gap: $gap-md;
@@ -682,9 +658,6 @@
   }
 }
 
-// ────────────────────────────────────────────────
-// Responsive
-// ────────────────────────────────────────────────
 @media (max-width: $breakpoint-lg) {
   .section-header {
     flex-direction: column;
@@ -874,7 +847,6 @@
   }
 }
 
-// Assurer que tous les éléments prennent toute la largeur
 .tournage-section * {
   box-sizing: border-box;
 }

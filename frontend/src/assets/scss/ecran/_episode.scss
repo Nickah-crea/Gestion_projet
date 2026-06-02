@@ -1,13 +1,7 @@
-// _episode.scss – Style pour la vue épisode ALIGNÉE AVEC VUE PROJET
 @import '../base/variables';
 
-// =============================================
-// VUE ÉPISODE PRINCIPALE - STRUCTURE IDENTIQUE AU PROJET
-// =============================================
-
-// Conteneur principal identique à .project-view-screen-work
 .episode-view-container-screen-work {
-  width: 1100px;  // Garde le max-width
+  width: 1100px;  
   margin: 0 auto;
   background: $color-background;
   border-radius: $border-radius-lg;
@@ -18,12 +12,12 @@
 }
 
 .main-content-view-screen-work {
-  width: 100%;        // Assure-toi que c'est 100%
-  display: block;     // Pas flex/inline
+  width: 100%;        
+  display: block;   
 }
 
 // ────────────────────────────────────────────────
-// En-tête de l'épisode (identique structure projet)
+// En-tête de l'épisode 
 // ────────────────────────────────────────────────
 .episode-header-view-screen-work {
   display: flex;
@@ -105,7 +99,7 @@
 }
 
 // ────────────────────────────────────────────────
-// Statistiques HORIZONTALES - Identique au projet
+// Statistiques HORIZONTALES 
 // ────────────────────────────────────────────────
 .episode-stats-view-screen-work {
   display: flex;
@@ -118,7 +112,6 @@
   min-height: auto;
 }
 
-// Réutilisation des styles de stat-card du projet
 .stat-card-screen-work {
   flex: 1;
   display: flex;
@@ -256,9 +249,6 @@
   }
 }
 
-// ────────────────────────────────────────────────
-// Section détails épisode (structure projet)
-// ────────────────────────────────────────────────
 .episode-details-view-screen-work {
   margin-bottom: $margin-xl;
   background: $color-background-alt;
@@ -537,7 +527,7 @@
 }
 
 // ────────────────────────────────────────────────
-// Section Commentaires (optionnelle)
+// Section Commentaires 
 // ────────────────────────────────────────────────
 .comment-section-screen-work {
   margin-top: $margin-lg;
@@ -638,7 +628,7 @@
 }
 
 // ────────────────────────────────────────────────
-// Actions supplémentaires (style projet)
+// Actions supplémentaires
 // ────────────────────────────────────────────────
 .episode-actions-view-screen-work {
   display: flex;
@@ -797,9 +787,6 @@
   }
 }
 
-// ────────────────────────────────────────────────
-// Responsive (identique au projet)
-// ────────────────────────────────────────────────
 @media (max-width: $breakpoint-lg) {
   .episode-view-container-screen-work {
     padding: $padding-lg;
@@ -929,7 +916,6 @@
   }
 }
 
-// Amélioration de l'accessibilité
 @media (prefers-reduced-motion: reduce) {
   .episode-actions-bar-screen-work button,
   .stat-card-screen-work,
@@ -945,9 +931,6 @@
 }
 
 
-// =============================================
-// EN-TÊTE ÉPISODE RÉORGANISÉ
-// =============================================
 .episode-header-view-screen-work {
   display: flex;
   justify-content: space-between;
@@ -1064,9 +1047,6 @@
   }
 }
 
-// =============================================
-// RESPONSIVE POUR L'EN-TÊTE
-// =============================================
 @media (max-width: $breakpoint-lg) {
   .episode-header-right-screen-work {
     gap: $gap-sm;
@@ -1111,12 +1091,9 @@
   }
 }
 
-// =============================================
-// BARRE D'ACTIONS ALIGNÉE À DROITE
-// =============================================
 .episode-actions-bar-screen-work {
   display: flex;
-  justify-content: flex-end; // Aligne tout à droite
+  justify-content: flex-end; 
   margin: $margin-lg 0;
   padding: 0;
   background: transparent;

@@ -21,7 +21,6 @@
   transition: $transition;
 }
 
-/* Sections de la navbar */
 .navbar-left-section,
 .navbar-center-section,
 .navbar-right-section {
@@ -30,7 +29,6 @@
   gap: $gap-md;
 }
 
-/* Titre de la navbar */
 .navbar-title {
   display: flex;
   align-items: center;
@@ -46,7 +44,6 @@
   }
 }
 
-/* Permission notice */
 .navbar-permission-notice {
   display: flex;
   align-items: center;
