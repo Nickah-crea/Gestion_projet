@@ -266,7 +266,7 @@
 }
 
 // =============================================
-// CONTENU PRINCIPAL À DROITE
+// CONTENU PRINCIPAL À DROITE - STYLE STANDARD (AddScene.vue)
 // =============================================
 .creation-body-add-scene {
   flex: 1;
@@ -282,7 +282,7 @@
 }
 
 // =============================================
-// SYSTÈME D'ONGLETS
+// SYSTÈME D'ONGLETS (Standard)
 // =============================================
 .tabs-container-add-scene {
   background: $color-background-alt;
@@ -361,7 +361,7 @@
 }
 
 // =============================================
-// FORMULAIRE DE CRÉATION/MODIFICATION
+// FORMULAIRE STANDARD (AddScene.vue)
 // =============================================
 .form-container-add-scene {
   background: transparent;
@@ -371,7 +371,6 @@
   margin-bottom: 0;
 }
 
-// EN-TÊTE DU FORMULAIRE
 .tab-pane-add-scene .form-header-add-scene {
   display: flex;
   justify-content: space-between;
@@ -484,9 +483,7 @@
   }
 }
 
-// =============================================
-// AFFICHAGE DE LA SÉQUENCE PARENTE
-// =============================================
+// AFFICHAGE DE LA SÉQUENCE PARENTE (Standard)
 .sequence-display-add-scene {
   .sequence-display-content-add-scene {
     display: flex;
@@ -511,9 +508,7 @@
   }
 }
 
-// =============================================
-// MESSAGES D'ERREUR ET SUGGESTIONS
-// =============================================
+// MESSAGES D'ERREUR ET SUGGESTIONS (Standard)
 .error-text-add-scene {
   @include typography-p4;
   color: $color-error;
@@ -563,9 +558,7 @@
   gap: $gap-xs;
 }
 
-// =============================================
-// ACTIONS DU FORMULAIRE
-// =============================================
+// ACTIONS DU FORMULAIRE (Standard)
 .form-actions-add-scene {
   display: flex;
   gap: $spacing-sm;
@@ -639,7 +632,312 @@
 }
 
 // =============================================
-// RESPONSIVE
+// FORMULAIRE ÉCRAN DE TRAVAIL (Add_scene_ecran_travail.vue)
+// Style identique à _add-ep_ecran.scss
+// =============================================
+.creation-body-add-scene-ecran {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  background: none;
+}
+
+.creation-main-content-add-scene-ecran {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.form-container-add-scene-ecran {
+  background: $color-background-alt;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.form-header-add-scene-ecran {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h2 {
+    @include typography-playfair-h3;
+    color: $color-text-primary;
+    font-size: calc(#{$font-size-h3} - 4px);
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin: 0;
+  }
+
+  .back-btn-add-scene-ecran {
+    padding: $gap-xs $padding-sm;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &:hover {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}
+
+.scene-form-add-scene-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row-add-scene-ecran {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group-add-scene-ecran {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+
+  label {
+    @include typography-p4;
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $gap-xs;
+
+    &::after {
+      content: '*';
+      color: $color-error;
+      margin-left: 2px;
+    }
+
+    &:not([for*="*"])::after {
+      content: '';
+    }
+  }
+
+  .form-input-add-scene-ecran,
+  .form-select-add-scene-ecran,
+  .form-textarea-add-scene-ecran {
+    width: 100%;
+    padding: $gap-sm $padding-sm;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    color: $color-text-primary;
+    background: $color-background-alt;
+    transition: $transition-fast;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+
+    &:hover {
+      border-color: rgba($color-primary, 0.5);
+    }
+
+    &:disabled {
+      background: $color-background;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  .form-input-add-scene-ecran {
+    height: 42px;
+    
+    &.error-input {
+      border-color: $color-error;
+      background: rgba($color-error, 0.05);
+    }
+  }
+
+  .form-select-add-scene-ecran {
+    height: 42px;
+    cursor: pointer;
+  }
+
+  .form-textarea-add-scene-ecran {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+    line-height: $line-height-base;
+  }
+}
+
+// AFFICHAGE DE LA SÉQUENCE PARENTE (Écran de travail)
+.sequence-display-add-scene-ecran {
+  .sequence-display-content-add-scene-ecran {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    padding: $gap-sm $padding-sm;
+    background: rgba($color-primary, 0.05);
+    border: 1px solid rgba($color-primary, 0.2);
+    border-radius: $border-radius-xs;
+    min-height: 42px;
+    
+    i {
+      color: $color-primary;
+      font-size: $font-size-p3;
+    }
+    
+    span {
+      flex: 1;
+      font-size: $font-size-p4;
+      color: $color-text-primary;
+    }
+  }
+}
+
+// MESSAGES D'ERREUR (Écran de travail)
+.error-text-add-scene-ecran {
+  @include typography-p4;
+  color: $color-error;
+  margin-top: $gap-xs;
+  display: block;
+}
+
+.info-text-add-scene-ecran {
+  @include typography-p4;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  display: block;
+  font-style: italic;
+}
+
+.suggestion-text-add-scene-ecran {
+  @include typography-p4;
+  color: $color-text-muted;
+  margin-top: $gap-xs;
+  display: block;
+  
+  .suggestion-btn-add-scene-ecran {
+    background: transparent;
+    border: none;
+    color: $color-second-prim;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: $font-size-p4;
+    margin-left: $gap-xs;
+    
+    &:hover {
+      color: darken($color-second-prim, 10%);
+    }
+  }
+}
+
+.error-message-add-scene-ecran {
+  padding: $padding-sm;
+  background: rgba($color-error, 0.1);
+  border: 1px solid $color-error;
+  border-radius: $border-radius-xs;
+  color: $color-error;
+  font-size: $font-size-p4;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+// ACTIONS DU FORMULAIRE (Écran de travail)
+.form-actions-add-scene-ecran {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+  }
+
+  .cancel-btn-add-scene-ecran,
+  .submit-btn-add-scene-ecran {
+    padding: $gap-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius-xs;
+    font-size: $font-size-p4;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $gap-xs;
+    min-width: 140px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: auto;
+      width: 100%;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .cancel-btn-add-scene-ecran {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover:not(:disabled) {
+      background: rgba($color-primary, 0.1);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  .submit-btn-add-scene-ecran {
+    background: $color-primary;
+    color: $color-text-light;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+      box-shadow: $shadow-hover;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVE (Standard)
 // =============================================
 @media (max-width: $breakpoint-xl) {
   .creation-sidebar-add-scene {
@@ -647,6 +945,10 @@
   }
   
   .creation-body-add-scene {
+    margin-left: 250px;
+  }
+  
+  .creation-body-add-scene-ecran {
     margin-left: 250px;
   }
 }
@@ -659,6 +961,10 @@
   }
   
   .creation-body-add-scene {
+    margin-left: 0;
+  }
+  
+  .creation-body-add-scene-ecran {
     margin-left: 0;
   }
   
@@ -684,10 +990,20 @@
     gap: $spacing-sm;
     align-items: flex-start;
   }
+  
+  .form-header-add-scene-ecran {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: $breakpoint-md) {
   .creation-main-content-add-scene {
+    padding: $spacing-sm;
+  }
+  
+  .creation-main-content-add-scene-ecran {
     padding: $spacing-sm;
   }
 }
@@ -699,7 +1015,10 @@
   .submit-btn-add-scene,
   .cancel-btn-add-scene,
   .tab-btn-add-scene,
-  .tab-indicator-add-scene {
+  .tab-indicator-add-scene,
+  .form-input-add-scene-ecran,
+  .submit-btn-add-scene-ecran,
+  .cancel-btn-add-scene-ecran {
     transition: none;
     
     &:hover {
@@ -710,4 +1029,12 @@
   .tab-pane-add-scene {
     animation: none;
   }
+}
+
+// Ajustements pour les icônes (Écran de travail)
+.back-btn-add-scene-ecran i,
+.sidebar-btn-add-scene i,
+.submit-btn-add-scene-ecran i,
+.cancel-btn-add-scene-ecran i {
+  font-size: 14px;
 }
