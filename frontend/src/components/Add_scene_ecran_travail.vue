@@ -75,18 +75,18 @@
     </div>
 
     <!-- Contenu principal à droite -->
-    <div class="creation-body-add-scene">
-      <div class="creation-main-content-add-scene">
-        <div class="form-container-add-scene">
+    <div class="creation-body-add-scene-ecran">
+      <div class="creation-main-content-add-scene-ecran">
+        <div class="form-container-add-scene-ecran">
           <!-- En-tête de formulaire -->
-          <div class="form-header-add-scene">
+          <div class="form-header-add-scene-ecran">
             <h2><i class="fas fa-plus-circle"></i> Ajouter une nouvelle scène</h2>
           </div>
 
-          <form @submit.prevent="submitScene" class="scene-form-add-scene">
+          <form @submit.prevent="submitScene" class="scene-form-add-scene-ecran">
             <!-- Ligne 1 : Titre + Ordre -->
-            <div class="form-row-add-scene">
-              <div class="form-group-add-scene">
+            <div class="form-row-add-scene-ecran">
+              <div class="form-group-add-scene-ecran">
                 <label for="titre">Titre de la scène</label>
                 <input 
                   type="text" 
@@ -94,11 +94,11 @@
                   v-model="scene.titre" 
                   required 
                   placeholder="Entrez le titre de la scène"
-                  class="form-input-add-scene"
+                  class="form-input-add-scene-ecran"
                 />
               </div>
 
-              <div class="form-group-add-scene">
+              <div class="form-group-add-scene-ecran">
                 <label for="ordre">Ordre dans la séquence</label>
                 <input 
                   type="number" 
@@ -107,7 +107,7 @@
                   required 
                   placeholder="Numéro d'ordre"
                   min="1"
-                  class="form-input-add-scene"
+                  class="form-input-add-scene-ecran"
                   :class="{ 'error-input': orderError }"
                   @blur="validateOrder"
                 />
@@ -122,7 +122,7 @@
             </div>
 
             <!-- Synopsis -->
-            <div class="form-group-add-scene">
+            <div class="form-group-add-scene-ecran">
               <label for="synopsis">Synopsis</label>
               <textarea 
                 id="synopsis"
@@ -130,32 +130,32 @@
                 required 
                 rows="5"
                 placeholder="Décrivez le contenu de cette scène"
-                class="form-textarea-add-scene"
+                class="form-textarea-add-scene-ecran"
               ></textarea>
             </div>
 
             <!-- Ligne 2 : Séquence + Statut -->
-            <div class="form-row-add-scene">
-              <div class="form-group-add-scene">
+            <div class="form-row-add-scene-ecran">
+              <div class="form-group-add-scene-ecran">
                 <label for="sequence">Séquence liée</label>
-                <div class="sequence-display-add-scene">
-                  <div class="sequence-display-content-add-scene">
+                <div class="sequence-display-add-scene-ecran">
+                  <div class="sequence-display-content-add-scene-ecran">
                     <i class="fas fa-film"></i>
                     <span>{{ sequenceTitre || 'Séquence non spécifiée' }}</span>
                   </div>
                 </div>
-                <span class="info-text-add-scene">
+                <span class="info-text-add-scene-ecran">
                   La scène sera ajoutée à cette séquence
                 </span>
               </div>
 
-              <div class="form-group-add-scene">
+              <div class="form-group-add-scene-ecran">
                 <label for="statut">Statut</label>
                 <select 
                   id="statut"
                   v-model="scene.statutId" 
                   required
-                  class="form-select-add-scene"
+                  class="form-select-add-scene-ecran"
                 >
                   <option value="" disabled>Sélectionnez un statut</option>
                   <option 
@@ -169,15 +169,15 @@
               </div>
             </div>
 
-            <div v-if="errorMessage" class="error-message-add-scene">
+            <div v-if="errorMessage" class="error-message-add-scene-ecran">
               <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
             </div>
 
-            <div class="form-actions-add-scene">
-              <button type="button" @click="goBack" class="cancel-btn-add-scene">
+            <div class="form-actions-add-scene-ecran">
+              <button type="button" @click="goBack" class="cancel-btn-add-scene-ecran">
                 <i class="fas fa-times"></i> Annuler
               </button>
-              <button type="submit" class="submit-btn-add-scene" :disabled="loading || orderError !== ''">
+              <button type="submit" class="submit-btn-add-scene-ecran" :disabled="loading || orderError !== ''">
                 <i v-if="loading" class="fas fa-spinner fa-spin"></i>
                 <i v-else class="fas fa-plus-circle"></i>
                 {{ loading ? 'Création en cours...' : 'Créer la scène' }}

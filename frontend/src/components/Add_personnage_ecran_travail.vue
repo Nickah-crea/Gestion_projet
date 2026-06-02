@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper-global-crea-comedien">
+  <div class="app-wrapper-global">
     <!-- Sidebar latérale fixe à gauche -->
     <div class="creation-sidebar-crea-comedien">
       <div class="sidebar-header-crea-comedien">
