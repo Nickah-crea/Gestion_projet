@@ -1,4 +1,3 @@
-// export/pdfExportPlateau.js
 import { COLORS, addStandardHeader, addStandardFooter } from './pdfExport';
 
 export async function exporterPDFPlateau(pdf, resultat, resultatDetails, margin, yPosition, contentWidth, currentPageNum, itemTitle) {

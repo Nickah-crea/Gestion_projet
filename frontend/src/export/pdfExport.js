@@ -1,4 +1,3 @@
-// export/pdfExport.js
 import jsPDF from 'jspdf';
 import logoVide from '../assets/img/logo-vide.png';
 import { exporterPDFPersonnage } from './pdfExportPersonnage';

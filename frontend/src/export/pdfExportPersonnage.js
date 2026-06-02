@@ -1,4 +1,3 @@
-// export/pdfExportPersonnage.js
 import { COLORS, addStandardHeader, addStandardFooter } from './pdfExport';
 
 /**

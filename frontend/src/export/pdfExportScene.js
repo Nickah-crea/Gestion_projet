@@ -1,4 +1,3 @@
-// export/pdfExportScene.js
 import { COLORS, addStandardHeader, addStandardFooter } from './pdfExport';
 
 export async function exporterPDFScene(pdf, resultat, resultatDetails, margin, yPosition, contentWidth, currentPageNum, itemTitle) {

@@ -1,5 +1,3 @@
-// export/emailExport.js
-
 /**
  * Envoie un PDF par email à une liste de destinataires
  * @param {Blob} pdfBlob - Le blob du PDF à envoyer

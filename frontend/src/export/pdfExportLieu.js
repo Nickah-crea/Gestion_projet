@@ -1,4 +1,3 @@
-// export/pdfExportLieu.js
 import { COLORS, addStandardHeader, addStandardFooter } from './pdfExport';
 
 export async function exporterPDFLieu(pdf, resultat, resultatDetails, margin, yPosition, contentWidth, currentPageNum, itemTitle) {

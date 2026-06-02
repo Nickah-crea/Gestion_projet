@@ -1,5 +1,3 @@
-// export/utils.js
-
 export function formatDate(date) {
   if (!date) return 'Non spécifiée';
   try {
